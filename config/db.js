@@ -7,8 +7,8 @@ const sqlConfig = {
   database: process.env.DB_NAME,
   server: process.env.DB_HOST,
   pool: {
-    max: 10,
-    min: 0,
+    max: 1,
+    min: 1,
     idleTimeoutMillis: 30000
   },
   options: {
@@ -21,13 +21,31 @@ const pool = new sql.ConnectionPool(sqlConfig);
 const poolConnection = pool.connect();
 
 
-async function getPoolConnection() {
-  await poolConnection;
-  return poolConnection
+let execPreparedStmt = async (stmt, params, values) => {
+
+  !params ? params = [] : '';
+  !values ? values = {} : '';
+
+  let pool = await poolConnection
+  const ps = new sql.PreparedStatement(pool)
+
+  for (let param of params) {
+    if (param.type === 'input') {
+      ps.input(param.name, param.dataType)
+    } else if (param.type === 'output') {
+      ps.output(param.name, param.dataType)
+    }
+  }
+
+  return ps.prepare(stmt).then(() => {
+    return ps.execute(values)
+  })
 }
+
 
 
 module.exports = {
   sql,
-  getPoolConnection
+  poolConnection,
+  execPreparedStmt
 }

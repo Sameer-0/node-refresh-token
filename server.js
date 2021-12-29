@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config()
 const http = require('http');
+const path = require('path');
 //const https = require("https");
 const {
     existsSync,
@@ -12,14 +13,13 @@ const {
     appendFile
 } = require('fs');
 
-const session = require('express-session')
-const redis = require('redis')
+//redis
+const {RedisStore, redisClient, session} = require('./config/redis')
 
-const RedisStore = require('connect-redis')(session)
-//const redisClient = redis.createClient();
-const redisClient = redis.createClient(6379, "127.0.0.1");
-redisClient.on('error', err => console.log('Redis Client Error', err));
-redisClient.on('connect', () => console.log('Redis connection established.'));
+//ROUTERS
+const loginRouter = require('./app/routers/login')
+
+
 
 app.use(express.json());
 app.use(
@@ -28,19 +28,23 @@ app.use(
     })
 );
 
+app.use(express.static('./public'));
+app.set('views', './app/views');
+app.set('view engine', 'ejs');
+
 app.use(
     session({
         store: new RedisStore({
             client: redisClient,
             ttl: 260
         }),
-        saveUninitialized: true,
+        saveUninitialized: false,
         secret: process.env.COOKIE_SECRET,
         resave: false,
         name: 'token',
         cookie: {
             secure: false,
-            maxAge: 1000 * 5,
+            maxAge: 1000 * 120,
             httpOnly: false,
             domain: 'localhost',
             sameSite: true,
@@ -49,7 +53,7 @@ app.use(
 )
 
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     if (!req.session) {
         return next(new Error('No session found!')) // handle error
     }
@@ -58,12 +62,7 @@ app.use(function (req, res, next) {
 
 
 //test router
-app.use('/test', (req, res, next) => {
-    res.send('Hello World!!!')
-})
-
-
-
+app.use('/login', loginRouter)
 
 
 
