@@ -1,0 +1,128 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header text-uppercase">
+            <h5>Faculty Workload</h5>
+        </div>
+        <div class="card-body">
+            <form action='/faculty/upload' method='POST' encType="multipart/form-data">
+                <input name="facultyWorkloadFile" class="upload-workload cursor-pointer form-control" type="file" />
+                <p class="mt-2 text-center mb-0">&#42;Choose a File or Drag and Drop</p>
+                <p class="text-center"><a href="/downloadable/facultyWorkload.csv"
+                        class="text-info font-weight-bold"><i class="fas fa-download"></i> Download Excel Template</a>
+                </p>
+                <button class="btn btn-danger m-auto d-block"><i class="fas fa-upload"></i> Upload</button>
+                <!-- <a href="/courseworkload/upload" class="btn btn-danger m-auto d-block">Upload</a> -->
+            </form>
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between">
+            <h5>FACULTY WORKLOAD DATA</h5>
+            <div><a href="/faculty/addNewFacultyWorkload" class="btn btn-danger text-white"><i class="fas fa-plus"></i> Add</a></div>
+        </div>
+        <div class="col-12 table-responsive mt-3 mb-3">
+            <table id="roomDataTable" class="table table-bordered table-striped call-datatable">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr No</th>
+                        <th scope="col">Faculty Id</th>
+                        <th scope="col">Faculty Name</th>
+                        <th scope="col">Module Id</th>
+                        <th scope="col">Program Id</th>
+                        <th scope="col">Campus Id</th>
+                        <th scope="col">Lectures Per Week</th>
+                        <th scope="col">Practical Per Week</th>
+                        <th scope="col">Drawing Per Week</th>
+                        <th scope="col">Tutorial Per Week</th>
+                        <th scope="col">Total Load Per Week</th>
+                        <th scope="col">Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% let i = 0; let value; for(value of facultyWorkData) { i++ %>
+                    <tr>
+                        <td><%- i %></td>
+                        <td><%- value.facultyId %></td>
+                        <td><%- value.facultyName %></td>
+                        <td><%- value.moduleId %></td>
+                        <td><%- value.programId %></td>
+                        <td><%- value.campusId %></td>
+                        <td><%- value.lecPerWeek %></td>
+                        <td><%- value.practicalPerWeek %></td>
+                        <td><%- value.drawingPerWeek %></td>
+                        <td><%- value.tutorialsPerWeek %></td>
+                        <td><%- value.totalLoadPerWeek %></td>
+                        <td><% if (value.type == 1) { %>
+                            Visiting
+                            <% } else { %>
+                            Core
+                            <% } %></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--DASHBOARD CONTENT END-->
+</div>
+</div>
+</div>
+<!--DASHBOARD CONTENT END-->
+</div>
+<!--RIGHT SIDE BAR FOR MOBILE START-->
+<!--RIGHT SIDE BAR FOR MOBILE END-->
+</div>
+</div>
+</div>
+
+<%- include("../partials/footer") %>
+<script>
+    function callDatatable() {
+        if ($('.call-datatable').length > 0) {
+            //CALL DATATABLE
+
+            $('.call-datatable').DataTable({
+                autoFill: false,
+                //scrollY: 400,
+                scrollX: '100%',
+                deferRender: true,
+                scrollY: true,
+                scrollX: true,
+                paging: true,
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $(
+                                '<select><option value="">-Select-</option></select>'
+                            )
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '',
+                                        true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d +
+                                '">' + d + '</option>')
+                        });
+                    });
+                }
+            })
+            //CALL DATATABLE END
+        }
+    }
+    callDatatable();
+</script>
+<%- include("../partials/footerEnd") %>

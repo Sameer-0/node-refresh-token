@@ -1,0 +1,194 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+
+    <div class="card">
+        <div class="card-header text-uppercase">
+            <h5>fetch course workload from sap</h5>
+            <% if (fetchData == 'school not found' || fetchData == 'WSDL client creation issue' || 
+                                            fetchData == 'WSDL client connection issue' || fetchData == 'table truncate' || fetchData == 'table insert') { %>
+            <h6 class="bg-danger text-white p-3">Error occured while fetching Course Workload</h6>
+            <% } else if (fetchData == 'No Data Found') { %>
+            <h6 class="bg-warning text-white p-3">Note! No Data Found for Course Workload</h6>
+
+            <% } else if (fetchData > 0) { %>
+            <h6 class="bg-success text-white p-3">Done! Course Workload Fetched Successfully</h6>
+            <% } %>
+        </div>
+        <div class="card-body">
+            <form action='/courseworkload/getCourseWorkloadSap' method='POST'>
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 mb-3">
+                        <label class="font-weight-bold">Select Program</label>
+                        <select name="programId" id="programForCourseWorkload" class="form-control">
+                            <option selected disabled>--Select Program--</option>
+                            <% for(let value of programList) { %>
+                            <option value="<%- value.programId%>"><%- value.programId%>/<%- value.programName%></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-3">
+                        <label class="font-weight-bold">Select Session</label>
+                        <select name="acadSession" id="sessionForCourseWorkload" class="form-control">
+                            <option selected disabled>--Select Session--</option>
+                            <% for(let value of sessionList) { %>
+                            <option value="<%- value.id%>"><%- value.acadSession%></option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-danger"><i class="fas fa-download"></i>Fetch From SAP</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header text-uppercase">
+            <h5>course workload</h5>
+            <%if (typeof(courWorkExists) == "number" && courWorkExists == 1) { %>
+            <div class="alert alert-danger" role="alert">
+                There is previous Course Workload Data <a href="/courseworkload/uploaded/" class="alert-link">Click here
+                    to View Data</a>. Kindly delete the data.
+            </div>
+            <% } %>
+        </div>
+        <div class="card-body">
+            <form action='/courseworkload/upload' method='POST' encType="multipart/form-data">
+                <input name="courseworkloadFile" class="upload-workload cursor-pointer form-control" type="file" />
+                <p class="mt-2 text-center mb-0">&#42;Choose a File or Drag and Drop</p>
+                <p class="text-center"><a href="/courseworkload/downloadCourseWorkload" class="text-info font-weight-bold"><i
+                            class="fas fa-download"></i> Download Excel Template</a></p>
+                <button class="btn btn-danger m-auto d-block"><i class="fas fa-upload"></i> Upload</button>
+                <!-- <a href="/courseworkload/upload" class="btn btn-danger m-auto d-block">Upload</a> -->
+
+            </form>
+
+
+            <% if (typeof(isUploaded) == 'boolean' && isUploaded) {%>
+            <div class=" mt-4">
+                <h4 class="text-center bg-success text-white p-3">Uploaded Successfully.</h4>
+            </div>
+            <% } else if (typeof(isUploaded) == 'boolean' && !isUploaded) { %>
+            <div class=" mt-4">
+                <h4 class="text-center bg-danger text-white p-3">Upload failed! Invalid file format.</h4>
+            </div>
+            <% } %>
+
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header text-uppercase">
+            <h5>COURSE WORKLOAD DATA</h5>
+        </div>
+        <div class="col-12 table-responsive mt-3 mb-3">
+            <table id="roomDataTable" class="table table-bordered table-striped call-datatable">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr No</th>
+                        <th scope="col">Module Id</th>
+                        <th scope="col">Course Name</th>
+                        <th scope="col">AcadSession</th>
+                        <th scope="col">Program Id</th>
+                        <th scope="col">Campus Id</th>
+                        <th scope="col">No of Divisions</th>
+                        <th scope="col">Lectures per Week per division</th>
+                        <th scope="col">Total Sessions per Week</th>
+                        <th scope="col">Sessions per Semester</th>
+                        <th scope="col">Practical per Week per Division</th>
+                        <th scope="col">Continuous</th>
+                        <th scope="col">Electives</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% let i = 0; let value; for(value of courseWorkData) { i++ %>
+                        <tr>
+                            <td><%- i %></td>
+                            <td><%- value.moduleId %></td>
+                            <td><%- value.CourseName %></td>
+                            <td><%- value.acadSession %></td>
+                            <td><%- value.programId %></td>
+                            <td><%- value.campusId %></td>
+                            <td><%- value.NoofDivisions %></td>
+                            <td><%- value.LecturesperWeekperdivision %></td>
+                            <td><%- value.TotalSessionsperWeek %></td>
+                            <td><%- value.SessionsperSemester %></td>
+                            <td><%- value.practicalPerWeekPerDivision %></td>
+                            <td><%- value.continuous %></td>
+                            <td><%- value.electives %></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--DASHBOARD CONTENT END-->
+</div>
+
+<%- include("../partials/footer") %>
+<script>
+
+// $("#downloadCourseWorkload").click(() => {
+//     $.ajax({
+//         url: "/courseworkload/downloadCourseWorkload",
+//         type: "GET",
+//         success: data => {
+//             console.log("Course workload downloaded: ", data)
+//         },
+//         error: error => {
+//             console.log("Error downloading course workload: ", error)
+//         }
+//     })
+// })
+
+</script>
+<script>
+
+    function callDatatable() {
+            if ($('.call-datatable').length > 0) {
+                //CALL DATATABLE
+    
+                $('.call-datatable').DataTable({
+                    autoFill: false,
+                    //scrollY: 400,
+                    scrollX: '100%',
+                    deferRender: true,
+                    scrollY: true,
+                    scrollX: true,
+                    paging: true,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $(
+                                    '<select><option value="">-Select-</option></select>'
+                                )
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                        $(this).val()
+                                    );
+    
+                                    column
+                                        .search(val ? '^' + val + '$' : '',
+                                            true, false)
+                                        .draw();
+                                });
+    
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d +
+                                    '">' + d + '</option>')
+                            });
+                        });
+                    }
+                })
+                //CALL DATATABLE END
+            }
+        }
+        callDatatable();
+    </script>
+<%- include("../partials/footerEnd") %>

@@ -1,0 +1,361 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+
+<div class="col-12 dashboardContent">
+    <div class="card">
+        <div class="card-header text-uppercase d-flex">
+            <h5>Transaction List</h5>
+
+
+            <select class="trans-stages ml-auto" name="stageId" id="stageId">
+                <option disabled selected>--Stages--</option>
+                <% for(let stage of stageList) { %>
+                <option value="<%- stage.id %>"><%- stage.name %></option>
+                <% } %>
+            </select>
+
+
+        </div>
+        <div class="card-body">
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="trans-table">
+                    <thead>
+                        <th>Transaction UUID</th>
+
+                        <th>Applicant</th>
+
+                        <th>Applicant Sap ID</th>
+
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+
+                        <% for (let transaction of transactionList) { %>
+                        <tr>
+                            <td><%- transaction.transaction_uuid %></td>
+
+                            <td><%- transaction.applicant %></td>
+
+                            <td><%- transaction.applicant_sap_id %></td>
+
+                            <td>
+                                <button class="btn btn-sm btn-success view-trans"
+                                    data-trans-id="<%- transaction.transaction_uuid %>" data-toggle="modal"
+                                    data-target="#view-trans-modal">View Details</button>
+
+                                <i class="fas fa-check-square fa-2x approve-trans"
+                                    data-trans-id="<%- transaction.transaction_uuid %>"
+                                    data-target="#approve-trans"></i>
+
+                                <i class="fas fa-trash-alt fa-2x text-danger reject-trans"
+                                    data-trans-id="<%- transaction.transaction_uuid %>" data-target="#reject-trans"></i>
+                            </td>
+
+                        </tr>
+                        <% } %>
+
+
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <!--DASHBOARD CONTENT END-->
+    </div>
+
+
+
+    <!-- drop-down list for stages -->
+
+
+
+
+
+
+
+
+
+
+    <!-- view details -->
+
+    <div class="modal fade full-screen-modal" id="view-trans-modal" tabindex="-1" role="dialog"
+        aria-labelledby="view-trans-modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-white" id="view-trans-modal-title">Transaction Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="trans-details-table">
+                            <thead>
+                                <th>Room </th>
+                                <th>Applicant</th>
+                                <th>Transaction Type</th>
+                                <th>Applicant SAP ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Stage</th>
+                                <th>Organization</th>
+                                <th>Campus</th>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!-- getTranDetailsByStage -->
+
+
+
+
+
+    <%- include("../partials/footer") %>
+    <script>
+        $(document).on('click', '.view-trans', function () {
+
+            let transId = $(this).attr('data-trans-id');
+
+            $.ajax({
+                url: '/management/room/transaction/details',
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    transId: transId
+                },
+                success: (data) => {
+
+                    let transData = data.transDetails;
+
+
+                    let trStr = ``;
+
+                    for (let trans of transData) {
+                        trStr += `<tr>
+                        <td>${trans.room}</td>
+                        <td>${trans.applicant}</td>
+                        <td>${trans.trans_type}</td>
+                        <td>${trans.applicant_sap_id}</td>
+                        <td>${trans.start_date}</td>
+                        <td>${trans.end_date}</td>
+                        <td>${trans.start_time}</td>
+                        <td>${trans.end_time}</td>
+                        <td>${trans.stage}</td>
+                        <td>${trans.organization}</td>
+                        <td>${trans.campus}</td>
+                     </tr>`
+                    }
+
+
+                    $('#trans-details-table tbody').html(trStr)
+
+
+
+
+
+
+                }
+
+            })
+
+        })
+
+        $('.approve-trans').on('click', function () {
+            let transId = $(this).attr('data-trans-id')
+            // alert('Approve Successfully')
+
+            if (confirm("Do you want to Approve this?") == true) {
+                console.log("Approve Successfully!");
+            } else {
+                console.log("You pressed CANCEL!");
+            }
+
+
+
+            $.ajax({
+                url: '/management/room/transaction/approveStatus',
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    transId: transId
+                }
+            })
+        })
+
+        $('.reject-trans').on('click', function () {
+            let transId = $(this).attr('data-trans-id')
+
+            if (confirm("Do you want to Reject this?") == true) {
+                console.log("Reject Successfully");
+            } else {
+                console.log("You pressed CANCEL!");
+            }
+
+
+            $.ajax({
+                url: '/management/room/transaction/approveStatus',
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    transId: transId
+                }
+            })
+        })
+
+
+
+
+
+
+        $('#stageId').on('change', function () {
+            console.log('hello')
+            let stageId = $(this).val()
+
+
+            $.ajax({
+                url: '/management/room/transaction/getStageDetails',
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    stageId: stageId
+                },
+                success: data => {
+                    console.log('on success', data)
+
+                    let transData = data.transList;
+
+                    let trStr = ``;
+
+
+                    // if(stageId ==2){
+                    //     tbrStr += `<tr>
+                    //         <td><button class="btn btn-sm btn-success view-trans"
+                    //                 data-toggle="modal"
+                    //                 data-target="#view-trans-modal">View Details</button> </td>
+                    //             </tr>`
+                    // }
+
+                    if (transData.length == 0) {
+                        trStr += `<tr class="text-center">
+                            <td colspan="4">No data Found</td>
+                           
+                            </tr>`
+                    } else {
+
+                        //${stageId == 2 ? 'Reject/Approve' : ''}
+
+                        for (let trans of transData) {
+                            trStr += `<tr>
+                            <td>${trans.transaction_uuid}</td>
+                            <td>${trans.applicant}</td>
+                            <td>${trans.applicant_sap_id}</td>
+                            <td> <button class="btn btn-sm btn-success view-trans" data-trans-id="${trans.transaction_uuid}" data-toggle="modal"
+                                    data-target="#view-trans-modal">View Details</button>
+                               
+
+                            `
+
+                            if (stageId == 2) {
+                                trStr += `
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+                            Tooltip on top
+                            </button>
+                                
+                            <i class="fas fa-check-square fa-2x approve-trans" data-trans-id="${trans.transaction_uuid}"
+                            data-target="#approve-trans"></i>
+                            <i class="fas fa-trash-alt fa-2x text-danger reject-trans" data-trans-id="${trans.transaction_uuid}" 
+                            data-target="#reject-trans"></i>
+                            `
+                            }
+
+                            trStr += `</td>
+                                
+                            </tr>`
+
+
+
+
+
+                        }
+
+                    }
+
+                    $('#trans-table tbody').html(trStr)
+
+
+                },
+                error: err => {
+                    console.log('on failed:', err)
+                }
+
+            })
+        })
+
+
+
+
+        function callDatatable() {
+            if ($('.call-datatable').length > 0) {
+                //CALL DATATABLE
+
+                $('.call-datatable').DataTable({
+                    autoFill: false,
+                    //scrollY: 400,
+                    scrollX: '100%',
+                    deferRender: true,
+                    scrollY: true,
+                    scrollX: true,
+                    paging: true,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $(
+                                    '<select><option value="">-Select-</option></select>'
+                                )
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                        $(this).val()
+                                    );
+
+                                    column
+                                        .search(val ? '^' + val + '$' : '',
+                                            true, false)
+                                        .draw();
+                                });
+
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d +
+                                    '">' + d + '</option>')
+                            });
+                        });
+                    }
+                })
+                //CALL DATATABLE END
+            }
+        }
+        callDatatable();
+    </script>
+    <%- include("../partials/footerEnd") %>

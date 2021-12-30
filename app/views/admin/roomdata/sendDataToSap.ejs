@@ -1,0 +1,50 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+                <!--Notificaion icon-->
+                <!--HEADER END-->
+                <div class="col-12 dashboardContent">
+                                    <!--DASHBOARD CONTENT START-->
+                                        <div class="card-body">
+                                            
+											<button id="sendDataToSap">SEND DATA TO SAP</button>
+                                            <div class="sapEventBody">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--DASHBOARD CONTENT END-->
+                                </div>
+
+<%- include("../partials/footer") %>
+
+<script>
+    let socket = io.connect(`http://<%- slug %>.localhost:3000/`);
+  socket.on('connect', () => {
+    console.log(socket.connected)
+  });
+$('#sendDataToSap').click(function () {
+    console.log('called-->');
+      socket.emit('sapEvent', "<%- slug %>")
+    })
+
+    socket.on('sapEventData', (dataData) => {
+       let drawerList = "<p>"+dataData+"</p>";
+    //   for (let data of dataData) {
+    //     drawerList += "<li>" + data.slotAllotedFor + "</li>"
+    //   }
+      $('.sapEventBody').html(drawerList)
+    })
+// $('#sendDataToSap').on('click', function(){
+// $.ajax({
+// 	url: '/roomdata/sendTimetableToSAP',
+// 	type: 'POST',
+// 	success: data => {
+// 		console.log("Data from SAP: ", data)
+// 	}
+// })
+// })
+
+</script>
+
+<%- include("../partials/footerEnd") %>

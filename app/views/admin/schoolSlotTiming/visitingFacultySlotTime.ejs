@@ -1,0 +1,329 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header bg-danger">
+            <h1 class="f-20 text-white">Visiting Faculty's Prefered Slots</h1>
+        </div>
+        <div class="card-body">
+            <hr />
+
+            <div class="row">
+                <div class="col-md-4">
+                    <select class="form-control mb-3 select2" id="visitingFacultyPicker">
+                        <option disabled selected>--Select Faculty--</option>
+                        <% for (let fVal of facultyData) { %>
+                        <option value="<%- fVal.facultyId %>"><%- fVal.facultyName %> / <%- fVal.facultyId %></option>
+                        <% } %>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="vsTimePreference mt-3">
+                <div class="card mt-3">
+                    <div class="card-header cursor-pointer" id="monday" data-toggle="collapse"
+                        data-target="#collapseMon" aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plus"></i> Slot Preference
+                        </h5>
+                    </div>
+
+                    <div id="collapseMon" class="collapse show" aria-labelledby="monday">
+                        <div class="card-body">
+                            <div class="col-12 mt-3 table-responsive">
+                                <!-- <table id="visitingSlotTimeTable1"
+                                    class="table table-bordered table-striped text-center">
+                                    <thead>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th class="bg-dark text-white text-capitalize" colspan="9">Monday</th>
+                                        </tr>
+                                        <tr>
+                                            <td>Slot1</td>
+                                            <td>Slot2</td>
+                                            <td>Slot3</td>
+                                            <td>Slot4</td>
+                                            <td>Slot5</td>
+                                            <td>Slot6</td>
+                                            <td>Slot7</td>
+                                            <td>Slot8</td>
+                                            <td>Slot9</td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type='checkbox' value='slot1'/></td>
+                                            <td><input type='checkbox' value='slot2'/></td>
+                                            <td><input type='checkbox' value='slot3'/></td>
+                                            <td><input type='checkbox' value='slot4'/></td>
+                                            <td><input type='checkbox' value='slot5'/></td>
+                                            <td><input type='checkbox' value='slot6'/></td>
+                                            <td><input type='checkbox' value='slot7'/></td>
+                                            <td><input type='checkbox' value='slot8'/></td>
+                                            <td><input type='checkbox' value='slot9'/></td>
+                                        </tr>
+                                    </tbody>
+                                </table> -->
+                                <table id="visitingSlotTimeTable"
+                                    class="table table-bordered table-striped text-center">
+                                    <thead>
+                                        
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-12 text-center mt-5">
+                            <button class="btn btn-danger d-none" id="allocateSlotTimeVisitingFaculty">Update
+                                Preference</button>
+                        </div>
+                    </div>
+                    
+                </div>
+
+
+
+            </div>
+        </div>
+
+        <!--DASHBOARD CONTENT END-->
+
+       <%- include("../partials/footer") %>
+        <script>
+            $(document).ready(function () {
+                let alertTxt = $('.alert-text')
+                let alertBody = $('.alertBody')
+                let loader = $('.loaderBody')
+                //DATATABLE FUNCTION
+                function callDatatable() {
+                    if ($('.call-datatable').length > 0) {
+                        //CALL DATATABLE
+
+                        $('.call-datatable').DataTable({
+                            autoFill: false,
+                            //scrollY: 400,
+                            scrollX: '100%',
+                            deferRender: true,
+                            scrollY: true,
+                            scrollX: true,
+                            paging: false,
+                            initComplete: function () {
+                                this.api().columns().every(function () {
+                                    var column = this;
+                                    var select = $(
+                                            '<select><option value="">-Select-</option></select>'
+                                        )
+                                        .appendTo($(column.footer()).empty())
+                                        .on('change', function () {
+                                            var val = $.fn.dataTable.util.escapeRegex(
+                                                $(this).val()
+                                            );
+
+                                            column
+                                                .search(val ? '^' + val + '$' : '',
+                                                    true, false)
+                                                .draw();
+                                        });
+
+                                    column.data().unique().sort().each(function (d, j) {
+                                        select.append('<option value="' + d +
+                                            '">' + d + '</option>')
+                                    });
+                                });
+                            }
+                        })
+
+                        $('.call-datatable tbody tr').click(function () {
+                            if ($('.call-datatable tbody tr').hasClass('tr-selected')) {
+                                $('.call-datatable tbody tr').removeClass('tr-selected')
+                            } else {
+                                $(this).addClass('tr-selected')
+                            }
+                        })
+                    }
+                }
+                //DATATABLE FUNCTION ENDS HERE
+
+                $("#visitingFacultyPicker").change(function () {
+                    // $('.call-datatable').DataTable().destroy()
+                    $.ajax({
+                        type: 'POST',
+                        url: '/slots/getSlotsForVisitingFaculty/',
+                        dataType: "json",
+                        data: {
+                            facultyId: $(this).val()
+                        },
+                        success: function (data) {
+                            if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				            }
+                            let values = data.data
+                            let slotData = data.slotData;
+                            tableData = "";
+                            tableData1 = "";
+                            console.log('data', data)
+                            console.log('slotData1', slotData[0])
+
+                            for (value of values) {
+                                let maxSlotNo = "";
+                                tableData1 += "<tr><td class='bg-dark text-white text-capitalize' colspan='9'>"+ value.dayName + "</td></tr><tr>";
+                                for (let sVal of slotData) {
+                                    if(sVal.name == value.dayName){
+                                        tableData1 += "<td>"+sVal.starttime +" - "+ sVal.endtime +"</td>"
+                                        maxSlotNo = sVal.slotName.substring(4);
+                                    }
+                                }
+                                console.log("maxSlotNo--->",maxSlotNo);
+                                // tableData1 += "</tr><tr class='" + value.dayName + "'>" ;
+                                // for(let i = 1; i <= Number(maxSlotNo); i++){
+                                //     let slotValue = (value.slot).concat(i.toString());
+                                //     console.log(slotValue);
+                                //     tableData1 += "<td><input type='checkbox' value='" + slotValue + "'/></td>";
+                                //     console.log(i.toString());
+                                // }
+                                // tableData1 += " </tr>";
+                                tableData1 += "</tr>" + "<tr class='" + value.dayName +
+                                    "'><td><input type='checkbox' value='" +
+                                    value.slot1 +
+                                    "'/></td><td><input type='checkbox' value='" + value
+                                    .slot2 + "'/></td><td><input type='checkbox' value='" +
+                                    value.slot3 +
+                                    "'/></td><td><input type='checkbox' value='" + value
+                                    .slot4 + "'/></td><td><input type='checkbox' value='" +
+                                    value.slot5 +
+                                    "'/></td><td><input type='checkbox' value='" + value
+                                    .slot6 + "'/></td><td><input type='checkbox' value='" +
+                                    value.slot7 +
+                                    "'/></td><td><input type='checkbox' value='" + value
+                                    .slot8 + "'/></td><td><input type='checkbox' value='" +
+                                    value.slot9 + "'/></td></tr>";
+                                    // console.log(tableData1)
+
+                            }
+                            // console.log(tableData1)
+                            $('#visitingSlotTimeTable tbody').html(tableData1)
+
+                            // $("#visitingSlotTimeTable tbody .thrusday td:first").html("Thursday");
+
+                            let inputCheck = $('#visitingSlotTimeTable tbody input')
+                            inputCheck.each(function () {
+                                if ($(this).val() === 'Y') {
+                                    console.log("")
+                                    $(this).prop('checked', true)
+                                }
+                            })
+
+                            inputCheck.click(function () {
+                                if ($(this).val() === 'N') {
+                                    $(this).val('Y')
+                                } else {
+                                    $(this).val('N')
+                                }
+                            })
+
+                            $('#allocateSlotTimeVisitingFaculty').removeClass('d-none')
+                            callDatatable()
+
+
+                        }
+                    })
+                })
+
+                // allocate slot button click
+                $('#allocateSlotTimeVisitingFaculty').click(function () {
+
+                    loader.removeClass('d-none')
+                    let prefObjMon = {}
+                    let prefObjTue = {}
+                    let prefObjWed = {}
+                    let prefObjThu = {}
+                    let prefObjFri = {}
+                    let prefObjSat = {}
+                    let prefObjSun = {}
+                    let inputCheckMon = $('#visitingSlotTimeTable tbody .monday input')
+                    let inputCheckTue = $('#visitingSlotTimeTable tbody .tuesday input')
+                    let inputCheckWed = $('#visitingSlotTimeTable tbody .wednesday input')
+                    let inputCheckThu = $('#visitingSlotTimeTable tbody .thursday input')
+                    let inputCheckFri = $('#visitingSlotTimeTable tbody .friday input')
+                    let inputCheckSat = $('#visitingSlotTimeTable tbody .saturday input')
+                    let inputCheckSun = $('#visitingSlotTimeTable tbody .sunday input')
+                    let inputCount = 0
+
+                    inputCountZero = function () {
+                        if (inputCount == 9) {
+                            inputCount = 0;
+                        }
+                    }
+
+                    inputCheckMon.each(function () {
+                        inputCount++
+                        prefObjMon["slot" + inputCount] = $(this).val()
+                        inputCountZero();
+                    })
+                    inputCheckTue.each(function () {
+                        inputCount++
+                        prefObjTue["slot" + inputCount] = $(this).val()
+                        inputCountZero();
+                    })
+                    inputCheckWed.each(function () {
+                        inputCount++
+                        prefObjWed["slot" + inputCount] = $(this).val()
+                        inputCountZero();
+                    })
+                    inputCheckThu.each(function () {
+                        inputCount++
+                        prefObjThu["slot" + inputCount] = $(this).val()
+                        inputCountZero();
+                    })
+                    inputCheckFri.each(function () {
+                        inputCount++
+                        prefObjFri["slot" + inputCount] = $(this).val()
+                        inputCountZero();
+                    })
+                    inputCheckSat.each(function () {
+                        inputCount++
+                        prefObjSat["slot" + inputCount] = $(this).val()
+                        inputCountZero();
+                    })
+                    inputCheckSun.each(function () {
+                        inputCount++
+                        prefObjSun["slot" + inputCount] = $(this).val()
+                        inputCountZero();
+                    })
+
+                    
+                    //prefArr.push(prefObj)
+                    console.log("Monday Object", prefObjMon, prefObjTue, prefObjWed, prefObjThu,
+                        prefObjFri, prefObjSat, prefObjSun);
+
+                    let prefObj = {monObj: prefObjMon, tueObj: prefObjTue, wedObj: prefObjWed, thuObj: prefObjThu, friObj: prefObjFri, satObj: prefObjSat, sunObj: prefObjSun};
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/slots/updateSlotsForVisitingFaculty/',
+                        dataType: 'json',
+                        data: {
+                            prefData: JSON.stringify(prefObj),
+                            facultyId: $("#visitingFacultyPicker").val()
+                        },
+                        success: function (data) {
+                            loader.addClass('d-none')
+                            if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				            }
+                            alertTxt.html('Preference Updated!')
+                            alertBody.removeClass('d-none')
+
+                        }
+                    })
+                    console.log('Hello')
+                })
+            })
+        </script>
+        <%- include("../partials/footerEnd") %>

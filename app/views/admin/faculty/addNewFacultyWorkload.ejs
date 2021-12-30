@@ -1,0 +1,133 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<%- include("../partials/loader") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+<div class="col-12 dashboardContent">
+	<!--DASHBOARD CONTENT START-->
+	<div class="card">
+		<div class="card-header">
+			<h5>ADD FACULTY WORKLOAD </h5>
+		</div>
+	
+	<div class="card-body">
+        <form action="/faculty/addNewFacultyWorkload" method="POST">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="facultyId">FACULTY ID</label>
+                <input type="number" id="facultyId" name="facultyId" class="form-control" required>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="facultyName">FACULTY NAME</label>
+                <input type="text" id="facultyName" name="facultyName" class="form-control" required>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="programId">PROGRAM ID</label>
+                <select name="programId" id="programId" class="form-control" required>
+                    <option selected disabled>--Select Program--</option>
+                    <% for(let value of programList) { %>
+                        <option value="<%- value.programId%>"><%- value.programId%>/<%- value.programName%></option>
+                    <% } %>
+                </select>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="moduleId">MODULE ID</label>
+                <select name="moduleId" id="moduleId" class="form-control" required>
+                    <option selected disabled>--Select Module--</option>
+                </select>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="campusId">CAMPUS ID</label>
+                <select name="campusId" id="campusId" class="form-control" required>
+                    <option selected disabled>--Select Campus--</option>
+                </select>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="lecturePerWeek">LECTURE PER WEEK</label>
+                <input type="number" id="lecturePerWeek" name="lecturePerWeek" class="form-control" required>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="practicalPerWeek">PRACTICAL PER WEEK</label>
+                <input type="number" id="practicalPerWeek" name="practicalPerWeek" class="form-control" required>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="drawingPerWeek">DRAWING PER WEEK</label>
+                <input type="number" id="drawingPerWeek" name="drawingPerWeek" class="form-control" required>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="tutorialsPerWeek">TUTORIALS PER WEEK</label>
+                <input type="number" id="tutorialsPerWeek" name="tutorialsPerWeek" class="form-control" required>
+            </div>
+            <!-- <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="totalLoadPerWeek">TOTAL LOAD PER WEEK</label>
+                <input type="text" id="totalLoadPerWeek" name="totalLoadPerWeek" class="form-control" required>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="divisionsAssignedIfAny">DIVISIONS ASSIGNED IF ANY</label>
+                <input type="text" id="divisionsAssignedIfAny" name="divisionsAssignedIfAny" class="form-control">
+            </div> -->
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <label class="font-weight-bold" for="facultyType">FACULTY TYPE</label>
+                <select name="facultyType" id="facultyType" class="form-control" required>
+                    <option selected disabled value="">--Select Type--</option>
+                    <option value="0">Core</option>
+                    <option value="1">Visiting</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <button class="btn btn-success m-auto d-block"> Submit</button>
+        </div>
+    </form>
+	</div>
+</div>
+</div>
+	<!--DASHBOARD CONTENT END-->
+</div>
+
+<%- include("../partials/footer") %>
+<script>
+    $('#programId').on('change', () => {
+        let program = $('#programId').val();
+        console.log(program);
+        $.ajax({
+            url: "/faculty/getModuleByProgram",
+            type: "POST",
+            data: { programId: program },
+            success: data => {
+                console.log("moduleList: ", data.moduleList)
+                let moduleOptions = `<option selected disabled value="">--Select Module--</option>`;
+                for(let module of data.moduleList){
+                    moduleOptions += `<option value="${module.moduleId}">${module.courseName}</option>`;
+                }
+                $('#moduleId').html(moduleOptions);
+            },
+            error: error => {
+                console.log("Error: ", error)
+            }
+        })
+    });
+
+    $('#moduleId').on('change', () => {
+        let program = $('#programId').val();
+        let module = $('#moduleId').val();
+        console.log(module);
+        $.ajax({
+            url: "/faculty/getCampusByProgramAndModule",
+            type: "POST",
+            data: { programId: program, moduleId: module },
+            success: data => {
+                let campusOptions = `<option selected disabled value="">--Select Campus--</option>`;
+                for(let campus of data.campusList){
+                    campusOptions += `<option value="${campus.Campus_ID}">${campus.Campus_abbreviation}</option>`;
+                }
+                $('#campusId').html(campusOptions);
+            },
+            error: error => {
+                console.log("Error: ", error)
+            }
+        })
+    })
+</script>
+<%- include("../partials/footerEnd") %>

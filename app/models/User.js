@@ -21,7 +21,13 @@ module.exports = class User {
     static fetchAll() {
         //return execPreparedStmt(`SELECT * FROM injection_test`)
         return poolConnection.then(pool => {
-            return pool.request().input('age', sql.Int, 22).query(`SELECT * FROM injection_test WHERE age = @age;`)
+            return pool.request().input().query(`SELECT * FROM [bncp-mum].users`)
         })
     }
+
+    fetchByUserna
+
+
+
+
 }

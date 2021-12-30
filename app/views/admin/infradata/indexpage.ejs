@@ -1,0 +1,135 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header text-uppercase">
+            <h5>Upload Room Data</h5>
+        </div>
+        <div class="card-body">
+            <form action='/infradata/uploaddata/' method='POST' encType="multipart/form-data">
+                <input name="uploadedFile" class="upload-workload cursor-pointer form-control" type="file" />
+                <p class="mt-2 text-center mb-0">&#42;Choose a File or Drag and Drop</p>
+                <p class="text-center"><a href="/downloadable/roomdataupdated.csv" class="text-info font-weight-bold"><i
+                            class="fas fa-download"></i> Download Excel Template</a></p>
+                <button type="submit" class="btn btn-danger m-auto d-block"><i class="fas fa-upload"></i>
+                    Upload</button>
+
+                <!-- <a href="/courseworkload/upload" class="btn btn-danger m-auto d-block">Upload</a> -->
+            </form>
+
+            
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="card-header text-uppercase">
+            <h5>Room Data</h5>
+        </div>
+        <div class="col-12 table-responsive mt-3 mb-3">
+            <table id="roomDataTable" class="table table-bordered table-striped call-datatable">
+                <thead>
+                    <tr>
+                        <th scope="col">Sr No</th>
+                        <th scope="col">Room No.</th>
+                        <th scope="col">Room Type</th>
+                        <th scope="col">Campus Id</th>
+                        <th scope="col">Floor</th>
+                        <th scope="col">Capacity</th>
+                        <th scope="col">Building Name</th>
+                        <th scope="col">Building Number</th>
+                        <th scope="col">Alloted</th>
+                        <th scope="col">Allotment Id</th>
+                        <th scope="col">Alloted By</th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Handled By</th>
+                        <th scope="col">Designation</th>
+                        <th scope="col">T or non T</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% let i = 0; let value; for(value of data) { i++ %>
+                        <tr>
+                            <td><%- i %></td>
+                            <td><%- value.roomno %></td>
+                            <td><%- value.roomtype %></td>
+                            <td><%- value.campusId %></td>
+                            <td><%- value.floor %></td>
+                            <td><%- value.capacity %></td>
+                            <td><%- value.building_name %></td>
+                            <td><%- value.building_number %></td>
+                            <td><%- value.alloted %></td>
+                            <td><%- value.allotmentId %></td>
+                            <td><%- value.allotedBy %></td>
+                            <td><%- value.owned_by %></td>
+                            <td><%- value.handled_by %></td>
+                            <td><%- value.designation %></td>
+                            <td><%- value.t_or_nont %></td>
+                            <td><%- value.description %></td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--DASHBOARD CONTENT END-->
+</div>
+</div>
+</div>
+<!--DASHBOARD CONTENT END-->
+</div>
+<!--RIGHT SIDE BAR FOR MOBILE START-->
+<!--RIGHT SIDE BAR FOR MOBILE END-->
+</div>
+</div>
+</div>
+
+<%- include("../partials/footer") %>
+<script>
+
+    function callDatatable() {
+            if ($('.call-datatable').length > 0) {
+                //CALL DATATABLE
+    
+                $('.call-datatable').DataTable({
+                    autoFill: false,
+                    //scrollY: 400,
+                    scrollX: '100%',
+                    deferRender: true,
+                    scrollY: true,
+                    scrollX: true,
+                    paging: true,
+                    initComplete: function () {
+                        this.api().columns().every(function () {
+                            var column = this;
+                            var select = $(
+                                    '<select><option value="">-Select-</option></select>'
+                                )
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $.fn.dataTable.util.escapeRegex(
+                                        $(this).val()
+                                    );
+    
+                                    column
+                                        .search(val ? '^' + val + '$' : '',
+                                            true, false)
+                                        .draw();
+                                });
+    
+                            column.data().unique().sort().each(function (d, j) {
+                                select.append('<option value="' + d +
+                                    '">' + d + '</option>')
+                            });
+                        });
+                    }
+                })
+                //CALL DATATABLE END
+            }
+        }
+        callDatatable();
+    </script>
+<%- include("../partials/footerEnd") %>

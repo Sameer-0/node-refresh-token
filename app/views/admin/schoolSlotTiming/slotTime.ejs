@@ -1,0 +1,148 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <h2 class="f-20">Slot Timing</h2>
+            <span>
+                <a href="/slots/index" class="btn btn-danger">Edit Slot</a>
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="slotTiming" class="table table-striped table-bordered call-datatable">
+                    <thead>
+                        <tr>
+                            <th scope="col">Program</th>
+                            <th scope="col">Slot Name</th>
+                            <th scope="col">Day</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Action</th>
+                            <!-- <th scope="col">Delete</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (slot of data) { %>
+                        <tr>
+                            <td><%- slot.programName %></td>
+                            <td><%- slot.slotName %></td>
+                            <td><%= slot.name %></td>
+                            <td><%- slot.starttime %> to <%- slot.endtime %></td>
+                            <td><%- slot.starttime %> to <%- slot.endtime %></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <div class="card mt-5">
+        <div class="card-header d-flex justify-content-between">
+            <h2 class="f-20">Add New Slot</h2>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="col-12 mt-3">
+                    <label>Slot Name<sup class="text-danger">*</sup></label>
+                    <input type="text" id="insertSlotName" value="slot<%- data.length + 1 %>"
+                        class="col-md-4 form-control" disabled />
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label>Start Time<sup class="text-danger">*</sup></label>
+                    <div class="selTime" id="startTime">
+                    </div>
+                </div>
+                <div class="col-md-4 mt-3">
+                    <label>End Time<sup class="text-danger">*</sup></label>
+                    <div class="selTime" id="endTime">
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="button" id="addNewSlot" class="btn btn-md btn-success">
+                        Add New Slot</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!--DASHBOARD CONTENT END-->
+   <%- include("../partials/footer") %>
+
+    <script>
+        // $("#addNewSlot").click(function () {
+        //     let startTimeUpdt = $("#startTime .selHH").val() + ":" + $("#startTime .selMM").val() + " " + $(
+        //         "#startTime .selAmPm").val();
+        //     let endTimeUpdt = $("#endTime .selHH").val() + ":" + $("#endTime .selMM").val() + " " + $(
+        //         "#endTime .selAmPm").val();
+        //     let slotName = "slot<%- data.length + 1 %>";
+        //     let schoolId = "<%- data[0].schoolId %>";
+        //     let campusId =  "<%- data[0].campusId %>";
+            
+        //     console.log("Slot Name", slotName)
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/slots/addNewSlot",
+        //         datatYpe: "json",
+        //         data: {
+        //             startTime: startTimeUpdt,
+        //             endTime: endTimeUpdt,
+        //             slotName: slotName,
+        //             schoolId: schoolId,
+        //             campusId: campusId
+        //         },
+        //         success: function (data) {
+        //             console.log("after update", data);
+        //             if(data.status === "200") {
+        //             location.reload();
+        //             }
+        //         }
+        //     })
+        // })
+        function callDatatable() {
+        if ($('.call-datatable').length > 0) {
+            //CALL DATATABLE
+
+            $('.call-datatable').DataTable({
+                autoFill: false,
+                //scrollY: 400,
+                scrollX: '100%',
+                deferRender: true,
+                scrollY: true,
+                scrollX: true,
+                paging: true,
+                initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this;
+                        var select = $(
+                                '<select><option value="">-Select-</option></select>'
+                            )
+                            .appendTo($(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(val ? '^' + val + '$' : '',
+                                        true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d +
+                                '">' + d + '</option>')
+                        });
+                    });
+                }
+            })
+            //CALL DATATABLE END
+        }
+    }
+    callDatatable();
+    </script>
+
+    <%- include("../partials/footerEnd") %>

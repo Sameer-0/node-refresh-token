@@ -1,0 +1,451 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<%- include("../partials/loader") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+<div class="modal fade" id="replaceFaculty" tabindex="-1" role="dialog" aria-labelledby="replaceFacultylDataTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title text-white" id="replaceFacultyDataTitle">Update Data</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-12">
+							<p class="font-weight-bold">Replace Faculty Options</p>
+						</div>
+						<div class="row pl-2 pr-2">
+							<input type="hidden" id="eventId">
+							<input type="hidden" id="bookedProgramId">
+							<input type="hidden" id="bookedAcadSession">
+							<input type="hidden" id="bookedDivision">
+							<div class="col-6">
+								<input type="radio" name="replaceOptions" id="division" value="D">
+								<label for="division">Division Wise</label>
+							</div>
+							<div class="col-6">
+								<input type="radio" name="replaceOptions" id="module" value="M">
+								<label for="module">Module Wise</label>
+							</div>
+							<div class="col-6">
+								<input type="radio" name="replaceOptions" id="semester" value="S">
+								<label for="semester">Semester Wise</label>
+							</div>
+							<div class="col-6">
+								<input type="radio" name="replaceOptions" id="program" value="P">
+								<label for="program">Program Wise</label>
+							</div>
+							<div class="col-6">
+								<input type="radio" name="replaceOptions" id="replaceAll" value="A">
+								<label for="replaceAll">Replace All</label>
+							</div>
+						</div>
+
+						<div class="col-12">
+							<hr/>
+							<div class="row mb-3 pl-2 pr-2">
+								<div class="col-6">
+									<label for="findFaculty">Find</label>
+									<input type="number" readonly="true" id="findFaculty" value="">
+								</div>
+								<div class="col-6">
+									<label for="replaceFacultyBy">Replace</label>
+									<select name="replaceFacultyBy" id="replaceFacultyBy" class="form-control" required>
+										<option selected disabled>--Select Faculty--</option>
+									</select>
+								</div>
+							</div>
+							<div class="text-center">
+								
+								<button id="replaceFacultyBtn" class="btn btn-sm btn-success ">Replace Faculty</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<div class="col-12 dashboardContent">
+	<!--DASHBOARD CONTENT START-->
+	<div class="card">
+		<div class="card-header d-flex justify-content-between">
+			<h5>SAP LOGS </h5>
+			<div>
+				<div class="custom-control custom-switch">
+					<input type="checkbox" class="custom-control-input" id="showFailedEvents">
+					<label class="custom-control-label" for="showFailedEvents">Failed Data Only</label>
+				</div>
+				
+				<div class="col-12">
+				<select class="form-control mb-3 d-none" id="failedDatePicker">
+				</select>
+				<select class="form-control mb-3 select2" id="datePicker">
+					<option disabled selected>--Select Date--</option>
+					<% for (let dateD of dateList) { %>
+					<% if (firstDate == dateD.dateString) { %>
+					<option value="<%- dateD.dateString %>" selected><%- dateD.dateString %></option>
+					<% } else { %>
+					<option value="<%- dateD.dateString %>"><%- dateD.dateString %></option>
+					<% } %>
+					<% } %>
+				</select>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<div class="card">
+	<div class="col-12 table-responsive mt-3 mb-3">
+		<table id="sapLogsDataTable" class="table table-bordered table-striped call-datatable">
+			<thead>
+				<tr>
+					<!-- <th scope="col">Id</th> -->
+					<th scope="col">Date</th>
+					<th scope="col">Room No.</th>
+					<th scope="col">Slot</th>
+					<th scope="col">Acad Year</th>
+					<th scope="col">Event Name</th>
+					<th scope="col">Faculty Id</th>
+					<th scope="col">Sap EventId</th>
+					<th scope="col">Remark</th>
+					<th scope="col">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% let i = 0; let value; for(value of sapEventLogData) { i++ %>
+				<tr class="trData">
+					<!-- <td><%- value.id %></td> -->
+					<td><%- value.dateString %> (<%- value.dayString %>)</td>
+					<td><%- value.roomno %></td>
+					<td><%- value.slotname %></td>
+					<td><%- value.bookedAcadYear %></td>
+					<td><%- value.eventName %></td>
+					<td><%- value.facultyId %></td>
+					<td><%- value.sapEventId %></td>
+					<td><%- value.remark %></td>
+					<td></td>
+					
+				</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+	<!--DASHBOARD CONTENT END-->
+</div>
+
+<%- include("../partials/footer") %>
+<script>
+	//INITIALIZE DATA TABLE
+
+
+	function callDatatable() {
+		if ($('.call-datatable').length > 0) {
+			//CALL DATATABLE
+
+			$('.call-datatable').DataTable({
+				autoFill: false,
+				//scrollY: 400,
+				scrollX: '100%',
+				deferRender: true,
+				scrollY: true,
+				scrollX: true,
+				paging: true,
+				initComplete: function () {
+					this.api().columns().every(function () {
+						var column = this;
+						var select = $(
+								'<select><option value="">-Select-</option></select>'
+							)
+							.appendTo($(column.footer()).empty())
+							.on('change', function () {
+								var val = $.fn.dataTable.util.escapeRegex(
+									$(this).val()
+								);
+
+								column
+									.search(val ? '^' + val + '$' : '',
+										true, false)
+									.draw();
+							});
+
+						column.data().unique().sort().each(function (d, j) {
+							select.append('<option value="' + d +
+								'">' + d + '</option>')
+						});
+					});
+				}
+			})
+			//CALL DATATABLE END
+		}
+	}
+	callDatatable();
+
+	$('#datePicker').on('change', () => {
+		let sapLogsDataTable = $('#sapLogsDataTable');
+		$('.loaderBody').removeClass('d-none');
+		$.ajax({
+			url: '/sap/showSAPEventLog',
+			type: 'POST',
+			data: {
+				selectedDate: $('#datePicker').val()
+			},
+			success: function (data) {
+				if (data.cause == "permission denied") {
+						   	window.location = data.reqUrl
+						  	return
+					    }
+				$(".call-datatable").DataTable().destroy();
+
+				console.log(data.data);
+				let logData = data.data;
+				let tr = "";
+				for (let d in logData) {
+					tr += `<tr class="trData"><td>${logData[d].dateString} (${logData[d].dayString})</td>
+						<td>${logData[d].roomno}</td>
+						<td>${logData[d].slotname}</td>
+						<td>${logData[d].bookedAcadYear}</td>
+						<td>${logData[d].eventName}</td>
+						<td>${logData[d].facultyId}</td>
+						<td>${logData[d].sapEventId}</td>
+						<td>${logData[d].remark}</td><td></td></tr>`;
+						// <td><span class="facultyForReplace" data-toggle="modal" data-target="#replaceFaculty" data-bookedProgramId="${logData[d].bookedProgramId}" data-bookedAcadSession="${logData[d].bookedAcadSession}" data-bookedDivision="${logData[d].bookedDivision}" data-eventId="${logData[d].eventId}" data-facultyId="${logData[d].facultyId}" ><i class="fas fa-exchange-alt" title="Replace faculty"></i></span></td>
+							
+				}
+				sapLogsDataTable.find('tbody').html(tr);
+				callDatatable();
+				$('.loaderBody').addClass('d-none');
+			},
+			error: function (err) {
+				console.log(err)
+			}
+		});
+
+	});
+
+	$('#failedDatePicker').on('change', () => {
+		let sapLogsDataTable = $('#sapLogsDataTable');
+		$('.loaderBody').removeClass('d-none');
+		$.ajax({
+			url: '/sap/showFailedSAPEventLog',
+			type: 'POST',
+			data: {
+				selectedDate: $('#failedDatePicker').val()
+			},
+			success: function (data) {
+				if (data.cause == "permission denied") {
+					window.location = data.reqUrl
+					return
+				}
+				$(".call-datatable").DataTable().destroy();
+
+				console.log(data.data);
+				let sapEventLogData = data.data.sapEventLogData;
+				let tr = "";
+				for (let d in sapEventLogData) {
+					tr += `<tr class="trData"><td>${sapEventLogData[d].dateString} (${sapEventLogData[d].dayString})</td>
+							<td>${sapEventLogData[d].roomno}</td>
+							<td>${sapEventLogData[d].slotname}</td>
+							<td>${sapEventLogData[d].bookedAcadYear}</td>
+							<td>${sapEventLogData[d].eventName}</td>
+							<td>${sapEventLogData[d].facultyId}</td>
+							<td>${sapEventLogData[d].sapEventId}</td>
+							<td>${sapEventLogData[d].remark}</td>
+							<td><span class="facultyForReplace" data-toggle="modal" data-target="#replaceFaculty"
+								data-bookedProgramId="${sapEventLogData[d].bookedProgramId}" data-bookedAcadSession="${sapEventLogData[d].bookedAcadSession}" data-bookedDivision="${sapEventLogData[d].bookedDivision}" data-eventId="${sapEventLogData[d].eventId}" data-facultyId="${sapEventLogData[d].facultyId}" ><i class="fas fa-exchange-alt" title="Replace faculty"></i></span></td></tr>`;
+
+				}
+				sapLogsDataTable.find('tbody').html(tr);
+				callDatatable();
+				$('.loaderBody').addClass('d-none');
+			},
+			error: function (err) {
+				console.log(err)
+			}
+		});
+
+	});
+
+	$("#showFailedEvents").on('change', function () {
+
+		let isChecked = $(this).is(':checked');
+		$('.loaderBody').removeClass('d-none');
+		console.log('isChecked===>> ', isChecked)
+		let sapLogsDataTable = $('#sapLogsDataTable');
+		if (isChecked) {
+			$('#datePicker').select2('destroy');
+			$('#datePicker').addClass('d-none');
+			$('#failedDatePicker').removeClass('d-none');
+			$('#failedDatePicker').select2({
+				placeholder: "Select Date",
+			});
+			$.ajax({
+				url: '/sap/showFailedSAPEventLog',
+				type: 'POST',
+				success: function (data) {
+					if (data.cause == "permission denied") {
+						$('.loaderBody').addClass('d-none');
+					   	window.location = data.reqUrl
+					 	return
+					}
+					console.log("data--->", data);
+					$(".call-datatable").DataTable().destroy();
+					let dateList = data.data.dateList;
+					if (dateList) {
+						let options = `<option value="" Selected>Select Date</option>`;
+						for (let d in dateList) {
+							options +=
+								`<option value="${dateList[d].dateString}">${dateList[d].dateString}</option>`;
+						}
+						$('#failedDatePicker').html(options);
+					}
+					let tr = "";
+					sapLogsDataTable.find('tbody').html(tr);
+					callDatatable();
+					$('.loaderBody').addClass('d-none');
+				},
+				error: function (data) {
+					console.log(err)
+				}
+			});
+		} else {
+			$('#failedDatePicker').select2('destroy');
+			$('#datePicker').removeClass('d-none');
+			$('#failedDatePicker').addClass('d-none');
+			$('#datePicker').select2({
+				placeholder: "Select Date",
+			});
+			$.ajax({
+				url: '/sap/showSAPEventLog',
+				type: 'POST',
+				data: {
+					selectedDate: $('#datePicker').val()
+				},
+				success: function (data) {
+					if (data.cause == "permission denied") {
+					   	window.location = data.reqUrl
+					  	return
+					}
+					$(".call-datatable").DataTable().destroy();
+
+					console.log(data.data);
+					let logData = data.data;
+					let tr = "";
+					for (let d in logData) {
+						tr += `<tr><td>${logData[d].dateString} (${logData[d].dayString})</td>
+						<td>${logData[d].roomno}</td>
+						<td>${logData[d].slotname}</td>
+						<td>${logData[d].bookedAcadYear}</td>
+						<td>${logData[d].eventName}</td>
+						<td>${logData[d].facultyId}</td>
+						<td>${logData[d].sapEventId}</td>
+						<td>${logData[d].remark}</td><td></td></tr>`;
+						// <td><span class="facultyForReplace" data-toggle="modal" data-target="#replaceFaculty" data-bookedProgramId="${logData[d].bookedProgramId}" data-bookedAcadSession="${logData[d].bookedAcadSession}" data-bookedDivision="${logData[d].bookedDivision}" data-eventId="${logData[d].eventId}" data-facultyId="${logData[d].facultyId}" ><i class="fas fa-exchange-alt" title="Replace faculty"></i></span></td>
+						
+
+						//console.log(logData[d]);
+					}
+					sapLogsDataTable.find('tbody').html(tr);
+					callDatatable();
+					$('.loaderBody').addClass('d-none');
+				},
+				error: function (err) {
+					console.log(err)
+				}
+			});
+		}
+	});
+
+	$('#replaceFaculty').on('shown.bs.modal', function (e) {
+		console.log("show");
+	});
+	$('#replaceFaculty').on('hidden.bs.modal', function (e) {
+		console.log("hide");
+	});
+	$(document).on( "click", ".facultyForReplace", function(){
+		let facultyId = $(this).attr('data-facultyId');
+		let bookedProgramId = $(this).attr('data-bookedProgramId');
+		let bookedAcadSession = $(this).attr('data-bookedAcadSession');
+		let bookedDivision = $(this).attr('data-bookedDivision');
+		let eventId = $(this).attr('data-eventId');
+		eventId = eventId.substring(0,8);
+		let eventType = $(this).attr('data-eventId').substring(11,13);
+		console.log(eventType);
+		$.ajax({
+			url: '/sap/getFacultyForReplace',
+			type: 'POST',
+			data: {programId: bookedProgramId, moduleId: eventId, eventType: eventType },
+			success: data => {
+                let replaceFacultyByOptions = `<option selected disabled value="">--Select Faculty--</option>`;
+                for(let faculty of data.facultyList){
+					if(facultyId != faculty.facultyId)
+                    	replaceFacultyByOptions += `<option value="${faculty.facultyId}">${faculty.facultyId} (${faculty.facultyName})</option>`;
+                }
+                $('#replaceFacultyBy').html(replaceFacultyByOptions);
+            },
+            error: error => {
+                console.log("Error: ", error)
+            }
+		});
+		$('#findFaculty').val(facultyId);
+		$('#eventId').val(eventId);
+		$('#bookedProgramId').val(bookedProgramId);
+		$('#bookedAcadSession').val(bookedAcadSession);
+		$('#bookedDivision').val(bookedDivision);
+	});
+
+	$('#replaceFacultyBtn').on('click', function(){
+		let findFaculty = $('#findFaculty').val();
+		let eventId = $('#eventId').val();
+		let bookedProgramId = $('#bookedProgramId').val();
+		let bookedAcadSession = $('#bookedAcadSession').val();
+		let bookedDivision = $('#bookedDivision').val();
+		let replaceFacultyBy = $('#replaceFacultyBy').val();
+
+		let replaceOptions = $('input[name="replaceOptions"]:checked').val();
+		console.log("findFaculty",findFaculty)
+		console.log("replaceFacultyBy",replaceFacultyBy)
+		console.log("replaceOptions",replaceOptions)
+		if(!replaceOptions){
+			alert("Please select one of the replace options");
+			return false;
+		}
+		if(!replaceFacultyBy){
+			alert("Please Enter facultyId");
+			return false;
+		}
+		$.ajax({
+				url: '/sap/replaceFacultyForEvent',
+				type: 'POST',
+				data: {
+					findFaculty: findFaculty,
+					replaceFacultyBy: replaceFacultyBy,
+					replaceOptions: replaceOptions,
+					programId: bookedProgramId,
+					acadSession: bookedAcadSession,
+					division: bookedDivision,
+					moduleId: eventId
+				},
+				success: function (data) {
+					if (data.cause == "permission denied") {
+					   	window.location = data.reqUrl
+					  	return
+					}
+					console.log(data);
+					console.log(data.data.Success);
+					if(data.data.Success == "Success"){
+						alert("Faculty replaced");
+					}
+				},
+				error: function (err) {
+					console.log(err)
+				}
+			});
+	})
+</script>
+<%- include("../partials/footerEnd") %>

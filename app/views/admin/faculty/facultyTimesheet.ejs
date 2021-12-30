@@ -1,0 +1,155 @@
+<%- include("../partials/head") %>
+    <%- include("../partials/leftSidebar") %>
+        <%- include("../partials/header") %>
+
+            <div class="col-12 dashboardContent">
+                <!--DASHBOARD CONTENT START-->
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="f-20">Faculty Timesheet</h1>
+                    </div>
+                    <div class="card-body">
+                        <hr />
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select class="form-control mb-3 select2" id="facultyPickerForTimesheet">
+                                    <option disabled selected>--Select Faculty--</option>
+                                    <% for (let fVal of facultyData) { %>
+                                        <option value="<%- fVal.facultyId %>">
+                                            <%- fVal.facultyName %> / <%- fVal.facultyId %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive mt-2">
+                            <table id="facultyTimesheetTable"
+                                class="table table-bordered table-striped time-table-daywise call-datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                        <th>Slot</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <!--DASHBOARD CONTENT END-->
+
+                <%- include("../partials/footer") %>
+                    <script>
+                        $(document).ready(function () {
+
+                            //DATATABLE FUNCTION
+                            function callDatatable() {
+                                if ($('.call-datatable').length > 0) {
+                                    //CALL DATATABLE
+                                    $('.call-datatable').DataTable({
+                                        autoFill: false,
+                                        //scrollY: 400,
+                                        scrollX: '100%',
+                                        deferRender: true,
+                                        scrollY: true,
+                                        scrollX: true,
+                                        paging: false,
+                                        initComplete: function () {
+                                            this.api().columns().every(function () {
+                                                var column = this;
+                                                var select = $(
+                                                    '<select><option value="">-Select-</option></select>'
+                                                )
+                                                    .appendTo($(column.footer()).empty())
+                                                    .on('change', function () {
+                                                        var val = $.fn.dataTable.util.escapeRegex(
+                                                            $(this).val()
+                                                        );
+
+                                                        column
+                                                            .search(val ? '^' + val + '$' : '',
+                                                                true, false)
+                                                            .draw();
+                                                    });
+
+                                                column.data().unique().sort().each(function (d, j) {
+                                                    select.append('<option value="' + d +
+                                                        '">' + d + '</option>')
+                                                });
+                                            });
+                                        }
+                                    })
+
+                                    $('.call-datatable tbody tr').click(function () {
+                                        if ($('.call-datatable tbody tr').hasClass('tr-selected')) {
+                                            $('.call-datatable tbody tr').removeClass('tr-selected')
+                                        } else {
+                                            $(this).addClass('tr-selected')
+                                        }
+                                    })
+                                }
+                            }
+                            //DATATABLE FUNCTION ENDS HERE
+
+                            $("#facultyPickerForTimesheet").change(function () {
+                                $('.call-datatable').DataTable().destroy()
+                                console.log("HIT")
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/faculty/facultyTimesheet/',
+                                    dataType: "json",
+                                    data: {
+                                        facultyId: $(this).val()
+                                    },
+                                    success: function (data) {
+                                        if (data.cause == "permission denied") {
+                                            window.location = data.reqUrl
+                                            return
+                                        }
+                                        let values = data.data
+                                        let tbHead = "<th>Day</th>"
+                                        let tbBody = ""
+                                        let slotTime = Object.keys(values[0])
+
+                                        console.log("slotTime ->", slotTime[0])
+
+                                        for (let i = 0; i < slotTime.length - 1; i++) {
+                                            tbHead += "<th>" + slotTime[i] + "</th>"
+                                        }
+
+                                        for (value of values) {
+                                            tbBody += "<tr><td class='day" + value.day + "'>" + value.day + "</td><td>" + value[slotTime[0]] + "</td><td>" + value[slotTime[1]] + "</td><td>" + value[slotTime[2]] + "</td><td>" + value[slotTime[3]] + "</td><td>" + value[slotTime[4]] + "</td><td>" + value[slotTime[5]] + "</td><td>" + value[slotTime[6]] + "</td><td>" + value[slotTime[7]] + "</td><td>" + value[slotTime[8]] + "</td></tr>"
+                                        }
+
+                                        $("#facultyTimesheetTable thead tr").html(tbHead)
+                                        $("#facultyTimesheetTable tbody").html(tbBody)
+                                        $("#facultyTimesheetTable .day1").html("Monday")
+                                        $("#facultyTimesheetTable .day2").html("Tuesday")
+                                        $("#facultyTimesheetTable .day3").html("Wednesday")
+                                        $("#facultyTimesheetTable .day4").html("Thursday")
+                                        $("#facultyTimesheetTable .day5").html("Friday")
+                                        $("#facultyTimesheetTable .day6").html("Saturday")
+
+
+                                        callDatatable()
+                                    }
+
+                                })
+                            })
+
+                        })
+                    </script>
+                    <%- include("../partials/footerEnd") %>

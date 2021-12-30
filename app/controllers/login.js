@@ -1,5 +1,11 @@
-
-const {RedisStore, redisClient} = require('../../config/redis')
+const {
+    RedisStore,
+    redisClient
+} = require('../../config/redis')
+const {
+    body,
+    validationResult
+} = require('express-validator');
 
 let store = new RedisStore({
     client: redisClient,
@@ -9,28 +15,32 @@ let store = new RedisStore({
 
 module.exports = {
 
-    login: (req, res, next) => {
+    getLogin: (req, res, next) => {
+        res.render('index')
+    },
 
-        if (req.method === 'GET') {
-            res.render('index')
+    postLogin: (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                errors: errors.array()
+            });
         }
 
-        else if(req.method === 'POST') {
-            console.log(req.sessionID)
-            console.log(req.session.name)
+        console.log(req.sessionID)
+        console.log(req.session.name)
 
-            req.session.username = req.body.username
-            req.session.email = 'bkapilsharma@gmail.com'
-            req.session.fName = 'Kapil'
-   
-            store.get(req.sessionID, async function(err, data){
-                let result = await data;
-                console.log('Data: ', result)
-            })
-            res.redirect('/login')
+        req.session.username = req.body.username
+        req.session.email = 'bkapilsharma@gmail.com'
+        req.session.fName = 'Kapil'
 
-        }
-
+        store.get(req.sessionID, async function (err, data) {
+            let result = await data;
+            console.log('Data: ', result)
+        })
+        res.redirect('/login')
     }
-
 }

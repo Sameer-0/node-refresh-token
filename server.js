@@ -14,12 +14,16 @@ const {
 } = require('fs');
 
 //redis
-const {RedisStore, redisClient, session} = require('./config/redis')
+const {
+    RedisStore,
+    redisClient,
+    session
+} = require('./config/redis')
 
 //ROUTERS
 const loginRouter = require('./app/routers/login')
-
-
+const userRouter = require('./app/routers/user')
+const homeRouter = require('./app/routers/home')
 
 app.use(express.json());
 app.use(
@@ -44,7 +48,7 @@ app.use(
         name: 'token',
         cookie: {
             secure: false,
-            maxAge: 1000 * 120,
+            maxAge: 1000 * 60 * 30,
             httpOnly: false,
             domain: 'localhost',
             sameSite: true,
@@ -62,7 +66,45 @@ app.use((req, res, next) => {
 
 
 //test router
-app.use('/login', loginRouter)
+app.use('/login', isLoggedIn, loginRouter)
+
+app.get('/logout', (req, res, next) => {
+    req.session.destroy(function (err) {
+        res.redirect('/login')
+    })
+})
+
+app.use('/user', userRouter)
+app.use('/', homeRouter)
+
+
+
+let store = new RedisStore({
+    client: redisClient,
+    ttl: 260
+})
+
+
+
+function isLoggedIn(req, res, next) {
+    let sessionId = req.sessionID;
+
+    store.get(sessionId, async (err, result) => {
+
+        if (result) {
+            console.log('Hello')
+            res.send('Redirecting to dashboard! Already logged in')
+        } else {
+            console.log('World')
+            next();
+        }
+
+    })
+
+
+
+
+}
 
 
 

@@ -1,0 +1,134 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <h1 class="f-20">Edit School Slot Timing</h1>
+            <a href="/slots/getSlotTime"><button class="btn btn-danger">Slot Time</button></a>
+        </div>
+        <div class="card-body">
+            <div class="col-md-6">
+                <label class="font-weight-bold">Select Slot</label>
+                <select id="editSchoolSlotTiming" class="form-control">
+                    <option value disabled selected>--Select Slot--</option>
+                    <% data.forEach((value) => { %>
+                        <!-- <option value="<%- value.slotName %>"><%- value.programId %><%- value.slotName %></option> -->
+                        <option value="<%= value.slotName %>" data-dayId="<%= value.dayId %>"><%= value.slotName %> - <%- value.dayName %></option>
+                    <% })  %>
+                </select>
+            </div>
+            <div class="col-md-6 mt-4 border-block">
+                <h6>Slot Details:</h6>
+                <p class="mb-0">Start Time: <span class="start-time">Select slot to view time</span></p>
+                <p>End Time: <span class="end-time">Select slot to view time</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-body">
+            <div class="col-12">
+                <h6 class="heading-border-bottom">Update Selected Slot Time</h6>
+                <!-- SLOT UPDATE FORM -->
+                <form class="mt-3">
+                    <div class="form-row">
+                        <div class="col-md-6 mt-3">
+                            <label>Start Time<sup class="text-danger">*</sup></label>
+                            <div class="selTime" id="startTime">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label>End Time<sup class="text-danger">*</sup></label>
+                            <div class="selTime" id="endTime">
+                            </div>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <button type="button" id="updateSlotTime" class="btn btn-sm btn-success" disabled>Update
+                                Timing</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--DASHBOARD CONTENT END-->
+   <%- include("../partials/footer") %>
+    <script>
+        $(document).ready(function () {
+            var startTime = $(".start-time");
+            var endTime = $(".end-time");
+            var inputStartTime = $("#startTime");
+            var inputEndTime = $("#endTime");
+            var btnUpdateSlot = $("#updateSlotTime");
+            var selectSchoolSlotTiming = $("#editSchoolSlotTiming");
+           
+            selectSchoolSlotTiming.change(function () {
+                let dayId = $("#editSchoolSlotTiming").find('option:selected').attr('data-dayId');
+                console.log("dayId--->",dayId);
+                $.ajax({
+                    type: "POST",
+                    url: "/slots/index",
+                    datatYpe: "json",
+                    data: {
+                        slotName: $(this).val(),
+                        dayId: dayId
+                    },
+                    success: function (data) {
+                        if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				        } 
+                        console.log(data);
+                        let slotData = data.data[0];
+                        startTime.html(slotData.starttime);
+                        endTime.html(slotData.endtime);
+
+                        inputStartTime.attr("disabled", false);
+                        inputEndTime.attr("disabled", false);
+                        btnUpdateSlot.attr("disabled", false);
+
+                    }
+                })
+            });
+
+            btnUpdateSlot.click(function () {
+                let dayId = $("#editSchoolSlotTiming").find('option:selected').attr('data-dayId');
+                let startTimeUpdt = $("#startTime .selHH").val()+":"+$("#startTime .selMM").val()+" "+$("#startTime .selAmPm").val()
+                let endTimeUpdt = $("#endTime .selHH").val()+":"+$("#endTime .selMM").val()+" "+$("#endTime .selAmPm").val()
+                $.ajax({
+                    type: "POST",
+                    url: "/slots/updateSlotTime",
+                    datatYpe: "json",
+                    data: {
+                        startTime: startTimeUpdt,
+                        endTime: endTimeUpdt,
+                        slotName: selectSchoolSlotTiming.val(),
+                        dayId: dayId
+                    },
+                    success: function (data) {
+                        if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				        }
+                        console.log("after update", data);
+                        let slotData = data.data[0];
+                        startTime.html(startTimeUpdt);
+                        endTime.html(endTimeUpdt);
+                        $(".alertBody").removeClass("d-none");
+                        $(".alert-text").html("Hurray! Time Slot Updated.")
+                        inputStartTime.attr("disabled", false);
+                        inputEndTime.attr("disabled", false);
+                        btnUpdateSlot.attr("disabled", false);
+
+                    }
+                })
+            })
+
+        })
+    </script>
+
+    <%- include("../partials/footerEnd") %>

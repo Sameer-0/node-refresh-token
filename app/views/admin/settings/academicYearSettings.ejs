@@ -1,0 +1,54 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h1 class="f-20">Academic Year Settings</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <form action='/settings/saveAcademicSettings' method='POST'>
+                    <div class="row">
+                    <div class="col-sm-4 mb-3">
+                        <label class="font-weight-bold">Name: <span class="text-danger">*</span></label>
+                        <input class='text-center form-control' id="acadYearName" name="acadYearName" value='<%- data.name %>'/>
+                    </div>
+                    <div class="col-sm-4 mb-3">
+                        <label class="font-weight-bold">AcadYear: <span class="text-danger">*</span></label>
+                        <input class='text-center form-control' id="input_acad_year" name="input_acad_year" value='<%- data.input_acad_year %>'/>
+                    </div>
+                    <div class="col-sm-4 mb-3">
+                        <label class="font-weight-bold">Start Date: <span class="text-danger">*</span></label>
+                        <input class='text-center form-control' type="date" id="startDate" name="startDate">
+                    </div>
+                    <div class="col-sm-4 mb-3">
+                        <label class="font-weight-bold">End Date: <span class="text-danger">*</span></label>
+                        <input class='text-center form-control' type="date" id="endDate" name="endDate">
+                    </div>
+                    <div class="col-12 text-center">
+                        <button id="saveAcademicYear" class="btn btn-success" type="submit">Save Settings</button>
+                    </div>
+                </div>
+                </form>
+           
+        </div>
+    </div>
+
+    <!--DASHBOARD CONTENT END-->
+
+   <%- include("../partials/footer") %>
+    <script>
+        $(document).ready(function (){
+            let data = '<%- data %>';
+            let startDate = '<%- data.start_date %>';
+            let endDate = '<%- data.end_date %>';
+            startDate = moment(startDate).format('YYYY-MM-DD');
+            endDate = moment(endDate).format('YYYY-MM-DD');
+            $('#startDate').val(startDate);
+            $('#endDate').val(endDate);
+        })
+    </script>
+    <%- include("../partials/footerEnd") %>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>NMIMS</title>
+</head>
+
+<body>
+    <div class="col-md-6 offset-md-3 secure-pass">
+        <img class="img-security" src="/img/logo.png" alt="img" />
+        <div class="card card-outline-secondary">
+            <div class="card-header">
+                <h3 class="mb-0">Set Password</h3>
+            </div>
+            <div class="card-body">
+                <div class="form" autocomplete="off">
+                    <div class="form-group">
+                        <label for="inpEmail">Email</label>
+                        <input type="text" class="form-control" id="inpEmail" required="">
+                        <span class="form-text small text-muted email">
+                            You must enter your registered email address
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="inpPassword">Password</label>
+                        <input type="password" class="form-control" id="inpPassword" required="">
+                    </div>
+                    <div class="form-group">
+                        <label for="inpConfPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="inpConfPassword" required="">
+                        <span class="form-text small text-muted">
+                            The password must be minimum 8 letter password, with at least a symbol, upper and lower case
+                            letters and a number. Both password and confirm password must be same
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <button id="set-pass-btn" class="btn btn-primary btn-lg float-right">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 offset-md-3 secure-alert d-none">
+        <h1 class="display-4"></h1>
+    </div>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/jquery-ui.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            function checkPassword(str) {
+                var re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+                return re.test(str);
+            }
+
+            function validateEmail(email) {
+                const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(String(email).toLowerCase());
+            }
+
+            $('#set-pass-btn').on('click', () => {
+
+                if (!validateEmail($('#inpEmail').val())) {
+                    $(".email").effect("shake");
+                    return
+                }
+
+                if ($('#inpPassword').val().length < 8) {
+                    $(".text-muted").effect("shake");
+                    return
+                }
+
+                if ($('#inpConfPassword').val().length < 8) {
+                    $(".text-muted").effect("shake");
+                    return
+                }
+
+                if (checkPassword($('#inpPassword').val())) {
+                    $(".text-muted").effect("shake");
+                    return
+                }
+
+                if ($('#inpPassword').val() !== $('#inpConfPassword').val()) {
+                    $(".text-muted").effect("shake");
+                    return
+                }
+
+
+                $.ajax({
+                    url: "/v1/setPass",
+                    type: "POST",
+                    data:
+                    {
+                        password: $('#inpPassword').val().toString().trim(),
+                        confirmPassword: $('#inpConfPassword').val().toString().trim(),
+                        email: $('#inpEmail').val().toString().trim(),
+                        passToken: window.location.pathname.split("/")[3],
+                    },
+                    success: function (data) {
+                        if (data.cause == "permission denied") {
+                            window.location = data.reqUrl
+                            return
+                        }
+                        if (data.status === "success") {
+                            $('.secure-pass').addClass('d-none')
+                            $('h1').text('Your password has been changed successfully !!!')
+                            $('.secure-alert').removeClass('d-none')
+                        }
+                        else if (data.status == 'link expired') {
+                            $('.secure-pass').addClass('d-none')
+                            $('h1').text('This link has been expired')
+                            $('.secure-alert').removeClass('d-none')
+                        } else if (data.status == 'Email does not match') {
+                            alert("Email address is not registered with us")
+                        }
+                        else if (data.status == 'Password does not match') {
+                            alert("Password does not match")
+                        }
+                        else {
+                            alert("Something went wrong")
+                        }
+                    },
+                    error: function (errors) {
+                        alert("Error occured while creating user")
+                    }
+                })
+            })
+        });
+    </script>
+</body>
+
+</html>

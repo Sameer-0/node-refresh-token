@@ -1,0 +1,249 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<%- include("../partials/loader") %>
+
+<div class="col-12 dashboardContent">
+  <!--DASHBOARD CONTENT START-->
+  <div class="card">
+    <div class="card-header">
+      <h1 class="f-20">Timetable Generation Process</h1>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-5 mt-3">
+          <div class="form-group">
+            <input type="hidden" id="schoolSel" value="<%- schoolName.schoolId %>"/>
+            <label for="schoolSel">School Name: </label>
+            <label><%- schoolName.Organization_Name %></label>
+            <!-- <select class="form-control" id="schoolSel" name="schoolSel">
+              <option value="<%- schoolName.schoolId %>" selected><%- schoolName.Organization_Name %></option>
+            </select> -->
+          </div>
+          <div class="form-group">
+            <label for="programGenTimeTableSel">Select Programs</label>
+            <select class="form-control" id="programGenTimeTableSel" name="programId">
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="semGenTimeTableSel">Select Semester</label>
+            
+                <!-- <div class="small alert-danger px-2">This filed is not required for manual allocation.</div> -->
+            
+            <select class="form-control" id="sem1GenTimeTableSel" name="acadSession" disabled>
+              <option disabled selected>--Select Semester--</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-success mt-3" id="startAutomaticAllotment">Start Allotment</button>
+         
+          <!-- <button class="btn btn-sm btn-info mt-3" id="manualAllotmentBtn">Manual Allotment</button> -->
+
+          <button id="clearSheetData" class="btn btn-sm btn-danger mt-3">Clear Sheet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--DASHBOARD CONTENT END-->
+
+ <%- include("../partials/footer") %>
+  <script>
+    $(document).ready(function () {
+      let selectProgram = $('#programGenTimeTableSel')
+      let selAcadSession = $("#sem1GenTimeTableSel")
+      let selSchoolId = $("#schoolSel")
+      let loaderBody = $('.loaderBody')
+      let alertTxt = $('.alert-text')
+      let alertOk = $('#alertOk')
+      let alertConfirm = $('#alertConfirm')
+      let alertNo = $('#alertNo')
+      let alertBody = $('.alertBody')
+
+
+		//programId load
+		$.ajax({
+			type: 'GET',
+			url: '/roomdata/getprograms/',
+			dataType: "json",
+			success: function (data) {
+        if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				  }
+        var resultSet = data.programs;
+        
+
+        console.log("GET PRGRAMS========>", data)
+
+				var ajaxData = "<option selected disabled value>---Select Program---</option>";
+
+				for (let programData of resultSet) {
+					ajaxData += "<option value='" + programData.programId + "'>" + programData
+						.programName + "</option>"
+					console.log(programData.programName)
+				}
+
+				$("#genTimeTableSel").html(ajaxData);
+				$("#programIdForSemesterData").html(ajaxData);
+				$("#programGenTimeTableSel").html(ajaxData);
+
+				// for(let singleResult of resultSet) {
+				// 	ajaxData += "<tr><td class='room-no' room-no='' scope='row'>"+singleResult.roomno+"</td><td>"+singleResult.slot1+"</td><td>"+singleResult.slot2+"</td><td>"+singleResult.slot3+"</td><td>"+singleResult.slot4+"</td><td>"+singleResult.slot5+"</td><td>"+singleResult.slot6+"</td><td>"+singleResult.slot7+"</td><td>"+singleResult.slot8+"</td><td>"+singleResult.slot9+"</td></tr>";
+				// };
+			}
+		});
+
+      selectProgram.change(function () {
+        selAcadSession.attr('disabled', false)
+        console.log("Program Id: ", selectProgram.val())
+
+        $.ajax({
+          type: 'POST',
+          url: '/settings/getAcadSession',
+          dataType: 'json',
+          data: {
+            programId: selectProgram.val()
+          },
+          success: function (data) {
+            if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				  }
+            let acadData = data.data;
+            let acadAjax = "<option selected disabled value>--Select Semester--</option>";
+            for (let value of acadData) {
+              acadAjax += "<option value='" + value.acadSession + "'>" + value.acadSession + "</option>"
+            }
+            selAcadSession.html(acadAjax)
+          }
+        })
+      });
+
+      $('#startAutomaticAllotment').click(function () {
+        let programIdDyn = 0;
+        let acadSessionDyn = "";
+        let schoolIdDyn = "";
+        if (selectProgram.val() !== null) {
+          programIdDyn = selectProgram.val();
+        }
+        if (selAcadSession.val() !== null) {
+          acadSessionDyn = selAcadSession.val()
+
+        }
+        if(selSchoolId.val() !== null){
+          schoolIdDyn = selSchoolId.val()
+        }
+
+        console.log("SEMESTER", acadSessionDyn)
+
+        loaderBody.removeClass('d-none')
+        $.ajax({
+          type: 'POST',
+          url: '/roomdata/generateTimeTable',
+          dataType: 'json',
+          data: {
+            programId: programIdDyn,
+            acadSession: acadSessionDyn,
+            schoolId: schoolIdDyn
+          },
+          success: function (data) {
+            if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				  }
+            console.log('TIME TABLE GENERATED', data)
+            let status = data.status
+            loaderBody.addClass('d-none')
+            if (status === 'manualPending') {
+              alertTxt.html(data.message)
+              $('.alertBody').removeClass('d-none')
+            } else if (status === 'automaticAllocated') {
+              alertTxt.html(data.message)
+              $('.alertBody').removeClass('d-none')
+            } else if (status === 'schoolWiseAllocation') {
+              alertTxt.html(data.message)
+              $('.alertBody').removeClass('d-none')
+            } else {
+              window.location.href = "/roomdata/getroomtimesheet/";
+            }
+
+          }
+        })
+      })
+
+      $('#manualAllotmentBtn').click(function () {
+        if (selectProgram.val() === null) {
+          alertTxt.html("Please select a program from program drop-down list first.")
+          $('.alertBody').removeClass('d-none')
+        } else {
+          loaderBody.removeClass('d-none')
+          $.ajax({
+            type: 'POST',
+            url: '/roomdata/startManualAllotment',
+            dataType: 'json',
+            data: {
+              programId: selectProgram.val()
+            },
+            success: function (data) {
+              if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				  }
+              loaderBody.addClass('d-none')
+              let status = data.status
+              if (status === 'allocated' || status === 'manuallyProcessed') {
+                alertTxt.html(data.message)
+                $('.alertBody').removeClass('d-none')
+              } else if (status === 'redirect') {
+                let output = data.data
+                window.location.href = "/roomdata/getroomtimesheet/";
+              }
+            }
+          })
+        }
+      })
+
+      $("#clearSheetData").click(function () {
+        alertTxt.html("Are you sure you want to clear time table sheet?")
+        alertConfirm.removeClass('d-none')
+        alertOk.addClass('d-none')
+        alertNo.removeClass('d-none')
+        alertBody.removeClass('d-none')
+
+        alertConfirm.click(function () {
+          alertBody.addClass('d-none')
+          loaderBody.removeClass('d-none')
+          $.ajax({
+            type: 'GET',
+            url: '/roomdata/emptyTimeSheet/',
+            dataType: "json",
+            success: function (data) {
+              loaderBody.addClass('d-none')
+              if (data.cause == "permission denied") {
+						   	window.location = data.reqUrl
+						  	return
+					    }
+              if (data.cause == "permission denied") {
+							window.location = data.reqUrl
+							return
+				      }
+              var resultSet = data.answers;
+              alertTxt.html("Time Table sheet cleared successfully.")
+              alertNo.addClass('d-none')
+              alertConfirm.html('Please wait...').removeClass('btn-danger').addClass('btn-success')
+              alertBody.removeClass('d-none')
+              setTimeout(function () {
+                alertBody.addClass('d-none')
+                alertOk.removeClass('d-none')
+                alertConfirm.html('I Confirm').removeClass('btn-success').addClass('btn-danger')
+                  .addClass('d-none')
+              }, 2000)
+            }
+          })
+        })
+
+      })
+
+    })
+  </script>
+  <%- include("../partials/footerEnd") %>

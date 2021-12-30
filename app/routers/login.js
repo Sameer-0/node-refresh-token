@@ -1,8 +1,10 @@
-const router = require('express').Router()
+const router = require('express').Router();
+const { body } = require('express-validator');
 
-const controller = require('../controllers/login')
+const controller = require('../controllers/login');
 
-router.get('/', controller.login)
-router.post('/', controller.login)
+router.get('/', controller.getLogin);
+router.post('/', body('username').escape(), controller.postLogin);
+
 
 module.exports = router;

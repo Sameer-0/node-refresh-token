@@ -1,0 +1,318 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+
+<div class="col-12 dashboardContent">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header bg-danger">
+            <h1 class="f-20 text-white">Faculty Allocation Status</h1>
+        </div>
+        <div class="card-body">
+            <hr />
+
+            <div class="row">
+                <div class="col-md-4">
+                    <select class="form-control mb-3 select2" id="facultyPicker">
+                        <option disabled selected>--Select Faculty--</option>
+                        <% for (let fVal of facultyData) { %>
+                        <option value="<%- fVal.facultyId %>">
+                            <%- fVal.facultyName %> / <%- fVal.facultyId %>
+                        </option>
+                        <% } %>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="vsTimePreference mt-3">
+                <div class="card mt-3">
+                    <div class="card-header cursor-pointer" id="monday" data-toggle="collapse"
+                        data-target="#collapseMon" aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="mb-0">
+                            <i class="fas fa-plus"></i> Slot Status
+                        </h5>
+                    </div>
+
+                    <div id="collapseMon" class="collapse show" aria-labelledby="monday">
+                        <div class="card-body">
+                            <div class="row">
+
+                                <label for="showSlotDetails"><input type="checkbox" id="showSlotDetails"
+                                        name="showSlotDetails" value="false"> Show Details</label>
+                            </div>
+                            <div class="col-12 mt-3 table-responsive">
+                                <!-- s -->
+                                <table id="facultySlotStatus" class="table table-bordered table-striped text-center">
+                                    <tbody>
+                                        <tr><td class='bg-dark text-white text-capitalize' colspan='9'>Monday</td></tr>
+                                        <tr>
+                                        <% for (let sVal of slotData) { %>
+                                            <% if( sVal.name == 'monday' ) { %>
+                                            <td>
+                                                <%- sVal.starttime %> - <%- sVal.endtime %>
+                                            </td>
+                                            <% } } %>
+                                        <tr>
+                                        <tr data-day="monday">
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'monday' ) { %>
+                                                <td data-slotname="<%- sVal.slotName %>">
+                                                    <span class="slotStatus"></span>
+                                                    <span class="slotStatusWithDetails d-none"></span>
+                                                </td>
+                                            <% } } %>
+                                        </tr>
+                                        <tr><td class='bg-dark text-white text-capitalize' colspan='9'>Tuseday</td></tr>
+                                        <tr>
+                                            <% for (let sVal of slotData) { %>
+                                            <% if( sVal.name == 'tuesday' ) { %>
+                                            <td>
+                                                <%- sVal.starttime %> - <%- sVal.endtime %>
+                                            </td>
+                                            <% } } %>
+                                        </tr>
+                                        <tr data-day="tuesday">
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'tuesday' ) { %>
+                                                <td data-slotname="<%- sVal.slotName %>">
+                                                    <span class="slotStatus"></span>
+                                                    <span class="slotStatusWithDetails d-none"></span>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr><td class='bg-dark text-white text-capitalize' colspan='9'>Wednesday</td></tr>
+                                        <tr>
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'wednesday' ) { %>
+                                                <td>
+                                                    <%- sVal.starttime %> - <%- sVal.endtime %>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr data-day="wednesday">
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'wednesday' ) { %>
+                                                <td data-slotname="<%- sVal.slotName %>">
+                                                    <span class="slotStatus"></span>
+                                                    <span class="slotStatusWithDetails d-none"></span>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr><td class='bg-dark text-white text-capitalize' colspan='9'>Thursday</td></tr>
+                                        <tr>
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'thursday' ) { %>
+                                                <td>
+                                                    <%- sVal.starttime %> - <%- sVal.endtime %>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr data-day="thursday">
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'thursday' ) { %>
+                                                <td data-slotname="<%- sVal.slotName %>">
+                                                    <span class="slotStatus"></span>
+                                                    <span class="slotStatusWithDetails d-none"></span>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr><td class='bg-dark text-white text-capitalize' colspan='9'>Friday</td></tr>
+                                        <tr>
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'friday' ) { %>
+                                                <td>
+                                                    <%- sVal.starttime %> - <%- sVal.endtime %>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr data-day="friday">
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'friday' ) { %>
+                                                <td data-slotname="<%- sVal.slotName %>">
+                                                    <span class="slotStatus"></span>
+                                                    <span class="slotStatusWithDetails d-none"></span>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr><td class='bg-dark text-white text-capitalize' colspan='9'>Saturday</td></tr>
+                                        <tr>
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'saturday' ) { %>
+                                                <td>
+                                                    <%- sVal.starttime %> - <%- sVal.endtime %>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr data-day="saturday">
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'saturday' ) { %>
+                                                <td data-slotname="<%- sVal.slotName %>">
+                                                    <span class="slotStatus"></span>
+                                                    <span class="slotStatusWithDetails d-none"></span>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr><td class='bg-dark text-white text-capitalize' colspan='9'>Sunday</td></tr>
+                                        <tr>
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'sunday' ) { %>
+                                                <td>
+                                                    <%- sVal.starttime %> - <%- sVal.endtime %>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        <tr data-day="sunday">
+                                            <% for (let sVal of slotData) { %>
+                                                <% if( sVal.name == 'sunday' ) { %>
+                                                <td data-slotname="<%- sVal.slotName %>">
+                                                    <span class="slotStatus"></span>
+                                                    <span class="slotStatusWithDetails d-none"></span>
+                                                </td>
+                                                <% } } %>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--DASHBOARD CONTENT END-->
+
+        <%- include("../partials/footer") %>
+        <script>
+            $(document).ready(function () {
+                // let slotData = `<%- slotData %>`;
+                // slotData = JSON.parse(slotData);
+                // console.log("slotData-->",slotData)
+                $("#facultyPicker").change(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/faculty/facultySlotStatus/',
+                        dataType: "json",
+                        data: {
+                            facultyId: $(this).val()
+                        },
+                        success: function (data) {
+                            if (data.cause == "permission denied") {
+                                window.location = data.reqUrl
+                                return
+                            }
+                            let tableSlotStatus = $('#facultySlotStatus')
+                            let facultySlotData = data.data;
+                            //console.log("data--->",data)
+                            facultySlotData = JSON.parse(facultySlotData)
+                            console.log("facultySlotData--->", facultySlotData)
+                            let scheduleObj = availObj = {};
+                            let tableData = ``;
+
+                            tableSlotStatus.find('tbody td[data-slotname]').removeClass('bg-danger bg-success text-white');
+
+                            tableSlotStatus.find('tbody td[data-slotname] .slotStatus').html('');
+                            tableSlotStatus.find('tbody td[data-slotname] .slotStatusWithDetails').html('');
+
+                            if (facultySlotData.schedule) {
+                                scheduleObj = facultySlotData.schedule
+                            }
+
+                            if (facultySlotData.availability) {
+                                availObj = facultySlotData.availability
+                            }
+
+                            console.log("ScObj: ", scheduleObj)
+                            console.log("availObj: ", availObj)
+
+
+                            //console.log("facultyName--->",facultySlotData.facultyName)
+                            let facultyName = facultySlotData.facultyName;
+                            for (let day in scheduleObj) {
+
+                                let dayObj = scheduleObj[day];
+                                // tableData += `<tr><td class='bg-dark text-white text-capitalize' colspan='9'>${day}</td></tr>`;
+                                // tableData += `<tr class="trSlotTime">`;
+                                // for(let sVal of slotData){
+                                //     if(sVal.name == day){
+                                //         tableData += `<td>${sVal.starttime} - ${sVal.endtime}</td>`;
+                                //     }
+                                // }
+                                // tableData += `</tr>`;
+                                // tableData += `<tr data-day="${day}">`;
+                                // for(let sVal of slotData){
+                                //     if(sVal.name == day){
+                                //         tableData += `<td data-slotname="${sVal.slotName}"><span class="slotStatus"></span><span
+                                //                     class="slotStatusWithDetails d-none"></span></td>`;
+                                //     }
+                                // }
+                                // tableData += `</tr>`;
+                                for (let slot in dayObj) {
+                                    let slotObj = dayObj[slot];
+                                    if (slot) {
+                                        //console.log("slot--->",slot)
+                                        let eventData = slotObj.eventName;
+                                        eventData = eventData.split('(')[0];
+                                        tableSlotStatus.find(
+                                            `tbody tr[data-day=${day}] td[data-slotname=${slot}] .slotStatus`
+                                            ).html('Booked');
+                                        tableSlotStatus.find(
+                                            `tbody tr[data-day=${day}] td[data-slotname=${slot}] .slotStatusWithDetails`
+                                            ).html(`${eventData} ${slotObj.roomno}`);
+                                        tableSlotStatus.find(
+                                            `tbody tr[data-day=${day}] td[data-slotname=${slot}]`
+                                            ).addClass('bg-danger text-white');
+                                        // tableSlotStatus.find(
+                                        //     `tbody tr[data-day=${day}] td[data-slotname=${slot}]`
+                                        // ).html(`${eventData} ${slotObj.roomno}`).addClass(
+                                        //     'bg-danger text-white');
+                                    }
+                                }
+                                // $('#facultySlotStatus tbody').html(tableData);
+                            }
+
+
+                            // if (Object.keys(availObj).length > 0) {
+                            //     for (let day in availObj) {
+                            //         for (let slot of availObj[day]) {
+                            //             if (slot) {
+                            //                 let thisTd = tableSlotStatus.find(
+                            //                     `tbody tr[data-day=${day}] td[data-slotname=${slot}]`
+                            //                 );
+                            //                 if (thisTd.hasClass('bg-danger')) {} else {
+                            //                     tableSlotStatus.find(`tbody tr[data-day=${day}] td[data-slotname=${slot}]`).addClass('bg-success text-white');
+                            //                     tableSlotStatus.find(`tbody tr[data-day=${day}] td[data-slotname=${slot}] .slotStatus`).html('Avail');
+                            //                 }
+                            //             }
+
+                            //         }
+                            //     }
+                            // } else {
+                            $(`#facultySlotStatus tbody td[data-slotname]`).each(
+                                function (index, thisTd) {
+                                    //console.log(thisTd)
+                                    if (!$(thisTd).hasClass('bg-danger')) {
+                                        $(thisTd).find('.slotStatus').html('Avail');
+                                        $(thisTd).find(`.slotStatusWithDetails`).html(
+                                            'Avail');
+                                        $(thisTd).addClass('bg-success text-white');
+                                    }
+                                })
+                            // }
+
+                        }
+                    })
+                })
+                $("#showSlotDetails").click(function () {
+                    if ($('#showSlotDetails').prop('checked')) {
+                        $('.slotStatus').addClass('d-none');
+                        $('.slotStatusWithDetails').removeClass('d-none');
+                    } else {
+                        $('.slotStatus').removeClass('d-none');
+                        $('.slotStatusWithDetails').addClass('d-none');
+                    }
+                });
+            });
+        </script>
+        <%- include("../partials/footerEnd") %>

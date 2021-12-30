@@ -1,0 +1,103 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+
+<div class="col-12 dashboardContent">
+                    <!--DASHBOARD CONTENT START-->
+                    <div class="card">
+                        <div class="card-header">
+                            <h1 class="f-20">Room Data</h1>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                            <table class="table table-bordered time-table-daywise datatable-dropdown">
+                                <thead class="thead-dark">
+                                    <tr>
+                                      <th scope="col">Room No</th>
+                                      <th scope="col">Room Type</th>
+                                      <th scope="col">Day</th>
+                                      <th scope="col">Slot No.</th>
+                                      <th scope="col">Is Booked?</th>
+                                      <th scope="col">Booked Programs</th>
+                                      <th scope="col">Booked Acad Year</th>
+                                      <th scope="col">Booked Acad Session</th>
+                                      <th scope="col">Booked Div</th>
+                                      <th scope="col">Event Name</th>
+                                      <th scope="col">Event Id</th>
+                                      <th scope="col">SAP Event Id</th>
+                                      <th scope="col">Created Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                  <% values.forEach((value) => { %>
+
+                                    <tr>
+                                        <td class="room-no" room-no="" scope="row"><%- value.roomno %></td>
+                                        <td><%- value.roomtype %></td>
+                                        <td><%- value.dayName %></td>
+                                        <td><%- value.slotno %></td>
+                                        <td><%- value.isbooked %></td>
+                                        <td><%- value.bookedProgramId %></td>
+                                        <td><%- value.bookedAcadYear %></td>
+                                        <td><%- value.bookedAcadSession %></td>
+                                        <td><%- value.bookedDiv %></td>
+                                        <td><%- value.eventName %></td>
+                                        <td><%- value.eventid %></td>
+                                        <td><%- value.sapEventId %></td>
+                                        <td><%- value.createdType %></td>
+                                    </tr>
+                                <% })  %>
+                                </tbody>
+                                <tfoot>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tfoot>
+                            </table>
+                        </div>
+
+
+                        </div>
+                    </div>
+
+                    <%- include("../partials/fullscreen-timetable") %>
+                    <!--DASHBOARD CONTENT END-->
+
+<%- include("../partials/footer") %>
+<script>
+    //INITIALIZE DATA TABLE
+    $('.datatable-dropdown').DataTable( {
+        initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+ 
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
+    } );
+</script>
+<%- include("../partials/footerEnd") %>
