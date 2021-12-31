@@ -16,7 +16,7 @@ let store = new RedisStore({
 module.exports = {
 
     getLogin: (req, res, next) => {
-        res.render('index')
+        res.render('login')
     },
 
     postLogin: (req, res, next) => {
