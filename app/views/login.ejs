@@ -7,264 +7,261 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="/css/bootstrap.min.css"> -->
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
   <link rel="stylesheet" href="/css/font-awesome-all.min.css">
-  <title>Hello, world!</title>
+
+  <title>Login - Infrastructure & Timetable Portal</title>
 
   <style>
-    /* REUABLE CLASSES START*/
-    .p-60-30 {
-      padding: 60px 30px;
-    }
-
-    .px-30 {
-      padding-left: 30px;
-      padding-right: 30px;
-    }
-
-    /* REUABLE CLASSES END*/
-
-    body {
-      font-family: 'Roboto Slab', serif;
-      font-size: 18px;
-      background: linear-gradient(90deg, #790004, #000b45);
-    }
-
-    #main-page {
-      min-height: 100vh;
-      border-radius: 30px;
-      overflow: hidden;
-      background: radial-gradient(#ffdbdd, #edf0ff);
-      position: relative;
-    }
-
-    #main-nav {
-      font-weight: 600;
-      font-size: 18px;
-    }
-
-    #main-nav .nav-link {
-      color: rgb(0, 0, 0);
-    }
-
-    #main-nav li {
-      margin-left: 50px;
-    }
-
-    #main-logo {
-      max-width: 250px;
+    :root {
+      --login-bg-color: radial-gradient(circle, rgb(143 0 0) 0%, rgb(0 0 0) 100%);
+      --welcome-color: #740e00;
+      --bottom-line-color: #ff1f00;
     }
 
 
-    #banner-section {
-      background-image: url('../img/banner-bg.jpg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      position: relative;
-      overflow: hidden;
-      padding: 0;
-    }
 
-    #banner-section .wrapper {
-      background: rgb(255 255 255 / 85%);
-      padding: 25px 30px;
-    }
-
-    /* .features {
-      background: #00284e;
-    } */
-
-    .features .circle {
-      width: 80px;
-      height: 80px;
-      background: #f3f3f3;
-      border-radius: 50%;
-      display: flex;
-      padding: 16px;
-      margin: auto;
-      position: relative;
-      border: 1px solid #767778;
-    }
-
-    .features .circle a {
-      z-index: 5;
-    }
-
-    .features .circle img {
-      width: 48px;
-    }
-
-    .features a {
-      text-decoration: none;
-    }
-
-    .cust-circle {
-      width: 500px;
-      height: 500px;
-      background: #fff;
+    .background {
+      background: var(--login-bg-color);
+      position: fixed;
       display: block;
-      border-radius: 50%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      height: 100vh;
+      width: 100%;
+    }
+
+
+    /* Custom CSS */
+    .cust-btn-group {
+      display: flex;
+      align-items: center;
+      padding: 7px 15px;
+      background: #fff;
+      border: 1px solid #c2c2c2;
+      border-radius: 25px;
+      font-size: 18px;
+    }
+
+    .cust-input-prepend {
+      margin-right: 10px;
+      width: 20px;
+    }
+
+    .cust-btn-group input {
+      border: none;
+      width: 100%;
+    }
+
+    .cust-btn-group input:focus {
+      outline: none;
+    }
+
+    .bottom-line {
+      width: 100px;
+      position: relative;
+      height: 1px;
+      margin-bottom: 25px;
+      background: var(--bottom-line-color);
+      display: block;
+    }
+
+    .bottom-line::after {
+      content: '';
+      width: 100%;
+      height: 2px;
       position: absolute;
-      top: -262px;
-      left: -107px;
-      z-index: 1;
+      top: 2px;
+      left: 0;
+      background: #6b6d6d;
     }
 
 
-    #hbs-head {
-      background: aliceblue;
+    /* // Custom CSS */
+
+
+    img {
+      width: 100%;
     }
 
-    .home-logo-wraper {
-      max-width: 300px;
-      padding: 10px;
+    .login-wrapper {
+      overflow: hidden;
+      padding: 15px;
+      position: fixed;
+      width: 1200px;
+      left: calc(50% - 600px);
+      top: calc(50% - 280px);
+      box-shadow: 0px 0px 8px 1px;
+      background: rgb(255 255 255 / 80%);
+      border-radius: 30px;
+    }
+
+    section.login-wrapper::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: -1;
+      width: 50%;
+      height: 100%;
+      background: rgb(255 255 255 / 80%);
+    }
+
+    .inner-login-wrapper {
+      height: 100%;
+      width: 100%;
+    }
+
+    .logo img {
+      width: 170px;
+    }
+
+    #login-left {
+      padding: 150px 100px;
+    }
+
+    #login-left .cust-btn-group i {
+      color: #757575;
+    }
+
+    #login-left h3 span {
+      color: var(--welcome-color);
+    }
+
+
+    .login-btn {
+      display: block;
       margin: auto;
+      background: #000;
+      padding: 7px 50px;
       border-radius: 25px;
     }
 
-    .line-bottom {
-      border: 2px solid #f95632;
-      width: 100px;
-      position: relative;
-      animation-name: lineToggleColorRev;
-      animation-duration: 1s;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite
-    }
-
-    .line-bottom::after {
-      content: '';
-      position: absolute;
-      width: 50px;
-      border: 2px solid #69d6f4;
-      top: -2px;
-      right: -2px;
-      animation-name: lineToggleColor;
-      animation-duration: 1s;
-      animation-timing-function: linear;
-      animation-iteration-count: infinite;
-    }
-
-    .header {
-      background: linear-gradient(45deg, #fbf7dc, rgb(230 240 255));
-    }
-
-    .header .nav {
-      background: #ecf2f5;
-      box-shadow: 0px 15px 8px -19px #000;
-    }
-
-    .header .nav a {
-      color: #000;
-      text-decoration: none;
-      padding: 0 15px;
-    }
-
-    /* ANIMATION */
-
-
-    @keyframes lineToggleColor {
-      0% {
-        border: 2px solid #69d6f4;
+    @media (max-width: 1200px) {
+      .login-wrapper {
+        width: 950px;
+        top: calc(50% - 268px);
+        left: calc(50% - 475px);
       }
 
-      100% {
-        border: 2px solid #f95632;
+      #login-left {
+        padding: 133px 50px;
       }
     }
 
-    @keyframes lineToggleColorRev {
-      0% {
-        border: 2px solid #f95632;
+    @media (max-width: 1023px) {
+      .login-wrapper {
+        width: 700px;
+        top: calc(50% - 230px);
+        left: calc(50% - 350px);
       }
 
-      100% {
-        border: 2px solid #69d6f4;
+      #login-left {
+        padding: 49px 15px;
       }
+    }
+
+    @media (max-width: 767px) {
+      .login-wrapper {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        left: 0;
+        top: 0;
+      }
+
+      .inner-login-wrapper {
+        height: 100%;
+        width: 100%;
+      }
+
+
     }
   </style>
 </head>
 
-<body class="p-4">
+<body>
+  <canvas class="background"></canvas>
 
-  <div id="main-page" class="bg-white">
-    <!-- main page start -->
-    <div class="wrapper">
-      <header class="header">
-        <div class="row">
-          <div class="col-6">
-            <div class="home-logo-wraper">
-              <img src="/img/logo-nmims.png" class="img-fluid">
-            </div>
+  <section class="login-wrapper">
+    <div class="inner-login-wrapper">
+      <div class="row">
+        <div class="col-md-6" id="login-right">
+          <div class="logo">
+            <img src="/img/logo-svkm.png" />
           </div>
-          <div class="col-6">
-            <div class="home-logo-wraper">
-              <img src="/img/logo-svkm.png" class="img-fluid">
-            </div>
-          </div>
-          <div class="col-12 p-2 d-flex justify-content-center nav">
-            <a href="tel:022-42199993"><i class="fas fa-phone"></i> 022-42199993</a>
-            <a href="mailto:portal_app_team@svkm.ac.in"><i class="fas fa-envelope"></i> portal_app_team@svkm.ac.in</a>
-          </div>
+          <object type="image/svg+xml" data="/img/svg/login-animate-svkm.svg">
+            <img src="/img/svg/login-animate-svkm.svg" />
+          </object>
         </div>
-
-      </header>
-      <div class="container text-center py-5">
-        <h1 class="h2 mt-5">Welcome to Infrastructure & Timetable Portal.</h1>
-        <p>Timetable automation and infrastructure management made easy.</p>
-        <hr class="line-bottom" />
-
-        <div class="row features">
-          <div class="col-md-3 col-sm-4 col-6 mt-5">
-            <div class="circle">
-              <img src="/img/student-time-table.png" alt="Timetable Automation">
+        <div class="col-md-6" id="login-left">
+          <form class="text-center">
+            <h3><span>Wel</span>come</h3>
+            <span class="bottom-line mx-auto"></span>
+            <div class="cust-btn-group mt-3 mb-3">
+              <div class="cust-input-prepend">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <input type="text" placeholder="Email">
             </div>
-            <p class="font-weight-bold pt-2">Timetable Automation</p>
-          </div>
-
-          <div class="col-md-3 col-sm-4 col-6 mt-5">
-            <div class="circle">
-              <img src="/img/simulation.png" alt="Reschedule Timetable">
+            <div class="cust-btn-group mb-3">
+              <div class="cust-input-prepend">
+                <i class="fas fa-key"></i>
+              </div>
+              <input type="text" placeholder="Password">
             </div>
-            <p class="font-weight-bold pt-2">Reschedule Timetable</p>
-          </div>
-          <div class="col-md-3 col-sm-4 col-6 mt-5">
-            <div class="circle">
-              <img src="/img/building-data.png" alt="Infrastructure Management">
-            </div>
-            <p class="font-weight-bold pt-2">Infrastructure Management</p>
-          </div>
-          <div class="col-md-3 col-sm-4 col-6 mt-5">
-            <div class="circle">
-              <img src="/img/analytics.png" alt="MIS Report">
-            </div>
-            <p class="font-weight-bold pt-2">MIS Report</p>
-          </div>
-        </div>
 
-        <div class="col-6 mx-auto">
-          <select class="mt-5 form-control text-center" id="org-select">
-            <option>--Select Organization--</option>
-           
-          </select>
-
-          <button class="btn btn-md btn-dark mt-3 px-5" id="go-btn">GO</button>
+            <button class="btn btn-dark login-btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+          </form>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
 
   <script src="/js/jquery-3.3.1.min.js"></script>
-  <script src="/js/popper.min.js"></script>
-  <script src="/js/bootstrap.min.js"></script>
+  <!-- <script src="/js/popper.min.js"></script> -->
+  <!-- <script src="/js/bootstrap.min.js"></script> -->
 
-  <script>
-    $('#go-btn').on('click', function(){
-      console.log('hello')
-       window.location.href = `http://${$('#org-select').val()}.localhost:3000/login`
-    })
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
   </script>
 
+  <script src="/js/particlejs.min.js"></script>
+
+  <!-- Page Level JavaScript Libaries End -->
+  <script>
+    window.onload = function () {
+      console.log("Window on load")
+      Particles.init({
+        selector: '.background',
+        connectParticles: true,
+        color: '#ffffff'
+      });
+    };
+
+    $(document).ready(function () {
+      console.log("Document ready")
+    })
+
+
+    //DYNAMIC CSS
+    const cssRoot = document.querySelector(':root');
+
+    if (window.location.host.split('.')[0] === 'bncp-mum') {
+      cssRoot.style.setProperty("--login-bg-color",
+        'radial-gradient(circle, rgb(0 13 107) 0%, rgb(0 0 0) 100%)')
+
+      cssRoot.style.setProperty("--welcome-color",
+        'rgb(0 13 107)')
+    }
+  </script>
 </body>
 
 </html>

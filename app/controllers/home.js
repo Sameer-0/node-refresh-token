@@ -6,6 +6,5 @@ module.exports = {
         OrganizationSlug.fetchAll().then(result => {
             res.render('index', {orgList: result.recordset})
         })
-
     }
 }
