@@ -11,12 +11,17 @@ let store = new RedisStore({
     client: redisClient,
     ttl: 260
 })
+const OrganizationSlug = require('../models/OrganizationSlug')
 
 
 module.exports = {
 
     getLogin: (req, res, next) => {
-        res.render('login')
+        OrganizationSlug.fetchAll().then(_result=>{
+            console.log(_result.recordset)
+            res.render('login')
+        })
+        
     },
 
     postLogin: (req, res, next) => {

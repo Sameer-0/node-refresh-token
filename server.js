@@ -3,6 +3,7 @@ const app = express();
 require('dotenv').config()
 const http = require('http');
 const path = require('path');
+const setRouter = require("./router")
 //const https = require("https");
 const {
     existsSync,
@@ -21,9 +22,9 @@ const {
 } = require('./config/redis')
 
 //ROUTERS
-const loginRouter = require('./app/routers/login')
-const userRouter = require('./app/routers/user')
-const homeRouter = require('./app/routers/home')
+// const loginRouter = require('./app/routers/login')
+// const userRouter = require('./app/routers/user')
+// const homeRouter = require('./app/routers/home')
 
 app.use(express.json());
 app.use(
@@ -35,7 +36,7 @@ app.use(
 app.use(express.static('./public'));
 app.set('views', './app/views');
 app.set('view engine', 'ejs');
-
+setRouter(app)
 app.use(
     session({
         store: new RedisStore({
@@ -66,7 +67,7 @@ app.use((req, res, next) => {
 
 
 //test router
-app.use('/login', isLoggedIn, loginRouter)
+//app.use('/login', isLoggedIn, loginRouter)
 
 app.get('/logout', (req, res, next) => {
     req.session.destroy(function (err) {
@@ -74,8 +75,8 @@ app.get('/logout', (req, res, next) => {
     })
 })
 
-app.use('/user', userRouter)
-app.use('/', homeRouter)
+//app.use('/user', userRouter)
+//app.use('/', homeRouter)
 
 
 
