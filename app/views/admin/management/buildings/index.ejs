@@ -104,7 +104,7 @@
                         <select class="form-control modalSelect2" name="startTimeId" required>
                             <option disabled selected value>--Start Time--</option>
                             <% for(let time of timeList) { %>
-                            <option value="<%- time.id %>"><%- time.str_start_time %></option>
+                            <option value="<%- time.id %>"><%- time.start_time %></option>
                             <% } %>
                         </select>
                     </div>
@@ -113,7 +113,7 @@
                         <select class="form-control modalSelect2" name="endTimeId" required>
                             <option disabled selected value>--End Time--</option>
                             <% for(let time of timeList) { %>
-                            <option value="<%- time.id %>"><%- time.str_end_time %></option>
+                            <option value="<%- time.id %>"><%- time.end_time %></option>
                             <% } %>
                         </select>
                     </div>
@@ -139,87 +139,7 @@
 </div>
 
 
-<!-- UPDATE  BUILDING MODAL -->
-<div class="modal fade" id="update-building-modal" tabindex="-1" role="dialog" aria-labelledby="add-building-modal"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-info">
-                <h5 class="modal-title text-white" id="add-building-modal-title">Update Building Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="/management/building/update" method="POST">
-                <div class="modal-body">
-                    <input type="hidden" name="buildingId">
-                    <div class="form-row">
-                        <input name="buildingName" type="text" class="form-control" placeholder="Building Name" required>
-                    </div>
 
-                    <div class="form-row mt-4">
-                        <input name="buildingNumber" type="text" class="form-control" placeholder="Building Number" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="floors" type="number" class="form-control" placeholder="Total Floor Count" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <select class="form-control modalSelect2Update" name="ownerId" required>
-                            <option disabled selected>--Owner--</option>
-                            <% for(let owner of orgList) { %>
-                            <option value="<%- owner.id %>"><%- owner.org_abbr %></option>
-                            <% } %>
-                        </select>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <select class="form-control modalSelect2Update" name="handledById" required>
-                            <option disabled selected>--Handled By--</option>
-                            <% for(let handler of orgList) { %>
-                            <option value="<%- handler.id %>"><%- handler.org_abbr %></option>
-                            <% } %>
-                        </select>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <select class="form-control modalSelect2Update" name="startTimeId">
-                            <option disabled selected>--Start Time--</option>
-                            <% for(let time of timeList) { %>
-                            <option value="<%- time.id %>"><%- time.str_start_time %></option>
-                            <% } %>
-                        </select>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <select class="form-control modalSelect2Update" name="endTimeId">
-                            <option disabled selected>--End Time--</option>
-                            <% for(let time of timeList) { %>
-                            <option value="<%- time.id %>"><%- time.str_end_time %></option>
-                            <% } %>
-                        </select>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <select class="form-control modalSelect2Update" name="campusId" required>
-                            <option disabled selected>--Campus--</option>
-                            <% for(let campus of campusList) { %>
-                            <option value="<%- campus.id %>"><%- campus.campus_abbr %></option>
-                            <% } %>
-                        </select>
-                    </div>
-
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Update Details</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <%- include("../partials/footer") %>
 <script>

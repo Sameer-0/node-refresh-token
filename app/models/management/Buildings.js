@@ -18,7 +18,7 @@ module.exports = class Buildings {
     static fetchAll() {
         //return execPreparedStmt(`SELECT * FROM injection_test`)
         return poolConnection.then(pool => {
-            return pool.request().query(`select b.id, b.building_name, b.building_number,b.total_floors, b.owner_id,b.handled_by, b.start_time, b.end_time, b.campus_id from [dbo].buildings b`)
+            return pool.request().query(`select b.id, b.building_name, b.building_number,b.total_floors, b.owner_id,b.handled_by, cast(b.start_time as time(0)) as start_time, cast(b.end_time as time(0)) as end_time, b.campus_id from [dbo].buildings b`)
         })
     }
 }
