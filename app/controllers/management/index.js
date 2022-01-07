@@ -1,8 +1,12 @@
 const AcademicYear = require('../../models/management/AcademicYear')
+const Buildings = require('../../models/management/Buildings')
+const OrganizationMaster = require("../../models/management/OrganizationMaster")
+const CampusMaster = require("../../models/management/CampusMaster")
+const SlotIntervalTimings = require("../../models/management/SlotIntervalTimings")
 const moment = require('moment');
 module.exports = {
 
-    getIndex: (req, res, next) => {
+    getIAcadYearPage: (req, res, next) => {
         AcademicYear.fetchAll().then(result => {
             if (result.recordset.length > 0) {
                 let data = {
@@ -31,12 +35,42 @@ module.exports = {
         })
     },
 
-    addAcadYear: (req, res) => {
-        
-     AcademicYear.Save(req.body).then(resp=>{
-         
-        console.log('Reqest:::::::::::>>', resp)
-     })
+    updateAcadYear: (req, res) => {
+        AcademicYear.Save(req.body)
         res.redirect('/management/academic-year')
+    },
+
+    getBuildingPage: (req, res) => {
+
+        Promise.all([Buildings.fetchAll(), OrganizationMaster.fetchAll(), CampusMaster.fetchAll(), SlotIntervalTimings.fetchAll()]).then(result => {
+            console.log('LOST:::::::::::::', result[0].recordset)
+            res.render('admin/management/buildings/index', {
+                buildingList: result[0].recordset,
+                orgList: result[1].recordset,
+                campusList: result[2].recordset,
+                timeList: result[3].recordset,
+             })
+         }).catch(error=>{
+            console.log(error)
+        })
+
+        // Buildings.fetchAll().then(buldingresult => {
+        //     OrganizationMaster.fetchAll().then(orgList => {
+        //         CampusMaster.fetchAll().then(campuslist => {
+        //             SlotIntervalTimings.fetchAll().then(timeslot => {
+        //                 res.render('admin/management/buildings/index', {
+        //                     buildingList: buldingresult.recordset,
+        //                     orgList: orgList.recordset,
+        //                     campusList: campuslist.recordset,
+        //                     timeList: timeslot.recordset,
+        //                 })
+        //             })
+        //         })
+        //     })
+        // }).catch(error=>{
+        //     console.log(error)
+        // })
     }
+
+
 }
