@@ -32,8 +32,11 @@ module.exports = {
     },
 
     addAcadYear: (req, res) => {
-        console.log('Reqest:::::::::::>>', req.body)
-        AcademicYear.saveacadYear(req.body)
+        
+     AcademicYear.Save(req.body).then(resp=>{
+         
+        console.log('Reqest:::::::::::>>', resp)
+     })
         res.redirect('/management/academic-year')
     }
 }

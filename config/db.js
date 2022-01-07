@@ -7,7 +7,7 @@ const sqlConfig = {
   database: process.env.DB_NAME,
   server: process.env.DB_HOST,
   pool: {
-    max: 1,
+    max: 40,
     min: 1,
     idleTimeoutMillis: 30000
   },
