@@ -15,7 +15,7 @@ module.exports = class OrganizationMaster {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`select id, org_id,org_abbr, org_name, org_name, org_complete_name, org_type_id from [dbo].organization_master where active = 1`)
+            return pool.request().query(`select id, org_id,org_abbr, org_name, org_complete_name, org_type_id from [dbo].organization_master where active = 1`)
         })
     }
 }

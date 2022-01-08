@@ -1,3 +1,8 @@
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
 const AcademicYear = require('../../models/management/AcademicYear')
 const Buildings = require('../../models/management/Buildings')
 const OrganizationMaster = require("../../models/management/OrganizationMaster")
@@ -44,24 +49,23 @@ module.exports = {
         Promise.all([Buildings.fetchAll(), OrganizationMaster.fetchAll(), CampusMaster.fetchAll(), SlotIntervalTimings.fetchAll()]).then(result => {
             let buildingList = []
             let slotList = []
-            result[0].recordset.map(item => {
-                let buildings = {
-                    id: item.id,
-                    building_name: item.building_name,
-                    building_number: item.building_number,
-                    total_floors: item.total_floors,
-                    owner_id: item.owner_id,
-                    handled_by: item.handled_by,
-                    start_time: moment(item.start_time).format('LTS'),
-                    end_time: moment(item.end_time).format('LTS'),
-                    campus_id: item.campus_id
-                }
-                buildingList.push(buildings)
-            })
+            // result[0].recordset.map(item => {
+            //     let buildings = {
+            //         id: item.id,
+            //         building_name: item.building_name,
+            //         building_number: item.building_number,
+            //         total_floors: item.total_floors,
+            //         owner_id: item.owner_id,
+            //         handled_by: item.handled_by,
+            //         start_time: moment(item.start_time).format('LTS'),
+            //         end_time: moment(item.end_time).format('LTS'),
+            //         campus_id: item.campus_id
+            //     }
+            //     buildingList.push(buildings)
+            // })
 
             result[3].recordset.map(item => {
 
-                console.log(item.start_time)
                 let slot = {
                     id: item.id,
                     start_time: moment(item.start_time).format('LTS'),
@@ -71,7 +75,7 @@ module.exports = {
                 slotList.push(slot)
             })
             res.render('admin/management/buildings/index', {
-                buildingList: buildingList,
+                buildingList: result[0].recordset,
                 orgList: result[1].recordset,
                 campusList: result[2].recordset,
                 timeList: slotList,
@@ -96,7 +100,17 @@ module.exports = {
         // }).catch(error=>{
         //     console.log(error)
         // })
-    }
+    },
 
+    getAdd: async (req, res) => {
+      //  let errors = validationResult(req)
+
+Buildings.Save(req.body)
+        res.json({
+            status: 200,
+            message: "Success",
+            body: req.body
+        })
+    }
 
 }
