@@ -13,7 +13,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered call-datatable" id="buildingTable">
                     <thead>
                         <th>Name</th>
                         <th>Number</th>
@@ -28,7 +28,7 @@
                     <tbody>
                         <% for (let building of buildingList) { %>
                         <tr>
-                            <td><%- building.building_name %></td>
+                            <td><%- building.building_name %> </td>
                             <td><%- building.building_number %></td>
                             <td><%- building.total_floors %></td>
                             <td><%- building.owner %></td>
@@ -73,6 +73,7 @@
                 <div class="form-row">
                     <input name="buildingName" id="buildingName" type="text" class="form-control"
                         placeholder="Building Name" required>
+                        <input type="hidden" id="buildingid" name="buildingid">
                 </div>
 
                 <div class="form-row mt-4">
@@ -137,6 +138,7 @@
             <div class="modal-footer">
                 <div id="errorMsg"></div>
                 <button type="submit" class="btn btn-danger addBuilding">Create Building</button>
+                <button type="submit" class="btn btn-danger updateBuilding d-none">Update Building</button>
             </div>
             <!-- </form> -->
         </div>
@@ -180,9 +182,13 @@
         })
     })
 
-    $('.edit-building').one('click', function () {
+
+
+    $('#buildingTable').on('click', '.edit-building', function () {
+        $(".addBuilding").addClass('d-none')
+        $(".updateBuilding").removeClass('d-none')
         $.ajax({
-            url: '/management/building/fetch-single',
+            url: '/management/buildings/fetch-single',
             method: 'POST',
             type: 'JSON',
             data: {
@@ -192,24 +198,45 @@
 
                 let building = data.buildingData;
                 console.log('Success: ', building)
+                $("#buildingid").val(building.id),
+                    $("#buildingName").val(building.building_name),
+                    $("#buildingNumber").val(building.building_number),
+                    $("#floors").val(building.total_floors),
+                    $("#ownerId").val(building.owner_id).trigger('change'),
+                    $("#handledById").val(building.handled_by).trigger('change'),
+                    $("#startTimeId").val(building.start_time).trigger('change'),
+                    $("#endTimeId").val(building.end_time).trigger('change'),
+                    $("#campusId").val(building.campus_id).trigger('change'),
+                    $("#add-building-modal").modal('show')
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
 
-                $(`#update-building-modal input[name='buildingId']`).val(building.building_id)
-                $(`#update-building-modal input[name='buildingName']`).val(building.building_name)
-                $(`#update-building-modal input[name='buildingNumber']`).val(building
-                    .building_number)
-                $(`#update-building-modal input[name='floors']`).val(building.total_floors)
-                $(`#update-building-modal select[name='ownerId']`).val(building.owner_id).trigger(
-                    'change')
-                $(`#update-building-modal select[name='handledById']`).val(building.handled_by)
-                    .trigger('change')
-                $(`#update-building-modal select[name='startTimeId']`).val(building.start_time)
-                    .trigger('change')
-                $(`#update-building-modal select[name='endTimeId']`).val(building.end_time).trigger(
-                    'change')
-                $(`#update-building-modal select[name='campusId']`).val(building.campus_id).trigger(
-                    'change')
 
 
+
+    $(".updateBuilding").on('click', function () {
+        $.ajax({
+            url: '/management/buildings/update',
+            method: 'POST',
+            type: 'JSON',
+            data: {
+                buildingid: $("#buildingid").val(),
+                buildingName: $("#buildingName").val(),
+                buildingNumber: $("#buildingNumber").val(),
+                floors: $("#floors").val(),
+                ownerId: $("#ownerId").val(),
+                handledById: $("#handledById").val(),
+                startTimeId: $("#startTimeId").val(),
+                endTimeId: $("#endTimeId").val(),
+                campusId: $("#campusId").val(),
+            },
+            success: data => {
+                console.log('Data:::::::::>',data)
+            location.reload()
             },
             error: err => {
                 console.log('Error: ', err)

@@ -102,14 +102,27 @@ module.exports = {
         // })
     },
 
-    getAdd: async (req, res) => {
-      //  let errors = validationResult(req)
+    getAdd: (req, res) => {
+        //  let errors = validationResult(req)
 
-Buildings.Save(req.body)
+        Buildings.Save(req.body)
         res.json({
             status: 200,
             message: "Success",
             body: req.body
+        })
+    },
+
+    getSingleBuilding: (req,res) => {
+        Buildings.fetchbyId(req.body.buildingId).then(result=>{
+            res.json({status:200,buildingData:result.recordset[0]})
+        })
+    },
+
+    updateBuilding: (req,res) => {
+        console.log("BODY:::::::>>",req.body)
+        Buildings.Update(req.body).then(result=>{
+            res.json({status:200})
         })
     }
 

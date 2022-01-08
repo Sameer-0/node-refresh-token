@@ -16,8 +16,8 @@ module.exports = class Buildings {
         this.campus_id = campus_id;
     }
 
-    static Save(body){
-        console.log('Body:',body)
+    static Save(body) {
+
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('Building_name', sql.NVarChar(255), body.buildingName)
@@ -38,7 +38,35 @@ module.exports = class Buildings {
     static fetchAll() {
         //return execPreparedStmt(`SELECT * FROM injection_test`)
         return poolConnection.then(pool => {
-            return pool.request().query(`select b.id, b.building_name, b.building_number,b.total_floors, b.owner_id,b.handled_by, b.start_time ,b.end_time, b.campus_id from [dbo].buildings b`)
+            return pool.request().query(`select b.id as building_id, b.building_name, b.building_number,b.total_floors, b.owner_id,b.handled_by, b.start_time ,b.end_time, b.campus_id from [dbo].buildings b`)
+        })
+    }
+
+    static fetchbyId(id) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            request.input('Id', sql.Int, id)
+            return request.query(`select b.id, b.building_name, b.building_number,b.total_floors, b.owner_id,b.handled_by, b.start_time ,b.end_time, b.campus_id from [dbo].buildings b where id =  @Id`)
+        })
+    }
+
+
+    static Update(body) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            request.input('buildingid', sql.NVarChar(50), body.buildingid)
+                .input('Building_name', sql.NVarChar(255), body.buildingName)
+                .input('Building_number', sql.NVarChar(50), body.buildingNumber)
+                .input('Total_floors', sql.Int, body.floors)
+                .input('Owner_id', sql.Int, body.ownerId)
+                .input('Handled_by', sql.Int, body.handledById)
+                .input('Start_time', sql.Int, body.startTimeId)
+                .input('End_time', sql.Int, body.endTimeId)
+                .input('Campus_id', sql.Int, body.campusId)
+            let stmt = `update [dbo].buildings set building_name = @Building_name, building_number = @Building_number,total_floors = @Total_floors, owner_id = @Owner_id,handled_by = @Handled_by,start_time  = @Start_time,end_time = @End_time, campus_id = @Campus_id where id = @buildingid`
+            return request.query(stmt)
+        }).catch(error => {
+            throw error
         })
     }
 }
