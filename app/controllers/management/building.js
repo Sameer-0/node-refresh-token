@@ -13,7 +13,7 @@ module.exports = {
 
     getIAcadYearPage: (req, res, next) => {
         AcademicYear.fetchAll().then(result => {
-            if (result.recordset.length > 0) {
+    
                 let data = {
                     id: result.recordset[0].id,
                     name: result.recordset[0].name,
@@ -26,12 +26,7 @@ module.exports = {
                     status: 200,
                     message: "Sucess"
                 })
-            } else {
-                res.render('admin/management/academicYear/academicYear', {
-                    status: 204,
-                    message: "Data not found"
-                })
-            }
+        
         }).catch(err => {
             res.status(500).json({
                 stats: 500,
