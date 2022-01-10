@@ -54,7 +54,7 @@ module.exports = class CampusMaster {
     static deleteById(id){
         return poolConnection.then(pool => {
             let request = pool.request();
-            request.input('Id', sql.Int, body.Id)
+            request.input('Id', sql.Int, id)
             return request.query(`update [dbo].campus_master set active = 0 where id = @Id`);
         })
     }
