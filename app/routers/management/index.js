@@ -3,12 +3,23 @@ const {
     check,
     validationResult
 } = require('express-validator');
-const controller = require('../../controllers/management/index');
+const buildingcontroller = require('../../controllers/management/building');
+const campuscontroller = require('../../controllers/management/campus');
 
-router.get('/academic-year', controller.getIAcadYearPage);
-router.post('/academic-year', controller.updateAcadYear)
-router.get('/buildings', controller.getBuildingPage)
-router.post('/buildings/add', controller.getAdd)
-router.post('/buildings/fetch-single', controller.getSingleBuilding)
-router.post('/buildings/update', controller.updateBuilding)
+
+router.get('/academic-year', buildingcontroller.getIAcadYearPage);
+router.post('/academic-year', buildingcontroller.updateAcadYear)
+
+// BUILDING ROUTER
+router.get('/building', buildingcontroller.getBuildingPage)
+router.post('/building/add', buildingcontroller.getAdd)
+router.post('/building/fetch-single', buildingcontroller.getSingleBuilding)
+router.post('/building/update', buildingcontroller.updateBuilding)
+
+// CAMPUS ROUTER
+router.get('/campus',campuscontroller.getCampusPage)
+router.post('/campus/add',campuscontroller.createCampus)
+router.post('/campus/fetch-single',campuscontroller.getCampusById)
+router.post('/campus/update',campuscontroller.updateCampus)
+router.post('/campus/delete-single',campuscontroller.deleteById)
 module.exports = router;

@@ -14,7 +14,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered call-datatable" id="campusTable">
                     <thead>
                         <th>Id</th>
                         <th>Abbr</th>
@@ -33,8 +33,8 @@
                                 <i class="fas fa-edit text-dark cursor-pointer edit-campus"
                                     data-campus-id="<%- campus.id %>" data-toggle="modal"
                                     data-target="#update-campus-modal"></i>
-                                <a href="/management/campus/delete?id=<%- campus.id %>"
-                                    class="fas fa-trash-alt text-danger"></a>
+                                <a data-campus-id="<%- campus.id %>"
+                                    class="fas fa-trash-alt text-danger delete-campus"></a>
                             </td>
                         </tr>
 
@@ -60,36 +60,42 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/management/campus/add" method="POST">
-                <div class="modal-body">
+            <!-- <form action="/management/campus/add" method="POST"> -->
+            <div class="modal-body">
 
-                    <div class="form-row mt-4">
-                        <input name="campusId" type="number" class="form-control" placeholder="Campus Id" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusAbbr" type="text" class="form-control" placeholder="Campus Abbr" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusName" type="text" class="form-control" placeholder="Campus Name" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusDesc" type="text" class="form-control" placeholder="Campus Description">
-                    </div>
+                <div class="form-row mt-4">
+                    <input name="campusId" id="campusId" type="number" class="form-control" placeholder="Campus Id"
+                        required>
+                    <input type="hidden" id="Id" name="Id">
                 </div>
 
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Create Campus</button>
+                <div class="form-row mt-4">
+                    <input name="campusAbbr" id="campusAbbr" type="text" class="form-control" placeholder="Campus Abbr"
+                        required>
                 </div>
-            </form>
+
+                <div class="form-row mt-4">
+                    <input name="campusName" id="campusName" type="text" class="form-control" placeholder="Campus Name"
+                        required>
+                </div>
+
+                <div class="form-row mt-4">
+                    <input name="campusDesc" id="campusDesc" type="text" class="form-control"
+                        placeholder="Campus Description">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger createCampus">Create Campus</button>
+                <button type="button" class="btn btn-danger updateCampus d-none">Update Campus</button>
+            </div>
+            <!-- </form> -->
         </div>
     </div>
 </div>
 
 
-<!-- UPDATE CAMPUS MODAL -->
+<!-- UPDATE CAMPUS MODAL
 <div class="modal fade" id="update-campus-modal" tabindex="-1" role="dialog" aria-labelledby="update-campus-modal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -126,7 +132,7 @@
             </form>
         </div>
     </div>
-</div>
+</div> -->
 
 
 
@@ -142,25 +148,22 @@
         dropdownParent: $('#update-org-modal')
     });
 
-    $('.edit-campus').on('click', function () {
+
+    //management/campus/add
+    $('.createCampus').on('click', function () {
         $.ajax({
-            url: '/management/campus/fetch-single',
+            url: '/management/campus/add',
             method: 'POST',
             type: 'JSON',
             data: {
-                id: $(this).attr('data-campus-id')
+                campusId: $("#campusId").val(),
+                campusAbbr: $("#campusAbbr").val(),
+                campusName: $("#campusName").val(),
+                campusDesc: $("#campusDesc").val()
             },
             success: data => {
-
-                let campus = data.campusData;
-                console.log('Success: ', campus)
-
-                $(`#update-campus-modal input[name='id']`).val(campus.id)
-                $(`#update-campus-modal input[name='campusId']`).val(campus.campus_id)
-                $(`#update-campus-modal input[name='campusAbbr']`).val(campus.abbr)
-                $(`#update-campus-modal input[name='campusName']`).val(campus.name)
-                $(`#update-campus-modal input[name='campusDesc']`).val(campus.c_desc)
-
+                console.log('Success: ', data)
+                location.reload()
             },
             error: err => {
                 console.log('Error: ', err)
@@ -169,6 +172,73 @@
     })
 
 
+    $('#campusTable').on('click', '.edit-campus', function () {
+        $(".updateCampus").removeClass('d-none')
+        $(".createCampus").addClass('d-none')
+        $.ajax({
+            url: '/management/campus/fetch-single',
+            method: 'POST',
+            type: 'JSON',
+            data: {
+                id: $(this).attr('data-campus-id')
+            },
+            success: data => {
+                let camp = data.result;
+                $("#Id").val(camp.id)
+                $("#campusId").val(camp.campus_id)
+                $("#campusAbbr").val(camp.campus_abbr)
+                $("#campusName").val(camp.campus_name_40_char)
+                $("#campusDesc").val(camp.campus_description)
+                $("#add-campus-modal").modal('show')
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
+
+
+    $('.updateCampus').on('click', function () {
+        $.ajax({
+            url: '/management/campus/update',
+            method: 'POST',
+            type: 'JSON',
+            data: {
+                Id: $("#Id").val(),
+                campusId: $("#campusId").val(),
+                campusAbbr: $("#campusAbbr").val(),
+                campusName: $("#campusName").val(),
+                campusDesc: $("#campusDesc").val()
+            },
+            success: data => {
+                location.reload()
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
+
+
+
+    $('#campusTable').on('click', '.delete-campus', function () {
+        $(".updateCampus").removeClass('d-none')
+        $(".createCampus").addClass('d-none')
+        $.ajax({
+            url: '/management/campus/delete-single',
+            method: 'POST',
+            type: 'JSON',
+            data: {
+                id: $(this).attr('data-campus-id')
+            },
+            success: data => {
+                location.reload()
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
 
 
     function callDatatable() {

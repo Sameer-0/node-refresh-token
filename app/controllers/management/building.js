@@ -41,7 +41,7 @@ module.exports = {
     },
 
     updateAcadYear: (req, res) => {
-        AcademicYear.Save(req.body)
+        AcademicYear.save(req.body)
         res.redirect('/management/academic-year')
     },
 
@@ -113,16 +113,20 @@ module.exports = {
         })
     },
 
-    getSingleBuilding: (req,res) => {
-        Buildings.fetchbyId(req.body.buildingId).then(result=>{
-            res.json({status:200,buildingData:result.recordset[0]})
+    getSingleBuilding: (req, res) => {
+        Buildings.fetchbyId(req.body.buildingId).then(result => {
+            res.json({
+                status: 200,
+                buildingData: result.recordset[0]
+            })
         })
     },
 
-    updateBuilding: (req,res) => {
-        console.log("BODY:::::::>>",req.body)
-        Buildings.Update(req.body).then(result=>{
-            res.json({status:200})
+    updateBuilding: (req, res) => {
+        Buildings.Update(req.body).then(result => {
+            res.json({
+                status: 200
+            })
         })
     }
 

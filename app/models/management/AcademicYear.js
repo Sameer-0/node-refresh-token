@@ -18,15 +18,14 @@ module.exports = class AcademicYear {
         })
     }
 
-    static Save(body) {
+    static save(body) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('StartDate', sql.Date, body.startDate)
-                .input('EndDate', sql.Date, body.endDate)
-                .input('AcadYear', sql.Char(4), body.acadYear)
-                .input('Id', sql.Int, body.id)
-            let stmt = `update [dbo].academic_year set start_date = @StartDate , end_date = @EndDate, input_acad_year = @AcadYear  where id  = @Id`
-            return request.query(stmt)
+            return request.input('startDate', sql.Date, body.startDate)
+                .input('endDate', sql.Date, body.endDate)
+                .input('acadYear', sql.Char(4), body.acadYear)
+                .input('id', sql.Int, body.id)
+                .query(`update [dbo].academic_year set start_date = @startDate , end_date = @endDate, input_acad_year = @acadYear  where id  = @id`)
         }).catch(error => {
             throw error
         })
