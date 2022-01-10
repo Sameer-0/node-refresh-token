@@ -6,6 +6,7 @@ const {
 const buildingcontroller = require('../../controllers/management/building');
 const campuscontroller = require('../../controllers/management/campus');
 const orgcontroller = require('../../controllers/management/organization');
+const dashcontroller = require('../../controllers/management/dashboard');
 
 
 router.get('/academic-year', buildingcontroller.getIAcadYearPage);
@@ -30,4 +31,8 @@ router.post('/organization/add',orgcontroller.createOrg)
 router.post('/organization/fetch-single',orgcontroller.getOrgById)
 router.post('/organization/update-single',orgcontroller.updateOrgById)
 router.post('/organization/delete-single',orgcontroller.deleteById)
+
+
+//DASHBOARD ROUTER
+router.get('/dashboard',dashcontroller.getDashboard)
 module.exports = router;
