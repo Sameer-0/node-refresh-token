@@ -35,7 +35,7 @@ router.post('/organization/delete-single',orgcontroller.deleteById)
 
 
 //DASHBOARD ROUTER
-router.get('/dashboard',dashcontroller.getDashboard)
+router.get('/',dashcontroller.getDashboard)
 
 //ROOM ROUTER
 router.get('/room',roomcontroller.getPage)
