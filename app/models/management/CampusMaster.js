@@ -11,16 +11,33 @@ module.exports = class CampusMaster {
         this.campus_description = campus_description;
     }
 
-    static fetchAll(limit,offset) {
+    static fetchAll(limit, offset) {
         //return execPreparedStmt(`SELECT * FROM injection_test`)
         return poolConnection.then(pool => {
-         //  let request = pool.request();
-        //  return  request.input('OFFSETCOUNT',sql.Int,limit)
-        //    .input('NEXTOFFSETCOUNT',sql.Int,offset)
-       return pool.request().query(`select id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc from [dbo].campus_master where active = 1 order by id desc`)
-        //   .query(`select om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
-        //    from [dbo].organization_master om join  [dbo].organization_type ot on om.org_type_id = ot.id  where ot.active = 1 and om.active = 1
-        //    ORDER BY om.id DESC OFFSET @OFFSETCOUNT ROWS FETCH NEXT @NEXTOFFSETCOUNT ROWS ONLY`)
+            //  let request = pool.request();
+            //  return  request.input('OFFSETCOUNT',sql.Int,limit)
+            //    .input('NEXTOFFSETCOUNT',sql.Int,offset)
+            return pool.request().query(`select top 10  id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc from [dbo].campus_master where active = 1 order by id desc`)
+            //   .query(`select om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
+            //    from [dbo].organization_master om join  [dbo].organization_type ot on om.org_type_id = ot.id  where ot.active = 1 and om.active = 1
+            //    ORDER BY om.id DESC OFFSET @OFFSETCOUNT ROWS FETCH NEXT @NEXTOFFSETCOUNT ROWS ONLY`)
+        })
+    }
+
+    static fetchAllForPagination(pageno){
+        return poolConnection.then(pool => {
+            let request =  pool.request()
+            return request.input('pageno',sql.Int, pageno)
+            .query(`select top 10  id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc from [dbo].campus_master where active = 1 order by id desc`)
+        })
+    }
+
+
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`select count(*) as count from [dbo].campus_master where active = 1`)
+
         })
     }
 
@@ -57,7 +74,7 @@ module.exports = class CampusMaster {
     }
 
 
-    static deleteById(id){
+    static deleteById(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
             request.input('Id', sql.Int, id)

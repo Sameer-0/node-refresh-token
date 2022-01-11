@@ -13,7 +13,7 @@
             <button class="btn btn-success ms-auto " data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
                     class="fas fa-plus"></i> Add New</button>
         </div>
-        <div class="card-body mt-5">
+        <div class="card-body">
             <div class="table-responsive">
               
                 <table class="table table-bordered" id="campusTable">
@@ -43,8 +43,9 @@
                         <% } %>
                     </tbody>
                 </table>
-   
+      <p id="pagination"></p>
             </div>
+            
         </div>
     </div>
     <!--DASHBOARD CONTENT END-->
@@ -100,6 +101,7 @@
 
 
 <%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
     $('.modalSelect2').select2({
         dropdownParent: $('#add-org-modal')
@@ -201,47 +203,55 @@
         })
     })
 
+        //Pagination Here
+     let pageCount = `<%- pageCount %>`
+        console.log("Page Count=====>>>", pageCount)
+        let pageNos = Math.ceil(Number(pageCount) / 10)
 
-    function callDatatable() {
-        if ($('.call-datatable').length > 0) {
-            //CALL DATATABLE
+		console.log("Page Numbers", pageNos)
+		$('#pagination').bootpag({
+			total: pageNos,
+			page: 1,
+			maxVisible: 10,
+			leaps: true,
+			firstLastUse: true,
+			first: '←',
+			last: '→',
+			wrapClass: 'pagination',
+			activeClass: 'active',
+			disabledClass: 'disabled',
+			nextClass: 'next',
+			prevClass: 'prev',
+			lastClass: 'last',
+			firstClass: 'first'
+		}).on("page", function (event, num) {
 
-            $('.call-datatable').DataTable({
-                autoFill: false,
-                //scrollY: 400,
-                scrollX: '100%',
-                deferRender: true,
-                scrollY: true,
-                scrollX: true,
-                paging: true,
-                initComplete: function () {
-                    this.api().columns().every(function () {
-                        var column = this;
-                        var select = $(
-                                '<select><option value="">-Select-</option></select>'
-                            )
-                            .appendTo($(column.footer()).empty())
-                            .on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
+			$.ajax({
+				type: "POST",
+				url: "/management/campus",
+				data: {pageNo: num},
+				success: function (data) {
+                    let quoteList = data.data;
 
-                                column
-                                    .search(val ? '^' + val + '$' : '',
-                                        true, false)
-                                    .draw();
-                            });
+                    console.log('quoteList-------------->',quoteList)
 
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d +
-                                '">' + d + '</option>')
-                        });
-                    });
-                }
-            })
-            //CALL DATATABLE END
-        }
-    }
-    callDatatable();
+					let quoteAjax = "";
+					for (quote of quoteList) {
+						if (islogin !== ""){
+                            //Display For LoggedinUser
+                            quoteAjax += `<div class="col-md-6 mt-5"><div class="product-box"> <div class="item-content"> <h6 class="item-title"> ${quote.countryname} forwarder seeks agent in ${quote.location} </h6> <p class="card-text">Type: <b>${quote.partnershiptype}</b></p><p class="item-paragraph"> <a href="tel:${quote.mobile}" class="btn btn-success rounded-0 btn-sm"><i class="fas fa-phone"></i></a> <a href="mailto:${quote.email}" class="btn btn-warning rounded-0 btn-sm"><i class="fas fa-envelope"></i></a> </p></div><a class="align-button-down" href="/quote/agent-request?id=${ quote.id}">View</a> </div></div>`
+						}
+						else {
+                            quoteAjax += `<div class="col-md-6 mt-5"><div class="product-box"> <div class="item-content"> <h6 class="item-title"> ${quote.countryname} forwarder seeks agent in ${ quote.location} </h6> <p class="card-text">Type: <b>${quote.partnershiptype}</b></p></div><a class="align-button-down" href="/quote/agent-request?id=${quote.id}">View</a> </div></div>`
+						}
+					}
+					$("#campusTable").html(quoteAjax);
+				}
+			})
+		});
+
+
+
+
 </script>
 <%- include("../partials/footerEnd") %>
