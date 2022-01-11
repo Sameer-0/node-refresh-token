@@ -8,15 +8,38 @@ const Buildings = require('../../models/management/Buildings')
 const OrganizationMaster = require("../../models/management/OrganizationMaster")
 const CampusMaster = require("../../models/management/CampusMaster")
 const SlotIntervalTimings = require("../../models/management/SlotIntervalTimings")
+const Pagination = require("../../utils/Pagination")
 const moment = require('moment');
 
 module.exports = {
     getCampusPage: (req, res) => {
-
+        // const {
+        //     page,
+        //     size
+        // } = req.query;
+        // const {
+        //     limit,
+        //     offset
+        // } = Pagination.getPagination(page, size);
+//   CampusMaster.fetchAll(limit, offset)
         CampusMaster.fetchAll().then(result => {
-            res.render('admin/management/campus/index', {
-                campusList: result.recordset
-            })
+            // res.render('admin/management/campus/index', {
+            //     campusList: result.recordset
+            // })
+            res.render('admin/management/campus/index',{
+                     status: 200,
+                    // totalTtems: result.recordset.length,
+                     campusList: result.recordset,
+                    // totalPages: limit,
+                    // currentpage: page
+                 })
+            // res.json({
+            //     status: 200,
+            //     totalTtems: result.recordset.length,
+            //     campusList: result.recordset,
+            //     totalPages: offset,
+            //     currentpage: page
+            // })
         })
     },
 
@@ -47,9 +70,9 @@ module.exports = {
         })
     },
 
-    deleteById:(req, res)=>{
+    deleteById: (req, res) => {
 
-        CampusMaster.deleteById(req.body.id).then(result=>{
+        CampusMaster.deleteById(req.body.id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset
