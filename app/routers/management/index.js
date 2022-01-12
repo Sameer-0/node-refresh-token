@@ -11,7 +11,7 @@ const dashcontroller = require('../../controllers/management/dashboard');
 const roomcontroller = require('../../controllers/management/room');
 
 
-router.get('/academic-year', buildingcontroller.getIAcadYearPage);
+router.get('/academic-year', buildingcontroller.getIAcadYearPage)
 router.post('/academic-year', buildingcontroller.updateAcadYear)
 
 // BUILDING ROUTER

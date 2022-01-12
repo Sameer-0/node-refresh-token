@@ -8,7 +8,6 @@ const Buildings = require('../../models/Buildings')
 const OrganizationMaster = require("../../models/OrganizationMaster")
 const CampusMaster = require("../../models/CampusMaster")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
-const Pagination = require("../../utils/Pagination")
 const moment = require('moment');
 
 module.exports = {

@@ -8,7 +8,6 @@ const {
 const roomModel = require('../../models/RoomData')
 const building = require('../../models/Buildings')
 const SlotIntervalTimings = require('../../models/SlotIntervalTimings')
-const pagination = require('../../utils/Pagination')
 const moment = require('moment')
 
 

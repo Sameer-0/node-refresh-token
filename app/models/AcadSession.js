@@ -1,6 +1,8 @@
 const {
-    dbconfig
-} = require("../../config/databaseConfig")
+    sql,
+    poolConnection,
+    execPreparedStmt
+} = require('../../config/db')
 
 module.exports = class AcadSession {
     constructor(acadSession) {

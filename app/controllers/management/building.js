@@ -13,7 +13,6 @@ module.exports = {
 
     getIAcadYearPage: (req, res, next) => {
         AcademicYear.fetchAll().then(result => {
-    
                 let data = {
                     id: result.recordset[0].id,
                     name: result.recordset[0].name,

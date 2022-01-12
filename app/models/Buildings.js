@@ -2,7 +2,7 @@ const {
     sql,
     poolConnection,
     execPreparedStmt
-} = require('../../../config/db')
+} = require('../../config/db')
 const moment = require('moment');
 module.exports = class Buildings {
     constructor(buildingName, buildingNumber, totalFloors, ownerId, handledBy, startTime, endTime, campusId) {

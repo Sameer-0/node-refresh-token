@@ -2,7 +2,7 @@ const {
     sql,
     poolConnection,
     execPreparedStmt
-} = require('../../../config/db')
+} = require('../../config/db')
 module.exports = class OrganizationMaster {
     constructor(orgId, orgAbbr, orgName, orgCompleteName, orgTypeId, parentId) {
         this.orgId = orgId;

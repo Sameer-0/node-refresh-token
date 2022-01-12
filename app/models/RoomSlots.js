@@ -2,7 +2,7 @@ const {
     sql,
     poolConnection,
     execPreparedStmt
-} = require('../../../config/db')
+} = require('../../config/db')
 
 module.exports = class RoomSlots {
     constructor(date, roomId, slotId, allotedTo, transactionUui, isBooked, dateId) {

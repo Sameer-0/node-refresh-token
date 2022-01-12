@@ -2,7 +2,7 @@ const {
     sql,
     poolConnection,
     execPreparedStmt
-} = require('../../../config/db')
+} = require('../../config/db')
 module.exports = class CampusMaster {
     constructor(campusId, campusAbbr, campusName40Char, campusDesc) {
         this.campusId = campusId;
