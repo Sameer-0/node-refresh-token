@@ -4,25 +4,25 @@ const {
     execPreparedStmt
 } = require('../../../config/db')
 module.exports = class CampusMaster {
-    constructor(campus_id, campus_abbr, campus_name_40_char, campus_description) {
-        this.campus_id = campus_id;
-        this.campus_abbr = campus_abbr;
-        this.campus_name_40_char = campus_name_40_char;
-        this.campus_description = campus_description;
+    constructor(campusId, campusAbbr, campusName40Char, campusDesc) {
+        this.campusId = campusId;
+        this.campusAbbr = campusAbbr;
+        this.campusName40Char = campusName40Char;
+        this.campusDesc = campusDesc;
     }
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`select top 10  id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc from [dbo].campus_master where active = 1 order by id desc`)
+            return pool.request().query(`SELECT TOP 10  id, campus_id, campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
         })
     }
 
-    static fetchAllForPagination(pageno){
+    static fetchAllForPagination(pageNo){
         return poolConnection.then(pool => {
             let request =  pool.request()
-            return request.input('pageno',sql.Int, pageno)
-            .query(`select id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc
-            from [dbo].campus_master where active = 1 order by id desc OFFSET (@pageno - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+            return request.input('pageNo',sql.Int, pageNo)
+            .query(`SELECT id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc
+            FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -30,7 +30,7 @@ module.exports = class CampusMaster {
 
     static getCount() {
         return poolConnection.then(pool => {
-            return pool.request().query(`select count(*) as count from [dbo].campus_master where active = 1`)
+            return pool.request().query(`SELECT COUNT(*) AS COUNT FROM [dbo].campus_master WHERE active = 1`)
 
         })
     }
@@ -38,11 +38,11 @@ module.exports = class CampusMaster {
     static save(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            request.input('Campus_id', sql.Int, body.campusId)
-            request.input('Campus_abbr', sql.NVarChar(40), body.campusAbbr)
-            request.input('Campus_name_40_char', sql.NVarChar(40), body.campusName)
-            request.input('campus_description', sql.NVarChar(150), body.campusDesc)
-            return request.query(`insert into [dbo].campus_master (campus_id, campus_abbr, campus_name_40_char, campus_description) values(@Campus_id, @Campus_abbr, @Campus_name_40_char,@campus_description)`);
+            request.input('campusId', sql.Int, body.campusId)
+            request.input('campusAbbr', sql.NVarChar(40), body.campusAbbr)
+            request.input('campusName40Char', sql.NVarChar(40), body.campusName)
+            request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
+            return request.query(`INSERT INTO [dbo].campus_master (campus_id, campus_abbr, campus_name_40_char, campus_description) VALUES (@campusId, @campusAbbr, @campusName40Char, @campusDesc)`);
         })
     }
 
@@ -50,7 +50,7 @@ module.exports = class CampusMaster {
         return poolConnection.then(pool => {
             let request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`select id, campus_id, campus_abbr, campus_name_40_char, campus_description from [dbo].campus_master  where id = @id`)
+            return request.query(`SELECT id, campus_id, campus_abbr, campus_name_40_char, campus_description FROM [dbo].campus_master  WHERE id = @id`)
         })
     }
 
@@ -58,12 +58,12 @@ module.exports = class CampusMaster {
     static update(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            request.input('Id', sql.Int, body.Id)
-            request.input('Campus_id', sql.Int, body.campusId)
-            request.input('Campus_abbr', sql.NVarChar(40), body.campusAbbr)
-            request.input('Campus_name_40_char', sql.NVarChar(40), body.campusName)
-            request.input('campus_description', sql.NVarChar(150), body.campusDesc)
-            return request.query(`update [dbo].campus_master set campus_id = @Campus_id, campus_abbr = @Campus_abbr, campus_name_40_char = @Campus_name_40_char, campus_description = @campus_description where id = @Id`);
+            request.input('id', sql.Int, body.Id)
+            request.input('campusId', sql.Int, body.campusId)
+            request.input('campusAbbr', sql.NVarChar(40), body.campusAbbr)
+            request.input('campusName40Char', sql.NVarChar(40), body.campusName)
+            request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
+            return request.query(`UPDATE [dbo].campus_master SET campus_id = @campusId, campus_abbr = @campusAbbr, campus_name_40_char = @campusName40Char, campus_description = @campusDesc WHERE id = @id`);
         })
     }
 
@@ -71,17 +71,17 @@ module.exports = class CampusMaster {
     static deleteById(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            request.input('Id', sql.Int, id)
-            return request.query(`update [dbo].campus_master set active = 0 where id = @Id`);
+            request.input('id', sql.Int, id)
+            return request.query(`UPDATE [dbo].campus_master SET active = 0 WHERE id = @id`);
         })
     }
 
     static searchCampus(keyword){
         return poolConnection.then(pool => {
             let request =  pool.request()
-            return request.input('keyword',sql.NVarChar(100), '%'+keyword+'%')
-            .query(`select top 10 id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc 
-            from [dbo].campus_master where campus_id like @keyword or campus_abbr like @keyword or campus_name_40_char like @keyword or campus_description like @keyword and active = 1`)
+            return request.input('keyword', sql.NVarChar(100), '%'+keyword+'%')
+            .query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
+            FROM [dbo].campus_master WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1`)
         })
     }
 }
