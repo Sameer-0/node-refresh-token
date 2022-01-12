@@ -109,7 +109,7 @@ module.exports = {
     },
 
     getSingleBuilding: (req, res) => {
-        Buildings.fetchbyId(req.body.buildingId).then(result => {
+        Buildings.fetchById(req.body.buildingId).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]

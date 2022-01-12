@@ -43,7 +43,7 @@ module.exports = class Buildings {
         })
     }
 
-    static fetchbyId(id) {
+    static fetchById(id) {
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('id', sql.Int, id)
