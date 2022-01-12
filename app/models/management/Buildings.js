@@ -28,7 +28,7 @@ module.exports = class Buildings {
                 .input('Start_time', sql.Int, body.startTimeId)
                 .input('End_time', sql.Int, body.endTimeId)
                 .input('Campus_id', sql.Int, body.campusId)
-            let stmt = `insert into [dbo].buildings(building_name, building_number,total_floors,owner_id,handled_by,start_time,end_time,campus_id) values (@Building_name, @Building_number,@Total_floors,@Owner_id,@Handled_by,@Start_time,@End_time,@Campus_id)`
+            let stmt = `insert into [dbo].buildings(building_name, building_number, total_floors, owner_id, handled_by, start_time, end_time, campus_id) values (@Building_name, @Building_number,@Total_floors,@Owner_id,@Handled_by,@Start_time,@End_time,@Campus_id)`
             return request.query(stmt)
         }).catch(error => {
             throw error

@@ -14,9 +14,9 @@
             <button class="btn btn-success ml-auto" data-toggle="modal" data-target="#add-org-modal"><i
                     class="fas fa-plus"></i> Add New</button>
         </div>
-        <div class="card-body">
+        <div class="card-body mt-5">
             <div class="table-responsive">
-                <table class="table table-bordered call-datatable" id="organizationTable">
+                <table class="table table-bordered" id="organizationTable">
                     <thead>
                         <th>Id</th>
                         <th>Abbr</th>
@@ -39,10 +39,17 @@
                                 <a data-org-id="<%- org.id %>" class="fas fa-trash-alt text-danger delete-org"></a>
                             </td>
                         </tr>
-
                         <% } %>
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p>Total entries:<%- pageCount %></p>
+                    </div>
+                    <div>
+                        <p id="pagination"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -113,6 +120,7 @@
 
 
 <%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
     $('.modalSelect2').select2({
         dropdownParent: $('#add-org-modal')
@@ -230,47 +238,68 @@
 
 
 
+     //Pagination Here
+     let pageCount = `<%- pageCount %>`
+    console.log("Page Count=====>>>", pageCount)
+    let pageNos = Math.ceil(Number(pageCount) / 10)
 
-    function callDatatable() {
-        if ($('.call-datatable').length > 0) {
-            //CALL DATATABLE
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active',
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
 
-            $('.call-datatable').DataTable({
-                autoFill: false,
-                //scrollY: 400,
-                scrollX: '100%',
-                deferRender: true,
-                scrollY: true,
-                scrollX: true,
-                paging: true,
-                initComplete: function () {
-                    this.api().columns().every(function () {
-                        var column = this;
-                        var select = $(
-                                '<select><option value="">-Select-</option></select>'
-                            )
-                            .appendTo($(column.footer()).empty())
-                            .on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
-
-                                column
-                                    .search(val ? '^' + val + '$' : '',
-                                        true, false)
-                                    .draw();
-                            });
-
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d +
-                                '">' + d + '</option>')
-                        });
-                    });
+        $.ajax({
+            type: "POST",
+            url: "/management/campus",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                let orgList = data.data;
+                let orgAjax = `<table class="table table-bordered" id="organizationTable">
+                    <thead>
+                        <th>Id</th>
+                        <th>Abbr</th>
+                        <th>Name</th>
+                        <th>Complete Name</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>`;
+                for (org of orgList) {
+                    orgAjax +=
+                        `     <tr>
+                            <td>${org.org_id}</td>
+                            <td>${org.org_abbr}</td>
+                            <td>${org.org_name}</td>
+                            <td>${org.org_complete_name}</td>
+                            <td>${org.org_type}</td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-org" data-org-id="${org.id}"
+                                    data-toggle="modal" data-target="#update-org-modal"></i>
+                                <a data-org-id="${org.id}" class="fas fa-trash-alt text-danger delete-org"></a>
+                            </td>
+                        </tr>`
                 }
-            })
-            //CALL DATATABLE END
-        }
-    }
-    callDatatable();
+                orgAjax += `<tbody></table>`
+                $("#organizationTable").html(orgAjax);
+            }
+        })
+    });
+
+
 </script>
 <%- include("../partials/footerEnd") %>

@@ -21,7 +21,7 @@ module.exports = {
                     start_date: moment(result.recordset[0].start_date).format('YYYY-MM-DD'),
                     end_date: moment(result.recordset[0].end_date).format('YYYY-MM-DD')
                 }
-                res.render('admin/management/academicYear/academicYear', {
+                res.render('management/academicYear/academicYear', {
                     academicDetails: data,
                     status: 200,
                     message: "Sucess"
@@ -69,7 +69,7 @@ module.exports = {
                 }
                 slotList.push(slot)
             })
-            res.render('admin/management/buildings/index', {
+            res.render('management/buildings/index', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
                 campusList: result[2].recordset,

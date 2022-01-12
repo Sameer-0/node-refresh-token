@@ -44,10 +44,14 @@
                         </tbody>
                     </table>
                     <div class="d-flex justify-content-between">
-                        <div><p>Total entries:<%- pageCount %></p></div>
-                        <div><p id="pagination"></p></div>
+                        <div>
+                            <p>Total entries:<%- pageCount %></p>
+                        </div>
+                        <div>
+                            <p id="pagination"></p>
+                        </div>
                     </div>
-                   
+
                 </div>
 
             </div>
@@ -273,7 +277,7 @@
 
     //search feature
 
-    $("#searchkeyword").on('input',function(event){
+    $("#searchkeyword").on('input', function (event) {
         let keyword = $("#searchkeyword").val()
         $.ajax({
             type: "POST",
@@ -282,9 +286,9 @@
                 keyword: keyword
             },
             success: function (data) {
-                console.log('campusList::::::',data)
+                console.log('campusList::::::', data)
                 let campusList = data.data;
-               
+
                 let quoteAjax = `<table class="table table-bordered" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
@@ -315,6 +319,5 @@
             }
         })
     })
-    
 </script>
 <%- include("../partials/footerEnd") %>

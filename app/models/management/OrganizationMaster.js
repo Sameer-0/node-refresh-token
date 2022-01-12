@@ -15,8 +15,17 @@ module.exports = class OrganizationMaster {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`select om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
+            return pool.request().query(`select top 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
             from [dbo].organization_master om join [dbo].organization_type ot on om.org_type_id = ot.id  where ot.active = 1 and om.active = 1`)
+        })
+    }
+
+    static fetchAllForPagination(pageno){
+        return poolConnection.then(pool => {
+            let request =  pool.request()
+            return request.input('pageno',sql.Int, pageno)
+            .query(`select top 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
+            from [dbo].organization_master om join [dbo].organization_type ot on om.org_type_id = ot.id  where ot.active = 1 and om.active = 1 order by id desc OFFSET (@pageno - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -59,6 +68,13 @@ module.exports = class OrganizationMaster {
             let request = pool.request();
             return request.input('Id', sql.Int, id)
                 .query(`update  [dbo].organization_master set active  = 0 where id = @Id`)
+        })
+    }
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`select count(*) as count from [dbo].organization_master where active = 1`)
+
         })
     }
 

@@ -3,6 +3,7 @@ const {
     check,
     validationResult
 } = require('express-validator');
+
 const buildingcontroller = require('../../controllers/management/building');
 const campuscontroller = require('../../controllers/management/campus');
 const orgcontroller = require('../../controllers/management/organization');
@@ -30,6 +31,7 @@ router.post('/campus/delete-single',campuscontroller.deleteById)
 
 // ORGANIZATION ROUTER
 router.get('/organization',orgcontroller.getPage)
+router.post('/organization',[check('pageNo','Invalid Page No').exists().trim().escape()],orgcontroller.getPage)
 router.post('/organization/add',orgcontroller.createOrg)
 router.post('/organization/fetch-single',orgcontroller.getOrgById)
 router.post('/organization/update-single',orgcontroller.updateOrgById)
