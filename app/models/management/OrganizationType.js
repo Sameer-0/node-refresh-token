@@ -12,7 +12,7 @@ module.exports = class OrganizationTypes {
 
         static fetchAll(){
             return poolConnection.then(pool => {
-                return pool.request().query(`select id, name, description from [dbo].organization_type where active  = 1`)
+                return pool.request().query(`SELECT id, name, description FROM [dbo].organization_type WHERE active  = 1`)
             })
         }
 

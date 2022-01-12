@@ -1,7 +1,7 @@
 module.exports = class RescheduleFlags {
-    constructor(name, description, denoted_by){
+    constructor(name, description, denotedBy){
         this.name = name;
         this.description = description;
-        this.denoted_by = denoted_by;
+        this.denotedBy = denotedBy;
     }
 }

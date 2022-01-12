@@ -14,7 +14,7 @@ module.exports = class RoomTypes {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`select id, name, description from [dbo].room_types where active = 1`)
+            return pool.request().query(`SELECT id, name, description FROM [dbo].room_types WHERE active = 1`)
         })
     }
 
@@ -23,9 +23,9 @@ module.exports = class RoomTypes {
     static save(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Name', sql.NVarChar(100), body.name)
-                .input('Description', sql.NVarChar(200), body.description)
-                .query(`insert into [dbo].room_types(name, description) values(@Name,  @Description)`)
+            return request.input('name', sql.NVarChar(100), body.name)
+                .input('description', sql.NVarChar(200), body.description)
+                .query(`INSERT INTO [dbo].room_types (name, description) VALUES (@name,  @description)`)
         })
     }
 
@@ -34,10 +34,10 @@ module.exports = class RoomTypes {
     static update(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Id', sql.Int, body.id)
-                .input('Name', sql.NVarChar(100), body.name)
-                .input('Description', sql.NVarChar(200), body.description)
-                .query(`update [dbo].room_types set name = @Name, description = @Description  where id = @Id`)
+            return request.input('id', sql.Int, body.id)
+                .input('name', sql.NVarChar(100), body.name)
+                .input('description', sql.NVarChar(200), body.description)
+                .query(`UPDATE [dbo].room_types SET name = @name, description = @description  WHERE id = @id`)
         })
     }
 
@@ -45,8 +45,8 @@ module.exports = class RoomTypes {
     static delete(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Id', sql.Int, body.id)
-                .query(`update [dbo].room_types set active = 0  where id = @Id`)
+            return request.input('id', sql.Int, body.id)
+                .query(`UPDATE [dbo].room_types SET active = 0  WHERE id = @id`)
         })
     }
 

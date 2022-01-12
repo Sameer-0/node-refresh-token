@@ -4,36 +4,36 @@ const {
     execPreparedStmt
 } = require('../../../config/db')
 module.exports = class OrganizationMaster {
-    constructor(org_id, org_abbr, org_name, org_complete_name, org_type_id, parent_id) {
-        this.org_id = org_id;
-        this.org_abbr = org_abbr;
-        this.org_name = org_name;
-        this.org_complete_name = org_complete_name;
-        this.org_type_id = org_type_id;
-        this.parent_id = parent_id;
+    constructor(orgId, orgAbbr, orgName, orgCompleteName, orgTypeId, parentId) {
+        this.orgId = orgId;
+        this.orgAbbr = orgAbbr;
+        this.orgName = orgName;
+        this.orgCompleteName = orgCompleteName;
+        this.orgTypeId = orgTypeId;
+        this.parentId = parentId;
     }
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`select top 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
-            from [dbo].organization_master om join [dbo].organization_type ot on om.org_type_id = ot.id  where ot.active = 1 and om.active = 1`)
+            return pool.request().query(`SELECT TOP 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
+            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1`)
         })
     }
 
-    static fetchAllForPagination(pageno){
+    static fetchAllForPagination(pageNo){
         return poolConnection.then(pool => {
             let request =  pool.request()
-            return request.input('pageno',sql.Int, pageno)
-            .query(`select top 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
-            from [dbo].organization_master om join [dbo].organization_type ot on om.org_type_id = ot.id  where ot.active = 1 and om.active = 1 order by id desc OFFSET (@pageno - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+            return request.input('pageNo', sql.Int, pageNo)
+            .query(`SELECT TOP 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
+            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 OREDR BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
     static getOrgById(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Id', sql.Int, id)
-                .query(`select id, org_id, org_abbr, org_name, org_complete_name, org_type_id from [dbo].organization_master where id = @Id`)
+            return request.input('id', sql.Int, id)
+                .query(`SLEECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id FROM [dbo].organization_master WHERE id = @id`)
         })
     }
 
@@ -41,39 +41,39 @@ module.exports = class OrganizationMaster {
     static save(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Org_id', sql.Int, body.org_id)
-                .input('Org_abbr', sql.NVarChar(40), body.org_abbr)
-                .input('Org_name', sql.NVarChar(100), body.org_name)
-                .input('Org_complete_name', sql.NVarChar(400), body.org_complete_name)
-                .input('Org_type_id', sql.Int, body.org_type_id)
-                .query(`insert into [dbo].organization_master (org_id, org_abbr, org_name, org_complete_name, org_type_id) values(@Org_id, @Org_abbr, @Org_name,  @Org_complete_name, @Org_type_id)`)
+            return request.input('orgId', sql.Int, body.org_id)
+                .input('orgAbbr', sql.NVarChar(40), body.org_abbr)
+                .input('orgName', sql.NVarChar(100), body.org_name)
+                .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
+                .input('orgTypeId', sql.Int, body.org_type_id)
+                .query(`INSERT INTO [dbo].organization_master (org_id, org_abbr, org_name, org_complete_name, org_type_id) VALUES (@orgId, @orgAbbr, @orgName,  @orgCompleteName, @orgTypeId)`)
         })
     }
 
     static update(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Id', sql.Int, body.id)
-                .input('Org_id', sql.Int, body.org_id)
-                .input('Org_abbr', sql.NVarChar(40), body.org_abbr)
-                .input('Org_name', sql.NVarChar(100), body.org_name)
-                .input('Org_complete_name', sql.NVarChar(400), body.org_complete_name)
-                .input('Org_type_id', sql.Int, body.org_type_id)
-                .query(`update  [dbo].organization_master set org_id = @Org_id, org_abbr = @Org_abbr, org_name = @Org_name, org_complete_name = @Org_complete_name, org_type_id = @Org_type_id where id = @Id`)
+            return request.input('id', sql.Int, body.id)
+                .input('orgId', sql.Int, body.org_id)
+                .input('orgAbbr', sql.NVarChar(40), body.org_abbr)
+                .input('orgName', sql.NVarChar(100), body.org_name)
+                .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
+                .input('orgTypeId', sql.Int, body.org_type_id)
+                .query(`UPDATE  [dbo].organization_master SET org_id = @orgId, org_abbr = @orgAbbr, org_name = @orgName, org_complete_name = @orgCompleteName, org_type_id = @orgTypeId WHERE id = @id`)
         })
     }
 
     static deleteOrgById(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Id', sql.Int, id)
-                .query(`update  [dbo].organization_master set active  = 0 where id = @Id`)
+            return request.input('id', sql.Int, id)
+                .query(`UPDATE  [dbo].organization_master SET active  = 0 WHERE id = @id`)
         })
     }
 
     static getCount() {
         return poolConnection.then(pool => {
-            return pool.request().query(`select count(*) as count from [dbo].organization_master where active = 1`)
+            return pool.request().query(`SELECT COUNT(*) AS COUNT FROM [dbo].organization_master WHERE active = 1`)
 
         })
     }
