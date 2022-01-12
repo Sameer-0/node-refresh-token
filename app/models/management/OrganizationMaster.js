@@ -20,7 +20,7 @@ module.exports = class OrganizationMaster {
         })
     }
 
-    static fetchAllForPagination(pageNo){
+    static fetchChunkRows(pageNo){
         return poolConnection.then(pool => {
             let request =  pool.request()
             return request.input('pageNo', sql.Int, pageNo)
