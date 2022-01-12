@@ -3,8 +3,8 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
-const OrganizationMaster = require("../../models/management/OrganizationMaster")
-const OrganizationType = require("../../models/management/OrganizationType")
+const OrganizationMaster = require("../../models/OrganizationMaster")
+const OrganizationType = require("../../models/OrganizationType")
 module.exports = {
     getPage: (req, res) => {
         if (req.method == "GET") {

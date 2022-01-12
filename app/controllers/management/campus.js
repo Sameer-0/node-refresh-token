@@ -3,11 +3,11 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
-const AcademicYear = require('../../models/management/AcademicYear')
-const Buildings = require('../../models/management/Buildings')
-const OrganizationMaster = require("../../models/management/OrganizationMaster")
-const CampusMaster = require("../../models/management/CampusMaster")
-const SlotIntervalTimings = require("../../models/management/SlotIntervalTimings")
+const AcademicYear = require('../../models/AcademicYear')
+const Buildings = require('../../models/Buildings')
+const OrganizationMaster = require("../../models/OrganizationMaster")
+const CampusMaster = require("../../models/CampusMaster")
+const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const Pagination = require("../../utils/Pagination")
 const moment = require('moment');
 

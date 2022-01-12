@@ -5,9 +5,9 @@ const {
     Result
 } = require('express-validator');
 
-const roomModel = require('../../models/management/RoomData')
-const building = require('../../models/management/Buildings')
-const SlotIntervalTimings = require('../../models/management/SlotIntervalTimings')
+const roomModel = require('../../models/RoomData')
+const building = require('../../models/Buildings')
+const SlotIntervalTimings = require('../../models/SlotIntervalTimings')
 const pagination = require('../../utils/Pagination')
 const moment = require('moment')
 
