@@ -5,51 +5,55 @@
 <!--HEADER END-->
 <div class="wrapper">
     <div class="main-content">
-    <!--DASHBOARD CONTENT START-->
-    <div class="card">
-        <div class="card-header text-uppercase d-flex align-items-center">
-            <h5>Campus List</h5>
+        <!--DASHBOARD CONTENT START-->
+        <div class="card">
+            <div class="card-header text-uppercase d-flex align-items-center">
+                <h5>Campus List</h5>
 
-            <button class="btn btn-success ms-auto " data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
-                    class="fas fa-plus"></i> Add New</button>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-              
-                <table class="table table-bordered" id="campusTable">
-                    <thead>
-                        <th>Campus Id</th>
-                        <th>Abbr</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        <% for (let campus of campusList) { %>
-                        <tr>
-                            <td><%- campus.campus_id %></td>
-                            <td><%- campus.abbr %></td>
-                            <td><%- campus.name %></td>
-                            <td><%- campus.c_desc %></td>
-                            <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-campus"
-                                    data-campus-id="<%- campus.id %>" data-toggle="modal"
-                                    data-target="#update-campus-modal"></i>
-                                <a data-campus-id="<%- campus.id %>"
-                                    class="fas fa-trash-alt text-danger delete-campus"></a>
-                            </td>
-                        </tr>
-
-                        <% } %>
-                    </tbody>
-                </table>
-      <p id="pagination"></p>
+                <button class="btn btn-success ms-auto " data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
+                        class="fas fa-plus"></i> Add New</button>
             </div>
-            
+            <div class="card-body">
+                <input type="text" id="searchkeyword">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="campusTable">
+                        <thead>
+                            <th>Campus Id</th>
+                            <th>Abbr</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <% for (let campus of campusList) { %>
+                            <tr>
+                                <td><%- campus.campus_id %></td>
+                                <td><%- campus.abbr %></td>
+                                <td><%- campus.name %></td>
+                                <td><%- campus.c_desc %></td>
+                                <td>
+                                    <i class="fas fa-edit text-dark cursor-pointer edit-campus"
+                                        data-campus-id="<%- campus.id %>" data-toggle="modal"
+                                        data-target="#update-campus-modal"></i>
+                                    <a data-campus-id="<%- campus.id %>"
+                                        class="fas fa-trash-alt text-danger delete-campus"></a>
+                                </td>
+                            </tr>
+
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between">
+                        <div><p>Total entries:<%- pageCount %></p></div>
+                        <div><p id="pagination"></p></div>
+                    </div>
+                   
+                </div>
+
+            </div>
         </div>
+        <!--DASHBOARD CONTENT END-->
     </div>
-    <!--DASHBOARD CONTENT END-->
-</div>
 </div>
 
 
@@ -203,55 +207,114 @@
         })
     })
 
-        //Pagination Here
-     let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
-        let pageNos = Math.ceil(Number(pageCount) / 10)
+    //Pagination Here
+    let pageCount = `<%- pageCount %>`
+    console.log("Page Count=====>>>", pageCount)
+    let pageNos = Math.ceil(Number(pageCount) / 10)
 
-		console.log("Page Numbers", pageNos)
-		$('#pagination').bootpag({
-			total: pageNos,
-			page: 1,
-			maxVisible: 10,
-			leaps: true,
-			firstLastUse: true,
-			first: '←',
-			last: '→',
-			wrapClass: 'pagination',
-			activeClass: 'active',
-			disabledClass: 'disabled',
-			nextClass: 'next',
-			prevClass: 'prev',
-			lastClass: 'last',
-			firstClass: 'first'
-		}).on("page", function (event, num) {
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active',
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
 
-			$.ajax({
-				type: "POST",
-				url: "/management/campus",
-				data: {pageNo: num},
-				success: function (data) {
-                    let quoteList = data.data;
+        $.ajax({
+            type: "POST",
+            url: "/management/campus",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                let campusList = data.data;
+                let quoteAjax = `<table class="table table-bordered" id="campusTable">
+                    <thead>
+                        <th>Campus Id</th>
+                        <th>Abbr</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>`;
+                for (campus of campusList) {
+                    quoteAjax +=
+                        ` <tr>
+                                <td>${campus.campus_id}</td>
+                                <td>${campus.abbr}</td>
+                                <td>${campus.name}</td>
+                                <td>${campus.c_desc}</td>
+                                <td>
+                                    <i class="fas fa-edit text-dark cursor-pointer edit-campus"
+                                        data-campus-id="${campus.id}" data-toggle="modal"
+                                        data-target="#update-campus-modal"></i>
+                                    <a data-campus-id="${campus.id}"
+                                        class="fas fa-trash-alt text-danger delete-campus"></a>
+                                </td>
+                            </tr>`
+                }
+                quoteAjax += `<tbody></table>`
+                $("#campusTable").html(quoteAjax);
+            }
+        })
+    });
 
-                    console.log('quoteList-------------->',quoteList)
-
-					let quoteAjax = "";
-					for (quote of quoteList) {
-						if (islogin !== ""){
-                            //Display For LoggedinUser
-                            quoteAjax += `<div class="col-md-6 mt-5"><div class="product-box"> <div class="item-content"> <h6 class="item-title"> ${quote.countryname} forwarder seeks agent in ${quote.location} </h6> <p class="card-text">Type: <b>${quote.partnershiptype}</b></p><p class="item-paragraph"> <a href="tel:${quote.mobile}" class="btn btn-success rounded-0 btn-sm"><i class="fas fa-phone"></i></a> <a href="mailto:${quote.email}" class="btn btn-warning rounded-0 btn-sm"><i class="fas fa-envelope"></i></a> </p></div><a class="align-button-down" href="/quote/agent-request?id=${ quote.id}">View</a> </div></div>`
-						}
-						else {
-                            quoteAjax += `<div class="col-md-6 mt-5"><div class="product-box"> <div class="item-content"> <h6 class="item-title"> ${quote.countryname} forwarder seeks agent in ${ quote.location} </h6> <p class="card-text">Type: <b>${quote.partnershiptype}</b></p></div><a class="align-button-down" href="/quote/agent-request?id=${quote.id}">View</a> </div></div>`
-						}
-					}
-					$("#campusTable").html(quoteAjax);
-				}
-			})
-		});
 
 
+    //search feature
 
-
+    $("#searchkeyword").on('input',function(event){
+        let keyword = $("#searchkeyword").val()
+        $.ajax({
+            type: "POST",
+            url: "/management/campus-search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                console.log('campusList::::::',data)
+                let campusList = data.data;
+               
+                let quoteAjax = `<table class="table table-bordered" id="campusTable">
+                    <thead>
+                        <th>Campus Id</th>
+                        <th>Abbr</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>`;
+                for (campus of campusList) {
+                    quoteAjax +=
+                        ` <tr>
+                                <td>${campus.campus_id}</td>
+                                <td>${campus.abbr}</td>
+                                <td>${campus.name}</td>
+                                <td>${campus.c_desc}</td>
+                                <td>
+                                    <i class="fas fa-edit text-dark cursor-pointer edit-campus"
+                                        data-campus-id="${campus.id}" data-toggle="modal"
+                                        data-target="#update-campus-modal"></i>
+                                    <a data-campus-id="${campus.id}"
+                                        class="fas fa-trash-alt text-danger delete-campus"></a>
+                                </td>
+                            </tr>`
+                }
+                quoteAjax += `<tbody></table>`
+                $("#campusTable").html(quoteAjax);
+            }
+        })
+    })
+    
 </script>
 <%- include("../partials/footerEnd") %>

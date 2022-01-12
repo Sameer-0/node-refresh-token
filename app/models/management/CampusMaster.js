@@ -11,16 +11,9 @@ module.exports = class CampusMaster {
         this.campus_description = campus_description;
     }
 
-    static fetchAll(limit, offset) {
-        //return execPreparedStmt(`SELECT * FROM injection_test`)
+    static fetchAll() {
         return poolConnection.then(pool => {
-            //  let request = pool.request();
-            //  return  request.input('OFFSETCOUNT',sql.Int,limit)
-            //    .input('NEXTOFFSETCOUNT',sql.Int,offset)
             return pool.request().query(`select top 10  id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc from [dbo].campus_master where active = 1 order by id desc`)
-            //   .query(`select om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name as org_type
-            //    from [dbo].organization_master om join  [dbo].organization_type ot on om.org_type_id = ot.id  where ot.active = 1 and om.active = 1
-            //    ORDER BY om.id DESC OFFSET @OFFSETCOUNT ROWS FETCH NEXT @NEXTOFFSETCOUNT ROWS ONLY`)
         })
     }
 
@@ -80,6 +73,15 @@ module.exports = class CampusMaster {
             let request = pool.request();
             request.input('Id', sql.Int, id)
             return request.query(`update [dbo].campus_master set active = 0 where id = @Id`);
+        })
+    }
+
+    static searchCampus(keyword){
+        return poolConnection.then(pool => {
+            let request =  pool.request()
+            return request.input('keyword',sql.NVarChar(100), '%'+keyword+'%')
+            .query(`select top 10 id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc 
+            from [dbo].campus_master where campus_id like @keyword or campus_abbr like @keyword or campus_name_40_char like @keyword or campus_description like @keyword and active = 1`)
         })
     }
 }

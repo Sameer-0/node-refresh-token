@@ -22,6 +22,7 @@ router.post('/building/update', buildingcontroller.updateBuilding)
 // CAMPUS ROUTER
 router.get('/campus',campuscontroller.getCampusPage)
 router.post('/campus',[check('pageNo','Invalid Page No').exists().trim().escape()],campuscontroller.getCampusPage)
+router.post('/campus-search',[check('keyword','Invalid keyword').exists().trim().escape()],campuscontroller.searchCampus)
 router.post('/campus/add',campuscontroller.createCampus)
 router.post('/campus/fetch-single',campuscontroller.getCampusById)
 router.post('/campus/update',campuscontroller.updateCampus)

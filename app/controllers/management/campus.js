@@ -16,7 +16,6 @@ module.exports = {
 
         if (req.method == "GET") {
             Promise.all([CampusMaster.fetchAll(), CampusMaster.getCount()]).then(result => {
-                console.log('Page Count', result[1].recordset[0])
                 res.render('admin/management/campus/index', {
                     status: 200,
                     campusList: result[0].recordset,
@@ -24,18 +23,15 @@ module.exports = {
                 })
             })
         } else if (req.method == "POST") {
-            console.log('Page:::::::::::', req.body.pageNo)
             CampusMaster.fetchAllForPagination(req.body.pageNo).then(result => {
-                console.log('Page:::::::::::', result.recordset)
                 res.json({
                     status: "200",
                     message: "Quotes fetched",
-                    data: result.recordset
+                    data: result.recordset,
+                    length: result.recordset.length
                 })
             })
         }
-
-
     },
 
     createCampus: (req, res) => {
@@ -66,11 +62,35 @@ module.exports = {
     },
 
     deleteById: (req, res) => {
-
         CampusMaster.deleteById(req.body.id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset
+            })
+        })
+    },
+
+    searchCampus: (req, res) => {
+        CampusMaster.searchCampus(req.body.keyword).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Campus fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            res.json({
+                status: "500",
+                message: "Something went wrong",
             })
         })
     }
