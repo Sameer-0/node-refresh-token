@@ -73,7 +73,7 @@ module.exports = class OrganizationMaster {
 
     static getCount() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT COUNT(*) AS COUNT FROM [dbo].organization_master WHERE active = 1`)
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].organization_master WHERE active = 1`)
 
         })
     }

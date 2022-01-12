@@ -14,7 +14,7 @@ module.exports = class CampusMaster {
     static fetchAll() {
         return poolConnection.then(pool => {
             let request = pool.request()
-           .query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
+          return  request.query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
         })
     }
 
@@ -31,7 +31,7 @@ module.exports = class CampusMaster {
 
     static getCount() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT COUNT(*) AS COUNT FROM [dbo].campus_master WHERE active = 1`)
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].campus_master WHERE active = 1`)
         })
     }
 
