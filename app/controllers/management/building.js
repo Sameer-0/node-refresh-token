@@ -100,7 +100,7 @@ module.exports = {
     getAdd: (req, res) => {
         //  let errors = validationResult(req)
 
-        Buildings.Save(req.body)
+        Buildings.save(req.body)
         res.json({
             status: 200,
             message: "Success",
@@ -118,7 +118,7 @@ module.exports = {
     },
 
     updateBuilding: (req, res) => {
-        Buildings.Update(req.body).then(result => {
+        Buildings.update(req.body).then(result => {
             res.json({
                 status: 200
             })

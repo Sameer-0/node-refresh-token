@@ -13,15 +13,16 @@ module.exports = class CampusMaster {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP 10  id, campus_id, campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
+            let request = pool.request()
+           .query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
         })
     }
 
-    static fetchAllForPagination(pageNo){
+    static fetchChunkRows(pageNo) {
         return poolConnection.then(pool => {
-            let request =  pool.request()
-            return request.input('pageNo',sql.Int, pageNo)
-            .query(`SELECT id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc
             FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -31,7 +32,6 @@ module.exports = class CampusMaster {
     static getCount() {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT COUNT(*) AS COUNT FROM [dbo].campus_master WHERE active = 1`)
-
         })
     }
 
@@ -76,11 +76,11 @@ module.exports = class CampusMaster {
         })
     }
 
-    static searchCampus(keyword){
+    static searchCampus(keyword) {
         return poolConnection.then(pool => {
-            let request =  pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%'+keyword+'%')
-            .query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
+            let request = pool.request()
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
             FROM [dbo].campus_master WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1`)
         })
     }

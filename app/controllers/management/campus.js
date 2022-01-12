@@ -23,7 +23,7 @@ module.exports = {
                 })
             })
         } else if (req.method == "POST") {
-            CampusMaster.fetchAllForPagination(req.body.pageNo).then(result => {
+            CampusMaster.fetchChunkRows(req.body.pageNo).then(result => {
                 res.json({
                     status: "200",
                     message: "Quotes fetched",
