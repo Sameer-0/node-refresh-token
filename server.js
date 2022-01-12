@@ -70,10 +70,10 @@ app.get('/logout', (req, res, next) => {
 })
 
 
-// let store = new RedisStore({
-//     client: redisClient,
-//     ttl: 260
-// })
+let store = new RedisStore({
+    client: redisClient,
+    ttl: 260
+})
 
 
 
