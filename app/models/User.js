@@ -2,8 +2,7 @@ const {
     sql,
     poolConnection,
     execPreparedStmt
-} = require('../../config/db.js')
-
+} = require('../../config/db')
 
 module.exports = class User {
 

@@ -3,17 +3,16 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
-const AcademicYear = require('../../models/management/AcademicYear')
-const Buildings = require('../../models/management/Buildings')
-const OrganizationMaster = require("../../models/management/OrganizationMaster")
-const CampusMaster = require("../../models/management/CampusMaster")
-const SlotIntervalTimings = require("../../models/management/SlotIntervalTimings")
+const AcademicYear = require('../../models/AcademicYear')
+const Buildings = require('../../models/Buildings')
+const OrganizationMaster = require("../../models/OrganizationMaster")
+const CampusMaster = require("../../models/CampusMaster")
+const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const moment = require('moment');
 module.exports = {
 
     getIAcadYearPage: (req, res, next) => {
         AcademicYear.fetchAll().then(result => {
-    
                 let data = {
                     id: result.recordset[0].id,
                     name: result.recordset[0].name,
@@ -21,7 +20,7 @@ module.exports = {
                     start_date: moment(result.recordset[0].start_date).format('YYYY-MM-DD'),
                     end_date: moment(result.recordset[0].end_date).format('YYYY-MM-DD')
                 }
-                res.render('admin/management/academicYear/academicYear', {
+                res.render('management/academicYear/academicYear', {
                     academicDetails: data,
                     status: 200,
                     message: "Sucess"
@@ -69,7 +68,7 @@ module.exports = {
                 }
                 slotList.push(slot)
             })
-            res.render('admin/management/buildings/index', {
+            res.render('management/buildings/index', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
                 campusList: result[2].recordset,
@@ -100,7 +99,7 @@ module.exports = {
     getAdd: (req, res) => {
         //  let errors = validationResult(req)
 
-        Buildings.Save(req.body)
+        Buildings.save(req.body)
         res.json({
             status: 200,
             message: "Success",
@@ -109,7 +108,7 @@ module.exports = {
     },
 
     getSingleBuilding: (req, res) => {
-        Buildings.fetchbyId(req.body.buildingId).then(result => {
+        Buildings.fetchById(req.body.buildingId).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -118,7 +117,7 @@ module.exports = {
     },
 
     updateBuilding: (req, res) => {
-        Buildings.Update(req.body).then(result => {
+        Buildings.update(req.body).then(result => {
             res.json({
                 status: 200
             })
