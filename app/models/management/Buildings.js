@@ -5,30 +5,31 @@ const {
 } = require('../../../config/db')
 const moment = require('moment');
 module.exports = class Buildings {
-    constructor(building_name, building_number, total_floors, owner_id, handled_by, start_time, end_time, campus_id) {
-        this.building_name = building_name;
-        this.building_number = building_number;
-        this.total_floors = total_floors;
-        this.owner_id = owner_id;
-        this.handled_by = handled_by;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.campus_id = campus_id;
+    constructor(buildingName, buildingNumber, totalFloors, ownerId, handledBy, startTime, endTime, campusId) {
+        this.buildingName = buildingName;
+        this.buildingNumber = buildingNumber;
+        this.totalFloors = totalFloors;
+        this.ownerId = ownerId;
+        this.handledBy = handledBy;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.campusId = campusId;
     }
 
-    static Save(body) {
+    static save(body) {
 
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('Building_name', sql.NVarChar(255), body.buildingName)
-                .input('Building_number', sql.NVarChar(50), body.buildingNumber)
-                .input('Total_floors', sql.Int, body.floors)
-                .input('Owner_id', sql.Int, body.ownerId)
-                .input('Handled_by', sql.Int, body.handledById)
-                .input('Start_time', sql.Int, body.startTimeId)
-                .input('End_time', sql.Int, body.endTimeId)
-                .input('Campus_id', sql.Int, body.campusId)
-            let stmt = `insert into [dbo].buildings(building_name, building_number,total_floors,owner_id,handled_by,start_time,end_time,campus_id) values (@Building_name, @Building_number,@Total_floors,@Owner_id,@Handled_by,@Start_time,@End_time,@Campus_id)`
+            request.input('buildingName', sql.NVarChar(255), body.buildingName)
+                .input('buildingNumber', sql.NVarChar(50), body.buildingNumber)
+                .input('totalFloors', sql.Int, body.floors)
+                .input('ownerId', sql.Int, body.ownerId)
+                .input('handledBy', sql.Int, body.handledById)
+                .input('startTime', sql.Int, body.startTimeId)
+                .input('endTime', sql.Int, body.endTimeId)
+                .input('campusId', sql.Int, body.campusId)
+
+            let stmt = `INSERT INTO [dbo].buildings (building_name, building_number, total_floors, owner_id, handled_by, start_time, end_time, campus_id) VALUES (@buildingName, @buildingNumber, @totalFloors, @ownerId, @handledBy, @startTime, @endTime, @campusId)`
             return request.query(stmt)
         }).catch(error => {
             throw error
@@ -38,32 +39,34 @@ module.exports = class Buildings {
     static fetchAll() {
         //return execPreparedStmt(`SELECT * FROM injection_test`)
         return poolConnection.then(pool => {
-            return pool.request().query(`select b.id as building_id, b.building_name, b.building_number,b.total_floors, b.owner_id,b.handled_by, b.start_time ,b.end_time, b.campus_id from [dbo].buildings b`)
+            return pool.request().query(`SELECT b.id AS building_id, b.building_name, b.building_number, b.total_floors, b.owner_id, b.handled_by, b.start_time, b.end_time, b.campus_id FROM [dbo].buildings b`)
         })
     }
 
     static fetchbyId(id) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('Id', sql.Int, id)
-            return request.query(`select b.id, b.building_name, b.building_number,b.total_floors, b.owner_id,b.handled_by, b.start_time ,b.end_time, b.campus_id from [dbo].buildings b where id =  @Id`)
+            request.input('id', sql.Int, id)
+            return request.query(`SELECT b.id, b.building_name, b.building_number, b.total_floors, b.owner_id, b.handled_by, b.start_time, b.end_time, b.campus_id FROM [dbo].buildings b WHERE id =  @id`)
         })
     }
 
 
-    static Update(body) {
+    static update(body) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('buildingid', sql.NVarChar(50), body.buildingid)
-                .input('Building_name', sql.NVarChar(255), body.buildingName)
-                .input('Building_number', sql.NVarChar(50), body.buildingNumber)
-                .input('Total_floors', sql.Int, body.floors)
-                .input('Owner_id', sql.Int, body.ownerId)
-                .input('Handled_by', sql.Int, body.handledById)
-                .input('Start_time', sql.Int, body.startTimeId)
-                .input('End_time', sql.Int, body.endTimeId)
-                .input('Campus_id', sql.Int, body.campusId)
-            let stmt = `update [dbo].buildings set building_name = @Building_name, building_number = @Building_number,total_floors = @Total_floors, owner_id = @Owner_id,handled_by = @Handled_by,start_time  = @Start_time,end_time = @End_time, campus_id = @Campus_id where id = @buildingid`
+
+            request.input('buildingId', sql.NVarChar(50), body.buildingId)
+                .input('buildingName', sql.NVarChar(255), body.buildingName)
+                .input('buildingNumber', sql.NVarChar(50), body.buildingNumber)
+                .input('totalFloors', sql.Int, body.floors)
+                .input('ownerId', sql.Int, body.ownerId)
+                .input('handledBy', sql.Int, body.handledById)
+                .input('startTime', sql.Int, body.startTimeId)
+                .input('endTime', sql.Int, body.endTimeId)
+                .input('campusId', sql.Int, body.campusId)
+
+            let stmt = `UPDATE [dbo].buildings SET building_name = @buildingName, building_number = @buildingNumber, total_floors = @totalFloors, owner_id = @ownerId, handled_by = @handledBy, start_time  = @startTime, end_time = @endTime, campus_id = @campusId WHERE id = @buildingId`
             return request.query(stmt)
         }).catch(error => {
             throw error

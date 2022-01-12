@@ -3,214 +3,68 @@
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
 <!--HEADER END-->
-<div class="col-12 dashboardContent">
-    <!--DASHBOARD CONTENT START-->
-    <div class="card">
-        <div class="card-header text-uppercase d-flex">
-            <h5>Campus List</h5>
+<div class="wrapper">
+    <div class="main-content">
+        <!--DASHBOARD CONTENT START-->
+        <div class="card">
+            <div class="card-header text-uppercase d-flex align-items-center">
+                <h5>Room Data</h5>
 
-            <button class="btn btn-success ml-auto" data-toggle="modal" data-target="#add-campus-modal"><i
-                    class="fas fa-plus"></i> Add New</button>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <th>Id</th>
-                        <th>Abbr</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        <% for (let campus of campusList) { %>
-                        <tr>
-                            <td><%- campus.campus_id %></td>
-                            <td><%- campus.abbr %></td>
-                            <td><%- campus.name %></td>
-                            <td><%- campus.c_desc %></td>
-                            <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-campus"
-                                    data-campus-id="<%- campus.id %>" data-toggle="modal"
-                                    data-target="#update-campus-modal"></i>
-                                <a href="/management/campus/delete?id=<%- campus.id %>"
-                                    class="fas fa-trash-alt text-danger"></a>
-                            </td>
-                        </tr>
+                <button class="btn btn-success ms-auto " data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
+                        class="fas fa-plus"></i> Add New</button>
+            </div>
+            <div class="card-body">
+                <input type="text" id="searchkeyword">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="RoomDataTable">
+                        <thead>
+                            <th>Room No</th>
+                            <th>Building</th>
+                            <th>Type</th>
+                            <th>Floor</th>
+                            <th>Capacity</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Is Basement</th>
+                            <th>Handled By</th>
+                            <th>Campus</th>
+                            <th>Is Processed</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <% for (let room of roomList) { %>
+                                <tr>
+                                    <td><%- room.room_number %></td>
+                                    <td><%- room.building_name %></td>
+                                    <td><%- room.room_type %></td>
+                                    <td><%- room.floor_number %></td>
+                                    <td><%- room.capacity %></td>
+                                    <td><%- room.start_time %></td>
+                                    <td><%- room.end_time %></td>
+                                    <td><%- room.is_basement ? 'Yes' : 'No' %></td>
+                                    <td><%- room.handled_by %></td>
+                                    <td><%- room.campus %></td>
+                                    <td><%- room.is_processed ? 'Yes' : 'No' %></td>
+                                    <td>
+                                        <i class="fas fa-edit text-dark cursor-pointer edit-room" data-room-id="<%- room.id %>"
+                                            data-toggle="modal" data-target="#update-room-modal"></i>
+                                        <a href="/management/room/delete?id=<%- room.id %>"
+                                            class="fas fa-trash-alt text-danger del-entry"></a>
+                                    </td>
+                                </tr>
+        
+                                <% } %>
+                        </tbody>
+                    </table>
 
-                        <% } %>
-                    </tbody>
-                </table>
+                </div>
+
             </div>
         </div>
-    </div>
-    <!--DASHBOARD CONTENT END-->
-</div>
-
-
-
-<!-- ADD NEW CAMPUS MODAL -->
-<div class="modal fade" id="add-campus-modal" tabindex="-1" role="dialog" aria-labelledby="add-building-modal"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-info">
-                <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="/management/campus/add" method="POST">
-                <div class="modal-body">
-
-                    <div class="form-row mt-4">
-                        <input name="campusId" type="number" class="form-control" placeholder="Campus Id" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusAbbr" type="text" class="form-control" placeholder="Campus Abbr" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusName" type="text" class="form-control" placeholder="Campus Name" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusDesc" type="text" class="form-control" placeholder="Campus Description">
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Create Campus</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-<!-- UPDATE CAMPUS MODAL -->
-<div class="modal fade" id="update-campus-modal" tabindex="-1" role="dialog" aria-labelledby="update-campus-modal"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-info">
-                <h5 class="modal-title text-white" id="update-campus-modal-title">Update Campus</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="/management/campus/update" method="POST">
-                <div class="modal-body">
-                    <input name="id" type="hidden" required>
-                    <div class="form-row mt-4">
-                        <input name="campusId" type="number" class="form-control" placeholder="Campus Id" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusAbbr" type="text" class="form-control" placeholder="Campus Abbr" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusName" type="text" class="form-control" placeholder="Campus Name" required>
-                    </div>
-
-                    <div class="form-row mt-4">
-                        <input name="campusDesc" type="text" class="form-control" placeholder="Campus Description">
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Update Campus</button>
-                </div>
-            </form>
-        </div>
+        <!--DASHBOARD CONTENT END-->
     </div>
 </div>
 
 
 
-
-
-<%- include("../partials/footer") %>
-<script>
-    $('.modalSelect2').select2({
-        dropdownParent: $('#add-org-modal')
-    });
-
-    $('.modalSelect2Update').select2({
-        dropdownParent: $('#update-org-modal')
-    });
-
-    $('.edit-campus').on('click', function () {
-        $.ajax({
-            url: '/management/campus/fetch-single',
-            method: 'POST',
-            type: 'JSON',
-            data: {
-                id: $(this).attr('data-campus-id')
-            },
-            success: data => {
-
-                let campus = data.campusData;
-                console.log('Success: ', campus)
-
-                $(`#update-campus-modal input[name='id']`).val(campus.id)
-                $(`#update-campus-modal input[name='campusId']`).val(campus.campus_id)
-                $(`#update-campus-modal input[name='campusAbbr']`).val(campus.abbr)
-                $(`#update-campus-modal input[name='campusName']`).val(campus.name)
-                $(`#update-campus-modal input[name='campusDesc']`).val(campus.c_desc)
-
-            },
-            error: err => {
-                console.log('Error: ', err)
-            }
-        })
-    })
-
-
-
-
-    function callDatatable() {
-        if ($('.call-datatable').length > 0) {
-            //CALL DATATABLE
-
-            $('.call-datatable').DataTable({
-                autoFill: false,
-                //scrollY: 400,
-                scrollX: '100%',
-                deferRender: true,
-                scrollY: true,
-                scrollX: true,
-                paging: true,
-                initComplete: function () {
-                    this.api().columns().every(function () {
-                        var column = this;
-                        var select = $(
-                                '<select><option value="">-Select-</option></select>'
-                            )
-                            .appendTo($(column.footer()).empty())
-                            .on('change', function () {
-                                var val = $.fn.dataTable.util.escapeRegex(
-                                    $(this).val()
-                                );
-
-                                column
-                                    .search(val ? '^' + val + '$' : '',
-                                        true, false)
-                                    .draw();
-                            });
-
-                        column.data().unique().sort().each(function (d, j) {
-                            select.append('<option value="' + d +
-                                '">' + d + '</option>')
-                        });
-                    });
-                }
-            })
-            //CALL DATATABLE END
-        }
-    }
-    callDatatable();
-</script>
 <%- include("../partials/footerEnd") %>

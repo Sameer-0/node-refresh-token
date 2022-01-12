@@ -41,4 +41,5 @@ router.get('/',dashcontroller.getDashboard)
 
 //ROOM ROUTER
 router.get('/room',roomcontroller.getPage)
+
 module.exports = router;
