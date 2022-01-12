@@ -28,7 +28,8 @@ module.exports = class CampusMaster {
         return poolConnection.then(pool => {
             let request =  pool.request()
             return request.input('pageno',sql.Int, pageno)
-            .query(`select top 10  id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc from [dbo].campus_master where active = 1 order by id desc`)
+            .query(`select id, campus_id, campus_abbr as abbr, campus_name_40_char as name, campus_description as c_desc
+            from [dbo].campus_master where active = 1 order by id desc OFFSET (@pageno - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
