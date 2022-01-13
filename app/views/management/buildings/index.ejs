@@ -48,6 +48,14 @@
                         <% } %>
                     </tbody>
                 </table>
+                  <div class="d-flex justify-content-between">
+                        <div>
+                            <p>Total entries:<%- pageCount %></p>
+                        </div>
+                        <div>
+                            <p id="pagination"></p>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -143,6 +151,7 @@
 
 
 <%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
 
 
@@ -247,6 +256,76 @@
         })
     })
 
+
+        //Pagination Here
+    let pageCount = `<%- pageCount %>`
+    console.log("Page Count=====>>>", pageCount)
+    let pageNos = Math.ceil(Number(pageCount) / 10)
+
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active',
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
+
+        $.ajax({
+            type: "POST",
+            url: "/management/building",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                let buildingList = data.data;
+                console.log('buildingList:::::::>>',buildingList)
+                let buildingAjax = `<table class="table table-bordered" id="buildingTable">
+                    <thead>
+                        <th>Name</th>
+                        <th>Number</th>
+                        <th>Floors</th>
+                        <th>Owner</th>
+                        <th>Handled By</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Campus</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>`;
+                for (building of buildingList) {
+                    buildingAjax +=
+                        `<tr>
+                            <td>${building.building_name}</td>
+                            <td>${building.building_number}</td>
+                            <td>${building.total_floors}</td>
+                            <td>${building.owner}</td>
+                            <td>${building.handled_by}</td>
+                            <td>${building.start_time}</td>
+                            <td>${building.end_time}</td>
+                            <td>${building.campus_abbr}</td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                                    data-building-id="${building.building_id}" ></i>
+                                <a data-building-id="${building.building_id}"
+                                    class="fas fa-trash-alt text-danger delete-building"></a>
+                            </td>
+                        </tr>`
+                }
+                buildingAjax += `<tbody></table>`
+                $("#buildingTable").html(buildingAjax);
+            }
+        })
+    });
 
 
 </script>

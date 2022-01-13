@@ -16,6 +16,7 @@ router.post('/academic-year', buildingcontroller.updateAcadYear)
 
 // BUILDING ROUTER
 router.get('/building', buildingcontroller.getBuildingPage)
+router.post('/building',[check('pageNo','Invalid Page No').exists().trim().escape()],buildingcontroller.getBuildingPage)
 router.post('/building/add', buildingcontroller.getAdd)
 router.post('/building/fetch-single', buildingcontroller.getSingleBuilding)
 router.post('/building/update', buildingcontroller.updateBuilding)

@@ -82,4 +82,19 @@ module.exports = class Buildings {
             throw error
         })
     }
+
+
+        static fetchChunkRows(rowcount, pageNo) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+            .query(`SELECT b.id AS building_id, b.building_name, b.building_number, b.total_floors, org_o.org_abbr AS owner, org_h.org_abbr handled_by, st.start_time AS start_time, et.end_time AS end_time, c.campus_abbr FROM dbo.buildings b INNER JOIN dbo.organization_master org_o ON org_o.id = b.owner_id INNER JOIN dbo.organization_master org_h ON org_h.id = b.handled_by INNER JOIN dbo.slot_interval_timings st ON st.id = b.start_time INNER JOIN dbo.slot_interval_timings et ON et.id = b.end_time INNER JOIN dbo.campus_master c ON c.id = b.campus_id WHERE b.active = 1 AND st.active = 1 AND org_h.active = 1 ORDER BY b.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+        static getCount() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].buildings WHERE active = 1`)
+        })
+    }
 }
