@@ -15,7 +15,6 @@ module.exports = {
 
         if (req.method == "GET") {
             Promise.all([CampusMaster.fetchAll(10), CampusMaster.getCount()]).then(result => {
-                console.log('result[1].recordset[0].count',result[1].recordset[0])
                 res.render('management/campus/index', {
                     status: 200,
                     campusList: result[0].recordset,

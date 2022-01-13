@@ -9,10 +9,11 @@ const campuscontroller = require('../../controllers/management/campus');
 const orgcontroller = require('../../controllers/management/organization');
 const dashcontroller = require('../../controllers/management/dashboard');
 const roomcontroller = require('../../controllers/management/room');
+const acadYearcontroller = require('../../controllers/management/academicYear');
 
-
-router.get('/academic-year', buildingcontroller.getIAcadYearPage)
-router.post('/academic-year', buildingcontroller.updateAcadYear)
+//ACADEMIC YEAR ROUTER
+router.get('/academic-year', acadYearcontroller.getAcadYearPage)
+router.post('/academic-year', acadYearcontroller.updateAcadYear)
 
 // BUILDING ROUTER
 router.get('/building', buildingcontroller.getBuildingPage)
