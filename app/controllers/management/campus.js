@@ -14,7 +14,7 @@ module.exports = {
     getCampusPage: (req, res) => {
 
         if (req.method == "GET") {
-            Promise.all([CampusMaster.fetchAll(), CampusMaster.getCount()]).then(result => {
+            Promise.all([CampusMaster.fetchAll(10), CampusMaster.getCount()]).then(result => {
                 console.log('result[1].recordset[0].count',result[1].recordset[0])
                 res.render('management/campus/index', {
                     status: 200,
@@ -71,7 +71,9 @@ module.exports = {
     },
 
     searchCampus: (req, res) => {
-        CampusMaster.searchCampus(req.body.keyword).then(result => {
+        //here 10is rowcount
+        let rowcont  = 10;
+        CampusMaster.searchCampus(rowcont, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

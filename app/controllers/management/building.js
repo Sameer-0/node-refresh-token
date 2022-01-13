@@ -40,26 +40,26 @@ module.exports = {
     },
 
     getBuildingPage: (req, res) => {
-        Promise.all([Buildings.fetchAll(), OrganizationMaster.fetchAll(), CampusMaster.fetchAll(), SlotIntervalTimings.fetchAll()]).then(result => {
+        let rowcount = 10
+        Promise.all([Buildings.fetchAll(rowcount), OrganizationMaster.fetchAll(), CampusMaster.fetchAll(), SlotIntervalTimings.fetchAll()]).then(result => {
             let buildingList = []
             let slotList = []
-            // result[0].recordset.map(item => {
-            //     let buildings = {
-            //         id: item.id,
-            //         building_name: item.building_name,
-            //         building_number: item.building_number,
-            //         total_floors: item.total_floors,
-            //         owner_id: item.owner_id,
-            //         handled_by: item.handled_by,
-            //         start_time: moment(item.start_time).format('LTS'),
-            //         end_time: moment(item.end_time).format('LTS'),
-            //         campus_id: item.campus_id
-            //     }
-            //     buildingList.push(buildings)
-            // })
+            result[0].recordset.map(item => {
+                let buildings = {
+                    building_id: item.id,
+                    building_name: item.building_name,
+                    building_number: item.building_number,
+                    total_floors: item.total_floors,
+                    owner: item.owner,
+                    handled_by: item.handled_by,
+                    start_time: moment(item.start_time).format('LTS'),
+                    end_time: moment(item.end_time).format('LTS'),
+                    campus_abbr: item.campus_abbr
+                }
+                buildingList.push(buildings)
+            })
 
             result[3].recordset.map(item => {
-
                 let slot = {
                     id: item.id,
                     start_time: moment(item.start_time).format('LTS'),
@@ -69,7 +69,7 @@ module.exports = {
                 slotList.push(slot)
             })
             res.render('management/buildings/index', {
-                buildingList: result[0].recordset,
+                buildingList: buildingList,
                 orgList: result[1].recordset,
                 campusList: result[2].recordset,
                 timeList: slotList,

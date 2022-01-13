@@ -39,8 +39,7 @@
                             <td><%- building.campus_abbr %></td>
                             <td>
                                 <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                    data-building-id="<%- building.building_id %>" data-toggle="modal"
-                                    data-target="#update-building-modal"></i>
+                                    data-building-id="<%- building.building_id %>" ></i>
                                 <a href="/management/building/delete?id=<%- building.building_id %>"
                                     class="fas fa-trash-alt text-danger"></a>
                             </td>
@@ -145,14 +144,7 @@
 
 <%- include("../partials/footer") %>
 <script>
-    $('.modalSelect2').select2({
-        dropdownParent: $('#add-building-modal')
-        
-    });
 
-    $('.modalSelect2Update').select2({
-        dropdownParent: $('#update-building-modal')
-    });
 
     $(".addBuilding").on('click', function () {
         $.ajax({
@@ -183,6 +175,7 @@
     $('#buildingTable').on('click', '.edit-building', function () {
         $(".addBuilding").addClass('d-none')
         $(".updateBuilding").removeClass('d-none')
+        console.log('buildingId:::::::::::>>',$(this).attr('data-building-id'))
         $.ajax({
             url: '/management/building/fetch-single',
             method: 'POST',
@@ -242,49 +235,5 @@
 
 
 
-
-    function callDatatable() {
-        if ($('.call-datatable').length > 0) {
-            //CALL DATATABLE
-
-            $('.call-datatable').DataTable(
-            //     {
-            //     autoFill: false,
-            //     //scrollY: 400,
-            //     scrollX: '100%',
-            //     deferRender: true,
-            //     scrollY: true,
-            //     scrollX: true,
-            //     paging: true,
-            //     initComplete: function () {
-            //         this.api().columns().every(function () {
-            //             var column = this;
-            //             var select = $(
-            //                     '<select><option value="">-Select-</option></select>'
-            //                 )
-            //                 .appendTo($(column.footer()).empty())
-            //                 .on('change', function () {
-            //                     var val = $.fn.dataTable.util.escapeRegex(
-            //                         $(this).val()
-            //                     );
-
-            //                     column
-            //                         .search(val ? '^' + val + '$' : '',
-            //                             true, false)
-            //                         .draw();
-            //                 });
-
-            //             column.data().unique().sort().each(function (d, j) {
-            //                 select.append('<option value="' + d +
-            //                     '">' + d + '</option>')
-            //             });
-            //         });
-            //     }
-            // }
-            )
-            //CALL DATATABLE END
-        }
-    }
-    callDatatable();
 </script>
 <%- include("../partials/footerEnd") %>
