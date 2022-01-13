@@ -19,7 +19,7 @@ router.get('/building', buildingcontroller.getBuildingPage)
 router.post('/building/add', buildingcontroller.getAdd)
 router.post('/building/fetch-single', buildingcontroller.getSingleBuilding)
 router.post('/building/update', buildingcontroller.updateBuilding)
-
+router.post('/building/delete-single',buildingcontroller.deleteById)
 // CAMPUS ROUTER
 router.get('/campus',campuscontroller.getCampusPage)
 router.post('/campus',[check('pageNo','Invalid Page No').exists().trim().escape()],campuscontroller.getCampusPage)

@@ -40,8 +40,8 @@
                             <td>
                                 <i class="fas fa-edit text-dark cursor-pointer edit-building"
                                     data-building-id="<%- building.building_id %>" ></i>
-                                <a href="/management/building/delete?id=<%- building.building_id %>"
-                                    class="fas fa-trash-alt text-danger"></a>
+                                <a data-building-id="<%- building.building_id %>"
+                                    class="fas fa-trash-alt text-danger delete-building"></a>
                             </td>
                         </tr>
 
@@ -62,7 +62,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="add-building-modal-title">Modal title</h5>
+          <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -173,9 +173,9 @@
 
 
     $('#buildingTable').on('click', '.edit-building', function () {
+        $("#add-building-modal-title").html('Update Building')
         $(".addBuilding").addClass('d-none')
         $(".updateBuilding").removeClass('d-none')
-        console.log('buildingId:::::::::::>>',$(this).attr('data-building-id'))
         $.ajax({
             url: '/management/building/fetch-single',
             method: 'POST',
@@ -205,8 +205,6 @@
     })
 
 
-
-
     $(".updateBuilding").on('click', function () {
         $.ajax({
             url: '/management/building/update',
@@ -224,8 +222,24 @@
                 campusId: $("#campusId").val(),
             },
             success: data => {
-                console.log('Data:::::::::>',data)
             location.reload()
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
+
+       $('#buildingTable').on('click', '.delete-building', function () {
+        $.ajax({
+            url: '/management/building/delete-single',
+            method: 'POST',
+            type: 'JSON',
+            data: {
+                buildingId: $(this).attr('data-building-id')
+            },
+            success: data => {
+                location.reload()        
             },
             error: err => {
                 console.log('Error: ', err)

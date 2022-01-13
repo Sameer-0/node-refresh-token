@@ -46,7 +46,7 @@ module.exports = {
             let slotList = []
             result[0].recordset.map(item => {
                 let buildings = {
-                    building_id: item.id,
+                    building_id: item.building_id,
                     building_name: item.building_name,
                     building_number: item.building_number,
                     total_floors: item.total_floors,
@@ -118,6 +118,14 @@ module.exports = {
 
     updateBuilding: (req, res) => {
         Buildings.update(req.body).then(result => {
+            res.json({
+                status: 200
+            })
+        })
+    },
+
+    deleteById:(req, res)=>{
+        Buildings.softDeleteById(req.body.buildingId).then(result => {
             res.json({
                 status: 200
             })
