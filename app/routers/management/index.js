@@ -9,17 +9,19 @@ const campuscontroller = require('../../controllers/management/campus');
 const orgcontroller = require('../../controllers/management/organization');
 const dashcontroller = require('../../controllers/management/dashboard');
 const roomcontroller = require('../../controllers/management/room');
+const acadYearcontroller = require('../../controllers/management/academicYear');
 
-
-router.get('/academic-year', buildingcontroller.getIAcadYearPage)
-router.post('/academic-year', buildingcontroller.updateAcadYear)
+//ACADEMIC YEAR ROUTER
+router.get('/academic-year', acadYearcontroller.getAcadYearPage)
+router.post('/academic-year', acadYearcontroller.updateAcadYear)
 
 // BUILDING ROUTER
 router.get('/building', buildingcontroller.getBuildingPage)
+router.post('/building',[check('pageNo','Invalid Page No').exists().trim().escape()],buildingcontroller.getBuildingPage)
 router.post('/building/add', buildingcontroller.getAdd)
 router.post('/building/fetch-single', buildingcontroller.getSingleBuilding)
 router.post('/building/update', buildingcontroller.updateBuilding)
-
+router.post('/building/delete-single',buildingcontroller.deleteById)
 // CAMPUS ROUTER
 router.get('/campus',campuscontroller.getCampusPage)
 router.post('/campus',[check('pageNo','Invalid Page No').exists().trim().escape()],campuscontroller.getCampusPage)
