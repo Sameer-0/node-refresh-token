@@ -13,9 +13,9 @@ module.exports = class OrganizationMaster {
         this.parentId = parentId;
     }
 
-    static fetchAll() {
+    static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
             FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1`)
         })
     }
