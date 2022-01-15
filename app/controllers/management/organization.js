@@ -8,7 +8,7 @@ const OrganizationType = require("../../models/OrganizationType")
 module.exports = {
     getPage: (req, res) => {
         if (req.method == "GET") {
-            Promise.all([OrganizationMaster.fetchAll(), OrganizationType.fetchAll(), OrganizationMaster.getCount()]).then(result => {
+            Promise.all([OrganizationMaster.fetchAll(10), OrganizationType.fetchAll(), OrganizationMaster.getCount()]).then(result => {
                 res.render('management/organization/index', {
                     orgList: result[0].recordset,
                     orgtypeList: result[1].recordset,
@@ -16,7 +16,12 @@ module.exports = {
                 })
             })
         } else if (req.method == "POST") {
-
+            OrganizationMaster.fetchChunkRows(req.body.pageNo).then(result => {
+                res.json({
+                    status: 200,
+                    data: result.recordset,
+                })
+            })
         }
     },
 

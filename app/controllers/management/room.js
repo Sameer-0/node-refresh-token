@@ -16,8 +16,8 @@ module.exports = {
     getPage: (req, res, next) => {
 
         roomModel.fetchAll().then(result => {
-            console.log('result::', result)
-            res.render('admin/management/room/index.ejs' , {
+            console.log('result::', result.recordset)
+            res.render('management/room/index' , {
                 roomList: result.recordset
             })
         }).catch(err => {
