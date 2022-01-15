@@ -28,14 +28,14 @@
                         <% let count = 1%>
                         <%roomTypes.map(list=>{%>
                         <tr>
-                            <td><%-count++%></td>
-                            <td><%-list.name%></td>
-                            <td><%-list.description%></td>
+                            <td><%- count++ %></td>
+                            <td><%- list.name %></td>
+                            <td><%- list.description %></td>
                             <td>
                                 <i class="fas fa-edit text-dark cursor-pointer edit-roomtype"
                                     data-roomtype-id="<%- list.roomtypeid %>"></i>
-                                <a  data-roomtype-id="<%- list.roomtypeid %>"
-                                    class="fas fa-trash-alt text-danger delete-org"></a>
+                                <a data-roomtype-id="<%- list.roomtypeid %>"
+                                    class="fas fa-trash-alt text-danger delete-roomtype"></a>
                             </td>
                         </tr>
                         <%})%>
@@ -60,6 +60,7 @@
                 <div class="mb-3">
                     <label for="roomName" class="form-label">Enter Room Name</label>
                     <input type="text" class="form-control" id="roomName" placeholder="Enter Name">
+                    <input type="hidden" id="roomtypeid">
                 </div>
 
                 <div class="mb-3">
@@ -72,7 +73,7 @@
             <div class="modal-footer">
                 <span class="errorMsg"></span>
                 <button type="submit" class="btn btn-danger createRoomType">Create Room</button>
-                <button type="submit" class="btn btn-danger updateOrg d-none">Update Room</button>
+                <button type="submit" class="btn btn-danger updateRoomType d-none">Update Room</button>
             </div>
         </div>
     </div>
@@ -108,8 +109,9 @@
         })
 
         //edit
-        $("#rootTypeTable").on('click','.edit-roomtype', function () {
-              console.log('Data::::::::::::>>')
+        $("#rootTypeTable").on('click', '.edit-roomtype', function () {
+            $(".createRoomType").addClass('d-none')
+            $(".updateRoomType").removeClass('d-none')
             $.ajax({
                 url: '/management/room/roomtype/fetch-single',
                 method: 'POST',
@@ -118,8 +120,57 @@
                     roomtypeid: $(this).attr("data-roomtype-id")
                 },
                 success: data => {
-                  console.log('Data::::::::::::>>',data)
+                    console.log('Data::::::::::::>>', data.data)
+                    let room = data.data
+                    $('#roomtypeid').val(room.roomtypeid),
+                        $('#roomName').val(room.roomName),
+                        $('#description').val(room.description),
+                        $("#add-room-modal").modal('show')
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
 
+
+        //Update 
+        $(".updateRoomType").one('click', function () {
+            $.ajax({
+                url: '/management/room/roomtype/update-single',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    roomtypeid: $("#roomtypeid").val(),
+                    roomName: $('#roomName').val(),
+                    description: $('#description').val(),
+                },
+                success: data => {
+                    if (data.status == 200) {
+                        location.reload()
+                    } else {
+                        $(".errorMsg").html(data.message)
+                    }
+
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+
+        //Delete
+        $("#rootTypeTable").on('click', '.delete-roomtype', function () {
+            $.ajax({
+                url: '/management/room/roomtype/delete-single',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    roomtypeid: $(this).attr("data-roomtype-id")
+                },
+                success: data => {
+                  location.reload()
                 },
                 error: err => {
                     console.log('Error: ', err)

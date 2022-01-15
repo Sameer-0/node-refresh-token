@@ -34,10 +34,10 @@ module.exports = class RoomTypes {
     static update(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('id', sql.Int, body.id)
-                .input('name', sql.NVarChar(100), body.name)
+            return request.input('roomTypeId', sql.Int, body.roomtypeid)
+                .input('roomName', sql.NVarChar(100), body.roomName)
                 .input('description', sql.NVarChar(200), body.description)
-                .query(`UPDATE [dbo].room_types SET name = @name, description = @description  WHERE id = @id`)
+                .query(`UPDATE [dbo].room_types SET name = @roomName, description = @description  WHERE id = @roomTypeId`)
         })
     }
 
@@ -45,7 +45,7 @@ module.exports = class RoomTypes {
     static delete(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('id', sql.Int, body.id)
+            return request.input('id', sql.Int, id)
                 .query(`UPDATE [dbo].room_types SET active = 0  WHERE id = @id`)
         })
     }
@@ -54,7 +54,7 @@ module.exports = class RoomTypes {
           return poolConnection.then(pool => {
               let request =  pool.request()
             return   request.input('roomTypeId', sql.Int, id)
-           .query(`SELECT  rt.id as roomtypeid, rt.name, rt.description FROM [dbo].room_types rt WHERE rt.id  =  @roomTypeId`)
+           .query(`SELECT  rt.id as roomtypeid, rt.name as roomName, rt.description FROM [dbo].room_types rt WHERE rt.id  =  @roomTypeId`)
         })
     }
 

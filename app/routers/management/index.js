@@ -57,5 +57,7 @@ router.get('/room', roomcontroller.getPage)
 router.get('/room/roomtype', roomcontroller.getRoomTypePage)
 router.post('/room/roomtype/add', roomcontroller.createRoomType)
 router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)
+router.post('/room/roomtype/update-single', roomcontroller.updateRoomTypeById)
+router.post('/room/roomtype/delete-single', roomcontroller.deleteRoomTypeById)
 
 module.exports = router;

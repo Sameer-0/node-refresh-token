@@ -44,5 +44,23 @@ module.exports = {
                 data: result.recordset[0]
             })
         })
+    },
+
+    updateRoomTypeById:(req, res)=>{
+               RoomTypes.update(req.body.roomtypeid).then(result => {
+            res.json({
+                status: 200,
+                message: "Success"
+            })
+        }) 
+    },
+
+        deleteRoomTypeById:(req, res)=>{
+               RoomTypes.delete(req.body.roomtypeid).then(result => {
+            res.json({
+                status: 200,
+                message: "Success"
+            })
+        }) 
     }
 }
