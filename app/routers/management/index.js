@@ -54,5 +54,8 @@ router.get('/', dashcontroller.getDashboard)
 
 //ROOM ROUTER
 router.get('/room', roomcontroller.getPage)
+router.get('/room/roomtype', roomcontroller.getRoomTypePage)
+router.post('/room/roomtype/add', roomcontroller.createRoomType)
+router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)
 
 module.exports = router;
