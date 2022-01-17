@@ -11,10 +11,10 @@ module.exports = class CampusMaster {
         this.campusDesc = campusDesc;
     }
 
-    static fetchAll() {
+    static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             let request = pool.request()
-          return  request.query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
+          return  request.query(`SELECT TOP ${Number(rowcount)} id, campus_id, campus_abbr , campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
         })
     }
 

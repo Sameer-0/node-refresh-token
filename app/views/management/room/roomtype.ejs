@@ -1,0 +1,184 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+<div class="wrapper">
+    <div class="main-content">
+        <!--DASHBOARD CONTENT START-->
+        <div class="card">
+            <div class="card-header text-uppercase d-flex">
+                <h5>ROOM TYPE List</h5>
+
+                <!-- <button class="btn btn-success ml-auto" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
+                    class="fas fa-plus"></i> Add New</button> -->
+                <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+                    data-bs-target="#add-room-modal">
+                    <i class="fas fa-plus"></i> Add New</button>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="rootTypeTable">
+                    <thead>
+                        <th>Sr No.</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        <% let count = 1%>
+                        <%roomTypes.map(list=>{%>
+                        <tr>
+                            <td><%- count++ %></td>
+                            <td><%- list.name %></td>
+                            <td><%- list.description %></td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-roomtype"
+                                    data-roomtype-id="<%- list.roomtypeid %>"></i>
+                                <a data-roomtype-id="<%- list.roomtypeid %>"
+                                    class="fas fa-trash-alt text-danger delete-roomtype"></a>
+                            </td>
+                        </tr>
+                        <%})%>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--DASHBOARD CONTENT END-->
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="add-room-modal" tabindex="-1" aria-labelledby="add-room-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="add-room-modal">ADD ROOM TYPE</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="roomName" class="form-label">Enter Room Name</label>
+                    <input type="text" class="form-control" id="roomName" placeholder="Enter Name">
+                    <input type="hidden" id="roomtypeid">
+                </div>
+
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Enter Description</label>
+                    <input type="text" class="form-control" id="description" placeholder="Enter Description">
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <span class="errorMsg"></span>
+                <button type="submit" class="btn btn-danger createRoomType">Create Room</button>
+                <button type="submit" class="btn btn-danger updateRoomType d-none">Update Room</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%- include("../partials/footer") %>
+<script>
+    $(document).ready(function () {
+
+        //Create 
+        $(".createRoomType").one('click', function () {
+            $.ajax({
+                url: '/management/room/roomtype/add',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    roomName: $('#roomName').val(),
+                    description: $('#description').val(),
+                },
+                success: data => {
+                    if (data.status == 200) {
+                        location.reload()
+                    } else {
+                        $(".errorMsg").html(data.message)
+                    }
+
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+        //edit
+        $("#rootTypeTable").on('click', '.edit-roomtype', function () {
+            $(".createRoomType").addClass('d-none')
+            $(".updateRoomType").removeClass('d-none')
+            $.ajax({
+                url: '/management/room/roomtype/fetch-single',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    roomtypeid: $(this).attr("data-roomtype-id")
+                },
+                success: data => {
+                    console.log('Data::::::::::::>>', data.data)
+                    let room = data.data
+                    $('#roomtypeid').val(room.roomtypeid),
+                        $('#roomName').val(room.roomName),
+                        $('#description').val(room.description),
+                        $("#add-room-modal").modal('show')
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+
+        //Update 
+        $(".updateRoomType").one('click', function () {
+            $.ajax({
+                url: '/management/room/roomtype/update-single',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    roomtypeid: $("#roomtypeid").val(),
+                    roomName: $('#roomName').val(),
+                    description: $('#description').val(),
+                },
+                success: data => {
+                    if (data.status == 200) {
+                        location.reload()
+                    } else {
+                        $(".errorMsg").html(data.message)
+                    }
+
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+
+        //Delete
+        $("#rootTypeTable").on('click', '.delete-roomtype', function () {
+            $.ajax({
+                url: '/management/room/roomtype/delete-single',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    roomtypeid: $(this).attr("data-roomtype-id")
+                },
+                success: data => {
+                  location.reload()
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+
+    })
+</script>
+<%- include("../partials/footerEnd") %>

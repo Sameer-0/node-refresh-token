@@ -13,10 +13,10 @@ module.exports = class OrganizationMaster {
         this.parentId = parentId;
     }
 
-    static fetchAll() {
+    static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
+            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC`)
         })
     }
 
@@ -24,8 +24,8 @@ module.exports = class OrganizationMaster {
         return poolConnection.then(pool => {
             let request =  pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-            .query(`SELECT TOP 10 om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 OREDR BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+            .query(`SELECT om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
+            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -33,7 +33,7 @@ module.exports = class OrganizationMaster {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('id', sql.Int, id)
-                .query(`SLEECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id FROM [dbo].organization_master WHERE id = @id`)
+                .query(`SELECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id FROM [dbo].organization_master WHERE id = @id`)
         })
     }
 

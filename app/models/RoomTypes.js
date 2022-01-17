@@ -12,9 +12,9 @@ module.exports = class RoomTypes {
     }
 
 
-    static fetchAll() {
+    static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, name, description FROM [dbo].room_types WHERE active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)}  rt.id as roomtypeid, rt.name, rt.description FROM [dbo].room_types rt WHERE rt.active = 1 ORDER BY rt.id DESC`)
         })
     }
 
@@ -23,9 +23,9 @@ module.exports = class RoomTypes {
     static save(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('name', sql.NVarChar(100), body.name)
+            return request.input('roomName', sql.NVarChar(100), body.roomName)
                 .input('description', sql.NVarChar(200), body.description)
-                .query(`INSERT INTO [dbo].room_types (name, description) VALUES (@name,  @description)`)
+                .query(`INSERT INTO [dbo].room_types (name, description) VALUES (@roomName,  @description)`)
         })
     }
 
@@ -34,10 +34,10 @@ module.exports = class RoomTypes {
     static update(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('id', sql.Int, body.id)
-                .input('name', sql.NVarChar(100), body.name)
+            return request.input('roomTypeId', sql.Int, body.roomtypeid)
+                .input('roomName', sql.NVarChar(100), body.roomName)
                 .input('description', sql.NVarChar(200), body.description)
-                .query(`UPDATE [dbo].room_types SET name = @name, description = @description  WHERE id = @id`)
+                .query(`UPDATE [dbo].room_types SET name = @roomName, description = @description  WHERE id = @roomTypeId`)
         })
     }
 
@@ -45,8 +45,16 @@ module.exports = class RoomTypes {
     static delete(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('id', sql.Int, body.id)
+            return request.input('id', sql.Int, id)
                 .query(`UPDATE [dbo].room_types SET active = 0  WHERE id = @id`)
+        })
+    }
+
+    static getRoomTypeById(id){
+          return poolConnection.then(pool => {
+              let request =  pool.request()
+            return   request.input('roomTypeId', sql.Int, id)
+           .query(`SELECT  rt.id as roomtypeid, rt.name as roomName, rt.description FROM [dbo].room_types rt WHERE rt.id  =  @roomTypeId`)
         })
     }
 

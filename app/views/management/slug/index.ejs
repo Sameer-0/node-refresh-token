@@ -1,0 +1,256 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!-- MAIN-CONTENT -->
+<div class="wrapper">
+    <div class="main-content">
+        <!--DASHBOARD CONTENT START-->
+        <div class="card">
+            <div class="card-header text-uppercase d-flex align-items-center">
+                <h5>Slug List</h5>
+                <button class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#add-slug-modal"><i
+                        class="fas fa-plus"></i> Add New</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="slugTable">
+                        <thead>
+                            <th>Slug</th>
+                            <th>Campus</th>
+                            <th>Organization</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <% for (let slug of slugList) { %>
+                            <tr>
+                                <td><%- slug.slug_name %></td>
+                                <td><%- slug.campus_abbr %> </td>
+                                <td><%- slug.org_abbr %></td>
+                                <td>
+                                    <i class="fas fa-edit text-dark cursor-pointer edit-slug"
+                                        data-slug-id="<%- slug.slugid %>"></i>
+                                    <a data-slug-id="<%- slug.slugid %>"
+                                        class="fas fa-trash-alt text-danger delete-slug"></a>
+                                </td>
+                            </tr>
+
+                            <% } %>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ADD NEW BUILDING MODAL -->
+<!-- Modal -->
+<div class="modal fade" id="add-slug-modal" tabindex="-1" aria-labelledby="add-slug-modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="add-slug-modal-title">Add New Slug</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-3 py-2">
+                    <input name="slugName" id="slugName" type="text" class="form-control" placeholder="Slug Name"
+                        required>
+                    <input type="hidden" id="slugId" name="slugId">
+                </div>
+
+
+                <div class="my-3 py-2">
+                    <select id="campusId" name="campusId" class="form-select">
+                        <option value="">Select Campus</option>
+                        <%for(let campus of campusList){%>
+                        <option value="<%- campus.id %>"><%- campus.campus_abbr%></option>
+                        <%}%>
+              </select>
+            </div>
+
+                        <div class="my-3 py-2">
+              <select id="orgId" name="orgId" class="form-select">
+                   <option value="">Select Organization</option>
+                  <%for(let org of orgList){%>
+                        <option value="<%-  org.id %>"><%- org.org_abbr%></option>
+                        <%}%>
+              </select>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+            <div id="errorMsg"></div>
+            <button type="submit" class="btn btn-danger addSlug">Create Slug</button>
+            <button type="submit" class="btn btn-danger updateSlug d-none">Update Slug</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<%- include("../partials/footer") %>
+                        <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
+                        </script>
+                        <script>
+                            $(".addSlug").one('click', function () {
+                                $.ajax({
+                                    url: '/management/slug/add',
+                                    method: 'POST',
+                                    type: 'JSON',
+                                    data: {
+                                        slugName: $("#slugName").val(),
+                                        campusId: $("#campusId").val(),
+                                        orgId: $("#orgId").val()
+                                    },
+                                    success: data => {
+                                        location.reload()
+                                    },
+                                    error: err => {
+                                        console.log('Error: ', err)
+                                    }
+                                })
+                            })
+
+
+
+                            $('#slugTable').on('click', '.edit-slug', function () {
+                                $("#add-slug-modal-title").html('Update Slug')
+                                $(".addSlug").addClass('d-none')
+                                $(".updateSlug").removeClass('d-none')
+                                console.log('id:::::::::>>>', $(this).attr('data-slug-id'))
+                                $.ajax({
+                                    url: '/management/slug/fetch-single',
+                                    method: 'POST',
+                                    type: 'JSON',
+                                    data: {
+                                        slugId: $(this).attr('data-slug-id')
+                                    },
+                                    success: data => {
+                                        let slug = data.data;
+                                        $("#slugId").val(slug.slugid)
+                                        $("#slugName").val(slug.slugName).trigger('change')
+                                        $("#campusId").val(slug.campusId).trigger('change')
+                                        $("#orgId").val(slug.orgId).trigger('change')
+                                        $("#add-slug-modal").modal('show')
+                                    },
+                                    error: err => {
+                                        console.log('Error: ', err)
+                                    }
+                                })
+                            })
+
+
+                            $(".updateSlug").one('click', function () {
+                                $.ajax({
+                                    url: '/management/slug/update-single',
+                                    method: 'POST',
+                                    type: 'JSON',
+                                    data: {
+                                        slugid: $("#slugId").val(),
+                                        slugName: $("#slugName").val(),
+                                        campusId: $("#campusId").val(),
+                                        orgId: $("#orgId").val()
+                                    },
+                                    success: data => {
+                                        location.reload()
+                                    },
+                                    error: err => {
+                                        console.log('Error: ', err)
+                                    }
+                                })
+                            })
+
+                            $('#slugTable').on('click', '.delete-slug', function () {
+                                $.ajax({
+                                    url: '/management/slug/delete-single',
+                                    method: 'POST',
+                                    type: 'JSON',
+                                    data: {
+                                        slugid: $(this).attr('data-slug-id')
+                                    },
+                                    success: data => {
+                                        location.reload()
+                                    },
+                                    error: err => {
+                                        console.log('Error: ', err)
+                                    }
+                                })
+                            })
+
+
+                            //Pagination Here
+                            // let pageCount = `<%- pageCount %>`
+                            // console.log("Page Count=====>>>", pageCount)
+                            // let pageNos = Math.ceil(Number(pageCount) / 10)
+
+                            // console.log("Page Numbers", pageNos)
+                            // $('#pagination').bootpag({
+                            //     total: pageNos,
+                            //     page: 1,
+                            //     maxVisible: 10,
+                            //     leaps: true,
+                            //     firstLastUse: true,
+                            //     first: '←',
+                            //     last: '→',
+                            //     wrapClass: 'pagination',
+                            //     activeClass: 'active',
+                            //     disabledClass: 'disabled',
+                            //     nextClass: 'next',
+                            //     prevClass: 'prev',
+                            //     lastClass: 'last',
+                            //     firstClass: 'first'
+                            // }).on("page", function (event, num) {
+
+                            //     $.ajax({
+                            //         type: "POST",
+                            //         url: "/management/building",
+                            //         data: {
+                            //             pageNo: num
+                            //         },
+                            //         success: function (data) {
+                            //             let buildingList = data.data;
+                            //             let buildingAjax = `<table class="table table-bordered" id="buildingTable">
+                            //                 <thead>
+                            //                     <th>Name</th>
+                            //                     <th>Number</th>
+                            //                     <th>Floors</th>
+                            //                     <th>Owner</th>
+                            //                     <th>Handled By</th>
+                            //                     <th>Start Time</th>
+                            //                     <th>End Time</th>
+                            //                     <th>Campus</th>
+                            //                     <th>Action</th>
+                            //                 </thead>
+                            //                 <tbody>`;
+                            //             for (building of buildingList) {
+                            //                 buildingAjax +=
+                            //                     `<tr>
+                            //                         <td>${building.building_name}</td>
+                            //                         <td>${building.building_number}</td>
+                            //                         <td>${building.total_floors}</td>
+                            //                         <td>${building.owner}</td>
+                            //                         <td>${building.handled_by}</td>
+                            //                         <td>${building.start_time}</td>
+                            //                         <td>${building.end_time}</td>
+                            //                         <td>${building.campus_abbr}</td>
+                            //                         <td>
+                            //                             <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                            //                                 data-building-id="${building.building_id}" ></i>
+                            //                             <a data-building-id="${building.building_id}"
+                            //                                 class="fas fa-trash-alt text-danger delete-building"></a>
+                            //                         </td>
+                            //                     </tr>`
+                            //             }
+                            //             buildingAjax += `<tbody></table>`
+                            //             $("#buildingTable").html(buildingAjax);
+                            //         }
+                            //     })
+                            // });
+                        </script>
+                        <%- include("../partials/footerEnd") %>

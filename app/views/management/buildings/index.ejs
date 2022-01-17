@@ -39,16 +39,23 @@
                             <td><%- building.campus_abbr %></td>
                             <td>
                                 <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                    data-building-id="<%- building.building_id %>" data-toggle="modal"
-                                    data-target="#update-building-modal"></i>
-                                <a href="/management/building/delete?id=<%- building.building_id %>"
-                                    class="fas fa-trash-alt text-danger"></a>
+                                    data-building-id="<%- building.building_id %>" ></i>
+                                <a data-building-id="<%- building.building_id %>"
+                                    class="fas fa-trash-alt text-danger delete-building"></a>
                             </td>
                         </tr>
 
                         <% } %>
                     </tbody>
                 </table>
+                  <div class="d-flex justify-content-between">
+                        <div>
+                            <p>Total entries:<%- pageCount %></p>
+                        </div>
+                        <div>
+                            <p id="pagination"></p>
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -63,7 +70,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="add-building-modal-title">Modal title</h5>
+          <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -144,15 +151,9 @@
 
 
 <%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
-    $('.modalSelect2').select2({
-        dropdownParent: $('#add-building-modal')
-        
-    });
 
-    $('.modalSelect2Update').select2({
-        dropdownParent: $('#update-building-modal')
-    });
 
     $(".addBuilding").on('click', function () {
         $.ajax({
@@ -181,6 +182,7 @@
 
 
     $('#buildingTable').on('click', '.edit-building', function () {
+        $("#add-building-modal-title").html('Update Building')
         $(".addBuilding").addClass('d-none')
         $(".updateBuilding").removeClass('d-none')
         $.ajax({
@@ -212,8 +214,6 @@
     })
 
 
-
-
     $(".updateBuilding").on('click', function () {
         $.ajax({
             url: '/management/building/update',
@@ -231,7 +231,6 @@
                 campusId: $("#campusId").val(),
             },
             success: data => {
-                console.log('Data:::::::::>',data)
             location.reload()
             },
             error: err => {
@@ -240,51 +239,93 @@
         })
     })
 
+       $('#buildingTable').on('click', '.delete-building', function () {
+        $.ajax({
+            url: '/management/building/delete-single',
+            method: 'POST',
+            type: 'JSON',
+            data: {
+                buildingId: $(this).attr('data-building-id')
+            },
+            success: data => {
+                location.reload()        
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
 
 
+        //Pagination Here
+    let pageCount = `<%- pageCount %>`
+    console.log("Page Count=====>>>", pageCount)
+    let pageNos = Math.ceil(Number(pageCount) / 10)
 
-    function callDatatable() {
-        if ($('.call-datatable').length > 0) {
-            //CALL DATATABLE
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active',
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
 
-            $('.call-datatable').DataTable(
-            //     {
-            //     autoFill: false,
-            //     //scrollY: 400,
-            //     scrollX: '100%',
-            //     deferRender: true,
-            //     scrollY: true,
-            //     scrollX: true,
-            //     paging: true,
-            //     initComplete: function () {
-            //         this.api().columns().every(function () {
-            //             var column = this;
-            //             var select = $(
-            //                     '<select><option value="">-Select-</option></select>'
-            //                 )
-            //                 .appendTo($(column.footer()).empty())
-            //                 .on('change', function () {
-            //                     var val = $.fn.dataTable.util.escapeRegex(
-            //                         $(this).val()
-            //                     );
+        $.ajax({
+            type: "POST",
+            url: "/management/building",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                let buildingList = data.data;
+                let buildingAjax = `<table class="table table-bordered" id="buildingTable">
+                    <thead>
+                        <th>Name</th>
+                        <th>Number</th>
+                        <th>Floors</th>
+                        <th>Owner</th>
+                        <th>Handled By</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Campus</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>`;
+                for (building of buildingList) {
+                    buildingAjax +=
+                        `<tr>
+                            <td>${building.building_name}</td>
+                            <td>${building.building_number}</td>
+                            <td>${building.total_floors}</td>
+                            <td>${building.owner}</td>
+                            <td>${building.handled_by}</td>
+                            <td>${building.start_time}</td>
+                            <td>${building.end_time}</td>
+                            <td>${building.campus_abbr}</td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                                    data-building-id="${building.building_id}" ></i>
+                                <a data-building-id="${building.building_id}"
+                                    class="fas fa-trash-alt text-danger delete-building"></a>
+                            </td>
+                        </tr>`
+                }
+                buildingAjax += `<tbody></table>`
+                $("#buildingTable").html(buildingAjax);
+            }
+        })
+    });
 
-            //                     column
-            //                         .search(val ? '^' + val + '$' : '',
-            //                             true, false)
-            //                         .draw();
-            //                 });
 
-            //             column.data().unique().sort().each(function (d, j) {
-            //                 select.append('<option value="' + d +
-            //                     '">' + d + '</option>')
-            //             });
-            //         });
-            //     }
-            // }
-            )
-            //CALL DATATABLE END
-        }
-    }
-    callDatatable();
 </script>
 <%- include("../partials/footerEnd") %>
