@@ -116,6 +116,54 @@ module.exports = {
                 status: 200
             })
         })
+    },
+
+    searchBuilding: (req, res) => {
+        console.log(req.body)
+        //here 10is rowcount
+        let rowcount = 10;
+        Buildings.searchBuilding(rowcount, req.body.keyword).then(result => {
+            if (result.recordset.length > 0) {
+
+                let buildingList = []
+            
+                result.recordset.map(item => {
+                    let buildings = {
+                        building_id: item.building_id,
+                        building_name: item.building_name,
+                        building_number: item.building_number,
+                        total_floors: item.total_floors,
+                        owner: item.owner,
+                        handled_by: item.handled_by,
+                        start_time: moment(item.start_time).format('LTS'),
+                        end_time: moment(item.end_time).format('LTS'),
+                        campus_abbr: item.campus_abbr
+                    }
+                    buildingList.push(buildings)
+                })
+
+
+                res.json({
+                    status: "200",
+                    message: "Building fetched",
+                    data: buildingList,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
     }
 
 }
