@@ -14,7 +14,7 @@
                         class="fas fa-plus"></i> Add New</button>
             </div>
             <div class="card-body">
-                <input type="text" id="searchkeyword">
+                <input type="search" id="searchkeyword">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="campusTable">
                         <thead>
@@ -278,7 +278,7 @@
                 console.log('campusList::::::', data)
                 let campusList = data.data;
 
-                let quoteAjax = `<table class="table table-bordered" id="campusTable">
+                let AjaxTable = `<table class="table table-bordered" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
                         <th>Abbr</th>
@@ -290,7 +290,7 @@
 
                 if (campusList.length > 0) {
                     for (campus of campusList) {
-                        quoteAjax +=
+                        AjaxTable +=
                             ` <tr>
                                 <td>${campus.campus_id}</td>
                                 <td>${campus.abbr}</td>
@@ -306,15 +306,13 @@
                             </tr>`;
                     }
                 } else {
-                    quoteAjax +=
+                    AjaxTable +=
                         ` <tr>
                                 <td colspan="5">No Data Found</td>
                             </tr>`;
                 }
-
-
-                quoteAjax += `<tbody></table>`
-                $("#campusTable").html(quoteAjax);
+                AjaxTable += `<tbody></table>`
+                $("#campusTable").html(AjaxTable);
             }
         })
     }, 500));
