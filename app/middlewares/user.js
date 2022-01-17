@@ -16,11 +16,9 @@ module.exports = {
             client: redisClient,
             ttl: 260
         })
-
-        console.log('STORE:::::::::>>',store)
         
         store.get(sessionId, async (err, result) => {
-            console.log('result: ', result)
+            console.log('result::::::::::::::::::>> ',err, result, sessionId)
             if (!result) {
                 res.redirect('/user/login')
             } else {
