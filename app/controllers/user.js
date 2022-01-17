@@ -109,10 +109,8 @@ module.exports = {
     },
 
     authenticate: async (req, res, next) => {
-
         console.log('username ===>>> ', req.body.username)
         console.log('res.locals.slug ===>>> ', res.locals.slug)
-
         let userData = await User.passwordByUsername(req.body.username, res.locals.slug).then(result => {
             if (result.recordset.length === 0) {
                 return res.send('User does not exist...')
@@ -133,7 +131,6 @@ module.exports = {
             req.session.firstName = userData.f_name;
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
-
             res.redirect('/management/dashboard')
         }
 
