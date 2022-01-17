@@ -19,43 +19,11 @@ module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
-            Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(10000), CampusMaster.fetchAll(10000),
-                SlotIntervalTimings.fetchAll(), Buildings.getCount()
-            ]).then(result => {
-                let roomList = []
-                let slotList = []
-                result[0].recordset.map(item => {
-                    let rooms = {
-                        room_number: item.room_number,
-                        building_name: item.building_name,
-                        room_type: item.room_type,
-                        floor_number: item.floor_number,
-                        capacity: item.capacity,
-                        start_time: moment(item.start_time).format('LTS'),
-                        end_time: moment(item.end_time).format('LTS'),
-                        handled_by: item.handled_by,
-                        campus_abbr: item.campus_abbr,
-                        is_basement: item.is_basement,
-                        is_processed: item.is_processed
-                    }
-                    roomList.push(rooms)
-                })
-                result[3].recordset.map(item => {
-                    let slot = {
-                        id: item.id,
-                        start_time: moment(item.start_time).format('LTS'),
-                        end_time: moment(item.end_time).format('LTS'),
-                        slot_name: item.slot_name
-                    }
-                    slotList.push(slot)
+            roomModel.fetchAll(10).then(result=>{
+                res.render('management/room/index', {
+                    roomList: result.recordset
                 })
 
-                res.render('management/room/index', {
-                    roomList: roomList,
-                    orgList: result[1].recordset,
-                    campusList: result[2].recordset,
-                    timeList: slotList,
-                })
             }).catch(error => {
                 throw error
             })
