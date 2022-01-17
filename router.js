@@ -9,7 +9,7 @@ function setRouter(app) {
     app.use('/', homeRouter)
     app.use('/user', userRouter)
     app.use('/management',  management)
-   // app.use('/management', isLoggedIn,  management)
+//    app.use('/management', isLoggedIn,  management)
 }
 
 

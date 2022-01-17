@@ -1,4 +1,5 @@
 <%- include("../partials/head") %>
+<<<<<<< HEAD
     <%- include("../partials/leftSidebar") %>
         <%- include("../partials/header") %>
             <!--Notificaion icon-->
@@ -12,6 +13,59 @@
 
                         <button class="btn btn-success ms-auto " data-bs-toggle="modal"
                             data-bs-target="#add-campus-modal"><i class="fas fa-plus"></i> Add New</button>
+=======
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+<div class="wrapper">
+    <div class="main-content">
+        <!--DASHBOARD CONTENT START-->
+        <div class="card">
+            <div class="card-header text-uppercase d-flex align-items-center">
+                <h5>Campus List</h5>
+
+                <button class="btn btn-success ms-auto " data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
+                        class="fas fa-plus"></i> Add New</button>
+            </div>
+            <div class="card-body">
+                <input type="search" id="searchkeyword">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="campusTable">
+                        <thead>
+                            <th>Campus Id</th>
+                            <th>Abbr</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <% for (let campus of campusList) { %>
+                            <tr>
+                                <td><%- campus.campus_id %></td>
+                                <td><%- campus.abbr %></td>
+                                <td><%- campus.name %></td>
+                                <td><%- campus.c_desc %></td>
+                                <td>
+                                    <i class="fas fa-edit text-dark cursor-pointer edit-campus"
+                                        data-campus-id="<%- campus.id %>" data-toggle="modal"
+                                        data-target="#update-campus-modal"></i>
+                                    <a data-campus-id="<%- campus.id %>"
+                                        class="fas fa-trash-alt text-danger delete-campus"></a>
+                                </td>
+                            </tr>
+
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p>Total entries:<%- pageCount %></p>
+                        </div>
+                        <div>
+                            <p id="pagination"></p>
+                        </div>
+>>>>>>> 1ea9373b00b844a8b8a12c988d7c510434854edf
                     </div>
                     <div class="card-body table-responsive">
                         <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -294,7 +348,7 @@
                 console.log('campusList::::::', data)
                 let campusList = data.data;
 
-                let quoteAjax = `<table class="table table-bordered" id="campusTable">
+                let AjaxTable = `<table class="table table-bordered" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
                         <th>Abbr</th>
@@ -306,7 +360,7 @@
 
                 if (campusList.length > 0) {
                     for (campus of campusList) {
-                        quoteAjax +=
+                        AjaxTable +=
                             ` <tr>
                                 <td>${campus.campus_id}</td>
                                 <td>${campus.abbr}</td>
@@ -322,15 +376,13 @@
                             </tr>`;
                     }
                 } else {
-                    quoteAjax +=
+                    AjaxTable +=
                         ` <tr>
                                 <td colspan="5">No Data Found</td>
                             </tr>`;
                 }
-
-
-                quoteAjax += `<tbody></table>`
-                $("#campusTable").html(quoteAjax);
+                AjaxTable += `<tbody></table>`
+                $("#campusTable").html(AjaxTable);
             }
         })
     }, 500));

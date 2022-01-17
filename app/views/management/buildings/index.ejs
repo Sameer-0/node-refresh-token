@@ -1,4 +1,5 @@
 <%- include("../partials/head") %>
+<<<<<<< HEAD
     <%- include("../partials/leftSidebar") %>
         <%- include("../partials/header") %>
             <!--Notificaion icon-->
@@ -11,6 +12,65 @@
                         <h5>Building List</h5>
                         <button class="btn btn-success ms-auto" data-bs-toggle="modal"
                             data-bs-target="#add-building-modal"><i class="fas fa-plus"></i> Add New</button>
+=======
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+    <!-- MAIN-CONTENT -->
+    <div class="wrapper">
+        <div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header text-uppercase d-flex align-items-center" >
+            <h5>Building List</h5>
+            <button class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i
+                    class="fas fa-plus"></i> Add New</button>
+        </div>
+        <div class="card-body">
+            <input type="search" id="searchkeyword">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="buildingTable">
+                    <thead>
+                        <th>Name</th>
+                        <th>Number</th>
+                        <th>Floors</th>
+                        <th>Owner</th>
+                        <th>Handled By</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Campus</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        <% for (let building of buildingList) { %>
+                        <tr>
+                            <td><%- building.building_name %> </td>
+                            <td><%- building.building_number %></td>
+                            <td><%- building.total_floors %></td>
+                            <td><%- building.owner %></td>
+                            <td><%- building.handled_by %></td>
+                            <td><%- building.start_time %></td>
+                            <td><%- building.end_time %></td>
+                            <td><%- building.campus_abbr %></td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                                    data-building-id="<%- building.building_id %>" ></i>
+                                <a data-building-id="<%- building.building_id %>"
+                                    class="fas fa-trash-alt text-danger delete-building"></a>
+                            </td>
+                        </tr>
+
+                        <% } %>
+                    </tbody>
+                </table>
+                  <div class="d-flex justify-content-between">
+                        <div>
+                            <p>Total entries:<%- pageCount %></p>
+                        </div>
+                        <div>
+                            <p id="pagination"></p>
+                        </div>
+>>>>>>> 1ea9373b00b844a8b8a12c988d7c510434854edf
                     </div>
                     <div class="card-body table-responsive">
                         
@@ -356,5 +416,76 @@
                     });
 
 
+<<<<<<< HEAD
                 </script>
                 <%- include("../partials/footerEnd") %>
+=======
+
+   //search feature delay function is writter in script.js file which is located in public/js/script.js
+   $('#searchkeyword').on('input', delay(function (e) {
+        let keyword = $("#searchkeyword").val()
+        $.ajax({
+            type: "POST",
+            url: "/management/building/building-search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                console.log('campusList::::::', data)
+                let buildingList = data.data;
+
+                let AjaxTable = `<table class="table table-bordered" id="buildingTable">
+                    <thead>
+                        <th>Name</th>
+                        <th>Number</th>
+                        <th>Floors</th>
+                        <th>Owner</th>
+                        <th>Handled By</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Campus</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>`;
+
+                if (buildingList.length > 0) {
+                    for (building of buildingList) {
+                        AjaxTable +=
+                        `<tr>
+                            <td>${building.building_name}</td>
+                            <td>${building.building_number}</td>
+                            <td>${building.total_floors}</td>
+                            <td>${building.owner}</td>
+                            <td>${building.handled_by}</td>
+                            <td>${building.start_time}</td>
+                            <td>${building.end_time}</td>
+                            <td>${building.campus_abbr}</td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                                    data-building-id="${building.building_id}" ></i>
+                                <a data-building-id="${building.building_id}"
+                                    class="fas fa-trash-alt text-danger delete-building"></a>
+                            </td>
+                        </tr>`
+                    }
+                } else {
+                    AjaxTable +=
+                        ` <tr>
+                                <td colspan="9">No Data Found</td>
+                            </tr>`;
+                }
+                AjaxTable += `<tbody></table>`
+                $("#buildingTable").html(AjaxTable);
+            }
+        })
+    }, 500));
+
+
+
+
+
+
+
+</script>
+<%- include("../partials/footerEnd") %>
+>>>>>>> 1ea9373b00b844a8b8a12c988d7c510434854edf

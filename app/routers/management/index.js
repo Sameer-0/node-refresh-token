@@ -12,6 +12,7 @@ const roomcontroller = require('../../controllers/management/room');
 const acadYearcontroller = require('../../controllers/management/academicYear');
 const slugcontroller = require('../../controllers/management/slug');
 const rtscontroller =  require("../../controllers/management/roomtransactionstages")
+const rtypescontroller =  require("../../controllers/management/roomtransactiontypes")
 //ACADEMIC YEAR ROUTER
 router.get('/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic-year', acadYearcontroller.updateAcadYear)
@@ -23,6 +24,9 @@ router.post('/building/add', buildingcontroller.getAdd)
 router.post('/building/fetch-single', buildingcontroller.getSingleBuilding)
 router.post('/building/update', buildingcontroller.updateBuilding)
 router.post('/building/delete-single', buildingcontroller.deleteById)
+router.post('/building/building-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], buildingcontroller.searchBuilding)
+
+
 // CAMPUS ROUTER
 router.get('/campus', campuscontroller.getCampusPage)
 router.post('/campus', [check('pageNo', 'Invalid Page No').exists().trim().escape()], campuscontroller.getCampusPage)
@@ -39,7 +43,7 @@ router.post('/organization/add', orgcontroller.createOrg)
 router.post('/organization/fetch-single', orgcontroller.getOrgById)
 router.post('/organization/update-single', orgcontroller.updateOrgById)
 router.post('/organization/delete-single', orgcontroller.deleteById)
-
+router.post('/organization-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], orgcontroller.searchOrg)
 
 //SLUG ROUTER
 router.get('/slug', slugcontroller.getPage)
@@ -50,7 +54,7 @@ router.post('/slug/delete-single', slugcontroller.deleteSlugById)
 
 
 //DASHBOARD ROUTER
-router.get('/', dashcontroller.getDashboard)
+router.get('/dashboard', dashcontroller.getDashboard)
 
 //ROOM DASHBOARD ROUTER START
 router.get('/room', roomcontroller.getPage)
@@ -59,6 +63,8 @@ router.post('/room/roomtype/add', roomcontroller.createRoomType)
 router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)
 router.post('/room/roomtype/update-single', roomcontroller.updateRoomTypeById)
 router.post('/room/roomtype/delete-single', roomcontroller.deleteRoomTypeById)
+router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
+
 
 // ROOM TRANSACTION STATGE =  rtstage
 
@@ -67,4 +73,17 @@ router.post('/room/rtstage/add', rtscontroller.createRoomTrabsactionStages)
 router.post('/room/rtstage/fetch-single', rtscontroller.getRoomTrabsactionStagesById)
 router.post('/room/rtstage/update-single', rtscontroller.updateRoomTrabsactionStagesById)
 router.post('/room/rtstage/delete-single', rtscontroller.deleteRoomTrabsactionStagesById)
+
+
+// ROOM TRANSACTION TYPES =  rtypes
+
+router.get('/room/rtypes', rtypescontroller.getPage)
+router.post('/room/rtypes/add', rtypescontroller.createRoomTrabsactionStages)
+router.post('/room/rtypes/fetch-single', rtypescontroller.getRoomTrabsactionStagesById)
+router.post('/room/rtypes/update-single', rtypescontroller.updateRoomTrabsactionStagesById)
+router.post('/room/rtypes/delete-single', rtypescontroller.deleteRoomTrabsactionStagesById)
+
+// ROOM TRANSACTION
+
+router.get('/room/transaction')
 module.exports = router;

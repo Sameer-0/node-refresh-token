@@ -78,5 +78,16 @@ module.exports = class OrganizationMaster {
         })
     }
 
+    static searchOrg(rowcont, keyword) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcont)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
+                FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  
+                WHERE ot.active = 1 AND om.active = 1 and om.id like @keyword or om.org_abbr like @keyword 
+                or om.org_complete_name like @keyword or ot.name like @keyword ORDER BY om.id DESC`)
+        })
+    }
+
 
 }
