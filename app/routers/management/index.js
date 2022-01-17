@@ -11,7 +11,7 @@ const dashcontroller = require('../../controllers/management/dashboard');
 const roomcontroller = require('../../controllers/management/room');
 const acadYearcontroller = require('../../controllers/management/academicYear');
 const slugcontroller = require('../../controllers/management/slug');
-
+const rtscontroller =  require("../../controllers/management/roomtransactionstages")
 //ACADEMIC YEAR ROUTER
 router.get('/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic-year', acadYearcontroller.updateAcadYear)
@@ -52,12 +52,16 @@ router.post('/slug/delete-single', slugcontroller.deleteSlugById)
 //DASHBOARD ROUTER
 router.get('/', dashcontroller.getDashboard)
 
-//ROOM ROUTER
+//ROOM DASHBOARD ROUTER START
 router.get('/room', roomcontroller.getPage)
 router.get('/room/roomtype', roomcontroller.getRoomTypePage)
 router.post('/room/roomtype/add', roomcontroller.createRoomType)
 router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)
 router.post('/room/roomtype/update-single', roomcontroller.updateRoomTypeById)
 router.post('/room/roomtype/delete-single', roomcontroller.deleteRoomTypeById)
+
+// ROOM TRANSACTION STATGE =  rtstage
+
+router.get('/room/rtstage', rtscontroller.getPage)
 
 module.exports = router;

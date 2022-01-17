@@ -11,12 +11,12 @@ const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const moment = require('moment');
 module.exports = {
 
- 
+
 
     getBuildingPage: (req, res) => {
         let rowcount = 10
         if (req.method == "GET") {
-            Promise.all([Buildings.fetchAll(rowcount), OrganizationMaster.fetchAll(), CampusMaster.fetchAll(), SlotIntervalTimings.fetchAll(), Buildings.getCount()]).then(result => {
+            Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(10000), CampusMaster.fetchAll(10000), SlotIntervalTimings.fetchAll(), Buildings.getCount()]).then(result => {
                 let buildingList = []
                 let slotList = []
                 result[0].recordset.map(item => {
@@ -51,7 +51,7 @@ module.exports = {
                     pageCount: result[4].recordset[0].count
                 })
             }).catch(error => {
-                console.log('Error',error)
+                throw error
             })
         } else if (req.method == "POST") {
             Buildings.fetchChunkRows(rowcount, req.body.pageNo).then(result => {
@@ -77,6 +77,8 @@ module.exports = {
                     data: buildingList,
                     length: result.recordset.length
                 })
+            }).catch(error => {
+                throw error
             })
         }
 

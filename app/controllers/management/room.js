@@ -16,7 +16,6 @@ const moment = require('moment')
 module.exports = {
     getPage: (req, res, next) => {
         res.render('management/room/index')
-
     },
 
     getRoomTypePage: (req, res) => {
