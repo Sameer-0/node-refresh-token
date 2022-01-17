@@ -4,6 +4,7 @@ require('dotenv').config()
 const http = require('http');
 const path = require('path');
 const setRouter = require("./router")
+const {verifySubdomain} = require('././app/middlewares/domain')
 //const https = require("https");
 const {
     existsSync,
@@ -32,7 +33,9 @@ app.use(
 app.use(express.static('./public'));
 app.set('views', './app/views');
 app.set('view engine', 'ejs');
-setRouter(app)
+
+
+
 
 app.use(
     session({
@@ -62,6 +65,8 @@ app.use((req, res, next) => {
     next() // otherwise continue
 })
 
+app.use(verifySubdomain);
+
 
 app.get('/logout', (req, res, next) => {
     req.session.destroy(function (err) {
@@ -69,14 +74,8 @@ app.get('/logout', (req, res, next) => {
     })
 })
 
-
-let store = new RedisStore({
-    client: redisClient,
-    ttl: 260
-})
-
-
-
-
+setRouter(app)
 
 app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
+
+

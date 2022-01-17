@@ -16,9 +16,13 @@ const OrganizationSlug = require('../models/OrganizationSlug')
 
 module.exports = {
 
-    getLogin: (req, res, next) => {
-        OrganizationSlug.fetchAll().then(_result=>{
-            console.log(_result.recordset)
+    renderLoginPage: (req, res, next) => {
+
+        console.log('sessionID: ', req.sessionID)
+        console.log('sessionID: ', req.session)
+
+        OrganizationSlug.fetchAll().then(result => {
+           // console.log(result.recordset)
             res.render('login')
         })
         

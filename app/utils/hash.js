@@ -1,17 +1,27 @@
-const {
-    scrypt,
-    randomBytes
-} = require('crypto');
+const crypto = require("crypto")
+const req = require('express/lib/request');
 require('dotenv').config()
 
 
 module.exports = {
 
-    hashPassword: (password) => {
-        return new Promise(resolve => {
-            scrypt('pass@123', process.env.SALT_ARR, 64, (err, derivedKey) => {
-                if (err) throw err;
-                resolve(derivedKey.toString('hex'));
+    hashPassword:(password) => {
+        return new Promise((resolve, reject) => {
+            // generate random 16 bytes long salt
+            const salt = crypto.randomBytes(16).toString("hex")
+            crypto.scrypt(password, salt, 64, (err, derivedKey) => {
+                if (err) reject(err);
+                resolve(salt + ":" + derivedKey.toString('hex'))
+            });
+        })
+    },
+
+   verifyPassword:(password, hash) => {
+        return new Promise((resolve, reject) => {
+            const [salt, key] = hash.split(":")
+            crypto.scrypt(password, salt, 64, (err, derivedKey) => {
+                if (err) reject(err);
+                resolve(key == derivedKey.toString('hex'))
             });
         })
     }

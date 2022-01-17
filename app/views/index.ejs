@@ -262,9 +262,19 @@
   <script src="/js/bootstrap.min.js"></script>
 
   <script>
-    $('#go-btn').on('click', function(){
+    $('#go-btn').on('click', function () {
       console.log('hello')
-       window.location.href = `http://${$('#org-select').val()}.localhost:3000/user/login`
+      window.location.href = `http://${$('#org-select').val()}.localhost:3000/user/login`
+    })
+
+    $('#go-btn').on('click', function () {
+      $.ajax({
+        type: 'POST',
+        url: '/set-slug',
+        data: {
+          slug: $('#org-select').val()
+        }
+      })
     })
   </script>
 

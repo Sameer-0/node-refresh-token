@@ -3,7 +3,7 @@ const { body } = require('express-validator');
 
 const controller = require('../controllers/login');
 
-router.get('/', controller.getLogin);
+router.get('/', controller.renderLoginPage);
 router.post('/', body('username').escape(), controller.postLogin);
 
 

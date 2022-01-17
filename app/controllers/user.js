@@ -1,12 +1,16 @@
-
-const saltRounds = 10;
-const hash = require('../utils/hash')
+// const saltRounds = 10;
+const express = require('express')
+const session = require('express-session')
+const {hashPassword, verifyPassword} = require('../utils/hash')
 const User = require('../models/User');
-const res = require('express/lib/response');
+// const res = require('express/lib/response');
+
+
 const {
     RedisStore,
     redisClient
 } = require('../../config/redis')
+
 
 const {
     body,
@@ -20,46 +24,40 @@ let store = new RedisStore({
 
 
 
-const {
-    request
-} = require('express');
-const e = require('express');
+
 
 
 module.exports = {
 
-    userLogin: (req, res, next) => {
-
+    renderLoginPage: (req, res, next) => {
         res.render('login.ejs')
     },
 
-    userRegister: (req, res, next) => {
+    renderRegisterPage: (req, res, next) => {
         res.render('register.ejs')
     },
 
     registerUser: (req, res, next) => {
         // const hash = bcrypt.hashSync(req.body.password, saltRounds);
         // req.body.password = hash
+        hash.hashPassword(req.body.password).then(result => {
+            console.log('PAss:>:::', result)
+
+            req.body.password = result
+            console.log('haspass', result)
 
 
-        hash.hashPassword(req.body.password).then(result=>{
-            console.log('PAss:>:::',result)
 
-           req.body.password = result
-           console.log('haspass', result)
-
-           
-    
             User.addUser(req.body)
             res.redirect('/user/register')
         })
 
-        
+
     },
 
 
     getProfile: (req, res, next) => {
-        User.fetchAll()
+        User.fetchUserById('session se id nikalo')
             .then(result => {
                 // console.log(result)
                 res.render("user.ejs", {
@@ -68,8 +66,8 @@ module.exports = {
             }).catch(err => {
                 console.log(err)
             })
-
     },
+
     getUserById: (req, res, next) => {
         User.fetchUserById(req.body.id).then(result => {
             res.json({
@@ -110,34 +108,36 @@ module.exports = {
         })
     },
 
-    authenticate: (req, res, next) => {
+    authenticate: async (req, res, next) => {
 
-console.log('REQQ::::::::::',req)
-const{username, password} = req.body
-       req.session.username = username
-       req.session.password = password
-       console.log('REQQ1::::::::::',req.body)
-    
-        console.log("REQ::::::::>>", req.sessionID)
-        User.findByUserName(req.body.username).then(result => {
-            let userinfo = result.recordset[0]
-            console.log('userinfo::::>>', userinfo)
-            if (userinfo == undefined) {
-                // console.log('Please register..')
-                res.send('User does not exist...')
+        console.log('username ===>>> ', req.body.username)
+        console.log('res.locals.slug ===>>> ', res.locals.slug)
+
+        let userData = await User.passwordByUsername(req.body.username, res.locals.slug).then(result => {
+            if (result.recordset.length === 0) {
+                return res.send('User does not exist...')
             }
-
-
-            let access = hash.verify(req.body.password, userinfo.password)
-            if (access) {
-                res.redirect("/user/dashboard")
-            } else {
-                console.log('Not Match')
-            }
-
-        }).catch(err => {
-            console.log("Error::::::::::::::", err)
+            return result.recordset[0];
         })
+
+        console.log('UserData: ', userData)
+
+        let isVerified =  await verifyPassword(req.body.password, userData.password)
+
+        console.log('isVerified: ', isVerified)
+
+
+
+        if(isVerified) {
+            req.session.username = userData.username;
+            req.session.firstName = userData.f_name;
+            req.session.lastName = userData.l_name;
+            req.session.email = userData.email;
+
+            res.redirect('/management/dashboard')
+        }
+
+
     },
 
     dashboard: (req, res, next) => {
@@ -148,4 +148,3 @@ const{username, password} = req.body
     }
 
 }
-

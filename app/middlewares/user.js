@@ -2,16 +2,15 @@ const {
     RedisStore,
     redisClient,
     session
-} = require('./redis')
-
-
-
+} = require('../../config/redis')
 
 
 module.exports = {
-
     
-    isLoggedIn(req, res, next) {
+    isLoggedIn: (req, res, next) => {
+
+        console.log('res.sessionID====>>>>> ', req.sessionID)
+
         let sessionId = req.sessionID;
         let store = new RedisStore({
             client: redisClient,
@@ -19,12 +18,10 @@ module.exports = {
         })
         
         store.get(sessionId, async (err, result) => {
-
-            if (result) {
-                console.log('Hello')
-                res.send('Redirecting to dashboard! Already logged in')
+            console.log('result: ', result)
+            if (!result) {
+                res.redirect('/user/login')
             } else {
-                console.log('World')
                 next();
             }
         })
