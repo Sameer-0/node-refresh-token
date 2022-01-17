@@ -14,7 +14,7 @@ module.exports = class RoomTransactionStages {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)}  rts.id as roomtypeid, rts.name, rts.description FROM [dbo].room_transaction_stages rts WHERE rts.active = 1 ORDER BY rts.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)}  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_stages rts WHERE rts.active = 1 ORDER BY rts.id DESC`)
         })
     }
 
@@ -42,10 +42,11 @@ module.exports = class RoomTransactionStages {
 
     
     static delete(id) {
+        console.log(id)
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('id', sql.Int, id)
-                .query(`UPDATE [dbo].room_transaction_stages SET active = 0  WHERE id = @id`)
+            return request.input('rtsId', sql.Int, id)
+                .query(`UPDATE [dbo].room_transaction_stages SET active = 0  WHERE id = @rtsId`)
         })
     }
 

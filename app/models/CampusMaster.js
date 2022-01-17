@@ -14,7 +14,7 @@ module.exports = class CampusMaster {
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             let request = pool.request()
-          return  request.query(`SELECT TOP ${Number(rowcount)} id, campus_id, campus_abbr , campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
+          return  request.query(`SELECT TOP ${Number(rowcount)} id, campus_id, campus_abbr ,campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
         })
     }
 
@@ -76,12 +76,12 @@ module.exports = class CampusMaster {
         })
     }
 
-    static searchCampus(keyword) {
+    static searchCampus(rowcont, keyword) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP 10 id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
-            FROM [dbo].campus_master WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1`)
+                .query(`SELECT TOP ${Number(rowcont)} id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
+            FROM [dbo].campus_master WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1 ORDER BY id DESC`)
         })
     }
 }

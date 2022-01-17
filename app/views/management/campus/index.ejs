@@ -111,8 +111,17 @@
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
-  
 
+function delay(callback, ms) {
+  var timer = 0;
+  return function() {
+    var context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      callback.apply(context, args);
+    }, ms || 0);
+  };
+}
     //management/campus/add
     $('.createCampus').on('click', function () {
         $.ajax({
@@ -235,6 +244,7 @@
             },
             success: function (data) {
                 let campusList = data.data;
+                console.log('campusList:::::::>>',campusList)
                 let quoteAjax = `<table class="table table-bordered" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
@@ -270,7 +280,8 @@
 
     //search feature
 
-    $("#searchkeyword").on('input', function (event) {
+
+    $('#searchkeyword').on('input',delay(function(e){
         let keyword = $("#searchkeyword").val()
         console.log(keyword)
         $.ajax({
@@ -312,6 +323,12 @@
                 $("#campusTable").html(quoteAjax);
             }
         })
-    })
+},500));
+
+    // $("#searchkeyword").on('input', function (event) {
+    //     let keyword = $("#searchkeyword").val()
+    //     console.log(keyword)
+      
+    // })
 </script>
 <%- include("../partials/footerEnd") %>

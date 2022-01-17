@@ -43,7 +43,7 @@ app.use(
             client: redisClient,
             ttl: 260
         }),
-        saveUninitialized: false,
+        saveUninitialized: true,
         secret: process.env.COOKIE_SECRET,
         resave: false,
         name: 'token',

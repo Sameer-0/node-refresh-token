@@ -8,16 +8,16 @@
         <!--DASHBOARD CONTENT START-->
         <div class="card">
             <div class="card-header text-uppercase d-flex">
-                <h5>ROOM TYPE List</h5>
+                <h5>ROOM TRANSACTION STAGE List</h5>
 
                 <!-- <button class="btn btn-success ml-auto" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
                     class="fas fa-plus"></i> Add New</button> -->
                 <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
-                    data-bs-target="#add-room-modal">
+                    data-bs-target="#add-roomtransaction-stages-modal">
                     <i class="fas fa-plus"></i> Add New</button>
             </div>
             <div class="card-body">
-                <table class="table table-bordered" id="rootTypeTable">
+                <table class="table table-bordered" id="rootTransactionTable">
                     <thead>
                         <th>Sr No.</th>
                         <th>Name</th>
@@ -32,10 +32,10 @@
                             <td><%- list.name %></td>
                             <td><%- list.description %></td>
                             <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-roomtype"
-                                    data-roomtype-id="<%- list.roomtypeid %>"></i>
-                                <a data-roomtype-id="<%- list.roomtypeid %>"
-                                    class="fas fa-trash-alt text-danger delete-roomtype"></a>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-roomtransaction-strage"
+                                    data-roomtransaction-stages-id="<%- list.rtsid %>"></i>
+                                <a data-roomtransaction-stages-id="<%- list.rtsid %>"
+                                    class="fas fa-trash-alt text-danger delete-RTS"></a>
                             </td>
                         </tr>
                         <%})%>
@@ -49,31 +49,32 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="add-room-modal" tabindex="-1" aria-labelledby="add-room-modal" aria-hidden="true">
+<div class="modal fade" id="add-roomtransaction-stages-modal" tabindex="-1"
+    aria-labelledby="add-roomtransaction-stages-modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="add-room-modal">ADD ROOM TYPE</h5>
+                <h5 class="modal-title" id="add-roomtransaction-stages-title">ADD ROOM TRANSACTION STAGES</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="roomName" class="form-label">Enter Room Name</label>
-                    <input type="text" class="form-control" id="roomName" placeholder="Enter Name">
-                    <input type="hidden" id="roomtypeid">
+                    <label for="roomName" class="form-label">Enter Room Transaction Stage</label>
+                    <input type="text" class="form-control" id="rtsName" placeholder="Enter Name">
+                    <input type="hidden" id="rtsId">
                 </div>
 
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Enter Description</label>
-                    <input type="text" class="form-control" id="description" placeholder="Enter Description">
+                    <textarea class="form-control" id="description" placeholder="Enter Description"></textarea>
                 </div>
-
-
             </div>
             <div class="modal-footer">
                 <span class="errorMsg"></span>
-                <button type="submit" class="btn btn-danger createRoomType">Create Room</button>
-                <button type="submit" class="btn btn-danger updateRoomType d-none">Update Room</button>
+                <button type="submit" class="btn btn-danger createRoomTransactionStages">Create Room Transaction
+                    Stage</button>
+                <button type="submit" class="btn btn-danger updateRoomTransactionStages d-none">Update Room Transaction
+                    Stage</button>
             </div>
         </div>
     </div>
@@ -85,13 +86,13 @@
     $(document).ready(function () {
 
         //Create 
-        $(".createRoomType").one('click', function () {
+        $(".createRoomTransactionStages").one('click', function () {
             $.ajax({
-                url: '/management/room/roomtype/add',
+                url: '/management/room/rtstage/add',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    roomName: $('#roomName').val(),
+                    rtsName: $('#rtsName').val(),
                     description: $('#description').val(),
                 },
                 success: data => {
@@ -100,7 +101,6 @@
                     } else {
                         $(".errorMsg").html(data.message)
                     }
-
                 },
                 error: err => {
                     console.log('Error: ', err)
@@ -109,23 +109,24 @@
         })
 
         //edit
-        $("#rootTypeTable").on('click', '.edit-roomtype', function () {
-            $(".createRoomType").addClass('d-none')
-            $(".updateRoomType").removeClass('d-none')
+        $("#rootTransactionTable").on('click', '.edit-roomtransaction-strage', function () {
+            $(".createRoomTransactionStages").addClass('d-none')
+            $(".updateRoomTransactionStages").removeClass('d-none')
+            $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION STAGES`)
             $.ajax({
-                url: '/management/room/roomtype/fetch-single',
+                url: '/management/room/rtstage/fetch-single',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    roomtypeid: $(this).attr("data-roomtype-id")
+                    rtsId: $(this).attr("data-roomtransaction-stages-id")
                 },
                 success: data => {
                     console.log('Data::::::::::::>>', data.data)
                     let room = data.data
-                    $('#roomtypeid').val(room.roomtypeid),
-                        $('#roomName').val(room.roomName),
+                    $('#rtsId').val(room.rtsid),
+                        $('#rtsName').val(room.rtsName),
                         $('#description').val(room.description),
-                        $("#add-room-modal").modal('show')
+                        $("#add-roomtransaction-stages-modal").modal('show')
                 },
                 error: err => {
                     console.log('Error: ', err)
@@ -135,14 +136,14 @@
 
 
         //Update 
-        $(".updateRoomType").one('click', function () {
+        $(".updateRoomTransactionStages").one('click', function () {
             $.ajax({
-                url: '/management/room/roomtype/update-single',
+                url: '/management/room/rtstage/update-single',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    roomtypeid: $("#roomtypeid").val(),
-                    roomName: $('#roomName').val(),
+                    rtsId: $("#rtsId").val(),
+                    rtsName: $('#rtsName').val(),
                     description: $('#description').val(),
                 },
                 success: data => {
@@ -161,16 +162,16 @@
 
 
         //Delete
-        $("#rootTypeTable").on('click', '.delete-roomtype', function () {
+        $("#rootTransactionTable").on('click', '.delete-RTS', function () {
             $.ajax({
-                url: '/management/room/roomtype/delete-single',
+                url: '/management/room/rtstage/delete-single',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    roomtypeid: $(this).attr("data-roomtype-id")
+                    rtsId: $(this).attr("data-roomtransaction-stages-id")
                 },
                 success: data => {
-                  location.reload()
+                    location.reload()
                 },
                 error: err => {
                     console.log('Error: ', err)
