@@ -50,7 +50,7 @@ router.post('/slug/delete-single', slugcontroller.deleteSlugById)
 
 
 //DASHBOARD ROUTER
-router.get('/', dashcontroller.getDashboard)
+router.get('/dashboard', dashcontroller.getDashboard)
 
 //ROOM DASHBOARD ROUTER START
 router.get('/room', roomcontroller.getPage)

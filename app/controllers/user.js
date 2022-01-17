@@ -61,7 +61,7 @@ module.exports = {
         User.fetchUserById('session se id nikalo')
             .then(result => {
                 // console.log(result)
-                res.render("user.ejs", {
+                res.render("/management/room/index.ejs", {
                     userList: result.recordset
                 })
             }).catch(err => {
@@ -136,7 +136,7 @@ module.exports = {
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
 
-          return  res.redirect('/management/dashboard')
+          res.redirect('/management/dashboard')
         }
 
 
