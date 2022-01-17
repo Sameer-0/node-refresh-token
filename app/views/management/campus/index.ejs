@@ -111,17 +111,6 @@
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
-
-function delay(callback, ms) {
-  var timer = 0;
-  return function() {
-    var context = this, args = arguments;
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-      callback.apply(context, args);
-    }, ms || 0);
-  };
-}
     //management/campus/add
     $('.createCampus').on('click', function () {
         $.ajax({
@@ -217,7 +206,6 @@ function delay(callback, ms) {
     let pageCount = `<%- pageCount %>`
     console.log("Page Count=====>>>", pageCount)
     let pageNos = Math.ceil(Number(pageCount) / 10)
-
     console.log("Page Numbers", pageNos)
     $('#pagination').bootpag({
         total: pageNos,
@@ -244,7 +232,7 @@ function delay(callback, ms) {
             },
             success: function (data) {
                 let campusList = data.data;
-                console.log('campusList:::::::>>',campusList)
+                console.log('campusList:::::::>>', campusList)
                 let quoteAjax = `<table class="table table-bordered" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
@@ -277,13 +265,9 @@ function delay(callback, ms) {
     });
 
 
-
-    //search feature
-
-
-    $('#searchkeyword').on('input',delay(function(e){
+    //search feature delay function is writter in script.js file which is located in public/js/script.js
+    $('#searchkeyword').on('input', delay(function (e) {
         let keyword = $("#searchkeyword").val()
-        console.log(keyword)
         $.ajax({
             type: "POST",
             url: "/management/campus-search",
@@ -303,9 +287,11 @@ function delay(callback, ms) {
                         <th>Action</th>
                     </thead>
                     <tbody>`;
-                for (campus of campusList) {
-                    quoteAjax +=
-                        ` <tr>
+
+                if (campusList.length > 0) {
+                    for (campus of campusList) {
+                        quoteAjax +=
+                            ` <tr>
                                 <td>${campus.campus_id}</td>
                                 <td>${campus.abbr}</td>
                                 <td>${campus.name}</td>
@@ -317,18 +303,20 @@ function delay(callback, ms) {
                                     <a data-campus-id="${campus.id}"
                                         class="fas fa-trash-alt text-danger delete-campus"></a>
                                 </td>
-                            </tr>`
+                            </tr>`;
+                    }
+                } else {
+                    quoteAjax +=
+                        ` <tr>
+                                <td colspan="5">No Data Found</td>
+                            </tr>`;
                 }
+
+
                 quoteAjax += `<tbody></table>`
                 $("#campusTable").html(quoteAjax);
             }
         })
-},500));
-
-    // $("#searchkeyword").on('input', function (event) {
-    //     let keyword = $("#searchkeyword").val()
-    //     console.log(keyword)
-      
-    // })
+    }, 500));
 </script>
 <%- include("../partials/footerEnd") %>
