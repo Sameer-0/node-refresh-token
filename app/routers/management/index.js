@@ -54,7 +54,7 @@ router.post('/slug/delete-single', slugcontroller.deleteSlugById)
 
 
 //DASHBOARD ROUTER
-router.get('/', dashcontroller.getDashboard)
+router.get('/dashboard', dashcontroller.getDashboard)
 
 //ROOM DASHBOARD ROUTER START
 router.get('/room', roomcontroller.getPage)
@@ -63,6 +63,8 @@ router.post('/room/roomtype/add', roomcontroller.createRoomType)
 router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)
 router.post('/room/roomtype/update-single', roomcontroller.updateRoomTypeById)
 router.post('/room/roomtype/delete-single', roomcontroller.deleteRoomTypeById)
+router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
+
 
 // ROOM TRANSACTION STATGE =  rtstage
 
