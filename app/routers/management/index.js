@@ -59,9 +59,14 @@ router.post('/room/roomtype/add', roomcontroller.createRoomType)
 router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)
 router.post('/room/roomtype/update-single', roomcontroller.updateRoomTypeById)
 router.post('/room/roomtype/delete-single', roomcontroller.deleteRoomTypeById)
+router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
+
 
 // ROOM TRANSACTION STATGE =  rtstage
 
 router.get('/room/rtstage', rtscontroller.getPage)
-
+router.post('/room/rtstage/add', rtscontroller.createRoomTrabsactionStages)
+router.post('/room/rtstage/fetch-single', rtscontroller.getRoomTrabsactionStagesById)
+router.post('/room/rtstage/update-single', rtscontroller.updateRoomTrabsactionStagesById)
+router.post('/room/rtstage/delete-single', rtscontroller.deleteRoomTrabsactionStagesById)
 module.exports = router;

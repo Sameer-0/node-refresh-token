@@ -136,5 +136,31 @@ module.exports = {
                 message: "Success"
             })
         })
+    },
+
+    searchRoom: (req, res) => {
+        let rowCount  = 10;
+        roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Rooms fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
     }
 }

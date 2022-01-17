@@ -30,8 +30,9 @@
                     <h5>ROOM DATA</h5>
                 </div>
                 <div class="card-body">
+                    <input type="text" id="searchkeyword" placeholder="search">
                     <div class="table-responsive">
-                        <table class="table table-bordered call-datatable">
+                        <table class="table table-bordered" id="roomTable">
                             <thead>
                                 <th>Room No</th>
                                 <th>Building</th>
@@ -58,7 +59,7 @@
                                     <td><%- room.end_time %></td>
                                     <td><%- room.is_basement ? 'Yes' : 'No' %></td>
                                     <td><%- room.handled_by %></td>
-                                    <td><%- room.campus %></td>
+                                    <td><%- room.campus_abbr %></td>
                                     <td><%- room.is_processed ? 'Yes' : 'No' %></td>
                                     <td>
                                         <i class="fas fa-edit text-dark cursor-pointer edit-room"
@@ -122,7 +123,71 @@
 </div>
 <%- include("../partials/footer") %>
 <script>
+    $('#searchkeyword').on('input', delay(function (e) {
+        let keyword = $("#searchkeyword").val()
+        $.ajax({
+            type: "POST",
+            url: "/management/room-search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                console.log('roomList::::::', data)
+                let roomList = data.data;
+
+                let quoteAjax = `<table class="table table-bordered" id="roomTable">
+                    <thead>
+                                <th>Room No</th>
+                                <th>Building</th>
+                                <th>Type</th>
+                                <th>Floor</th>
+                                <th>Capacity</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Is Basement</th>
+                                <th>Handled By</th>
+                                <th>Campus</th>
+                                <th>Is Processed</th>
+                                <th>Action</th>
+                    </thead>
+                    <tbody>`;
+
+                if (roomList.length > 0) {
+                    for (room of roomList) {
+                        quoteAjax +=
+                            ` <tr>
+                                <td>${room.room_number}</td>
+                                <td>${room.building_name}</td>
+                                <td>${room.room_type_id}</td>
+                                <td>${room.floor_number}</td>
+                                <td>${room.capacity}</td>
+                                <td>${room.start_time}</td>
+                                <td>${room.end_time}</td>
+                                <td>${room.is_basement}</td>
+                                <td>${room.handled_by}</td>
+                                <td>${room.campus_abbr}</td>
+                                <td>${room.is_processed ? 'Yes' : 'No'}</td>
+                               <td>
+                                    <i class="fas fa-edit text-dark cursor-pointer edit-room"
+                                        data-room-id="${room.id}" data-toggle="modal"
+                                        data-target="#update-room-modal"></i>
+                                    <a data-room-id="${room.id}"
+                                        class="fas fa-trash-alt text-danger delete-room"></a>
+                                </td>
+                            </tr>`;
+                    }
+                } else {
+                    quoteAjax +=
+                        ` <tr>
+                                <td colspan="5">No Data Found</td>
+                            </tr>`;
+                }
 
 
+                quoteAjax += `<tbody></table>`
+                $("#roomTable").html(quoteAjax);
+            }
+        })
+    }, 500));
 </script>
 <%- include("../partials/footerEnd") %>
