@@ -16,6 +16,7 @@ const {
     body,
     validationResult
 } = require('express-validator');
+const hash = require('../utils/hash');
 
 let store = new RedisStore({
     client: redisClient,
@@ -129,12 +130,13 @@ module.exports = {
 
 
         if(isVerified) {
+            console.log('isuser::::::::')
             req.session.username = userData.username;
             req.session.firstName = userData.f_name;
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
 
-            res.redirect('/management/dashboard')
+          return  res.redirect('/management/dashboard')
         }
 
 

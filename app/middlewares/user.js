@@ -16,6 +16,8 @@ module.exports = {
             client: redisClient,
             ttl: 260
         })
+
+        console.log('STORE:::::::::>>',store)
         
         store.get(sessionId, async (err, result) => {
             console.log('result: ', result)
