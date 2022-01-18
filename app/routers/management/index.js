@@ -13,6 +13,7 @@ const acadYearcontroller = require('../../controllers/management/academicYear');
 const slugcontroller = require('../../controllers/management/slug');
 const rtscontroller =  require("../../controllers/management/roomtransactionstages")
 const rtypescontroller =  require("../../controllers/management/roomtransactiontypes")
+const roomtransactioncontroller =  require("../../controllers/management/roomtransactions")
 //ACADEMIC YEAR ROUTER
 router.get('/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic-year', acadYearcontroller.updateAcadYear)
@@ -83,7 +84,9 @@ router.post('/room/rtypes/fetch-single', rtypescontroller.getRoomTrabsactionStag
 router.post('/room/rtypes/update-single', rtypescontroller.updateRoomTrabsactionStagesById)
 router.post('/room/rtypes/delete-single', rtypescontroller.deleteRoomTrabsactionStagesById)
 
-// ROOM TRANSACTION
 
-router.get('/room/transaction')
+// ROOM TRANSACTION
+router.get('/room/transaction',roomtransactioncontroller.getPage)
+router.post('/room/transaction/view-details',roomtransactioncontroller.viewDetails)
+router.post('/room/transaction/approve-trans',roomtransactioncontroller.approveTrans)
 module.exports = router;

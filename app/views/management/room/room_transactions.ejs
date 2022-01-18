@@ -1,0 +1,157 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card">
+        <div class="card-header text-uppercase d-flex">
+            <h5>ROOM TRANSACTION LIST</h5>
+            <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+                data-bs-target="#add-room-modal">
+                <i class="fas fa-plus"></i> Add New</button>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="trans-table">
+                    <thead>
+                        <th>Transaction UUID</th>
+                        <th>Applicant</th>
+                        <th>Applicant Sap ID</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        <% for (let transaction of transactionList) { %>
+                        <tr>
+                            <td><%- transaction.transaction_uuid %></td>
+                            <td><%- transaction.applicant %></td>
+                            <td><%- transaction.applicant_sap_id %></td>
+                            <td>
+                                <a class="btn btn-success  btn-sm view-details"
+                                    data-trans-id="<%- transaction.transaction_uuid %>">View Details</a>
+
+                                <a class="fas fa-check-square fa-2x approve-trans"
+                                    data-trans-id="<%- transaction.transaction_uuid %>"
+                                    data-target="#approve-trans"></a>
+
+                                <i class="fas fa-trash-alt fa-2x text-danger reject-trans"
+                                    data-trans-id="<%- transaction.transaction_uuid %>" data-target="#reject-trans"></i>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--DASHBOARD CONTENT END-->
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="transaction-modal" tabindex="-1" aria-labelledby="transaction-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transaction-modal-title">VIEW ROOM TRANSACTION LIST</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="roomtransactionTable"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close window</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>
+<script>
+    $(document).ready(() => {
+
+        //view-details
+        $("#trans-table").on('click', '.view-details', function () {
+            $.ajax({
+                url: '/management/room/transaction/view-details',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    transid: $(this).attr("data-trans-id")
+                },
+                success: data => {
+                    let ajaxTable = `<table class="table table-bordered   table-hover"" id="trans-details-table">
+                            <thead>
+                                <th>Room </th>
+                                <th>Applicant</th>
+                                <th>Transaction Type</th>
+                                <th>Applicant SAP ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Stage</th>
+                                <th>Organization</th>
+                                <th>Campus</th>
+                            </thead>
+                        `;
+                    data.data.forEach(function (trans) {
+                        ajaxTable += `<tr>
+                        <td>${trans.room}</td>
+                        <td>${trans.applicant}</td>
+                        <td>${trans.trans_type}</td>
+                        <td>${trans.applicant_sap_id}</td>
+                        <td>${trans.start_date}</td>
+                        <td>${trans.end_date}</td>
+                        <td>${trans.start_time}</td>
+                        <td>${trans.end_time}</td>
+                        <td>${trans.stage}</td>
+                        <td>${trans.organization}</td>
+                        <td>${trans.campus}</td>
+                     </tr>`
+                    })
+
+                    ajaxTable += `</table>`
+                    $("#roomtransactionTable").html(ajaxTable)
+                    $("#transaction-modal").modal('show')
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+
+        })
+
+
+        //approve-trans
+
+        $("#trans-table").on('click', '.approve-trans', function () {
+            console.log('HELLO',$(this).attr("data-trans-id"))
+            $.ajax({
+                url: '/management/room/transaction/approve-trans',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    transid: $(this).attr("data-trans-id")
+                },
+                success: data => {
+console.log(data.data.message)
+alert(data.data.message)
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+
+
+
+
+    })
+</script>
+<%- include("../partials/footerEnd") %>
