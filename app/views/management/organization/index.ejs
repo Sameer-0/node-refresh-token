@@ -1,5 +1,4 @@
 <%- include("../partials/head") %>
-<<<<<<< HEAD
     <%- include("../partials/leftSidebar") %>
         <%- include("../partials/header") %>
             <!--Notificaion icon-->
@@ -70,69 +69,10 @@
                             </div>
                         </div>
 
-=======
-<%- include("../partials/leftSidebar") %>
-<%- include("../partials/header") %>
-<!--Notificaion icon-->
-<!--HEADER END-->
-<div class="wrapper">
-    <div class="main-content">
-        <!--DASHBOARD CONTENT START-->
-        <div class="card">
-            <div class="card-header text-uppercase d-flex">
-                <h5>Organization List</h5>
-                <% if(typeof(kap) == 'string') { %>
-                <h1><%- kap %></h1>
-                <% } %>
-                <!-- <button class="btn btn-success ml-auto" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
-                    class="fas fa-plus"></i> Add New</button> -->
-                <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
-                    data-bs-target="#add-org-modal">
-                    <i class="fas fa-plus"></i> Add New</button>
-            </div>
-            <div class="card-body">
-                <input type="search" id="searchkeyword">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="organizationTable">
-                        <thead>
-                            <th>Id</th>
-                            <th>Abbr</th>
-                            <th>Name</th>
-                            <th>Complete Name</th>
-                            <th>Type</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <% for (let org of orgList) { %>
-                            <tr>
-                                <td><%- org.org_id %></td>
-                                <td><%- org.org_abbr %></td>
-                                <td><%- org.org_name %></td>
-                                <td><%- org.org_complete_name %></td>
-                                <td><%- org.org_type %></td>
-                                <td>
-                                    <i class="fas fa-edit text-dark cursor-pointer edit-org"
-                                        data-org-id="<%- org.id %>"></i>
-                                    <a data-org-id="<%- org.id %>" class="fas fa-trash-alt text-danger delete-org"></a>
-                                </td>
-                            </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <p>Total entries:<%- pageCount %></p>
-                        </div>
-                        <div>
-                            <p id="pagination"></p>
-                        </div>
->>>>>>> 1ea9373b00b844a8b8a12c988d7c510434854edf
                     </div>
                 </div>
                 <!--DASHBOARD CONTENT END-->
             </div>
-<<<<<<< HEAD
-=======
         </div>
         <!--DASHBOARD CONTENT END-->
     </div>
@@ -151,7 +91,6 @@
             </div>
             <!-- <form action="/management/organization/add" method="POST"> -->
             <div class="modal-body">
->>>>>>> 1ea9373b00b844a8b8a12c988d7c510434854edf
 
 
 
@@ -211,160 +150,6 @@
                 </div>
             </div>
 
-<<<<<<< HEAD
-
-
-
-
-
-
-            <%- include("../partials/footer") %>
-                <script
-                    src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-                <script>
-
-                    //Create 
-
-                    $(".createOrg").on('click', function () {
-                        $.ajax({
-                            url: '/management/organization/add',
-                            method: 'POST',
-                            type: 'JSON',
-                            data: {
-                                org_id: $('#orgId').val(),
-                                org_abbr: $('#orgAbbr').val(),
-                                org_name: $('#orgName').val(),
-                                org_complete_name: $('#orgCompleteName').val(),
-                                org_type_id: $('#orgType').val()
-                            },
-                            success: data => {
-                                if (data.status == 200) {
-                                    location.reload()
-                                } else {
-                                    $(".errorMsg").html(data.message)
-                                }
-
-                            },
-                            error: err => {
-                                console.log('Error: ', err)
-                            }
-                        })
-                    })
-
-                    $('#organizationTable').on('click', '.edit-org', function () {
-                        $(".createOrg").addClass('d-none')
-                        $(".updateOrg").removeClass('d-none')
-
-                        $("#add-org-modal-title").html("Update Organization")
-                        $.ajax({
-                            url: '/management/organization/fetch-single',
-                            method: 'POST',
-                            type: 'JSON',
-                            data: {
-                                orgId: $(this).attr('data-org-id')
-                            },
-                            success: data => {
-                                let org = data.orgData;
-                                $('#orgLid').val(org.id)
-                                $('#orgId').val(org.org_id)
-                                $('#orgAbbr').val(org.org_abbr)
-                                $('#orgName').val(org.org_name)
-                                $('#orgCompleteName').val(org.org_complete_name)
-                                $('#orgType').val(org.org_type_id).trigger('change')
-                                $("#add-org-modal").modal('show')
-                            },
-                            error: err => {
-                                console.log('Error: ', err)
-                            }
-                        })
-                    })
-
-                    $(".updateOrg").on('click', function () {
-                        $.ajax({
-                            url: '/management/organization/update-single',
-                            method: 'POST',
-                            type: 'JSON',
-                            data: {
-                                id: $('#orgLid').val(),
-                                org_id: $('#orgId').val(),
-                                org_abbr: $('#orgAbbr').val(),
-                                org_name: $('#orgName').val(),
-                                org_complete_name: $('#orgCompleteName').val(),
-                                org_type_id: $('#orgType').val()
-                            },
-                            success: data => {
-                                if (data.status == 200) {
-                                    location.reload()
-                                } else {
-                                    $(".errorMsg").html(data.message)
-                                }
-
-                            },
-                            error: err => {
-                                console.log('Error: ', err)
-                            }
-                        })
-                    })
-
-
-                    //Delete
-                    $('.delete-org').on('click', function () {
-                        $(".createOrg").addClass('d-none')
-                        $(".updateOrg").removeClass('d-none')
-
-                        $("#add-org-modal-title").html("Update Organization")
-                        $.ajax({
-                            url: '/management/organization/delete-single',
-                            method: 'POST',
-                            type: 'JSON',
-                            data: {
-                                orgId: $(this).attr('data-org-id')
-                            },
-                            success: data => {
-                                location.reload()
-                            },
-                            error: err => {
-                                console.log('Error: ', err)
-                            }
-                        })
-                    })
-
-
-
-                    //Pagination Here
-                    let pageCount = `<%- pageCount %>`
-                    console.log("Page Count=====>>>", pageCount)
-                    let pageNos = Math.ceil(Number(pageCount) / 10)
-
-                    console.log("Page Numbers", pageNos)
-                    $('#pagination').bootpag({
-                        total: pageNos,
-                        page: 1,
-                        maxVisible: 10,
-                        leaps: true,
-                        firstLastUse: true,
-                        first: '←',
-                        last: '→',
-                        wrapClass: 'pagination',
-                        activeClass: 'active',
-                        disabledClass: 'disabled',
-                        nextClass: 'next',
-                        prevClass: 'prev',
-                        lastClass: 'last',
-                        firstClass: 'first'
-                    }).on("page", function (event, num) {
-
-                        $.ajax({
-                            type: "POST",
-                            url: "/management/organization",
-                            data: {
-                                pageNo: num
-                            },
-                            success: function (data) {
-                                let orgList = data.data;
-                                console.log('orgList:::::::>>', orgList)
-                                let orgAjax = `<table class="table table-bordered" id="organizationTable">
-=======
             <div class="modal-footer">
                 <span class="errorMsg"></span>
                 <button type="submit" class="btn btn-danger createOrg">Create Organization</button>
@@ -524,7 +309,6 @@
                 let orgList = data.data;
                 console.log('orgList:::::::>>', orgList)
                 let orgAjax = `<table class="table table-bordered" id="organizationTable">
->>>>>>> 1ea9373b00b844a8b8a12c988d7c510434854edf
                     <thead>
                         <th>Id</th>
                         <th>Abbr</th>
@@ -556,10 +340,6 @@
                     });
 
 
-<<<<<<< HEAD
-                </script>
-                <%- include("../partials/footerEnd") %>
-=======
 
 
     //search feature delay function is writter in script.js file which is located in public/js/script.js
@@ -615,4 +395,3 @@
     }, 500));
 </script>
 <%- include("../partials/footerEnd") %>
->>>>>>> 1ea9373b00b844a8b8a12c988d7c510434854edf
