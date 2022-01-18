@@ -23,7 +23,7 @@ module.exports = class RoomData {
 
     static fetchAll(rowCount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowCount)} r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
+            return pool.request().query(`SELECT TOP ${Number(rowCount)} r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
             CONVERT(NVARCHAR, r.start_time, 100) AS start_time, CONVERT(NVARCHAR, r.end_time, 100) AS end_time,
             o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].room_data r
             INNER JOIN [dbo].[buildings] b ON b.id = r.building_id
@@ -33,6 +33,20 @@ module.exports = class RoomData {
 
         })
     }
+
+    static fetchRoomById(id) {
+        return poolConnection.then(pool => {
+            return pool.request().input('id', sql.Int, id)
+            .query(`SELECT r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
+            CONVERT(NVARCHAR, r.start_time, 100) AS start_time, CONVERT(NVARCHAR, r.end_time, 100) AS end_time,
+            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].room_data r
+            INNER JOIN [dbo].[buildings] b ON b.id = r.building_id
+            INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
+            INNER JOIN [dbo].organization_master o ON o.id = r.handled_by
+            INNER JOIN [dbo].campus_master c ON c.id = b.campus_id WHERE r.id = @id`)
+        })
+    }
+
 
     static fetchChunkRows(rowCount, pageNo) {
         return poolConnection.then(pool => {
