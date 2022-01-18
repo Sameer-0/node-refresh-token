@@ -19,14 +19,38 @@ module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
-            roomModel.fetchAll(10).then(result=>{
+            Promise.all([roomModel.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), RoomTypes.fetchAll(10),Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
+                let roomList = []
+                let slotList = []
+                // result[0].recordset.map(item => {
+                //     let rooms = {
+                //         room_number: item.room_number,
+                //         building_name: item.building_name,
+                //         room_type: item.room_type,
+                //         floor_number: item.floor_number,
+                //         capacity: item.capacity,
+                //         start_time: moment(item.start_time).format('LTS'),
+                //         end_time: moment(item.end_time).format('LTS'),
+                //         handled_by: item.handled_by,
+                //         campus_abbr: item.campus_abbr,
+                //         is_basement: item.is_basement,
+                //         is_processed: item.is_processed
+                //     }
+                //     roomList.push(rooms)
+                // })
                 res.render('management/room/index', {
-                    roomList: result.recordset
+                    roomList: result[0].recordset,
+                    campusList: result[2].recordset,
+                    buildingList: result[5].recordset,
+                    orgList: result[1].recordset,
+                    roomTypeList: result[4].recordset,
+                    timeList: result[3].recordset
                 })
 
             }).catch(error => {
                 throw error
             })
+
         } else if (req.method == 'POST') {
             roomModel.fetchChunkRows(rowCount, req.body.pageNo).then(result => {
                 let roomList = []
@@ -59,6 +83,17 @@ module.exports = {
                 throw error
             })
         }
+    },
+
+
+    getSingleRoom:(req, res) => {
+        roomModel.fetchRoomById(req.body.id).then(result => {
+            res.json({
+                status: 200,
+                roomData: result.recordset[0]
+            })
+        })
+
     },
 
     getRoomTypePage: (req, res) => {
@@ -107,7 +142,7 @@ module.exports = {
     },
 
     searchRoom: (req, res) => {
-        let rowCount  = 10;
+        let rowCount = 10;
         roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({

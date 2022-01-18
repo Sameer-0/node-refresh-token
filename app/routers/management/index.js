@@ -59,6 +59,7 @@ router.get('/dashboard', dashcontroller.getDashboard)
 
 //ROOM DASHBOARD ROUTER START
 router.get('/room', roomcontroller.getPage)
+router.post('/room/fetch-single', roomcontroller.getSingleRoom)
 router.get('/room/roomtype', roomcontroller.getRoomTypePage)
 router.post('/room/roomtype/add', roomcontroller.createRoomType)
 router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)

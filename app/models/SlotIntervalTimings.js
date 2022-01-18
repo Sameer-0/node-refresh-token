@@ -13,7 +13,7 @@ module.exports = class SlotIntervalTimings {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, start_time, end_time, slot_name FROM [dbo].slot_interval_timings WHERE active = 1`)
+            return pool.request().query(`SELECT id, CONVERT(NVARCHAR, start_time, 100) AS start_time, CONVERT(NVARCHAR, end_time, 100) AS end_time, slot_name FROM [dbo].slot_interval_timings WHERE active = 1`)
         })
     }
 
