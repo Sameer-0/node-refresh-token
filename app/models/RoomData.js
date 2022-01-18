@@ -37,7 +37,7 @@ module.exports = class RoomData {
     static fetchRoomById(id) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, id)
-            .query(`SELECT r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
+            .query(`SELECT r.room_number, b.building_name AS building_name, b.id AS buildingid, rt.name AS room_type, r.floor_number, r.capacity,
             CONVERT(NVARCHAR, r.start_time, 100) AS start_time, CONVERT(NVARCHAR, r.end_time, 100) AS end_time,
             o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].room_data r
             INNER JOIN [dbo].[buildings] b ON b.id = r.building_id

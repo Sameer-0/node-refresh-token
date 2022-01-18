@@ -1,295 +1,321 @@
 <%- include("../partials/head") %>
-<%- include("../partials/leftSidebar") %>
-<%- include("../partials/header") %>
-<!--Notificaion icon-->
-    <!-- MAIN-CONTENT -->
-    <div class="wrapper">
-        <div class="main-content">
-    <!--DASHBOARD CONTENT START-->
-    <div class="card">
-        <div class="card-header text-uppercase d-flex align-items-center" >
-            <h5>Building List</h5>
-            <button class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i
-                    class="fas fa-plus"></i> Add New</button>
-        </div>
-        <div class="card-body">
-            <input type="search" id="searchkeyword">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="buildingTable">
-                    <thead>
-                        <th>Name</th>
-                        <th>Number</th>
-                        <th>Floors</th>
-                        <th>Owner</th>
-                        <th>Handled By</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Campus</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        <% for (let building of buildingList) { %>
-                        <tr>
-                            <td><%- building.building_name %> </td>
-                            <td><%- building.building_number %></td>
-                            <td><%- building.total_floors %></td>
-                            <td><%- building.owner %></td>
-                            <td><%- building.handled_by %></td>
-                            <td><%- building.start_time %></td>
-                            <td><%- building.end_time %></td>
-                            <td><%- building.campus_abbr %></td>
-                            <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                    data-building-id="<%- building.building_id %>" ></i>
-                                <a data-building-id="<%- building.building_id %>"
-                                    class="fas fa-trash-alt text-danger delete-building"></a>
-                            </td>
-                        </tr>
+    <%- include("../partials/leftSidebar") %>
+        <%- include("../partials/header") %>
+            <!--Notificaion icon-->
+            <!-- MAIN-CONTENT -->
 
-                        <% } %>
-                    </tbody>
-                </table>
-                  <div class="d-flex justify-content-between">
-                        <div>
-                            <p>Total entries:<%- pageCount %></p>
+            <div class="main-content">
+                <!--DASHBOARD CONTENT START-->
+                <div class="card table-card">
+                    <div class="card-header text-uppercase d-flex align-items-center">
+                        <h5>Building List</h5>
+                        <button class="btn btn-success ms-auto" data-bs-toggle="modal"
+                            data-bs-target="#add-building-modal"><i class="fas fa-plus"></i> Add New</button>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <input type="search" id="searchkeyword">
+                            <table class="table custom_row" id="buildingTable">
+                                <thead>
+                                    <th>Name</th>
+                                    <th>Number</th>
+                                    <th>Floors</th>
+                                    <th>Owner</th>
+                                    <th>Handled By</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Campus</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+                                    <% for (let building of buildingList) { %>
+                                        <tr>
+                                            <td>
+                                                <%- building.building_name %>
+                                            </td>
+                                            <td>
+                                                <%- building.building_number %>
+                                            </td>
+                                            <td>
+                                                <%- building.total_floors %>
+                                            </td>
+                                            <td>
+                                                <%- building.owner %>
+                                            </td>
+                                            <td>
+                                                <%- building.handled_by %>
+                                            </td>
+                                            <td>
+                                                <%- building.start_time %>
+                                            </td>
+                                            <td>
+                                                <%- building.end_time %>
+                                            </td>
+                                            <td>
+                                                <%- building.campus_abbr %>
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                                                    data-building-id="<%- building.building_id %>"></i>
+                                                <a data-building-id="<%- building.building_id %>"
+                                                    class="fas fa-trash-alt text-danger delete-building"></a>
+                                            </td>
+                                        </tr>
+
+                                        <% } %>
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p>Total entries:<%- pageCount %>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p id="pagination"></p>
+                                </div>
+                            </div>
+                       
+                    </div>
+             
+            </div>
+
+
+            <!-- ADD NEW BUILDING MODAL -->
+            <!-- Modal -->
+            <div class="modal fade" id="add-building-modal" tabindex="-1" aria-labelledby="add-building-modal"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content modal-inputform">
+                        <div class="modal-header modal-inputform-header">
+                            <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div>
-                            <p id="pagination"></p>
+                        <div class="modal-body">
+                            <div class="my-3 py-2">
+                                <input name="buildingName" id="buildingName" type="text" class="form-control"
+                                    placeholder="Building Name" required>
+                                <input type="hidden" id="buildingId" name="buildingId">
+                            </div>
+
+                            <div class="my-3 py-2">
+                                <input name="buildingNumber" id="buildingNumber" type="text" class="form-control"
+                                    placeholder="Building Number" required>
+                            </div>
+
+                            <div class="my-3 py-2">
+                                <input name="floors" id="floors" type="number" class="form-control"
+                                    placeholder="Total Floor Count" required>
+                            </div>
+
+                            <div class="my-3 py-2">
+
+                                <select class="form-select modalSelect2" name="ownerId" id="ownerId" required>
+                                    <option disabled selected>--Owner--</option>
+                                    <% for(let owner of orgList) { %>
+                                        <option value="<%- owner.id %>">
+                                            <%- owner.org_abbr %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+
+                            <div class="my-3 py-2">
+                                <select class="form-select modalSelect2" name="handledById" id="handledById" required>
+                                    <option disabled selected value>--Handled By--</option>
+                                    <% for(let handler of orgList) { %>
+                                        <option value="<%- handler.id %>">
+                                            <%- handler.org_abbr %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+
+                            <div class="my-3 py-2">
+                                <select class="form-select modalSelect2" name="startTimeId" id="startTimeId" required>
+                                    <option disabled selected value>--Start Time--</option>
+                                    <% for(let time of timeList) { %>
+                                        <option value="<%- time.id %>">
+                                            <%- time.start_time %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+
+                            <div class="my-3 py-2">
+                                <select class="form-select modalSelect2" name="endTimeId" id="endTimeId" required>
+                                    <option disabled selected value>--End Time--</option>
+                                    <% for(let time of timeList) { %>
+                                        <option value="<%- time.id %>">
+                                            <%- time.end_time %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+
+                            <div class="my-3 py-2">
+                                <select class="form-select modalSelect2" name="campusId" id="campusId" required>
+                                    <option disabled selected value>--Campus--</option>
+                                    <% for(let campus of campusList) { %>
+                                        <option value="<%- campus.id %>">
+                                            <%- campus.campus_abbr %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <div id="errorMsg"></div>
+                            <button type="submit" class="btn btn-danger addBuilding modal-inputform-btn">Create Building</button>
+                            <button type="submit" class="btn btn-danger updateBuilding d-none">Update Building</button>
                         </div>
                     </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-</div>
-</div>
-
-
-<!-- ADD NEW BUILDING MODAL -->
-<!-- Modal -->
-<div class="modal fade" id="add-building-modal" tabindex="-1" aria-labelledby="add-building-modal" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="my-3 py-2">
-                <input name="buildingName" id="buildingName" type="text" class="form-control"
-                    placeholder="Building Name" required>
-                    <input type="hidden" id="buildingId" name="buildingId">
-            </div>
-
-            <div class="my-3 py-2">
-                <input name="buildingNumber" id="buildingNumber" type="text" class="form-control"
-                    placeholder="Building Number" required>
-            </div>
-
-            <div class="my-3 py-2">
-                <input name="floors" id="floors" type="number" class="form-control" placeholder="Total Floor Count"
-                    required>
-            </div>
-
-            <div class="my-3 py-2">
-
-                <select class="form-select modalSelect2" name="ownerId" id="ownerId" required >
-                    <option disabled selected>--Owner--</option>
-                    <% for(let owner of orgList) { %>
-                    <option value="<%- owner.id %>"><%- owner.org_abbr %></option>
-                    <% } %>
-                </select>
-            </div>
-
-            <div class="my-3 py-2">
-                <select class="form-select modalSelect2" name="handledById" id="handledById" required>
-                    <option disabled selected value>--Handled By--</option>
-                    <% for(let handler of orgList) { %>
-                    <option value="<%- handler.id %>"><%- handler.org_abbr %></option>
-                    <% } %>
-                </select>
-            </div>
-
-            <div class="my-3 py-2">
-                <select class="form-select modalSelect2" name="startTimeId" id="startTimeId" required>
-                    <option disabled selected value>--Start Time--</option>
-                    <% for(let time of timeList) { %>
-                    <option value="<%- time.id %>"><%- time.start_time %></option>
-                    <% } %>
-                </select>
-            </div>
-
-            <div class="my-3 py-2">
-                <select class="form-select modalSelect2" name="endTimeId" id="endTimeId" required>
-                    <option disabled selected value>--End Time--</option>
-                    <% for(let time of timeList) { %>
-                    <option value="<%- time.id %>"><%- time.end_time %></option>
-                    <% } %>
-                </select>
-            </div>
-
-            <div class="my-3 py-2">
-                <select class="form-select modalSelect2" name="campusId" id="campusId" required>
-                    <option disabled selected value>--Campus--</option>
-                    <% for(let campus of campusList) { %>
-                    <option value="<%- campus.id %>"><%- campus.campus_abbr %></option>
-                    <% } %>
-                </select>
-            </div>
-
-
-        </div>
-        <div class="modal-footer">
-            <div id="errorMsg"></div>
-            <button type="submit" class="btn btn-danger addBuilding">Create Building</button>
-            <button type="submit" class="btn btn-danger updateBuilding d-none">Update Building</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  
 
 
 
-
-<%- include("../partials/footer") %>
-<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-<script>
-
-
-    $(".addBuilding").on('click', function () {
-        $.ajax({
-            url: '/management/building/add',
-            method: 'POST',
-            type: 'JSON',
-            data: {
-                buildingName: $("#buildingName").val(),
-                buildingNumber: $("#buildingNumber").val(),
-                floors: $("#floors").val(),
-                ownerId: $("#ownerId").val(),
-                handledById: $("#handledById").val(),
-                startTimeId: $("#startTimeId").val(),
-                endTimeId: $("#endTimeId").val(),
-                campusId: $("#campusId").val(),
-            },
-            success: data => {
-                location.reload()
-            },
-            error: err => {
-                console.log('Error: ', err)
-            }
-        })
-    })
+            <%- include("../partials/footer") %>
+                <script
+                    src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+                <script>
 
 
-
-    $('#buildingTable').on('click', '.edit-building', function () {
-        $("#add-building-modal-title").html('Update Building')
-        $(".addBuilding").addClass('d-none')
-        $(".updateBuilding").removeClass('d-none')
-        $.ajax({
-            url: '/management/building/fetch-single',
-            method: 'POST',
-            type: 'JSON',
-            data: {
-                buildingId: $(this).attr('data-building-id')
-            },
-            success: data => {
-
-                let building = data.buildingData;
-                console.log('Success: ', building)
-                $("#buildingId").val(building.id),
-                    $("#buildingName").val(building.building_name),
-                    $("#buildingNumber").val(building.building_number),
-                    $("#floors").val(building.total_floors),
-                    $("#ownerId").val(building.owner_id).trigger('change'),
-                    $("#handledById").val(building.handled_by).trigger('change'),
-                    $("#startTimeId").val(building.start_time).trigger('change'),
-                    $("#endTimeId").val(building.end_time).trigger('change'),
-                    $("#campusId").val(building.campus_id).trigger('change'),
-                    $("#add-building-modal").modal('show')
-            },
-            error: err => {
-                console.log('Error: ', err)
-            }
-        })
-    })
+                    $(".addBuilding").on('click', function () {
+                        $.ajax({
+                            url: '/management/building/add',
+                            method: 'POST',
+                            type: 'JSON',
+                            data: {
+                                buildingName: $("#buildingName").val(),
+                                buildingNumber: $("#buildingNumber").val(),
+                                floors: $("#floors").val(),
+                                ownerId: $("#ownerId").val(),
+                                handledById: $("#handledById").val(),
+                                startTimeId: $("#startTimeId").val(),
+                                endTimeId: $("#endTimeId").val(),
+                                campusId: $("#campusId").val(),
+                            },
+                            success: data => {
+                                location.reload()
+                            },
+                            error: err => {
+                                console.log('Error: ', err)
+                            }
+                        })
+                    })
 
 
-    $(".updateBuilding").on('click', function () {
-        $.ajax({
-            url: '/management/building/update',
-            method: 'POST',
-            type: 'JSON',
-            data: {
-                buildingId: $("#buildingId").val(),
-                buildingName: $("#buildingName").val(),
-                buildingNumber: $("#buildingNumber").val(),
-                floors: $("#floors").val(),
-                ownerId: $("#ownerId").val(),
-                handledById: $("#handledById").val(),
-                startTimeId: $("#startTimeId").val(),
-                endTimeId: $("#endTimeId").val(),
-                campusId: $("#campusId").val(),
-            },
-            success: data => {
-            location.reload()
-            },
-            error: err => {
-                console.log('Error: ', err)
-            }
-        })
-    })
 
-       $('#buildingTable').on('click', '.delete-building', function () {
-        $.ajax({
-            url: '/management/building/delete-single',
-            method: 'POST',
-            type: 'JSON',
-            data: {
-                buildingId: $(this).attr('data-building-id')
-            },
-            success: data => {
-                location.reload()        
-            },
-            error: err => {
-                console.log('Error: ', err)
-            }
-        })
-    })
+                    $('#buildingTable').on('click', '.edit-building', function () {
+                        $("#add-building-modal-title").html('Update Building')
+                        $(".addBuilding").addClass('d-none')
+                        $(".updateBuilding").removeClass('d-none')
+                        $.ajax({
+                            url: '/management/building/fetch-single',
+                            method: 'POST',
+                            type: 'JSON',
+                            data: {
+                                buildingId: $(this).attr('data-building-id')
+                            },
+                            success: data => {
+
+                                let building = data.buildingData;
+                                console.log('Success: ', building)
+                                $("#buildingId").val(building.id),
+                                    $("#buildingName").val(building.building_name),
+                                    $("#buildingNumber").val(building.building_number),
+                                    $("#floors").val(building.total_floors),
+                                    $("#ownerId").val(building.owner_id).trigger('change'),
+                                    $("#handledById").val(building.handled_by).trigger('change'),
+                                    $("#startTimeId").val(building.start_time).trigger('change'),
+                                    $("#endTimeId").val(building.end_time).trigger('change'),
+                                    $("#campusId").val(building.campus_id).trigger('change'),
+                                    $("#add-building-modal").modal('show')
+                            },
+                            error: err => {
+                                console.log('Error: ', err)
+                            }
+                        })
+                    })
 
 
-        //Pagination Here
-    let pageCount = `<%- pageCount %>`
-    console.log("Page Count=====>>>", pageCount)
-    let pageNos = Math.ceil(Number(pageCount) / 10)
+                    $(".updateBuilding").on('click', function () {
+                        $.ajax({
+                            url: '/management/building/update',
+                            method: 'POST',
+                            type: 'JSON',
+                            data: {
+                                buildingId: $("#buildingId").val(),
+                                buildingName: $("#buildingName").val(),
+                                buildingNumber: $("#buildingNumber").val(),
+                                floors: $("#floors").val(),
+                                ownerId: $("#ownerId").val(),
+                                handledById: $("#handledById").val(),
+                                startTimeId: $("#startTimeId").val(),
+                                endTimeId: $("#endTimeId").val(),
+                                campusId: $("#campusId").val(),
+                            },
+                            success: data => {
+                                location.reload()
+                            },
+                            error: err => {
+                                console.log('Error: ', err)
+                            }
+                        })
+                    })
 
-    console.log("Page Numbers", pageNos)
-    $('#pagination').bootpag({
-        total: pageNos,
-        page: 1,
-        maxVisible: 10,
-        leaps: true,
-        firstLastUse: true,
-        first: '←',
-        last: '→',
-        wrapClass: 'pagination',
-        activeClass: 'active',
-        disabledClass: 'disabled',
-        nextClass: 'next',
-        prevClass: 'prev',
-        lastClass: 'last',
-        firstClass: 'first'
-    }).on("page", function (event, num) {
+                    $('#buildingTable').on('click', '.delete-building', function () {
+                        $.ajax({
+                            url: '/management/building/delete-single',
+                            method: 'POST',
+                            type: 'JSON',
+                            data: {
+                                buildingId: $(this).attr('data-building-id')
+                            },
+                            success: data => {
+                                location.reload()
+                            },
+                            error: err => {
+                                console.log('Error: ', err)
+                            }
+                        })
+                    })
 
-        $.ajax({
-            type: "POST",
-            url: "/management/building",
-            data: {
-                pageNo: num
-            },
-            success: function (data) {
-                let buildingList = data.data;
-                let buildingAjax = `<table class="table table-bordered" id="buildingTable">
+
+                    //Pagination Here
+                    let pageCount = `<%- pageCount %>`
+                    console.log("Page Count=====>>>", pageCount)
+                    let pageNos = Math.ceil(Number(pageCount) / 10)
+
+                    console.log("Page Numbers", pageNos)
+                    $('#pagination').bootpag({
+                        total: pageNos,
+                        page: 1,
+                        maxVisible: 10,
+                        leaps: true,
+                        firstLastUse: true,
+                        first: '←',
+                        last: '→',
+                        wrapClass: 'pagination',
+                        activeClass: 'active',
+                        disabledClass: 'disabled',
+                        nextClass: 'next',
+                        prevClass: 'prev',
+                        lastClass: 'last',
+                        firstClass: 'first'
+                    }).on("page", function (event, num) {
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/management/building",
+                            data: {
+                                pageNo: num
+                            },
+                            success: function (data) {
+                                let buildingList = data.data;
+                                let buildingAjax = `<table class="table custom_row" id="buildingTable">
                     <thead>
                         <th>Name</th>
                         <th>Number</th>
@@ -302,9 +328,9 @@
                         <th>Action</th>
                     </thead>
                     <tbody>`;
-                for (building of buildingList) {
-                    buildingAjax +=
-                        `<tr>
+                                for (building of buildingList) {
+                                    buildingAjax +=
+                                        `<tr>
                             <td>${building.building_name}</td>
                             <td>${building.building_number}</td>
                             <td>${building.total_floors}</td>
@@ -320,12 +346,12 @@
                                     class="fas fa-trash-alt text-danger delete-building"></a>
                             </td>
                         </tr>`
-                }
-                buildingAjax += `<tbody></table>`
-                $("#buildingTable").html(buildingAjax);
-            }
-        })
-    });
+                                }
+                                buildingAjax += `<tbody></table>`
+                                $("#buildingTable").html(buildingAjax);
+                            }
+                        })
+                    });
 
 
 
