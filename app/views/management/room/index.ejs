@@ -88,8 +88,8 @@
                             <td>
                                 <i class="fas fa-edit text-dark cursor-pointer edit-room"
                                     data-room-id="<%- room.roomid %>"></i>
-                                <a href="/management/room/delete?id=<%- room.id %>"
-                                    class="fas fa-trash-alt text-danger del-entry"></a>
+                                <a data-room-id="<%- room.roomid %>"
+                                    class="fas fa-trash-alt text-danger delete-room"></a>
                             </td>
                         </tr>
 
@@ -117,6 +117,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+
+                <input type="hidden" id="roomId" name="roomId">
 
 
                 <div class="row mt-4 ">
@@ -194,7 +196,7 @@
                                     <select class="form-select modalSelect2" name="startTime" id="startTime" required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
-                                        <option value="<%- time.start_time %>"><%- time.start_time %>
+                                        <option value="<%- time.id %>"><%- time.start_time %>
                                         </option>
                                         <% } %>
                                     </select>
@@ -203,20 +205,20 @@
                                     <select class="form-select modalSelect2" name="endTime" id="endTime" required>
                                         <option disabled selected value>--End Time--</option>
                                         <% for(let time of timeList) { %>
-                                        <option value="<%- time.end_time %>"><%- time.end_time %></option>
+                                        <option value="<%- time.id %>"><%- time.end_time %></option>
                                         <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="isBasement" style="width: 70px;"
-                                        required>
+                                    <select class="form-select modalSelect2" name="isBasement" id="isBasement"
+                                        style="width: 70px;" required>
                                         <option selected value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
                                 </td>
                                 <td>
 
-                                    <i class="far fa-edit"></i>
+                                    <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
 
                                 </td>
@@ -232,7 +234,7 @@
                 <button type="button" class="btn btn-success btn-sm" id="add-room"><i class="fas fa-plus"></i> Add
                     More Room</button>
                 <button type="submit" class="btn btn-danger addRoom" id="insert-room">Submit</button>
-                <button type="submit" class="btn btn-danger updateRoom d-none">Room Data</button>
+                <button type="submit" class="btn btn-danger updateRoom d-none">Update Room</button>
             </div>
         </div>
     </div>
@@ -299,8 +301,7 @@
                                 <td>${room.is_processed ? 'Yes' : 'No'}</td>
                                <td>
                                     <i class="fas fa-edit text-dark cursor-pointer edit-room"
-                                        data-room-id="${room.id}" data-toggle="modal"
-                                        data-target="#update-room-modal"></i>
+                                        data-room-id="${room.id}"></i>
                                     <a data-room-id="${room.id}"
                                         class="fas fa-trash-alt text-danger delete-room"></a>
                                 </td>
@@ -369,7 +370,7 @@
 
 
     $('#roomTable').on('click', '.edit-room', function () {
-        $("#add-room-modal-title").html('Room Data')
+        $("#add-room-modal-title").html('Update Room')
         $(".addRoom").addClass('d-none')
         $("#add-room").addClass('d-none')
         $(".updateRoom").removeClass('d-none')
@@ -385,7 +386,7 @@
 
                 let roomData = data.roomData;
                 console.log('success: ', roomData)
-
+                $("#roomId").val(roomData.roomid)
                 $("#update-roomNo").val(roomData.room_number)
                 $("#buildingName").val(roomData.buildingid).trigger('change'),
                     $("#campus").val(roomData.id).trigger('change'),
@@ -394,6 +395,7 @@
                 $("#capacity").val(roomData.capacity)
                 $("#startTime").val(roomData.start_time)
                 $("#endTime").val(roomData.end_time)
+                $("#handledBy").val(roomData.orgid)
 
 
                 $("#add-room-modal").modal('show')
@@ -404,20 +406,23 @@
         })
 
         $(".updateRoom").on('click', function () {
+
             $.ajax({
-                url: '/management/building/update',
+                url: '/management/room/update',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    buildingId: $("#buildingId").val(),
-                    buildingName: $("#buildingName").val(),
-                    buildingNumber: $("#buildingNumber").val(),
-                    floors: $("#floors").val(),
-                    ownerId: $("#ownerId").val(),
-                    handledById: $("#handledById").val(),
-                    startTimeId: $("#startTimeId").val(),
-                    endTimeId: $("#endTimeId").val(),
-                    campusId: $("#campusId").val(),
+                    roomid: $("#roomId").val(),
+                    room_number: $('#update-roomNo').val(),
+                    buildingid: $('#buildingName').val(),
+                    roomtypeId: $('#roomType').val(),
+                    floor_number: $('#floorNo').val(),
+                    capacity: $('#capacity').val(),
+                    start_time: $('#startTime').val(),
+                    end_time: $('#endTime').val(),
+                    is_basement: $('#isBasement').val(),
+                    orgid:$("#handledBy").val()
+
                 },
                 success: data => {
                     location.reload()
@@ -427,6 +432,30 @@
                 }
             })
         })
+
+
+        $('#roomTable').on('click', '.delete-room', function () {
+            console.log('deletehit:::::')
+
+            $.ajax({
+                url: '/management/room/delete-room',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    roomId: $(this).attr('data-room-id')
+                },
+                success: data => {
+                    location.reload()
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+
+
+
     })
 </script>
 <%- include("../partials/footerEnd") %>
