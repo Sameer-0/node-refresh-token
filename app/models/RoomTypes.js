@@ -58,4 +58,13 @@ module.exports = class RoomTypes {
         })
     }
 
+    static searchRoomType(rowcount, keyword) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcount)}  rt.id as roomtypeid, rt.name, rt.description FROM 
+                [dbo].room_types rt WHERE rt.active = 1 AND rt.name LIKE @keyword OR rt.description  LIKE @keyword  ORDER BY rt.id DESC`)
+        })
+    }
+
 }

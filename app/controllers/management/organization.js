@@ -64,7 +64,7 @@ module.exports = {
     },
 
     
-    searchOrg: (req, res) => {
+    search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
         OrganizationMaster.searchOrg(rowcont, req.body.keyword).then(result => {

@@ -1,23 +1,16 @@
-const {
-    check,
-    oneOf,
-    validationResult,
-    Result
-} = require('express-validator');
-
-const RoomTransactionTypes = require('../../models/RoomTransactionTypes')
+const RoomTypes = require('../../models/RoomTypes')
 
 module.exports = {
-    getPage: (req, res) => {
-        RoomTransactionTypes.fetchAll(50).then(result => {
-            res.render('management/room/room_transaction_types', {
-                roomTransactionTypeList: result.recordset
+    getRoomTypePage: (req, res) => {
+        RoomTypes.fetchAll(10).then(result => {
+            res.render('management/room/roomtype', {
+                roomTypes: result.recordset
             })
         })
     },
 
-    createRoomTrabsactionStages: (req, res) => {
-        RoomTransactionTypes.save(req.body).then(result => {
+    createRoomType: (req, res) => {
+        RoomTypes.save(req.body).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -25,8 +18,8 @@ module.exports = {
         })
     },
 
-    getRoomTrabsactionStagesById: (req, res) => {
-        RoomTransactionTypes.getRTSId(req.body.rtsId).then(result => {
+    getRoomTypeById: (req, res) => {
+        RoomTypes.getRoomTypeById(req.body.roomtypeid).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -35,8 +28,8 @@ module.exports = {
         })
     },
 
-    updateRoomTrabsactionStagesById: (req, res) => {
-        RoomTransactionTypes.update(req.body).then(result => {
+    updateRoomTypeById: (req, res) => {
+        RoomTypes.update(req.body).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -44,8 +37,8 @@ module.exports = {
         })
     },
 
-    deleteRoomTrabsactionStagesById:(req, res)=>{
-        RoomTransactionTypes.delete(req.body.rtsId).then(result=>{
+    deleteRoomTypeById: (req, res) => {
+        RoomTypes.delete(req.body.roomtypeid).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -55,13 +48,12 @@ module.exports = {
 
     search: (req, res) => {
         //here 10is rowcount
-        console.log(req.body)
         let rowcont = 10;
-        RoomTransactionTypes.search(rowcont, req.body.keyword).then(result => {
+        RoomTypes.searchRoomType(rowcont, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
-                    message: "Room Transaction Type fetched",
+                    message: "Room Type fetched",
                     data: result.recordset,
                     length: result.recordset.length
                 })
@@ -80,4 +72,5 @@ module.exports = {
             })
         })
     }
+
 }
