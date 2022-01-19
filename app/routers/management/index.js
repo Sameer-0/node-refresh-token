@@ -52,7 +52,7 @@ router.post('/slug/add', slugcontroller.createSlug)
 router.post('/slug/fetch-single', slugcontroller.getSlugById)
 router.post('/slug/update-single', slugcontroller.updateSlugById)
 router.post('/slug/delete-single', slugcontroller.deleteSlugById)
-
+router.post('/slug/slug-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], slugcontroller.searchSlug)
 
 //DASHBOARD ROUTER
 router.get('/dashboard', dashcontroller.getDashboard)
