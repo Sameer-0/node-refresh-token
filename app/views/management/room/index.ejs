@@ -49,7 +49,7 @@
             <div class="card-header text-uppercase d-flex align-items-center">
                 <h5>ROOM DATA</h5>
                 <button class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i
-                    class="fas fa-plus"></i> Add New</button>
+                        class="fas fa-plus"></i> Add New</button>
             </div>
             <div class="card-body table-responsive">
                 <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i>
@@ -122,7 +122,7 @@
                 <div class="row mt-4 ">
                     <div class="col-md-4">
                         <label>Campus</label>
-                        <select class="form-select modalSelect2" name="campusId" required>
+                        <select class="form-select modalSelect2" name="campusId" id="campus" required>
                             <option disabled selected value>--Select Campus--</option>
                             <% for(let campus of campusList) { %>
                             <option value="<%- campus.id %>"><%- campus.campus_abbr %></option>
@@ -142,7 +142,7 @@
 
                     <div class="col-md-4">
                         <label>Handled By</label>
-                        <select class="form-select modalSelect2" name="handledBy" required>
+                        <select class="form-select modalSelect2" name="handledBy" id="handledBy" required>
                             <option disabled selected value>--Select Organization--</option>
                             <% for(let org of orgList) { %>
                             <option value="<%- org.id %>"><%- org.org_abbr %>/<%- org.org_id %></option>
@@ -178,20 +178,20 @@
                                     <select class="form-select modalSelect2" name="roomType" id="roomType" required>
                                         <option disabled selected value>--Room Type--</option>
                                         <% for(let roomType of roomTypeList) { %>
-                                        <option value="<%- roomType.id %>"><%- roomType.name %></option>
+                                        <option value="<%- roomType.roomtypeid %>"><%- roomType.name %></option>
                                         <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="floorNo" class="form-control" style="width: 70px;"
-                                        required>
+                                    <input type="number" name="floorNo" id="floorNo" class="form-control"
+                                        style="width: 70px;" required>
                                 </td>
                                 <td>
-                                    <input type="number" name="capacity" class="form-control" style="width: 70px;"
-                                        required>
+                                    <input type="number" name="capacity" id="capacity" class="form-control"
+                                        style="width: 70px;" required>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="startTime" required>
+                                    <select class="form-select modalSelect2" name="startTime" id="startTime" required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.start_time %>"><%- time.start_time %>
@@ -200,7 +200,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="endTime" required>
+                                    <select class="form-select modalSelect2" name="endTime" id="endTime" required>
                                         <option disabled selected value>--End Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.end_time %>"><%- time.end_time %></option>
@@ -384,17 +384,48 @@
             success: data => {
 
                 let roomData = data.roomData;
-                console.log('success: ', roomData.buildingid)
+                console.log('success: ', roomData)
 
                 $("#update-roomNo").val(roomData.room_number)
                 $("#buildingName").val(roomData.buildingid).trigger('change'),
-                $("#roomType").val(roomData.room_type)
+                    $("#campus").val(roomData.id).trigger('change'),
+                    $("#roomType").val(roomData.roomtypeId)
+                $("#floorNo").val(roomData.floor_number)
+                $("#capacity").val(roomData.capacity)
+                $("#startTime").val(roomData.start_time)
+                $("#endTime").val(roomData.end_time)
+
 
                 $("#add-room-modal").modal('show')
             },
             error: err => {
                 console.log('Error: ', err)
             }
+        })
+
+        $(".updateRoom").on('click', function () {
+            $.ajax({
+                url: '/management/building/update',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    buildingId: $("#buildingId").val(),
+                    buildingName: $("#buildingName").val(),
+                    buildingNumber: $("#buildingNumber").val(),
+                    floors: $("#floors").val(),
+                    ownerId: $("#ownerId").val(),
+                    handledById: $("#handledById").val(),
+                    startTimeId: $("#startTimeId").val(),
+                    endTimeId: $("#endTimeId").val(),
+                    campusId: $("#campusId").val(),
+                },
+                success: data => {
+                    location.reload()
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
         })
     })
 </script>

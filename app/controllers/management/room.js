@@ -96,6 +96,12 @@ module.exports = {
 
     },
 
+
+    updateRoomById:(req, res) => {
+        
+
+    },
+
     getRoomTypePage: (req, res) => {
         RoomTypes.fetchAll(10).then(result => {
             res.render('management/room/roomtype', {
