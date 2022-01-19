@@ -37,13 +37,21 @@ module.exports = class RoomData {
     static fetchRoomById(id) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, id)
-            .query(`SELECT r.room_number, b.building_name AS building_name, b.id AS buildingid, rt.name AS room_type, r.floor_number, r.capacity,
-            CONVERT(NVARCHAR, r.start_time, 100) AS start_time, CONVERT(NVARCHAR, r.end_time, 100) AS end_time,
-            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].room_data r
+            .query(`SELECT r.room_number, b.building_name AS building_name, b.id AS buildingid, rt.name AS room_type, rt.id AS roomtypeId, r.floor_number, r.capacity,
+            CONVERT(NVARCHAR, r.start_time, 100) AS start_time, CONVERT(NVARCHAR, r.end_time, 100) AS end_time, o.id AS o_id,
+            o.org_abbr AS handled_by, c.id, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].room_data r
             INNER JOIN [dbo].[buildings] b ON b.id = r.building_id
             INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
             INNER JOIN [dbo].organization_master o ON o.id = r.handled_by
             INNER JOIN [dbo].campus_master c ON c.id = b.campus_id WHERE r.id = @id`)
+        })
+    }
+
+    static updateRoomById(body) {
+        return poolConnection.then(pool => {
+            return pool.request().input('roomId', sql.Int, body.roomid)
+            .input('roomNo', sql.Int, body.room_number)
+            .input('roomType', sql.NVarChar(50), body.room_type)
         })
     }
 

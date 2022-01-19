@@ -61,6 +61,7 @@ router.get('/dashboard', dashcontroller.getDashboard)
 //ROOM DASHBOARD ROUTER START roomtype
 router.get('/room', roomcontroller.getPage)
 router.post('/room/fetch-single', roomcontroller.getSingleRoom)
+router.post('/room/update', roomcontroller.updateRoomById)
 router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
 
 //ROOM TYPE ROUTER
