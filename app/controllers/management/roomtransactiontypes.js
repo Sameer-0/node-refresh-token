@@ -51,5 +51,33 @@ module.exports = {
                 message: "Success"
             })
         })
+    },
+
+    search: (req, res) => {
+        //here 10is rowcount
+        console.log(req.body)
+        let rowcont = 10;
+        RoomTransactionTypes.search(rowcont, req.body.keyword).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Room Transaction Type fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
     }
 }

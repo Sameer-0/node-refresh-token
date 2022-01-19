@@ -21,7 +21,6 @@ module.exports = class RoomTypes {
 
 
     static save(body) {
-      
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('roomName', sql.NVarChar(100), body.roomName)

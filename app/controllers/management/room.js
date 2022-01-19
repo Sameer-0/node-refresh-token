@@ -95,8 +95,6 @@ module.exports = {
         })
 
     },
-
-
     updateRoomById:(req, res) => {
         roomModel.updateRoomById(req.body).then(result => {
             res.json({
@@ -115,53 +113,7 @@ module.exports = {
         })
     },
 
-
-
-    getRoomTypePage: (req, res) => {
-        RoomTypes.fetchAll(10).then(result => {
-            res.render('management/room/roomtype', {
-                roomTypes: result.recordset
-            })
-        })
-    },
-
-    createRoomType: (req, res) => {
-        RoomTypes.save(req.body).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
-        })
-    },
-
-    getRoomTypeById: (req, res) => {
-        RoomTypes.getRoomTypeById(req.body.roomtypeid).then(result => {
-            res.json({
-                status: 200,
-                message: "Success",
-                data: result.recordset[0]
-            })
-        })
-    },
-
-    updateRoomTypeById: (req, res) => {
-        RoomTypes.update(req.body.roomtypeid).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
-        })
-    },
-
-    deleteRoomTypeById: (req, res) => {
-        RoomTypes.delete(req.body.roomtypeid).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
-        })
-    },
-
+   
     searchRoom: (req, res) => {
         let rowCount = 10;
         roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
