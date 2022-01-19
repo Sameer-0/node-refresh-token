@@ -9,6 +9,7 @@ const campuscontroller = require('../../controllers/management/campus');
 const orgcontroller = require('../../controllers/management/organization');
 const dashcontroller = require('../../controllers/management/dashboard');
 const roomcontroller = require('../../controllers/management/room');
+const roomtype = require('../../controllers/management/roomtype');
 const acadYearcontroller = require('../../controllers/management/academicYear');
 const slugcontroller = require('../../controllers/management/slug');
 const rtscontroller =  require("../../controllers/management/roomtransactionstages")
@@ -57,15 +58,19 @@ router.post('/slug/slug-search', [check('keyword', 'Invalid keyword').exists().t
 //DASHBOARD ROUTER
 router.get('/dashboard', dashcontroller.getDashboard)
 
-//ROOM DASHBOARD ROUTER START
+//ROOM DASHBOARD ROUTER START roomtype
 router.get('/room', roomcontroller.getPage)
 router.post('/room/fetch-single', roomcontroller.getSingleRoom)
-router.get('/room/roomtype', roomcontroller.getRoomTypePage)
-router.post('/room/roomtype/add', roomcontroller.createRoomType)
-router.post('/room/roomtype/fetch-single', roomcontroller.getRoomTypeById)
-router.post('/room/roomtype/update-single', roomcontroller.updateRoomTypeById)
-router.post('/room/roomtype/delete-single', roomcontroller.deleteRoomTypeById)
 router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
+
+//ROOM TYPE ROUTER
+router.get('/room/roomtype', roomtype.getRoomTypePage)
+router.post('/room/roomtype/add', roomtype.createRoomType)
+router.post('/room/roomtype/fetch-single', roomtype.getRoomTypeById)
+router.post('/room/roomtype/update-single', roomtype.updateRoomTypeById)
+router.post('/room/roomtype/delete-single', roomtype.deleteRoomTypeById)
+router.post('/room/roomtype/roomtype-search',[check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.searchRoomType)
+
 
 
 // ROOM TRANSACTION STATGE =  rtstage
