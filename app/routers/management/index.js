@@ -12,9 +12,11 @@ const roomcontroller = require('../../controllers/management/room');
 const roomtype = require('../../controllers/management/roomtype');
 const acadYearcontroller = require('../../controllers/management/academicYear');
 const slugcontroller = require('../../controllers/management/slug');
-const rtscontroller =  require("../../controllers/management/roomtransactionstages")
-const rtypescontroller =  require("../../controllers/management/roomtransactiontypes")
-const roomtransactioncontroller =  require("../../controllers/management/roomtransactions")
+const rtscontroller = require("../../controllers/management/roomtransactionstages")
+const rtypescontroller = require("../../controllers/management/roomtransactiontypes")
+const roomtransactioncontroller = require("../../controllers/management/roomtransactions")
+const roomslotscontroller = require("../../controllers/management/roomslots")
+
 //ACADEMIC YEAR ROUTER
 router.get('/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic-year', acadYearcontroller.updateAcadYear)
@@ -70,7 +72,7 @@ router.post('/room/roomtype/add', roomtype.createRoomType)
 router.post('/room/roomtype/fetch-single', roomtype.getRoomTypeById)
 router.post('/room/roomtype/update-single', roomtype.updateRoomTypeById)
 router.post('/room/roomtype/delete-single', roomtype.deleteRoomTypeById)
-router.post('/room/roomtype/roomtype-search',[check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.search)
+router.post('/room/roomtype/roomtype-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.search)
 
 
 
@@ -80,7 +82,7 @@ router.post('/room/rtstage/add', rtscontroller.createRoomTrabsactionStages)
 router.post('/room/rtstage/fetch-single', rtscontroller.getRoomTrabsactionStagesById)
 router.post('/room/rtstage/update-single', rtscontroller.updateRoomTrabsactionStagesById)
 router.post('/room/rtstage/delete-single', rtscontroller.deleteRoomTrabsactionStagesById)
-router.post('/room/rtstage/rtstage-search',[check('keyword', 'Invalid keyword').exists().trim().escape()], rtscontroller.search)
+router.post('/room/rtstage/rtstage-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtscontroller.search)
 
 // ROOM TRANSACTION TYPES =  rtypes
 
@@ -89,11 +91,14 @@ router.post('/room/rtypes/add', rtypescontroller.createRoomTrabsactionStages)
 router.post('/room/rtypes/fetch-single', rtypescontroller.getRoomTrabsactionStagesById)
 router.post('/room/rtypes/update-single', rtypescontroller.updateRoomTrabsactionStagesById)
 router.post('/room/rtypes/delete-single', rtypescontroller.deleteRoomTrabsactionStagesById)
-router.post('/room/rtypes/rtypes-search',[check('keyword', 'Invalid keyword').exists().trim().escape()], rtypescontroller.search)
+router.post('/room/rtypes/rtypes-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtypescontroller.search)
 
 // ROOM TRANSACTION
-router.get('/room/transaction',roomtransactioncontroller.getPage)
-router.post('/room/transaction/view-details',roomtransactioncontroller.viewDetails)
-router.post('/room/transaction/approve-trans',roomtransactioncontroller.approveTrans)
-router.post('/room/transaction/transaction-search',[check('keyword', 'Invalid keyword').exists().trim().escape()], roomtransactioncontroller.search)
+router.get('/room/transaction', roomtransactioncontroller.getPage)
+router.post('/room/transaction/view-details', roomtransactioncontroller.viewDetails)
+router.post('/room/transaction/approve-trans', roomtransactioncontroller.approveTrans)
+router.post('/room/transaction/transaction-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtransactioncontroller.search)
+
+//ROOM SLOTS ROUTER
+router.get('/room/slots', roomslotscontroller.getPage)
 module.exports = router;

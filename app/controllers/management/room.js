@@ -13,13 +13,11 @@ const Buildings = require('../../models/Buildings');
 const OrganizationMaster = require('../../models/OrganizationMaster');
 const CampusMaster = require('../../models/CampusMaster');
 
-
-
 module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
-            Promise.all([roomModel.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), RoomTypes.fetchAll(10),Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
+            Promise.all([roomModel.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), RoomTypes.fetchAll(10), Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
                 let roomList = []
                 let slotList = []
                 // result[0].recordset.map(item => {
@@ -86,7 +84,7 @@ module.exports = {
     },
 
 
-    getSingleRoom:(req, res) => {
+    getSingleRoom: (req, res) => {
         roomModel.fetchRoomById(req.body.id).then(result => {
             res.json({
                 status: 200,
@@ -96,7 +94,10 @@ module.exports = {
 
     },
 
-   
+    updateRoomById: () => {
+
+    },
+
     searchRoom: (req, res) => {
         let rowCount = 10;
         roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
