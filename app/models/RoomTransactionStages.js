@@ -40,7 +40,7 @@ module.exports = class RoomTransactionStages {
     }
 
 
-    
+
     static delete(id) {
         console.log(id)
         return poolConnection.then(pool => {
@@ -51,23 +51,32 @@ module.exports = class RoomTransactionStages {
     }
 
 
-    static getRTSId(id){
+    static getRTSId(id) {
         return poolConnection.then(pool => {
-            let request =  pool.request()
-          return   request.input('rtsId', sql.Int, id)
-         .query(`SELECT  rts.id as rtsid, rts.name as rtsName, rts.description FROM [dbo].room_transaction_stages rts WHERE rts.id  =  @rtsId`)
-      })
-  }
+            let request = pool.request()
+            return request.input('rtsId', sql.Int, id)
+                .query(`SELECT  rts.id as rtsid, rts.name as rtsName, rts.description FROM [dbo].room_transaction_stages rts WHERE rts.id  =  @rtsId`)
+        })
+    }
 
 
 
-  static getRTSCount(){
-    return poolConnection.then(pool => {
-        let request =  pool.request()
-      return   request.input('rtsId', sql.Int, id)
-     .query(`SELECT  COUNT(*) as count FROM [dbo].room_transaction_stages rts WHERE rts.active = 1`)
-  })
-}
+    static getRTSCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('rtsId', sql.Int, id)
+                .query(`SELECT  COUNT(*) as count FROM [dbo].room_transaction_stages rts WHERE rts.active = 1`)
+        })
+    }
+
+
+    static search(rowcount, keyword) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcount)}  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_stages rts WHERE rts.active = 1 AND rts.name LIKE @keyword OR rts.description LIKE @keyword ORDER BY rts.id DESC`)
+        })
+    }
 
 
 }

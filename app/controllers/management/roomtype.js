@@ -46,31 +46,31 @@ module.exports = {
         })
     },
 
-    searchRoomType:(req, res)=>{
-               //here 10is rowcount
-               let rowcont = 10;
-               RoomTypes.searchRoomType(rowcont, req.body.keyword).then(result => {
-                   if (result.recordset.length > 0) {
-                       res.json({
-                           status: "200",
-                           message: "Slug fetched",
-                           data: result.recordset,
-                           length: result.recordset.length
-                       })
-                   } else {
-                       res.json({
-                           status: "400",
-                           message: "No data found",
-                           data: result.recordset,
-                           length: result.recordset.length
-                       })
-                   }
-               }).catch(error => {
-                   res.json({
-                       status: "500",
-                       message: "Something went wrong",
-                   })
-               })
+    search: (req, res) => {
+        //here 10is rowcount
+        let rowcont = 10;
+        RoomTypes.searchRoomType(rowcont, req.body.keyword).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Room Type fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
     }
 
 }

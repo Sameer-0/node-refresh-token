@@ -69,7 +69,7 @@ module.exports = {
         })
     },
 
-    searchCampus: (req, res) => {
+    search: (req, res) => {
         //here 10is rowcount
         let rowcont  = 10;
         CampusMaster.searchCampus(rowcont, req.body.keyword).then(result => {

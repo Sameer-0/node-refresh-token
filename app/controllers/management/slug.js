@@ -72,7 +72,7 @@ module.exports = {
         })
     },
 
-    searchSlug: (req, res) => {
+    search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
         SlugTable.searchSlug(rowcont, req.body.keyword).then(result => {
