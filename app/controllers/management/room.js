@@ -113,6 +113,12 @@ module.exports = {
         })
     },
 
+    addRoom:(req, res) => {
+        roomModel.add().then(result => {
+            
+        })
+    },
+
    
     searchRoom: (req, res) => {
         let rowCount = 10;
