@@ -15,9 +15,9 @@ module.exports = class RoomSlots {
         this.dateId = dateId;
     }
 
-    static fetchAll() {
+    static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, date, room_id, slot_id, alloted_to, b_transaction_id, is_booked, active, b_transaction_uuid FROM [dbo].room_slots WHERE active  = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, date, room_id, slot_id, alloted_to, b_transaction_id, is_booked, active, b_transaction_uuid FROM [dbo].room_slots WHERE active  = 1`)
         })
     }
 
@@ -31,7 +31,6 @@ module.exports = class RoomSlots {
                 .input('bTransactionId',sql.BigInt, b_transaction_id)
                 .input('isBooked',sql.BigInt, body.is_booked)
                 .input('bTransactionUuid',sql.BigInt, body.b_transaction_uuid)
-
                 .query(`INSERT INTO [dbo].room_slots (date, room_id, slot_id, alloted_to, b_transaction_id, is_booked, b_transaction_uuid)  VALUES (@date, @roomId, @slotId, @allotedTo, @bTransactionId, @isBooked, @bTransactionUuid)`)
         })
     }

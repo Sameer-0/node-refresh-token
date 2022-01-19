@@ -22,13 +22,12 @@ module.exports = {
 
     approveTrans: (req, res) => {
         RoomTransactions.approveTransactionByUuId(req.body.transid).then(result => {
-            console.log('Resulr:::::::::::::::::>', result.recordset)
+
             res.json({
                 status: 200,
                 data: result.recordset
             })
         }).catch(error=>{
-            console.log('Resulr:::::::::::::::::>', error.originalError.info)
              res.json({status:500,data:error.originalError.info})
         })
     },

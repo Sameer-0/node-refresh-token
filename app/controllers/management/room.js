@@ -13,8 +13,6 @@ const Buildings = require('../../models/Buildings');
 const OrganizationMaster = require('../../models/OrganizationMaster');
 const CampusMaster = require('../../models/CampusMaster');
 
-
-
 module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
@@ -86,7 +84,7 @@ module.exports = {
     },
 
 
-    getSingleRoom:(req, res) => {
+    getSingleRoom: (req, res) => {
         roomModel.fetchRoomById(req.body.id).then(result => {
             res.json({
                 status: 200,
@@ -113,7 +111,7 @@ module.exports = {
         })
     },
 
-   
+
     searchRoom: (req, res) => {
         let rowCount = 10;
         roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
