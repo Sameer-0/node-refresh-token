@@ -16,7 +16,7 @@ const rtscontroller = require("../../controllers/management/roomtransactionstage
 const rtypescontroller = require("../../controllers/management/roomtransactiontypes")
 const roomtransactioncontroller = require("../../controllers/management/roomtransactions")
 const roomslotscontroller = require("../../controllers/management/roomslots")
-
+const programcontroller = require("../../controllers/management/program")
 //ACADEMIC YEAR ROUTER
 router.get('/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic-year', acadYearcontroller.updateAcadYear)
@@ -102,4 +102,8 @@ router.post('/room/transaction/transaction-search', [check('keyword', 'Invalid k
 
 //ROOM SLOTS ROUTER
 router.get('/room/slots', roomslotscontroller.getPage)
+
+//PROGRAM ROUTER
+router.get('/program',programcontroller.getPage)
+
 module.exports = router;
