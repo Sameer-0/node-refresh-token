@@ -111,7 +111,13 @@ module.exports = {
         })
     },
 
+    addRoom:(req, res) => {
+        roomModel.add().then(result => {
+            
+        })
+    },
 
+   
     searchRoom: (req, res) => {
         let rowCount = 10;
         roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
