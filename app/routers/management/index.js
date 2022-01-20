@@ -42,12 +42,12 @@ router.post('/campus/delete-single', campuscontroller.deleteById)
 
 // ORGANIZATION ROUTER
 router.get('/organization', orgcontroller.getPage)
-router.post('/organization', [check('pageNo', 'Invalid Page No').exists().trim().escape()], orgcontroller.getPage)
-router.post('/organization/add', orgcontroller.createOrg)
-router.post('/organization/fetch-single', orgcontroller.getOrgById)
-router.post('/organization/update-single', orgcontroller.updateOrgById)
-router.post('/organization/delete-single', orgcontroller.deleteById)
-router.post('/organization-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], orgcontroller.search)
+router.post('/organization', orgcontroller.createOrg)
+router.put('/organization', orgcontroller.updateOrgById)
+router.delete('/organization', orgcontroller.deleteById)
+router.post('/organization/pagination', [check('pageNo', 'Invalid Page No').exists().trim().escape()], orgcontroller.getPage)
+router.post('/organization/single', orgcontroller.getOrgById)
+router.post('/organization/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], orgcontroller.search)
 
 //SLUG ROUTER
 router.get('/slug', slugcontroller.getPage)
@@ -104,6 +104,6 @@ router.post('/room/transaction/transaction-search', [check('keyword', 'Invalid k
 router.get('/room/slots', roomslotscontroller.getPage)
 
 //PROGRAM ROUTER
-router.get('/program',programcontroller.getPage)
+router.get('/program', programcontroller.getPage)
 
 module.exports = router;
