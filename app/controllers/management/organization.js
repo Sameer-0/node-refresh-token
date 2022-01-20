@@ -7,6 +7,7 @@ const OrganizationMaster = require("../../models/OrganizationMaster")
 const OrganizationType = require("../../models/OrganizationType")
 module.exports = {
     getPage: (req, res) => {
+       
         if (req.method == "GET") {
             Promise.all([OrganizationMaster.fetchAll(10), OrganizationType.fetchAll(), OrganizationMaster.getCount()]).then(result => {
                 res.render('management/organization/index', {

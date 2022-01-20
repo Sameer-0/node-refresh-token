@@ -13,12 +13,7 @@
                             data-bs-target="#add-building-modal"><i class="fas fa-plus"></i> Add New</button>
                     </div>
                     <div class="card-body table-responsive">
-<<<<<<< HEAD
                         <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-=======
-                        <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                            type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
->>>>>>> refs/remotes/origin/main
                             <table class="table custom_row" id="buildingTable">
                                 <thead>
                                     <th>Name</th>
@@ -189,7 +184,7 @@
 
                     $(".addBuilding").on('click', function () {
                         $.ajax({
-                            url: '/management/building/add',
+                            url: '/management/building',
                             method: 'POST',
                             type: 'JSON',
                             data: {
@@ -218,14 +213,13 @@
                         $(".addBuilding").addClass('d-none')
                         $(".updateBuilding").removeClass('d-none')
                         $.ajax({
-                            url: '/management/building/fetch-single',
+                            url: '/management/building/single',
                             method: 'POST',
                             type: 'JSON',
                             data: {
                                 buildingId: $(this).attr('data-building-id')
                             },
                             success: data => {
-
                                 let building = data.buildingData;
                                 console.log('Success: ', building)
                                 $("#buildingId").val(building.id),
@@ -248,8 +242,8 @@
 
                     $(".updateBuilding").on('click', function () {
                         $.ajax({
-                            url: '/management/building/update',
-                            method: 'POST',
+                            url: '/management/building',
+                            method: 'PUT',
                             type: 'JSON',
                             data: {
                                 buildingId: $("#buildingId").val(),
@@ -273,8 +267,8 @@
 
                     $('#buildingTable').on('click', '.delete-building', function () {
                         $.ajax({
-                            url: '/management/building/delete-single',
-                            method: 'POST',
+                            url: '/management/building',
+                            method: 'DELETE',
                             type: 'JSON',
                             data: {
                                 buildingId: $(this).attr('data-building-id')
@@ -314,7 +308,7 @@
 
                         $.ajax({
                             type: "POST",
-                            url: "/management/building",
+                            url: "/management/building/pagination",
                             data: {
                                 pageNo: num
                             },
@@ -365,14 +359,12 @@
         let keyword = $("#searchkeyword").val()
         $.ajax({
             type: "POST",
-            url: "/management/building/building-search",
+            url: "/management/building/search",
             data: {
                 keyword: keyword
             },
             success: function (data) {
-                console.log('campusList::::::', data)
                 let buildingList = data.data;
-
                 let AjaxTable = `<table class="table table-bordered" id="buildingTable">
                     <thead>
                         <th>Name</th>
