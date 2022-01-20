@@ -17,37 +17,11 @@ module.exports = {
         let rowcount = 10
         if (req.method == "GET") {
             Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), Buildings.getCount()]).then(result => {
-                let buildingList = []
-                let slotList = []
-                result[0].recordset.map(item => {
-                    let buildings = {
-                        building_id: item.building_id,
-                        building_name: item.building_name,
-                        building_number: item.building_number,
-                        total_floors: item.total_floors,
-                        owner: item.owner,
-                        handled_by: item.handled_by,
-                        start_time: moment(item.start_time).format('LTS'),
-                        end_time: moment(item.end_time).format('LTS'),
-                        campus_abbr: item.campus_abbr
-                    }
-                    buildingList.push(buildings)
-                })
-
-                result[3].recordset.map(item => {
-                    let slot = {
-                        id: item.id,
-                        start_time: moment(item.start_time).format('LTS'),
-                        end_time: moment(item.end_time).format('LTS'),
-                        slot_name: item.slot_name
-                    }
-                    slotList.push(slot)
-                })
                 res.render('management/buildings/index', {
-                    buildingList: buildingList,
+                    buildingList: result[0].recordset,
                     orgList: result[1].recordset,
                     campusList: result[2].recordset,
-                    timeList: slotList,
+                    timeList: result[3].recordset,
                     pageCount: result[4].recordset[0].count
                 })
             }).catch(error => {
@@ -55,26 +29,11 @@ module.exports = {
             })
         } else if (req.method == "POST") {
             Buildings.fetchChunkRows(rowcount, req.body.pageNo).then(result => {
-                let buildingList = []
-                result.recordset.map(item => {
-                    let buildings = {
-                        building_id: item.building_id,
-                        building_name: item.building_name,
-                        building_number: item.building_number,
-                        total_floors: item.total_floors,
-                        owner: item.owner,
-                        handled_by: item.handled_by,
-                        start_time: moment(item.start_time).format('LTS'),
-                        end_time: moment(item.end_time).format('LTS'),
-                        campus_abbr: item.campus_abbr
-                    }
-                    buildingList.push(buildings)
-                })
-
+              
                 res.json({
                     status: "200",
                     message: "Quotes fetched",
-                    data: buildingList,
+                    data: result.recordset,
                     length: result.recordset.length
                 })
             }).catch(error => {
@@ -122,31 +81,12 @@ module.exports = {
         console.log(req.body)
         //here 10is rowcount
         let rowcount = 10;
-        Buildings.searchBuilding(rowcount, req.body.keyword).then(result => {
+        Buildings.search(rowcount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
-
-                let buildingList = []
-            
-                result.recordset.map(item => {
-                    let buildings = {
-                        building_id: item.building_id,
-                        building_name: item.building_name,
-                        building_number: item.building_number,
-                        total_floors: item.total_floors,
-                        owner: item.owner,
-                        handled_by: item.handled_by,
-                        start_time: moment(item.start_time).format('LTS'),
-                        end_time: moment(item.end_time).format('LTS'),
-                        campus_abbr: item.campus_abbr
-                    }
-                    buildingList.push(buildings)
-                })
-
-
                 res.json({
                     status: "200",
                     message: "Building fetched",
-                    data: buildingList,
+                    data: result.recordset,
                     length: result.recordset.length
                 })
             } else {
