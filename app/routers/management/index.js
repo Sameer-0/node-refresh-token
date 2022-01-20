@@ -18,9 +18,11 @@ const roomtransactioncontroller = require("../../controllers/management/roomtran
 const roomslotscontroller = require("../../controllers/management/roomslots")
 const programcontroller = require("../../controllers/management/program")
 const divisioncontroller = require('../../controllers/management/division')
+const academiccontroller = require('../../controllers/management/academic')
+
 //ACADEMIC YEAR ROUTER
-router.get('/academic-year', acadYearcontroller.getAcadYearPage)
-router.post('/academic-year', acadYearcontroller.updateAcadYear)
+router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
+router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
 
 // BUILDING ROUTER
 router.get('/building', buildingcontroller.getBuildingPage)
@@ -110,4 +112,13 @@ router.get('/program', programcontroller.getPage)
 //DIVISION ROUTER
 router.get('/divisions', divisioncontroller.getPage)
 
+
+//ACADEMIC ROUTER
+router.get('/academic', academiccontroller.getPage)
+router.get('/academic/session', academiccontroller.acadSessionPage)
+router.get('/academic/session/search', academiccontroller.acadSessionSearch)
+router.post('/academic/session', academiccontroller.addAcadSession)
+router.get('/academic/session/single', academiccontroller.getSingleAcadSession)
+router.put('/academic/session', academiccontroller.updateAcadSession)
+router.delete('/academic/session', academiccontroller.deleteAcadSession)
 module.exports = router;

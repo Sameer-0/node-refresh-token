@@ -12,7 +12,7 @@ module.exports = class AcadSession {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} as.id as acadSessionId, as.acad_session FROM [dbo].acad_sessions ac WHERE as.active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id AS acadSessionId, ac.acad_session FROM [dbo].acad_sessions ac WHERE ac.active = 1 ORDER BY ac.id DESC`)
         })
     }
 
@@ -46,6 +46,23 @@ module.exports = class AcadSession {
                 .query(`UPDATE [dbo].acad_sessions SET active = 0 WHERE id = @acadSessionId`)
         }).catch(error => {
             throw error
+        })
+    }
+
+    static search(rowcount, keyword) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcount)} ac.id AS acadSessionId, ac.acad_session FROM [dbo].acad_sessions ac WHERE ac.active = 1 AND ac.acad_session LIKE @keyword ORDER BY ac.id DESC`)
+        })
+    }
+
+
+    static getById(id) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('Id', sql.NVarChar(100), id)
+            .query(`SELECT  ac.id AS acadSessionId, ac.acad_session FROM [dbo].acad_sessions ac WHERE ac.active = 1 AND ac.id = @Id`)
         })
     }
 }
