@@ -54,7 +54,8 @@
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h5 class="modal-title" id="add-roomtransaction-stages-title">ADD ROOM TRANSACTION STAGES</h5>
-                <button type="button" class ="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
@@ -70,9 +71,11 @@
             </div>
             <div class="modal-footer">
                 <span class="errorMsg"></span>
-                <button type="submit" class="btn  createRoomTransactionStages modal-inputform-btn">Create Room Transaction
+                <button type="submit" class="btn  createRoomTransactionStages modal-inputform-btn">Create Room
+                    Transaction
                     Stage</button>
-                <button type="submit" class="btn  updateRoomTransactionStages modal-inputform-btn d-none">Update Room Transaction
+                <button type="submit" class="btn  updateRoomTransactionStages modal-inputform-btn d-none">Update Room
+                    Transaction
                     Stage</button>
             </div>
         </div>
@@ -87,7 +90,7 @@
         //Create 
         $(".createRoomTransactionStages").one('click', function () {
             $.ajax({
-                url: '/management/room/rtstage/add',
+                url: '/management/room/rtstage',
                 method: 'POST',
                 type: 'JSON',
                 data: {
@@ -113,7 +116,7 @@
             $(".updateRoomTransactionStages").removeClass('d-none')
             $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION STAGES`)
             $.ajax({
-                url: '/management/room/rtstage/fetch-single',
+                url: '/management/room/rtstage/single',
                 method: 'POST',
                 type: 'JSON',
                 data: {
@@ -137,8 +140,8 @@
         //Update 
         $(".updateRoomTransactionStages").one('click', function () {
             $.ajax({
-                url: '/management/room/rtstage/update-single',
-                method: 'POST',
+                url: '/management/room/rtstage/update',
+                method: 'PUT',
                 type: 'JSON',
                 data: {
                     rtsId: $("#rtsId").val(),
@@ -163,8 +166,8 @@
         //Delete
         $("#rootTransactionTable").on('click', '.delete-RTS', function () {
             $.ajax({
-                url: '/management/room/rtstage/delete-single',
-                method: 'POST',
+                url: '/management/room/rtstage/delete',
+                method: 'DELETE',
                 type: 'JSON',
                 data: {
                     rtsId: $(this).attr("data-roomtransaction-stages-id")
@@ -184,7 +187,7 @@
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "POST",
-                url: "/management/room/rtstage/rtstage-search",
+                url: "/management/room/rtstage/search",
                 data: {
                     keyword: keyword
                 },
