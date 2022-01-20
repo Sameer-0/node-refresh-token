@@ -119,9 +119,15 @@ module.exports = class RoomData {
         })
     }
 
-    static add() {
+    static add(roomJson) {
         return poolConnection.then(pool => {
-            return pool.request().input()
+
+        console.log('body============>>>>>>>> ',roomJson)
+        
+        return pool.request().input('room_json', sql.NVarChar(sql.MAX), roomJson)
+        .output('output', sql.Bit)
+        .output('msg', sql.NVarChar(sql.MAX))
+        .execute('insert_room_data')
         })
     }
 }

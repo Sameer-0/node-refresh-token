@@ -17,7 +17,7 @@ module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
-            Promise.all([roomModel.fetchAll(10), OrganizationMaster.fetchAll(200), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), RoomTypes.fetchAll(10),Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
+            Promise.all([roomModel.fetchAll(10), OrganizationMaster.fetchAll(200), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), RoomTypes.fetchAll(10), Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
                 let roomList = []
                 let slotList = []
                 // result[0].recordset.map(item => {
@@ -93,7 +93,7 @@ module.exports = {
         })
 
     },
-    updateRoomById:(req, res) => {
+    updateRoomById: (req, res) => {
         roomModel.updateRoomById(req.body).then(result => {
             res.json({
                 status: 200
@@ -102,7 +102,7 @@ module.exports = {
     },
 
 
-    deleteRoomById:(req, res) => {
+    deleteRoomById: (req, res) => {
         roomModel.delete(req.body.roomId).then(result => {
             res.json({
                 status: 200,
@@ -111,13 +111,27 @@ module.exports = {
         })
     },
 
-    addRoom:(req, res) => {
-        roomModel.add().then(result => {
-            
+    addRoom: (req, res) => {
+
+        // console.log('roomJson:::::::>>>', req.body.roomJson)
+        roomModel.add(req.body.roomJson).then(result => {
+
+            console.log('result', result)
+            res.json({
+                status: 200,
+                message: "success",
+                data: result.recordset
+            })
+
+        }).catch(err => {
+            res.json({
+                status: 500
+            })
         })
     },
 
-   
+
+
     searchRoom: (req, res) => {
         let rowCount = 10;
         roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
