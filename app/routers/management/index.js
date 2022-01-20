@@ -33,7 +33,7 @@ router.delete('/building', buildingcontroller.deleteById)
 
 // CAMPUS ROUTER
 router.get('/campus', campuscontroller.getCampusPage)
-router.put('/campus/update', campuscontroller.updateCampus)
+router.put('/campus', campuscontroller.updateCampus)
 router.post('/campus', campuscontroller.createCampus)
 router.post('/campus', [check('pageNo', 'Invalid Page No').exists().trim().escape()], campuscontroller.getCampusPage)
 router.get('/campus/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], campuscontroller.search)
@@ -70,7 +70,7 @@ router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim()
 
 //ROOM TYPE ROUTER
 router.get('/room/roomtype', roomtype.getRoomTypePage)
-router.put('/room/roomtype/update', roomtype.updateRoomTypeById)
+router.put('/room/roomtype', roomtype.updateRoomTypeById)
 router.post('/room/roomtype', roomtype.createRoomType)
 router.get('/room/roomtype/single', roomtype.getRoomTypeById)
 router.get('/room/roomtype/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.search)
@@ -79,7 +79,7 @@ router.delete('/room/roomtype/delete', roomtype.deleteRoomTypeById)
 
 // ROOM TRANSACTION STATGE =  rtstage
 router.get('/room/rtstage', rtscontroller.getPage)
-router.put('/room/rtstage/update', rtscontroller.updateRoomTrabsactionStagesById)
+router.put('/room/rtstage', rtscontroller.updateRoomTrabsactionStagesById)
 router.post('/room/rtstage', rtscontroller.createRoomTrabsactionStages)
 router.get('/room/rtstage/single', rtscontroller.getRoomTrabsactionStagesById)
 router.get('/room/rtstage/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtscontroller.search)
