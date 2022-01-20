@@ -53,7 +53,7 @@ module.exports = {
     },
 
     getSingleBuilding: (req, res) => {
-        Buildings.fetchById(req.body.buildingId).then(result => {
+        Buildings.fetchById(req.query.buildingId).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -78,10 +78,11 @@ module.exports = {
     },
 
     searchBuilding: (req, res) => {
-        console.log(req.body)
+        console.log('REQ::::::::::::::>>>',req.query.keyword)
         //here 10is rowcount
         let rowcount = 10;
-        Buildings.search(rowcount, req.body.keyword).then(result => {
+        
+        Buildings.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

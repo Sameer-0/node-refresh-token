@@ -45,7 +45,7 @@ module.exports = {
     },
 
     getSlugById: (req, res) => {
-        SlugTable.getSlugById(req.body.slugId).then(result => {
+        SlugTable.getSlugById(req.query.slugId).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -75,7 +75,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
-        SlugTable.searchSlug(rowcont, req.body.keyword).then(result => {
+        SlugTable.searchSlug(rowcont, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

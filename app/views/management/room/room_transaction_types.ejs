@@ -119,13 +119,12 @@
             $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
             $.ajax({
                 url: '/management/room/rtypes/single',
-                method: 'POST',
+                method: 'GET',
                 type: 'JSON',
                 data: {
                     rtsId: $(this).attr("data-roomtransaction-stages-id")
                 },
                 success: data => {
-                    console.log('Data::::::::::::>>', data.data)
                     let room = data.data
                     $('#rtsId').val(room.rtsid),
                         $('#rtsName').val(room.rtsName),
@@ -188,7 +187,7 @@
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "POST",
+                type: "GET",
                 url: "/management/room/rtypes/search",
                 data: {
                     keyword: keyword

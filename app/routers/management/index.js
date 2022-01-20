@@ -17,6 +17,7 @@ const rtypescontroller = require("../../controllers/management/roomtransactionty
 const roomtransactioncontroller = require("../../controllers/management/roomtransactions")
 const roomslotscontroller = require("../../controllers/management/roomslots")
 const programcontroller = require("../../controllers/management/program")
+const divisioncontroller = require('../../controllers/management/division')
 //ACADEMIC YEAR ROUTER
 router.get('/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic-year', acadYearcontroller.updateAcadYear)
@@ -26,8 +27,8 @@ router.get('/building', buildingcontroller.getBuildingPage)
 router.put('/building', buildingcontroller.updateBuilding)
 router.post('/building', buildingcontroller.getAdd)
 router.post('/building/pagination', [check('pageNo', 'Invalid Page No').exists().trim().escape()], buildingcontroller.getBuildingPage)
-router.post('/building/single', buildingcontroller.getSingleBuilding)
-router.post('/building/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], buildingcontroller.searchBuilding)
+router.get('/building/single', buildingcontroller.getSingleBuilding)
+router.get('/building/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], buildingcontroller.searchBuilding)
 router.delete('/building', buildingcontroller.deleteById)
 
 // CAMPUS ROUTER
@@ -35,8 +36,8 @@ router.get('/campus', campuscontroller.getCampusPage)
 router.put('/campus/update', campuscontroller.updateCampus)
 router.post('/campus', campuscontroller.createCampus)
 router.post('/campus', [check('pageNo', 'Invalid Page No').exists().trim().escape()], campuscontroller.getCampusPage)
-router.post('/campus/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], campuscontroller.search)
-router.post('/campus/single', campuscontroller.getCampusById)
+router.get('/campus/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], campuscontroller.search)
+router.get('/campus/single', campuscontroller.getCampusById)
 router.delete('/campus/delete', campuscontroller.deleteById)
 
 // ORGANIZATION ROUTER
@@ -53,8 +54,8 @@ router.get('/slug', slugcontroller.getPage)
 router.post('/slug', slugcontroller.createSlug)
 router.put('/slug', slugcontroller.updateSlugById)
 router.delete('/slug', slugcontroller.deleteSlugById)
-router.post('/slug/single', slugcontroller.getSlugById)
-router.post('/slug/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], slugcontroller.search)
+router.get('/slug/single', slugcontroller.getSlugById)
+router.get('/slug/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], slugcontroller.search)
 
 //DASHBOARD ROUTER
 router.get('/dashboard', dashcontroller.getDashboard)
@@ -71,8 +72,8 @@ router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim()
 router.get('/room/roomtype', roomtype.getRoomTypePage)
 router.put('/room/roomtype/update', roomtype.updateRoomTypeById)
 router.post('/room/roomtype', roomtype.createRoomType)
-router.post('/room/roomtype/single', roomtype.getRoomTypeById)
-router.post('/room/roomtype/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.search)
+router.get('/room/roomtype/single', roomtype.getRoomTypeById)
+router.get('/room/roomtype/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.search)
 router.delete('/room/roomtype/delete', roomtype.deleteRoomTypeById)
 
 
@@ -80,29 +81,33 @@ router.delete('/room/roomtype/delete', roomtype.deleteRoomTypeById)
 router.get('/room/rtstage', rtscontroller.getPage)
 router.put('/room/rtstage/update', rtscontroller.updateRoomTrabsactionStagesById)
 router.post('/room/rtstage', rtscontroller.createRoomTrabsactionStages)
-router.post('/room/rtstage/single', rtscontroller.getRoomTrabsactionStagesById)
-router.post('/room/rtstage/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtscontroller.search)
+router.get('/room/rtstage/single', rtscontroller.getRoomTrabsactionStagesById)
+router.get('/room/rtstage/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtscontroller.search)
 router.delete('/room/rtstage', rtscontroller.deleteRoomTrabsactionStagesById)
 
 
 // ROOM TRANSACTION TYPES =  rtypes
 router.get('/room/rtypes', rtypescontroller.getPage)
 router.post('/room/rtypes', rtypescontroller.createRoomTrabsactionStages)
-router.post('/room/rtypes/single', rtypescontroller.getRoomTrabsactionStagesById)
+router.get('/room/rtypes/single', rtypescontroller.getRoomTrabsactionStagesById)
 router.put('/room/rtypes', rtypescontroller.updateRoomTrabsactionStagesById)
 router.delete('/room/rtypes', rtypescontroller.deleteRoomTrabsactionStagesById)
-router.post('/room/rtypes/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtypescontroller.search)
+router.get('/room/rtypes/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtypescontroller.search)
 
 // ROOM TRANSACTION
 router.get('/room/transaction', roomtransactioncontroller.getPage)
 router.post('/room/transaction/single', roomtransactioncontroller.viewDetails)
 router.post('/room/transaction/approve-trans', roomtransactioncontroller.approveTrans)
-router.post('/room/transaction/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtransactioncontroller.search)
+router.get('/room/transaction/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtransactioncontroller.search)
 
 //ROOM SLOTS ROUTER
 router.get('/room/slots', roomslotscontroller.getPage)
 
 //PROGRAM ROUTER
 router.get('/program', programcontroller.getPage)
+
+
+//DIVISION ROUTER
+router.get('/divisions', divisioncontroller.getPage)
 
 module.exports = router;
