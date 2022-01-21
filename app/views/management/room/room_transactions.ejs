@@ -9,9 +9,9 @@
     <div class="card">
         <div class="card-header text-uppercase d-flex">
             <h5>ROOM TRANSACTION LIST</h5>
-            <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+            <!-- <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
                 data-bs-target="#add-room-modal">
-                <i class="fas fa-plus"></i> Add New</button>
+                <i class="fas fa-plus"></i> Add New</button> -->
         </div>
         <div class="card-body">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -79,7 +79,7 @@
         //view-details
         $("#trans-table").on('click', '.view-details', function () {
             $.ajax({
-                url: '/management/room/transaction/view-details',
+                url: '/management/room/transaction/single',
                 method: 'POST',
                 type: 'JSON',
                 data: {
@@ -155,8 +155,8 @@
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "POST",
-                url: "/management/room/transaction/transaction-search",
+                type: "GET",
+                url: "/management/room/transaction/search",
                 data: {
                     keyword: keyword
                 },

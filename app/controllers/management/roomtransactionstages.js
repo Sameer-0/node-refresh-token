@@ -26,7 +26,7 @@ module.exports = {
     },
 
     getRoomTrabsactionStagesById: (req, res) => {
-        RoomTransactionStages.getRTSId(req.body.rtsId).then(result => {
+        RoomTransactionStages.getRTSId(req.query.rtsId).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -56,7 +56,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
-        RoomTransactionStages.search(rowcont, req.body.keyword).then(result => {
+        RoomTransactionStages.search(rowcont, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

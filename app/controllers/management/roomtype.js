@@ -19,7 +19,7 @@ module.exports = {
     },
 
     getRoomTypeById: (req, res) => {
-        RoomTypes.getRoomTypeById(req.body.roomtypeid).then(result => {
+        RoomTypes.getRoomTypeById(req.query.roomtypeid).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -49,7 +49,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
-        RoomTypes.searchRoomType(rowcont, req.body.keyword).then(result => {
+        RoomTypes.searchRoomType(rowcont, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

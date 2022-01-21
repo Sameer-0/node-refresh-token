@@ -43,7 +43,7 @@ module.exports = {
     },
 
     getCampusById: (req, res) => {
-        CampusMaster.getCampusById(req.body.id).then(result => {
+        CampusMaster.getCampusById(req.query.id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset[0]
@@ -72,7 +72,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont  = 10;
-        CampusMaster.searchCampus(rowcont, req.body.keyword).then(result => {
+        CampusMaster.searchCampus(rowcont, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
