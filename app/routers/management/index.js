@@ -18,8 +18,10 @@ const roomtransactioncontroller = require("../../controllers/management/roomtran
 const roomslotscontroller = require("../../controllers/management/roomslots")
 const programcontroller = require("../../controllers/management/program")
 const divisioncontroller = require('../../controllers/management/division')
-const academiccontroller = require('../../controllers/management/academic')
-
+const acadsession = require('../../controllers/management/academicsession')
+const acadcalendercontroller = require('../../controllers/management/academiccalender')
+const cancellationreasonscontroller = require('../../controllers/management/cancellationreasons')
+const roomcancellationreasonscontroller = require('../../controllers/management/roombookingrejectionreasons')
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
@@ -114,11 +116,30 @@ router.get('/divisions', divisioncontroller.getPage)
 
 
 //ACADEMIC ROUTER
-router.get('/academic', academiccontroller.getPage)
-router.get('/academic/session', academiccontroller.acadSessionPage)
-router.get('/academic/session/search', academiccontroller.acadSessionSearch)
-router.post('/academic/session', academiccontroller.addAcadSession)
-router.get('/academic/session/single', academiccontroller.getSingleAcadSession)
-router.put('/academic/session', academiccontroller.updateAcadSession)
-router.delete('/academic/session', academiccontroller.deleteAcadSession)
+router.get('/academic', acadsession.getPage)
+router.get('/academic/session', acadsession.acadSessionPage)
+router.get('/academic/session/search', acadsession.acadSessionSearch)
+router.post('/academic/session', acadsession.addAcadSession)
+router.get('/academic/session/single', acadsession.getSingleAcadSession)
+router.put('/academic/session', acadsession.updateAcadSession)
+router.delete('/academic/session', acadsession.deleteAcadSession)
+
+//ACADEMIC CALENDER
+router.get('/academic/calender', acadcalendercontroller.getPage)
+router.get('/academic/calender/search', acadcalendercontroller.search)
+//CANCELLATION REASONS ROUTER
+router.get('/cancellationreasons', cancellationreasonscontroller.getPage)
+router.post('/cancellationreasons', cancellationreasonscontroller.create)
+router.get('/cancellationreasons/single', cancellationreasonscontroller.getById)
+router.put('/cancellationreasons', cancellationreasonscontroller.update)
+router.delete('/cancellationreasons', cancellationreasonscontroller.delete)
+router.get('/cancellationreasons/search', cancellationreasonscontroller.search)
+
+// ROOM CANCELATION REASONS ROUTER
+router.get('/room/bookingrejectionreasons', roomcancellationreasonscontroller.getPage)
+router.post('/room/bookingrejectionreasons', roomcancellationreasonscontroller.create)
+router.get('/room/bookingrejectionreasons/single', roomcancellationreasonscontroller.getById)
+router.put('/room/bookingrejectionreasons', roomcancellationreasonscontroller.update)
+router.delete('/room/bookingrejectionreasons', roomcancellationreasonscontroller.delete)
+router.get('/room/bookingrejectionreasons/search', roomcancellationreasonscontroller.search)
 module.exports = router;

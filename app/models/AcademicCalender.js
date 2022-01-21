@@ -72,7 +72,7 @@ module.exports = class AcademicCalender {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id, ac.date_str, ac.date, ac.day, ac.day_name, ac.week, ac.iso_week, ac.day_of_week, ac.month, ac.month_name, ac.quarter,ac.year, ac.day_of_year FROM [dbo].academic_calendar ac WHERE ac.active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id, CONVERT(NVARCHAR, ac.date_str,110) AS date_str,  CONVERT(NVARCHAR, ac.date, 101) AS date, ac.day, ac.day_name, ac.week, ac.iso_week, ac.day_of_week, ac.month, ac.month_name, ac.quarter,ac.year, ac.day_of_year FROM [dbo].academic_calendar ac WHERE ac.active = 1 ORDER BY ac.id DESC`)
         })
     }
 
@@ -86,6 +86,15 @@ module.exports = class AcademicCalender {
             throw error
         })
     }
+
+    static search(rowcount, keyword) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcount)} ac.id, CONVERT(NVARCHAR, ac.date_str,110) AS date_str,  CONVERT(NVARCHAR, ac.date, 101) AS date, ac.day, ac.day_name, ac.week, ac.iso_week, ac.day_of_week, ac.month, ac.month_name, ac.quarter, ac.year, ac.day_of_year FROM [dbo].academic_calendar ac WHERE ac.active = 1 AND ac.date_str LIKE @keyword OR  ac.date LIKE @keyword OR  ac.day LIKE @keyword OR ac.week LIKE @keyword OR ac.iso_week LIKE @keyword OR ac.month LIKE @keyword OR ac.month_name LIKE @keyword OR ac.quarter LIKE @keyword OR ac.year LIKE @keyword OR ac.day_of_year LIKE @keyword OR ac.day_name LIKE @keyword OR ac.day_of_week LIKE @keyword ORDER BY ac.id DESC`)
+        })
+    }
+
 
 
 
