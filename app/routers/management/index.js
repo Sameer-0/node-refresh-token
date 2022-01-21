@@ -18,6 +18,9 @@ const roomtransactioncontroller = require("../../controllers/management/roomtran
 const roomslotscontroller = require("../../controllers/management/roomslots")
 const programcontroller = require("../../controllers/management/program")
 const divisioncontroller = require('../../controllers/management/division')
+const programTypeController = require('../../controllers/management/programType')
+const todosController = require('../../controllers/management/todos');
+const todos = require('../../controllers/management/todos');
 //ACADEMIC YEAR ROUTER
 router.get('/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic-year', acadYearcontroller.updateAcadYear)
@@ -62,11 +65,11 @@ router.get('/dashboard', dashcontroller.getDashboard)
 
 //ROOM ROUTER
 router.get('/room', roomcontroller.getPage)
-router.post('/room/fetch-single', roomcontroller.getSingleRoom)
-router.post('/room/update', roomcontroller.updateRoomById)
-router.post('/room/delete-room', roomcontroller.deleteRoomById)
-router.post('/room/add-room', roomcontroller.addRoom)
-router.post('/room-search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
+router.get('/room/single', roomcontroller.getSingleRoom)
+router.put('/room', roomcontroller.updateRoomById)
+router.delete('/room', roomcontroller.deleteRoomById)
+router.post('/room', roomcontroller.addRoom)
+router.get('/room/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
 
 //ROOM TYPE ROUTER
 router.get('/room/roomtype', roomtype.getRoomTypePage)
@@ -105,6 +108,28 @@ router.get('/room/slots', roomslotscontroller.getPage)
 
 //PROGRAM ROUTER
 router.get('/program', programcontroller.getPage)
+
+// PROGRAM TYPE ROUTER
+router.get('/program/list', programTypeController.getProgramTypePage)
+router.post('/program/programType', programTypeController.createProgramType)
+router.put('/program/list', programTypeController.updateProgramTypeById)
+router.delete('/program/list', programTypeController.deleteProgramTypeById)
+router.get('/program/ptypes/single', programTypeController.getProgramTypeById)
+router.get('/room/ptypes/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], programTypeController.search)
+
+
+// TODOS ROUTER
+router.get('/todos', todosController.getPage)
+router.post('/todos/create', todosController.createTodos)
+router.get('/todos/viewsingle', todosController.viewDetails)
+router.put('/todos/single', todosController.updateTodosById)
+router.get('/todos/single', todosController.getTodosById)
+router.delete('/todos/single', todosController.deleteTodosById)
+router.get('/todos/search', todosController.search)
+
+
+
+
 
 
 //DIVISION ROUTER

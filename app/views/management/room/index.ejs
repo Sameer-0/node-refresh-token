@@ -274,8 +274,8 @@
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "POST",
-                url: "/management/room-search",
+                type: "GET",
+                url: "/management/room/search",
                 data: {
                     keyword: keyword
                 },
@@ -390,8 +390,8 @@
             $(".updateRoom").removeClass('d-none')
 
             $.ajax({
-                url: '/management/room/fetch-single',
-                method: 'POST',
+                url: '/management/room/single',
+                method: 'GET',
                 type: 'JSON',
                 data: {
                     id: $(this).attr('data-room-id')
@@ -422,8 +422,8 @@
         // Update Room
         $(".updateRoom").on('click', function () {
             $.ajax({
-                url: '/management/room/update',
-                method: 'POST',
+                url: '/management/room',
+                method: 'PUT',
                 type: 'JSON',
                 data: {
                     roomid: $("#roomId").val(),
@@ -451,8 +451,8 @@
         $('#roomTable').on('click', '.delete-room', function () {
             console.log('deletehit:::::')
             $.ajax({
-                url: '/management/room/delete-room',
-                method: 'POST',
+                url: '/management/room',
+                method: 'DELETE',
                 type: 'JSON',
                 data: {
                     roomId: $(this).attr('data-room-id')
@@ -532,7 +532,7 @@
             // console.log('roomJsonStr::', JSON.parse(roomJson))
 
             $.ajax({
-                url: '/management/room/add-room',
+                url: '/management/room',
                 method: 'POST',
                 dataType: 'JSON',
                 data: {
@@ -548,6 +548,7 @@
             })
 
         })
+
 
 
 

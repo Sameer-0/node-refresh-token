@@ -85,7 +85,7 @@ module.exports = {
 
 
     getSingleRoom: (req, res) => {
-        roomModel.fetchRoomById(req.body.id).then(result => {
+        roomModel.fetchRoomById(req.query.id).then(result => {
             res.json({
                 status: 200,
                 roomData: result.recordset[0]
@@ -133,8 +133,9 @@ module.exports = {
 
 
     searchRoom: (req, res) => {
+   
         let rowCount = 10;
-        roomModel.searchRoom(rowCount, req.body.keyword).then(result => {
+        roomModel.searchRoom(rowCount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

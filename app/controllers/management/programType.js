@@ -1,16 +1,17 @@
-const RoomTypes = require('../../models/RoomTypes')
+const programTypeModel = require('../../models/programType')
 
 module.exports = {
-    getRoomTypePage: (req, res) => {
-        RoomTypes.fetchAll(10).then(result => {
-            res.render('management/room/roomtype', {
-                roomTypes: result.recordset
+    getProgramTypePage: (req, res) => {
+        programTypeModel.fetchAll().then(result => {
+            res.render('management/program/programType', {
+                programList: result.recordset
             })
         })
     },
 
-    createRoomType: (req, res) => {
-        RoomTypes.save(req.body).then(result => {
+    createProgramType: (req, res) => {
+        programTypeModel.save(req.body).then(result => {
+            console.log('reqBOdy:::::', req.body)
             res.json({
                 status: 200,
                 message: "Success"
@@ -18,27 +19,31 @@ module.exports = {
         })
     },
 
-    getRoomTypeById: (req, res) => {
-        RoomTypes.getRoomTypeById(req.query.roomtypeid).then(result => {
+
+    getProgramTypeById: (req, res) => {
+        programTypeModel.getProgramTypeById(req.query.id).then(result => {
+
             res.json({
                 status: 200,
                 message: "Success",
-                data: result.recordset
+                programData: result.recordset[0]
             })
         })
     },
 
-    updateRoomTypeById: (req, res) => {
-        RoomTypes.update(req.body).then(result => {
+    updateProgramTypeById: (req, res) => {
+
+        programTypeModel.update(req.body).then(result => {
             res.json({
                 status: 200,
-                message: "Success"
+                message: "Success",
+
             })
         })
     },
 
-    deleteRoomTypeById: (req, res) => {
-        RoomTypes.delete(req.body.roomtypeid).then(result => {
+    deleteProgramTypeById: (req, res) => {
+        programTypeModel.delete(req.body.id).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -47,9 +52,8 @@ module.exports = {
     },
 
     search: (req, res) => {
-        //here 10is rowcount
-        let rowcont = 10;
-        RoomTypes.searchRoomType(rowcont, req.query.keyword).then(result => {
+        let rowcount = 10;
+        programTypeModel.searchProgramType(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -65,7 +69,7 @@ module.exports = {
                     length: result.recordset.length
                 })
             }
-        }).catch(error => {
+        }).catch(err => {
             res.json({
                 status: "500",
                 message: "Something went wrong",
