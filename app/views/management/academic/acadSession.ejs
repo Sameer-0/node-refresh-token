@@ -1,0 +1,225 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card table-card">
+        <div class="card-header text-uppercase d-flex align-items-center">
+            <h5>Academic Session List</h5>
+
+            <button class="btn btn-success ms-auto " data-bs-toggle="modal"
+                data-bs-target="#add-academicSession-modal"><i class="fas fa-plus"></i> Add New</button>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+
+            <table class="table custom_row" id="acadSessionTable">
+                <thead>
+                    <th>Id</th>
+                    <th>Acad Session</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <% let count = 1%>
+                    <% for (let session of acadSession) { %>
+                    <tr>
+                        <td>
+                            <%- count++ %>
+                        </td>
+                        <td>
+                            <%- session.acad_session %>
+                        </td>
+                        <td>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-acadSession"
+                                data-acadSession-id="<%- session.acadSessionId %>"></i>
+                            <i data-acadSession-id="<%- session.acadSessionId %>"
+                                class="fas fa-trash-alt text-danger delete-acadSession"></i>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--DASHBOARD CONTENT END-->
+</div>
+
+
+
+
+
+<!-- ADD NEW CAMPUS MODAL -->
+<div class="modal fade" id="add-academicSession-modal" tabindex="-1" role="dialog"
+    aria-labelledby="add-academicSession-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header bg-info modal-inputform-header">
+                <h5 class="modal-title text-white" id="add-academicSession-modal-title">Add Acad Session</h5>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row mt-4">
+                    <input name="acad_session" id="acad_session" type="text" class="form-control" placeholder="Enter Academic Session"
+                        required>
+                </div>
+
+                <div class="form-row mt-4">
+                    <input name="acadSessionId" id="acadSessionId" type="hidden" class="form-control" 
+                        required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger createAcadSession ">Create</button>
+                <button type="button" class="btn btn-danger updateAcadSession  d-none">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script>
+    //management/campus/add
+    $('.createAcadSession').on('click', function () {
+        $.ajax({
+            url: '/management/academic/session',
+            method: 'POST',
+            type: 'JSON',
+            data: {
+                acadSession: $("#acad_session").val()
+            },
+            success: data => {
+                console.log('Success: ', data)
+                location.reload()
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
+
+
+    $('#acadSessionTable').on('click', '.edit-acadSession', function () {
+        $(".updateAcadSession").removeClass('d-none')
+        $(".createAcadSession").addClass('d-none')
+        $("#add-academicSession-modal-title").html('Update Acad Session')
+        $.ajax({
+            url: '/management/academic/session/single',
+            method: 'GET',
+            type: 'JSON',
+            data: {
+                id: $(this).attr('data-acadSession-id')
+            },
+            success: data => {
+             
+                let camp = data.data;
+                $("#acadSessionId").val(camp.acadSessionId)
+                $("#acad_session").val(camp.acad_session)
+                $("#add-academicSession-modal").modal('show')
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
+
+
+    $('.updateAcadSession').on('click', function () {
+        $.ajax({
+            url: '/management/academic/session',
+            method: 'PUT',
+            type: 'JSON',
+            data: {
+                acadSessionId:  $("#acadSessionId").val(),
+                acadSession: $("#acad_session").val()
+            },
+            success: data => {
+                location.reload()
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
+
+
+
+    $('#acadSessionTable').on('click', '.delete-acadSession', function () {
+        $.ajax({
+            url: '/management/academic/session',
+            method: 'DELETE',
+            type: 'JSON',
+            data: {
+                id: $(this).attr('data-acadSession-id')
+            },
+            success: data => {
+                location.reload()
+            },
+            error: err => {
+                console.log('Error: ', err)
+            }
+        })
+    })
+
+
+
+    //search feature delay function is writter in script.js file which is located in public/js/script.js
+    $('#searchkeyword').on('input', delay(function (e) {
+        let keyword = $("#searchkeyword").val()
+        $.ajax({
+            type: "GET",
+            url: "/management/academic/session/search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                console.log('campusList::::::', data)
+                let acadSessionList = data.data;
+
+                let AjaxTable = `<table class="table custom_row" id="acadSessionTable">
+                <thead>
+                    <th>Id</th>
+                    <th>Acad Session</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>`;
+
+                if (acadSessionList.length > 0) {
+                    for (session of acadSessionList) {
+                        AjaxTable +=
+                            `<tr>
+                        <td>
+                            ${session.acadSessionId}
+                        </td>
+                        <td>
+                            ${session.acad_session}
+                        </td>
+                        <td>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-acadSession"  data-acadSession-id="${session.acadSessionId}"></i>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer delete-acadSession" data-acadSession-id="${session.acadSessionId}" ></i>
+                        </td>
+                    </tr>`;
+                    }
+                } else {
+                    AjaxTable +=
+                        ` <tr>
+                                <td colspan="3">No Data Found</td>
+                            </tr>`;
+                }
+                AjaxTable += `<tbody></table>`
+                $("#acadSessionTable").html(AjaxTable);
+            }
+        })
+    }, 500));
+</script>
+<%- include("../partials/footerEnd") %>
