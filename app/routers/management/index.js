@@ -26,7 +26,8 @@ const academiccontroller = require("../../controllers/management/academic")
 const acadsessioncontroller = require("../../controllers/management/academicsession")
 const acadCalender = require("../../controllers/management/academiccalender")
 const cancellationreasons = require("../../controllers/management/cancellationreasons")
-const slotIntervals =  require("../../controllers/management/slotIntervals")
+const slotIntervalSetting =  require("../../controllers/management/slotinterval/intervalsetting")
+const slotIntervalTiming =  require("../../controllers/management/slotinterval/intervaltiming")
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
@@ -178,6 +179,22 @@ router.get('/cancellationreasons/search', cancellationreasons.search)
 router.delete('/cancellationreasons', cancellationreasons.delete)
 
 //SLOT INTERVALS
-router.get('/slotintervals',slotIntervals.getPage)
+router.get('/slotinterval',slotIntervalSetting.getMainPage)
+router.get('/slotinterval/setting',slotIntervalSetting.getPage)
+router.post('/slotinterval/setting',slotIntervalSetting.create)
+router.put('/slotinterval/setting',slotIntervalSetting.update)
+router.get('/slotinterval/setting/single',slotIntervalSetting.single)
+router.delete('/slotinterval/setting',slotIntervalSetting.delete)
+router.get('/slotinterval/setting/search',slotIntervalSetting.search)
+
+//SLOT INTERVAL TIMING
+
+router.get('/slotinterval/timing',slotIntervalTiming.getPage)
+router.post('/slotinterval/timing',slotIntervalTiming.create)
+router.put('/slotinterval/timing',slotIntervalTiming.update)
+router.get('/slotinterval/timing/single',slotIntervalTiming.single)
+router.delete('/slotinterval/timing',slotIntervalTiming.delete)
+router.get('/slotinterval/timing/search',slotIntervalTiming.search)
+
 
 module.exports = router;
