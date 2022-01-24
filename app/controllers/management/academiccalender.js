@@ -11,11 +11,9 @@ module.exports = {
 
 
     search: (req, res) => {
-        console.log('Resulr:::::::::::::::::>>>',req)
         //here 10is rowcount
         let rowcont  = 10;
         AcademicCalender.search(rowcont, req.query.keyword).then(result => {
-            console.log('Resulr:::::::::::::::::>>>',result.recordset)
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

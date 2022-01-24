@@ -36,6 +36,6 @@ module.exports ={
 
     updateAcadYear: (req, res) => {
         AcademicYear.update(req.body)
-        res.redirect('/management/academic-year')
+        res.redirect('/management/academic/academic-year')
     },
 }
