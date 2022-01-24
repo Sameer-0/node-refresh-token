@@ -45,7 +45,6 @@ module.exports = {
     delete:(req, res)=>{
   
         RoomBookingRejectionReasons.delete(req.body.id).then(result => {
-            console.log('result:::::::::::>>',result)
             res.json({
                 status: 200,
                 message: "Success"

@@ -22,7 +22,7 @@ module.exports = {
         })
     },
 
-    getById: (req, res) => {
+    single: (req, res) => {
         CancellationReasons.getById(req.query.id).then(result => {
             res.json({
                 status: 500,

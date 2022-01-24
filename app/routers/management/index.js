@@ -21,9 +21,14 @@ const divisioncontroller = require('../../controllers/management/division')
 const programTypeController = require('../../controllers/management/programType')
 const todosController = require('../../controllers/management/todos');
 const todos = require('../../controllers/management/todos');
+const roomrejectioncontroller = require("../../controllers/management/roombookingrejectionreasons")
+const academiccontroller =  require("../../controllers/management/academic")
+const acadsessioncontroller =  require("../../controllers/management/academicsession")
+const acadCalender = require("../../controllers/management/academiccalender")
+const cancellationreasons =  require("../../controllers/management/cancellationreasons")
 //ACADEMIC YEAR ROUTER
-router.get('/academic-year', acadYearcontroller.getAcadYearPage)
-router.post('/academic-year', acadYearcontroller.updateAcadYear)
+router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
+router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
 
 // BUILDING ROUTER
 router.get('/building', buildingcontroller.getBuildingPage)
@@ -134,5 +139,42 @@ router.get('/todos/search', todosController.search)
 
 //DIVISION ROUTER
 router.get('/divisions', divisioncontroller.getPage)
+
+
+
+// BOOKING REJECTION REASONS
+router.get('/room/bookingrejectionreasons',roomrejectioncontroller.getPage)
+router.post('/room/bookingrejectionreasons',roomrejectioncontroller.create)
+router.put('/room/bookingrejectionreasons',roomrejectioncontroller.update)
+router.get('/room/bookingrejectionreasons/search',roomrejectioncontroller.search)
+router.get('/room/bookingrejectionreasons/single',roomrejectioncontroller.getById)
+router.delete('/room/bookingrejectionreasons',roomrejectioncontroller.delete)
+
+
+// ACADEMIC ROUTER
+
+router.get('/academic', academiccontroller.getPage)
+
+//ACADEMIC SESSION
+router.get('/academic/session',acadsessioncontroller.getPage)
+router.post('/academic/session',acadsessioncontroller.create)
+router.put('/academic/session',acadsessioncontroller.update)
+router.get('/academic/session/search',acadsessioncontroller.search)
+router.get('/academic/session/single',acadsessioncontroller.single)
+
+
+//ACADEMIC CALENDER
+
+router.get('/academic/calender',acadCalender.getPage)
+router.get('/academic/calender/search',acadCalender.search)
+
+//BOOKING CANCELLATION REASONS
+router.get('/cancellationreasons', cancellationreasons.getPage)
+router.post('/cancellationreasons', cancellationreasons.create)
+router.put('/cancellationreasons', cancellationreasons.update)
+router.get('/cancellationreasons/single', cancellationreasons.single)
+router.get('/cancellationreasons/search', cancellationreasons.search)
+router.delete('/cancellationreasons', cancellationreasons.delete)
+
 
 module.exports = router;

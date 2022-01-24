@@ -1,11 +1,8 @@
 const AcadSession = require("../../models/AcadSession")
 
 module.exports = {
+ 
     getPage: (req, res) => {
-        res.render('management/academic/index')
-    },
-
-    acadSessionPage: (req, res) => {
         AcadSession.fetchAll(10).then(result => {
             res.render('management/academic/acadSession', {
                 acadSession: result.recordset
@@ -14,7 +11,7 @@ module.exports = {
 
     },
 
-    acadSessionSearch: (req, res) => {
+    search: (req, res) => {
         let rowcount = 10;
         AcadSession.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
@@ -41,7 +38,7 @@ module.exports = {
         })
     },
 
-    addAcadSession: (req, res) => {
+    create: (req, res) => {
         AcadSession.save(req.body).then(result => {
             res.json({
                 status: 200,
@@ -55,7 +52,7 @@ module.exports = {
         })
     },
 
-    getSingleAcadSession: (req, res) => {
+    single: (req, res) => {
         AcadSession.getById(req.query.id).then(result => {
             res.json({
                 status: 200,
@@ -64,7 +61,7 @@ module.exports = {
         })
     },
 
-    updateAcadSession: (req, res) => {
+    update: (req, res) => {
         AcadSession.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -73,7 +70,7 @@ module.exports = {
         })
     },
 
-    deleteAcadSession: (req, res) => {
+    delele: (req, res) => {
         AcadSession.softDeleteById(req.body.id).then(result => {
             res.json({
                 status: 200,
