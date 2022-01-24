@@ -7,56 +7,58 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
 
-    <div class="row my-3 gx-3 gy-3 row1-data">
+    <div class="card table-card">
+        <div class="card-header text-uppercase d-flex align-items-center">
+            <h5>Divisions</h5>
+            <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+                data-bs-target="#add-division-modal">
+                <!-- <i class="fas fa-plus"></i> Add New</button> -->
+        </div>
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
-        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
-            <div class="card row1-data-card text-center">
-                <div class="card-body d-flex align-items-center justify-content-center"><a
-                        href="/management/divisions"><img src="/icon_imgs/room-type.PNG" alt="">
-                        <p class="fw-normal pt-1">ROOM TYPE</p>
-                    </a></div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
-            <div class="card row1-data-card text-center">
-                <div class="card-body d-flex align-items-center justify-content-center"><a
-                        href="/management/room/rtstage"><img src="/icon_imgs/transaction.png" alt="">
-                        <p class="fw-normal pt-1">ROOM TRANSACTION STAGE</p>
-                    </a></div>
-            </div>
-        </div>
+            <table class="table custom_row" id="divisionTable">
+                <thead>
+                    <th>Course</th>
+                    <th>Division</th>
+                    <th>Division-Num</th>
+                    <th>Division Count</th>
+                    <th>Status_1</th>
+                    <th>Count FOR THEORY BATCH</th>
+                    <th>Count FOR PRACTICAL BATCH</th>
+                    <th>Count FOR TUTORIAL BATCH</th>
+                    <th>Count FOR WORKSHOP BATCH</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <% let count = 1%>
+                    <% for (let division of divisionList) { %>
+                    <tr>
+                        <td><%- count++ %></td>
+                        <td><%- division.course_id %></td>
+                        <td><%- division.division %></td>
+                        <td><%- division.division_num %></td>
+                        <td><%- division.division_count %></td>
+                        <td><%- division.status_1 %></td>
+                        <td><%- division.count_for_theory_batch %></td>
+                        <td><%- division.count_for_practical_batch %></td>
+                        <td><%- division.count_for_tutorial_batch %></td>
+                        <td><%- division.count_for_workshop_batch %></td>
+                        <td>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-division"
+                                data-division-id="<%- division.id %>"></i>
+                            <a data-division-id="<%- division.id %>"
+                                class="fas fa-trash-alt text-danger delete-division"></a>
+                        </td>
+                    </tr>
 
-        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
-            <div class="card row1-data-card text-center">
-                <div class="card-body d-flex align-items-center justify-content-center"><a
-                        href="/management/room/rtypes"><img src="/icon_imgs/transaction-type.png" alt="">
-                        <p class="fw-normal pt-1">ROOM TRANSACTION TYPE</p>
-                    </a></div>
-            </div>
+                    <% } %>
+                </tbody>
+            </table>
         </div>
-
-        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
-            <div class="card row1-data-card text-center">
-                <div class="card-body d-flex align-items-center justify-content-center"><a
-                        href="/management/room/transaction"><img src="/icon_imgs/room-transaction.png" alt="">
-                        <p class="fw-normal pt-1">ROOM TRANSACTION</p>
-                    </a></div>
-            </div>
-        </div>
-        
-        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
-            <div class="card row1-data-card text-center">
-                <div class="card-body d-flex align-items-center justify-content-center"><a href="/management/room/slots"><img
-                            src="/icon_imgs/campus.png" alt="">
-                        <p class="fw-normal pt-1">ROOM SLOTS</p>
-                    </a></div>
-            </div>
-        </div>
-
     </div>
-
 </div>
-
 
 
 
