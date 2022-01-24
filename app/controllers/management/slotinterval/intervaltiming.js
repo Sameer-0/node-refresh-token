@@ -71,6 +71,7 @@ module.exports = {
         })
     },
 
+    
     delete: (req, res) => {
         SlotIntervalTimings.delete(req.body.id).then(result => {
             res.json({
