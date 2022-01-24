@@ -1,3 +1,11 @@
+const {
+    sql,
+    poolConnection,
+    execPreparedStmt
+} = require('../../config/db')
+const moment = require('moment');
+const { pool } = require('mssql');
+
 module.exports = class Divisions {
     constructor(courseId, division, divisionNum, divisionCount, status1, countForTheoryBatch, countForPracticalBatch, countForTutorialBatch, countForWorkshopBatch) {
         this.courseId = courseId;
@@ -10,4 +18,12 @@ module.exports = class Divisions {
         this.countForTutorialBatch = countForTutorialBatch;
         this.countForWorkshopBatch = countForWorkshopBatch;
     }
+
+    static fetchAll() {
+        return poolConnection.then(pool => {
+            return pool.request().input(``)
+        })
+    }
 }
+
+

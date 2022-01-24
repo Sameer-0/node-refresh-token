@@ -1,5 +1,12 @@
+const divisionModel = require('../../models/Divisions')
+
+
+
 module.exports = {
     getPage: (req, res) => {
-        res.render('management/division/index')
+        divisionModel.fetchAll().then(result => {
+            res.render('management/division/index')
+        })
+       
     }
 }
