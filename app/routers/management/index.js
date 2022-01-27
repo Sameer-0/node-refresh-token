@@ -22,12 +22,18 @@ const programTypeController = require('../../controllers/management/programType'
 const todosController = require('../../controllers/management/todos');
 const todos = require('../../controllers/management/todos');
 const roomrejectioncontroller = require("../../controllers/management/roombookingrejectionreasons")
-const academiccontroller =  require("../../controllers/management/academic")
-const acadsessioncontroller =  require("../../controllers/management/academicsession")
+const academiccontroller = require("../../controllers/management/academic")
+const acadsessioncontroller = require("../../controllers/management/academicsession")
 const acadCalender = require("../../controllers/management/academiccalender")
+
 const cancellationreasons =  require("../../controllers/management/cancellationreasons")
+const cancellationreasons = require("../../controllers/management/cancellationreasons")
+const slotIntervalSetting =  require("../../controllers/management/slotinterval/intervalsetting")
+const slotIntervalTiming =  require("../../controllers/management/slotinterval/intervaltiming")
+
 const courseWorkload = require('../../controllers/management/courseWorkload')
 const divisionBatch = require('../../controllers/management/divisionBatch')
+
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
@@ -161,12 +167,12 @@ router.get('/courseWorkload', courseWorkload.getpage)
 
 
 // BOOKING REJECTION REASONS
-router.get('/room/bookingrejectionreasons',roomrejectioncontroller.getPage)
-router.post('/room/bookingrejectionreasons',roomrejectioncontroller.create)
-router.put('/room/bookingrejectionreasons',roomrejectioncontroller.update)
-router.get('/room/bookingrejectionreasons/search',roomrejectioncontroller.search)
-router.get('/room/bookingrejectionreasons/single',roomrejectioncontroller.getById)
-router.delete('/room/bookingrejectionreasons',roomrejectioncontroller.delete)
+router.get('/room/bookingrejectionreasons', roomrejectioncontroller.getPage)
+router.post('/room/bookingrejectionreasons', roomrejectioncontroller.create)
+router.put('/room/bookingrejectionreasons', roomrejectioncontroller.update)
+router.get('/room/bookingrejectionreasons/search', roomrejectioncontroller.search)
+router.get('/room/bookingrejectionreasons/single', roomrejectioncontroller.getById)
+router.delete('/room/bookingrejectionreasons', roomrejectioncontroller.delete)
 
 
 // ACADEMIC ROUTER
@@ -174,17 +180,17 @@ router.delete('/room/bookingrejectionreasons',roomrejectioncontroller.delete)
 router.get('/academic', academiccontroller.getPage)
 
 //ACADEMIC SESSION
-router.get('/academic/session',acadsessioncontroller.getPage)
-router.post('/academic/session',acadsessioncontroller.create)
-router.put('/academic/session',acadsessioncontroller.update)
-router.get('/academic/session/search',acadsessioncontroller.search)
-router.get('/academic/session/single',acadsessioncontroller.single)
+router.get('/academic/session', acadsessioncontroller.getPage)
+router.post('/academic/session', acadsessioncontroller.create)
+router.put('/academic/session', acadsessioncontroller.update)
+router.get('/academic/session/search', acadsessioncontroller.search)
+router.get('/academic/session/single', acadsessioncontroller.single)
 
 
 //ACADEMIC CALENDER
 
-router.get('/academic/calender',acadCalender.getPage)
-router.get('/academic/calender/search',acadCalender.search)
+router.get('/academic/calender', acadCalender.getPage)
+router.get('/academic/calender/search', acadCalender.search)
 
 //BOOKING CANCELLATION REASONS
 router.get('/cancellationreasons', cancellationreasons.getPage)
@@ -193,6 +199,24 @@ router.put('/cancellationreasons', cancellationreasons.update)
 router.get('/cancellationreasons/single', cancellationreasons.single)
 router.get('/cancellationreasons/search', cancellationreasons.search)
 router.delete('/cancellationreasons', cancellationreasons.delete)
+
+//SLOT INTERVALS
+router.get('/slotinterval',slotIntervalSetting.getMainPage)
+router.get('/slotinterval/setting',slotIntervalSetting.getPage)
+router.post('/slotinterval/setting',slotIntervalSetting.create)
+router.put('/slotinterval/setting',slotIntervalSetting.update)
+router.get('/slotinterval/setting/single',slotIntervalSetting.single)
+router.delete('/slotinterval/setting',slotIntervalSetting.delete)
+router.get('/slotinterval/setting/search',slotIntervalSetting.search)
+
+//SLOT INTERVAL TIMING
+
+router.get('/slotinterval/timing',slotIntervalTiming.getPage)
+router.post('/slotinterval/timing',slotIntervalTiming.create)
+router.put('/slotinterval/timing',slotIntervalTiming.update)
+router.get('/slotinterval/timing/single',slotIntervalTiming.single)
+router.delete('/slotinterval/timing',slotIntervalTiming.delete)
+router.get('/slotinterval/timing/search',slotIntervalTiming.search)
 
 
 module.exports = router;
