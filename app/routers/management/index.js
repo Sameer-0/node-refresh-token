@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const {
     check,
-    validationResult
+    validationResult,
+    body
 } = require('express-validator');
+
 
 const buildingcontroller = require('../../controllers/management/building');
 const campuscontroller = require('../../controllers/management/campus');
@@ -27,11 +29,12 @@ const acadsessioncontroller = require("../../controllers/management/academicsess
 const acadCalender = require("../../controllers/management/academiccalender")
 
 const cancellationreasons = require("../../controllers/management/cancellationreasons")
-const slotIntervalSetting =  require("../../controllers/management/slotinterval/intervalsetting")
-const slotIntervalTiming =  require("../../controllers/management/slotinterval/intervaltiming")
+const slotIntervalSetting = require("../../controllers/management/slotinterval/intervalsetting")
+const slotIntervalTiming = require("../../controllers/management/slotinterval/intervaltiming")
 
 const courseWorkload = require('../../controllers/management/courseWorkload')
 const divisionBatch = require('../../controllers/management/divisionBatch')
+const validate = require('../../middlewares/validate')
 
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
@@ -48,8 +51,8 @@ router.delete('/building', buildingcontroller.deleteById)
 
 // CAMPUS ROUTER
 router.get('/campus', campuscontroller.getCampusPage)
-router.put('/campus', campuscontroller.updateCampus)
-router.post('/campus', campuscontroller.createCampus)
+router.put('/campus', validate('updateCampus'), campuscontroller.updateCampus)
+router.post('/campus', validate('createCampus'), campuscontroller.createCampus)
 router.post('/campus', [check('pageNo', 'Invalid Page No').exists().trim().escape()], campuscontroller.getCampusPage)
 router.get('/campus/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], campuscontroller.search)
 router.get('/campus/single', campuscontroller.getCampusById)
@@ -151,7 +154,7 @@ router.get('/divisions/search', divisioncontroller.search)
 // DIVISION BATCHES
 router.get('/divisions/batches', divisionBatch.getPage)
 router.post('/divisions/batches/add', divisionBatch.createBatch)
-router.get('/division/batches/single',divisionBatch.getBatchById)
+router.get('/division/batches/single', divisionBatch.getBatchById)
 
 
 //INITIAL COURSE WORKLOAD
@@ -193,22 +196,22 @@ router.get('/cancellationreasons/search', cancellationreasons.search)
 router.delete('/cancellationreasons', cancellationreasons.delete)
 
 //SLOT INTERVALS
-router.get('/slotinterval',slotIntervalSetting.getMainPage)
-router.get('/slotinterval/setting',slotIntervalSetting.getPage)
-router.post('/slotinterval/setting',slotIntervalSetting.create)
-router.put('/slotinterval/setting',slotIntervalSetting.update)
-router.get('/slotinterval/setting/single',slotIntervalSetting.single)
-router.delete('/slotinterval/setting',slotIntervalSetting.delete)
-router.get('/slotinterval/setting/search',slotIntervalSetting.search)
+router.get('/slotinterval', slotIntervalSetting.getMainPage)
+router.get('/slotinterval/setting', slotIntervalSetting.getPage)
+router.post('/slotinterval/setting', slotIntervalSetting.create)
+router.put('/slotinterval/setting', slotIntervalSetting.update)
+router.get('/slotinterval/setting/single', slotIntervalSetting.single)
+router.delete('/slotinterval/setting', slotIntervalSetting.delete)
+router.get('/slotinterval/setting/search', slotIntervalSetting.search)
 
 //SLOT INTERVAL TIMING
 
-router.get('/slotinterval/timing',slotIntervalTiming.getPage)
-router.post('/slotinterval/timing',slotIntervalTiming.create)
-router.put('/slotinterval/timing',slotIntervalTiming.update)
-router.get('/slotinterval/timing/single',slotIntervalTiming.single)
-router.delete('/slotinterval/timing',slotIntervalTiming.delete)
-router.get('/slotinterval/timing/search',slotIntervalTiming.search)
+router.get('/slotinterval/timing', slotIntervalTiming.getPage)
+router.post('/slotinterval/timing', slotIntervalTiming.create)
+router.put('/slotinterval/timing', slotIntervalTiming.update)
+router.get('/slotinterval/timing/single', slotIntervalTiming.single)
+router.delete('/slotinterval/timing', slotIntervalTiming.delete)
+router.get('/slotinterval/timing/search', slotIntervalTiming.search)
 
 
 module.exports = router;
