@@ -7,7 +7,7 @@ const OrganizationMaster = require("../../models/OrganizationMaster")
 const OrganizationType = require("../../models/OrganizationType")
 module.exports = {
     getPage: (req, res) => {
-       
+
         if (req.method == "GET") {
             Promise.all([OrganizationMaster.fetchAll(10), OrganizationType.fetchAll(), OrganizationMaster.getCount()]).then(result => {
                 res.render('management/organization/index', {
@@ -27,6 +27,14 @@ module.exports = {
     },
 
     createOrg: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         OrganizationMaster.save(req.body).then(result => {
             res.json({
                 status: 200
@@ -44,6 +52,16 @@ module.exports = {
     },
 
     updateOrgById: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         OrganizationMaster.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -64,7 +82,7 @@ module.exports = {
         })
     },
 
-    
+
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;

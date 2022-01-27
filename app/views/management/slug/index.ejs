@@ -63,6 +63,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
+                <div id="errorHtml"></div>
                 <div class="my-3 py-2">
                     <input name="slugName" id="slugName" type="text" class="form-control" placeholder="Slug Name"
                         required>
@@ -108,7 +109,7 @@
                         <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
                         </script>
                         <script>
-                            $(".addSlug").one('click', function () {
+                            $(".addSlug").on('click', function () {
                                 $.ajax({
                                     url: '/management/slug',
                                     method: 'POST',
@@ -122,7 +123,17 @@
                                         location.reload()
                                     },
                                     error: err => {
-                                        console.log('Error: ', err)
+                                        let error = err.responseJSON.errors
+                                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                                        error.map(er => {
+                                            errorHtml +=
+                                                `<li>${er.msg}</li>`
+                                        })
+                                        errorHtml +=
+                                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                                        $("#errorHtml").html(errorHtml)
                                     }
                                 })
                             })
@@ -155,7 +166,7 @@
                             })
 
 
-                            $(".updateSlug").one('click', function () {
+                            $(".updateSlug").on('click', function () {
                                 $.ajax({
                                     url: '/management/slug',
                                     method: 'POST',
@@ -170,7 +181,17 @@
                                         location.reload()
                                     },
                                     error: err => {
-                                        console.log('Error: ', err)
+                                        let error = err.responseJSON.errors
+                                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                                        error.map(er => {
+                                            errorHtml +=
+                                                `<li>${er.msg}</li>`
+                                        })
+                                        errorHtml +=
+                                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                                        $("#errorHtml").html(errorHtml)
                                     }
                                 })
                             })

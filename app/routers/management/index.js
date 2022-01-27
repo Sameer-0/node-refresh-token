@@ -38,12 +38,12 @@ const validate = require('../../middlewares/validate')
 
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
-router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
+router.post('/academic/academic-year', validate('createAcadYear'), acadYearcontroller.updateAcadYear)
 
 // BUILDING ROUTER
 router.get('/building', buildingcontroller.getBuildingPage)
 router.put('/building', buildingcontroller.updateBuilding)
-router.post('/building',validate('createBuilding'), buildingcontroller.getAdd)
+router.post('/building', validate('createBuilding'), buildingcontroller.getAdd)
 router.post('/building/pagination', [check('pageNo', 'Invalid Page No').exists().trim().escape()], buildingcontroller.getBuildingPage)
 router.get('/building/single', buildingcontroller.getSingleBuilding)
 router.get('/building/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], buildingcontroller.searchBuilding)
@@ -60,8 +60,8 @@ router.delete('/campus/delete', campuscontroller.deleteById)
 
 // ORGANIZATION ROUTER
 router.get('/organization', orgcontroller.getPage)
-router.post('/organization', orgcontroller.createOrg)
-router.put('/organization', orgcontroller.updateOrgById)
+router.post('/organization', validate('createOrganization'), orgcontroller.createOrg)
+router.put('/organization', validate('updateOrganization'), orgcontroller.updateOrgById)
 router.delete('/organization', orgcontroller.deleteById)
 router.post('/organization/pagination', [check('pageNo', 'Invalid Page No').exists().trim().escape()], orgcontroller.getPage)
 router.post('/organization/single', orgcontroller.getOrgById)
@@ -69,8 +69,8 @@ router.post('/organization/search', [check('keyword', 'Invalid keyword').exists(
 
 //SLUG ROUTER
 router.get('/slug', slugcontroller.getPage)
-router.post('/slug', slugcontroller.createSlug)
-router.put('/slug', slugcontroller.updateSlugById)
+router.post('/slug', validate('createSlug'), slugcontroller.createSlug)
+router.put('/slug', validate('updateSlug'), slugcontroller.updateSlugById)
 router.delete('/slug', slugcontroller.deleteSlugById)
 router.get('/slug/single', slugcontroller.getSlugById)
 router.get('/slug/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], slugcontroller.search)
@@ -189,8 +189,8 @@ router.get('/academic/calender/search', acadCalender.search)
 
 //BOOKING CANCELLATION REASONS
 router.get('/cancellationreasons', cancellationreasons.getPage)
-router.post('/cancellationreasons', cancellationreasons.create)
-router.put('/cancellationreasons', cancellationreasons.update)
+router.post('/cancellationreasons', validate('createCancellationreasons'), cancellationreasons.create)
+router.put('/cancellationreasons', validate('updateCancellationreasons'), cancellationreasons.update)
 router.get('/cancellationreasons/single', cancellationreasons.single)
 router.get('/cancellationreasons/search', cancellationreasons.search)
 router.delete('/cancellationreasons', cancellationreasons.delete)
