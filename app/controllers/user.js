@@ -110,8 +110,8 @@ module.exports = {
     },
 
     authenticate: async (req, res, next) => {
-      //  console.log('req ===>>> ', req.headers.host)
-      //  console.log('res.locals.slug ===>>> ', res.locals.slug)
+      console.log('req ===>>> ', req.headers.host)
+       console.log('res.locals.slug ===>>> ', res.locals.slug)
         let userData = await User.passwordByUsername(req.body.username, res.locals.slug).then(result => {
             if (result.recordset.length === 0) {
                 return res.send('User does not exist...')
@@ -130,11 +130,11 @@ module.exports = {
             req.session.firstName = userData.f_name;
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
-            if(userData.role=="management"){
+            if(userData.role=="MANAGEMENT"){
               
                 res.redirect('/management/dashboard')
                 
-            }else if(userData.role=="admin"){
+            }else if(userData.role=="ADMIN"){
                 res.redirect('/Admin/dashboard')
             }else{
                 res.redirect('404')
@@ -151,6 +151,12 @@ module.exports = {
         res.render('dashboard.ejs', {
             username: req.session.username
         })
+    },
+
+    logout:(req, res)=>{
+        console.log('Logout:::::::::>>>')
+            res.redirect('/')
+        
     }
 
 }

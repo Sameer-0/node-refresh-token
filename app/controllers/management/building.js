@@ -44,6 +44,16 @@ module.exports = {
     },
 
     getAdd: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         Buildings.save(req.body)
         res.json({
             status: 200,
