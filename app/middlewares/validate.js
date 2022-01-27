@@ -25,6 +25,19 @@ module.exports = function validate(method) {
             ]
         }
 
+        case 'createBuilding': {
+            return [
+                check('buildingName').not().isEmpty().withMessage('Building Name not be empty'),
+                check('buildingNumber').not().isEmpty().withMessage('Building Number must not be empty').isNumeric().withMessage('campusId must be number only'),
+                check('floors').not().isEmpty().withMessage('floors must not be empty'),
+                check('ownerId').not().isEmpty().withMessage('Owner Name must not be empty'),
+                check('handledById').not().isEmpty().withMessage('HandledBy  must not be empty'),
+                check('startTimeId').not().isEmpty().withMessage('startTimeId  must not be empty'),
+                check('endTimeId').not().isEmpty().withMessage('endTimeId  must not be empty'),
+                check('campusId').not().isEmpty().withMessage('campusId  must not be empty').isNumeric().withMessage('campusId must be number only'),
+            ]
+        }
+
         default: {
             return "No Validation Found"
         }
