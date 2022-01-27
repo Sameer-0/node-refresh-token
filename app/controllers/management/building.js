@@ -16,7 +16,7 @@ module.exports = {
     getBuildingPage: (req, res) => {
         let rowcount = 10
         if (req.method == "GET") {
-            Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), Buildings.getCount()]).then(result => {
+            Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount()]).then(result => {
                 res.render('management/buildings/index', {
                     buildingList: result[0].recordset,
                     orgList: result[1].recordset,

@@ -26,7 +26,6 @@ const academiccontroller = require("../../controllers/management/academic")
 const acadsessioncontroller = require("../../controllers/management/academicsession")
 const acadCalender = require("../../controllers/management/academiccalender")
 
-const cancellationreasons =  require("../../controllers/management/cancellationreasons")
 const cancellationreasons = require("../../controllers/management/cancellationreasons")
 const slotIntervalSetting =  require("../../controllers/management/slotinterval/intervalsetting")
 const slotIntervalTiming =  require("../../controllers/management/slotinterval/intervaltiming")
