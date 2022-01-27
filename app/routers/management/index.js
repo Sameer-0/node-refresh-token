@@ -26,6 +26,8 @@ const academiccontroller =  require("../../controllers/management/academic")
 const acadsessioncontroller =  require("../../controllers/management/academicsession")
 const acadCalender = require("../../controllers/management/academiccalender")
 const cancellationreasons =  require("../../controllers/management/cancellationreasons")
+const courseWorkload = require('../../controllers/management/courseWorkload')
+const divisionBatch = require('../../controllers/management/divisionBatch')
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
@@ -139,6 +141,22 @@ router.get('/todos/search', todosController.search)
 
 //DIVISION ROUTER
 router.get('/divisions', divisioncontroller.getPage)
+router.post('/divisions/add', divisioncontroller.addDivision)
+router.get('/divisions/single', divisioncontroller.getDivisionById)
+router.put('/divisions/single', divisioncontroller.updateDivisionById)
+router.delete('/divisions/single', divisioncontroller.deleteDivisionById)
+router.get('/divisions/search', divisioncontroller.search)
+
+
+// DIVISION BATCHES
+router.get('/divisions/batches', divisionBatch.getPage)
+router.post('/divisions/batches/add', divisionBatch.createBatch)
+router.get('/division/batches/single',divisionBatch.getBatchById)
+
+
+//INITIAL COURSE WORKLOAD
+router.get('/courseWorkload', courseWorkload.getpage)
+
 
 
 
