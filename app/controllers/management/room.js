@@ -17,7 +17,7 @@ module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
-            Promise.all([roomModel.fetchAll(10), OrganizationMaster.fetchAll(200), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), RoomTypes.fetchAll(10), Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
+            Promise.all([roomModel.fetchAll(rowCount), OrganizationMaster.fetchAll(200), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
                 let roomList = []
                 let slotList = []
                 // result[0].recordset.map(item => {

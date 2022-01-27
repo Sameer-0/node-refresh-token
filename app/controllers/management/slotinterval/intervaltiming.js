@@ -63,7 +63,7 @@ module.exports = {
     },
 
     update: (req, res) => {
-        SlotIntervalSetting.update(req.body).then(result => {
+        SlotIntervalTimings.update(req.body).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -71,6 +71,7 @@ module.exports = {
         })
     },
 
+    
     delete: (req, res) => {
         SlotIntervalTimings.delete(req.body.id).then(result => {
             res.json({
