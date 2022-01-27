@@ -28,5 +28,13 @@ module.exports = {
                 batchData: result.recordset[0]
             })
         })
+    },
+
+    updateBatchById: (req, res) => {
+        divBatchModel.updateBatch(req.body).then(result => {
+            res.json({
+                status:200
+            })
+        })
     }
 }

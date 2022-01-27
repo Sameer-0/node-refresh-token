@@ -1,7 +1,10 @@
 // const saltRounds = 10;
 const express = require('express')
 const session = require('express-session')
-const {hashPassword, verifyPassword} = require('../utils/hash')
+const {
+    hashPassword,
+    verifyPassword
+} = require('../utils/hash')
 const User = require('../models/User');
 // const res = require('express/lib/response');
 
@@ -110,8 +113,8 @@ module.exports = {
     },
 
     authenticate: async (req, res, next) => {
-      //  console.log('req ===>>> ', req.headers.host)
-      //  console.log('res.locals.slug ===>>> ', res.locals.slug)
+        console.log('req ===>>> ', req.headers.host)
+        console.log('res.locals.slug ===>>> ', res.locals.slug)
         let userData = await User.passwordByUsername(req.body.username, res.locals.slug).then(result => {
             if (result.recordset.length === 0) {
                 return res.send('User does not exist...')
@@ -119,28 +122,29 @@ module.exports = {
             return result.recordset[0];
         })
 
-      console.log('UserData: ', userData)
+        console.log('UserData: ', userData)
 
-        let isVerified =  await verifyPassword(req.body.password, userData.password)
+        let isVerified = await verifyPassword(req.body.password, userData.password)
 
- 
 
-        if(isVerified) {
+
+        if (isVerified) {
             req.session.username = userData.username;
             req.session.firstName = userData.f_name;
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
-            if(userData.role=="management"){
-              
-                res.redirect('/management/dashboard')
-                
-            }else if(userData.role=="admin"){
-                res.redirect('/Admin/dashboard')
-            }else{
+            if (userData.role == "MANAGEMENT") {
+                let slug = res.locals.slug.split("-")[0] + '-mgmt.'
+                let host = req.headers.host.split(".")[1]
+                let url = `http://${slug}${host}/management/dashboard`
+                res.redirect(url)
+            } else if (userData.role == "admin") {
+                res.redirect('/admin/dashboard')
+            } else {
                 res.redirect('404')
             }
-        }else{
-             res.redirect('/user/login')
+        } else {
+            res.redirect('/user/login')
         }
 
 
