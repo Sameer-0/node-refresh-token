@@ -134,15 +134,8 @@ router.get('/todos/single', todosController.getTodosById)
 router.delete('/todos/single', todosController.deleteTodosById)
 router.get('/todos/search', todosController.search)
 
-
-
-
-
-
 //DIVISION ROUTER
 router.get('/divisions', divisioncontroller.getPage)
-
-
 
 // BOOKING REJECTION REASONS
 router.get('/room/bookingrejectionreasons', roomrejectioncontroller.getPage)

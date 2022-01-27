@@ -133,7 +133,6 @@ module.exports = {
             req.session.firstName = userData.f_name;
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
-
         res.redirect('/management/dashboard')
         }
 
