@@ -139,11 +139,6 @@ router.get('/todos/single', todosController.getTodosById)
 router.delete('/todos/single', todosController.deleteTodosById)
 router.get('/todos/search', todosController.search)
 
-
-
-
-
-
 //DIVISION ROUTER
 router.get('/divisions', divisioncontroller.getPage)
 router.post('/divisions/add', divisioncontroller.addDivision)
@@ -161,8 +156,6 @@ router.get('/division/batches/single',divisionBatch.getBatchById)
 
 //INITIAL COURSE WORKLOAD
 router.get('/courseWorkload', courseWorkload.getpage)
-
-
 
 
 // BOOKING REJECTION REASONS
