@@ -37,6 +37,20 @@ module.exports = function validate(method) {
                 check('campusId').not().isEmpty().withMessage('campusId  must not be empty').isNumeric().withMessage('campusId must be number only'),
             ]
         }
+        
+        case 'updateBuilding': {
+            return [
+                check('buildingId').not().isEmpty().withMessage('Building Id not be empty').isNumeric().withMessage('campusId must be number only'),
+                check('buildingName').not().isEmpty().withMessage('Building Name not be empty'),
+                check('buildingNumber').not().isEmpty().withMessage('Building Number must not be empty').isNumeric().withMessage('campusId must be number only'),
+                check('floors').not().isEmpty().withMessage('floors must not be empty'),
+                check('ownerId').not().isEmpty().withMessage('Owner Name must not be empty'),
+                check('handledById').not().isEmpty().withMessage('HandledBy  must not be empty'),
+                check('startTimeId').not().isEmpty().withMessage('startTimeId  must not be empty'),
+                check('endTimeId').not().isEmpty().withMessage('endTimeId  must not be empty'),
+                check('campusId').not().isEmpty().withMessage('campusId  must not be empty').isNumeric().withMessage('campusId must be number only'),
+            ]
+        }
 
         case 'createAcadYear': {
             return [
@@ -97,8 +111,7 @@ module.exports = function validate(method) {
                 check('typeOfCancellation').not().isEmpty().withMessage('Type of cancellation must not be empty'),
                 check('reasonText').not().isEmpty().withMessage('Reason must not be empty'),
                 check('sapId').not().isEmpty().withMessage('sapId must not be empty').isNumeric().withMessage('sapId must be number only')
-            ]
-        }
+            ]}
 
         default: {
             return "No Validation Found"
