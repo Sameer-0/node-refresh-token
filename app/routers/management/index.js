@@ -154,7 +154,8 @@ router.get('/divisions/search', divisioncontroller.search)
 // DIVISION BATCHES
 router.get('/divisions/batches', divisionBatch.getPage)
 router.post('/divisions/batches/add', divisionBatch.createBatch)
-router.get('/division/batches/single', divisionBatch.getBatchById)
+router.get('/division/batches/single',divisionBatch.getBatchById)
+router.put('/division/batches', divisionBatch.updateBatchById)
 
 
 //INITIAL COURSE WORKLOAD

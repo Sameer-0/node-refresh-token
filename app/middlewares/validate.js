@@ -3,6 +3,8 @@ const {
     body
 } = require('express-validator')
 
+module.exports = {
+
 module.exports = function validate(method) {
     switch (method) {
 
@@ -135,4 +137,5 @@ module.exports = function validate(method) {
 
 
     }
+
 }
