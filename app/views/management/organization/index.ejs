@@ -89,7 +89,7 @@
             </div>
             <!-- <form action="/management/organization/add" method="POST"> -->
             <div class="modal-body">
-
+                <div id="errorHtml"></div>
                 <div class="form-row mt-4">
                     <input type="hidden" id="orgLid">
                     <input name="orgId" id="orgId" type="number" class="form-control" placeholder="Organization Id"
@@ -164,7 +164,17 @@
 
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })
@@ -219,7 +229,17 @@
 
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })

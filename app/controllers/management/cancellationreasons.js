@@ -1,3 +1,6 @@
+const {
+    validationResult
+} = require('express-validator');
 const CancellationReasons = require("../../models/CancellationReasons")
 module.exports = {
     getPage: (req, res) => {
@@ -9,6 +12,15 @@ module.exports = {
     },
 
     create: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         CancellationReasons.save(req.body).then(result => {
             res.json({
                 status: 200,
@@ -33,6 +45,15 @@ module.exports = {
     },
 
     update: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         CancellationReasons.update(req.body).then(result => {
             res.json({
                 status: 200,

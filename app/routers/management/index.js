@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const {
     check,
-    validationResult
+    validationResult,
+    body
 } = require('express-validator');
+
 
 const buildingcontroller = require('../../controllers/management/building');
 const campuscontroller = require('../../controllers/management/campus');
@@ -27,20 +29,21 @@ const acadsessioncontroller = require("../../controllers/management/academicsess
 const acadCalender = require("../../controllers/management/academiccalender")
 
 const cancellationreasons = require("../../controllers/management/cancellationreasons")
-const slotIntervalSetting =  require("../../controllers/management/slotinterval/intervalsetting")
-const slotIntervalTiming =  require("../../controllers/management/slotinterval/intervaltiming")
+const slotIntervalSetting = require("../../controllers/management/slotinterval/intervalsetting")
+const slotIntervalTiming = require("../../controllers/management/slotinterval/intervaltiming")
 
 const courseWorkload = require('../../controllers/management/courseWorkload')
 const divisionBatch = require('../../controllers/management/divisionBatch')
+const validate = require('../../middlewares/validate')
 
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
-router.post('/academic/academic-year', acadYearcontroller.updateAcadYear)
+router.post('/academic/academic-year', validate('createAcadYear'), acadYearcontroller.updateAcadYear)
 
 // BUILDING ROUTER
 router.get('/building', buildingcontroller.getBuildingPage)
-router.put('/building', buildingcontroller.updateBuilding)
-router.post('/building', buildingcontroller.getAdd)
+router.put('/building', validate('updateBuilding'), buildingcontroller.updateBuilding)
+router.post('/building',validate('createBuilding'), buildingcontroller.getAdd)
 router.post('/building/pagination', [check('pageNo', 'Invalid Page No').exists().trim().escape()], buildingcontroller.getBuildingPage)
 router.get('/building/single', buildingcontroller.getSingleBuilding)
 router.get('/building/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], buildingcontroller.searchBuilding)
@@ -48,8 +51,8 @@ router.delete('/building', buildingcontroller.deleteById)
 
 // CAMPUS ROUTER
 router.get('/campus', campuscontroller.getCampusPage)
-router.put('/campus', campuscontroller.updateCampus)
-router.post('/campus', campuscontroller.createCampus)
+router.put('/campus', validate('updateCampus'), campuscontroller.updateCampus)
+router.post('/campus', validate('createCampus'), campuscontroller.createCampus)
 router.post('/campus', [check('pageNo', 'Invalid Page No').exists().trim().escape()], campuscontroller.getCampusPage)
 router.get('/campus/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], campuscontroller.search)
 router.get('/campus/single', campuscontroller.getCampusById)
@@ -57,8 +60,8 @@ router.delete('/campus/delete', campuscontroller.deleteById)
 
 // ORGANIZATION ROUTER
 router.get('/organization', orgcontroller.getPage)
-router.post('/organization', orgcontroller.createOrg)
-router.put('/organization', orgcontroller.updateOrgById)
+router.post('/organization', validate('createOrganization'), orgcontroller.createOrg)
+router.put('/organization', validate('updateOrganization'), orgcontroller.updateOrgById)
 router.delete('/organization', orgcontroller.deleteById)
 router.post('/organization/pagination', [check('pageNo', 'Invalid Page No').exists().trim().escape()], orgcontroller.getPage)
 router.post('/organization/single', orgcontroller.getOrgById)
@@ -66,8 +69,8 @@ router.post('/organization/search', [check('keyword', 'Invalid keyword').exists(
 
 //SLUG ROUTER
 router.get('/slug', slugcontroller.getPage)
-router.post('/slug', slugcontroller.createSlug)
-router.put('/slug', slugcontroller.updateSlugById)
+router.post('/slug', validate('createSlug'), slugcontroller.createSlug)
+router.put('/slug', validate('updateSlug'), slugcontroller.updateSlugById)
 router.delete('/slug', slugcontroller.deleteSlugById)
 router.get('/slug/single', slugcontroller.getSlugById)
 router.get('/slug/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], slugcontroller.search)
@@ -85,8 +88,8 @@ router.get('/room/search', [check('keyword', 'Invalid keyword').exists().trim().
 
 //ROOM TYPE ROUTER
 router.get('/room/roomtype', roomtype.getRoomTypePage)
-router.put('/room/roomtype', roomtype.updateRoomTypeById)
-router.post('/room/roomtype', roomtype.createRoomType)
+router.put('/room/roomtype', validate('updateRoomType'), roomtype.updateRoomTypeById)
+router.post('/room/roomtype', validate('createRoomType'),  roomtype.createRoomType)
 router.get('/room/roomtype/single', roomtype.getRoomTypeById)
 router.get('/room/roomtype/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.search)
 router.delete('/room/roomtype/delete', roomtype.deleteRoomTypeById)
@@ -139,11 +142,6 @@ router.get('/todos/single', todosController.getTodosById)
 router.delete('/todos/single', todosController.deleteTodosById)
 router.get('/todos/search', todosController.search)
 
-
-
-
-
-
 //DIVISION ROUTER
 router.get('/divisions', divisioncontroller.getPage)
 router.post('/divisions/add', divisioncontroller.addDivision)
@@ -162,8 +160,6 @@ router.put('/division/batches', divisionBatch.updateBatchById)
 
 //INITIAL COURSE WORKLOAD
 router.get('/courseWorkload', courseWorkload.getpage)
-
-
 
 
 // BOOKING REJECTION REASONS
@@ -194,29 +190,29 @@ router.get('/academic/calender/search', acadCalender.search)
 
 //BOOKING CANCELLATION REASONS
 router.get('/cancellationreasons', cancellationreasons.getPage)
-router.post('/cancellationreasons', cancellationreasons.create)
-router.put('/cancellationreasons', cancellationreasons.update)
+router.post('/cancellationreasons', validate('createCancellationreasons'), cancellationreasons.create)
+router.put('/cancellationreasons', validate('updateCancellationreasons'), cancellationreasons.update)
 router.get('/cancellationreasons/single', cancellationreasons.single)
 router.get('/cancellationreasons/search', cancellationreasons.search)
 router.delete('/cancellationreasons', cancellationreasons.delete)
 
 //SLOT INTERVALS
-router.get('/slotinterval',slotIntervalSetting.getMainPage)
-router.get('/slotinterval/setting',slotIntervalSetting.getPage)
-router.post('/slotinterval/setting',slotIntervalSetting.create)
-router.put('/slotinterval/setting',slotIntervalSetting.update)
-router.get('/slotinterval/setting/single',slotIntervalSetting.single)
-router.delete('/slotinterval/setting',slotIntervalSetting.delete)
-router.get('/slotinterval/setting/search',slotIntervalSetting.search)
+router.get('/slotinterval', slotIntervalSetting.getMainPage)
+router.get('/slotinterval/setting', slotIntervalSetting.getPage)
+router.post('/slotinterval/setting', slotIntervalSetting.create)
+router.put('/slotinterval/setting', slotIntervalSetting.update)
+router.get('/slotinterval/setting/single', slotIntervalSetting.single)
+router.delete('/slotinterval/setting', slotIntervalSetting.delete)
+router.get('/slotinterval/setting/search', slotIntervalSetting.search)
 
 //SLOT INTERVAL TIMING
 
-router.get('/slotinterval/timing',slotIntervalTiming.getPage)
-router.post('/slotinterval/timing',slotIntervalTiming.create)
-router.put('/slotinterval/timing',slotIntervalTiming.update)
-router.get('/slotinterval/timing/single',slotIntervalTiming.single)
-router.delete('/slotinterval/timing',slotIntervalTiming.delete)
-router.get('/slotinterval/timing/search',slotIntervalTiming.search)
+router.get('/slotinterval/timing', slotIntervalTiming.getPage)
+router.post('/slotinterval/timing', slotIntervalTiming.create)
+router.put('/slotinterval/timing', slotIntervalTiming.update)
+router.get('/slotinterval/timing/single', slotIntervalTiming.single)
+router.delete('/slotinterval/timing', slotIntervalTiming.delete)
+router.get('/slotinterval/timing/search', slotIntervalTiming.search)
 
 
 module.exports = router;
