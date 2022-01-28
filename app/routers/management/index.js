@@ -177,30 +177,30 @@ router.get('/academic', academiccontroller.getPage)
 
 //ACADEMIC SESSION
 router.get('/academic/session', acadsessioncontroller.getPage)
-router.post('/academic/session', acadsessioncontroller.create)
-router.put('/academic/session', acadsessioncontroller.update)
+router.post('/academic/session', validate('createSession'), acadsessioncontroller.create)
+router.put('/academic/session', validate('updateSession'), acadsessioncontroller.update)
 router.get('/academic/session/search', validate('search'), acadsessioncontroller.search)
-router.get('/academic/session/single', acadsessioncontroller.single)
+router.get('/academic/session/single', validate('single'), acadsessioncontroller.single)
 
 
 //ACADEMIC CALENDER
 
 router.get('/academic/calender', acadCalender.getPage)
-router.get('/academic/calender/search', acadCalender.search)
+router.get('/academic/calender/search', validate('search'), acadCalender.search)
 
 //BOOKING CANCELLATION REASONS
 router.get('/cancellationreasons', cancellationreasons.getPage)
 router.post('/cancellationreasons', validate('createCancellationreasons'), cancellationreasons.create)
 router.put('/cancellationreasons', validate('updateCancellationreasons'), cancellationreasons.update)
-router.get('/cancellationreasons/single', cancellationreasons.single)
+router.get('/cancellationreasons/single', validate('single'), cancellationreasons.single)
 router.get('/cancellationreasons/search', validate('search'), cancellationreasons.search)
-router.delete('/cancellationreasons', cancellationreasons.delete)
+router.delete('/cancellationreasons', validate('delete'), cancellationreasons.delete)
 
 //SLOT INTERVALS
 router.get('/slotinterval', slotIntervalSetting.getMainPage)
 router.get('/slotinterval/setting', slotIntervalSetting.getPage)
 router.post('/slotinterval/setting', validate('createSlotIntrSetting'), slotIntervalSetting.create)
-router.put('/slotinterval/setting',  validate('updateSlotIntrSetting'), slotIntervalSetting.update)
+router.put('/slotinterval/setting', validate('updateSlotIntrSetting'), slotIntervalSetting.update)
 router.get('/slotinterval/setting/single', validate('single'), slotIntervalSetting.single)
 router.delete('/slotinterval/setting', validate('delete'), slotIntervalSetting.delete)
 router.get('/slotinterval/setting/search', validate('search'), slotIntervalSetting.search)

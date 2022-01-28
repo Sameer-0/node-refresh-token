@@ -227,6 +227,19 @@ module.exports = function validate(method) {
             ]
         }
 
+        case 'createSession':{
+            return [
+                check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
+            ]
+        }
+
+        case 'updateSession':{
+            return [
+                check('acadSessionId').not().isEmpty().withMessage('Academic session acadSessionId must not be empty'),
+                check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
+            ]
+        }
+
         default: {
             return "No Validation Found"
         }
