@@ -1,3 +1,9 @@
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
+
 const SlotIntervalSetting = require("../../../models/SlotIntervalSetting")
 module.exports = {
     getMainPage: (req, res) => {
@@ -14,6 +20,15 @@ module.exports = {
 
 
     search: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         let rowcount = 10;
         SlotIntervalSetting.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
@@ -41,6 +56,16 @@ module.exports = {
     },
 
     create: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         SlotIntervalSetting.create(req.body).then(result => {
             res.json({
                 status: 200,
@@ -55,6 +80,16 @@ module.exports = {
     },
 
     single: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         SlotIntervalSetting.single(req.query.id).then(result => {
             res.json({
                 status: 200,
@@ -64,6 +99,16 @@ module.exports = {
     },
 
     update: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         SlotIntervalSetting.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -73,6 +118,16 @@ module.exports = {
     },
 
     delete: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         SlotIntervalSetting.delete(req.body.id).then(result => {
             res.json({
                 status: 200,

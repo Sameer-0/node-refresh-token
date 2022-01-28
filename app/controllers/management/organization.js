@@ -26,7 +26,7 @@ module.exports = {
         }
     },
 
-    createOrg: (req, res) => {
+    create: (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -42,8 +42,8 @@ module.exports = {
         })
     },
 
-    getOrgById: (req, res) => {
-        OrganizationMaster.getOrgById(req.body.orgId).then(result => {
+    single: (req, res) => {
+        OrganizationMaster.getOrgById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 orgData: result.recordset[0]
@@ -51,7 +51,7 @@ module.exports = {
         })
     },
 
-    updateOrgById: (req, res) => {
+    update: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -74,8 +74,8 @@ module.exports = {
             })
         })
     },
-    deleteById: (req, res) => {
-        OrganizationMaster.deleteOrgById(req.body.orgId).then(result => {
+    delete: (req, res) => {
+        OrganizationMaster.deleteOrgById(req.body.Id).then(result => {
             res.json({
                 status: 200
             })
