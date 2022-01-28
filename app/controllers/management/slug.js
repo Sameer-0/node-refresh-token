@@ -32,7 +32,7 @@ module.exports = {
         }
     },
 
-    createSlug: (req, res) => {
+    create: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -52,8 +52,8 @@ module.exports = {
         })
     },
 
-    getSlugById: (req, res) => {
-        SlugTable.getSlugById(req.query.slugId).then(result => {
+    single: (req, res) => {
+        SlugTable.getSlugById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -62,7 +62,7 @@ module.exports = {
         })
     },
 
-    updateSlugById: (req, res) => {
+    update: (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -80,8 +80,8 @@ module.exports = {
         })
     },
 
-    deleteSlugById: (req, res) => {
-        SlugTable.softDeleteById(req.body.slugid).then(result => {
+    delete: (req, res) => {
+        SlugTable.softDeleteById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success"

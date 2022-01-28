@@ -129,6 +129,102 @@ module.exports = function validate(method) {
             ]
         }
 
+        case 'createRtstage': {
+            return [
+                check('rtsName').not().isEmpty().withMessage('Room name must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'updateRtstage': {
+            return [
+                check('rtsName').not().isEmpty().withMessage('Room transaction type must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'createRtypes': {
+            return [
+                check('rtsName').not().isEmpty().withMessage('Room transaction stage must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'updateRtypes': {
+            return [
+                check('rtsId').not().isEmpty().withMessage('Room transaction id must not be empty'),
+                check('rtsName').not().isEmpty().withMessage('Room transaction stage must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'createBookingRejectionReasons': {
+            return [
+                check('reason').not().isEmpty().withMessage('Room Cancellation Reason stage must not be empty')
+            ]
+        }
+
+        case 'updateBookingRejectionReasons': {
+            return [
+                check('Id').not().isEmpty().withMessage('Room Cancellation Reason id must not be empty'),
+                check('reason').not().isEmpty().withMessage('Room Cancellation Reason stage must not be empty')
+            ]
+        }
+
+        case 'search': {
+            return [
+                [check('keyword', 'Input field must not be empty').exists().trim().escape()]
+            ]
+        }
+
+        case 'delete': {
+            return [check('Id', 'Parameter must bot be empty while deleteting records').not().isEmpty().exists().trim().escape()]
+        }
+
+        case 'single': {
+            return [check('Id', 'Parameter must bot be empty while fetching record').not().isEmpty().exists().trim().escape()]
+        }
+
+        case 'pagination': {
+            return [check('pageNo', 'Invalid Page No').exists().trim().escape()]
+        }
+
+        case 'createSlotIntrTime': {
+            return [
+                check('slotName').not().isEmpty().withMessage('SlotName must not be empty'),
+                check('startTime').not().isEmpty().withMessage('StartTime must not be empty'),
+                check('endTime').not().isEmpty().withMessage('EndTime must not be empty')
+            ]
+        }
+
+        case 'updateSlotIntrTime': {
+            return [
+                check('id').not().isEmpty().withMessage('id must not be empty'),
+                check('slotName').not().isEmpty().withMessage('SlotName must not be empty'),
+                check('startTime').not().isEmpty().withMessage('StartTime must not be empty'),
+                check('endTime').not().isEmpty().withMessage('EndTime must not be empty')
+            ]
+        }
+
+        case 'createSlotIntrSetting':{
+            return [
+                check('name').not().isEmpty().withMessage('Slot Setting Name must not be empty'),
+                check('startDate').not().isEmpty().withMessage('Start Date must not be empty'),
+                check('endDate').not().isEmpty().withMessage('EndDate must not be empty'),
+                check('intervalInMins').not().isEmpty().withMessage('IntervalInMins must not be empty')
+            ]
+        }
+
+        case 'updateSlotIntrSetting':{
+            return [
+                check('id').not().isEmpty().withMessage('Slot Setting id Name must not be empty'),
+                check('name').not().isEmpty().withMessage('Slot Setting Name must not be empty'),
+                check('startDate').not().isEmpty().withMessage('Start Date must not be empty'),
+                check('endDate').not().isEmpty().withMessage('EndDate must not be empty'),
+                check('intervalInMins').not().isEmpty().withMessage('IntervalInMins must not be empty').isNumeric().withMessage('IntervalInMins must be number only')
+            ]
+        }
+
         default: {
             return "No Validation Found"
         }

@@ -31,7 +31,7 @@ module.exports = {
         }
     },
 
-    createCampus: (req, res) => {
+    create: (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -50,8 +50,8 @@ module.exports = {
 
     },
 
-    getCampusById: (req, res) => {
-        CampusMaster.getCampusById(req.query.id).then(result => {
+    single: (req, res) => {
+        CampusMaster.getCampusById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset[0]
@@ -59,7 +59,7 @@ module.exports = {
         })
     },
 
-    updateCampus: (req, res) => {
+    update: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -78,8 +78,8 @@ module.exports = {
         })
     },
 
-    deleteById: (req, res) => {
-        CampusMaster.deleteById(req.body.id).then(result => {
+    delete: (req, res) => {
+        CampusMaster.deleteById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset

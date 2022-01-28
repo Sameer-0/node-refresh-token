@@ -7,7 +7,7 @@ const {
 const RoomTypes = require('../../models/RoomTypes')
 
 module.exports = {
-    getRoomTypePage: (req, res) => {
+    getPage: (req, res) => {
         RoomTypes.fetchAll(10).then(result => {
             res.render('management/room/roomtype', {
                 roomTypes: result.recordset
@@ -15,7 +15,7 @@ module.exports = {
         })
     },
 
-    createRoomType: (req, res) => {
+    create: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -34,7 +34,7 @@ module.exports = {
         })
     },
 
-    getRoomTypeById: (req, res) => {
+    single: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -45,7 +45,7 @@ module.exports = {
             return;
         }
 
-        RoomTypes.getRoomTypeById(req.query.roomtypeid).then(result => {
+        RoomTypes.getRoomTypeById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -54,7 +54,8 @@ module.exports = {
         })
     },
 
-    updateRoomTypeById: (req, res) => {
+    update: (req, res) => {
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -72,7 +73,7 @@ module.exports = {
         })
     },
 
-    deleteRoomTypeById: (req, res) => {
+    delete: (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -82,7 +83,7 @@ module.exports = {
             return;
         }
 
-        RoomTypes.delete(req.body.roomtypeid).then(result => {
+        RoomTypes.delete(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success"

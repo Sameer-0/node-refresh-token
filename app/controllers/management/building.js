@@ -13,7 +13,7 @@ module.exports = {
 
 
 
-    getBuildingPage: (req, res) => {
+    getPage: (req, res) => {
         let rowcount = 10
         if (req.method == "GET") {
             Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount()]).then(result => {
@@ -53,7 +53,7 @@ module.exports = {
 
     },
 
-    getAdd: (req, res) => {
+    create: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -72,7 +72,7 @@ module.exports = {
         })
     },
 
-    getSingleBuilding: (req, res) => {
+    single: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -83,7 +83,7 @@ module.exports = {
             return;
         }
 
-        Buildings.fetchById(req.query.buildingId).then(result => {
+        Buildings.fetchById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -91,7 +91,7 @@ module.exports = {
         })
     },
 
-    updateBuilding: (req, res) => {
+    update: (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -108,7 +108,7 @@ module.exports = {
         })
     },
 
-    deleteById: (req, res) => {
+    delete: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -120,14 +120,14 @@ module.exports = {
         }
 
  
-        Buildings.softDeleteById(req.body.buildingId).then(result => {
+        Buildings.softDeleteById(req.body.id).then(result => {
             res.json({
                 status: 200
             })
         })
     },
 
-    searchBuilding: (req, res) => {
+    search: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

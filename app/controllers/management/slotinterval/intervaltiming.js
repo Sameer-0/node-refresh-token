@@ -1,10 +1,14 @@
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
+
 const SlotIntervalTimings = require("../../../models/SlotIntervalTimings")
 module.exports = {
-
-
     getPage: (req, res) => {
         SlotIntervalTimings.fetchAll(10).then(result => {
-         
+
             res.render('management/slotintervals/timing', {
                 slotTiming: result.recordset
             })
@@ -13,6 +17,15 @@ module.exports = {
 
 
     search: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         let rowcount = 10;
         SlotIntervalTimings.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
@@ -40,6 +53,14 @@ module.exports = {
     },
 
     create: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         SlotIntervalTimings.create(req.body).then(result => {
             res.json({
                 status: 200,
@@ -54,6 +75,14 @@ module.exports = {
     },
 
     single: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         SlotIntervalTimings.single(req.query.id).then(result => {
             res.json({
                 status: 200,
@@ -63,6 +92,14 @@ module.exports = {
     },
 
     update: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         SlotIntervalTimings.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -71,8 +108,16 @@ module.exports = {
         })
     },
 
-    
+
     delete: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         SlotIntervalTimings.delete(req.body.id).then(result => {
             res.json({
                 status: 200,
