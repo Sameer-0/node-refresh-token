@@ -28,8 +28,18 @@ module.exports = {
                 throw error
             })
         } else if (req.method == "POST") {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                res.status(422).json({
+                    statuscode: 422,
+                    errors: errors.array()
+                });
+                return;
+            }
+
             Buildings.fetchChunkRows(rowcount, req.body.pageNo).then(result => {
-              
+
                 res.json({
                     status: "200",
                     message: "Quotes fetched",
@@ -63,6 +73,16 @@ module.exports = {
     },
 
     getSingleBuilding: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         Buildings.fetchById(req.query.buildingId).then(result => {
             res.json({
                 status: 200,
@@ -72,6 +92,15 @@ module.exports = {
     },
 
     updateBuilding: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         Buildings.update(req.body).then(result => {
             res.json({
                 status: 200
@@ -80,6 +109,17 @@ module.exports = {
     },
 
     deleteById: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+ 
         Buildings.softDeleteById(req.body.buildingId).then(result => {
             res.json({
                 status: 200
@@ -88,10 +128,19 @@ module.exports = {
     },
 
     searchBuilding: (req, res) => {
-        console.log('REQ::::::::::::::>>>',req.query.keyword)
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         //here 10is rowcount
         let rowcount = 10;
-        
+
         Buildings.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
