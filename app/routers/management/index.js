@@ -88,8 +88,8 @@ router.get('/room/search', [check('keyword', 'Invalid keyword').exists().trim().
 
 //ROOM TYPE ROUTER
 router.get('/room/roomtype', roomtype.getRoomTypePage)
-router.put('/room/roomtype', roomtype.updateRoomTypeById)
-router.post('/room/roomtype', roomtype.createRoomType)
+router.put('/room/roomtype', validate('updateRoomType'), roomtype.updateRoomTypeById)
+router.post('/room/roomtype', validate('createRoomType'),  roomtype.createRoomType)
 router.get('/room/roomtype/single', roomtype.getRoomTypeById)
 router.get('/room/roomtype/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomtype.search)
 router.delete('/room/roomtype/delete', roomtype.deleteRoomTypeById)

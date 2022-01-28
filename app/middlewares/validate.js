@@ -37,7 +37,7 @@ module.exports = function validate(method) {
                 check('campusId').not().isEmpty().withMessage('campusId  must not be empty').isNumeric().withMessage('campusId must be number only'),
             ]
         }
-        
+
         case 'updateBuilding': {
             return [
                 check('buildingId').not().isEmpty().withMessage('Building Id not be empty').isNumeric().withMessage('campusId must be number only'),
@@ -111,7 +111,23 @@ module.exports = function validate(method) {
                 check('typeOfCancellation').not().isEmpty().withMessage('Type of cancellation must not be empty'),
                 check('reasonText').not().isEmpty().withMessage('Reason must not be empty'),
                 check('sapId').not().isEmpty().withMessage('sapId must not be empty').isNumeric().withMessage('sapId must be number only')
-            ]}
+            ]
+        }
+
+        case 'createRoomType': {
+            return [
+                check('roomName').not().isEmpty().withMessage('Room name must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'updateRoomType': {
+            return [
+                check('roomtypeid').not().isEmpty().withMessage('roomtypeid must not be empty'),
+                check('roomName').not().isEmpty().withMessage('Room name must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
 
         default: {
             return "No Validation Found"
