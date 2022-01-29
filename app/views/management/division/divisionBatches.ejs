@@ -163,20 +163,58 @@
                 let batch = data.batchData;
                 console.log('Success: ', batch)
 
-                $("#id").val(batch.id),
-                $('#divisionId').val(batch.division_id),
-                $('#batch').val(batch.batch)
-
-
-
-
                 $("#add-divBatch-modal").modal('show')
+
+                $("#id").val(batch.id);
+                $('#divisionId').val(batch.division_id);
+                $('#divisionId').val('172');
+                $('#batch').val(batch.batch);
+                $('#eventType').val(batch.event_type);
+                $('#divisionCount').val(batch.division_count);
+                $('#batchCount').val(batch.batch_count);
+                $('#inputBatchCount').val(batch.input_batch_count);
+                $('#facultyCount').val(batch.faculty_count)
+
+   
+                
+
+
+
+                
             },
             error: err => {
                 console.log('Error: ', err)
             }
         })
 
+    })
+
+
+    // UPDATE BATCHES
+
+    $('.updateDivBatch').on('click', function () {
+        $.ajax({
+            url: '/management/division/batches',
+            type: 'JSON',
+            method: 'PUT',
+            data: {
+                id: $('#id').val(),
+                divisionId: $('#divisionId').val(),
+                batch: $('#batch').val(),
+                eventType: $('#eventType').val(),
+                divisionCount: $('#divisionCount').val(),
+                batchCount: $('#batchCount').val(),
+                inputBatchCount: $('#inputBatchCount').val(),
+                facultyCount: $('#facultyCount').val()
+            },
+            success: (data) => {
+                console.log('On success:::', data)
+                location.reload()
+            },
+            error: (err) => {
+                console.log('Error::', err)
+            }
+        })
     })
 </script>
 <%- include("../partials/footerEnd") %>

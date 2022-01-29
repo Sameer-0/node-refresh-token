@@ -47,4 +47,19 @@ module.exports = class DivisionBatches {
             .query(`SELECT id, division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count FROM [bncp-mum].division_batches WHERE id = @id `)
         })
     }
+
+    static updateBatch(body) {
+        return poolConnection.then(pool => {
+            return pool.request().input('id', sql.Int, body.id)
+            .input('divisionId', sql.Int, body.divisionId)
+            .input('batch', sql.Int, body.batch)
+            .input('eventType', sql.Char, body.eventType)
+            .input('divisionCount', sql.Int, body.divisionCount)
+            .input('batchCount', sql.Int, body.batchCount)
+            .input('inputBatchCount', sql.Int, body.inputBatchCount)
+            .input('facultyCount', sql.SmallInt, body.facultyCount)
+            .query(`UPDATE [bncp-mum].division_batches SET division_id = @divisionId, batch = @batch, event_type =@eventType, division_count =@divisionCount,
+            batch_count =@batchCount, input_batch_count =@inputBatchCount, faculty_count =@facultyCount WHERE id = @id`)
+        })
+    }
 }
