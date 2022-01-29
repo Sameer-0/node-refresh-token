@@ -75,6 +75,10 @@ module.exports = {
                 message: "Something went wrong",
             })
         })
+    },
+
+    programcheck:(req, res)=>{
+        res.json({status:"success",program:req.body.faculty_id})
     }
 
 }

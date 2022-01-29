@@ -35,6 +35,7 @@ const slotIntervalTiming = require("../../controllers/management/slotinterval/in
 const courseWorkload = require('../../controllers/management/courseWorkload')
 const divisionBatch = require('../../controllers/management/divisionBatch')
 const validate = require('../../middlewares/validate')
+const programcheck = require('../../middlewares/programcheck')
 
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
@@ -212,6 +213,9 @@ router.put('/slotinterval/timing', validate('updateSlotIntrTime'), slotIntervalT
 router.get('/slotinterval/timing/single', validate('single'), slotIntervalTiming.single)
 router.delete('/slotinterval/timing', validate('delete'), slotIntervalTiming.delete)
 router.get('/slotinterval/timing/search', validate('search'), slotIntervalTiming.search)
+
+//TEST ROUTE
+router.post('/program/checkprogram',programcheck, programTypeController.programcheck)
 
 
 module.exports = router;
