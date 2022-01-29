@@ -1,3 +1,10 @@
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
+
+
 const AcadSession = require("../../models/AcadSession")
 
 module.exports = {
@@ -12,6 +19,16 @@ module.exports = {
     },
 
     search: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         let rowcount = 10;
         AcadSession.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
@@ -39,6 +56,17 @@ module.exports = {
     },
 
     create: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
         AcadSession.save(req.body).then(result => {
             res.json({
                 status: 200,
@@ -53,7 +81,18 @@ module.exports = {
     },
 
     single: (req, res) => {
-        AcadSession.getById(req.query.id).then(result => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
+        AcadSession.getById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset[0]
@@ -62,6 +101,17 @@ module.exports = {
     },
 
     update: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
         AcadSession.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -71,7 +121,18 @@ module.exports = {
     },
 
     delele: (req, res) => {
-        AcadSession.softDeleteById(req.body.id).then(result => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
+        AcadSession.softDeleteById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success",

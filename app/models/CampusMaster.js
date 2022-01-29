@@ -43,6 +43,8 @@ module.exports = class CampusMaster {
             request.input('campusName40Char', sql.NVarChar(40), body.campusName)
             request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
             return request.query(`INSERT INTO [dbo].campus_master (campus_id, campus_abbr, campus_name_40_char, campus_description) VALUES (@campusId, @campusAbbr, @campusName40Char, @campusDesc)`);
+        }).catch(error=>{
+            throw error
         })
     }
 
@@ -51,6 +53,8 @@ module.exports = class CampusMaster {
             let request = pool.request();
             request.input('id', sql.Int, id)
             return request.query(`SELECT id, campus_id, campus_abbr, campus_name_40_char, campus_description FROM [dbo].campus_master  WHERE id = @id`)
+        }).catch(error=>{
+            throw error
         })
     }
 
@@ -64,6 +68,8 @@ module.exports = class CampusMaster {
             request.input('campusName40Char', sql.NVarChar(40), body.campusName)
             request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
             return request.query(`UPDATE [dbo].campus_master SET campus_id = @campusId, campus_abbr = @campusAbbr, campus_name_40_char = @campusName40Char, campus_description = @campusDesc WHERE id = @id`);
+        }).catch(error=>{
+            throw error
         })
     }
 
@@ -73,6 +79,8 @@ module.exports = class CampusMaster {
             let request = pool.request();
             request.input('id', sql.Int, id)
             return request.query(`UPDATE [dbo].campus_master SET active = 0 WHERE id = @id`);
+        }).catch(error=>{
+            throw error
         })
     }
 
@@ -82,6 +90,8 @@ module.exports = class CampusMaster {
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcont)} id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
             FROM [dbo].campus_master WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1 ORDER BY id DESC`)
+        }).catch(error=>{
+            throw error
         })
     }
 }

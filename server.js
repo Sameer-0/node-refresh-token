@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser')
 const app = express();
 require('dotenv').config()
 const http = require('http');
@@ -35,8 +36,6 @@ app.set('views', './app/views');
 app.set('view engine', 'ejs');
 
 
-
-
 app.use(
     session({
         store: new RedisStore({
@@ -66,7 +65,7 @@ app.use((req, res, next) => {
 })
 
 app.use(verifySubdomain);
-
+app.use(bodyParser.json())
 
 app.get('/logout', (req, res, next) => {
     req.session.destroy(function (err) {

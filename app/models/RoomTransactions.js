@@ -25,7 +25,9 @@ module.exports = class RoomTransactions {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, transaction_uuid, applicant, applicant_sap_id FROM [dbo].room_transactions WHERE active = 1`)
+            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowcount)}  transaction_uuid, applicant, applicant_sap_id FROM [dbo].room_transactions WHERE active = 1`)
+        }).catch(error=>{
+            throw error
         })
     }
 
@@ -43,6 +45,8 @@ module.exports = class RoomTransactions {
                 INNER JOIN [dbo].organization_master om  on rt.applied_for_org_id =  om.id
                 INNER JOIN [dbo].campus_master camp ON rt.applied_for_campus_org_id = camp.id
                 WHERE rt.transaction_uuid = @transid`)
+        }).catch(error=>{
+            throw error
         })
     }
 
@@ -52,6 +56,8 @@ module.exports = class RoomTransactions {
           return request.input('input_transaction_uuid', sql.UniqueIdentifier,  transuuid)
            // .output('message', sql.VarChar(400))
             .execute(`[dbo].room_transaction_approval`)
+        }).catch(error=>{
+            throw error
         })
     }
 
@@ -59,8 +65,10 @@ module.exports = class RoomTransactions {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} id, transaction_uuid, applicant, applicant_sap_id FROM [dbo].room_transactions 
+                .query(`SELECT DISTINCT TOP ${Number(rowcount)} transaction_uuid, applicant, applicant_sap_id FROM [dbo].room_transactions 
                 WHERE active = 1 AND transaction_uuid LIKE @keyword OR applicant LIKE @keyword OR applicant_sap_id LIKE @keyword`)
+        }).catch(error=>{
+            throw error
         })
     }
 

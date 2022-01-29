@@ -7,7 +7,7 @@ const OrganizationMaster = require("../../models/OrganizationMaster")
 const OrganizationType = require("../../models/OrganizationType")
 module.exports = {
     getPage: (req, res) => {
-       
+
         if (req.method == "GET") {
             Promise.all([OrganizationMaster.fetchAll(10), OrganizationType.fetchAll(), OrganizationMaster.getCount()]).then(result => {
                 res.render('management/organization/index', {
@@ -26,7 +26,15 @@ module.exports = {
         }
     },
 
-    createOrg: (req, res) => {
+    create: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         OrganizationMaster.save(req.body).then(result => {
             res.json({
                 status: 200
@@ -34,8 +42,8 @@ module.exports = {
         })
     },
 
-    getOrgById: (req, res) => {
-        OrganizationMaster.getOrgById(req.body.orgId).then(result => {
+    single: (req, res) => {
+        OrganizationMaster.getOrgById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 orgData: result.recordset[0]
@@ -43,7 +51,17 @@ module.exports = {
         })
     },
 
-    updateOrgById: (req, res) => {
+    update: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         OrganizationMaster.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -56,15 +74,15 @@ module.exports = {
             })
         })
     },
-    deleteById: (req, res) => {
-        OrganizationMaster.deleteOrgById(req.body.orgId).then(result => {
+    delete: (req, res) => {
+        OrganizationMaster.deleteOrgById(req.body.Id).then(result => {
             res.json({
                 status: 200
             })
         })
     },
 
-    
+
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;

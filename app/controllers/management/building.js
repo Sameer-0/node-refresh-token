@@ -13,10 +13,10 @@ module.exports = {
 
 
 
-    getBuildingPage: (req, res) => {
+    getPage: (req, res) => {
         let rowcount = 10
         if (req.method == "GET") {
-            Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(), Buildings.getCount()]).then(result => {
+            Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount()]).then(result => {
                 res.render('management/buildings/index', {
                     buildingList: result[0].recordset,
                     orgList: result[1].recordset,
@@ -28,8 +28,18 @@ module.exports = {
                 throw error
             })
         } else if (req.method == "POST") {
+
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                res.status(422).json({
+                    statuscode: 422,
+                    errors: errors.array()
+                });
+                return;
+            }
+
             Buildings.fetchChunkRows(rowcount, req.body.pageNo).then(result => {
-              
+
                 res.json({
                     status: "200",
                     message: "Quotes fetched",
@@ -43,7 +53,17 @@ module.exports = {
 
     },
 
-    getAdd: (req, res) => {
+    create: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         Buildings.save(req.body)
         res.json({
             status: 200,
@@ -52,8 +72,18 @@ module.exports = {
         })
     },
 
-    getSingleBuilding: (req, res) => {
-        Buildings.fetchById(req.query.buildingId).then(result => {
+    single: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        Buildings.fetchById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -61,7 +91,16 @@ module.exports = {
         })
     },
 
-    updateBuilding: (req, res) => {
+    update: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         Buildings.update(req.body).then(result => {
             res.json({
                 status: 200
@@ -69,19 +108,39 @@ module.exports = {
         })
     },
 
-    deleteById: (req, res) => {
-        Buildings.softDeleteById(req.body.buildingId).then(result => {
+    delete: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+ 
+        Buildings.softDeleteById(req.body.id).then(result => {
             res.json({
                 status: 200
             })
         })
     },
 
-    searchBuilding: (req, res) => {
-        console.log('REQ::::::::::::::>>>',req.query.keyword)
+    search: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         //here 10is rowcount
         let rowcount = 10;
-        
+
         Buildings.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({

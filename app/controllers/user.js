@@ -1,7 +1,10 @@
 // const saltRounds = 10;
 const express = require('express')
 const session = require('express-session')
-const {hashPassword, verifyPassword} = require('../utils/hash')
+const {
+    hashPassword,
+    verifyPassword
+} = require('../utils/hash')
 const User = require('../models/User');
 // const res = require('express/lib/response');
 
@@ -110,8 +113,12 @@ module.exports = {
     },
 
     authenticate: async (req, res, next) => {
-        console.log('username ===>>> ', req.body.username)
-        console.log('res.locals.slug ===>>> ', res.locals.slug)
+
+        console.log('req ===>>> ', req.headers.host)
+
+      console.log('req ===>>> ', req.headers.host)
+       console.log('res.locals.slug ===>>> ', res.locals.slug)
+
         let userData = await User.passwordByUsername(req.body.username, res.locals.slug).then(result => {
             if (result.recordset.length === 0) {
                 return res.send('User does not exist...')
@@ -121,20 +128,29 @@ module.exports = {
 
         console.log('UserData: ', userData)
 
-        let isVerified =  await verifyPassword(req.body.password, userData.password)
-
-        console.log('isVerified: ', isVerified)
+        let isVerified = await verifyPassword(req.body.password, userData.password)
 
 
 
-        if(isVerified) {
-            console.log('isuser::::::::')
+        if (isVerified) {
             req.session.username = userData.username;
             req.session.firstName = userData.f_name;
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
 
-        res.redirect('/management/dashboard')
+            if (userData.role == "MANAGEMENT") {
+                let slug = res.locals.slug.split("-")[0] + '-mgmt.'
+                let host = req.headers.host.split(".")[1]
+                let url = `http://${slug}${host}/management/dashboard`
+                res.redirect(url)
+            } else if (userData.role == "admin") {
+                res.redirect('/admin/dashboard')
+            } else{
+
+                res.redirect('404')
+            }
+        } else {
+            res.redirect('/user/login')
         }
 
 
@@ -145,6 +161,12 @@ module.exports = {
         res.render('dashboard.ejs', {
             username: req.session.username
         })
+    },
+
+    logout:(req, res)=>{
+        console.log('Logout:::::::::>>>')
+            res.redirect('/')
+        
     }
 
 }

@@ -1,7 +1,13 @@
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
+
 const RoomTypes = require('../../models/RoomTypes')
 
 module.exports = {
-    getRoomTypePage: (req, res) => {
+    getPage: (req, res) => {
         RoomTypes.fetchAll(10).then(result => {
             res.render('management/room/roomtype', {
                 roomTypes: result.recordset
@@ -9,7 +15,17 @@ module.exports = {
         })
     },
 
-    createRoomType: (req, res) => {
+    create: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         RoomTypes.save(req.body).then(result => {
             res.json({
                 status: 200,
@@ -18,17 +34,37 @@ module.exports = {
         })
     },
 
-    getRoomTypeById: (req, res) => {
-        RoomTypes.getRoomTypeById(req.query.roomtypeid).then(result => {
+    single: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        RoomTypes.getRoomTypeById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
-                data: result.recordset
+                data: result.recordset[0]
             })
         })
     },
 
-    updateRoomTypeById: (req, res) => {
+    update: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         RoomTypes.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -37,8 +73,17 @@ module.exports = {
         })
     },
 
-    deleteRoomTypeById: (req, res) => {
-        RoomTypes.delete(req.body.roomtypeid).then(result => {
+    delete: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        RoomTypes.delete(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -47,6 +92,16 @@ module.exports = {
     },
 
     search: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         //here 10is rowcount
         let rowcont = 10;
         RoomTypes.searchRoomType(rowcont, req.query.keyword).then(result => {

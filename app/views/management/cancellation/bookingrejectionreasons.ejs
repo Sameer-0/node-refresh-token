@@ -65,6 +65,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
+                <div id="errorHtml"></div>
                 <div class="form-row mt-4">
                     <label class="form-label">Reason</label>
                     <textarea name="reason" rows="10" id="reason" type="text" class="form-control"
@@ -102,7 +103,17 @@
                 location.reload()
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })
@@ -124,7 +135,6 @@
             success: data => {
 
                 let camp = data.data;
-                console.log(camp)
                 $("#cancellationId").val(camp.id)
                  $("#reason").val(camp.reason)
                 $("#add-room-cancellation-modal").modal('show')
@@ -149,7 +159,17 @@
                 location.reload()
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })

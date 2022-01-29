@@ -1,6 +1,4 @@
 const {
-    check,
-    oneOf,
     validationResult
 } = require('express-validator');
 const AcademicYear = require('../../models/AcademicYear')
@@ -33,17 +31,27 @@ module.exports = {
         }
     },
 
-    createCampus: (req, res) => {
+    create: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         CampusMaster.save(req.body).then(result => {
             res.json({
                 status: 200,
                 messsage: "Success"
             })
         })
+
     },
 
-    getCampusById: (req, res) => {
-        CampusMaster.getCampusById(req.query.id).then(result => {
+    single: (req, res) => {
+        CampusMaster.getCampusById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset[0]
@@ -51,7 +59,17 @@ module.exports = {
         })
     },
 
-    updateCampus: (req, res) => {
+    update: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+        
         CampusMaster.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -60,8 +78,8 @@ module.exports = {
         })
     },
 
-    deleteById: (req, res) => {
-        CampusMaster.deleteById(req.body.id).then(result => {
+    delete: (req, res) => {
+        CampusMaster.deleteById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset
@@ -71,7 +89,7 @@ module.exports = {
 
     search: (req, res) => {
         //here 10is rowcount
-        let rowcont  = 10;
+        let rowcont = 10;
         CampusMaster.searchCampus(rowcont, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({

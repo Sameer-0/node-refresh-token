@@ -63,6 +63,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
+                <div id="errorHtml"></div>
                 <div class="form-row mt-4">
                     <input name="acad_session" id="acad_session" type="text" class="form-control" placeholder="Enter Academic Session"
                         required>
@@ -103,7 +104,17 @@
                 location.reload()
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })
@@ -118,7 +129,7 @@
             method: 'GET',
             type: 'JSON',
             data: {
-                id: $(this).attr('data-acadSession-id')
+                Id: $(this).attr('data-acadSession-id')
             },
             success: data => {
              
@@ -147,7 +158,17 @@
                 location.reload()
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })
@@ -160,7 +181,7 @@
             method: 'DELETE',
             type: 'JSON',
             data: {
-                id: $(this).attr('data-acadSession-id')
+                Id: $(this).attr('data-acadSession-id')
             },
             success: data => {
                 location.reload()

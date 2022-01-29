@@ -15,7 +15,7 @@
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
             <table class="table custom_row" id="rootTypeTable">
                 <thead>
                     <th>Sr No.</th>
@@ -53,9 +53,11 @@
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h5 class="modal-title" id="add-room-modal">ADD ROOM TYPE</h5>
-                <button type="button" class ="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
+                <div id="errorHtml"></div>
                 <div class="mb-3">
                     <label for="roomName" class="form-label">Enter Room Name</label>
                     <input type="text" class="form-control" id="roomName" placeholder="Enter Name">
@@ -81,7 +83,7 @@
     $(document).ready(function () {
 
         //Create 
-        $(".createRoomType").one('click', function () {
+        $(".createRoomType").on('click', function () {
             $.ajax({
                 url: '/management/room/roomtype',
                 method: 'POST',
@@ -99,7 +101,17 @@
 
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
                 }
             })
         })
@@ -113,10 +125,9 @@
                 method: 'GET',
                 type: 'JSON',
                 data: {
-                    roomtypeid: $(this).attr("data-roomtype-id")
+                    Id: $(this).attr("data-roomtype-id")
                 },
                 success: data => {
-                    console.log('Data::::::::::::>>', data.data)
                     let room = data.data
                     $('#roomtypeid').val(room.roomtypeid),
                         $('#roomName').val(room.roomName),
@@ -131,9 +142,9 @@
 
 
         //Update 
-        $(".updateRoomType").one('click', function () {
+        $(".updateRoomType").on('click', function () {
             $.ajax({
-                url: '/management/room/roomtype/update',
+                url: '/management/room/roomtype',
                 method: 'PUT',
                 type: 'JSON',
                 data: {
@@ -150,7 +161,17 @@
 
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
                 }
             })
         })
@@ -163,7 +184,7 @@
                 method: 'DELETE',
                 type: 'JSON',
                 data: {
-                    roomtypeid: $(this).attr("data-roomtype-id")
+                    Id: $(this).attr("data-roomtype-id")
                 },
                 success: data => {
                     location.reload()
