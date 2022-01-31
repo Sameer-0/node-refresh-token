@@ -155,6 +155,12 @@ module.exports = {
         res.render('dashboard.ejs', {
             username: req.session.username
         })
+    },
+
+    logout:(req, res)=>{
+        console.log('Logout:::::::::>>>')
+            res.redirect('/')
+        
     }
 
 }

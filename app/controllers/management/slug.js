@@ -1,6 +1,4 @@
 const {
-    check,
-    oneOf,
     validationResult
 } = require('express-validator');
 const SlugTable = require("../../models/SlugTable")
@@ -35,6 +33,16 @@ module.exports = {
     },
 
     createSlug: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         req.body.tanantId = uuidv4()
         SlugTable.save(req.body).then(result => {
             res.json({
@@ -55,6 +63,15 @@ module.exports = {
     },
 
     updateSlugById: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         SlugTable.update(req.body).then(result => {
             res.json({
                 status: 200,
@@ -63,8 +80,8 @@ module.exports = {
         })
     },
 
-    deleteSlugById:(req, res)=>{
-                SlugTable.softDeleteById(req.body.slugid).then(result => {
+    deleteSlugById: (req, res) => {
+        SlugTable.softDeleteById(req.body.slugid).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
