@@ -113,8 +113,12 @@ module.exports = {
     },
 
     authenticate: async (req, res, next) => {
+
         console.log('req ===>>> ', req.headers.host)
-        console.log('res.locals.slug ===>>> ', res.locals.slug)
+
+      console.log('req ===>>> ', req.headers.host)
+       console.log('res.locals.slug ===>>> ', res.locals.slug)
+
         let userData = await User.passwordByUsername(req.body.username, res.locals.slug).then(result => {
             if (result.recordset.length === 0) {
                 return res.send('User does not exist...')
@@ -140,7 +144,8 @@ module.exports = {
                 res.redirect(url)
             } else if (userData.role == "admin") {
                 res.redirect('/admin/dashboard')
-            } else {
+            } else{
+
                 res.redirect('404')
             }
         } else {
