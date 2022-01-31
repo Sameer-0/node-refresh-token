@@ -58,6 +58,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
+                <div id="errorHtml"></div>
                 <div class="mb-3">
                     <label for="roomName" class="form-label">Enter Room Transaction Stage</label>
                     <input type="text" class="form-control" id="rtsName" placeholder="Enter Name">
@@ -88,7 +89,7 @@
     $(document).ready(function () {
 
         //Create 
-        $(".createRoomTransactionStages").one('click', function () {
+        $(".createRoomTransactionStages").on('click', function () {
             $.ajax({
                 url: '/management/room/rtstage',
                 method: 'POST',
@@ -105,8 +106,20 @@
                     }
                 },
                 error: err => {
-                    console.log('Error: ', err)
-                }
+                console.log(err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    console.log(er.msg)
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+            }
             })
         })
 
@@ -138,9 +151,9 @@
 
 
         //Update 
-        $(".updateRoomTransactionStages").one('click', function () {
+        $(".updateRoomTransactionStages").on('click', function () {
             $.ajax({
-                url: '/management/room/rtstage/update',
+                url: '/management/room/rtstage',
                 method: 'PUT',
                 type: 'JSON',
                 data: {
@@ -157,7 +170,18 @@
 
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    console.log('err', err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
                 }
             })
         })

@@ -55,14 +55,7 @@ module.exports = {
     },
 
     updateRoomTypeById: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
+     
 
         RoomTypes.update(req.body).then(result => {
             res.json({

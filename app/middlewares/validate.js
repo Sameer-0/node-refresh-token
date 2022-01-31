@@ -1,7 +1,8 @@
 const {
     check,
     body
-} = require('express-validator')
+} = require('express-validator');
+const { searchRoom } = require('../models/RoomData');
 
 module.exports = function validate(method) {
     switch (method) {
@@ -128,6 +129,105 @@ module.exports = function validate(method) {
                 check('description').not().isEmpty().withMessage('Description must not be empty')
             ]
         }
+
+        case 'createRoom': {
+            return [
+               body().isArray(),
+                check('*.roomNo', 'roomNo must not be empty').not().isEmpty(),
+                check('*.buildingId', 'buildingId must not be empty').not().isEmpty(),
+                // check('roomJson.*.roomNo').not().isEmpty().withMessage('roomNo must not be empty'),
+                // check('roomJson.*.buildingId').not().isEmpty().withMessage('building name must not be empty'),
+                // check('roomJson.*.roomType').not().isEmpty().withMessage('room type must not be empty'),
+                // check('roomJson.*.floorNo').not().isEmpty().withMessage('floor number must not be empty').isNumeric().withMessage('floorNo must be number only'),
+                // check('roomJson.*.capacity').not().isEmpty().withMessage('capacity must not be empty').isNumeric().withMessage('capacity must be number only'),
+                // check('roomJson.*.handledBy').not().isEmpty().withMessage('handledBy must not be empty'),
+                // check('roomJson.*.isBasement').not().isEmpty().withMessage('isBasement must not be empty'),
+                // check('roomJson.*.campusId').not().isEmpty().withMessage('campus must not be empty'),
+                // check('roomJson.*.startTime').not().isEmpty().withMessage('startTime must not be empty'),
+                // check('roomJson.*.endTime').not().isEmpty().withMessage('endTime must not be empty')
+            ]
+        }
+
+        case 'updateRoom': {
+            return [
+                check('roomid').not().isEmpty().withMessage('roomId must not be empty').isNumeric().withMessage('roomId must be number only'),
+                check('room_number').not().isEmpty().withMessage('roomNo must not be empty'),
+                check('buildingId').not().isEmpty().withMessage('building name must not be empty'),
+                check('roomtypeId').not().isEmpty().withMessage('roomType must not be empty'),
+                check('floor_number').not().isEmpty().withMessage('floor must not be empty').isNumeric().withMessage('floorNo must be number only'),
+                check('capacity').not().isEmpty().withMessage('capacity must not be empty').isNumeric().withMessage('capacity must not be empty'),
+                check('handledBy').not().isEmpty().withMessage('handledBy must not be empty'),
+                check('is_basement').not().isEmpty().withMessage('isBasement must not be empty'),
+                check('campusId').not().isEmpty().withMessage('campus must not be empty'),
+                check('start_time').not().isEmpty().withMessage('startTime must not be empty'),
+                check('end_time').not().isEmpty().withMessage('endTime must not be empty')
+           ]
+        }
+
+       case 'search': {
+           return [
+               check('keyword').exists().trim().escape().withMessage('Invalid Keyword')
+           ]
+       }
+
+       case 'delete': {
+           return [
+               check('id').not().isEmpty().withMessage('Id must not be empty').isNumeric().withMessage('Id must be an integer')
+           ]
+       }
+
+
+       case 'createRoomTransStage':{
+           return[
+            check('rtsName').not().isEmpty().withMessage('Room transaction must not be empty'),
+            check('description').not().isEmpty().withMessage('Description must not be empty')
+           ]
+       }
+
+       case 'updateRoomTransStage': {
+           return[
+               check('rtsId').not().isEmpty().withMessage('Room Transaction Id must not be empty'),
+               check('rtsName').not().isEmpty().withMessage('Transaction Name must not be empty'),
+               check('description').not().isEmpty().withMessage('Description must not be empty')
+           ]
+       }
+
+       case 'search': {
+           return[
+               check('keyword').exists().trim().escape().withMessage('Invalid Keyword')
+           ]
+       }
+       
+       case 'createRoomTransType': {
+           return[
+               check('rtsName').not().isEmpty().withMessage('Room Transaction Type must not be empty'),
+               check('description').not().isEmpty().withMessage('Description must not be empty')
+           ]
+       }
+
+       case 'updateRoomTransType': {
+           return[
+               check('rtsId').not().isEmpty().withMessage('roomTransactionTypeId must not be empty'),
+               check('rtsName').not().isEmpty().withMessage('Room Transaction type must not be empty'),
+               check('description').not().isEmpty().withMessage('Description must not be empty')
+
+           ]
+       }
+
+       case 'createDivision': {
+           return[
+               check('courseId').not.isEmpty().withMessage('Course must not be empty'),
+               check('division').not().isEmpty().withMessage('Division must not be empty'),
+               check('divisionNum').not().isEmpty().withMessage('division number must not be empty').isNumeric().withMessage('DivisionNum must be an integer'),
+               check('divisionCount').not().isEmpty().withMessage('Division Count must not be empty').isNumeric().withMessage('DivisionCount must be an integer'),
+               check('countTheoryBatch').not().isEmpty().withMessage('countTheoryBatch must not be empty').isNumeric().withMessage('countTheoryBatch must be an integer'),
+               check('countPracticalBatch').not().isEmpty().withMessage('countPracticalBatch must not be empty').isNumeric().withMessage('countPracticalBatch must be number'),
+               check('countTutorialBatch').not().isEmpty().withMessage('countTutorialBatch must not be empty').isNumeric().withMessage('countTutorialBatch must be an integer'),
+               check('countWorkshopBatch').not().isEmpty().withMessage('countWorkshopBatch must not be an empty').isNumeric().withMessage('countWorkshopBatch must not be an integer'),
+               
+           ]
+       }
+       
 
         default: {
             return "No Validation Found"

@@ -17,6 +17,15 @@ module.exports = {
     },
 
     createRoomTrabsactionStages: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         RoomTransactionTypes.save(req.body).then(result => {
             res.json({
                 status: 200,
@@ -36,6 +45,15 @@ module.exports = {
     },
 
     updateRoomTrabsactionStagesById: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         RoomTransactionTypes.update(req.body).then(result => {
             res.json({
                 status: 200,

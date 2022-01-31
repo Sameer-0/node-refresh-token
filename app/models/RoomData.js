@@ -122,7 +122,8 @@ module.exports = class RoomData {
     static add(roomJson) {
         return poolConnection.then(pool => {
 
-        console.log('body============>>>>>>>> ',roomJson)
+        // console.log('body============>>>>>>>> ',roomJson)
+        
         
         return pool.request().input('room_json', sql.NVarChar(sql.MAX), roomJson)
         .output('output', sql.Bit)

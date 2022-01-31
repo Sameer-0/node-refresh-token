@@ -81,10 +81,10 @@ router.get('/dashboard', dashcontroller.getDashboard)
 //ROOM ROUTER
 router.get('/room', roomcontroller.getPage)
 router.get('/room/single', roomcontroller.getSingleRoom)
-router.put('/room', roomcontroller.updateRoomById)
-router.delete('/room', roomcontroller.deleteRoomById)
-router.post('/room', roomcontroller.addRoom)
-router.get('/room/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], roomcontroller.searchRoom)
+router.put('/room', validate('updateRoom'), roomcontroller.updateRoomById)
+router.delete('/room', validate('delete'), roomcontroller.deleteRoomById)
+router.post('/room',  roomcontroller.addRoom)
+router.get('/room/search', validate('search'), roomcontroller.searchRoom)
 
 //ROOM TYPE ROUTER
 router.get('/room/roomtype', roomtype.getRoomTypePage)
@@ -97,8 +97,8 @@ router.delete('/room/roomtype/delete', roomtype.deleteRoomTypeById)
 
 // ROOM TRANSACTION STATGE =  rtstage
 router.get('/room/rtstage', rtscontroller.getPage)
-router.put('/room/rtstage', rtscontroller.updateRoomTrabsactionStagesById)
-router.post('/room/rtstage', rtscontroller.createRoomTrabsactionStages)
+router.put('/room/rtstage', validate('updateRoomTransStage'),  rtscontroller.updateRoomTrabsactionStagesById)
+router.post('/room/rtstage', validate('createRoomTransStage'), rtscontroller.createRoomTrabsactionStages)
 router.get('/room/rtstage/single', rtscontroller.getRoomTrabsactionStagesById)
 router.get('/room/rtstage/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtscontroller.search)
 router.delete('/room/rtstage', rtscontroller.deleteRoomTrabsactionStagesById)
@@ -106,9 +106,9 @@ router.delete('/room/rtstage', rtscontroller.deleteRoomTrabsactionStagesById)
 
 // ROOM TRANSACTION TYPES =  rtypes
 router.get('/room/rtypes', rtypescontroller.getPage)
-router.post('/room/rtypes', rtypescontroller.createRoomTrabsactionStages)
+router.post('/room/rtypes', validate('createRoomTransType'), rtypescontroller.createRoomTrabsactionStages)
 router.get('/room/rtypes/single', rtypescontroller.getRoomTrabsactionStagesById)
-router.put('/room/rtypes', rtypescontroller.updateRoomTrabsactionStagesById)
+router.put('/room/rtypes', validate('updateRoomTransType'), rtypescontroller.updateRoomTrabsactionStagesById)
 router.delete('/room/rtypes', rtypescontroller.deleteRoomTrabsactionStagesById)
 router.get('/room/rtypes/search', [check('keyword', 'Invalid keyword').exists().trim().escape()], rtypescontroller.search)
 
