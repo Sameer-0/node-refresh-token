@@ -73,7 +73,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-
+                <div id="errorHtml"></div>
                 <div class="form-row mt-4">
                     <label class="form-label">Name</label>
                     <input type="text" name="name" id="name" class="form-control" placeholder="Enter Name" required>
@@ -134,7 +134,17 @@
                 location.reload()
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })
@@ -151,11 +161,11 @@
             method: 'GET',
             type: 'JSON',
             data: {
-                id: $(this).attr('data-slot-setting-id')
+                Id: $(this).attr('data-slot-setting-id')
             },
             success: data => {
                 let obj = data.data;
-                $("#name").val(obj.name)
+                console.log(obj)
                 $("#name").val(obj.name)
                 $("#start_date").val(obj.start_date)
                 $("#end_date").val(obj.end_date)
@@ -186,7 +196,17 @@
                 location.reload()
             },
             error: err => {
-                console.log('Error: ', err)
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })
@@ -199,7 +219,7 @@
             method: 'DELETE',
             type: 'JSON',
             data: {
-                id: $(this).attr('data-slot-setting-id')
+                Id: $(this).attr('data-slot-setting-id')
             },
             success: data => {
                 location.reload()

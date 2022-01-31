@@ -10,9 +10,9 @@
         <div class="card-header text-uppercase d-flex align-items-center">
             <h5>ROOM TRANSACTION STAGE List</h5>
 
-            <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+            <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                 data-bs-target="#add-roomtransaction-stages-modal">
-                <i class="fas fa-plus"></i> Add New</button>
+                <i class="fas fa-plus"></i></button>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -106,20 +106,18 @@
                     }
                 },
                 error: err => {
-                console.log(err)
-                let error = err.responseJSON.errors
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                error.map(er => {
-                    console.log(er.msg)
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
                     errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
-            }
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
+                }
             })
         })
 
@@ -133,7 +131,7 @@
                 method: 'GET',
                 type: 'JSON',
                 data: {
-                    rtsId: $(this).attr("data-roomtransaction-stages-id")
+                    Id: $(this).attr("data-roomtransaction-stages-id")
                 },
                 success: data => {
                     console.log('Data::::::::::::>>', data.data)
@@ -170,7 +168,10 @@
 
                 },
                 error: err => {
+<<<<<<< HEAD
                     console.log('err', err)
+=======
+>>>>>>> origin
                     let error = err.responseJSON.errors
                     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
@@ -194,7 +195,7 @@
                 method: 'DELETE',
                 type: 'JSON',
                 data: {
-                    rtsId: $(this).attr("data-roomtransaction-stages-id")
+                    Id: $(this).attr("data-roomtransaction-stages-id")
                 },
                 success: data => {
                     location.reload()

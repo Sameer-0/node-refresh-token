@@ -9,9 +9,9 @@
     <div class="card table-card">
         <div class="card-header text-uppercase d-flex align-items-center">
             <h5>ROOM TYPE LIST</h5>
-            <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+            <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                 data-bs-target="#add-room-modal">
-                <i class="fas fa-plus"></i> Add New</button>
+                <i class="fas fa-plus"></i></button>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -83,7 +83,7 @@
     $(document).ready(function () {
 
         //Create 
-        $(".createRoomType").one('click', function () {
+        $(".createRoomType").on('click', function () {
             $.ajax({
                 url: '/management/room/roomtype',
                 method: 'POST',
@@ -125,7 +125,7 @@
                 method: 'GET',
                 type: 'JSON',
                 data: {
-                    roomtypeid: $(this).attr("data-roomtype-id")
+                    Id: $(this).attr("data-roomtype-id")
                 },
                 success: data => {
                     let room = data.data
@@ -142,7 +142,7 @@
 
 
         //Update 
-        $(".updateRoomType").one('click', function () {
+        $(".updateRoomType").on('click', function () {
             $.ajax({
                 url: '/management/room/roomtype',
                 method: 'PUT',
@@ -184,7 +184,7 @@
                 method: 'DELETE',
                 type: 'JSON',
                 data: {
-                    roomtypeid: $(this).attr("data-roomtype-id")
+                    Id: $(this).attr("data-roomtype-id")
                 },
                 success: data => {
                     location.reload()

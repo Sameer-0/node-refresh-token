@@ -163,40 +163,6 @@ module.exports = function validate(method) {
                 check('end_time').not().isEmpty().withMessage('endTime must not be empty')
            ]
         }
-
-       case 'search': {
-           return [
-               check('keyword').exists().trim().escape().withMessage('Invalid Keyword')
-           ]
-       }
-
-       case 'delete': {
-           return [
-               check('id').not().isEmpty().withMessage('Id must not be empty').isNumeric().withMessage('Id must be an integer')
-           ]
-       }
-
-
-       case 'createRoomTransStage':{
-           return[
-            check('rtsName').not().isEmpty().withMessage('Room transaction must not be empty'),
-            check('description').not().isEmpty().withMessage('Description must not be empty')
-           ]
-       }
-
-       case 'updateRoomTransStage': {
-           return[
-               check('rtsId').not().isEmpty().withMessage('Room Transaction Id must not be empty'),
-               check('rtsName').not().isEmpty().withMessage('Transaction Name must not be empty'),
-               check('description').not().isEmpty().withMessage('Description must not be empty')
-           ]
-       }
-
-       case 'search': {
-           return[
-               check('keyword').exists().trim().escape().withMessage('Invalid Keyword')
-           ]
-       }
        
        case 'createRoomTransType': {
            return[
@@ -216,7 +182,7 @@ module.exports = function validate(method) {
 
        case 'createDivision': {
            return[
-               check('courseId').not.isEmpty().withMessage('Course must not be empty'),
+               check('courseId').not().isEmpty().withMessage('Course must not be empty'),
                check('division').not().isEmpty().withMessage('Division must not be empty'),
                check('divisionNum').not().isEmpty().withMessage('division number must not be empty').isNumeric().withMessage('DivisionNum must be an integer'),
                check('divisionCount').not().isEmpty().withMessage('Division Count must not be empty').isNumeric().withMessage('DivisionCount must be an integer'),
@@ -228,6 +194,116 @@ module.exports = function validate(method) {
            ]
        }
        
+
+        case 'createRtstage': {
+            return [
+                check('rtsName').not().isEmpty().withMessage('Room name must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'updateRtstage': {
+            return [
+                check('rtsName').not().isEmpty().withMessage('Room transaction type must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'createRtypes': {
+            return [
+                check('rtsName').not().isEmpty().withMessage('Room transaction stage must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'updateRtypes': {
+            return [
+                check('rtsId').not().isEmpty().withMessage('Room transaction id must not be empty'),
+                check('rtsName').not().isEmpty().withMessage('Room transaction stage must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'createBookingRejectionReasons': {
+            return [
+                check('reason').not().isEmpty().withMessage('Room Cancellation Reason stage must not be empty')
+            ]
+        }
+
+        case 'updateBookingRejectionReasons': {
+            return [
+                check('Id').not().isEmpty().withMessage('Room Cancellation Reason id must not be empty'),
+                check('reason').not().isEmpty().withMessage('Room Cancellation Reason stage must not be empty')
+            ]
+        }
+
+        case 'search': {
+            return [
+                [check('keyword', 'Input field must not be empty').exists().trim().escape()]
+            ]
+        }
+
+        case 'delete': {
+            return [check('Id', 'Parameter must bot be empty while deleteting records').not().isEmpty().exists().trim().escape()]
+        }
+
+        case 'single': {
+            return [check('Id', 'Parameter must bot be empty while fetching record').not().isEmpty().exists().trim().escape()]
+        }
+
+        case 'pagination': {
+            return [check('pageNo', 'Invalid Page No').exists().trim().escape()]
+        }
+
+        case 'createSlotIntrTime': {
+            return [
+                check('slotName').not().isEmpty().withMessage('SlotName must not be empty'),
+                check('startTime').not().isEmpty().withMessage('StartTime must not be empty'),
+                check('endTime').not().isEmpty().withMessage('EndTime must not be empty')
+            ]
+        }
+
+        case 'updateSlotIntrTime': {
+            return [
+                check('id').not().isEmpty().withMessage('id must not be empty'),
+                check('slotName').not().isEmpty().withMessage('SlotName must not be empty'),
+                check('startTime').not().isEmpty().withMessage('StartTime must not be empty'),
+                check('endTime').not().isEmpty().withMessage('EndTime must not be empty')
+            ]
+        }
+
+        case 'createSlotIntrSetting':{
+            return [
+                check('name').not().isEmpty().withMessage('Slot Setting Name must not be empty'),
+                check('startDate').not().isEmpty().withMessage('Start Date must not be empty'),
+                check('endDate').not().isEmpty().withMessage('EndDate must not be empty'),
+                check('intervalInMins').not().isEmpty().withMessage('IntervalInMins must not be empty')
+            ]
+        }
+
+        case 'updateSlotIntrSetting':{
+            return [
+                check('id').not().isEmpty().withMessage('Slot Setting id Name must not be empty'),
+                check('name').not().isEmpty().withMessage('Slot Setting Name must not be empty'),
+                check('startDate').not().isEmpty().withMessage('Start Date must not be empty'),
+                check('endDate').not().isEmpty().withMessage('EndDate must not be empty'),
+                check('intervalInMins').not().isEmpty().withMessage('IntervalInMins must not be empty').isNumeric().withMessage('IntervalInMins must be number only')
+            ]
+        }
+
+        case 'createSession':{
+            return [
+                check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
+            ]
+        }
+
+        case 'updateSession':{
+            return [
+                check('acadSessionId').not().isEmpty().withMessage('Academic session acadSessionId must not be empty'),
+                check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
+            ]
+        }
+
 
         default: {
             return "No Validation Found"

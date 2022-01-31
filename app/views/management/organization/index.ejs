@@ -7,29 +7,31 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
     <div class="card table-card">
-        <div class="card-header text-uppercase d-flex align-items-center">
+        <div class="card-header text-uppercase d-flex align-items-center justify-content-between">
             <h5>Organization List</h5>
             <% if(typeof(kap)=='string' ) { %>
             <h1>
                 <%- kap %>
             </h1>
             <% } %>
-
-            <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
-                data-bs-target="#add-org-modal">
-                <i class="fas fa-plus"></i> Add New</button>
+            <button class="btn ms-auto add-btn" data-bs-toggle="modal"
+            data-bs-target="#add-org-modal"><i class="fas fa-plus"></i></button>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+
+                
             <table class="table custom_row" id="organizationTable">
                 <thead>
+                    <tr>
                     <th>Id</th>
                     <th>Abbr</th>
                     <th>Name</th>
                     <th>Complete Name</th>
                     <th>Type</th>
                     <th>Action</th>
+                </tr>
                 </thead>
                 <tbody>
                     <% for (let org of orgList) { %>
@@ -57,6 +59,8 @@
                     <% } %>
                 </tbody>
             </table>
+         
+        
             <div class="d-flex justify-content-between">
                 <div>
                     <p>Total entries:<%- pageCount %>
@@ -189,7 +193,7 @@
             method: 'POST',
             type: 'JSON',
             data: {
-                orgId: $(this).attr('data-org-id')
+                Id: $(this).attr('data-org-id')
             },
             success: data => {
                 let org = data.orgData;
@@ -256,7 +260,7 @@
             method: 'DELETE',
             type: 'JSON',
             data: {
-                orgId: $(this).attr('data-org-id')
+                Id: $(this).attr('data-org-id')
             },
             success: data => {
                 location.reload()

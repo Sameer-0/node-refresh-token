@@ -16,7 +16,8 @@ module.exports = {
         })
     },
 
-    createRoomTrabsactionStages: (req, res) => {
+    create: (req, res) => {
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -33,8 +34,18 @@ module.exports = {
         })
     },
 
-    getRoomTrabsactionStagesById: (req, res) => {
-        RoomTransactionStages.getRTSId(req.query.rtsId).then(result => {
+    single: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        RoomTransactionStages.getRTSId(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -43,7 +54,8 @@ module.exports = {
         })
     },
 
-    updateRoomTrabsactionStagesById: (req, res) => {
+    update: (req, res) => {
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -61,8 +73,18 @@ module.exports = {
         })
     },
 
-    deleteRoomTrabsactionStagesById: (req, res) => {
-        RoomTransactionStages.delete(req.body.rtsId).then(result => {
+    delete: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        RoomTransactionStages.delete(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -71,6 +93,16 @@ module.exports = {
     },
 
     search: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         //here 10is rowcount
         let rowcont = 10;
         RoomTransactionStages.search(rowcont, req.query.keyword).then(result => {
