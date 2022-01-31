@@ -7,20 +7,20 @@ const {
 module.exports = function checkprogram(req, res, next) {
 
     const {
-        faculty_id
+        username
     } = req.body
 
-    if (!faculty_id) {
+    if (!username) {
         res.json({
             status: 400,
             message: "Faculty id must not be emoty"
         })
     } else {
-        console.log("Enterd:::::::::::::", faculty_id)
+        console.log("Enterd:::::::::::::", username)
         let response = poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('facultyId', sql.Int, faculty_id)
-                .query(`select program_id from [dbo].user_program where faculty_id = @facultyId and active  = 1`)
+            return request.input('userName', sql.Int, username)
+                .query(`select program_id from [dbo].user_program where username = @userName and active  = 1`)
         })
 
         response.then(result => {
