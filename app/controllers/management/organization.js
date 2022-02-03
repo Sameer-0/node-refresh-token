@@ -37,7 +37,8 @@ module.exports = {
         }
         OrganizationMaster.save(req.body).then(result => {
             res.json({
-                status: 200
+                status: 200,
+                data: result.recordset
             })
         })
     },

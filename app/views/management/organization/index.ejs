@@ -14,24 +14,24 @@
                 <%- kap %>
             </h1>
             <% } %>
-            <button class="btn ms-auto add-btn" data-bs-toggle="modal"
-            data-bs-target="#add-org-modal"><i class="fas fa-plus"></i></button>
+            <button class="btn ms-auto add-btn" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
+                    class="fas fa-plus"></i></button>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
-                
+
             <table class="table custom_row" id="organizationTable">
                 <thead>
                     <tr>
-                    <th>Id</th>
-                    <th>Abbr</th>
-                    <th>Name</th>
-                    <th>Complete Name</th>
-                    <th>Type</th>
-                    <th>Action</th>
-                </tr>
+                        <th>Id</th>
+                        <th>Abbr</th>
+                        <th>Name</th>
+                        <th>Complete Name</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <% for (let org of orgList) { %>
@@ -59,8 +59,8 @@
                     <% } %>
                 </tbody>
             </table>
-         
-        
+
+
             <div class="d-flex justify-content-between">
                 <div>
                     <p>Total entries:<%- pageCount %>
@@ -148,6 +148,7 @@
     //Create 
 
     $(".createOrg").on('click', function () {
+
         $.ajax({
             url: '/management/organization',
             method: 'POST',
@@ -160,11 +161,14 @@
                 org_type_id: $('#orgType').val()
             },
             success: data => {
-                if (data.status == 200) {
-                    location.reload()
-                } else {
-                    $(".errorMsg").html(data.message)
-                }
+                console.log('orgData:::', data)
+                // if (data.status == 200) {
+                //     location.reload()
+                // } else {
+                //     $(".errorMsg").html(data.message)
+                // }
+
+
 
             },
             error: err => {
@@ -197,6 +201,7 @@
             },
             success: data => {
                 let org = data.orgData;
+                
                 $('#orgLid').val(org.id)
                 $('#orgId').val(org.org_id)
                 $('#orgAbbr').val(org.org_abbr)
@@ -204,6 +209,7 @@
                 $('#orgCompleteName').val(org.org_complete_name)
                 $('#orgType').val(org.org_type_id).trigger('change')
                 $("#add-org-modal").modal('show')
+                
             },
             error: err => {
                 console.log('Error: ', err)
@@ -270,6 +276,13 @@
             }
         })
     })
+
+
+
+    // validation demo:
+
+
+
 
 
 

@@ -66,6 +66,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
+                <div id="errorHtml"></div>
                 <div class="mb-3">
                     <label for="task" class="form-label">Enter Task</label>
                     <input type="text" class="form-control" id="task" placeholder="Enter task">
@@ -136,7 +137,17 @@
 
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
                 }
             })
         })
@@ -234,7 +245,17 @@
 
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
                 }
             })
         })
@@ -253,7 +274,17 @@
                     location.reload()
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
                 }
             })
         })

@@ -106,38 +106,49 @@
                         </div>
                     </div>
 
-
-
-
-
-                    <div class="my-3 py-2">
-                        <input name="divisionNum" id="divisionNum" type="text" class="form-control"
-                            placeholder="divisionNum">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="divisionNum" id="divisionNum" type="text" class="form-control"
+                                    placeholder="divisionNum">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="divisionCount" id="divisionCount" type="text" class="form-control"
+                                    placeholder="divisionCount">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="my-3 py-2">
-                        <input name="divisionCount" id="divisionCount" type="text" class="form-control"
-                            placeholder="divisionCount">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countTheoryBatch" id="countTheoryBatch" type="text" class="form-control"
+                                    placeholder="countTheoryBatch">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countPracticalBatch" id="countPracticalBatch" type="text"
+                                    class="form-control" placeholder="countPracticalBatch">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="my-3 py-2">
-                        <input name="countTheoryBatch" id="countTheoryBatch" type="text" class="form-control"
-                            placeholder="countTheoryBatch">
-                    </div>
-
-                    <div class="my-3 py-2">
-                        <input name="countPracticalBatch" id="countPracticalBatch" type="text" class="form-control"
-                            placeholder="countPracticalBatch">
-                    </div>
-
-                    <div class="my-3 py-2">
-                        <input name="countTutorialBatch" id="countTutorialBatch" type="text" class="form-control"
-                            placeholder="countTutorialBatch">
-                    </div>
-
-                    <div class="my-3 py-2">
-                        <input name="countWorkshopBatch" id="countWorkshopBatch" type="text" class="form-control"
-                            placeholder="countWorkshopBatch">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countTutorialBatch" id="countTutorialBatch" type="text"
+                                    class="form-control" placeholder="countTutorialBatch">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countWorkshopBatch" id="countWorkshopBatch" type="text"
+                                    class="form-control" placeholder="countWorkshopBatch">
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -233,7 +244,17 @@
                         $("#add-division-modal").modal('show')
                     },
                     error: err => {
-                        console.log('Error: ', err)
+                        let error = err.responseJSON.errors
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        error.map(er => {
+                            errorHtml +=
+                                `<li>${er.msg}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
                     }
                 })
 
@@ -263,8 +284,18 @@
                     success: (data) => {
                         location.reload()
                     },
-                    error: (err) => {
-                        console.log('Error::', err)
+                    error: err => {
+                        let error = err.responseJSON.errors
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        error.map(er => {
+                            errorHtml +=
+                                `<li>${er.msg}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
                     }
                 })
             })

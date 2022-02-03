@@ -55,7 +55,7 @@
 
 <!-- ADD MODAL -->
 <div class="modal fade" id="add-divBatch-modal" tabindex="-1" aria-labelledby="add-divBatch-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h5 class="modal-title" id="add-divBatch-modal-title">DivBatch</h5>
@@ -63,40 +63,60 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div class="my-3 py-2">
-                    <input type="hidden" id="id" name="id">
-                    <select class="form-select modalSelect2" name="divisionId" id="divisionId" required>
-                        <option disabled selected>--Division--</option>
-                        <% for(let division of divisionList) { %>
-                        <option value="<%- division.id %>">
-                            <%- division.division %>
-                        </option>
-                        <% } %>
-                    </select>
+                <div id="errorHtml"></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="my-3 py-2">
+                            <input type="hidden" id="id" name="id">
+                            <select class="form-select modalSelect2" name="divisionId" id="divisionId" required>
+                                <option disabled selected>--Division--</option>
+                                <% for(let division of divisionList) { %>
+                                <option value="<%- division.id %>">
+                                    <%- division.division %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="my-3 py-2">
+                            <input name="batch" id="batch" type="text" class="form-control" placeholder="batch"
+                                required>
+
+                        </div>
+                    </div>
                 </div>
 
-                <div class="my-3 py-2">
-                    <input name="batch" id="batch" type="text" class="form-control" placeholder="batch" required>
-
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="my-3 py-2">
+                            <input name="eventType" id="eventType" type="text" class="form-control"
+                                placeholder="event">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="my-3 py-2">
+                            <input name="divisionCount" id="divisionCount" type="text" class="form-control"
+                                placeholder="divisionCount">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="my-3 py-2">
-                    <input name="eventType" id="eventType" type="text" class="form-control" placeholder="eventType">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="my-3 py-2">
+                            <input name="batchCount" id="batchCount" type="text" class="form-control"
+                                placeholder="batchCount">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="my-3 py-2">
+                            <input name="inputBatchCount" id="inputBatchCount" type="text" class="form-control"
+                                placeholder="inputBatchCount">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="my-3 py-2">
-                    <input name="divisionCount" id="divisionCount" type="text" class="form-control"
-                        placeholder="divisionCount">
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="batchCount" id="batchCount" type="text" class="form-control" placeholder="batchCount">
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="inputBatchCount" id="inputBatchCount" type="text" class="form-control"
-                        placeholder="inputBatchCount">
-                </div>
 
                 <div class="my-3 py-2">
                     <input name="facultyCount" id="facultyCount" type="text" class="form-control"
@@ -139,8 +159,18 @@
             success: (data) => {
                 console.log('data:::', data)
             },
-            error: (err) => {
-                console.log('Error::', err)
+            error: err => {
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             }
         })
     })
@@ -167,7 +197,6 @@
 
                 $("#id").val(batch.id);
                 $('#divisionId').val(batch.division_id);
-                $('#divisionId').val('172');
                 $('#batch').val(batch.batch);
                 $('#eventType').val(batch.event_type);
                 $('#divisionCount').val(batch.division_count);
@@ -175,12 +204,12 @@
                 $('#inputBatchCount').val(batch.input_batch_count);
                 $('#facultyCount').val(batch.faculty_count)
 
-   
-                
 
 
 
-                
+
+
+
             },
             error: err => {
                 console.log('Error: ', err)
@@ -211,9 +240,19 @@
                 console.log('On success:::', data)
                 location.reload()
             },
-            error: (err) => {
-                console.log('Error::', err)
-            }
+            error: err => {
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
+                }
         })
     })
 </script>

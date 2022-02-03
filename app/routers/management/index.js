@@ -35,7 +35,8 @@ const slotIntervalTiming = require("../../controllers/management/slotinterval/in
 const courseWorkload = require('../../controllers/management/courseWorkload')
 const divisionBatch = require('../../controllers/management/divisionBatch')
 const validate = require('../../middlewares/validate')
-const programcheck = require('../../middlewares/programcheck')
+const programcheck = require('../../middlewares/programcheck');
+const roomValidate = require('../../middlewares/roomValidate');
 
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
@@ -84,7 +85,8 @@ router.get('/room', roomcontroller.getPage)
 router.get('/room/single', roomcontroller.getSingleRoom)
 router.put('/room', validate('updateRoom'), roomcontroller.updateRoomById)
 router.delete('/room', validate('delete'), roomcontroller.deleteRoomById)
-router.post('/room',  roomcontroller.addRoom)
+//router.post('/room', validate('createRoom') , roomcontroller.addRoom)
+router.post('/room', roomValidate, roomcontroller.addRoom)
 router.get('/room/search', validate('search'), roomcontroller.searchRoom)
 
 //ROOM TYPE ROUTER
@@ -127,36 +129,36 @@ router.get('/program', programcontroller.getPage)
 
 // PROGRAM TYPE ROUTER
 router.get('/program/list', programTypeController.getProgramTypePage)
-router.post('/program/programType', programTypeController.createProgramType)
-router.put('/program/list', programTypeController.updateProgramTypeById)
-router.delete('/program/list', programTypeController.deleteProgramTypeById)
+router.post('/program/programType', validate('createProgramType'), programTypeController.createProgramType)
+router.put('/program/list', validate('updateProgramType'), programTypeController.updateProgramTypeById)
+router.delete('/program/list', validate('delete'), programTypeController.deleteProgramTypeById)
 router.get('/program/ptypes/single', programTypeController.getProgramTypeById)
 router.get('/room/ptypes/search', validate('search'), programTypeController.search)
 
 
 // TODOS ROUTER
 router.get('/todos', todosController.getPage)
-router.post('/todos/create', todosController.createTodos)
+router.post('/todos/create', validate('createTodos'), todosController.createTodos)
 router.get('/todos/viewsingle', todosController.viewDetails)
-router.put('/todos/single', todosController.updateTodosById)
+router.put('/todos/single', validate('updateTodos'), todosController.updateTodosById)
 router.get('/todos/single', todosController.getTodosById)
-router.delete('/todos/single', todosController.deleteTodosById)
+router.delete('/todos/single', validate('delete'), todosController.deleteTodosById)
 router.get('/todos/search', validate('search'), todosController.search)
 
 //DIVISION ROUTER
 router.get('/divisions', divisioncontroller.getPage)
 router.post('/divisions', validate('createDivision'), divisioncontroller.addDivision)
 router.get('/divisions/single', divisioncontroller.getDivisionById)
-router.put('/divisions/single', divisioncontroller.updateDivisionById)
-router.delete('/divisions/single', divisioncontroller.deleteDivisionById)
+router.put('/divisions/single', validate('updateDivision'), divisioncontroller.updateDivisionById)
+router.delete('/divisions/single', validate('delete'), divisioncontroller.deleteDivisionById)
 router.get('/divisions/search', validate('search'), divisioncontroller.search)
 
 
 // DIVISION BATCHES
 router.get('/divisions/batches', divisionBatch.getPage)
-router.post('/divisions/batches/add', divisionBatch.createBatch)
-router.get('/division/batches/single',divisionBatch.getBatchById)
-router.put('/division/batches', divisionBatch.updateBatchById)
+router.post('/divisions/batches/add', validate('createDivBatch'), divisionBatch.createBatch)
+router.get('/division/batches/single', divisionBatch.getBatchById)
+router.put('/division/batches', validate('updateDivBatch'), divisionBatch.updateBatchById)
 
 
 //INITIAL COURSE WORKLOAD
@@ -216,7 +218,7 @@ router.delete('/slotinterval/timing', validate('delete'), slotIntervalTiming.del
 router.get('/slotinterval/timing/search', validate('search'), slotIntervalTiming.search)
 
 //TEST ROUTE
-router.post('/program/checkprogram',programcheck, programTypeController.programcheck)
+router.post('/program/checkprogram', programcheck, programTypeController.programcheck)
 
 
 module.exports = router;

@@ -1,8 +1,6 @@
 const {
     check,
-    oneOf,
-    validationResult,
-    Result
+    validationResult
 } = require('express-validator');
 
 const roomModel = require('../../models/RoomData')
@@ -122,14 +120,20 @@ module.exports = {
 
     addRoom: (req, res) => {
 
+       
+
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
+
+        console.log('ADDING ROOMS',req.body)
+        
+        // if (!errors.isEmpty()) {
+        //     //console.log('Errors: ', errors.array())
+        //     return res.status(422).json({
+        //         statuscode: 422,
+        //         errors: errors.array()
+        //     });
+        // }
+
 
 
         // console.log('roomJson:::::::>>>', req.body.roomJson)
@@ -145,7 +149,8 @@ module.exports = {
         }).catch(err => {
             res.json({
                 status: 500,
-                message: 'Invalid JSON'
+                message: 'Invalid JSON',
+                err: err
             })
         })
     },

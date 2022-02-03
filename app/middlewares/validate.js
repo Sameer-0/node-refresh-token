@@ -2,7 +2,9 @@ const {
     check,
     body
 } = require('express-validator');
-const { searchRoom } = require('../models/RoomData');
+const {
+    searchRoom
+} = require('../models/RoomData');
 
 module.exports = function validate(method) {
     switch (method) {
@@ -130,23 +132,21 @@ module.exports = function validate(method) {
             ]
         }
 
-        case 'createRoom': {
-            return [
-               body().isArray(),
-                check('*.roomNo', 'roomNo must not be empty').not().isEmpty(),
-                check('*.buildingId', 'buildingId must not be empty').not().isEmpty(),
-                // check('roomJson.*.roomNo').not().isEmpty().withMessage('roomNo must not be empty'),
-                // check('roomJson.*.buildingId').not().isEmpty().withMessage('building name must not be empty'),
-                // check('roomJson.*.roomType').not().isEmpty().withMessage('room type must not be empty'),
-                // check('roomJson.*.floorNo').not().isEmpty().withMessage('floor number must not be empty').isNumeric().withMessage('floorNo must be number only'),
-                // check('roomJson.*.capacity').not().isEmpty().withMessage('capacity must not be empty').isNumeric().withMessage('capacity must be number only'),
-                // check('roomJson.*.handledBy').not().isEmpty().withMessage('handledBy must not be empty'),
-                // check('roomJson.*.isBasement').not().isEmpty().withMessage('isBasement must not be empty'),
-                // check('roomJson.*.campusId').not().isEmpty().withMessage('campus must not be empty'),
-                // check('roomJson.*.startTime').not().isEmpty().withMessage('startTime must not be empty'),
-                // check('roomJson.*.endTime').not().isEmpty().withMessage('endTime must not be empty')
-            ]
-        }
+        // case 'createRoom': {
+        //     return [
+        //         body().isArray(),
+        //         body('*.roomNo', 'Room No must not be empty').exists().isInt(),
+        //         body('*.roomType', 'roomType must not be empty').exists().isInt(),
+        //         body('*.floorNo', 'floorNo must not be empty').exists().isInt(),
+        //         body('*.capacity', 'capacity must not be empty').exists().isInt(),
+        //         body('*.startTime', 'startTime must not be empty').exists().isInt(),
+        //         body('*.endTime', 'endTime must not be empty').exists().isInt(),
+        //         body('*.campusId', 'campusId must not be empty').exists().isInt(),
+        //         body('*.buildingId', 'buildingId must not be empty').exists().isInt(),
+        //         body('*.handledBy', 'handledBy must not be empty').exists().isInt(),
+        //         body('*.isBasement', 'Basement must not be empty').exists().isInt(),
+        //     ]
+        // }
 
         case 'updateRoom': {
             return [
@@ -161,39 +161,55 @@ module.exports = function validate(method) {
                 check('campusId').not().isEmpty().withMessage('campus must not be empty'),
                 check('start_time').not().isEmpty().withMessage('startTime must not be empty'),
                 check('end_time').not().isEmpty().withMessage('endTime must not be empty')
-           ]
+            ]
         }
-       
-       case 'createRoomTransType': {
-           return[
-               check('rtsName').not().isEmpty().withMessage('Room Transaction Type must not be empty'),
-               check('description').not().isEmpty().withMessage('Description must not be empty')
-           ]
-       }
 
-       case 'updateRoomTransType': {
-           return[
-               check('rtsId').not().isEmpty().withMessage('roomTransactionTypeId must not be empty'),
-               check('rtsName').not().isEmpty().withMessage('Room Transaction type must not be empty'),
-               check('description').not().isEmpty().withMessage('Description must not be empty')
+        case 'createRoomTransType': {
+            return [
+                check('rtsName').not().isEmpty().withMessage('Room Transaction Type must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
 
-           ]
-       }
+        case 'updateRoomTransType': {
+            return [
+                check('rtsId').not().isEmpty().withMessage('roomTransactionTypeId must not be empty'),
+                check('rtsName').not().isEmpty().withMessage('Room Transaction type must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
 
-       case 'createDivision': {
-           return[
-               check('courseId').not().isEmpty().withMessage('Course must not be empty'),
-               check('division').not().isEmpty().withMessage('Division must not be empty'),
-               check('divisionNum').not().isEmpty().withMessage('division number must not be empty').isNumeric().withMessage('DivisionNum must be an integer'),
-               check('divisionCount').not().isEmpty().withMessage('Division Count must not be empty').isNumeric().withMessage('DivisionCount must be an integer'),
-               check('countTheoryBatch').not().isEmpty().withMessage('countTheoryBatch must not be empty').isNumeric().withMessage('countTheoryBatch must be an integer'),
-               check('countPracticalBatch').not().isEmpty().withMessage('countPracticalBatch must not be empty').isNumeric().withMessage('countPracticalBatch must be number'),
-               check('countTutorialBatch').not().isEmpty().withMessage('countTutorialBatch must not be empty').isNumeric().withMessage('countTutorialBatch must be an integer'),
-               check('countWorkshopBatch').not().isEmpty().withMessage('countWorkshopBatch must not be an empty').isNumeric().withMessage('countWorkshopBatch must not be an integer'),
-               
-           ]
-       }
-       
+            ]
+        }
+
+        case 'createDivision': {
+            return [
+                check('courseId').not().isEmpty().withMessage('Course must not be empty'),
+                check('division').not().isEmpty().withMessage('Division must not be empty'),
+                check('divisionNum').not().isEmpty().withMessage('division number must not be empty').isNumeric().withMessage('DivisionNum must be an integer'),
+                check('divisionCount').not().isEmpty().withMessage('Division Count must not be empty').isNumeric().withMessage('DivisionCount must be an integer'),
+                check('countTheoryBatch').not().isEmpty().withMessage('countTheoryBatch must not be empty').isNumeric().withMessage('countTheoryBatch must be an integer'),
+                check('countPracticalBatch').not().isEmpty().withMessage('countPracticalBatch must not be empty').isNumeric().withMessage('countPracticalBatch must be number'),
+                check('countTutorialBatch').not().isEmpty().withMessage('countTutorialBatch must not be empty').isNumeric().withMessage('countTutorialBatch must be an integer'),
+                check('countWorkshopBatch').not().isEmpty().withMessage('countWorkshopBatch must not be an empty').isNumeric().withMessage('countWorkshopBatch must not be an integer'),
+
+            ]
+        }
+
+        case 'updateDivision': {
+            return [
+                check('id').not().isEmpty().withMessage('id must not be empty').isNumeric().withMessage('Id must be an integer'),
+                check('courseId').not().isEmpty().withMessage('Course must not be empty'),
+                check('division').not().isEmpty().withMessage('Division must not be empty'),
+                check('divisionNum').not().isEmpty().withMessage('division number must not be empty').isNumeric().withMessage('DivisionNum must be an integer'),
+                check('divisionCount').not().isEmpty().withMessage('Division Count must not be empty').isNumeric().withMessage('DivisionCount must be an integer'),
+                check('countTheoryBatch').not().isEmpty().withMessage('countTheoryBatch must not be empty').isNumeric().withMessage('countTheoryBatch must be an integer'),
+                check('countPracticalBatch').not().isEmpty().withMessage('countPracticalBatch must not be empty').isNumeric().withMessage('countPracticalBatch must be number'),
+                check('countTutorialBatch').not().isEmpty().withMessage('countTutorialBatch must not be empty').isNumeric().withMessage('countTutorialBatch must be an integer'),
+                check('countWorkshopBatch').not().isEmpty().withMessage('countWorkshopBatch must not be an empty').isNumeric().withMessage('countWorkshopBatch must not be an integer'),
+            ]
+        }
+
+
+
 
         case 'createRtstage': {
             return [
@@ -244,11 +260,11 @@ module.exports = function validate(method) {
         }
 
         case 'delete': {
-            return [check('Id', 'Parameter must bot be empty while deleteting records').not().isEmpty().exists().trim().escape()]
+            return [check('Id', 'Parameter must not be empty while deleteting records').not().isEmpty().exists().trim().escape()]
         }
 
         case 'single': {
-            return [check('Id', 'Parameter must bot be empty while fetching record').not().isEmpty().exists().trim().escape()]
+            return [check('Id', 'Parameter must not be empty while fetching record').not().isEmpty().exists().trim().escape()]
         }
 
         case 'pagination': {
@@ -272,7 +288,7 @@ module.exports = function validate(method) {
             ]
         }
 
-        case 'createSlotIntrSetting':{
+        case 'createSlotIntrSetting': {
             return [
                 check('name').not().isEmpty().withMessage('Slot Setting Name must not be empty'),
                 check('startDate').not().isEmpty().withMessage('Start Date must not be empty'),
@@ -281,7 +297,7 @@ module.exports = function validate(method) {
             ]
         }
 
-        case 'updateSlotIntrSetting':{
+        case 'updateSlotIntrSetting': {
             return [
                 check('id').not().isEmpty().withMessage('Slot Setting id Name must not be empty'),
                 check('name').not().isEmpty().withMessage('Slot Setting Name must not be empty'),
@@ -291,19 +307,73 @@ module.exports = function validate(method) {
             ]
         }
 
-        case 'createSession':{
+        case 'createSession': {
             return [
                 check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
             ]
         }
 
-        case 'updateSession':{
+        case 'updateSession': {
             return [
                 check('acadSessionId').not().isEmpty().withMessage('Academic session acadSessionId must not be empty'),
                 check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
             ]
         }
 
+        case 'createDivBatch': {
+            return [
+                check('divisionId').not().isEmpty().withMessage('Division must not be empty'),
+                check('batch').not().isEmpty().withMessage('batch must not be empty'),
+                check('eventType').not().isEmpty().withMessage('eventType must not be empty'),
+                check('divisionCount').not().isEmpty().withMessage('divisionCount must not be empty'),
+                check('batchCount').not().isEmpty().withMessage('batchCount must not be empty').isNumeric().withMessage('batchCount must be an integer'),
+                check('inputBatchCount').not().isEmpty().withMessage('inputBatchCount must not be empty').isNumeric().withMessage('inputBatchCount must be an integer'),
+                check('facultyCount').not().isEmpty().withMessage('facultyCount must not be empty').isNumeric().withMessage('facultyCount must be an integer')
+            ]
+        }
+
+        case 'updateDivBatch': {
+            return [
+                check('id').not().isEmpty().withMessage('Id must not be empty').isNumeric().withMessage('Id must be an integer'),
+                check('divisionId').not().isEmpty().withMessage('Division must not be empty'),
+                check('batch').not().isEmpty().withMessage('batch must not be empty'),
+                check('eventType').not().isEmpty().withMessage('eventType must not be empty'),
+                check('divisionCount').not().isEmpty().withMessage('divisionCount must not be empty'),
+                check('batchCount').not().isEmpty().withMessage('batchCount must not be empty').isNumeric().withMessage('batchCount must be an integer'),
+                check('inputBatchCount').not().isEmpty().withMessage('inputBatchCount must not be empty').isNumeric().withMessage('inputBatchCount must be an integer'),
+                check('facultyCount').not().isEmpty().withMessage('facultyCount must not be empty').isNumeric().withMessage('facultyCount must be an integer')
+            ]
+        }
+
+        case 'createProgramType': {
+            return[
+                check('programName').not().isEmpty().withMessage('programName must not be empty')
+            ]
+        }
+
+        case 'updateProgramType': {
+            return[
+                check('id').not().isEmpty().withMessage('id must not be empty').isNumeric().withMessage('id must be an integer'),
+                check('programName').not().isEmpty().withMessage('programName must not be empty')
+            ]
+        }
+
+        case 'createTodos': {
+            return[
+                check('task').not().isEmpty().withMessage('task must not be empty'),
+                check('description').not().isEmpty().withMessage('description must not be empty'),
+                check('tags').not().isEmpty().withMessage('tags must not be empty')
+            ]
+        }
+
+        case 'updateTodos': {
+            return[
+                check('id').not().isEmpty().withMessage('id must not be empty').isNumeric().withMessage('id must be an integer'),
+                check('task').not().isEmpty().withMessage('task must not be empty'),
+                check('description').not().isEmpty().withMessage('description must not be empty'),
+                check('tags').not().isEmpty().withMessage('tags must not be empty')
+            ]
+        }
 
         default: {
             return "No Validation Found"
