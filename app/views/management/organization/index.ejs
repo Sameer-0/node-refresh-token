@@ -9,29 +9,24 @@
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <h5>Organization List</h5>
-            <% if(typeof(kap)=='string' ) { %>
-            <h1>
-                <%- kap %>
-            </h1>
-            <% } %>
-            <button class="btn ms-auto add-btn" data-bs-toggle="modal"
-            data-bs-target="#add-org-modal"><i class="fas fa-plus"></i></button>
+            <button class="btn ms-auto add-btn" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
+                    class="fas fa-plus"></i></button>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
-                
+
             <table class="table custom_row" id="organizationTable">
                 <thead>
                     <tr>
-                    <th>Id</th>
-                    <th>Abbr</th>
-                    <th>Name</th>
-                    <th>Complete Name</th>
-                    <th>Type</th>
-                    <th>Action</th>
-                </tr>
+                        <th>Id</th>
+                        <th>Abbr</th>
+                        <th>Name</th>
+                        <th>Complete Name</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <% for (let org of orgList) { %>
@@ -59,8 +54,8 @@
                     <% } %>
                 </tbody>
             </table>
-         
-        
+
+
             <div class="d-flex justify-content-between">
                 <div>
                     <p>Total entries:<%- pageCount %>
@@ -81,60 +76,81 @@
 
 
 <!-- ADD NEW ORG MODAL -->
-<div class="modal fade" id="add-org-modal" tabindex="-1" role="dialog" aria-bs-labelledby="add-building-modal"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade" id="add-org-modal" aria-labelledby="add-building-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content modal-inputform">
-            <div class="modal-header bg-info modal-inputform-header">
-                <h5 class="modal-title text-white" id="add-org-modal-title">Add New
+            <div class="modal-header modal-inputform-header">
+                <h5 class="modal-title" id="add-org-modal-title">Add New
                     Organization</h5>
                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times"></i></button>
             </div>
-            <!-- <form action="/management/organization/add" method="POST"> -->
             <div class="modal-body">
                 <div id="errorHtml"></div>
-                <div class="form-row mt-4">
-                    <input type="hidden" id="orgLid">
-                    <input name="orgId" id="orgId" type="number" class="form-control" placeholder="Organization Id"
-                        required>
+                <input type="hidden" id="roomId" name="roomId">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="add-more-org-table">
+                        <thead>
+                            <th>Organization Id</th>
+                            <th>Organization Abbr</th>
+                            <th>Organization Name</th>
+                            <th>Organization Complete Name</th>
+                            <th>Organization Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input name="orgId" id="orgId" type="number" class="form-control"
+                                        placeholder="Organization Id" required>
+                                </td>
+                                <td>
+                                    <input name="orgAbbr" id="orgAbbr" type="text" class="form-control"
+                                        placeholder="Organization Abbr" required>
+                                </td>
+                                <td>
+                                    <input name="orgName" id="orgName" type="text" class="form-control"
+                                        placeholder="Organization Name" required>
+                                </td>
+                                <td>
+                                    <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
+                                        placeholder="Organization Complete Name" required>
+                                </td>
+                                <td>
+                                    <select class="form-control modalSelect2" name="orgType" id="orgType" required>
+                                        <option disabled selected value>--Organization Type--</option>
+                                        <% for(let orgType of orgtypeList) { %>
+                                        <option value="<%- orgType.id %>">
+                                            <%- orgType.name %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+
+                                <td>
+
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="form-row mt-4">
-                    <input name="orgAbbr" id="orgAbbr" type="text" class="form-control" placeholder="Organization Abbr"
-                        required>
-                </div>
-
-                <div class="form-row mt-4">
-                    <input name="orgName" id="orgName" type="text" class="form-control" placeholder="Organization Name"
-                        required>
-                </div>
-
-                <div class="form-row mt-4">
-                    <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
-                        placeholder="Organization Complete Name" required>
-                </div>
-
-                <div class="form-row mt-4">
-                    <select class="form-control modalSelect2" name="orgType" id="orgType" required>
-                        <option disabled selected value>--Organization Type--</option>
-                        <% for(let orgType of orgtypeList) { %>
-                        <option value="<%- orgType.id %>">
-                            <%- orgType.name %>
-                        </option>
-                        <% } %>
-                    </select>
-                </div>
             </div>
-
             <div class="modal-footer">
-                <span class="errorMsg"></span>
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button> -->
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-orgnization"><i
+                        class="fas fa-plus"></i> Add
+                    More Organization</button>
                 <button type="submit" class="btn  createOrg modal-inputform-btn">Create
                     Organization</button>
                 <button type="submit" class="btn  updateOrg modal-inputform-btn d-none">Update
                     Organization</button>
             </div>
-            <!-- </form> -->
+
         </div>
     </div>
 </div>
@@ -145,19 +161,81 @@
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
+    $('#add-more-orgnization').on('click', function () {
+        console.log("Organization Added::::")
+
+        let lastTr = $('#add-more-org-table tbody tr:last-child')
+        let orgId = lastTr.find(`select[name='orgId']`).val();
+        let orgAbbr = lastTr.find(`select[name='orgAbbr']`).val();
+        let orgName = lastTr.find(`select[name='orgName']`).val();
+        let orgCompleteName = lastTr.find(`select[name='orgCompleteName']`).val();
+        let orgType = lastTr.find(`select[name='orgType']`).val();
+
+        let clonedTr = lastTr.clone();
+        clonedTr.find(`input[name='orgId']`).val('')
+        clonedTr.find(`input[name='orgAbbr']`).val('')
+        clonedTr.find(`select[name='orgName']`).val('')
+        clonedTr.find(`select[name='orgCompleteName']`).val('')
+        clonedTr.find(`select[name='orgType']`).val(orgType).trigger('change');
+
+        $('#add-more-org-table tbody').append(clonedTr)
+    })
+
+    $('#add-org-modal').on('click', '.remove', function () {
+        let trLength = $('#add-org-modal tbody tr').length;
+
+        if (trLength > 1) {
+            $(this).closest('tr').remove()
+        } else {
+            alert('Cannot delete this room.')
+        }
+    })
+
     //Create 
 
     $(".createOrg").on('click', function () {
+
+        let orgElems = $('#add-more-org-table tbody tr');
+        let orgCount = orgElems.length;
+
+        let orgJson = [];
+
+        orgElems.each(function (index, elem) {
+            let orgId = $(`input[name='orgId']`).val()
+            let orgAbbr = $(`input[name='orgAbbr']`).val()
+            let orgName = $(`input[name='orgName']`).val()
+            let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
+            let orgType = $(elem).find(`select[name='orgType']`).val()
+
+            if (index < orgCount - 1) {
+                let obj = {
+                    orgId: orgId,
+                    orgAbbr: orgAbbr,
+                    orgName: orgName,
+                    orgCompleteName: orgCompleteName,
+                    orgType: orgType
+                }
+                orgJson.push(obj)
+            } else {
+                let obj = {
+                    orgId: orgId,
+                    orgAbbr: orgAbbr,
+                    orgName: orgName,
+                    orgCompleteName: orgCompleteName,
+                    orgType: orgType
+                }
+                orgJson.push(obj)
+            }
+        })
+
+        console.log('orgJson:::::::>>', orgJson)
+
         $.ajax({
             url: '/management/organization',
             method: 'POST',
             type: 'JSON',
             data: {
-                org_id: $('#orgId').val(),
-                org_abbr: $('#orgAbbr').val(),
-                org_name: $('#orgName').val(),
-                org_complete_name: $('#orgCompleteName').val(),
-                org_type_id: $('#orgType').val()
+                orgJson:JSON.stringify(orgJson)
             },
             success: data => {
                 if (data.status == 200) {

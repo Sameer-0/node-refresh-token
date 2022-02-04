@@ -61,7 +61,8 @@ router.delete('/campus', validate('delete'), campuscontroller.delete)
 
 // ORGANIZATION ROUTER
 router.get('/organization', orgcontroller.getPage)
-router.post('/organization', validate('createOrganization'), orgcontroller.create)
+//router.post('/organization', validate('createOrganization'), orgcontroller.create)
+router.post('/organization', orgcontroller.create)
 router.put('/organization', validate('updateOrganization'), orgcontroller.update)
 router.delete('/organization', validate('delete'), orgcontroller.delete)
 router.post('/organization/pagination', validate('pagination'), orgcontroller.getPage)
