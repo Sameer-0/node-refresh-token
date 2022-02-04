@@ -90,7 +90,7 @@ module.exports = {
             return;
         }
 
-        SlotIntervalSetting.single(req.query.id).then(result => {
+        SlotIntervalSetting.single(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset[0]
