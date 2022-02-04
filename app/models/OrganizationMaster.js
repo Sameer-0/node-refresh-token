@@ -38,15 +38,19 @@ module.exports = class OrganizationMaster {
     }
 
 
-    static save(body) {
+    static save(orgJson) {
+        console.log('orgJson:::::::::>>>',orgJson)
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('orgId', sql.Int, body.org_id)
-                .input('orgAbbr', sql.NVarChar(40), body.org_abbr)
-                .input('orgName', sql.NVarChar(100), body.org_name)
-                .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
-                .input('orgTypeId', sql.Int, body.org_type_id)
-                .query(`INSERT INTO [dbo].organization_master (org_id, org_abbr, org_name, org_complete_name, org_type_id) VALUES (@orgId, @orgAbbr, @orgName,  @orgCompleteName, @orgTypeId)`)
+            // return request.input('orgId', sql.Int, body.org_id)
+            //     .input('orgAbbr', sql.NVarChar(40), body.org_abbr)
+            //     .input('orgName', sql.NVarChar(100), body.org_name)
+            //     .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
+            //     .input('orgTypeId', sql.Int, body.org_type_id)
+            //     .query(`INSERT INTO [dbo].organization_master (org_id, org_abbr, org_name, org_complete_name, org_type_id) VALUES (@orgId, @orgAbbr, @orgName,  @orgCompleteName, @orgTypeId)`)
+        
+        }).catch(error=>{
+            throw error
         })
     }
 

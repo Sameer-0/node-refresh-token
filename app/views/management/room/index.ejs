@@ -136,7 +136,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-
+                <div id="errorHtml"></div>
                 <input type="hidden" id="roomId" name="roomId">
 
 
@@ -488,10 +488,8 @@
 
             roomElems.each(function (index, elem) {
 
-                $(elem).find(`input[name='roomNo']`).attr('data-room-no', $(elem)
-                    .find(
-                        `input[name='roomNo']`)
-                    .val())
+                $(elem).find(`input[name='roomNo']`).attr('data-room-no', $(elem).find(
+                    `input[name='roomNo']`).val())
 
 
                 let campusId = $(`select[name='campusId']`).val()
@@ -540,32 +538,37 @@
             })
 
             console.log('roomJSONStr:::::::::>>', roomJson)
-            // console.log('roomJsonStr::', JSON.parse(roomJson))
+      
 
+           //console.log('Hello',isEmpty(roomJson))
+      
             $.ajax({
                 url: '/management/room',
                 method: 'POST',
                 dataType: 'JSON',
                 data: {
-                    roomJson: JSON.stringify(roomJson)
+                   // roomJson: JSON.stringify(roomJson)
+                   roomJson: roomJson
                 },
                 success: (data) => {
                     console.log("On Success", data)
 
                 },
                 error: err => {
-                    console.log('Error: ', err)
-                }
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+            }
             })
-
         })
-
-
-
-
-
-
-
 
 
     })

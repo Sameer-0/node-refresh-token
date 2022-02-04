@@ -237,6 +237,13 @@ module.exports = function validate(method) {
                 check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
             ]
         }
+        case 'createRoom':{
+            return [
+                body().isArray(),
+                body('*.roomNo', 'Room No must be a number').exists().not().isEmpty().isNumeric(),
+                body('*.roomType', 'Room Type field must a number').exists().not().isEmpty()
+            ]
+        }
 
         default: {
             return "No Validation Found"

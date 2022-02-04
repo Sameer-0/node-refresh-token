@@ -13,7 +13,7 @@ module.exports = function checkprogram(req, res, next) {
     if (!username) {
         res.json({
             status: 400,
-            message: "Faculty id must not be emoty"
+            message: "Faculty id must not be empty"
         })
     } else {
         console.log("Enterd:::::::::::::", username)

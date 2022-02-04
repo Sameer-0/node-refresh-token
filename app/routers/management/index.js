@@ -61,7 +61,8 @@ router.delete('/campus', validate('delete'), campuscontroller.delete)
 
 // ORGANIZATION ROUTER
 router.get('/organization', orgcontroller.getPage)
-router.post('/organization', validate('createOrganization'), orgcontroller.create)
+//router.post('/organization', validate('createOrganization'), orgcontroller.create)
+router.post('/organization', orgcontroller.create)
 router.put('/organization', validate('updateOrganization'), orgcontroller.update)
 router.delete('/organization', validate('delete'), orgcontroller.delete)
 router.post('/organization/pagination', validate('pagination'), orgcontroller.getPage)
@@ -78,13 +79,15 @@ router.get('/slug/search', validate('search'), slugcontroller.search)
 
 //DASHBOARD ROUTER
 router.get('/dashboard', dashcontroller.getDashboard)
+router.get('/dashboardstepform',dashcontroller.dashboardStepForm)
+
 
 //ROOM ROUTER
 router.get('/room', roomcontroller.getPage)
 router.get('/room/single', roomcontroller.getSingleRoom)
 router.put('/room', roomcontroller.updateRoomById)
 router.delete('/room', roomcontroller.deleteRoomById)
-router.post('/room', roomcontroller.addRoom)
+router.post('/room', validate('createRoom'), roomcontroller.addRoom)
 router.get('/room/search', validate('search'), roomcontroller.searchRoom)
 
 //ROOM TYPE ROUTER
