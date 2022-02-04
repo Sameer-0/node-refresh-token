@@ -84,7 +84,7 @@ router.get('/room', roomcontroller.getPage)
 router.get('/room/single', roomcontroller.getSingleRoom)
 router.put('/room', roomcontroller.updateRoomById)
 router.delete('/room', roomcontroller.deleteRoomById)
-router.post('/room', roomcontroller.addRoom)
+router.post('/room', validate('createRoom'), roomcontroller.addRoom)
 router.get('/room/search', validate('search'), roomcontroller.searchRoom)
 
 //ROOM TYPE ROUTER

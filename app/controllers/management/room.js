@@ -113,6 +113,15 @@ module.exports = {
 
     addRoom: (req, res) => {
 
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         // console.log('roomJson:::::::>>>', req.body.roomJson)
         roomModel.add(req.body.roomJson).then(result => {
 
