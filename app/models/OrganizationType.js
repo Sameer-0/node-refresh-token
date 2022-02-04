@@ -10,9 +10,10 @@ module.exports = class OrganizationTypes {
         }
 
 
-        static fetchAll(){
+        static fetchAll(rowcount){
             return poolConnection.then(pool => {
-                return pool.request().query(`SELECT id, name, description FROM [dbo].organization_type WHERE active  = 1`)
+                let request  =  pool.request();
+                return request.query(`SELECT TOP ${Number(rowcount)} id, name, description FROM [dbo].organization_type WHERE active  = 1 ORDER BY id DESC`)
             })
         }
 

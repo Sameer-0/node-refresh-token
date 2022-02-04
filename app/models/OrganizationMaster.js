@@ -47,6 +47,8 @@ module.exports = class OrganizationMaster {
                 .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
                 .input('orgTypeId', sql.Int, body.org_type_id)
                 .query(`INSERT INTO [dbo].organization_master (org_id, org_abbr, org_name, org_complete_name, org_type_id) VALUES (@orgId, @orgAbbr, @orgName,  @orgCompleteName, @orgTypeId)`)
+        }).catch(error=>{
+            throw error
         })
     }
 

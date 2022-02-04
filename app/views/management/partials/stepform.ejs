@@ -1,0 +1,183 @@
+<form action="/management/organization" method="post" class="dash-form" id="org-form">
+
+
+    <div class="modal-header bg-info modal-inputform-header">
+        <h5 class="modal-title text-white" id="add-org-modal-title">Add New
+            Organization</h5>
+    </div>
+
+    <div id="errorHtml"></div>
+    <div class="form-row mt-4">
+        <input type="hidden" id="orgLid">
+        <input name="orgId" id="orgId" type="number" class="form-control" placeholder="Organization Id"
+            required>
+    </div>
+
+    <div class="form-row mt-4">
+        <input name="orgAbbr" id="orgAbbr" type="text" class="form-control" placeholder="Organization Abbr"
+            required>
+    </div>
+
+    <div class="form-row mt-4">
+        <input name="orgName" id="orgName" type="text" class="form-control" placeholder="Organization Name"
+            required>
+    </div>
+
+    <div class="form-row mt-4">
+        <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
+            placeholder="Organization Complete Name" required>
+    </div>
+    <div class="form-row mt-4">
+        <select class="form-control modalSelect2" name="orgType" id="orgType" required>
+            <option value="">Choose organization type</option>
+            <% for(let orgtp of orgType){%>
+        <option value="<%-orgtp.id%>"><%=orgtp.name%></option>
+        <%}%>
+        </select>
+    </div>
+    <div class="btn-container d-flex justify-content-end">
+        <!-- <button type="button" class="pre-btn">previous</button> -->
+        <button type="button" class="nxt-btn" id="org-submit">Next</button>
+    </div>
+
+</form>
+
+<form action="/management/campus" method="post" class="d-none dash-form" id="campus-form">
+
+    <div class="modal-header bg-info modal-inputform-header">
+        <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
+
+    </div>
+
+    <div id="errorHtml"></div>
+    <div class="form-row mt-4">
+        <input name="campusId" id="campusId" type="number" class="form-control" placeholder="Campus Id"
+            required>
+        <input type="hidden" id="Id" name="Id">
+    </div>
+
+    <div class="form-row mt-4">
+        <input name="campusAbbr" id="campusAbbr" type="text" class="form-control" placeholder="Campus Abbr"
+            required>
+    </div>
+
+    <div class="form-row mt-4">
+        <input name="campusName" id="campusName" type="text" class="form-control" placeholder="Campus Name"
+            required>
+    </div>
+
+
+    <div class="form-row mt-4">
+        <input name="campusDesc" id="campusDesc" type="text" class="form-control"
+            placeholder="Campus Description">
+
+    </div>
+
+
+    <div class="btn-container d-flex justify-content-between">
+        <button type="button" class="pre-btn" >previous</button>
+        <button type="button" class="nxt-btn" id="campus-submit">Next</button>
+    </div>
+
+</form>
+
+<form action="/management/building" method="post" class="d-none dash-form" id="building-form">
+
+     <div id="errorHtml"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <input name="buildingName" id="buildingName" type="text" class="form-control"
+                            placeholder="Building Name" required>
+                        <input type="hidden" id="buildingId" name="buildingId">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <input name="buildingNumber" id="buildingNumber" type="text" class="form-control"
+                            placeholder="Building Number" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <input name="floors" id="floors" type="number" class="form-control"
+                            placeholder="Total Floor Count" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <select class="form-select modalSelect2" name="ownerId" id="ownerId" required>
+                            <option disabled selected>--Owner--</option>
+                            <% for(let owner of orgList) { %>
+                            <option value="<%- owner.id %>">
+                                <%- owner.org_abbr %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <select class="form-select modalSelect2" name="startTimeId" id="startTimeId" required>
+                            <option disabled selected value>--Start Time--</option>
+                            <% for(let time of timeList) { %>
+                            <option value="<%- time.id %>">
+                                <%- time.start_time %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <select class="form-select modalSelect2" name="endTimeId" id="endTimeId" required>
+                            <option disabled selected value>--End Time--</option>
+                            <% for(let time of timeList) { %>
+                            <option value="<%- time.id %>">
+                                <%- time.end_time %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <select class="form-select modalSelect2" name="handledById" id="handledById" required>
+                            <option disabled selected value>--Handled By--</option>
+                            <% for(let handler of orgList) { %>
+                            <option value="<%- handler.id %>">
+                                <%- handler.org_abbr %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="my-3 py-2">
+                        <select class="form-select modalSelect2" name="campusId" id="campusId" required>
+                            <option disabled selected value>--Campus--</option>
+                            <% for(let campus of campusList) { %>
+                            <option value="<%- campus.id %>">
+                                <%- campus.campus_abbr %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+</form>
+
+

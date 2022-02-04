@@ -78,6 +78,8 @@ router.get('/slug/search', validate('search'), slugcontroller.search)
 
 //DASHBOARD ROUTER
 router.get('/dashboard', dashcontroller.getDashboard)
+router.get('/dashboardstepform',dashcontroller.dashboardStepForm)
+
 
 //ROOM ROUTER
 router.get('/room', roomcontroller.getPage)
