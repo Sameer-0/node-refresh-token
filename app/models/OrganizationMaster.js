@@ -20,11 +20,11 @@ module.exports = class OrganizationMaster {
         })
     }
 
-    static fetchChunkRows(pageNo){
+    static fetchChunkRows(pageNo) {
         return poolConnection.then(pool => {
-            let request =  pool.request()
+            let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-            .query(`SELECT om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
+                .query(`SELECT om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
             FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -39,17 +39,16 @@ module.exports = class OrganizationMaster {
 
 
     static save(orgJson) {
-        console.log('orgJson:::::::::>>>',orgJson)
+        console.log('orgJson:::::::::>>>', JSON.parse(orgJson))
         return poolConnection.then(pool => {
             let request = pool.request();
-            // return request.input('orgId', sql.Int, body.org_id)
-            //     .input('orgAbbr', sql.NVarChar(40), body.org_abbr)
-            //     .input('orgName', sql.NVarChar(100), body.org_name)
-            //     .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
-            //     .input('orgTypeId', sql.Int, body.org_type_id)
-            //     .query(`INSERT INTO [dbo].organization_master (org_id, org_abbr, org_name, org_complete_name, org_type_id) VALUES (@orgId, @orgAbbr, @orgName,  @orgCompleteName, @orgTypeId)`)
-        
-        }).catch(error=>{
+
+            return request.input('organization_json', sql.NVarChar(sql.MAX), orgJson)
+                .output('output', sql.Bit)
+                .output('msg', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[insert_organization_data]')
+        }).catch(error => {
+            console.log('ERROR:::::::::::::::::::>>>>', error)
             throw error
         })
     }
