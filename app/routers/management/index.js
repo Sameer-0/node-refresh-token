@@ -37,7 +37,7 @@ const divisionBatch = require('../../controllers/management/divisionBatch')
 const validate = require('../../middlewares/validate')
 const programcheck = require('../../middlewares/programcheck');
 const roomValidate = require('../../middlewares/roomValidate');
-const validationFunctions = require('../../')
+const validationFunctions = require('../../middlewares/validationFunctions')
 
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
@@ -87,16 +87,10 @@ router.get('/dashboardstepform',dashcontroller.dashboardStepForm)
 //ROOM ROUTER
 router.get('/room', roomcontroller.getPage)
 router.get('/room/single', roomcontroller.getSingleRoom)
-<<<<<<< HEAD
 router.put('/room', validate('updateRoom'), roomcontroller.updateRoomById)
 router.delete('/room', validate('delete'), roomcontroller.deleteRoomById)
 //router.post('/room', validate('createRoom') , roomcontroller.addRoom)
 router.post('/room', roomValidate, roomcontroller.addRoom)
-=======
-router.put('/room', roomcontroller.updateRoomById)
-router.delete('/room', roomcontroller.deleteRoomById)
-router.post('/room', validate('createRoom'), roomcontroller.addRoom)
->>>>>>> origin
 router.get('/room/search', validate('search'), roomcontroller.searchRoom)
 
 //ROOM TYPE ROUTER
