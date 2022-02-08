@@ -61,12 +61,12 @@
                         <p class="fw-normal pt-1">ROOM BOOKING REJECTION REASONS</p>
                     </a></div>
             </div>
-        </div>
+        </div> 
 
     </div>
 
     <div class="card table-card">
-        <div class="card-header text-uppercase d-flex align-items-center">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center">
             <h5>ROOM DATA</h5>
             <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i
                     class="fas fa-plus"></i></button>
@@ -503,10 +503,8 @@
 
             roomElems.each(function (index, elem) {
 
-                $(elem).find(`input[name='roomNo']`).attr('data-room-no', $(elem)
-                    .find(
-                        `input[name='roomNo']`)
-                    .val())
+                $(elem).find(`input[name='roomNo']`).attr('data-room-no', $(elem).find(
+                    `input[name='roomNo']`).val())
 
 
                 let campusId = $(`select[name='campusId']`).val()
@@ -556,18 +554,30 @@
                 }
             })
 
+<<<<<<< HEAD
             console.log('roomJson:::::::::>>', roomJson)
             // console.log('roomJsonStr::', JSON.parse(roomJson))
             roomJson = JSON.stringify(roomJson);
             console.log('roomJson:::::::::>>', roomJson)
 
+=======
+            console.log('roomJSONStr:::::::::>>', roomJson)
+      
+>>>>>>> origin
 
+           //console.log('Hello',isEmpty(roomJson))
+      
             $.ajax({
                 url: '/management/room',
                 method: 'POST',
                 dataType: 'JSON',
                 data: {
+<<<<<<< HEAD
                     roomJson: roomJson
+=======
+                   // roomJson: JSON.stringify(roomJson)
+                   roomJson: roomJson
+>>>>>>> origin
                 },
                 //data:roomJson,
                 success: (data) => {
@@ -584,6 +594,7 @@
 
                 },
                 error: err => {
+<<<<<<< HEAD
                     console.log('err:::::::>>', err)
                     // let error = err.responseJSON.errors
                     // console.log(error)
@@ -601,16 +612,22 @@
                     //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                     // $("#errorHtml").html(errorHtml)
                 }
+=======
+                let error = err.responseJSON.errors
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                error.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+            }
+>>>>>>> origin
             })
-
         })
-
-
-
-
-
-
-
 
 
     })

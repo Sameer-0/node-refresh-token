@@ -138,10 +138,10 @@ module.exports = {
             req.session.lastName = userData.l_name;
             req.session.email = userData.email;
             if (userData.role == "MANAGEMENT") {
-                let slug = res.locals.slug.split("-")[0] + '-mgmt.'
-                let host = req.headers.host.split(".")[1]
-                let url = `http://${slug}${host}/management/dashboard`
-                res.redirect(url)
+              //  let slug = res.locals.slug.split("-")[0] + '-mgmt.'
+               // let host = req.headers.host.split(".")[1]
+               // let url = `http://${slug}${host}/management/dashboard`
+                res.redirect('/management/dashboard')
             } else if (userData.role == "admin") {
                 res.redirect('/admin/dashboard')
             } else{
