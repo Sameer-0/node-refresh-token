@@ -1,3 +1,10 @@
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
+
+
 const divisionModel = require('../../models/Divisions')
 const divBatchModel = require('../../models/DivisionBatches')
 
@@ -12,6 +19,16 @@ module.exports = {
     },
 
     createBatch: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         divBatchModel.addBatch(req.body).then(result => {
             res.json({
                 status:200,
@@ -31,6 +48,15 @@ module.exports = {
     },
 
     updateBatchById: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         divBatchModel.updateBatch(req.body).then(result => {
             res.json({
                 status:200
