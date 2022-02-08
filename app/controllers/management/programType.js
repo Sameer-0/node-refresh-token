@@ -1,4 +1,9 @@
 const programTypeModel = require('../../models/programType')
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
 
 module.exports = {
     getProgramTypePage: (req, res) => {
@@ -10,6 +15,15 @@ module.exports = {
     },
 
     createProgramType: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         programTypeModel.save(req.body).then(result => {
             console.log('reqBOdy:::::', req.body)
             res.json({
@@ -32,6 +46,14 @@ module.exports = {
     },
 
     updateProgramTypeById: (req, res) => {
+        const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                res.status(422).json({
+                    statuscode: 422,
+                    errors: errors.array()
+                });
+                return;
+            }
 
         programTypeModel.update(req.body).then(result => {
             res.json({
@@ -43,6 +65,15 @@ module.exports = {
     },
 
     deleteProgramTypeById: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         programTypeModel.delete(req.body.id).then(result => {
             res.json({
                 status: 200,

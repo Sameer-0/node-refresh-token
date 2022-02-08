@@ -42,6 +42,16 @@ module.exports = {
     },
 
     createTodos: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
         Todos.createTodos(req.body).then(result => {
             res.json({
                 status: 200,
@@ -61,6 +71,16 @@ module.exports = {
     },
 
     updateTodosById: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+        
         Todos.updateTodos(req.body).then(result => {
             res.json({
                 status: 200,
@@ -70,6 +90,15 @@ module.exports = {
     },
 
     deleteTodosById: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
         Todos.delete(req.body.id).then(result => {
             res.json({
                 status: 200,

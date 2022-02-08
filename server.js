@@ -65,7 +65,6 @@ app.use((req, res, next) => {
 })
 
 app.use(verifySubdomain);
-app.use(bodyParser.json())
 
 app.get('/logout', (req, res, next) => {
     req.session.destroy(function (err) {

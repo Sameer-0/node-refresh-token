@@ -11,6 +11,7 @@ module.exports = {
     },
 
     viewDetails: (req, res) => {
+        
         RoomTransactions.viewTransactionUuId(50, req.body.transid).then(result => {
         
             res.json({
