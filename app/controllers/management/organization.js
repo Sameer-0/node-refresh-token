@@ -36,10 +36,14 @@ module.exports = {
             });
             return;
         }
+
         OrganizationMaster.save(req.body.orgJson).then(result => {
             res.json({
                 status: 200
             })
+        }).catch(error => {
+            console.log('result:::::::::>', error)
+            throw error
         })
     },
 
