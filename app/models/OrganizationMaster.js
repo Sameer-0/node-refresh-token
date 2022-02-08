@@ -39,16 +39,12 @@ module.exports = class OrganizationMaster {
 
 
     static save(orgJson) {
-        console.log('orgJson:::::::::>>>', JSON.parse(orgJson))
         return poolConnection.then(pool => {
             let request = pool.request();
-
-            return request.input('organization_json', sql.NVarChar(sql.MAX), orgJson)
+            return request.input('JSON', sql.NVarChar(sql.MAX), orgJson)
                 .output('output', sql.Bit)
-                .output('msg', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[insert_organization_data]')
         }).catch(error => {
-            console.log('ERROR:::::::::::::::::::>>>>', error)
             throw error
         })
     }
