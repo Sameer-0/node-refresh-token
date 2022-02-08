@@ -37,6 +37,7 @@ const divisionBatch = require('../../controllers/management/divisionBatch')
 const validate = require('../../middlewares/validate')
 const programcheck = require('../../middlewares/programcheck');
 const roomValidate = require('../../middlewares/roomValidate');
+const validationFunctions = require('../../')
 
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
