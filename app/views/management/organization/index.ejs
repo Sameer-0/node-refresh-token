@@ -201,9 +201,9 @@
         let orgJson = [];
 
         orgElems.each(function (index, elem) {
-            let orgId = $(`input[name='orgId']`).val()
-            let orgAbbr = $(`input[name='orgAbbr']`).val()
-            let orgName = $(`input[name='orgName']`).val()
+            let orgId = $(elem).find(`input[name='orgId']`).val()
+            let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
+            let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
             let orgType = $(elem).find(`select[name='orgType']`).val()
 
@@ -240,9 +240,13 @@
             success: data => {
                 console.log('data:::::::::::::::::>>',data)
                 if (data.status == 200) {
-                   // location.reload()
+                    location.reload()
                 } else {
-                    $(".errorMsg").html(data.message)
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    console.log('errorHtml::::::::>>',errorHtml)
+                $("#errorHtml").html(errorHtml)
                 }
 
             },
@@ -307,10 +311,15 @@
                 org_type_id: $('#orgType').val()
             },
             success: data => {
+                console.log('errorHtml::::::::>>',data)
                 if (data.status == 200) {
                     location.reload()
                 } else {
-                    $(".errorMsg").html(data.message)
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    console.log('errorHtml::::::::>>',errorHtml)
+                $("#errorHtml").html(errorHtml)
                 }
 
             },

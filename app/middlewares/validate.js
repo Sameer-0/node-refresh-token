@@ -64,13 +64,39 @@ module.exports = function validate(method) {
         }
 
         case 'createOrganization': {
-            return [
-                check('org_id').not().isEmpty().withMessage('Organization id not be empty').isNumeric().withMessage('campusId must be number only'),
-                check('org_abbr').not().isEmpty().withMessage('Organization Abbr must not be empty'),
-                check('org_name').not().isEmpty().withMessage('Organization name not be empty'),
-                check('org_complete_name').not().isEmpty().withMessage('Organization complete name must not be empty'),
-                check('org_type_id').not().isEmpty().withMessage('Organization  type must not be empty').isNumeric().withMessage('campusId must be number only')
-            ]
+            return (req, res, next) => {
+                let jsonreq = JSON.parse(req.body.orgJson);
+
+
+                if (jsonreq.length > 0) {
+                    console.log('LEngh::::::::::::::::11')
+                    for (let data of jsonreq) {
+                        for (let key in data) {
+                            if (!data[key]) {
+
+                                console.log('Error', key)
+                                res.json({
+                                    status: 500,
+                                    messgae: `must not be empty`
+                                })
+                                break;
+                            } else {
+                                console.log('NExt', data[key])
+                                next()
+                            }
+                        }
+                    }
+                    if (breakcode > 0) {
+                        return false
+                    }
+                } else {
+                    console.log('LEngh::::::::::::::::else')
+                    res.json({
+                        status: 400,
+                        message: "Form fields must not be empty"
+                    })
+                }
+            };
         }
 
         case 'updateOrganization': {
@@ -319,7 +345,7 @@ module.exports = function validate(method) {
                 check('acadSession').not().isEmpty().withMessage('Academic session must not be empty')
             ]
         }
-        case 'createRoom':{
+        case 'createRoom': {
             return [
                 body().isArray(),
                 body('*.roomNo', 'Room No must be a number').exists().not().isEmpty().isNumeric(),
@@ -353,20 +379,20 @@ module.exports = function validate(method) {
         }
 
         case 'createProgramType': {
-            return[
+            return [
                 check('programName').not().isEmpty().withMessage('programName must not be empty')
             ]
         }
 
         case 'updateProgramType': {
-            return[
+            return [
                 check('id').not().isEmpty().withMessage('id must not be empty').isNumeric().withMessage('id must be an integer'),
                 check('programName').not().isEmpty().withMessage('programName must not be empty')
             ]
         }
 
         case 'createTodos': {
-            return[
+            return [
                 check('task').not().isEmpty().withMessage('task must not be empty'),
                 check('description').not().isEmpty().withMessage('description must not be empty'),
                 check('tags').not().isEmpty().withMessage('tags must not be empty')
@@ -374,7 +400,7 @@ module.exports = function validate(method) {
         }
 
         case 'updateTodos': {
-            return[
+            return [
                 check('id').not().isEmpty().withMessage('id must not be empty').isNumeric().withMessage('id must be an integer'),
                 check('task').not().isEmpty().withMessage('task must not be empty'),
                 check('description').not().isEmpty().withMessage('description must not be empty'),
