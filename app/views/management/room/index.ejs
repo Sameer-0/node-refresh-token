@@ -131,7 +131,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-
+                <div id="errorHtml"></div>
                 <input type="hidden" id="roomId" name="roomId">
 
 
@@ -262,6 +262,9 @@
                 <button type="button" class="btn  modal-inputform-btn updateRoom d-none">Update Room Data</button>
             </div>
 
+
+
+
         </div>
     </div>
 </div>
@@ -338,7 +341,8 @@
 
                     quoteAjax += `<tbody></table>`
                     $("#roomTable").html(quoteAjax);
-                }
+                },
+
             })
         }, 500));
 
@@ -407,8 +411,7 @@
                     console.log('success: ', roomData)
                     $("#roomId").val(roomData.roomid)
                     $("#update-roomNo").val(roomData.room_number)
-                    $("#buildingName").val(roomData.buildingid).trigger(
-                            'change'),
+                    $("#buildingName").val(roomData.buildingid).trigger('change'),
                         $("#campus").val(roomData.id).trigger('change'),
                         $("#roomType").val(roomData.roomtypeId)
                     $("#floorNo").val(roomData.floor_number)
@@ -447,7 +450,19 @@
                     location.reload()
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    console.log(err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        console.log(er.msg)
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
                 }
             })
         })
@@ -477,16 +492,14 @@
             let roomElems = $('#add-room-table tbody tr');
             let roomCount = roomElems.length;
 
-            console.log('roomCount===>> ', roomCount)
+            // console.log('roomCount===>> ', roomCount)
 
             let roomJson = [];
 
             roomElems.each(function (index, elem) {
 
-                $(elem).find(`input[name='roomNo']`).attr('data-room-no', $(elem)
-                    .find(
-                        `input[name='roomNo']`)
-                    .val())
+                $(elem).find(`input[name='roomNo']`).attr('data-room-no', $(elem).find(
+                    `input[name='roomNo']`).val())
 
 
                 let campusId = $(`select[name='campusId']`).val()
@@ -499,6 +512,8 @@
                 let startTime = $(elem).find(`select[name='startTime']`).val()
                 let endTime = $(elem).find(`select[name='endTime']`).val()
                 let isBasement = $(elem).find(`select[name='isBasement']`).val()
+
+
 
                 if (index < roomCount - 1) {
                     let obj = {
@@ -534,27 +549,56 @@
                 }
             })
 
-            console.log('roomJSONStr:::::::::>>', roomJson)
+            console.log('roomJson:::::::::>>', roomJson)
             // console.log('roomJsonStr::', JSON.parse(roomJson))
+            roomJson = JSON.stringify(roomJson);
+            console.log('roomJson:::::::::>>', roomJson)
 
+
+           //console.log('Hello',isEmpty(roomJson))
+      
             $.ajax({
                 url: '/management/room',
                 method: 'POST',
                 dataType: 'JSON',
                 data: {
-                    roomJson: JSON.stringify(roomJson)
+                   // roomJson: JSON.stringify(roomJson)
+                   roomJson: roomJson
                 },
+                //data:roomJson,
                 success: (data) => {
-                    console.log("On Success", data)
+                    console.log('Data:::::::>>', data)
+                    if (data.status == "200") {
+                        location.reload()
+                    } else if (data.status == "400") {
+                        let errorHtml =
+                            `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    }
 
                 },
                 error: err => {
-                    console.log('Error: ', err)
+                    console.log('err:::::::>>', err)
+                    // let error = err.responseJSON.errors
+                    // console.log(error)
+
+                    // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    // <h3>Error</h3>
+                    // <ul><li>No fields can be empty.</li>`
+                    // // error.map(er => {
+                    // //     console.log(er.msg)
+                    // //     errorHtml +=
+                    // //         `<li>${er.msg}</li>`
+                    // // })
+
+                    // errorHtml +=
+                    //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    // $("#errorHtml").html(errorHtml)
                 }
             })
-
         })
-
     })
 </script>
 <%- include("../partials/footerEnd") %>

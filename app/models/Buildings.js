@@ -75,8 +75,7 @@ module.exports = class Buildings {
 
     static softDeleteById(id) {
         return poolConnection.then(pool => {
-            const request = pool.request();
-            return request.input('buildingId', sql.Int, id)
+            return pool.request().input('buildingId', sql.Int, id)
                 .query(`UPDATE [dbo].buildings SET active = 0 WHERE id = @buildingId`)
         }).catch(error => {
             throw error

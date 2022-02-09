@@ -16,6 +16,8 @@
                     </a></div>
             </div>
         </div>
+<<<<<<< HEAD
+=======
        
 </div>
     <div class="card table-card">
@@ -67,75 +69,152 @@
         </div>
     </div>
 </div>
+>>>>>>> origin
 
-<!-- ADD NEW Division MODAL -->
 
-<div class="modal fade" id="add-division-modal" tabindex="-1" aria-labelledby="add-division-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-inputform">
-            <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="add-division-modal-title">Add Division</h5>
-                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
-                        class="fas fa-times"></i></button>
+        <div class="card table-card">
+            <div class="card-header text-uppercase d-flex align-items-center">
+                <h5>Divisions</h5>
+                <button type="button" class="btn btn-success ms-auto" data-bs-toggle="modal"
+                    data-bs-target="#add-division-modal">
+                    <i class="fas fa-plus"></i> Add New</button>
             </div>
-            <div class="modal-body">
-                <div class="my-3 py-2">
-                    <input type="hidden" id="id" name="id">
-                    <select class="form-select modalSelect2" name="courseId" id="courseId" required>
-                        <option disabled selected>--Course--</option>
-                        <% for(let course of courseList) { %>
-                        <option value="<%- course.id %>">
-                            <%- course.module_name %>
-                        </option>
+            <div class="card-body table-responsive">
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i>
+                    </button><input type="search" id="searchkeyword" placeholder="Enter keywords"
+                        class="table-searchbar"></div>
+
+                <table class="table custom_row" id="divisionTable">
+                    <thead>
+                        <th>Course</th>
+                        <th>Division</th>
+                        <th>Division_Num</th>
+                        <th>Division Count</th>
+                        <th>Theory Batch Count</th>
+                        <th>Practical Batch Count</th>
+                        <th>Tutorial Batch Count</th>
+                        <th>Workshop Batch Count</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+
+                        <% for (let division of divisionList) { %>
+                        <tr>
+
+                            <td><%- division.course %></td>
+                            <td><%- division.division %></td>
+                            <td><%- division.division_num %></td>
+                            <td><%- division.division_count %></td>
+                            <td><%- division.count_for_theory_batch %></td>
+                            <td><%- division.count_for_practical_batch %></td>
+                            <td><%- division.count_for_tutorial_batch %></td>
+                            <td><%- division.count_for_workshop_batch %></td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-division"
+                                    data-division-id="<%- division.id %>"></i>
+                                <a data-division-id="<%- division.id %>"
+                                    class="fas fa-trash-alt text-danger delete-division"></a>
+                            </td>
+                        </tr>
+
                         <% } %>
-                    </select>
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="division" id="division" type="text" class="form-control" placeholder="Division"
-                        required>
-
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="divisionNum" id="divisionNum" type="text" class="form-control"
-                        placeholder="divisionNum">
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="divisionCount" id="divisionCount" type="text" class="form-control"
-                        placeholder="divisionCount">
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="countTheoryBatch" id="countTheoryBatch" type="text" class="form-control"
-                        placeholder="countTheoryBatch">
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="countPracticalBatch" id="countPracticalBatch" type="text" class="form-control"
-                        placeholder="countPracticalBatch">
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="countTutorialBatch" id="countTutorialBatch" type="text" class="form-control"
-                        placeholder="countTutorialBatch">
-                </div>
-
-                <div class="my-3 py-2">
-                    <input name="countWorkshopBatch" id="countWorkshopBatch" type="text" class="form-control"
-                        placeholder="countWorkshopBatch">
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <div id="errorMsg"></div>
-                <button type="submit" class="btn  addDivision modal-inputform-btn">Create Division</button>
-                <button type="submit" class="btn  updateDivision modal-inputform-btn d-none">Update Division</button>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- ADD NEW Division MODAL -->
+
+    <div class="modal fade" id="add-division-modal" tabindex="-1" aria-labelledby="add-division-modal"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content modal-inputform">
+                <div class="modal-header modal-inputform-header">
+                    <h5 class="modal-title" id="add-division-modal-title">Add Division</h5>
+                    <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div id="errorHtml"></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input type="hidden" id="id" name="id">
+                                <select class="form-select modalSelect2" name="courseId" id="courseId" required>
+                                    <option disabled selected>--Course--</option>
+                                    <% for(let course of courseList) { %>
+                                    <option value="<%- course.id %>">
+                                        <%- course.module_name %>
+                                    </option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="division" id="division" type="text" class="form-control"
+                                    placeholder="Division" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="divisionNum" id="divisionNum" type="text" class="form-control"
+                                    placeholder="divisionNum">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="divisionCount" id="divisionCount" type="text" class="form-control"
+                                    placeholder="divisionCount">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countTheoryBatch" id="countTheoryBatch" type="text" class="form-control"
+                                    placeholder="countTheoryBatch">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countPracticalBatch" id="countPracticalBatch" type="text"
+                                    class="form-control" placeholder="countPracticalBatch">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countTutorialBatch" id="countTutorialBatch" type="text"
+                                    class="form-control" placeholder="countTutorialBatch">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="my-3 py-2">
+                                <input name="countWorkshopBatch" id="countWorkshopBatch" type="text"
+                                    class="form-control" placeholder="countWorkshopBatch">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div id="errorMsg"></div>
+                    <button type="submit" class="btn  addDivision modal-inputform-btn">Create Division</button>
+                    <button type="submit" class="btn  updateDivision modal-inputform-btn d-none">Update
+                        Division</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -146,119 +225,150 @@
 
 
 
-<%- include("../partials/footer") %>
-<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+    <%- include("../partials/footer") %>
+    <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 
-<script>
-    $(document).ready(function () {
-        $(".addDivision").on('click', function () {
-            $.ajax({
-                url: '/management/divisions/add',
-                method: 'POST',
-                type: 'JSON',
-                data: {
-                    courseId: $('#courseId').val(),
-                    division: $('#division').val(),
-                    divisionNum: $('#divisionNum').val(),
-                    divisionCount: $('#divisionCount').val(),
-                    countTheoryBatch: $('#countTheoryBatch').val(),
-                    countPracticalBatch: $('#countPracticalBatch').val(),
-                    countTutorialBatch: $('#countTutorialBatch').val(),
-                    countWorkshopBatch: $('#countWorkshopBatch').val()
-                },
-                success: data => {
-                    location.reload()
-                },
-                error: err => {
-                    console.log('Error: ', err)
-                }
+    <script>
+        $(document).ready(function () {
+            $(".addDivision").on('click', function () {
+                $.ajax({
+                    url: '/management/divisions',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        courseId: $('#courseId').val(),
+                        division: $('#division').val(),
+                        divisionNum: $('#divisionNum').val(),
+                        divisionCount: $('#divisionCount').val(),
+                        countTheoryBatch: $('#countTheoryBatch').val(),
+                        countPracticalBatch: $('#countPracticalBatch').val(),
+                        countTutorialBatch: $('#countTutorialBatch').val(),
+                        countWorkshopBatch: $('#countWorkshopBatch').val()
+                    },
+                    success: data => {
+                        location.reload()
+                    },
+                    error: err => {
+                        let error = err.responseJSON.errors
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        error.map(er => {
+                            errorHtml +=
+                                `<li>${er.msg}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    }
+                })
             })
-        })
 
-        // FETCH SINGLE DIVISION
+            // FETCH SINGLE DIVISION
 
-        $('#divisionTable').on('click', '.edit-division', function () {
-            $("#add-division-modal-title").html('Update Division')
-            $(".addDivision").addClass('d-none')
-            $(".updateDivision").removeClass('d-none')
-            $.ajax({
-                url: '/management/divisions/single',
-                method: 'GET',
-                type: 'JSON',
-                data: {
-                    id: $(this).attr('data-division-id')
-                },
-                success: data => {
-                    let division = data.divisionData;
-                    console.log('Success: ', division)
+            $('#divisionTable').on('click', '.edit-division', function () {
+                $("#add-division-modal-title").html('Update Division')
+                $(".addDivision").addClass('d-none')
+                $(".updateDivision").removeClass('d-none')
+                $.ajax({
+                    url: '/management/divisions/single',
+                    method: 'GET',
+                    type: 'JSON',
+                    data: {
+                        id: $(this).attr('data-division-id')
+                    },
+                    success: data => {
+                        let division = data.divisionData;
+                        console.log('Success: ', division)
 
-                    $("#id").val(division.id),
-                        $("#courseId").val(division.course_id).trigger('change'),
-                        $("#division").val(division.division),
-                        $("#divisionNum").val(division.division_num),
-                        $("#divisionCount").val(division.division_count),
-                        $("#countTheoryBatch").val(division.count_for_theory_batch),
-                        $("#countPracticalBatch").val(division.count_for_practical_batch),
-                        $("#countTutorialBatch").val(division.count_for_tutorial_batch),
-                        $("#countWorkshopBatch").val(division.count_for_workshop_batch)
-
-
+                        $("#id").val(division.id),
+                            $("#courseId").val(division.course_id).trigger('change'),
+                            $("#division").val(division.division),
+                            $("#divisionNum").val(division.division_num),
+                            $("#divisionCount").val(division.division_count),
+                            $("#countTheoryBatch").val(division.count_for_theory_batch),
+                            $("#countPracticalBatch").val(division
+                                .count_for_practical_batch),
+                            $("#countTutorialBatch").val(division.count_for_tutorial_batch),
+                            $("#countWorkshopBatch").val(division.count_for_workshop_batch)
 
 
-                    $("#add-division-modal").modal('show')
-                },
-                error: err => {
-                    console.log('Error: ', err)
-                }
+
+
+                        $("#add-division-modal").modal('show')
+                    },
+                    error: err => {
+                        let error = err.responseJSON.errors
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        error.map(er => {
+                            errorHtml +=
+                                `<li>${er.msg}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    }
+                })
+
+
+
+            })
+
+            // UPDATE DIVISION
+
+            $('.updateDivision').on('click', function () {
+                $.ajax({
+                    url: '/management/divisions/single',
+                    type: 'JSON',
+                    method: 'PUT',
+                    data: {
+                        id: $('#id').val(),
+                        courseId: $('#courseId').val(),
+                        division: $('#division').val(),
+                        divisionNum: $('#divisionNum').val(),
+                        divisionCount: $('#divisionCount').val(),
+                        countTheoryBatch: $('#countTheoryBatch').val(),
+                        countPracticalBatch: $('#countPracticalBatch').val(),
+                        countTutorialBatch: $('#countTutorialBatch').val(),
+                        countWorkshopBatch: $('#countWorkshopBatch').val()
+
+                    },
+                    success: (data) => {
+                        location.reload()
+                    },
+                    error: err => {
+                        let error = err.responseJSON.errors
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        error.map(er => {
+                            errorHtml +=
+                                `<li>${er.msg}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    }
+                })
             })
 
 
+            // SEARCH DIVISION DATA
 
-        })
-
-        // UPDATE DIVISION
-
-        $('.updateDivision').on('click', function () {
-            $.ajax({
-                url: '/management/divisions/single',
-                type: 'JSON',
-                method: 'PUT',
-                data: {
-                    id: $('#id').val(),
-                    courseId: $('#courseId').val(),
-                    division: $('#division').val(),
-                    divisionNum: $('#divisionNum').val(),
-                    divisionCount: $('#divisionCount').val(),
-                    countTheoryBatch: $('#countTheoryBatch').val(),
-                    countPracticalBatch: $('#countPracticalBatch').val(),
-                    countTutorialBatch: $('#countTutorialBatch').val(),
-                    countWorkshopBatch: $('#countWorkshopBatch').val()
-
-                },
-                success: (data) => {
-                    location.reload()
-                },
-                error: (err) => {
-                    console.log('Error::', err)
-                }
-            })
-        })
-
-
-        // SEARCH DIVISION DATA
-
-        $('#searchkeyword').on('input', delay(function (e) {
-            let keyword = $("#searchkeyword").val()
-            $.ajax({
-                type: "GET",
-                url: "/management/divisions/search",
-                data: {
-                    keyword: keyword
-                },
-                success: function (data) {
-                    let divisionList = data.data;
-                    console.log(divisionList)
-                    let AjaxTable = `<table class="table table-bordered" id="divisionTable">
+            $('#searchkeyword').on('input', delay(function (e) {
+                let keyword = $("#searchkeyword").val()
+                $.ajax({
+                    type: "GET",
+                    url: "/management/divisions/search",
+                    data: {
+                        keyword: keyword
+                    },
+                    success: function (data) {
+                        let divisionList = data.data;
+                        console.log(divisionList)
+                        let AjaxTable = `<table class="table table-bordered" id="divisionTable">
                     <thead>
                     <th>Course</th>
                     <th>Division</th>
@@ -272,10 +382,10 @@
                     </thead>
                     <tbody>`;
 
-                    if (divisionList.length > 0) {
-                        for (division of divisionList) {
-                            AjaxTable +=
-                                `<tr>
+                        if (divisionList.length > 0) {
+                            for (division of divisionList) {
+                                AjaxTable +=
+                                    `<tr>
                             <td>${division.course}</td>
                             <td>${division.division}</td>
                             <td>${division.division_num}</td>
@@ -291,38 +401,38 @@
                                     class="fas fa-trash-alt text-danger delete-division"></a>
                             </td>
                         </tr>`
-                        }
-                    } else {
-                        AjaxTable +=
-                            ` <tr>
+                            }
+                        } else {
+                            AjaxTable +=
+                                ` <tr>
                                 <td colspan="4">No Data Found</td>
                             </tr>`;
+                        }
+                        AjaxTable += `<tbody></table>`
+                        $("#divisionTable").html(AjaxTable);
                     }
-                    AjaxTable += `<tbody></table>`
-                    $("#divisionTable").html(AjaxTable);
-                }
-            })
-        }, 500));
+                })
+            }, 500));
 
 
-        // DELETE DIVISION
+            // DELETE DIVISION
 
-        $("#divisionTable").on('click', '.delete-division', function () {
-            $.ajax({
-                url: '/management/divisions/single',
-                method: 'DELETE',
-                type: 'JSON',
-                data: {
-                    id: $(this).attr("data-division-id")
-                },
-                success: data => {
-                    location.reload()
-                },
-                error: err => {
-                    console.log('Error: ', err)
-                }
+            $("#divisionTable").on('click', '.delete-division', function () {
+                $.ajax({
+                    url: '/management/divisions/single',
+                    method: 'DELETE',
+                    type: 'JSON',
+                    data: {
+                        id: $(this).attr("data-division-id")
+                    },
+                    success: data => {
+                        location.reload()
+                    },
+                    error: err => {
+                        console.log('Error: ', err)
+                    }
+                })
             })
         })
-    })
-</script>
-<%- include("../partials/footerEnd") %>
+    </script>
+    <%- include("../partials/footerEnd") %>

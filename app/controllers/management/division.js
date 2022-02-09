@@ -1,6 +1,8 @@
 const {
-    search
-} = require('../../models/Buildings');
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
 const divisionModel = require('../../models/Divisions')
 const courseModel = require('../../models/InitialCourseWorkload')
 
@@ -20,6 +22,17 @@ module.exports = {
     },
 
     addDivision: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
         divisionModel.addDivision(req.body).then(result => {
             res.json({
                 status: 200,
@@ -31,6 +44,17 @@ module.exports = {
     },
 
     getDivisionById: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
         divisionModel.getDivision(req.query.id).then(result => {
             res.json({
                 status: 200,
@@ -40,6 +64,16 @@ module.exports = {
     },
 
     updateDivisionById: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         divisionModel.updateDivision(req.body).then(result => {
             res.json({
                 status: 200,
@@ -49,6 +83,17 @@ module.exports = {
     },
 
     search: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+
         let rowcount = 10;
         divisionModel.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
@@ -76,6 +121,16 @@ module.exports = {
     },
 
     deleteDivisionById: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        
         divisionModel.deleteDivision(req.body.id).then(result => {
             res.json({
                 status: 200

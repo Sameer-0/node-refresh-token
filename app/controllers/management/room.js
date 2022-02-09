@@ -1,8 +1,6 @@
 const {
     check,
-    oneOf,
-    validationResult,
-    Result
+    validationResult
 } = require('express-validator');
 
 const roomModel = require('../../models/RoomData')
@@ -94,6 +92,15 @@ module.exports = {
 
     },
     updateRoomById: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
         roomModel.updateRoomById(req.body).then(result => {
             res.json({
                 status: 200
@@ -113,10 +120,26 @@ module.exports = {
 
     addRoom: (req, res) => {
 
+       
+
+        const errors = validationResult(req);
+
+        console.log('ADDING ROOMS',req.body)
+        
+        // if (!errors.isEmpty()) {
+        //     //console.log('Errors: ', errors.array())
+        //     return res.status(422).json({
+        //         statuscode: 422,
+        //         errors: errors.array()
+        //     });
+        // }
+
+
+
         // console.log('roomJson:::::::>>>', req.body.roomJson)
         roomModel.add(req.body.roomJson).then(result => {
 
-            console.log('result', result)
+            // console.log('result', result)
             res.json({
                 status: 200,
                 message: "success",
@@ -125,7 +148,9 @@ module.exports = {
 
         }).catch(err => {
             res.json({
-                status: 500
+                status: 500,
+                message: 'Invalid JSON',
+                err: err
             })
         })
     },
@@ -133,6 +158,16 @@ module.exports = {
 
 
     searchRoom: (req, res) => {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
    
         let rowCount = 10;
         roomModel.searchRoom(rowCount, req.query.keyword).then(result => {

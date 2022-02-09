@@ -31,7 +31,7 @@ module.exports = class RoomData {
             INNER JOIN [dbo].organization_master o ON o.id = r.handled_by
             INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time
             INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time
-            INNER JOIN [dbo].campus_master c ON c.id = b.campus_id WHERE r.active = 1 and st.active = 1`)
+            INNER JOIN [dbo].campus_master c ON c.id = b.campus_id WHERE r.active = 1 and st.active = 1 ORDER BY r.id DESC`)
 
         })
     }
@@ -122,7 +122,8 @@ module.exports = class RoomData {
     static add(roomJson) {
         return poolConnection.then(pool => {
 
-        console.log('body============>>>>>>>> ',roomJson)
+        // console.log('body============>>>>>>>> ',roomJson)
+        
         
         return pool.request().input('room_json', sql.NVarChar(sql.MAX), roomJson)
         .output('output', sql.Bit)

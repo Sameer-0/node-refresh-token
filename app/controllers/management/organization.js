@@ -9,7 +9,7 @@ module.exports = {
     getPage: (req, res) => {
 
         if (req.method == "GET") {
-            Promise.all([OrganizationMaster.fetchAll(10), OrganizationType.fetchAll(), OrganizationMaster.getCount()]).then(result => {
+            Promise.all([OrganizationMaster.fetchAll(10), OrganizationType.fetchAll(50), OrganizationMaster.getCount()]).then(result => {
                 res.render('management/organization/index', {
                     orgList: result[0].recordset,
                     orgtypeList: result[1].recordset,
@@ -27,18 +27,35 @@ module.exports = {
     },
 
     create: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
-        OrganizationMaster.save(req.body).then(result => {
-            res.json({
-                status: 200
-            })
+
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     res.status(422).json({
+        //         statuscode: 422,
+        //         errors: errors.array()
+        //     });
+        //     return;
+        // }
+        console.log('Ersulr>>>>>>>::',req.body.orgJson)
+        OrganizationMaster.save(req.body.orgJson).then(result => {
+         console.log('result::::::::::::::>>',result)
+            if(result.output.output){
+                res.json({
+                    status: 200,
+                    data: result.recordset,
+                    message:"success"
+                })
+            }else{
+                res.json({
+                    status: 409,
+                    data: result.recordset,
+                    message:"Fail! Dublicate entry found"
+                })
+            }
+           
+        }).catch(error => {
+            console.log('Error:::::::::>', error)
+            throw error
         })
     },
 

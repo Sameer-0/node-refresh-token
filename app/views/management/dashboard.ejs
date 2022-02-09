@@ -1,31 +1,26 @@
 <%- include ('partials/head') %>
 <%- include ('partials/leftSidebar') %>
 <%- include ('partials/header') %>
-    <!-- MAIN-CONTENT -->
-    
-        <div class="main-content">
+<!-- MAIN-CONTENT -->
+
+<div class="main-content">
+
+    <!-- DATA-ROW-1 -->
+    <% if(settingCount > 0){%>
+    <!-- <h1>Render Dashboard Ejs</h1> -->
+    <%- include('partials/dashboard.ejs') %>
+    <%}else{%>
+    <h1>Render Step Form</h1>
+    <%- include('partials/dashboard.ejs') %>
+   <!-- <%- include('partials/stepform.ejs') %> -->
+    <%}%>
+
+    </main>
 
 
-        <form action="/management/organization" method="post" class="dash-form" id="org-form">
+</div>
 
-
-            <div class="modal-header bg-info modal-inputform-header">
-                <h5 class="modal-title text-white" id="add-org-modal-title">Add New
-                    Organization</h5>
-            </div>
-
-            <div id="errorHtml"></div>
-            <div class="form-row mt-4">
-                <input type="hidden" id="orgLid">
-                <input name="orgId" id="orgId" type="number" class="form-control" placeholder="Organization Id"
-                    required>
-            </div>
-
-            <div class="form-row mt-4">
-                <input name="orgAbbr" id="orgAbbr" type="text" class="form-control" placeholder="Organization Abbr"
-                    required>
-            </div>
-
+        <%- include('partials/footer') %>
             <div class="form-row mt-4">
                 <input name="orgName" id="orgName" type="text" class="form-control" placeholder="Organization Name"
                     required>
@@ -463,61 +458,93 @@
 			})
 		})
 
+            $(".homeCard .border").hover(function () {
+                $this = $(this)
 
-		let options = {
-        dataLabels: {
-            enabled: true
-        },
-        legend: {
-            show: true
-        },
-        chart: {
-            type: 'donut',
-            height: 200
-        },
-        plotOptions: {
-            pie: {
-                donut: {
-                    size: '40%'
-                }
+
+                $this.find("img").css({
+                    "transition": "0.3s",
+                    "transform": "scale(0.7)"
+                })
+
+                setTimeout(function () {
+                    $this.find("img").css({
+                        "transition": "0.2s",
+                        "transform": "scale(1)"
+                    })
+                }, 200)
+
+            }, function () {
+                $this.find("img").css({
+                    "transition": "0.2s",
+                    "transform": "scale(1)"
+                })
+            })
+
+
+            let options = {
+                dataLabels: {
+                    enabled: true
+                },
+                legend: {
+                    show: true
+                },
+                chart: {
+                    type: 'donut',
+                    height: 200
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '40%'
+                        }
+                    }
+                },
+                      series: [44, 55, 11],
+        labels: ['Room booked', 'Total room', 'Room available for booking']
             }
         },
-        series: [44, 55, 11],
-        labels: ['Room booked', 'Total room', 'Room available for booking']
+
     }
 
     var chart = new ApexCharts(document.querySelector("#chart1"), options);
 
     chart.render();
+	
+            //Calling Apies
+            $("#org-submit").on('click', function () {
+                $.ajax({
+                    url: '/management/organization',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        org_id: $('#orgId').val(),
+                        org_abbr: $('#orgAbbr').val(),
+                        org_name: $('#orgName').val(),
+                        org_complete_name: $('#orgCompleteName').val(),
+                        org_type_id: $('#orgType').val()
+                    },
+                    success: data => {
+                        if (data.status == 200) {
+                            location.reload()
+                        } else {
+                            $(".errorMsg").html(data.message)
+                        }
 
-    $("#org-submit").on('click', function () {
-        $.ajax({
-            url: '/management/organization',
-            method: 'POST',
-            type: 'JSON',
-            data: {
-                org_id: $('#orgId').val(),
-                org_abbr: $('#orgAbbr').val(),
-                org_name: $('#orgName').val(),
-                org_complete_name: $('#orgCompleteName').val(),
-                org_type_id: $('#orgType').val()
-            },
-            success: data => {
-                if (data.status == 200) {
-                    location.reload()
-                } else {
-                    $(".errorMsg").html(data.message)
-                }
-
-            },
-            error: err => {
-                let error = err.responseJSON.errors
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    },
+                    error: err => {
+                        let error = err.responseJSON.errors
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                error.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
+                        error.map(er => {
+                            errorHtml +=
+                                `<li>${er.msg}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    }
                 })
                 errorHtml +=
                     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
@@ -547,27 +574,44 @@
             error: err => {
                 let error = err.responseJSON.errors
                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                $('#org-form').addClass('d-none');
+                $('#campus-form').removeClass('d-none');
+                $('#building-form').addClass('d-none')
+            })
+
+            $('#campus-submit').on('click', function () {
+                console.log("yellio")
+                $.ajax({
+                    url: '/management/campus',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        campusId: $("#campusId").val(),
+                        campusAbbr: $("#campusAbbr").val(),
+                        campusName: $("#campusName").val(),
+                        campusDesc: $("#campusDesc").val()
+                    },
+                    success: data => {
+                        location.reload()
+                    },
+                    error: err => {
+                        let error = err.responseJSON.errors
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                error.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
+                        error.map(er => {
+                            errorHtml +=
+                                `<li>${er.msg}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    }
                 })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
-            }
+                $('#org-form').addClass('d-none');
+                $('#campus-form').addClass('d-none');
+                $('#building-form').removeClass('d-none')
+            })
         })
-        $('#org-form').addClass('d-none');
-        $('#campus-form').addClass('d-none');
-       $('#building-form').removeClass('d-none')
-    })
-
-  
-
-})
-</script>
-<%- include('partials/footerEnd') %>
-
-
-   
+    </script>
+    <%- include('partials/footerEnd') %>
