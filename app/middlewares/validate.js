@@ -7,8 +7,9 @@ const {
 } = require('../models/RoomData');
 
 module.exports = function validate(method) {
-    switch (method) {
 
+
+    switch (method) {
         case 'createCampus': {
             return [
                 check('campusId').not().isEmpty().withMessage('campusId must not be empty').isNumeric().withMessage('campusId must be number only'),
@@ -66,34 +67,25 @@ module.exports = function validate(method) {
         case 'createOrganization': {
             return (req, res, next) => {
                 let jsonreq = JSON.parse(req.body.orgJson);
-
-
-                if (jsonreq.length > 0) {
-                    console.log('LEngh::::::::::::::::11')
-                    for (let data of jsonreq) {
-                        for (let key in data) {
-                            if (!data[key]) {
-
-                                console.log('Error', key)
-                                res.json({
-                                    status: 500,
-                                    messgae: `must not be empty`
-                                })
-                                break;
-                            } else {
-                                console.log('NExt', data[key])
-                                next()
-                            }
+                let done = false
+                let keyval = [];
+                for (let data of jsonreq) {
+                    for (let key in data) {
+                        if (!data[key]) {
+                            done = false
+                            keyval.push(key + ` must not be empty`)
+                        } else {
+                            done = true
+                            console.log('NExt', data[key])
                         }
                     }
-                    if (breakcode > 0) {
-                        return false
-                    }
+                }
+                if (done) {
+                    next()
                 } else {
-                    console.log('LEngh::::::::::::::::else')
                     res.json({
                         status: 400,
-                        message: "Form fields must not be empty"
+                        message: keyval
                     })
                 }
             };
