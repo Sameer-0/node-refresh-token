@@ -28,22 +28,33 @@ module.exports = {
 
     create: (req, res) => {
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
-
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     res.status(422).json({
+        //         statuscode: 422,
+        //         errors: errors.array()
+        //     });
+        //     return;
+        // }
+        console.log('Ersulr>>>>>>>::',req.body.orgJson)
         OrganizationMaster.save(req.body.orgJson).then(result => {
-            res.json({
-                status: 200,
-                data: result.recordset
-            })
+         console.log('result::::::::::::::>>',result)
+            if(result.output.output){
+                res.json({
+                    status: 200,
+                    data: result.recordset,
+                    message:"success"
+                })
+            }else{
+                res.json({
+                    status: 409,
+                    data: result.recordset,
+                    message:"Fail! Dublicate entry found"
+                })
+            }
+           
         }).catch(error => {
-            console.log('result:::::::::>', error)
+            console.log('Error:::::::::>', error)
             throw error
         })
     },
