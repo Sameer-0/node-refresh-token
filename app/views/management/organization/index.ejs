@@ -235,23 +235,28 @@
             method: 'POST',
             type: 'JSON',
             data: {
-                orgJson:JSON.stringify(orgJson)
+                orgJson: JSON.stringify(orgJson)
             },
             success: data => {
-                console.log('data:::::::::::::::::>>',data)
+                console.log('data:::::::::::::::::>>', data)
                 if (data.status == 200) {
                     location.reload()
                 } else {
                     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
-                    <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    console.log('errorHtml::::::::>>',errorHtml)
-                $("#errorHtml").html(errorHtml)
+                    <ul>`
+                    data.message.forEach(function (item) {
+                        errorHtml += `<li>${item}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    console.log('errorHtml::::::::>>', errorHtml)
+                    $("#errorHtml").html(errorHtml)
                 }
 
             },
             error: err => {
-                console.log('Error:::::::::::::>>',err)
+                console.log('Error:::::::::::::>>', err)
                 let error = err.responseJSON.errors
                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
@@ -281,7 +286,7 @@
             },
             success: data => {
                 let org = data.orgData;
-                
+
                 $('#orgLid').val(org.id)
                 $('#orgId').val(org.org_id)
                 $('#orgAbbr').val(org.org_abbr)
@@ -289,7 +294,7 @@
                 $('#orgCompleteName').val(org.org_complete_name)
                 $('#orgType').val(org.org_type_id).trigger('change')
                 $("#add-org-modal").modal('show')
-                
+
             },
             error: err => {
                 console.log('Error: ', err)
@@ -311,15 +316,16 @@
                 org_type_id: $('#orgType').val()
             },
             success: data => {
-                console.log('errorHtml::::::::>>',data)
+                console.log('errorHtml::::::::>>', data)
                 if (data.status == 200) {
                     location.reload()
                 } else {
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    let errorHtml =
+                        `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    console.log('errorHtml::::::::>>',errorHtml)
-                $("#errorHtml").html(errorHtml)
+                    console.log('errorHtml::::::::>>', errorHtml)
+                    $("#errorHtml").html(errorHtml)
                 }
 
             },
