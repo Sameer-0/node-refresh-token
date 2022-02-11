@@ -48,6 +48,20 @@ module.exports = class CampusMaster {
         })
     }
 
+
+    static saveWithProc(campusJSON) {
+        console.log('JOSN::::::::::::::::',campusJSON)
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return  request.input('JSON', sql.NVarChar(sql.MAX), campusJSON)
+            .output('output', sql.Bit)
+            .execute(`[dbo].insert_campus_data`);
+        }).catch(error=>{
+            console.log('error::::::::::::::::',error)
+            throw error
+        })
+    }
+
     static getCampusById(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
