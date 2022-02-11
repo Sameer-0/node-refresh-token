@@ -88,7 +88,6 @@ module.exports = {
 
     addUser: (req, res, next) => {
         // console.log('reqBody', req.body)
-
         User.addUser(req.body)
         res.json({
             status: 200,
@@ -97,7 +96,6 @@ module.exports = {
     },
 
     deleteUser: (req, res, next) => {
-
         console.log('reqBodyId', req.body.id)
         User.deleteUser(req.body.id).then(result => {
             res.json({
@@ -108,43 +106,36 @@ module.exports = {
     },
 
     authenticate: async (req, res, next) => {
-
         User.getUserByUsername(req.body.username, res.locals.slug).then(result => {
-            console.log('result.recordset:::::::::::::>>>', result.recordset)
+            let userData = result.recordset[0]
             if (result.recordset.length > 0) {
-                console.log('result.recordset:::::::::::::1>>>', result.recordset)
-                verifyPassword(req.body.password, userData.password).then(result => {
-                    console.log('result:::::::::::>>>>',result)
-                })
-
-                // if (isVerified) {
-                //     req.session.username = userData.username;
-                //     req.session.firstName = userData.f_name;
-                //     req.session.lastName = userData.l_name;
-                //     req.session.email = userData.email;
-
-                //     if (userData.role == "management") {
-                //         res.redirect('/management/dashboard')
-                //     } else if (userData.role == "admin") {
-                //         res.redirect('/admin/dashboard')
-                //     } else {
-                //         res.redirect('404')
-                //     }
-
-                // } else {
-                //     res.redirect('/user/login')
-                // }
+                let isVerified = verifyPassword(req.body.password, userData.password)
+                if (isVerified) {
+                    req.session.username = userData.username;
+                    req.session.firstName = userData.f_name;
+                    req.session.lastName = userData.l_name;
+                    req.session.email = userData.email;
+                    var randomNumber = uuidv4();
+                    res.cookie('token', randomNumber, {
+                        httpOnly: true,
+                        signed: false
+                    });
+                    if (userData.role == "management") {
+                        res.redirect('/management/dashboard')
+                    } else if (userData.role == "admin") {
+                        res.redirect('/admin/dashboard')
+                    } else {
+                        res.redirect('404')
+                    }
+                } else {
+                    res.redirect('/user/login')
+                }
             } else {
                 res.send('User not exit..!')
             }
-
         }).catch(error => {
-            res.send('User not exit..!')
+            res.send('User not exit..!',error)
         })
-
-
-
-
     },
 
     dashboard: (req, res, next) => {

@@ -6,10 +6,9 @@ const {
 
 
 module.exports = {
-    
-    isLoggedIn: (req, res, next) => {
 
-        console.log('res.sessionID====>>>>> ', req.sessionID)
+    isLoggedIn: (req, res, next) => {
+        console.log('res.sessionID====>>>>> ', req.cookies.token)
 
         let sessionId = req.sessionID;
         let store = new RedisStore({
@@ -17,14 +16,17 @@ module.exports = {
             ttl: 260
         })
 
-       
-        // store.get(sessionId, async (err, result) => {
-        //     console.log('result::::::::::::::::::>> ',err, result, sessionId)
-        //     if (!result) {
-        //         res.redirect('/user/login')
-        //     } else {
-        //         next();
-        //     }
-        // })
+        if (req.cookies.token) {
+            store.get(req.cookies.token, async (err, result) => {
+                console.log('result::::::::::::::::::>> ', err, result)
+                if (!result) {
+                    res.redirect('/user/login')
+                } else {
+                    next();
+                }
+            })
+        } else {
+            res.redirect('/user/login')
+        }
     }
 }
