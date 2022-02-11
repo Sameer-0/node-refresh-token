@@ -88,11 +88,10 @@ module.exports = class User {
         })
     }
 
-    static passwordByUsername(username, slug) {
+    static getUserByUsername(username, slug) {
         return poolConnection.then(pool => {
             return pool.request()
             .input('username', sql.NVarChar(50), username)
-           // .query(`SELECT password, username, f_name, l_name, employee_id, email, contact_number, role_id FROM [${slug}].users WHERE username = @username`)
          .query(`select u.id, u.username, u.password, u.f_name, u.l_name,u.employee_id, u.email,u.contact_number, r.name as role from [${slug}].users u join [dbo].[roles] r on u.role_id = r.id where u.active =1 and r.active = 1  and u.username =  @username`)
         })
     }

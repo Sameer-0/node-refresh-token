@@ -2,6 +2,9 @@
 const express = require('express')
 const session = require('express-session')
 const {
+    v4: uuidv4
+} = require('uuid');
+const {
     hashPassword,
     verifyPassword
 } = require('../utils/hash')
@@ -27,10 +30,6 @@ let store = new RedisStore({
 })
 
 
-
-
-
-
 module.exports = {
 
     renderLoginPage: (req, res, next) => {
@@ -46,12 +45,8 @@ module.exports = {
         // req.body.password = hash
         hash.hashPassword(req.body.password).then(result => {
             console.log('PAss:>:::', result)
-
             req.body.password = result
             console.log('haspass', result)
-
-
-
             User.addUser(req.body)
             res.redirect('/user/register')
         })
@@ -114,43 +109,40 @@ module.exports = {
 
     authenticate: async (req, res, next) => {
 
-        console.log('req ===>>> ', req.headers.host)
+        User.getUserByUsername(req.body.username, res.locals.slug).then(result => {
+            console.log('result.recordset:::::::::::::>>>', result.recordset)
+            if (result.recordset.length > 0) {
+                console.log('result.recordset:::::::::::::1>>>', result.recordset)
+                verifyPassword(req.body.password, userData.password).then(result => {
+                    console.log('result:::::::::::>>>>',result)
+                })
 
-      console.log('req ===>>> ', req.headers.host)
-       console.log('res.locals.slug ===>>> ', res.locals.slug)
+                // if (isVerified) {
+                //     req.session.username = userData.username;
+                //     req.session.firstName = userData.f_name;
+                //     req.session.lastName = userData.l_name;
+                //     req.session.email = userData.email;
 
-        let userData = await User.passwordByUsername(req.body.username, res.locals.slug).then(result => {
-            if (result.recordset.length === 0) {
-                return res.send('User does not exist...')
+                //     if (userData.role == "management") {
+                //         res.redirect('/management/dashboard')
+                //     } else if (userData.role == "admin") {
+                //         res.redirect('/admin/dashboard')
+                //     } else {
+                //         res.redirect('404')
+                //     }
+
+                // } else {
+                //     res.redirect('/user/login')
+                // }
+            } else {
+                res.send('User not exit..!')
             }
-            return result.recordset[0];
+
+        }).catch(error => {
+            res.send('User not exit..!')
         })
 
-        console.log('UserData: ', userData)
 
-        let isVerified = await verifyPassword(req.body.password, userData.password)
-
-
-
-        if (isVerified) {
-            req.session.username = userData.username;
-            req.session.firstName = userData.f_name;
-            req.session.lastName = userData.l_name;
-            req.session.email = userData.email;
-            if (userData.role == "MANAGEMENT") {
-              //  let slug = res.locals.slug.split("-")[0] + '-mgmt.'
-               // let host = req.headers.host.split(".")[1]
-               // let url = `http://${slug}${host}/management/dashboard`
-                res.redirect('/management/dashboard')
-            } else if (userData.role == "admin") {
-                res.redirect('/admin/dashboard')
-            } else{
-
-                res.redirect('404')
-            }
-        } else {
-            res.redirect('/user/login')
-        }
 
 
     },
@@ -162,10 +154,9 @@ module.exports = {
         })
     },
 
-    logout:(req, res)=>{
+    logout: (req, res) => {
         console.log('Logout:::::::::>>>')
-            res.redirect('/')
-        
+        res.redirect('/')
     }
 
 }
