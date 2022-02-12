@@ -108,8 +108,6 @@ module.exports = {
         })
     },
 
-    programcheck:(req, res)=>{
-        res.json({status:"success",program:req.body.username})
-    }
+
 
 }
