@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser')
 const app = express();
 require('dotenv').config()
 const http = require('http');
@@ -57,7 +56,6 @@ app.use(
     })
 )
 
-
 app.use((req, res, next) => {
     if (!req.session) {
         return next(new Error('No session found!')) // handle error
@@ -69,17 +67,17 @@ app.use(verifySubdomain);
 
 
 // set a cookie
-app.use(function (req, res, next) {
-    var cookie = req.cookies;
-    if (cookie === undefined) {
-      var randomNumber = uuidv4();
-      res.cookie("token", randomNumber, {
-        maxAge: 1000 * 3600 * 24 * 30 * 2,
-        path: "/",
-      });
-    }
-    next();
-  });
+// app.use(function (req, res, next) {
+//     var cookie = req.cookies;
+//     if (cookie === undefined) {
+//       var randomNumber = uuidv4();
+//       res.cookie("token", randomNumber, {
+//         maxAge: 1000 * 3600 * 24 * 30 * 2,
+//         path: "/",
+//       });
+//     }
+//     next();
+//   });
 
 app.get('/logout', (req, res, next) => {
     req.session.destroy(function (err) {
