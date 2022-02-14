@@ -19,7 +19,8 @@ module.exports = {
             store.get(req.sessionID, async (err, result) => {
                 console.log('result::::::::::::::::::>> ', err, result)
                 if (!result) {
-                    res.redirect('/user/login')
+                 //   res.redirect('/user/login')
+                    next();
                 } else {
                     next();
                 }
