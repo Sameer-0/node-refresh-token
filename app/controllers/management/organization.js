@@ -4,7 +4,8 @@ const {
     validationResult
 } = require('express-validator');
 const OrganizationMaster = require("../../models/OrganizationMaster")
-const OrganizationType = require("../../models/OrganizationType")
+const OrganizationType = require("../../models/OrganizationType");
+const Settings = require('../../models/Settings');
 module.exports = {
     getPage: (req, res) => {
 
@@ -27,6 +28,11 @@ module.exports = {
     },
 
     create: (req, res) => {
+        
+        if(req.body.settingName){
+            Settings.updateByName(res.locals.slug, req.body.settingName)
+        }
+
         OrganizationMaster.save(req.body.orgJson).then(result => {
             if (result.output.output) {
                 res.json({

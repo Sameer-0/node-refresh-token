@@ -8,7 +8,7 @@ const Buildings = require('../../models/Buildings')
 const OrganizationMaster = require("../../models/OrganizationMaster")
 const CampusMaster = require("../../models/CampusMaster")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
-const moment = require('moment');
+const Settings = require('../../models/Settings');
 module.exports = {
 
 
@@ -64,6 +64,10 @@ module.exports = {
         //     return;
         // }
 
+        if(req.body.settingName){
+            Settings.updateByName(res.locals.slug, req.body.settingName)
+        }
+
         Buildings.saveWithProc(req.body.buildingJson)
         res.json({
             status: 200,
@@ -72,7 +76,6 @@ module.exports = {
     },
 
     single: (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({

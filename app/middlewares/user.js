@@ -12,10 +12,8 @@ let store = new RedisStore({
 module.exports = {
 
     isLoggedIn: (req, res, next) => {
-        console.log('sessionID====>>>>> ', req.sessionID)
-
         let sessionId = req.sessionID;
-
+        console.log('sessionId====>>>>> ', sessionId)
 
         if (req.sessionID) {
             store.get(req.sessionID, async (err, result) => {

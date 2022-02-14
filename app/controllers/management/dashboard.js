@@ -20,14 +20,13 @@ module.exports = {
                 campusList: result[2].recordset,
                 timeList: result[3].recordset,
                 pageCount: result[4].recordset[0].count,
-                settingCount: result[5].recordset[0].count,
-                orgType:result[6].recordset,
+                stepForm: result[5].recordset,
+                orgType: result[6].recordset,
                 roomTypeList:result[7].recordset
             })
         }).catch(error => {
             throw error
         })
-
     },
 
     dashboardStepForm: (req, res) => {
