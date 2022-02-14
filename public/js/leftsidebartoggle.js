@@ -8,4 +8,7 @@ $('.left-sidebar-toggle').click(function() {
 
     let nav = $('.top-navbar');
     nav.toggleClass('left-0');
+
+    let btn = $('.left-sidebar-toggle');
+    btn.toggleClass('left-sidebar-toggle-turn')
 })

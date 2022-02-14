@@ -21,7 +21,7 @@ module.exports = {
                     buildingList: result[0].recordset,
                     orgList: result[1].recordset,
                     campusList: result[2].recordset,
-                    timeList: result[3].recordset,
+                    timeList: result[3].recordset, 
                     pageCount: result[4].recordset[0].count
                 })
             }).catch(error => {

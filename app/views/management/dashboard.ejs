@@ -191,9 +191,12 @@
                             if (data.status == 200) {
                                 // location.reload()
                                 $('.org-form').addClass('arrow-pointer-active');
+                                $('.org-form').removeClass('org-form');
                                 $('#org-form').addClass('d-none');
                                 $('#campus-form').removeClass('d-none');
-                                $('#building-form').addClass('d-none')
+                                $('.campus-form').addClass('arrow-pointer-activenow');
+                                $('#building-form').addClass('d-none');
+
                             } else {
                                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
             <h3>Error</h3>
@@ -232,9 +235,10 @@
 
 
             $('#campus-submit').on('click', function () {
+                
                 let campusElems = $('#add-more-campus-table tbody tr');
                 let campusCount = campusElems.length;
-
+console.log("campus-sibmitted")
                 let campusJson = [];
 
                 campusElems.each(function (index, elem) {
@@ -295,6 +299,8 @@
                                 $('#org-form').addClass('d-none');
                                 $('#campus-form').addClass('d-none');
                                 $('#building-form').removeClass('d-none')
+                                $('.campus-form').removeClass('arrow-pointer-activenow');
+                                $('.building-form').addClass('arrow-pointer-activenow');
                             } else {
                                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
@@ -328,6 +334,7 @@
             })
 
             $("#building-submit").on('click', function () {
+                console.log("builidng data submitted")
                 let buildingElems = $('#add-more-building-table tbody tr');
                 let buildingCount = buildingElems.length;
 
@@ -387,7 +394,7 @@
                     console.log('buildingJson:::::::>>', buildingJson)
                     $('.error-show').text('');
                     $.ajax({
-                        url: '/management/building',
+                        url: '/management/buildings',
                         method: 'POST',
                         type: 'JSON',
                         data: {

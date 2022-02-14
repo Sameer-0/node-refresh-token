@@ -16,6 +16,6 @@ module.exports = class OrganizationTypes {
                 return request.query(`SELECT TOP ${Number(rowcount)} id, name, description FROM [dbo].organization_type WHERE active  = 1 ORDER BY id DESC`)
             })
         }
-
+  
 
 }
