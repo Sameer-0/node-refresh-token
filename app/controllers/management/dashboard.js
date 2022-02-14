@@ -4,27 +4,25 @@ const CampusMaster = require("../../models/CampusMaster")
 const Room = require("../../models/RoomData")
 const Settings = require("../../models/Settings")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
-const OrganizationType =  require("../../models/OrganizationType")
+const OrganizationType = require("../../models/OrganizationType")
 module.exports = {
 
     getDashboard: (req, res) => {
 
-        Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(), Settings.getCount(res.locals.slug), OrganizationType.fetchAll(50)]).then(result => {
-           
-           console.log('LIst:::::::',result[6].recordset)
+        Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.getCount(res.locals.slug), OrganizationType.fetchAll(50)]).then(result => {
+            console.log('LIst:::::::', result[5].recordset)
             res.render('management/dashboard', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
                 campusList: result[2].recordset,
                 timeList: result[3].recordset,
                 pageCount: result[4].recordset[0].count,
-                settingCount: result[5].recordset[0].count,
-                orgType:result[6].recordset
+                stepForm: result[5].recordset,
+                orgType: result[6].recordset
             })
         }).catch(error => {
             throw error
         })
-
     },
 
     dashboardStepForm: (req, res) => {

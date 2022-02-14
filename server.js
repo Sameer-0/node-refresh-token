@@ -43,6 +43,9 @@ app.use(
             ttl: 260
         }),
         saveUninitialized: false,
+        genid: function(req) {
+            return uuidv4() // use UUIDs for session IDs
+          },
         secret: process.env.COOKIE_SECRET,
         resave: false,
         name: 'token',

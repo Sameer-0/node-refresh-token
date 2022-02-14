@@ -6,7 +6,8 @@ const Buildings = require('../../models/Buildings')
 const OrganizationMaster = require("../../models/OrganizationMaster")
 const CampusMaster = require("../../models/CampusMaster")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
-const moment = require('moment');
+const Settings =  require('../../models/Settings')
+
 
 module.exports = {
     getCampusPage: (req, res) => {
@@ -39,6 +40,10 @@ module.exports = {
                 errors: errors.array()
             });
             return;
+        }
+
+        if(req.body.settingName){
+            Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
         CampusMaster.saveWithProc(req.body.campusJson).then(result => {

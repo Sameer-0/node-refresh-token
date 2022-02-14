@@ -1,4 +1,6 @@
-const { append } = require('express/lib/response');
+const {
+    append
+} = require('express/lib/response');
 const {
     sql,
     poolConnection,
