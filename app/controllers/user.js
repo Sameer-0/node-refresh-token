@@ -115,11 +115,7 @@ module.exports = {
                     req.session.firstName = userData.f_name;
                     req.session.lastName = userData.l_name;
                     req.session.email = userData.email;
-                    var randomNumber = uuidv4();
-                    res.cookie('token', randomNumber, {
-                        httpOnly: true,
-                        signed: false
-                    });
+                    //store.set(req.sessionID, req.session, callback)
                     if (userData.role == "management") {
                         res.redirect('/management/dashboard')
                     } else if (userData.role == "admin") {

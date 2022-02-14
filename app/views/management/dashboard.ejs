@@ -7,12 +7,19 @@
 
     <!-- DATA-ROW-1 -->
     <% if(settingCount > 0){%>
+
     <!-- <h1>Render Dashboard Ejs</h1> -->
     <%- include('partials/dashboard.ejs') %>
     <%}else{%>
-    <h1>Render Step Form</h1>
-    <%- include('partials/dashboard.ejs') %>
-   <!-- <%- include('partials/stepform.ejs') %> -->
+    <div class="d-flex justify-content-between py-3 time-line">
+        <div class="arrow-pointer org-form"> Organization </div>
+        <div class="arrow-pointer campus-form">Campus </div>
+        <div class="arrow-pointer building-form"> Building</div>
+        <div class="arrow-pointer"> Room</div>
+        <div class="arrow-pointer"> Faculty</div>
+
+    </div>
+    <%- include('partials/stepform.ejs') %>
     <%}%>
 
     </main>
@@ -22,10 +29,41 @@
 
         <%- include('partials/footer') %>
 
+
+
+
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/dashboardscript.js"></script>
+
+    <script src="/js/leftsidebartoggle.js"></script>
+    <script src="/js/fontawesome.all.min.js"></script>
     <script>
         $(document).ready(function () {
             $(".homeCard .border").hover(function () {
                 $this = $(this)
+
+                $this.find("img").css({
+                    "transition": "0.3s",
+                    "transform": "scale(0.7)"
+                })
+
+                setTimeout(function () {
+                    $this.find("img").css({
+                        "transition": "0.2s",
+                        "transform": "scale(1)"
+                    })
+                }, 200)
+
+            }, function () {
+                $this.find("img").css({
+                    "transition": "0.2s",
+                    "transform": "scale(1)"
+                })
+            })
+
+            $(".homeCard .border").hover(function () {
+                $this = $(this)
+
 
                 $this.find("img").css({
                     "transition": "0.3s",
@@ -65,87 +103,338 @@
                         }
                     }
                 },
-                series: [44, 55, 13, 33],
-                labels: ['Apple', 'Mango', 'Orange', 'Watermelon']
+                series: [44, 55, 11],
+                labels: ['Room booked', 'Total room', 'Room available for booking']
             }
-
             var chart = new ApexCharts(document.querySelector("#chart1"), options);
             chart.render();
+
+
+            function isWhiteSpace(str) {
+                        str = str.toString();
+
+                        for (let c of str) {
+                            if (c.charCodeAt() === 32) {
+                                return true;
+                            }
+                        };
+
+                        return false;
+                    }
 
             //Calling Apies
 
             $("#org-submit").on('click', function () {
-                $.ajax({
-                    url: '/management/organization',
-                    method: 'POST',
-                    type: 'JSON',
-                    data: {
-                        org_id: $('#orgId').val(),
-                        org_abbr: $('#orgAbbr').val(),
-                        org_name: $('#orgName').val(),
-                        org_complete_name: $('#orgCompleteName').val(),
-                        org_type_id: $('#orgType').val()
-                    },
-                    success: data => {
-                        if (data.status == 200) {
-                            location.reload()
-                        } else {
-                            $(".errorMsg").html(data.message)
-                        }
+                console.log('Click::::>>')
 
-                    },
-                    error: err => {
-                        let error = err.responseJSON.errors
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        error.map(er => {
-                            errorHtml +=
-                                `<li>${er.msg}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                let orgElems = $('#add-more-org-table tbody tr');
+                let orgCount = orgElems.length;
+
+                let orgJson = [];
+
+                orgElems.each(function (index, elem) {
+                    let orgId = $(elem).find(`input[name='orgId']`).val()
+                    let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
+                    let orgName = $(elem).find(`input[name='orgName']`).val()
+                    let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
+                    let orgType = $(elem).find(`select[name='orgType']`).val()
+
+                    
+
+                    if (orgId === "" || orgAbbr === "" || orgName === "" || orgCompleteName ===
+                        "" || orgType === "") {
+                        $('.error-show').text('Fields cannot be empty!!');
+                        return;
+                    } 
+                    else if(orgAbbr.trim() === "" || orgName.trim() === "" || orgCompleteName.trim() === ""){
+                        $('.error-show').text('Fields cannot have empty space!!');
+                        return;
+                    }
+                    else {
+
+                        if (index < orgCount - 1) {
+                            let obj = {
+                                org_id: orgId,
+                                org_abbr: orgAbbr,
+                                org_name: orgName,
+                                org_complete_name: orgCompleteName,
+                                org_type_id: orgType
+                            }
+                            orgJson.push(obj)
+                        } else {
+                            let obj = {
+                                org_id: orgId,
+                                org_abbr: orgAbbr,
+                                org_name: orgName,
+                                org_complete_name: orgCompleteName,
+                                org_type_id: orgType
+                            }
+                            orgJson.push(obj)
+                        }
                     }
                 })
-                $('#org-form').addClass('d-none');
-                $('#campus-form').removeClass('d-none');
-                $('#building-form').addClass('d-none')
+
+                if (orgJson.length > 0) {
+
+                    $('.error-show').text('');
+                    console.log('orgJson:::::::>>', orgJson)
+
+                    $.ajax({
+                        url: '/management/organization',
+                        method: 'POST',
+                        type: 'JSON',
+                        data: {
+                            orgJson: JSON.stringify(orgJson)
+                        },
+                        success: data => {
+                            console.log('data:::::::::::::::::>>', data)
+                            if (data.status == 200) {
+                                // location.reload()
+                                $('.org-form').addClass('arrow-pointer-active');
+                                $('#org-form').addClass('d-none');
+                                $('#campus-form').removeClass('d-none');
+                                $('#building-form').addClass('d-none')
+                            } else {
+                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <h3>Error</h3>
+            <ul>`
+                                data.message.forEach(function (item) {
+                                    errorHtml += `<li>${item}</li>`
+                                })
+                                errorHtml +=
+                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                                console.log('errorHtml::::::::>>', errorHtml)
+                                $("#errorHtml").html(errorHtml)
+                            }
+
+                        },
+                        error: err => {
+                            console.log('Error:::::::::::::>>', err)
+                            let error = err.responseJSON.errors
+                            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <h3>Error</h3>
+            <ul>`
+                            error.map(er => {
+                                errorHtml +=
+                                    `<li>${er.msg}</li>`
+                            })
+                            errorHtml +=
+                                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                            $("#errorHtml").html(errorHtml)
+                        }
+                    })
+                }
+
+
+
             })
+
+
 
             $('#campus-submit').on('click', function () {
-                console.log("yellio")
-                $.ajax({
-                    url: '/management/campus',
-                    method: 'POST',
-                    type: 'JSON',
-                    data: {
-                        campusId: $("#campusId").val(),
-                        campusAbbr: $("#campusAbbr").val(),
-                        campusName: $("#campusName").val(),
-                        campusDesc: $("#campusDesc").val()
-                    },
-                    success: data => {
-                        location.reload()
-                    },
-                    error: err => {
-                        let error = err.responseJSON.errors
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        error.map(er => {
-                            errorHtml +=
-                                `<li>${er.msg}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                let campusElems = $('#add-more-campus-table tbody tr');
+                let campusCount = campusElems.length;
+
+                let campusJson = [];
+
+                campusElems.each(function (index, elem) {
+                    let campusId = $(elem).find(`input[name='campusId']`).val()
+                    let campusAbbr = $(elem).find(`input[name='campusAbbr']`).val()
+                    let campusName = $(elem).find(`input[name='campusName']`).val()
+                    let campusDesc = $(elem).find(`input[name='campusDesc']`).val()
+
+                    if (campusId === "" || campusAbbr === "" || campusName === "" ||
+                        campusDesc === "") {
+                        
+                        $('.error-show').text('Fields cannot be empty!!');
+                        return;
+
+                    }
+                    
+                    else if(campusAbbr.trim() === "" || campusName.trim() === "" || campusDesc.trim() === ""){
+                        $('.error-show').text('Fields cannot have empty space!!');
+                        return;
+                    }
+                    else {
+
+                        if (index < campusCount - 1) {
+                            let obj = {
+                                campusId: campusId,
+                                campusAbbr: campusAbbr,
+                                campusName: campusName,
+                                campusDesc: campusDesc
+                            }
+                            campusJson.push(obj)
+                        } else {
+                            let obj = {
+                                campusId: campusId,
+                                campusAbbr: campusAbbr,
+                                campusName: campusName,
+                                campusDesc: campusDesc
+                            }
+                            campusJson.push(obj)
+                        }
                     }
                 })
-                $('#org-form').addClass('d-none');
-                $('#campus-form').addClass('d-none');
-                $('#building-form').removeClass('d-none')
+
+                if (campusJson.length > 0) {
+                    console.log('campusJson:::::::>>', campusJson)
+                    $('.error-show').text('')
+                    $.ajax({
+                        url: '/management/campus',
+                        method: 'POST',
+                        type: 'JSON',
+                        data: {
+                            campusJson: JSON.stringify(campusJson)
+                        },
+                        success: data => {
+                            console.log('data:::::::::::::::::>>', data)
+                            if (data.status == 200) {
+                                // location.reload()
+                                $('.campus-form').addClass('arrow-pointer-active')
+                                $('#org-form').addClass('d-none');
+                                $('#campus-form').addClass('d-none');
+                                $('#building-form').removeClass('d-none')
+                            } else {
+                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                                data.message.forEach(function (item) {
+                                    errorHtml += `<li>${item}</li>`
+                                })
+                                errorHtml +=
+                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                                console.log('errorHtml::::::::>>', errorHtml)
+                                $("#errorHtml").html(errorHtml)
+                            }
+
+                        },
+                        error: err => {
+                            console.log('Error:::::::::::::>>', err)
+                            let error = err.responseJSON.errors
+                            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                            error.map(er => {
+                                errorHtml +=
+                                    `<li>${er.msg}</li>`
+                            })
+                            errorHtml +=
+                                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                            $("#errorHtml").html(errorHtml)
+                        }
+                    })
+                }
             })
+
+            $("#building-submit").on('click', function () {
+                let buildingElems = $('#add-more-building-table tbody tr');
+                let buildingCount = buildingElems.length;
+
+                let buildingJson = [];
+
+                buildingElems.each(function (index, elem) {
+                    let buildingName = $(elem).find(`input[name='buildingName']`).val()
+                    let buildingNumber = $(elem).find(`input[name='buildingNumber']`).val();
+                    let floors = $(elem).find(`input[name='floors']`).val();
+                    let ownerId = $(elem).find(`select[name='ownerId']`).val();
+                    let startTimeId = $(elem).find(`select[name='startTimeId']`).val();
+                    let endTimeId = $(elem).find(`select[name='endTimeId']`).val();
+                    let handledById = $(elem).find(`select[name='handledById']`).val();
+                    let campusId = $(elem).find(`select[name='campusId']`).val();
+
+                    if (buildingName === "" || buildingNumber === "" || floors === "" ||
+                        ownerId === "" || startTimeId === "" || endTimeId === "" ||
+                        handledById === "" || campusId === "") {
+                         $('.error-show').text('Fields cannot be empty!!');
+                         return;
+                    } 
+                    else if(buildingName.trim() === ""){
+                        $('.error-show').text('Fields cannot have empty space!!');
+                        return;
+                    }
+                    else {
+
+                        if (index < buildingCount - 1) {
+                            let obj = {
+                                buildingName: buildingName,
+                                buildingNumber: buildingNumber,
+                                floors: floors,
+                                ownerId: ownerId,
+                                startTimeId: startTimeId,
+                                endTimeId: endTimeId,
+                                handledById: handledById,
+                                campusId: campusId
+                            }
+                            buildingJson.push(obj)
+                        } else {
+                            let obj = {
+                                buildingName: buildingName,
+                                buildingNumber: buildingNumber,
+                                floors: floors,
+                                ownerId: ownerId,
+                                startTimeId: startTimeId,
+                                endTimeId: endTimeId,
+                                handledById: handledById,
+                                campusId: campusId
+                            }
+                            buildingJson.push(obj)
+                        }
+                    }
+                })
+
+                if (buildingJson.length > 0) {
+                    console.log('buildingJson:::::::>>', buildingJson)
+                    $('.error-show').text('');
+                    $.ajax({
+                        url: '/management/building',
+                        method: 'POST',
+                        type: 'JSON',
+                        data: {
+                            buildingJson: JSON.stringify(buildingJson)
+                        },
+                        success: data => {
+                            console.log('data:::::::::::::::::>>', data)
+                            if (data.status == 200) {
+                                // location.reload()
+                                $('.building-form').addClass('arrow-pointer-active')
+                                $('#org-form').addClass('d-none');
+                                $('#campus-form').addClass('d-none');
+                                $('#building-form').addClass('d-none')
+                                $('#room-form').removeClass('d-none')
+                            } else {
+                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                                data.message.forEach(function (item) {
+                                    errorHtml += `<li>${item}</li>`
+                                })
+                                errorHtml +=
+                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                                console.log('errorHtml::::::::>>', errorHtml)
+                                $("#errorHtml").html(errorHtml)
+                            }
+
+                        },
+                        error: err => {
+                            console.log('Error:::::::::::::>>', err)
+                            let error = err.responseJSON.errors
+                            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                            error.map(er => {
+                                errorHtml +=
+                                    `<li>${er.msg}</li>`
+                            })
+                            errorHtml +=
+                                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                            $("#errorHtml").html(errorHtml)
+                        }
+                    })
+                }
+            })
+
+
         })
     </script>
     <%- include('partials/footerEnd') %>

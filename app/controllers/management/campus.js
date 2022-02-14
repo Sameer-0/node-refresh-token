@@ -41,7 +41,7 @@ module.exports = {
             return;
         }
 
-        CampusMaster.save(req.body).then(result => {
+        CampusMaster.saveWithProc(req.body.campusJson).then(result => {
             res.json({
                 status: 200,
                 messsage: "Success"
