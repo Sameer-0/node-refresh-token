@@ -11,8 +11,8 @@
         <div class="card-header table-card-header text-uppercase d-flex align-items-center">
             <h5>Campus List</h5>
 
-            <button class="btn add-btn ms-auto" data-bs-toggle="modal"
-                            data-bs-target="#add-campus-modal"><i class="fas fa-plus"></i></button>
+            <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
+                    class="fas fa-plus"></i></button>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -71,226 +71,312 @@
 
 
 
- <!-- ADD NEW CAMPUS MODAL -->
- <div class="modal fade" id="add-campus-modal" tabindex="-1" role="dialog"
- aria-labelledby="add-building-modal" aria-hidden="true">
- <div class="modal-dialog modal-dialog-centered" role="document">
-     <div class="modal-content modal-inputform">
-         <div class="modal-header bg-info modal-inputform-header">
-             <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
-             <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal"
-                 aria-label="Close"><i class="fas fa-times"></i></button>
+<!-- ADD NEW CAMPUS MODAL -->
+<div class="modal fade" id="add-campus-modal" tabindex="-1" role="dialog" aria-labelledby="add-building-modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header bg-info modal-inputform-header">
+                <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
 
-         </div>
-         <!-- <form action="/management/campus/add" method="POST"> -->
-         <div class="modal-body">
+            </div>
+            <!-- <form action="/management/campus/add" method="POST"> -->
+            <div class="modal-body">
+                <div id="errorHtml"></div>
+                <input type="hidden" id="roomId" name="roomId">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="add-more-campus-table">
+                        <thead>
+                            <th>Campus Id</th>
+                            <th>Campus Abbr</th>
+                            <th>Campus Name</th>
+                            <th>Campus Description</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input name="campusId" id="campusId" type="number" class="form-control"
+                                        placeholder="Campus Id" required>
+                                </td>
+                                <td>
+                                    <input name="campusAbbr" id="campusAbbr" type="text" class="form-control"
+                                        placeholder="Campus Abbr" required>
+                                </td>
+                                <td>
+                                    <input name="campusName" id="campusName" type="text" class="form-control"
+                                        placeholder="Campus Name" required>
+                                </td>
+                                <td>
+                                    <input name="campusDesc" id="campusDesc" type="text" class="form-control"
+                                        placeholder="Campus Description">
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer removecampus"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-             <div class="form-row mt-4">
-                 <input name="campusId" id="campusId" type="number" class="form-control"
-                     placeholder="Campus Id" required>
-                 <input type="hidden" id="Id" name="Id">
-             </div>
+            </div>
 
-             <div class="form-row mt-4">
-                 <input name="campusAbbr" id="campusAbbr" type="text" class="form-control"
-                     placeholder="Campus Abbr" required>
-             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-campus"><i class="fas fa-plus"></i>
+                    Add
+                    More Campus</button>
+                <button type="button" class="btn createCampus modal-inputform-btn">Create
+                    Campus</button>
+                <button type="button" class="btn updateCampus modal-inputform-btn d-none">Update
+                    Campus</button>
+            </div>
+            <!-- </form> -->
 
-             <div class="form-row mt-4">
-                 <input name="campusName" id="campusName" type="text" class="form-control"
-                     placeholder="Campus Name" required>
-             </div>
+        </div>
 
-             <div class="form-row mt-4">
-                 <input name="campusDesc" id="campusDesc" type="text" class="form-control"
-                     placeholder="Campus Description">
-             </div>
-         </div>
+        <div class="form-row mt-4">
+            <input name="campusDesc" id="campusDesc" type="text" class="form-control" placeholder="Campus Description">
 
-         <div class="modal-footer">
-             <button type="button" class="btn createCampus modal-inputform-btn">Create
-                 Campus</button>
-             <button type="button" class="btn updateCampus modal-inputform-btn d-none">Update
-                 Campus</button>
-         </div>
-         <!-- </form> -->
+        </div>
+    </div>
 
-     </div>
+    <div class="modal-footer">
+        <button type="button" class="btn  createCampus modal-inputform-btn">Create Campus</button>
+        <button type="button" class="btn  updateCampus modal-inputform-btn d-none">Update
+            Campus</button>
+    </div>
+    <!-- </form> -->
 
-     <div class="form-row mt-4">
-         <input name="campusDesc" id="campusDesc" type="text" class="form-control"
-             placeholder="Campus Description">
-
-     </div>
- </div>
-
- <div class="modal-footer">
-     <button type="button" class="btn  createCampus modal-inputform-btn">Create Campus</button>
-     <button type="button" class="btn  updateCampus modal-inputform-btn d-none">Update
-         Campus</button>
- </div>
- <!-- </form> -->
-
-<div class="form-row mt-4">
- <input name="campusDesc" id="campusDesc" type="text" class="form-control"
-     placeholder="Campus Description">
-
-
+    <div class="form-row mt-4">
+        <input name="campusDesc" id="campusDesc" type="text" class="form-control" placeholder="Campus Description">
+    </div>
 </div>
-</div>
+
+<%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#add-more-campus').on('click', function () {
+            console.log("Organization Added::::")
+
+            let lastTr = $('#add-more-campus-table tbody tr:last-child')
+            let campusId = lastTr.find(`select[name='campusId']`).val();
+            let campusAbbr = lastTr.find(`select[name='campusAbbr']`).val();
+            let campusName = lastTr.find(`select[name='campusName']`).val();
+            let campusDesc = lastTr.find(`select[name='campusDesc']`).val();
 
 
+            let clonedTr = lastTr.clone();
+            clonedTr.find(`input[name='campusId']`).val('')
+            clonedTr.find(`input[name='campusAbbr']`).val('')
+            clonedTr.find(`select[name='campusName']`).val('')
+            clonedTr.find(`select[name='campusDesc']`).val('')
+
+            $('#add-more-campus-table tbody').append(clonedTr)
+        })
+
+        $('#add-campus-modal').on('click', '.removecampus', function () {
+            let trLength = $('#add-campus-modal tbody tr').length;
+
+            if (trLength > 1) {
+                $(this).closest('tr').remove()
+            } else {
+                alert('Cannot delete this room.')
+            }
+        })
 
 
+        //management/campus/add
+        $('.createCampus').on('click', function () {
+            let campusElems = $('#add-more-campus-table tbody tr');
+            let campusCount = campusElems.length;
 
+            let campusJson = [];
 
-        <%- include("../partials/footer") %>
-        <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-        <script>
-            //management/campus/add
-            $('.createCampus').on('click', function () {
-                $.ajax({
-                    url: '/management/campus',
-                    method: 'POST',
-                    type: 'JSON',
-                    data: {
-                        campusId: $("#campusId").val(),
-                        campusAbbr: $("#campusAbbr").val(),
-                        campusName: $("#campusName").val(),
-                        campusDesc: $("#campusDesc").val()
-                    },
-                    success: data => {
+            campusElems.each(function (index, elem) {
+                let campusId = $(elem).find(`input[name='campusId']`).val()
+                let campusAbbr = $(elem).find(`input[name='campusAbbr']`).val()
+                let campusName = $(elem).find(`input[name='campusName']`).val()
+                let campusDesc = $(elem).find(`input[name='campusDesc']`).val()
+
+                if (index < campusCount - 1) {
+                    let obj = {
+                        campusId: campusId,
+                        campusAbbr: campusAbbr,
+                        campusName: campusName,
+                        campusDesc: campusDesc
+                    }
+                    campusJson.push(obj)
+                } else {
+                    let obj = {
+                        campusId: campusId,
+                        campusAbbr: campusAbbr,
+                        campusName: campusName,
+                        campusDesc: campusDesc
+                    }
+                    campusJson.push(obj)
+                }
+            })
+
+            console.log('campusJson:::::::>>', campusJson)
+
+            $.ajax({
+                url: '/management/campus',
+                method: 'POST',
+                type: 'JSON',
+                data: {
+                    campusJson: JSON.stringify(campusJson)
+                },
+                success: data => {
+                    console.log('data:::::::::::::::::>>', data)
+                    if (data.status == 200) {
                         location.reload()
-                    },
-                    error: err => {
-                        console.log(error)
-                        let error = err.responseJSON.errors
+                    } else {
                         let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                        error.map(er => {
-                            errorHtml +=
-                                `<li>${er.msg}</li>`
+                        data.message.forEach(function (item) {
+                            errorHtml += `<li>${item}</li>`
                         })
                         errorHtml +=
                             `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        console.log('errorHtml::::::::>>', errorHtml)
                         $("#errorHtml").html(errorHtml)
                     }
-                })
-            })
 
-
-            $('#campusTable').on('click', '.edit-campus', function () {
-                $(".updateCampus").removeClass('d-none')
-                $(".createCampus").addClass('d-none')
-                $.ajax({
-                    url: '/management/campus/single',
-                    method: 'GET',
-                    type: 'JSON',
-                    data: {
-                        Id: $(this).attr('data-campus-id')
-                    },
-                    success: data => {
-                        let camp = data.result;
-                        $("#Id").val(camp.id)
-                        $("#campusId").val(camp.campus_id)
-                        $("#campusAbbr").val(camp.campus_abbr)
-                        $("#campusName").val(camp.campus_name_40_char)
-                        $("#campusDesc").val(camp.campus_description)
-                        $("#add-campus-modal").modal('show')
-                    },
-
-                    error: err => {
-
-                    }
-                })
-            })
-
-
-            $('.updateCampus').on('click', function () {
-                $.ajax({
-                    url: '/management/campus',
-                    method: 'PUT',
-                    type: 'JSON',
-                    data: {
-                        Id: $("#Id").val(),
-                        campusId: $("#campusId").val(),
-                        campusAbbr: $("#campusAbbr").val(),
-                        campusName: $("#campusName").val(),
-                        campusDesc: $("#campusDesc").val()
-                    },
-                    success: data => {
-                        location.reload()
-                    },
-                    error: err => {
-                        console.log(err)
-                        let error = err.responseJSON.errors
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                },
+                error: err => {
+                    console.log('Error:::::::::::::>>', err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                        error.map(er => {
-                            console.log(er.msg)
-                            errorHtml +=
-                                `<li>${er.msg}</li>`
-                        })
+                    error.map(er => {
                         errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
-                    }
-                })
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
+                }
             })
+        })
 
 
+        $('#campusTable').on('click', '.edit-campus', function () {
+            $(".updateCampus").removeClass('d-none')
+            $(".createCampus").addClass('d-none')
+            $.ajax({
+                url: '/management/campus/single',
+                method: 'GET',
+                type: 'JSON',
+                data: {
+                    Id: $(this).attr('data-campus-id')
+                },
+                success: data => {
+                    let camp = data.result;
+                    $("#Id").val(camp.id)
+                    $("#campusId").val(camp.campus_id)
+                    $("#campusAbbr").val(camp.campus_abbr)
+                    $("#campusName").val(camp.campus_name_40_char)
+                    $("#campusDesc").val(camp.campus_description)
+                    $("#add-campus-modal").modal('show')
+                },
 
-            $('#campusTable').on('click', '.delete-campus', function () {
-                $.ajax({
-                    url: '/management/campus',
-                    method: 'DELETE',
-                    type: 'JSON',
-                    data: {
-                        Id: $(this).attr('data-campus-id')
-                    },
-                    success: data => {
-                        location.reload()
-                    },
-                    error: err => {
-                        console.log('Error: ', err)
-                    }
-                })
+                error: err => {
+
+                }
             })
+        })
 
-            //Pagination Here
-            let pageCount = `<%- pageCount %>`
-            console.log("Page Count=====>>>", pageCount)
-            let pageNos = Math.ceil(Number(pageCount) / 10)
-            console.log("Page Numbers", pageNos)
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active',
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
 
-                $.ajax({
-                    type: "POST",
-                    url: "/management/campus",
-                    data: {
-                        pageNo: num
-                    },
-                    success: function (data) {
-                        let campusList = data.data;
-                        console.log('campusList:::::::>>', campusList)
-                        let quoteAjax = `<table class="table custom_row" id="campusTable">
+        $('.updateCampus').on('click', function () {
+            $.ajax({
+                url: '/management/campus',
+                method: 'PUT',
+                type: 'JSON',
+                data: {
+                    Id: $("#Id").val(),
+                    campusId: $("#campusId").val(),
+                    campusAbbr: $("#campusAbbr").val(),
+                    campusName: $("#campusName").val(),
+                    campusDesc: $("#campusDesc").val()
+                },
+                success: data => {
+                    location.reload()
+                },
+                error: err => {
+                    console.log(err)
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    error.map(er => {
+                        console.log(er.msg)
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
+                }
+            })
+        })
+
+
+
+        $('#campusTable').on('click', '.delete-campus', function () {
+            $.ajax({
+                url: '/management/campus',
+                method: 'DELETE',
+                type: 'JSON',
+                data: {
+                    Id: $(this).attr('data-campus-id')
+                },
+                success: data => {
+                    location.reload()
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
+
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
+        console.log("Page Count=====>>>", pageCount)
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+
+            $.ajax({
+                type: "POST",
+                url: "/management/campus",
+                data: {
+                    pageNo: num
+                },
+                success: function (data) {
+                    let campusList = data.data;
+                    console.log('campusList:::::::>>', campusList)
+                    let quoteAjax = `<table class="table custom_row" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
                         <th>Abbr</th>
@@ -299,9 +385,9 @@
                         <th>Action</th>
                     </thead>
                     <tbody>`;
-                        for (campus of campusList) {
-                            quoteAjax +=
-                                ` <tr>
+                    for (campus of campusList) {
+                        quoteAjax +=
+                            ` <tr>
                                 <td>${campus.campus_id}</td>
                                 <td>${campus.abbr}</td>
                                 <td>${campus.name}</td>
@@ -314,28 +400,28 @@
                                         class="fas fa-trash-alt text-danger delete-campus"></a>
                                 </td>
                             </tr>`
-                        }
-                        quoteAjax += `<tbody></table>`
-                        $("#campusTable").html(quoteAjax);
                     }
-                })
-            });
+                    quoteAjax += `<tbody></table>`
+                    $("#campusTable").html(quoteAjax);
+                }
+            })
+        });
 
 
-            //search feature delay function is writter in script.js file which is located in public/js/script.js
-            $('#searchkeyword').on('input', delay(function (e) {
-                let keyword = $("#searchkeyword").val()
-                $.ajax({
-                    type: "GET",
-                    url: "/management/campus/search",
-                    data: {
-                        keyword: keyword
-                    },
-                    success: function (data) {
-                        console.log('campusList::::::', data)
-                        let campusList = data.data;
+        //search feature delay function is writter in script.js file which is located in public/js/script.js
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "GET",
+                url: "/management/campus/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    console.log('campusList::::::', data)
+                    let campusList = data.data;
 
-                        let AjaxTable = `<table class="table table-bordered" id="campusTable">
+                    let AjaxTable = `<table class="table table-bordered" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
                         <th>Abbr</th>
@@ -345,10 +431,10 @@
                     </thead>
                     <tbody>`;
 
-                        if (campusList.length > 0) {
-                            for (campus of campusList) {
-                                AjaxTable +=
-                                    ` <tr>
+                    if (campusList.length > 0) {
+                        for (campus of campusList) {
+                            AjaxTable +=
+                                ` <tr>
                                 <td>${campus.campus_id}</td>
                                 <td>${campus.abbr}</td>
                                 <td>${campus.name}</td>
@@ -361,17 +447,18 @@
                                         class="fas fa-trash-alt text-danger delete-campus"></a>
                                 </td>
                             </tr>`;
-                            }
-                        } else {
-                            AjaxTable +=
-                                ` <tr>
+                        }
+                    } else {
+                        AjaxTable +=
+                            ` <tr>
                                 <td colspan="5">No Data Found</td>
                             </tr>`;
-                        }
-                        AjaxTable += `<tbody></table>`
-                        $("#campusTable").html(AjaxTable);
                     }
-                })
-            }, 500));
-        </script>
-        <%- include("../partials/footerEnd") %>
+                    AjaxTable += `<tbody></table>`
+                    $("#campusTable").html(AjaxTable);
+                }
+            })
+        }, 500));
+    })
+</script>
+<%- include("../partials/footerEnd") %>

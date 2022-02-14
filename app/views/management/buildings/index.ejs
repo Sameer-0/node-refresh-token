@@ -1,6 +1,6 @@
 <%- include("../partials/head") %>
 
- 
+
 
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
@@ -12,8 +12,8 @@
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center">
             <h5>Building List</h5>
-            <button class="btn add-btn ms-auto" data-bs-toggle="modal"
-                            data-bs-target="#add-building-modal"><i class="fas fa-plus"></i></button>
+            <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i
+                    class="fas fa-plus"></i></button>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -88,115 +88,115 @@
     <!-- Modal -->
     <div class="modal fade" id="add-building-modal" tabindex="-1" aria-labelledby="add-building-modal"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-fullscreen modal-lg">
             <div class="modal-content modal-inputform">
                 <div class="modal-header modal-inputform-header">
                     <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
                     <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                             class="fas fa-times"></i></button>
                 </div>
+
+
                 <div class="modal-body">
                     <div id="errorHtml"></div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <input name="buildingName" id="buildingName" type="text" class="form-control"
-                                    placeholder="Building Name" required>
-                                <input type="hidden" id="buildingId" name="buildingId">
-                            </div>
-                        </div>
+                    <input type="hidden" id="roomId" name="roomId">
+                    <div class="table-responsive ">
+                        <table class="table " id="add-more-building-table">
+                            <thead>
+                                <th>Building Name</th>
+                                <th>Building Number</th>
+                                <th>Total Floor Count</th>
+                                <th>Owner</th>
+                                <th>Start time</th>
+                                <th>End time</th>
+                                <th>Handled by</th>
+                                <th>Campus</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input name="buildingName" id="buildingName" type="text" class="form-control"
+                                            placeholder="Building Name" required>
+                                    </td>
+                                    <td>
+                                        <input name="buildingNumber" id="buildingNumber" type="number"
+                                            class="form-control" placeholder="Building Number" required>
+                                    </td>
+                                    <td>
+                                        <input name="floors" id="floors" type="number" class="form-control"
+                                            placeholder="Total Floor Count" required>
+                                    </td>
 
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <input name="buildingNumber" id="buildingNumber" type="text" class="form-control"
-                                    placeholder="Building Number" required>
-                            </div>
-                        </div>
+                                    <td>
+                                        <select class="form-select modalSelect2" name="ownerId" id="ownerId" required>
+                                            <option disabled selected>--Owner--</option>
+                                            <% for(let owner of orgList) { %>
+                                            <option value="<%- owner.id %>">
+                                                <%- owner.org_abbr %>
+                                            </option>
+                                            <% } %>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select modalSelect2" name="startTimeId" id="startTimeId"
+                                            required>
+                                            <option disabled selected value>--Start Time--</option>
+                                            <% for(let time of timeList) { %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.start_time %>
+                                            </option>
+                                            <% } %>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select modalSelect2" name="endTimeId" id="endTimeId"
+                                            required>
+                                            <option disabled selected value>--End Time--</option>
+                                            <% for(let time of timeList) { %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.end_time %>
+                                            </option>
+                                            <% } %>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select modalSelect2" name="handledById" id="handledById"
+                                            required>
+                                            <option disabled selected value>--Handled By--</option>
+                                            <% for(let handler of orgList) { %>
+                                            <option value="<%- handler.id %>">
+                                                <%- handler.org_abbr %>
+                                            </option>
+                                            <% } %>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select modalSelect2" name="campusId" id="campusId" required>
+                                            <option disabled selected value>--Campus--</option>
+                                            <% for(let campus of campusList) { %>
+                                            <option value="<%- campus.id %>">
+                                                <%- campus.campus_abbr %>
+                                            </option>
+                                            <% } %>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer removebuilding"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <input name="floors" id="floors" type="number" class="form-control"
-                                    placeholder="Total Floor Count" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <select class="form-select modalSelect2" name="ownerId" id="ownerId" required>
-                                    <option disabled selected>--Owner--</option>
-                                    <% for(let owner of orgList) { %>
-                                    <option value="<%- owner.id %>">
-                                        <%- owner.org_abbr %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <select class="form-select modalSelect2" name="startTimeId" id="startTimeId" required>
-                                    <option disabled selected value>--Start Time--</option>
-                                    <% for(let time of timeList) { %>
-                                    <option value="<%- time.id %>">
-                                        <%- time.start_time %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <select class="form-select modalSelect2" name="endTimeId" id="endTimeId" required>
-                                    <option disabled selected value>--End Time--</option>
-                                    <% for(let time of timeList) { %>
-                                    <option value="<%- time.id %>">
-                                        <%- time.end_time %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <select class="form-select modalSelect2" name="handledById" id="handledById" required>
-                                    <option disabled selected value>--Handled By--</option>
-                                    <% for(let handler of orgList) { %>
-                                    <option value="<%- handler.id %>">
-                                        <%- handler.org_abbr %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="my-3 py-2">
-                                <select class="form-select modalSelect2" name="campusId" id="campusId" required>
-                                    <option disabled selected value>--Campus--</option>
-                                    <% for(let campus of campusList) { %>
-                                    <option value="<%- campus.id %>">
-                                        <%- campus.campus_abbr %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-
-
 
                 </div>
+
                 <div class="modal-footer">
                     <div id="errorMsg"></div>
+                    <button type="button" class="btn btn-success  btn-sm" id="add-more-building"><i
+                            class="fas fa-plus"></i>
+                        Add
+                        More Building</button>
                     <button type="submit" class="btn  addBuilding modal-inputform-btn">Create Building</button>
                     <button type="submit" class="btn  updateBuilding modal-inputform-btn d-none">Update
                         Building</button>
@@ -210,26 +210,81 @@
 
     <%- include("../partials/footer") %>
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+    <script src="/js/dashboardscript.js"></script>
     <script>
         $(".addBuilding").on('click', function () {
+            let buildingElems = $('#add-more-building-table tbody tr');
+            let buildingCount = buildingElems.length;
+
+            let buildingJson = [];
+
+            buildingElems.each(function (index, elem) {
+                let buildingName = $(elem).find(`input[name='buildingName']`).val()
+                let buildingNumber = $(elem).find(`input[name='buildingNumber']`).val();
+                let floors = $(elem).find(`input[name='floors']`).val();
+                let ownerId = $(elem).find(`select[name='ownerId']`).val();
+                let startTimeId = $(elem).find(`select[name='startTimeId']`).val();
+                let endTimeId = $(elem).find(`select[name='endTimeId']`).val();
+                let handledById = $(elem).find(`select[name='handledById']`).val();
+                let campusId = $(elem).find(`select[name='campusId']`).val();
+
+
+                if (index < buildingCount - 1) {
+                    let obj = {
+                        buildingName: buildingName,
+                        buildingNumber: buildingNumber,
+                        floors: floors,   
+                        ownerId: ownerId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        handledById: handledById,
+                        campusId: campusId
+                    }
+                    buildingJson.push(obj)
+                } else {
+                    let obj = {
+                        buildingName: buildingName,
+                        buildingNumber: buildingNumber,
+                        floors: floors,
+                        ownerId: ownerId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        handledById: handledById,
+                        campusId: campusId
+                    }
+                    buildingJson.push(obj)
+                }
+            })
+
+            console.log('buildingJson:::::::>>', buildingJson)
+
             $.ajax({
                 url: '/management/buildings',
                 method: 'POST',
                 type: 'JSON',
                 data: {
-                    buildingName: $("#buildingName").val(),
-                    buildingNumber: $("#buildingNumber").val(),
-                    floors: $("#floors").val(),
-                    ownerId: $("#ownerId").val(),
-                    handledById: $("#handledById").val(),
-                    startTimeId: $("#startTimeId").val(),
-                    endTimeId: $("#endTimeId").val(),
-                    campusId: $("#campusId").val(),
+                    buildingJson: JSON.stringify(buildingJson)
                 },
                 success: data => {
-                    location.reload()
+                    console.log('data:::::::::::::::::>>', data)
+                    if (data.status == 200) {
+                        // location.reload()
+                    } else {
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        data.message.forEach(function (item) {
+                            errorHtml += `<li>${item}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        console.log('errorHtml::::::::>>', errorHtml)
+                        $("#errorHtml").html(errorHtml)
+                    }
+
                 },
                 error: err => {
+                    console.log('Error:::::::::::::>>', err)
                     let error = err.responseJSON.errors
                     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
