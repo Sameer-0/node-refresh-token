@@ -9,6 +9,7 @@ const {
     verifyPassword
 } = require('../utils/hash')
 const User = require('../models/User');
+const Settings = require('../models/Settings');
 // const res = require('express/lib/response');
 
 
@@ -78,7 +79,6 @@ module.exports = {
     },
 
     updateUser: (req, res, next) => {
-
         User.updateUserById(req.body).then(result => {
             res.json({
                 status: 200,
@@ -115,9 +115,14 @@ module.exports = {
                     req.session.firstName = userData.f_name;
                     req.session.lastName = userData.l_name;
                     req.session.email = userData.email;
-                    //store.set(req.sessionID, req.session, callback)
                     if (userData.role == "management") {
-                        res.redirect('/management/dashboard')
+
+                        Settings.fetchStepForm(res.locals.slug).then(result => {
+                            console.log('SEtting result:::::::::::::::::::>>', result.recordset)
+                            console.log('LOCALS::::::::::::>>>', res.locals)
+                            res.redirect('/management/dashboard')
+                        })
+
                     } else if (userData.role == "admin") {
                         res.redirect('/admin/dashboard')
                     } else {
@@ -130,7 +135,7 @@ module.exports = {
                 res.send('User not exit..!')
             }
         }).catch(error => {
-            res.send('User not exit..!',error)
+            res.status(500).send('Something went wrong..!', error)
         })
     },
 

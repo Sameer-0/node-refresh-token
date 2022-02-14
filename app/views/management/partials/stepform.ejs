@@ -1,10 +1,21 @@
+<div class="d-flex justify-content-between py-3 time-line">
+    <div class="arrow-pointer org-form"> Organization </div>
+    <div class="arrow-pointer campus-form">Campus </div>
+    <div class="arrow-pointer building-form"> Building</div>
+    <div class="arrow-pointer"> Room</div>
+    <div class="arrow-pointer"> Faculty</div>
+</div>
+
+<%for(let stepFm  of stepForm){%>
+<% if(stepFm.name == "Organization"){%>
+<%if(stepFm.is_submitted === "0"){%>
+    <h1>Form1</h1>
 <form action="/management/organization" method="post" class="dash-form" id="org-form">
     <div class="modal-header table-card-header ">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New
             Organization</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> </button>
     </div>
-
     <div id="errorHtml" class="error-show pt-3"></div>
     <div class="table-responsive">
         <table class="table" id="add-more-org-table">
@@ -44,41 +55,36 @@
                             <% } %>
                         </select>
                     </td>
-
                     <td>
-
                         <i class="far fa-edit d-none"></i>
                         <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
-
                     </td>
                 </tr>
             </tbody>
         </table>
-
     </div>
     <div class="btn-container d-flex justify-content-end">
-       
         <button type="button" class="nxt-btn" id="org-submit">Next </button>
-        
     </div>
-
 </form>
+<%}%>
 
-<form action="/management/campus" method="post" class="d-none dash-form" id="campus-form">
 
+<%} else if(stepFm.name === "Campus"){%>
+<!-- Campus Step Form -->
+<%if(stepFm.is_submitted === "0"){%>
+    <h1>Form2</h1>
+<form action="/management/campus" method="post" class="dash-form" id="campus-form">
     <div class="modal-header table-card-header">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-campus"><i class="fas fa-plus"></i> </button>
     </div>
-
     <div id="errorHtml" class="error-show pt-3"></div>
-   
     <div class="table-responsive">
         <table class="table" id="add-more-campus-table">
             <thead>
                 <th>Campus Id</th>
                 <th>Abbr</th>
-               
                 <th>Campus Name</th>
                 <th>Description</th>
                 <th>Action</th>
@@ -101,36 +107,29 @@
                         <input name="campusDesc" id="campusDesc" type="text" class="form-control"
                             placeholder="Campus Description" required>
                     </td>
-                    
-
                     <td>
-
                         <i class="far fa-edit d-none"></i>
                         <i class="fas fa-trash-alt text-danger cursor-pointer removecampus"></i>
-
                     </td>
                 </tr>
             </tbody>
         </table>
-
     </div>
-   
-
     <div class="btn-container d-flex justify-content-end">
-        
         <button type="button" class="nxt-btn" id="campus-submit">Next</button>
     </div>
-
 </form>
+<%}%>
 
-<form action="/management/building" method="post" class="d-none dash-form" id="building-form">
-
+<%}  else if(stepFm.name == "Building"){%>
+<!-- Building Step Form -->
+<%if(stepFm.is_submitted === "0"){%>
+    <h1>Form3</h1>
+<form action="/management/building" method="post" class="dash-form" id="building-form">
     <div class="modal-header table-card-header">
         <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-building"><i class="fas fa-plus"></i> </button>
     </div>
-
-
     <div class="modal-body">
         <div id="errorHtml"></div>
         <input type="hidden" id="roomId" name="roomId">
@@ -153,8 +152,8 @@
                                 placeholder="Building Name" required>
                         </td>
                         <td>
-                            <input name="buildingNumber" id="buildingNumber" type="number"
-                                class="form-control" placeholder="Building Number" required>
+                            <input name="buildingNumber" id="buildingNumber" type="number" class="form-control"
+                                placeholder="Building Number" required>
                         </td>
                         <td>
                             <input name="floors" id="floors" type="number" class="form-control"
@@ -172,8 +171,7 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="startTimeId" id="startTimeId"
-                                required>
+                            <select class="form-select modalSelect2" name="startTimeId" id="startTimeId" required>
                                 <option disabled selected value>--Start Time--</option>
                                 <% for(let time of timeList) { %>
                                 <option value="<%- time.id %>">
@@ -183,8 +181,7 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="endTimeId" id="endTimeId"
-                                required>
+                            <select class="form-select modalSelect2" name="endTimeId" id="endTimeId" required>
                                 <option disabled selected value>--End Time--</option>
                                 <% for(let time of timeList) { %>
                                 <option value="<%- time.id %>">
@@ -194,8 +191,7 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="handledById" id="handledById"
-                                required>
+                            <select class="form-select modalSelect2" name="handledById" id="handledById" required>
                                 <option disabled selected value>--Handled By--</option>
                                 <% for(let handler of orgList) { %>
                                 <option value="<%- handler.id %>">
@@ -214,7 +210,6 @@
                                 <% } %>
                             </select>
                         </td>
-
                         <td>
                             <i class="far fa-edit d-none"></i>
                             <i class="fas fa-trash-alt text-danger cursor-pointer removebuilding"></i>
@@ -224,8 +219,11 @@
             </table>
         </div>
         <div class="btn-container d-flex justify-content-end">
-        
             <button type="button" class="nxt-btn" id="building-submit">Next</button>
         </div>
     </div>
 </form>
+<%}%>
+
+<%}%>
+<%}%>
