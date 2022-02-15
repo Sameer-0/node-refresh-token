@@ -9,15 +9,15 @@ module.exports = {
 
     getDashboard: (req, res) => {
 
-        Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.getCount(res.locals.slug), OrganizationType.fetchAll(50)]).then(result => {
-            console.log('LIst:::::::', result[5].recordset)
+        Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.fetchStepForm(res.locals.slug), OrganizationType.fetchAll(50)]).then(result => {
+            console.log('LIst:::::::', result[5].recordset[0])
             res.render('management/dashboard', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
                 campusList: result[2].recordset,
                 timeList: result[3].recordset,
                 pageCount: result[4].recordset[0].count,
-                stepForm: result[5].recordset,
+                stepForm: result[5].recordset[0],
                 orgType: result[6].recordset
             })
         }).catch(error => {
