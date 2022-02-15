@@ -1,16 +1,14 @@
 <div class="d-flex justify-content-between py-3 time-line">
-    <div class="arrow-pointer org-form"> Organization </div>
-    <div class="arrow-pointer campus-form">Campus </div>
-    <div class="arrow-pointer building-form"> Building</div>
-    <div class="arrow-pointer"> Room</div>
-    <div class="arrow-pointer"> Faculty</div>
+    <div class="arrow-pointer org-form <%=  stepForm.name == 'Organization' ? stepForm.is_submitted.name == '0' : 'd-none'  %>"> Organization </div>
+    <div class="arrow-pointer campus-form <%=  stepForm.name == 'Campus' ? stepForm.is_submitted.name == '0' : 'd-none'  %>">Campus </div>
+    <div class="arrow-pointer building-form <%=  stepForm.name == 'Building' ? stepForm.is_submitted.name == '0' : 'd-none'  %> "> Building</div>
+    <div class="arrow-pointer <%=  stepForm.name == 'Room' ? stepForm.is_submitted.name == '0' : 'd-none'  %> "> Room</div>
+    <div class="arrow-pointer <%=  stepForm.name == 'Faculty' ? stepForm.is_submitted.name == '0' : 'd-none'  %> "> Faculty</div>
 </div>
 
-<%for(let stepFm  of stepForm){%>
-<% if(stepFm.name == "Organization"){%>
-<%if(stepFm.is_submitted === "0"){%>
-    <h1>Form1</h1>
-<form action="/management/organization" method="post" class="dash-form" id="org-form">
+
+<!-- organization -->
+<form action="/management/organization" method="post" class="<%=  stepForm.name == 'Organization' ? stepForm.is_submitted.name == '0' : 'd-none'  %> dash-form" id="org-form">
     <div class="modal-header table-card-header ">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New
             Organization</h5>
@@ -67,14 +65,10 @@
         <button type="button" class="nxt-btn" id="org-submit">Next </button>
     </div>
 </form>
-<%}%>
 
 
-<%} else if(stepFm.name === "Campus"){%>
 <!-- Campus Step Form -->
-<%if(stepFm.is_submitted === "0"){%>
-    <h1>Form2</h1>
-<form action="/management/campus" method="post" class="dash-form" id="campus-form">
+<form action="/management/campus" method="post" class="<%=  stepForm.name == 'Campus' ? stepForm.is_submitted.name == '0' : 'd-none'  %> dash-form" id="campus-form">
     <div class="modal-header table-card-header">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-campus"><i class="fas fa-plus"></i> </button>
@@ -119,13 +113,9 @@
         <button type="button" class="nxt-btn" id="campus-submit">Next</button>
     </div>
 </form>
-<%}%>
 
-<%}  else if(stepFm.name == "Building"){%>
 <!-- Building Step Form -->
-<%if(stepFm.is_submitted === "0"){%>
-    <h1>Form3</h1>
-<form action="/management/building" method="post" class="dash-form" id="building-form">
+<form action="/management/building" method="post" class="<%=  stepForm.name == 'Building' ? stepForm.is_submitted.name == '0' : 'd-none'  %> dash-form" id="building-form">
     <div class="modal-header table-card-header">
         <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-building"><i class="fas fa-plus"></i> </button>
@@ -223,14 +213,9 @@
         </div>
     </div>
 </form>
-<%}%>
 
-<%}else if(stepFm.name == "Room"){%>
+
 <h1>Roonm</h1>
- <%}%>   
-<%}%>
-
-
 <form action="" method="post" class="d-none dash-form" id="room-form">
 
     <div class="modal-header table-card-header">
@@ -320,3 +305,4 @@
 
 
 </form>
+
