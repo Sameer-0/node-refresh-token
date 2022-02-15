@@ -7,10 +7,22 @@
 </div>
 
 <%for(let stepFm  of stepForm){%>
-<% if(stepFm.name == "Organization"){%>
-<%if(stepFm.is_submitted === "0"){%>
+
     <h1>Form1</h1>
-<form action="/management/organization" method="post" class="dash-form" id="org-form">
+<form action="/management/organization" method="post" class=<% for(let i = 0; i < stepForm.length; i++)
+{
+
+  if(stepForm[0].is_submitted == 0) {
+
+      
+      break;
+    }
+    else{
+        return "d-none";
+    }
+ 
+    
+} %>; id="org-form">
     <div class="modal-header table-card-header ">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New
             Organization</h5>
@@ -67,14 +79,11 @@
         <button type="button" class="nxt-btn" id="org-submit">Next </button>
     </div>
 </form>
-<%}%>
 
 
-<%} else if(stepFm.name === "Campus"){%>
-<!-- Campus Step Form -->
-<%if(stepFm.is_submitted === "0"){%>
+
     <h1>Form2</h1>
-<form action="/management/campus" method="post" class="dash-form" id="campus-form">
+<form action="/management/campus" method="post" class="d-none dash-form" id="campus-form">
     <div class="modal-header table-card-header">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-campus"><i class="fas fa-plus"></i> </button>
@@ -119,12 +128,8 @@
         <button type="button" class="nxt-btn" id="campus-submit">Next</button>
     </div>
 </form>
-<%}%>
 
-<%}  else if(stepFm.name == "Building"){%>
-<!-- Building Step Form -->
-<%if(stepFm.is_submitted === "0"){%>
-    <h1>Form3</h1>
+    <h1>Form3<%-stepFm.name%></h1>
 <form action="/management/building" method="post" class="dash-form" id="building-form">
     <div class="modal-header table-card-header">
         <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
@@ -223,19 +228,17 @@
         </div>
     </div>
 </form>
+
+<h1>Room</h1>
+ 
 <%}%>
 
-<%}else if(stepFm.name == "Room"){%>
-<h1>Roonm</h1>
- <%}%>   
-<%}%>
 
-
-<form action="" method="post" class="d-none dash-form" id="room-form">
+<form action="" method="post" class=" dash-form" id="room-form">
 
     <div class="modal-header table-card-header">
-        <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
-        <button type="button" class="btn add-btn btn-sm" id="add-more-building"><i class="fas fa-plus"></i> </button>
+        <h5 class="modal-title" id="add-room-modal-title">Add New Room</h5>
+        <button type="button" class="btn add-btn btn-sm" id="add-more-room"><i class="fas fa-plus"></i> </button>
     </div>
 
     <div class="modal-body">

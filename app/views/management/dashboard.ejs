@@ -18,8 +18,20 @@
 
 <script src="/js/leftsidebartoggle.js"></script>
 <script src="/js/fontawesome.all.min.js"></script>
+
+
+
 <script>
     $(document).ready(function () {
+//         $("#campus-form").addClass('d-none')
+
+// $('#building-form').addClass('d-none');
+// $('#room-form').addClass('d-none');
+
+
+
+
+
         $(".homeCard .border").hover(function () {
             $this = $(this)
 
@@ -154,48 +166,6 @@
                 }
             })
 
-<<<<<<< HEAD
-                if (orgJson.length > 0) {
-
-                    $('.error-show').text('');
-                    console.log('orgJson:::::::>>', orgJson)
-
-                    $.ajax({
-                        url: '/management/organization',
-                        method: 'POST',
-                        type: 'JSON',
-                        data: {
-                            orgJson: JSON.stringify(orgJson)
-                        },
-                        success: data => {
-                            console.log('data:::::::::::::::::>>', data)
-                            if (data.status == 200) {
-                                // location.reload()
-                                $('.org-form').addClass('arrow-pointer-active');
-                                $('.org-form').removeClass('org-form');
-                                $('#org-form').addClass('d-none');
-                                $('#campus-form').removeClass('d-none');
-                                $('.campus-form').addClass('arrow-pointer-activenow');
-                                $('#building-form').addClass('d-none');
-
-                            } else {
-                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <h3>Error</h3>
-            <ul>`
-                                data.message.forEach(function (item) {
-                                    errorHtml += `<li>${item}</li>`
-                                })
-                                errorHtml +=
-                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                                console.log('errorHtml::::::::>>', errorHtml)
-                                $("#errorHtml").html(errorHtml)
-                            }
-
-                        },
-                        error: err => {
-                            console.log('Error:::::::::::::>>', err)
-                            let error = err.responseJSON.errors
-=======
             if (orgJson.length > 0) {
 
                 $('.error-show').text('');
@@ -207,19 +177,19 @@
                     type: 'JSON',
                     data: {
                         orgJson: JSON.stringify(orgJson),
-                        settingName:'Organization'
+                        settingName: 'Organization'
                     },
                     success: data => {
                         console.log('data:::::::::::::::::>>', data)
                         if (data.status == 200) {
                             // location.reload()
+                            location.reload()
                             $('.org-form').addClass('arrow-pointer-active');
                             $('#org-form').addClass('d-none');
                             $('#campus-form').removeClass('d-none');
                             $('#building-form').addClass('d-none')
-                            location.reload()
+
                         } else {
->>>>>>> 844d96139816dbc39d6456cb7eb472c899926ee1
                             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
             <h3>Error</h3>
             <ul>`
@@ -255,19 +225,10 @@
         })
 
 
-<<<<<<< HEAD
-            $('#campus-submit').on('click', function () {
-                
-                let campusElems = $('#add-more-campus-table tbody tr');
-                let campusCount = campusElems.length;
-console.log("campus-sibmitted")
-                let campusJson = [];
-=======
 
         $('#campus-submit').on('click', function () {
             let campusElems = $('#add-more-campus-table tbody tr');
             let campusCount = campusElems.length;
->>>>>>> 844d96139816dbc39d6456cb7eb472c899926ee1
 
             let campusJson = [];
 
@@ -309,45 +270,6 @@ console.log("campus-sibmitted")
                 }
             })
 
-<<<<<<< HEAD
-                if (campusJson.length > 0) {
-                    console.log('campusJson:::::::>>', campusJson)
-                    $('.error-show').text('')
-                    $.ajax({
-                        url: '/management/campus',
-                        method: 'POST',
-                        type: 'JSON',
-                        data: {
-                            campusJson: JSON.stringify(campusJson)
-                        },
-                        success: data => {
-                            console.log('data:::::::::::::::::>>', data)
-                            if (data.status == 200) {
-                                // location.reload()
-                                $('.campus-form').addClass('arrow-pointer-active')
-                                $('#org-form').addClass('d-none');
-                                $('#campus-form').addClass('d-none');
-                                $('#building-form').removeClass('d-none')
-                                $('.campus-form').removeClass('arrow-pointer-activenow');
-                                $('.building-form').addClass('arrow-pointer-activenow');
-                            } else {
-                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                                data.message.forEach(function (item) {
-                                    errorHtml += `<li>${item}</li>`
-                                })
-                                errorHtml +=
-                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                                console.log('errorHtml::::::::>>', errorHtml)
-                                $("#errorHtml").html(errorHtml)
-                            }
-
-                        },
-                        error: err => {
-                            console.log('Error:::::::::::::>>', err)
-                            let error = err.responseJSON.errors
-=======
             if (campusJson.length > 0) {
                 console.log('campusJson:::::::>>', campusJson)
                 $('.error-show').text('')
@@ -357,7 +279,7 @@ console.log("campus-sibmitted")
                     type: 'JSON',
                     data: {
                         campusJson: JSON.stringify(campusJson),
-                        settingName:'Campus'
+                        settingName: 'Campus'
                     },
                     success: data => {
                         console.log('data:::::::::::::::::>>', data)
@@ -368,7 +290,6 @@ console.log("campus-sibmitted")
                             $('#campus-form').addClass('d-none');
                             $('#building-form').removeClass('d-none')
                         } else {
->>>>>>> 844d96139816dbc39d6456cb7eb472c899926ee1
                             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
@@ -381,34 +302,6 @@ console.log("campus-sibmitted")
                             $("#errorHtml").html(errorHtml)
                         }
 
-<<<<<<< HEAD
-            $("#building-submit").on('click', function () {
-                console.log("builidng data submitted")
-                let buildingElems = $('#add-more-building-table tbody tr');
-                let buildingCount = buildingElems.length;
-
-                let buildingJson = [];
-
-                buildingElems.each(function (index, elem) {
-                    let buildingName = $(elem).find(`input[name='buildingName']`).val()
-                    let buildingNumber = $(elem).find(`input[name='buildingNumber']`).val();
-                    let floors = $(elem).find(`input[name='floors']`).val();
-                    let ownerId = $(elem).find(`select[name='ownerId']`).val();
-                    let startTimeId = $(elem).find(`select[name='startTimeId']`).val();
-                    let endTimeId = $(elem).find(`select[name='endTimeId']`).val();
-                    let handledById = $(elem).find(`select[name='handledById']`).val();
-                    let campusId = $(elem).find(`select[name='campusId']`).val();
-
-                    if (buildingName === "" || buildingNumber === "" || floors === "" ||
-                        ownerId === "" || startTimeId === "" || endTimeId === "" ||
-                        handledById === "" || campusId === "") {
-                         $('.error-show').text('Fields cannot be empty!!');
-                         return;
-                    } 
-                    else if(buildingName.trim() === ""){
-                        $('.error-show').text('Fields cannot have empty space!!');
-                        return;
-=======
                     },
                     error: err => {
                         console.log('Error:::::::::::::>>', err)
@@ -423,7 +316,6 @@ console.log("campus-sibmitted")
                         errorHtml +=
                             `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                         $("#errorHtml").html(errorHtml)
->>>>>>> 844d96139816dbc39d6456cb7eb472c899926ee1
                     }
                 })
             }
@@ -483,54 +375,16 @@ console.log("campus-sibmitted")
                 }
             })
 
-<<<<<<< HEAD
-                if (buildingJson.length > 0) {
-                    console.log('buildingJson:::::::>>', buildingJson)
-                    $('.error-show').text('');
-                    $.ajax({
-                        url: '/management/buildings',
-                        method: 'POST',
-                        type: 'JSON',
-                        data: {
-                            buildingJson: JSON.stringify(buildingJson)
-                        },
-                        success: data => {
-                            console.log('data:::::::::::::::::>>', data)
-                            if (data.status == 200) {
-                                // location.reload()
-                                $('.building-form').addClass('arrow-pointer-active')
-                                $('#org-form').addClass('d-none');
-                                $('#campus-form').addClass('d-none');
-                                $('#building-form').addClass('d-none')
-                                $('#room-form').removeClass('d-none')
-                            } else {
-                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                                data.message.forEach(function (item) {
-                                    errorHtml += `<li>${item}</li>`
-                                })
-                                errorHtml +=
-                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                                console.log('errorHtml::::::::>>', errorHtml)
-                                $("#errorHtml").html(errorHtml)
-                            }
-
-                        },
-                        error: err => {
-                            console.log('Error:::::::::::::>>', err)
-                            let error = err.responseJSON.errors
-=======
             if (buildingJson.length > 0) {
                 console.log('buildingJson:::::::>>', buildingJson)
                 $('.error-show').text('');
                 $.ajax({
-                    url: '/management/building',
+                    url: '/management/buildings',
                     method: 'POST',
                     type: 'JSON',
                     data: {
                         buildingJson: JSON.stringify(buildingJson),
-                        settingName:'Building'
+                        settingName: 'Building'
                     },
                     success: data => {
                         console.log('data:::::::::::::::::>>', data)
@@ -542,7 +396,6 @@ console.log("campus-sibmitted")
                             $('#building-form').addClass('d-none')
                             $('#room-form').removeClass('d-none')
                         } else {
->>>>>>> 844d96139816dbc39d6456cb7eb472c899926ee1
                             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`

@@ -13,7 +13,7 @@ module.exports = {
 
         Promise.all([Buildings.fetchAll(10), OrganizationMaster.fetchAll(50), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(), Settings.getCount(res.locals.slug), OrganizationType.fetchAll(50), roomData.fetchAll(50)]).then(result => {
            
-           console.log('LIst:::::::',result[7].recordset)
+           console.log('LIst:::::::',result[5].recordset)
             res.render('management/dashboard', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
