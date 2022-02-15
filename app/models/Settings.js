@@ -21,26 +21,15 @@ module.exports = class Settings {
         })
     }
 
-    static getCount(slugName) {
+    static fetchStepForm(slugName) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.query(`SELECT id, name, type, CAST(is_submitted as Varchar(10)) as is_submitted  FROM [${slugName}].settings WHERE  active = 1 AND type = 'STEPFORM'`)
+            return request.query(`SELECT TOP 1 id, name, type, CAST(is_submitted as Varchar(10)) as is_submitted, active  FROM [${slugName}].settings WHERE is_submitted = 0 AND active = 1 AND type = 'STEPFORM' ORDER BY id ASC`)
         }).catch(error => {
             throw error
         })
     }
 
-
-
-
-    static fetchStepForm(slug) {
-        return poolConnection.then(pool => {
-            let request = pool.request();
-            return request.query(`SELECT id, name, type, CAST(active as Varchar(10)) as active   FROM [${slug}].settings WHERE active = 0 AND type = 'STEPFORM'`)
-        }).catch(error => {
-            throw error
-        })
-    }
 
     static updateByName(slug,settingName) {
         return poolConnection.then(pool => {
