@@ -3,8 +3,8 @@ const {
 } = require('express-validator');
 const AcademicYear = require('../../models/AcademicYear')
 const Buildings = require('../../models/Buildings')
-const OrganizationMaster = require("../../models/OrganizationMaster")
-const CampusMaster = require("../../models/CampusMaster")
+const Organizations = require("../../models/Organizations")
+const Campuses = require("../../models/Campuses")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const Settings =  require('../../models/Settings')
 
@@ -13,7 +13,7 @@ module.exports = {
     getCampusPage: (req, res) => {
 
         if (req.method == "GET") {
-            Promise.all([CampusMaster.fetchAll(10), CampusMaster.getCount()]).then(result => {
+            Promise.all([Campuses.fetchAll(10), Campuses.getCount()]).then(result => {
                 res.render('management/campus/index', {
                     status: 200,
                     campusList: result[0].recordset,
@@ -21,7 +21,7 @@ module.exports = {
                 })
             })
         } else if (req.method == "POST") {
-            CampusMaster.fetchChunkRows(req.body.pageNo).then(result => {
+            Campuses.fetchChunkRows(req.body.pageNo).then(result => {
                 res.json({
                     status: "200",
                     message: "Quotes fetched",
@@ -33,30 +33,37 @@ module.exports = {
     },
 
     create: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
 
         if(req.body.settingName){
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
-        CampusMaster.saveWithProc(req.body.campusJson).then(result => {
-            res.json({
-                status: 200,
-                messsage: "Success"
+        Campuses.saveWithProc(req.body.inputJSON).then(result => {
+            if (result.output.output) {
+                res.status(200).json({
+                    status: 200,
+                    data: result.recordset,
+                    message: "success"
+                })
+            } else {
+                res.status(409).json({
+                    status: 409,
+                    data: result.recordset,
+                    message: ["Fail! Dublicate entry found"]
+                })
+            }
+        }).catch(error => {
+            console.log('error::::::::::::',error)
+            res.status(500).json({
+                status: 500,
+                message: [error]
             })
         })
 
     },
 
     single: (req, res) => {
-        CampusMaster.getCampusById(req.query.Id).then(result => {
+        Campuses.getCampusById(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset[0]
@@ -75,7 +82,7 @@ module.exports = {
             return;
         }
         
-        CampusMaster.update(req.body).then(result => {
+        Campuses.update(req.body).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset
@@ -84,7 +91,7 @@ module.exports = {
     },
 
     delete: (req, res) => {
-        CampusMaster.deleteById(req.body.Id).then(result => {
+        Campuses.deleteById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset
@@ -95,7 +102,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
-        CampusMaster.searchCampus(rowcont, req.query.keyword).then(result => {
+        Campuses.searchCampus(rowcont, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

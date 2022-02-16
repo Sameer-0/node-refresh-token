@@ -3,7 +3,7 @@ const {
     poolConnection,
     execPreparedStmt
 } = require('../../config/db')
-module.exports = class CampusMaster {
+module.exports = class Campuses {
     constructor(campusId, campusAbbr, campusName40Char, campusDesc) {
         this.campusId = campusId;
         this.campusAbbr = campusAbbr;
@@ -14,7 +14,7 @@ module.exports = class CampusMaster {
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             let request = pool.request()
-          return  request.query(`SELECT TOP ${Number(rowcount)} id, campus_id, campus_abbr ,campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC`)
+            return request.query(`SELECT TOP ${Number(rowcount)} id, campus_id, campus_abbr ,campus_abbr AS abbr, campus_name_40_char as name, campus_description AS c_desc FROM [dbo].campuses WHERE active = 1 ORDER BY id DESC`)
         })
     }
 
@@ -23,7 +23,7 @@ module.exports = class CampusMaster {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
                 .query(`SELECT id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc
-            FROM [dbo].campus_master WHERE active = 1 ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+            FROM [dbo].campuses WHERE active = 1 ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -31,7 +31,7 @@ module.exports = class CampusMaster {
 
     static getCount() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].campus_master WHERE active = 1`)
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].campuses WHERE active = 1`)
         })
     }
 
@@ -42,23 +42,22 @@ module.exports = class CampusMaster {
             request.input('campusAbbr', sql.NVarChar(40), body.campusAbbr)
             request.input('campusName40Char', sql.NVarChar(40), body.campusName)
             request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
-            return request.query(`INSERT INTO [dbo].campus_master (campus_id, campus_abbr, campus_name_40_char, campus_description) VALUES (@campusId, @campusAbbr, @campusName40Char, @campusDesc)`);
-        }).catch(error=>{
+            return request.query(`INSERT INTO [dbo].campuses (campus_id, campus_abbr, campus_name_40_char, campus_description) VALUES (@campusId, @campusAbbr, @campusName40Char, @campusDesc)`);
+        }).catch(error => {
             throw error
         })
     }
 
 
-    static saveWithProc(campusJSON) {
-        console.log('JOSN::::::::::::::::',campusJSON)
+    static saveWithProc(inputJSON) {
+        console.log('JOSN::::::::::::::::', inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
-            return  request.input('JSON', sql.NVarChar(sql.MAX), campusJSON)
-            .output('output', sql.Bit)
-            .execute(`[dbo].insert_campus_data`);
-        }).catch(error=>{
-            console.log('error::::::::::::::::',error)
-            throw error
+            return request.input('input_json', sql.NVarChar(sql.MAX), inputJSON)
+                //  .output('make_error', sql.Bit)
+                //.output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[dbo].[sp_add_new_campuses]`);
         })
     }
 
@@ -66,8 +65,8 @@ module.exports = class CampusMaster {
         return poolConnection.then(pool => {
             let request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`SELECT id, campus_id, campus_abbr, campus_name_40_char, campus_description FROM [dbo].campus_master  WHERE id = @id`)
-        }).catch(error=>{
+            return request.query(`SELECT id, campus_id, campus_abbr, campus_name_40_char, campus_description FROM [dbo].campuses  WHERE id = @id`)
+        }).catch(error => {
             throw error
         })
     }
@@ -81,8 +80,8 @@ module.exports = class CampusMaster {
             request.input('campusAbbr', sql.NVarChar(40), body.campusAbbr)
             request.input('campusName40Char', sql.NVarChar(40), body.campusName)
             request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
-            return request.query(`UPDATE [dbo].campus_master SET campus_id = @campusId, campus_abbr = @campusAbbr, campus_name_40_char = @campusName40Char, campus_description = @campusDesc WHERE id = @id`);
-        }).catch(error=>{
+            return request.query(`UPDATE [dbo].campuses SET campus_id = @campusId, campus_abbr = @campusAbbr, campus_name_40_char = @campusName40Char, campus_description = @campusDesc WHERE id = @id`);
+        }).catch(error => {
             throw error
         })
     }
@@ -92,8 +91,8 @@ module.exports = class CampusMaster {
         return poolConnection.then(pool => {
             let request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`UPDATE [dbo].campus_master SET active = 0 WHERE id = @id`);
-        }).catch(error=>{
+            return request.query(`UPDATE [dbo].campuses SET active = 0 WHERE id = @id`);
+        }).catch(error => {
             throw error
         })
     }
@@ -103,8 +102,8 @@ module.exports = class CampusMaster {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcont)} id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
-            FROM [dbo].campus_master WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1 ORDER BY id DESC`)
-        }).catch(error=>{
+            FROM [dbo].campuses WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1 ORDER BY id DESC`)
+        }).catch(error => {
             throw error
         })
     }

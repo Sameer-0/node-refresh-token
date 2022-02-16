@@ -2,8 +2,8 @@ const {
     validationResult
 } = require('express-validator');
 const SlugTable = require("../../models/SlugTable")
-const OrganizationMaster = require("../../models/OrganizationMaster")
-const CampusMaster = require("../../models/CampusMaster")
+const Organizations = require("../../models/Organizations")
+const Campuses = require("../../models/Campuses")
 const {
     v4: uuidv4
 } = require('uuid');
@@ -12,7 +12,7 @@ module.exports = {
 
     getPage: (req, res) => {
         if (req.method == "GET") {
-            Promise.all([SlugTable.fetchAll(1000), SlugTable.getCount(), OrganizationMaster.fetchAll(1000), CampusMaster.fetchAll(1000)]).then(result => {
+            Promise.all([SlugTable.fetchAll(1000), SlugTable.getCount(), Organizations.fetchAll(1000), Campuses.fetchAll(1000)]).then(result => {
                 res.render('management/slug/index', {
                     slugList: result[0].recordset,
                     pageCount: result[1].recordset[0].count,

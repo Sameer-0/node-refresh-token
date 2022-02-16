@@ -5,12 +5,18 @@ const {
     body
 } = require('express-validator');
 
-const dashboard = require('../../controllers/management/dashboard');
-const validator =  require('../../middlewares/validator')
+const organization = require('../../controllers/management/organization');
 const validate = require('../../middlewares/validate')
 
-//DASHBOARD ROUTER
-router.get('/dashboard', dashboard.getDashboard)
-router.get('/dashboard-step-form',dashboard.dashboardStepForm)
+
+// ORGANIZATION ROUTER
+router.get('/organizations', organization.getPage)
+router.post('/organizations', validate('JsonValidator'), organization.create)
+router.put('/organization', validate('JsonValidator'), organization.update)
+router.delete('/organization', validate('delete'), organization.delete)
+router.post('/organization/pagination', validate('pagination'), organization.getPage)
+router.post('/organization/single', validate('single'), organization.single)
+router.post('/organization/search', validate('search'), organization.search)
+
 
 module.exports = router;
