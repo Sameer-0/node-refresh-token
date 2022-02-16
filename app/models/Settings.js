@@ -24,7 +24,7 @@ module.exports = class Settings {
     static fetchStepForm(slugName) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.query(`SELECT TOP 1 id, name, type, CAST(is_submitted as Varchar(10)) as is_submitted, active  FROM [${slugName}].settings WHERE is_submitted = 0 AND active = 1 AND type = 'STEPFORM' ORDER BY id ASC`)
+            return request.query(`SELECT TOP 1 id, name, seq, type, CAST(is_submitted as Varchar(10)) as is_submitted, active  FROM [${slugName}].settings WHERE is_submitted = 0 AND active = 1 AND type = 'STEPFORM' ORDER BY id ASC`)
         }).catch(error => {
             throw error
         })

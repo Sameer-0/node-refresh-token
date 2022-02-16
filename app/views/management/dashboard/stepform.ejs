@@ -1,14 +1,17 @@
-<div class="d-flex justify-content-between py-3 time-line">
-    <div class="arrow-pointer org-form <%=  stepForm.name == 'Organization' ? stepForm.is_submitted.name == '0' : 'd-none'  %>"> Organization </div>
-    <div class="arrow-pointer campus-form <%=  stepForm.name == 'Campus' ? stepForm.is_submitted.name == '0' : 'd-none'  %>">Campus </div>
-    <div class="arrow-pointer building-form <%=  stepForm.name == 'Building' ? stepForm.is_submitted.name == '0' : 'd-none'  %> "> Building</div>
-    <div class="arrow-pointer <%=  stepForm.name == 'Room' ? stepForm.is_submitted.name == '0' : 'd-none'  %> "> Room</div>
-    <div class="arrow-pointer <%=  stepForm.name == 'Faculty' ? stepForm.is_submitted.name == '0' : 'd-none'  %> "> Faculty</div>
+<div class="step-form">
+
+<div class="d-flex justify-content-between py-3 time-line stages">
+    <div class="arrow-pointer stage active" data-step="1"> Organization </div>
+    <div class="arrow-pointer stage pending" data-step="2">Campus </div>
+    <div class="arrow-pointer stage pending" data-step="3"> Building</div>
+    <div class="arrow-pointer stage pending" data-step="4"> Room</div>
+    <div class="arrow-pointer stage pending" data-step="5"> Faculty</div>
 </div>
 
+<div class="step-form-body">
 
 <!-- organization -->
-<form action="/management/organization" method="post" class="<%=  stepForm.name == 'Organization' ? stepForm.is_submitted.name == '0' : 'd-none'  %> dash-form" id="org-form">
+<form action="/management/organization" method="post" class="step active-form" id="org-form" data-step="1">
     <div class="modal-header table-card-header ">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New
             Organization</h5>
@@ -61,14 +64,11 @@
             </tbody>
         </table>
     </div>
-    <div class="btn-container d-flex justify-content-end">
-        <button type="button" class="nxt-btn" id="org-submit">Next </button>
-    </div>
+    
 </form>
 
-
 <!-- Campus Step Form -->
-<form action="/management/campus" method="post" class="<%=  stepForm.name == 'Campus' ? stepForm.is_submitted.name == '0' : 'd-none'  %> dash-form" id="campus-form">
+<form action="/management/campus" method="post" class="step d-none" id="campus-form" data-step="2">
     <div class="modal-header table-card-header">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-campus"><i class="fas fa-plus"></i> </button>
@@ -109,13 +109,11 @@
             </tbody>
         </table>
     </div>
-    <div class="btn-container d-flex justify-content-end">
-        <button type="button" class="nxt-btn" id="campus-submit">Next</button>
-    </div>
+    
 </form>
 
 <!-- Building Step Form -->
-<form action="/management/building" method="post" class="<%=  stepForm.name == 'Building' ? stepForm.is_submitted.name == '0' : 'd-none'  %> dash-form" id="building-form">
+<form action="/management/building" method="post" class="step d-none" id="building-form" data-step="3">
     <div class="modal-header table-card-header">
         <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-building"><i class="fas fa-plus"></i> </button>
@@ -208,15 +206,13 @@
                 </tbody>
             </table>
         </div>
-        <div class="btn-container d-flex justify-content-end">
-            <button type="button" class="nxt-btn" id="building-submit">Next</button>
-        </div>
+        
     </div>
 </form>
 
 
-<h1>Roonm</h1>
-<form action="" method="post" class="d-none dash-form" id="room-form">
+
+<form action="" method="post" class="step d-none" id="room-form" data-step="4">
 
     <div class="modal-header table-card-header">
         <h5 class="modal-title" id="add-room-modal-title">Add New Room</h5>
@@ -305,4 +301,12 @@
 
 
 </form>
+</div>
 
+<div class="step-form-footer">
+    <div class="btn-container d-flex justify-content-end">
+        <button type="button" class="nxt-btn" id="next-step">Next</button>
+    </div>
+</div>
+
+</div>

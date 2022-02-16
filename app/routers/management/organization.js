@@ -11,6 +11,6 @@ const validate = require('../../middlewares/validate')
 
 //DASHBOARD ROUTER
 router.get('/dashboard', dashboard.getDashboard)
-router.get('/dashboardstepform',dashboard.dashboardStepForm)
+router.get('/dashboard-step-form',dashboard.dashboardStepForm)
 
 module.exports = router;

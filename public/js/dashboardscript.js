@@ -136,3 +136,6 @@
                     alert('Cannot delete this room.')
                 }
             })
+
+            //Add more rows in faculty
+            
