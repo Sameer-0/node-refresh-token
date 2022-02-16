@@ -3,10 +3,9 @@ const {
     validationResult
 } = require('express-validator');
 
-const roomModel = require('../../models/RoomData')
+const Rooms = require('../../models/Rooms')
 const SlotIntervalTimings = require('../../models/SlotIntervalTimings')
 const RoomTypes = require('../../models/RoomTypes')
-const moment = require('moment');
 const Buildings = require('../../models/Buildings');
 const Organizations = require('../../models/Organizations');
 const Campuses = require('../../models/Campuses');
@@ -15,25 +14,7 @@ module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
-            Promise.all([roomModel.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
-                let roomList = []
-                let slotList = []
-                // result[0].recordset.map(item => {
-                //     let rooms = {
-                //         room_number: item.room_number,
-                //         building_name: item.building_name,
-                //         room_type: item.room_type,
-                //         floor_number: item.floor_number,
-                //         capacity: item.capacity,
-                //         start_time: moment(item.start_time).format('LTS'),
-                //         end_time: moment(item.end_time).format('LTS'),
-                //         handled_by: item.handled_by,
-                //         campus_abbr: item.campus_abbr,
-                //         is_basement: item.is_basement,
-                //         is_processed: item.is_processed
-                //     }
-                //     roomList.push(rooms)
-                // })
+            Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
                 res.render('management/room/index', {
                     roomList: result[0].recordset,
                     campusList: result[2].recordset,
@@ -48,7 +29,7 @@ module.exports = {
             })
 
         } else if (req.method == 'POST') {
-            roomModel.fetchChunkRows(rowCount, req.body.pageNo).then(result => {
+            Rooms.fetchChunkRows(rowCount, req.body.pageNo).then(result => {
                 let roomList = []
                 result.recordset.map(item => {
                     let rooms = {
@@ -83,7 +64,7 @@ module.exports = {
 
 
     getSingleRoom: (req, res) => {
-        roomModel.fetchRoomById(req.query.id).then(result => {
+        Rooms.fetchRoomById(req.query.id).then(result => {
             res.json({
                 status: 200,
                 roomData: result.recordset[0]
@@ -101,7 +82,7 @@ module.exports = {
             return;
         }
 
-        roomModel.updateRoomById(req.body).then(result => {
+        Rooms.updateRoomById(req.body).then(result => {
             res.json({
                 status: 200
             })
@@ -110,7 +91,7 @@ module.exports = {
 
 
     deleteRoomById: (req, res) => {
-        roomModel.delete(req.body.roomId).then(result => {
+        Rooms.delete(req.body.roomId).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -119,27 +100,7 @@ module.exports = {
     },
 
     addRoom: (req, res) => {
-
-       
-
-        const errors = validationResult(req);
-
-        console.log('ADDING ROOMS',req.body)
-        
-        // if (!errors.isEmpty()) {
-        //     //console.log('Errors: ', errors.array())
-        //     return res.status(422).json({
-        //         statuscode: 422,
-        //         errors: errors.array()
-        //     });
-        // }
-
-
-
-        // console.log('roomJson:::::::>>>', req.body.roomJson)
-        roomModel.add(req.body.roomJson).then(result => {
-
-            // console.log('result', result)
+        Rooms.add(req.body.roomJson).then(result => {
             res.json({
                 status: 200,
                 message: "success",
@@ -170,7 +131,7 @@ module.exports = {
 
    
         let rowCount = 10;
-        roomModel.searchRoom(rowCount, req.query.keyword).then(result => {
+        Rooms.searchRoom(rowCount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
