@@ -3,7 +3,7 @@ const {
     poolConnection,
     execPreparedStmt
 } = require('../../config/db')
-module.exports = class OrganizationMaster {
+module.exports = class Organizations {
     constructor(orgId, orgAbbr, orgName, orgCompleteName, orgTypeId, parentId) {
         this.orgId = orgId;
         this.orgAbbr = orgAbbr;
@@ -16,7 +16,7 @@ module.exports = class OrganizationMaster {
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC`)
+            FROM [dbo].organizations om JOIN [dbo].organization_types ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC`)
         })
     }
 
@@ -25,7 +25,7 @@ module.exports = class OrganizationMaster {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
                 .query(`SELECT om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-            FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+            FROM [dbo].organizations om JOIN [dbo].organization_types ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -33,15 +33,15 @@ module.exports = class OrganizationMaster {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('id', sql.Int, id)
-                .query(`SELECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id FROM [dbo].organization_master WHERE id = @id`)
+                .query(`SELECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id FROM [dbo].organizations WHERE id = @id`)
         })
     }
 
 
-    static save(orgJson) {
+    static save(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('JSON', sql.NVarChar(sql.MAX), orgJson)
+            return request.input('JSON', sql.NVarChar(sql.MAX), inputJSON)
                 .output('output', sql.Bit)
                 .execute('[dbo].[insert_organization_data]')
         }).catch(error => {
@@ -58,7 +58,7 @@ module.exports = class OrganizationMaster {
                 .input('orgName', sql.NVarChar(100), body.org_name)
                 .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
                 .input('orgTypeId', sql.Int, body.org_type_id)
-                .query(`UPDATE  [dbo].organization_master SET org_id = @orgId, org_abbr = @orgAbbr, org_name = @orgName, org_complete_name = @orgCompleteName, org_type_id = @orgTypeId WHERE id = @id`)
+                .query(`UPDATE  [dbo].organizations SET org_id = @orgId, org_abbr = @orgAbbr, org_name = @orgName, org_complete_name = @orgCompleteName, org_type_id = @orgTypeId WHERE id = @id`)
         })
     }
 
@@ -66,13 +66,13 @@ module.exports = class OrganizationMaster {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('id', sql.Int, id)
-                .query(`UPDATE  [dbo].organization_master SET active  = 0 WHERE id = @id`)
+                .query(`UPDATE  [dbo].organizations SET active  = 0 WHERE id = @id`)
         })
     }
 
     static getCount() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].organization_master WHERE active = 1`)
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].organizations WHERE active = 1`)
 
         })
     }
@@ -82,7 +82,7 @@ module.exports = class OrganizationMaster {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcont)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-                FROM [dbo].organization_master om JOIN [dbo].organization_type ot ON om.org_type_id = ot.id  
+                FROM [dbo].organizations om JOIN [dbo].organization_types ot ON om.org_type_id = ot.id  
                 WHERE ot.active = 1 AND om.active = 1 and om.id like @keyword or om.org_abbr like @keyword 
                 or om.org_complete_name like @keyword or ot.name like @keyword ORDER BY om.id DESC`)
         })

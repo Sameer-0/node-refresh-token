@@ -3,14 +3,13 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
-const OrganizationMaster = require("../../models/OrganizationMaster")
-const OrganizationType = require("../../models/OrganizationType");
+const Organizations = require("../../models/Organizations")
+const OrganizationTypes = require("../../models/OrganizationTypes");
 const Settings = require('../../models/Settings');
 module.exports = {
     getPage: (req, res) => {
-
         if (req.method == "GET") {
-            Promise.all([OrganizationMaster.fetchAll(10), OrganizationType.fetchAll(50), OrganizationMaster.getCount()]).then(result => {
+            Promise.all([Organizations.fetchAll(10), OrganizationTypes.fetchAll(50), Organizations.getCount()]).then(result => {
                 res.render('management/organization/index', {
                     orgList: result[0].recordset,
                     orgtypeList: result[1].recordset,
@@ -18,7 +17,7 @@ module.exports = {
                 })
             })
         } else if (req.method == "POST") {
-            OrganizationMaster.fetchChunkRows(req.body.pageNo).then(result => {
+            Organizations.fetchChunkRows(req.body.pageNo).then(result => {
                 res.json({
                     status: 200,
                     data: result.recordset,
@@ -28,32 +27,37 @@ module.exports = {
     },
 
     create: (req, res) => {
-        
-        if(req.body.settingName){
+
+        if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
-        OrganizationMaster.save(req.body.orgJson).then(result => {
+        console.log('req.body::::::::::::::::::::::::::', req.body)
+
+        Organizations.save(req.body.inputJSON).then(result => {
             if (result.output.output) {
-                res.json({
+                res.status(200).json({
                     status: 200,
                     data: result.recordset,
                     message: "success"
                 })
             } else {
-                res.json({
+                res.status(409).json({
                     status: 409,
                     data: result.recordset,
                     message: ["Fail! Dublicate entry found"]
                 })
             }
         }).catch(error => {
-            throw error
+            res.status(500).json({
+                status: 500,
+                message: [error]
+            })
         })
     },
 
     single: (req, res) => {
-        OrganizationMaster.getOrgById(req.body.Id).then(result => {
+        Organizations.getOrgById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 orgData: result.recordset[0]
@@ -72,7 +76,7 @@ module.exports = {
             return;
         }
 
-        OrganizationMaster.update(req.body).then(result => {
+        Organizations.update(req.body).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -85,7 +89,7 @@ module.exports = {
         })
     },
     delete: (req, res) => {
-        OrganizationMaster.deleteOrgById(req.body.Id).then(result => {
+        Organizations.deleteOrgById(req.body.Id).then(result => {
             res.json({
                 status: 200
             })
@@ -96,7 +100,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
-        OrganizationMaster.searchOrg(rowcont, req.body.keyword).then(result => {
+        Organizations.searchOrg(rowcont, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
