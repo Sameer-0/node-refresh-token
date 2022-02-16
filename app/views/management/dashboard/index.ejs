@@ -18,8 +18,6 @@
     .stage:nth-child(<%- currentFormStep %>)::before {
         border-left: 25px solid #ffc800;
     }
-   
-    
 </style>
 <% } %>
 <!-- PAGE LEVEL CSSS END -->
@@ -37,7 +35,7 @@
 
 
 </div>
-    </main>
+</main>
 
 
 <%- include('../partials/footer') %>
@@ -134,9 +132,11 @@
         function formStepNext() {
             currentFormStep++;
 
-            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass('submitted');
-            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass('active');
-       
+            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
+                'submitted');
+            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass(
+                'active');
+
 
             $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
             $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
@@ -144,8 +144,8 @@
 
         }
 
-        function fill(){
-      
+        function fill() {
+
         }
 
         //Calling Apies
@@ -206,50 +206,34 @@
                     $('.error-show').text('');
                     console.log('orgJson:::::::>>', orgJson)
 
-                    $.ajax({
-                        url: '/management/organization',
-                        method: 'POST',
-                        type: 'JSON',
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/management/organizations',
                         data: {
-                            orgJson: JSON.stringify(orgJson),
+                            inputJSON: JSON.stringify(orgJson),
                             settingName: 'Organization'
                         },
-                        success: data => {
-                            console.log('data:::::::::::::::::>>', data)
-                            if (data.status == 200) {
-                                // location.reload()
+                        dataType: 'JSON'
+                    }
 
-                                formStepNext();
+                    ajaxApi(ApiObj).then(result => {
+                        console.log('Result:::::::::::', result)
+                    }).catch(error => {
 
-                            } else {
-                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <h3>Error</h3>
-            <ul>`
-                                data.message.forEach(function (item) {
-                                    errorHtml += `<li>${item}</li>`
-                                })
-                                errorHtml +=
-                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                                console.log('errorHtml::::::::>>', errorHtml)
-                                $("#errorHtml").html(errorHtml)
-                            }
-
-                        },
-                        error: err => {
-                            console.log('Error:::::::::::::>>', err)
-                            let error = err.responseJSON.errors
-                            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <h3>Error</h3>
-            <ul>`
-                            error.map(er => {
-                                errorHtml +=
-                                    `<li>${er.msg}</li>`
-                            })
+                        let errors = error.responseJSON.message
+                        console.log('Error:::::::::::', errors)
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        errors.map(er => {
                             errorHtml +=
-                                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                            $("#errorHtml").html(errorHtml)
-                        }
+                                `<li>${er}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
                     })
+
                 }
             } else if (currentFormStep == 2) {
                 let campusElems = $('#add-more-campus-table tbody tr');
@@ -298,157 +282,124 @@
                 if (campusJson.length > 0) {
                     console.log('campusJson:::::::>>', campusJson)
                     $('.error-show').text('')
-                    $.ajax({
-                        url: '/management/campus',
-                        method: 'POST',
-                        type: 'JSON',
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/management/campuses',
                         data: {
-                            campusJson: JSON.stringify(campusJson),
+                            inputJSON: JSON.stringify(campusJson),
                             settingName: 'Campus'
                         },
-                        success: data => {
-                            console.log('data:::::::::::::::::>>', data)
-                            if (data.status == 200) {
-                                // location.reload()
-                                formStepNext();
-                            } else {
-                                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                                data.message.forEach(function (item) {
-                                    errorHtml += `<li>${item}</li>`
-                                })
-                                errorHtml +=
-                                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                                console.log('errorHtml::::::::>>', errorHtml)
-                                $("#errorHtml").html(errorHtml)
-                            }
-
-                        },
-                        error: err => {
-                            console.log('Error:::::::::::::>>', err)
-                            let error = err.responseJSON.errors
-                            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                            error.map(er => {
-                                errorHtml +=
-                                    `<li>${er.msg}</li>`
-                            })
-                            errorHtml +=
-                                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                            $("#errorHtml").html(errorHtml)
-                        }
-                    })
-                }
-            } else if (currentFormStep == 3) {
-console.log('building reached')
-                let buildingElems = $('#add-more-building-table tbody tr');
-            let buildingCount = buildingElems.length;
-
-            let buildingJson = [];
-
-            buildingElems.each(function (index, elem) {
-                let buildingName = $(elem).find(`input[name='buildingName']`).val()
-                let buildingNumber = $(elem).find(`input[name='buildingNumber']`).val();
-                let floors = $(elem).find(`input[name='floors']`).val();
-                let ownerId = $(elem).find(`select[name='ownerId']`).val();
-                let startTimeId = $(elem).find(`select[name='startTimeId']`).val();
-                let endTimeId = $(elem).find(`select[name='endTimeId']`).val();
-                let handledById = $(elem).find(`select[name='handledById']`).val();
-                let campusId = $(elem).find(`select[name='campusId']`).val();
-
-                if (buildingName === "" || buildingNumber === "" || floors === "" ||
-                    ownerId === "" || startTimeId === "" || endTimeId === "" ||
-                    handledById === "" || campusId === "") {
-                    $('.error-show').text('Fields cannot be empty!!');
-                    return;
-                } else if (buildingName.trim() === "") {
-                    $('.error-show').text('Fields cannot have empty space!!');
-                    return;
-                } else {
-
-                    if (index < buildingCount - 1) {
-                        let obj = {
-                            buildingName: buildingName,
-                            buildingNumber: buildingNumber,
-                            floors: floors,
-                            ownerId: ownerId,
-                            startTimeId: startTimeId,
-                            endTimeId: endTimeId,
-                            handledById: handledById,
-                            campusId: campusId
-                        }
-                        buildingJson.push(obj)
-                    } else {
-                        let obj = {
-                            buildingName: buildingName,
-                            buildingNumber: buildingNumber,
-                            floors: floors,
-                            ownerId: ownerId,
-                            startTimeId: startTimeId,
-                            endTimeId: endTimeId,
-                            handledById: handledById,
-                            campusId: campusId
-                        }
-                        buildingJson.push(obj)
+                        dataType: 'JSON'
                     }
-                }
-            })
 
-            if (buildingJson.length > 0) {
-                console.log('buildingJson:::::::>>', buildingJson)
-                $('.error-show').text('');
-                $.ajax({
-                    url: '/management/buildings',
-                    method: 'POST',
-                    type: 'JSON',
-                    data: {
-                        buildingJson: JSON.stringify(buildingJson),
-                        settingName: 'Building'
-                    },
-                    success: data => {
-                        console.log('data:::::::::::::::::>>', data)
-                        if (data.status == 200) {
-                            // location.reload()
-                            formStepNext();
-                        } else {
-                            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                            data.message.forEach(function (item) {
-                                errorHtml += `<li>${item}</li>`
-                            })
-                            errorHtml +=
-                                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                            console.log('errorHtml::::::::>>', errorHtml)
-                            $("#errorHtml").html(errorHtml)
-                        }
+                    ajaxApi(ApiObj).then(result => {
+                        console.log('Result:::::::::::', result)
+                    }).catch(error => {
 
-                    },
-                    error: err => {
-                        console.log('Error:::::::::::::>>', err)
-                        let error = err.responseJSON.errors
+                        let errors = error.responseJSON.message
+                        console.log('Error:::::::::::', errors)
                         let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                        error.map(er => {
+                        errors.map(er => {
                             errorHtml +=
-                                `<li>${er.msg}</li>`
+                                `<li>${er}</li>`
                         })
                         errorHtml +=
                             `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                         $("#errorHtml").html(errorHtml)
+                    })
+
+                }
+            } else if (currentFormStep == 3) {
+                console.log('building reached')
+                let buildingElems = $('#add-more-building-table tbody tr');
+                let buildingCount = buildingElems.length;
+
+                let buildingJson = [];
+
+                buildingElems.each(function (index, elem) {
+                    let buildingName = $(elem).find(`input[name='buildingName']`).val()
+                    let buildingNumber = $(elem).find(`input[name='buildingNumber']`).val();
+                    let floors = $(elem).find(`input[name='floors']`).val();
+                    let ownerId = $(elem).find(`select[name='ownerId']`).val();
+                    let startTimeId = $(elem).find(`select[name='startTimeId']`).val();
+                    let endTimeId = $(elem).find(`select[name='endTimeId']`).val();
+                    let handledById = $(elem).find(`select[name='handledById']`).val();
+                    let campusId = $(elem).find(`select[name='campusId']`).val();
+
+                    if (buildingName === "" || buildingNumber === "" || floors === "" ||
+                        ownerId === "" || startTimeId === "" || endTimeId === "" ||
+                        handledById === "" || campusId === "") {
+                        $('.error-show').text('Fields cannot be empty!!');
+                        return;
+                    } else if (buildingName.trim() === "") {
+                        $('.error-show').text('Fields cannot have empty space!!');
+                        return;
+                    } else {
+
+                        if (index < buildingCount - 1) {
+                            let obj = {
+                                buildingName: buildingName,
+                                buildingNumber: buildingNumber,
+                                floors: floors,
+                                ownerId: ownerId,
+                                startTimeId: startTimeId,
+                                endTimeId: endTimeId,
+                                handledById: handledById,
+                                campusId: campusId
+                            }
+                            buildingJson.push(obj)
+                        } else {
+                            let obj = {
+                                buildingName: buildingName,
+                                buildingNumber: buildingNumber,
+                                floors: floors,
+                                ownerId: ownerId,
+                                startTimeId: startTimeId,
+                                endTimeId: endTimeId,
+                                handledById: handledById,
+                                campusId: campusId
+                            }
+                            buildingJson.push(obj)
+                        }
                     }
                 })
-            }
 
-            }
+                if (buildingJson.length > 0) {
+                    console.log('buildingJson:::::::>>', buildingJson)
+                    $('.error-show').text('');
 
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/management/buildings',
+                        data: {
+                            inputJSON: JSON.stringify(buildingJson),
+                            settingName: 'Building'
+                        },
+                        dataType: 'JSON'
+                    }
+
+                    ajaxApi(ApiObj).then(result => {
+                        console.log('Result:::::::::::', result)
+                    }).catch(error => {
+
+                        let errors = error.responseJSON.message
+                        console.log('Error:::::::::::', errors)
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                        errors.map(er => {
+                            errorHtml +=
+                                `<li>${er}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    })
+                }
+            }
         })
-
-
-
     })
 </script>
 <!-- PAGE LEVEL JS END -->

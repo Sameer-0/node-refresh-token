@@ -2,9 +2,8 @@ const {
     check,
     body
 } = require('express-validator');
-const {
-    searchRoom
-} = require('../models/RoomData');
+
+
 
 module.exports = function validate(method) {
 

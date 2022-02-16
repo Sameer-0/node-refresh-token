@@ -7,7 +7,7 @@ const {
     execPreparedStmt
 } = require('../../config/db')
 
-module.exports = class RoomData {
+module.exports = class Rooms {
     constructor(roomNumber, buildingId, roomTypeId, floorNumber, capacity, startTime, endTime, handledBy, isBasement, isProcessed) {
         this.roomNumber = roomNumber;
         this.buildingId = buildingId;
@@ -25,13 +25,13 @@ module.exports = class RoomData {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowCount)} r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
             CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, st.end_time, 100) AS end_time,
-            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].room_data r
-            INNER JOIN [dbo].[buildings] b ON b.id = r.building_id
+            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].rooms r
+            INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
             INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
-            INNER JOIN [dbo].organization_master o ON o.id = r.handled_by
+            INNER JOIN [dbo].organizations o ON o.id = r.handled_by
             INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time
             INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time
-            INNER JOIN [dbo].campus_master c ON c.id = b.campus_id WHERE r.active = 1 and st.active = 1 ORDER BY r.id DESC`)
+            INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.active = 1 and st.active = 1 ORDER BY r.id DESC`)
 
         })
     }
