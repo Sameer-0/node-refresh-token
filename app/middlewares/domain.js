@@ -32,12 +32,13 @@ module.exports = {
                 .then(pool => {
                     return pool.request()
                         .input('slugName', sql.NVarChar(20), subDomain)
-                        .query(`SELECT slug_name FROM slug_table WHERE slug_name = @slugName`);
+                        .query(`SELECT slug_name FROM [dbo].tenants WHERE slug_name = @slugName`);
                 }).then(result => {
                     if (result.recordset.length === 0) {
                         return res.send('Invalid subdomain!!!')
                     }
                     res.locals.slug = result.recordset[0].slug_name
+                    console.log('Domain:::::::',res.locals.slug)
                     next();
                 })
         } else {

@@ -10,52 +10,6 @@ module.exports = function validate(method) {
 
 
     switch (method) {
-        case 'createCampus': {
-            return [
-                check('campusId').not().isEmpty().withMessage('campusId must not be empty').isNumeric().withMessage('campusId must be number only'),
-                check('campusAbbr').not().isEmpty().withMessage('campus Abbr must not be empty'),
-                check('campusName').not().isEmpty().withMessage('campus Name must not be empty'),
-                check('campusDesc').not().isEmpty().withMessage('Campus Description must not be empty')
-            ];
-        }
-
-        case 'updateCampus': {
-            return [
-                check('Id').not().isEmpty().withMessage('Id must not be empty'),
-                check('campusId').not().isEmpty().withMessage('campusId must not be empty').isNumeric().withMessage('campusId must be number only'),
-                check('campusAbbr').not().isEmpty().withMessage('campus Abbr must not be empty'),
-                check('campusName').not().isEmpty().withMessage('campus Name must not be empty'),
-                check('campusDesc').not().isEmpty().withMessage('Campus Description must not be empty'),
-            ]
-        }
-
-        case 'createBuilding': {
-            return [
-                check('buildingName').not().isEmpty().withMessage('Building Name not be empty'),
-                check('buildingNumber').not().isEmpty().withMessage('Building Number must not be empty').isNumeric().withMessage('campusId must be number only'),
-                check('floors').not().isEmpty().withMessage('floors must not be empty'),
-                check('ownerId').not().isEmpty().withMessage('Owner Name must not be empty'),
-                check('handledById').not().isEmpty().withMessage('HandledBy  must not be empty'),
-                check('startTimeId').not().isEmpty().withMessage('startTimeId  must not be empty'),
-                check('endTimeId').not().isEmpty().withMessage('endTimeId  must not be empty'),
-                check('campusId').not().isEmpty().withMessage('campusId  must not be empty').isNumeric().withMessage('campusId must be number only'),
-            ]
-        }
-
-        case 'updateBuilding': {
-            return [
-                check('buildingId').not().isEmpty().withMessage('Building Id not be empty').isNumeric().withMessage('campusId must be number only'),
-                check('buildingName').not().isEmpty().withMessage('Building Name not be empty'),
-                check('buildingNumber').not().isEmpty().withMessage('Building Number must not be empty').isNumeric().withMessage('campusId must be number only'),
-                check('floors').not().isEmpty().withMessage('floors must not be empty'),
-                check('ownerId').not().isEmpty().withMessage('Owner Name must not be empty'),
-                check('handledById').not().isEmpty().withMessage('HandledBy  must not be empty'),
-                check('startTimeId').not().isEmpty().withMessage('startTimeId  must not be empty'),
-                check('endTimeId').not().isEmpty().withMessage('endTimeId  must not be empty'),
-                check('campusId').not().isEmpty().withMessage('campusId  must not be empty').isNumeric().withMessage('campusId must be number only'),
-            ]
-        }
-
         case 'createAcadYear': {
             return [
                 check('acadYear').not().isEmpty().withMessage('acadYear Name not be empty'),
@@ -64,9 +18,11 @@ module.exports = function validate(method) {
             ]
         }
 
-        case 'createOrganization': {
+        case 'JsonValidator': {
+
             return (req, res, next) => {
-                let jsonreq = JSON.parse(req.body.orgJson);
+                console.log('Validation:::::::::::::::>>', req.body)
+                let jsonreq = JSON.parse(req.body.inputJSON);
                 let done = false
                 let keyval = [];
                 for (let data of jsonreq) {
@@ -74,6 +30,7 @@ module.exports = function validate(method) {
                         if (!data[key]) {
                             done = false
                             keyval.push(key + ` must not be empty`)
+                            break;
                         } else {
                             done = true
                             console.log('NExt', data[key])
@@ -81,25 +38,19 @@ module.exports = function validate(method) {
                     }
                 }
                 if (done) {
+                    console.log('Success:::::::::>>')
                     next()
                 } else {
-                    res.json({
-                        status: 400,
+                    console.log('Fail::::::::::::>>')
+                    res.status(403).json({
+                        status: 403,
                         message: keyval
                     })
                 }
             };
         }
 
-        case 'updateOrganization': {
-            return [
-                check('org_id').not().isEmpty().withMessage('Organization id not be empty').isNumeric().withMessage('campusId must be number only'),
-                check('org_abbr').not().isEmpty().withMessage('Organization Abbr must not be empty'),
-                check('org_name').not().isEmpty().withMessage('Organization name not be empty'),
-                check('org_complete_name').not().isEmpty().withMessage('Organization complete name must not be empty'),
-                check('org_type_id').not().isEmpty().withMessage('Organization  type must not be empty').isNumeric().withMessage('campusId must be number only')
-            ]
-        }
+
 
         case 'createSlug': {
             return [
@@ -150,21 +101,6 @@ module.exports = function validate(method) {
             ]
         }
 
-        // case 'createRoom': {
-        //     return [
-        //         body().isArray(),
-        //         body('*.roomNo', 'Room No must not be empty').exists().isInt(),
-        //         body('*.roomType', 'roomType must not be empty').exists().isInt(),
-        //         body('*.floorNo', 'floorNo must not be empty').exists().isInt(),
-        //         body('*.capacity', 'capacity must not be empty').exists().isInt(),
-        //         body('*.startTime', 'startTime must not be empty').exists().isInt(),
-        //         body('*.endTime', 'endTime must not be empty').exists().isInt(),
-        //         body('*.campusId', 'campusId must not be empty').exists().isInt(),
-        //         body('*.buildingId', 'buildingId must not be empty').exists().isInt(),
-        //         body('*.handledBy', 'handledBy must not be empty').exists().isInt(),
-        //         body('*.isBasement', 'Basement must not be empty').exists().isInt(),
-        //     ]
-        // }
 
         case 'updateRoom': {
             return [

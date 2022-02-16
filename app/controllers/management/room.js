@@ -8,14 +8,14 @@ const SlotIntervalTimings = require('../../models/SlotIntervalTimings')
 const RoomTypes = require('../../models/RoomTypes')
 const moment = require('moment');
 const Buildings = require('../../models/Buildings');
-const OrganizationMaster = require('../../models/OrganizationMaster');
-const CampusMaster = require('../../models/CampusMaster');
+const Organizations = require('../../models/Organizations');
+const Campuses = require('../../models/Campuses');
 
 module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
-            Promise.all([roomModel.fetchAll(rowCount), OrganizationMaster.fetchAll(200), CampusMaster.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
+            Promise.all([roomModel.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), roomModel.getCount()]).then(result => {
                 let roomList = []
                 let slotList = []
                 // result[0].recordset.map(item => {

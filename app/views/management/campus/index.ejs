@@ -204,18 +204,18 @@
 
                 if (index < campusCount - 1) {
                     let obj = {
-                        campusId: campusId,
-                        campusAbbr: campusAbbr,
-                        campusName: campusName,
-                        campusDesc: campusDesc
+                        campus_id: campusId,
+                        campus_abbr: campusAbbr,
+                        campus_name_40_char: campusName,
+                        description: campusDesc
                     }
                     campusJson.push(obj)
                 } else {
                     let obj = {
-                        campusId: campusId,
-                        campusAbbr: campusAbbr,
-                        campusName: campusName,
-                        campusDesc: campusDesc
+                        campus_id: campusId,
+                        campus_abbr: campusAbbr,
+                        campus_name_40_char: campusName,
+                        description: campusDesc
                     }
                     campusJson.push(obj)
                 }
@@ -223,46 +223,34 @@
 
             console.log('campusJson:::::::>>', campusJson)
 
-            $.ajax({
-                url: '/management/campus',
-                method: 'POST',
-                type: 'JSON',
-                data: {
-                    campusJson: JSON.stringify(campusJson)
-                },
-                success: data => {
-                    console.log('data:::::::::::::::::>>', data)
-                    if (data.status == 200) {
-                        location.reload()
-                    } else {
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        data.message.forEach(function (item) {
-                            errorHtml += `<li>${item}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        console.log('errorHtml::::::::>>', errorHtml)
-                        $("#errorHtml").html(errorHtml)
-                    }
 
+            let ApiObj = {
+                type: 'POST',
+                url: '/management/campuses',
+                data: {
+                    inputJSON: JSON.stringify(campusJson)
                 },
-                error: err => {
-                    console.log('Error:::::::::::::>>', err)
-                    let error = err.responseJSON.errors
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('Result:::::::::::', result)
+            }).catch(error => {
+
+                let errors = error.responseJSON.message
+                console.log('Error:::::::::::', errors)
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                    error.map(er => {
-                        errorHtml +=
-                            `<li>${er.msg}</li>`
-                    })
+                errors.map(er => {
                     errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
-                }
+                        `<li>${er}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             })
+
         })
 
 
