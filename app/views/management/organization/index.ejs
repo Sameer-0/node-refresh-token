@@ -15,7 +15,7 @@
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-            <table class="table custom_row" id="organizationTable">
+            <table class="table custom_row organizationTable" id="organizationTable">
                 <thead>
                     <tr>
                         <th>Id</th>
@@ -46,7 +46,8 @@
                         </td>
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-org" data-org-id="<%- org.id %>"></i>
-                            <a data-org-id="<%- org.id %>" class="fas fa-trash-alt text-danger delete-org"></a>
+                            <!-- <a data-org-id="<%- org.id %>" class="fas fa-trash-alt text-danger delete-org"></a> -->
+                            <input type="checkbox" data-org-id="<%- org.id %>" class="delete-org">
                         </td>
                     </tr>
                     <% } %>
@@ -84,7 +85,7 @@
                 <div id="errorHtml"></div>
                 <input type="hidden" id="roomId" name="roomId">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-org-table">
+                    <table class="table table-bordered organizationTable" id="add-more-org-table">
                         <thead>
                             <th>Organization Id</th>
                             <th>Organization Abbr</th>
@@ -96,7 +97,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <input name="orgLid" id="orgLid" type="text">
+                                    <input name="orgLid" id="orgLid" type="hidden">
                                     <input name="orgId" id="orgId" type="number" class="form-control"
                                         placeholder="Organization Id" required>
                                 </td>
@@ -233,18 +234,19 @@
 
         ajaxApi(ApiObj).then(result => {
             console.log('Result:::::::::::', result)
-            location.reload()
+        //    location.reload()
         }).catch(error => {
 
-            let errors = error.responseJSON.message
+            let errors = JSON.parse(error.responseJSON)
             console.log('Error:::::::::::', errors)
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
+                    <p>${errors.description}</p>
                     <ul>`
-            errors.map(er => {
+            errors.data.map(er => {
                 console.log('Errr:::::::::::>>', er)
                 errorHtml +=
-                    `<li>${er}</li>`
+                    `<li>${er.org_id} ${er.org_abbr}</li>`
             })
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
@@ -340,8 +342,12 @@
 
 
     //Delete
+    let deleteids = []
     $('.delete-org').on('click', function () {
 
+        deleteids.push($(this).attr('data-org-id'))
+
+        console.log('id::::::::::::::::>>>', deleteids)
         let ApiObj = {
             url: '/management/organization',
             type: 'DELETE',
@@ -351,23 +357,23 @@
             dataType: 'JSON'
         }
 
-        ajaxApi(ApiObj).then(result => {
-            location.reload()
-        }).catch(error => {
+        // ajaxApi(ApiObj).then(result => {
+        //     location.reload()
+        // }).catch(error => {
 
-            let errors = error.responseJSON.message
-            console.log('Error:::::::::::', errors)
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-            errors.map(er => {
-                errorHtml +=
-                    `<li>${er}</li>`
-            })
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
-        })
+        //     let errors = error.responseJSON.message
+        //     console.log('Error:::::::::::', errors)
+        //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        //             <h3>Error</h3>
+        //             <ul>`
+        //     errors.map(er => {
+        //         errorHtml +=
+        //             `<li>${er}</li>`
+        //     })
+        //     errorHtml +=
+        //         `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        //     $("#errorHtml").html(errorHtml)
+        // })
     })
 
 
@@ -506,5 +512,15 @@
             $("#errorHtml").html(errorHtml)
         })
     }, 500));
+
+
+
+    //Select Checkbox
+
+    // $(document).ready(function(){
+    //     $(".organizationTable").on('click',function(){
+
+    //     })
+    // })
 </script>
 <%- include("../partials/footerEnd") %>
