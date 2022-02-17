@@ -12,7 +12,7 @@ module.exports = class AcadSession {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id AS acadSessionId, ac.acad_session FROM [dbo].acad_sessions ac WHERE ac.active = 1 ORDER BY ac.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id AS acadSessionId, ac.acad_session, ac.sap_acad_session_id FROM [dbo].acad_sessions ac WHERE ac.active = 1 ORDER BY ac.id DESC`)
         })
     }
 
@@ -53,7 +53,7 @@ module.exports = class AcadSession {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} ac.id AS acadSessionId, ac.acad_session FROM [dbo].acad_sessions ac WHERE ac.active = 1 AND ac.acad_session LIKE @keyword ORDER BY ac.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} ac.id AS acadSessionId, ac.acad_session,  ac.sap_acad_session_id FROM [dbo].acad_sessions ac WHERE ac.active = 1 AND ac.acad_session LIKE @keyword ORDER BY ac.id DESC`)
         })
     }
 
