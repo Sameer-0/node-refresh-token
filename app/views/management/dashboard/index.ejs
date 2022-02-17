@@ -5,6 +5,8 @@
 <style>
     .stage:nth-child(-n + <%- currentFormStep-1 %>) {
         background: #3cc58c;
+        color: #fff;
+
     }
 
     .stage:nth-child(-n + <%- currentFormStep-1 %>)::before {
@@ -13,6 +15,8 @@
 
     .stage:nth-child(<%- currentFormStep %>) {
         background: #ffc800;
+        color: #000;
+
     }
 
     .stage:nth-child(<%- currentFormStep %>)::before {
@@ -125,10 +129,6 @@
         // chart.render();
 
 
-
-
-
-
         function formStepNext() {
             currentFormStep++;
 
@@ -141,10 +141,6 @@
             $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
             $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
                 'active-form');
-
-        }
-
-        function fill() {
 
         }
 
@@ -217,11 +213,11 @@
                     }
 
                     ajaxApi(ApiObj).then(result => {
-                        console.log('Result:::::::::::', result)
+                        console.log('Result:::::::::::>>', result)
                     }).catch(error => {
 
                         let errors = error.responseJSON.message
-                        console.log('Error:::::::::::', errors)
+                        console.log('Error:::::::::::>>', errors)
                         let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
@@ -397,6 +393,94 @@
                             `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                         $("#errorHtml").html(errorHtml)
                     })
+                }
+            } else if (currentFormStep == 4) {
+
+                let roomElems = $('#add-more-room-table tbody tr');
+                let roomCount = roomElems.length;
+
+                let roomJson = [];
+
+                roomElems.each(function (index, elem) {
+                    let roomNo = $(elem).find(`input[name='roomNo']`).val()
+                    let roomType = $(elem).find(`select[name='roomType']`).val()
+                    let floorNo = $(elem).find(`input[name='floorNo']`).val()
+                    let capacity = $(elem).find(`input[name='capacity']`).val()
+                    let startTime = $(elem).find(`select[name='startTime']`).val()
+                    let endTime = $(elem).find(`select[name='endTime']`).val()
+                    let isBasement = $(elem).find(`select[name='isBasement']`).val()
+
+
+
+                    if (roomNo === "" || roomType === "" || floorNo === "" || capacity ===
+                        "" || startTime === "" || endTime === "" || isBasement === "") {
+                        $('.error-show').text('Fields cannot be empty!!');
+                        return;
+                    } else if (roomNo.trim() === "" || floorNo.trim() === "" || capacity
+                        .trim() === "") {
+                        $('.error-show').text('Fields cannot have empty space!!');
+                        return;
+                    } else {
+
+                        if (index < roomCount - 1) {
+                            let obj = {
+                                room_no: roomNo,
+                                room_type: roomType,
+                                floor_no: floorNo,
+                                capacity: capacity,
+                                start_time: startTime,
+                                end_time: endTime,
+                                is_basement: isBasement
+                            }
+                            roomJson.push(obj)
+                        } else {
+                            let obj = {
+                                room_no: roomNo,
+                                room_type: roomType,
+                                floor_no: floorNo,
+                                capacity: capacity,
+                                start_time: startTime,
+                                end_time: endTime,
+                                is_basement: isBasement
+                            }
+                            roomJson.push(obj)
+                        }
+                    }
+                })
+
+                if (roomJson.length > 0) {
+
+                    $('.error-show').text('');
+                    console.log('roomJson:::::::>>', roomJson)
+
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/management/room',
+                        data: {
+                            inputJSON: JSON.stringify(roomJson),
+                            settingName: 'room'
+                        },
+                        dataType: 'JSON'
+                    }
+
+                    ajaxApi(ApiObj).then(result => {
+                        console.log('Result:::::::::::>>', result)
+                    }).catch(error => {
+
+                        let errors = error.responseJSON.message
+                        console.log('Error:::::::::::>>', errors)
+                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h3>Error</h3>
+    <ul>`
+                        errors.map(er => {
+                            errorHtml +=
+                                `<li>${er}</li>`
+                        })
+                        errorHtml +=
+                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        $("#errorHtml").html(errorHtml)
+                    })
+
                 }
             }
         })
