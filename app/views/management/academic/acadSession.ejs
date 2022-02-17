@@ -8,10 +8,9 @@
     <!--DASHBOARD CONTENT START-->
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center">
-            <h5>Academic Session List</h5>
-
-            <button class="btn add-btn ms-auto" data-bs-toggle="modal"
-            data-bs-target="#add-academicSession-modal"><i class="fas fa-plus"></i></button>
+            <h5>Academic Sessions</h5>
+            <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal"
+            data-bs-target="#add-academicSession-modal"><i class="fas fa-plus"></i></button> -->
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -21,7 +20,7 @@
                 <thead>
                     <th>Id</th>
                     <th>Acad Session</th>
-                    <th>Action</th>
+                    <th>Sap Academic Session</th>
                 </thead>
                 <tbody>
                     <% let count = 1 %>
@@ -34,10 +33,7 @@
                             <%- session.acad_session %>
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-acadSession"
-                                data-acadSession-id="<%- session.acadSessionId %>"></i>
-                            <i data-acadSession-id="<%- session.acadSessionId %>"
-                                class="fas fa-trash-alt text-danger delete-acadSession"></i>
+                            <%- session.sap_acad_session_id %>
                         </td>
                     </tr>
                     <% } %>
@@ -52,7 +48,7 @@
 
 
 
-<!-- ADD NEW CAMPUS MODAL -->
+<!-- ADD NEW ACAD SESSION MODAL -->
 <div class="modal fade" id="add-academicSession-modal" tabindex="-1" role="dialog"
     aria-labelledby="add-academicSession-modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -65,13 +61,12 @@
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <div class="form-row mt-4">
-                    <input name="acad_session" id="acad_session" type="text" class="form-control" placeholder="Enter Academic Session"
-                        required>
+                    <input name="acad_session" id="acad_session" type="text" class="form-control"
+                        placeholder="Enter Academic Session" required>
                 </div>
 
                 <div class="form-row mt-4">
-                    <input name="acadSessionId" id="acadSessionId" type="hidden" class="form-control" 
-                        required>
+                    <input name="acadSessionId" id="acadSessionId" type="hidden" class="form-control" required>
                 </div>
             </div>
             <div class="modal-footer">
@@ -92,103 +87,96 @@
 <script>
     //management/campus/add
     $('.createAcadSession').on('click', function () {
-        $.ajax({
+
+        let ApiObj = {
+            type: 'POST',
             url: '/management/academic/session',
-            method: 'POST',
-            type: 'JSON',
             data: {
                 acadSession: $("#acad_session").val()
             },
-            success: data => {
-                console.log('Success: ', data)
-                location.reload()
-            },
-            error: err => {
-                let error = err.responseJSON.errors
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            console.log('Result:::::::::::', result)
+        }).catch(error => {
+
+            let errors = error.responseJSON.message
+            console.log('Error:::::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                error.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
+            errors.map(er => {
                 errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
-            }
+                    `<li>${er}</li>`
+            })
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
         })
     })
 
-
-    $('#acadSessionTable').on('click', '.edit-acadSession', function () {
-        $(".updateAcadSession").removeClass('d-none')
-        $(".createAcadSession").addClass('d-none')
-        $("#add-academicSession-modal-title").html('Update Acad Session')
-        $.ajax({
-            url: '/management/academic/session/single',
-            method: 'GET',
-            type: 'JSON',
-            data: {
-                Id: $(this).attr('data-acadSession-id')
-            },
-            success: data => {
-             
-                let camp = data.data;
-                $("#acadSessionId").val(camp.acadSessionId)
-                $("#acad_session").val(camp.acad_session)
-                $("#add-academicSession-modal").modal('show')
-            },
-            error: err => {
-                console.log('Error: ', err)
-            }
-        })
-    })
 
 
     $('.updateAcadSession').on('click', function () {
-        $.ajax({
+
+        let ApiObj = {
             url: '/management/academic/session',
-            method: 'PUT',
-            type: 'JSON',
+            type: 'PUT',
             data: {
-                acadSessionId:  $("#acadSessionId").val(),
+                acadSessionId: $("#acadSessionId").val(),
                 acadSession: $("#acad_session").val()
             },
-            success: data => {
-                location.reload()
-            },
-            error: err => {
-                let error = err.responseJSON.errors
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            console.log('Result:::::::::::', result)
+        }).catch(error => {
+
+            let errors = error.responseJSON.message
+            console.log('Error:::::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-                error.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
+            errors.map(er => {
                 errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
-            }
+                    `<li>${er}</li>`
+            })
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
         })
     })
 
-
-
     $('#acadSessionTable').on('click', '.delete-acadSession', function () {
-        $.ajax({
+
+        let ApiObj = {
             url: '/management/academic/session',
-            method: 'DELETE',
-            type: 'JSON',
+            type: 'DELETE',
             data: {
                 Id: $(this).attr('data-acadSession-id')
             },
-            success: data => {
-                location.reload()
-            },
-            error: err => {
-                console.log('Error: ', err)
-            }
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            location.reload()
+            console.log('Result:::::::::::', result)
+        }).catch(error => {
+
+            let errors = error.responseJSON.message
+            console.log('Error:::::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+            errors.map(er => {
+                errorHtml +=
+                    `<li>${er}</li>`
+            })
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
         })
     })
 
@@ -197,28 +185,31 @@
     //search feature delay function is writter in script.js file which is located in public/js/script.js
     $('#searchkeyword').on('input', delay(function (e) {
         let keyword = $("#searchkeyword").val()
-        $.ajax({
+        let ApiObj = {
             type: "GET",
             url: "/management/academic/session/search",
             data: {
                 keyword: keyword
             },
-            success: function (data) {
-                console.log('campusList::::::', data)
-                let acadSessionList = data.data;
+            dataType: 'JSON'
+        }
 
-                let AjaxTable = `<table class="table custom_row" id="acadSessionTable">
+        ajaxApi(ApiObj).then(result => {
+            console.log('result::::::::::::::::>>', result)
+            let acadSessionList = result.data;
+
+            let AjaxTable = `<table class="table custom_row" id="acadSessionTable">
                 <thead>
                     <th>Id</th>
                     <th>Acad Session</th>
-                    <th>Action</th>
+                    <th>Sap Academic Session</th>
                 </thead>
                 <tbody>`;
 
-                if (acadSessionList.length > 0) {
-                    for (session of acadSessionList) {
-                        AjaxTable +=
-                            `<tr>
+            if (acadSessionList.length > 0) {
+                for (session of acadSessionList) {
+                    AjaxTable +=
+                        `<tr>
                         <td>
                             ${session.acadSessionId}
                         </td>
@@ -226,20 +217,35 @@
                             ${session.acad_session}
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-acadSession"  data-acadSession-id="${session.acadSessionId}"></i>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer delete-acadSession" data-acadSession-id="${session.acadSessionId}" ></i>
+                            ${session.sap_acad_session_id}
                         </td>
                     </tr>`;
-                    }
-                } else {
-                    AjaxTable +=
-                        ` <tr>
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
                                 <td colspan="3">No Data Found</td>
                             </tr>`;
-                }
-                AjaxTable += `<tbody></table>`
-                $("#acadSessionTable").html(AjaxTable);
             }
+            AjaxTable += `<tbody></table>`
+            $("#acadSessionTable").html(AjaxTable);
+
+
+
+        }).catch(error => {
+
+            let errors = error.responseJSON.message
+            console.log('Error:::::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+            errors.map(er => {
+                errorHtml +=
+                    `<li>${er}</li>`
+            })
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
         })
     }, 500));
 </script>
