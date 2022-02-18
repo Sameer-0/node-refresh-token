@@ -39,13 +39,12 @@ module.exports = class Organizations {
 
 
     static save(inputJSON) {
+        console.log('inputJSON:::::::::::::>>>', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('JSON', sql.NVarChar(sql.MAX), inputJSON)
-                .output('output', sql.Bit)
-                .execute('[dbo].[insert_organization_data]')
-        }).catch(error => {
-            throw error
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[sp_add_new_organizations]')
         })
     }
 
@@ -62,18 +61,25 @@ module.exports = class Organizations {
         })
     }
 
-    static deleteOrgById(id) {
+    static delete(inputJSON) {
+        console.log('inputJSON:::::::::::::>>>', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('id', sql.Int, id)
-                .query(`UPDATE  [dbo].organizations SET active  = 0 WHERE id = @id`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[delete_organizations]')
+        })
+    }
+
+    static deleteAll(){
+        return poolConnection.then(pool => {
+            return pool.request().query(`UPDATE [dbo].organizations SET active = 0 WHERE active = 1`)
         })
     }
 
     static getCount() {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].organizations WHERE active = 1`)
-
         })
     }
 
@@ -87,6 +93,7 @@ module.exports = class Organizations {
                 or om.org_complete_name like @keyword or ot.name like @keyword ORDER BY om.id DESC`)
         })
     }
+
 
 
 }
