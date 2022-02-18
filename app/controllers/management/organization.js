@@ -77,11 +77,27 @@ module.exports = {
             })
         })
     },
+
     delete: (req, res) => {
-        Organizations.deleteOrgById(req.body.Id).then(result => {
-            res.json({
-                status: 200
-            })
+
+        let object = {
+            delete_organizations: JSON.parse(req.body.Ids)
+        }
+
+        Organizations.delete(object).then(result => {
+            console.log('result::::::::::',result)
+            res.status(200).json(result.output.output_json)
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
+        })
+    },
+
+    deleteAll: (req, res) => {
+        Organizations.deleteAll().then(result => {
+            res.status(200).json({status:200})
+        }).catch(error => {
+            console.log('error:::::::::::',error)
+            res.status(500).json(error.originalError.info.message)
         })
     },
 

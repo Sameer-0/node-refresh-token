@@ -8,9 +8,16 @@
     <!--DASHBOARD CONTENT START-->
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
-            <h5>Organizations</h5>
-            <button class="btn ms-auto add-btn" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
-                    class="fas fa-plus"></i></button>
+            <div>
+                <h5>Organizations</h5>
+            </div>
+            <div>
+                <button class="btn ms-auto add-btn" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
+                        class="fas fa-plus"></i></button>
+                <button class="btn ms-auto delete-organizations add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-organizations add-btn "><i class="fas fa-trash"></i> <i
+                        class="fas fa-trash"></i></button>
+            </div>
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -24,6 +31,7 @@
                         <th>Complete Name</th>
                         <th>Type</th>
                         <th>Action</th>
+                        <th>All <input type="checkbox" class="selectAll-org"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,8 +54,10 @@
                         </td>
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-org" data-org-id="<%- org.id %>"></i>
-                            <!-- <a data-org-id="<%- org.id %>" class="fas fa-trash-alt text-danger delete-org"></a> -->
-                            <input type="checkbox" data-org-id="<%- org.id %>" class="delete-org">
+                        </td>
+                        <td>
+                            <input type="checkbox" data-org-id="<%- org.id %>" data-orgid="<%- org.org_id %>"
+                                class="delete-org">
                         </td>
                     </tr>
                     <% } %>
@@ -234,7 +244,7 @@
 
         ajaxApi(ApiObj).then(result => {
             console.log('Result:::::::::::', result)
-        //    location.reload()
+          location.reload()
         }).catch(error => {
 
             let errors = JSON.parse(error.responseJSON)
@@ -341,41 +351,92 @@
     })
 
 
-    //Delete
-    let deleteids = []
-    $('.delete-org').on('click', function () {
+    //Select All Organizations
+    $(".selectAll-org").on('click', function () {
+        if (this.checked) {
+            // Iterate each checkbox
+            $('.delete-org:checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $('.delete-org:checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    })
 
-        deleteids.push($(this).attr('data-org-id'))
 
-        console.log('id::::::::::::::::>>>', deleteids)
+    //Delete Single and mutiple Delete
+    $('.delete-organizations').on('click', function () {
+        let deleteids = []
+        $('.delete-org:checked').each(function () {
+            let obj = {
+                id: $(this).attr("data-org-id"),
+                org_id: $(this).attr("data-orgid")
+            }
+            deleteids.push(obj)
+        })
+
+        if (deleteids.length > 0) {
+            console.log('deleteids::::::::::::::',deleteids)
+            let ApiObj = {
+                url: '/management/organizations',
+                type: 'DELETE',
+                data: {
+                    Ids: JSON.stringify(deleteids)
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+            location.reload()
+            }).catch(error => {
+                let errors = error.responseJSON.message
+                console.log('Error:::::::::::', errors)
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                errors.map(er => {
+                    errorHtml +=
+                        `<li>${er}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+            })
+
+        } else {
+            alert('Select Organization')
+        }
+    })
+
+    //Bulk Delete
+    $(".bulk-delete-organizations").on('click', function () {
+        console.log('bulk-delete-organizations')
         let ApiObj = {
-            url: '/management/organization',
-            type: 'DELETE',
+            url: '/management/organizations',
+            type: 'PATCH',
             data: {
-                Id: $(this).attr('data-org-id')
+
             },
             dataType: 'JSON'
         }
-
-        // ajaxApi(ApiObj).then(result => {
-        //     location.reload()
-        // }).catch(error => {
-
-        //     let errors = error.responseJSON.message
-        //     console.log('Error:::::::::::', errors)
-        //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        //             <h3>Error</h3>
-        //             <ul>`
-        //     errors.map(er => {
-        //         errorHtml +=
-        //             `<li>${er}</li>`
-        //     })
-        //     errorHtml +=
-        //         `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-        //     $("#errorHtml").html(errorHtml)
-        // })
+        ajaxApi(ApiObj).then(result => {
+            location.reload()
+        }).catch(error => {
+            let errors = error.responseJSON.message
+            console.log('Error:::::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+            errors.map(er => {
+                errorHtml +=
+                    `<li>${er}</li>`
+            })
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        })
     })
-
 
 
     // validation demo:
@@ -418,6 +479,7 @@
                         <th>Complete Name</th>
                         <th>Type</th>
                         <th>Action</th>
+                        <th>All <input type="checkbox" class="selectAll-org"></th>
                     </thead>
                     <tbody>`;
                 for (org of orgList) {
@@ -469,6 +531,7 @@
                         <th>Complete Name</th>
                         <th>Type</th>
                         <th>Action</th>
+                        <th>All <input type="checkbox" class="selectAll-org"></th>
                     </thead>
                     <tbody>`;
 
@@ -484,8 +547,11 @@
                             <td>
                                 <i class="fas fa-edit text-dark cursor-pointer edit-org" data-org-id="${org.id}"
                                     ></i>
-                                <a data-org-id="${org.id}" class="fas fa-trash-alt text-danger delete-org"></a>
                             </td>
+                            <td>
+                                <input type="checkbox" data-org-id="${org.id}" data-orgid="${org.org_id}"
+                                class="delete-org">
+                                </td>
                         </tr>`
                 }
             } else {
