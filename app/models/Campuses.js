@@ -50,14 +50,11 @@ module.exports = class Campuses {
 
 
     static saveWithProc(inputJSON) {
-        console.log('JOSN::::::::::::::::', inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('input_json', sql.NVarChar(sql.MAX), inputJSON)
-                //  .output('make_error', sql.Bit)
-                //.output('output_flag', sql.Bit)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[dbo].[sp_add_new_campuses]`);
+                .execute(`[dbo].sp_add_new_campuses`);
         })
     }
 
@@ -75,25 +72,26 @@ module.exports = class Campuses {
     static update(body) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            request.input('id', sql.Int, body.Id)
-            request.input('campusId', sql.Int, body.campusId)
-            request.input('campusAbbr', sql.NVarChar(40), body.campusAbbr)
-            request.input('campusName40Char', sql.NVarChar(40), body.campusName)
-            request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
-            return request.query(`UPDATE [dbo].campuses SET campus_id = @campusId, campus_abbr = @campusAbbr, campus_name_40_char = @campusName40Char, campus_description = @campusDesc WHERE id = @id`);
-        }).catch(error => {
-            throw error
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[dbo].update_campuses`);
         })
     }
 
 
-    static deleteById(id) {
+    static delete(inputJSON) {
+        console.log('inputJSON:::::::::::::>>>', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             let request = pool.request();
-            request.input('id', sql.Int, id)
-            return request.query(`UPDATE [dbo].campuses SET active = 0 WHERE id = @id`);
-        }).catch(error => {
-            throw error
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].delete_campuses')
+        })
+    }
+
+    static deleteAll() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`UPDATE [dbo].campuses SET active = 0 WHERE active = 1`)
         })
     }
 

@@ -85,18 +85,19 @@ module.exports = {
         }
 
         Organizations.delete(object).then(result => {
-            console.log('result::::::::::',result)
-            res.status(200).json(result.output.output_json)
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
     deleteAll: (req, res) => {
         Organizations.deleteAll().then(result => {
-            res.status(200).json({status:200})
+            res.status(200).json({
+                status: 200
+            })
         }).catch(error => {
-            console.log('error:::::::::::',error)
+            console.log('error:::::::::::', error)
             res.status(500).json(error.originalError.info.message)
         })
     },
