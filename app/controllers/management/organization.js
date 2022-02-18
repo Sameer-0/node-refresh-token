@@ -33,26 +33,15 @@ module.exports = {
         }
 
         console.log('req.body::::::::::::::::::::::::::', req.body)
-
-        Organizations.save(req.body.inputJSON).then(result => {
-            if (result.output.output) {
-                res.status(200).json({
-                    status: 200,
-                    data: result.recordset,
-                    message: "success"
-                })
-            } else {
-                res.status(409).json({
-                    status: 409,
-                    data: result.recordset,
-                    message: ["Fail! Dublicate entry found"]
-                })
-            }
+        let object = {
+            generate_organization: JSON.parse(req.body.inputJSON)
+        }
+        Organizations.save(object).then(result => {
+            console.log('Response result:::::::::::::::>>', result.output.output_json)
+            res.status(200).json(result.output.output_json)
         }).catch(error => {
-            res.status(500).json({
-                status: 500,
-                message: [error]
-            })
+            console.log('ERRRPRR::::::::::::::::::::>>', JSON.parse(error.originalError.info.message))
+            res.status(500).json(error.originalError.info.message)
         })
     },
 
@@ -88,11 +77,27 @@ module.exports = {
             })
         })
     },
+
     delete: (req, res) => {
-        Organizations.deleteOrgById(req.body.Id).then(result => {
-            res.json({
-                status: 200
-            })
+
+        let object = {
+            delete_organizations: JSON.parse(req.body.Ids)
+        }
+
+        Organizations.delete(object).then(result => {
+            console.log('result::::::::::',result)
+            res.status(200).json(result.output.output_json)
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
+        })
+    },
+
+    deleteAll: (req, res) => {
+        Organizations.deleteAll().then(result => {
+            res.status(200).json({status:200})
+        }).catch(error => {
+            console.log('error:::::::::::',error)
+            res.status(500).json(error.originalError.info.message)
         })
     },
 
