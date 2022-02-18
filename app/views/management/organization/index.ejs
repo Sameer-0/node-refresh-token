@@ -54,10 +54,12 @@
                         </td>
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-org" data-org-id="<%- org.id %>"></i>
+
                         </td>
                         <td>
                             <input type="checkbox" data-org-id="<%- org.id %>" data-orgid="<%- org.org_id %>"
                                 class="delete-org">
+
                         </td>
                     </tr>
                     <% } %>
@@ -138,6 +140,7 @@
 
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
+
 
                                 </td>
                             </tr>
@@ -291,7 +294,7 @@
             $("#add-org-modal").modal('show')
         }).catch(error => {
 
-            let errors = error.responseJSON.message
+let errors = error.responseJSON.message
             console.log('Error:::::::::::', errors)
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
@@ -303,7 +306,7 @@
             })
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            $("#errorHtml").html(errorHtml)     
         })
     })
 
@@ -337,7 +340,7 @@
             error: err => {
                 let error = err.responseJSON.errors
                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
+                    <h3>Errorss</h3>
                     <ul>`
                 error.map(er => {
                     errorHtml +=
@@ -349,6 +352,7 @@
             }
         })
     })
+
 
 
     //Select All Organizations
@@ -409,6 +413,7 @@
         }
     })
 
+
     //Bulk Delete
     $(".bulk-delete-organizations").on('click', function () {
         console.log('bulk-delete-organizations')
@@ -420,6 +425,7 @@
             },
             dataType: 'JSON'
         }
+
         ajaxApi(ApiObj).then(result => {
             location.reload()
         }).catch(error => {
@@ -436,6 +442,7 @@
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             $("#errorHtml").html(errorHtml)
         })
+
     })
 
 
