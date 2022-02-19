@@ -10,10 +10,18 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
     <div class="card table-card">
-        <div class="card-header table-card-header text-uppercase d-flex align-items-center">
-            <h5>Building List</h5>
-            <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Building List</h5>
+            </div>
+            <div>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i
                     class="fas fa-plus"></i></button>
+            <button class="btn ms-auto delete-buildings add-btn "><i class="fas fa-trash"></i></button>
+            <button class="btn ms-auto bulk-delete-building add-btn "><img src="/icons/delete.png" alt=""
+                width="24px" height="32px"></button>
+            </div>
+          
         </div>
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -29,6 +37,7 @@
                     <th>End Time</th>
                     <th>Campus</th>
                     <th>Action</th>
+                    <th>All <input type="checkbox" class="selectAll-campus"></th>
                 </thead>
                 <tbody>
                     <% for (let building of buildingList) { %>
@@ -60,8 +69,11 @@
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-building"
                                 data-building-id="<%- building.building_id %>"></i>
-                            <a data-building-id="<%- building.building_id %>"
-                                class="fas fa-trash-alt text-danger delete-building"></a>
+                           
+                        </td>
+                        <td>
+                            <input type="checkbox" data-id="<%- building.id %>" data-building-id="<%- building.building_id %>"
+                                class="delete-building">
                         </td>
                     </tr>
 
@@ -197,12 +209,12 @@
                             class="fas fa-plus"></i>
                         Add
                         More Building</button>
-                    <button type="submit" class="btn  addBuilding modal-inputform-btn">Create Building</button>
+                    <button type="submit" class="btn  createBuilding modal-inputform-btn">Create Building</button>
                     <button type="submit" class="btn  updateBuilding modal-inputform-btn d-none">Update
                         Building</button>
                 </div>
             </div>
-        </div>
+        </div> 
     </div>
 
 
@@ -212,7 +224,7 @@
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
     <script src="/js/dashboardscript.js"></script>
     <script>
-        $(".addBuilding").on('click', function () {
+        $(".createBuilding").on('click', function () {
             let buildingElems = $('#add-more-building-table tbody tr');
             let buildingCount = buildingElems.length;
 
@@ -306,6 +318,10 @@
             $("#add-building-modal-title").html('Update Building')
             $(".addBuilding").addClass('d-none')
             $(".updateBuilding").removeClass('d-none')
+
+
+
+
             $.ajax({
                 url: '/management/building/single',
                 method: 'GET',
@@ -335,6 +351,53 @@
 
 
         $(".updateBuilding").on('click', function () {
+
+            let buildingElems = $('#add-more-building-table tbody tr');
+            let buildingCount = buildingElems.length;
+
+            let buildingJson = [];
+
+            buildingElems.each(function (index, elem) {
+                let buildingName = $(elem).find(`input[name='buildingName']`).val()
+                let buildingNumber = $(elem).find(`input[name='buildingNumber']`).val();
+                let floors = $(elem).find(`input[name='floors']`).val();
+                let ownerId = $(elem).find(`select[name='ownerId']`).val();
+                let startTimeId = $(elem).find(`select[name='startTimeId']`).val();
+                let endTimeId = $(elem).find(`select[name='endTimeId']`).val();
+                let handledById = $(elem).find(`select[name='handledById']`).val();
+                let campusId = $(elem).find(`select[name='campusId']`).val();
+
+
+                if (index < buildingCount - 1) {
+                    let obj = {
+                        buildingName: buildingName,
+                        buildingNumber: buildingNumber,
+                        floors: floors,   
+                        ownerId: ownerId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        handledById: handledById,
+                        campusId: campusId
+                    }
+                    buildingJson.push(obj)
+                } else {
+                    let obj = {
+                        buildingName: buildingName,
+                        buildingNumber: buildingNumber,
+                        floors: floors,
+                        ownerId: ownerId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        handledById: handledById,
+                        campusId: campusId
+                    }
+                    buildingJson.push(obj)
+                }
+            })
+
+         if(buildingJson.length > 0){
+
+
             $.ajax({
                 url: '/management/building',
                 method: 'PUT',
@@ -367,6 +430,10 @@
                     $("#errorHtml").html(errorHtml)
                 }
             })
+        }
+        else {
+                alert('Select Building First')
+            }
         })
 
         $('#buildingTable').on('click', '.delete-building', function () {
@@ -428,6 +495,7 @@
                         <th>End Time</th>
                         <th>Campus</th>
                         <th>Action</th>
+                        <th>All</th>
                     </thead>
                     <tbody>`;
                     for (building of buildingList) {
@@ -446,6 +514,10 @@
                                     data-building-id="${building.building_id}" ></i>
                                 <a data-building-id="${building.building_id}"
                                     class="fas fa-trash-alt text-danger delete-building"></a>
+                            </td>
+                            <td>
+                                <input type="checkbox" data-building-id="${building.building_id}"
+                                class="delete-building">
                             </td>
                         </tr>`
                     }

@@ -56,25 +56,14 @@ module.exports = {
 
     update: (req, res) => {
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+        let object = {
+            update_organizations: JSON.parse(req.body.inputJSON)
         }
 
-        Organizations.update(req.body).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
+        Organizations.update(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.json({
-                status: 400,
-                message: "Recored Already Exit!"
-            })
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
