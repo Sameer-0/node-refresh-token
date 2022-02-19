@@ -5,7 +5,7 @@ const {
     body
 } = require('express-validator');
 
-const roomcontroller = require('../../controllers/management/room')
+const roomcontroller = require('../../controllers/management/rooms')
 const roomslotscontroller = require("../../controllers/management/roomslots")
 const roomtype = require('../../controllers/management/roomtype')
 const validator = require('../../middlewares/validator')
@@ -13,7 +13,7 @@ const validate = require('../../middlewares/validate')
 const roomValidate = require('../../middlewares/roomValidate')
 
 //ROOM ROUTER
-router.get('/room', roomcontroller.getPage)
+router.get('/rooms', roomcontroller.getPage)
 router.get('/room/single', roomcontroller.getSingleRoom)
 router.put('/room', validate('updateRoom'), roomcontroller.updateRoomById)
 router.delete('/room', validate('delete'), roomcontroller.deleteRoomById)
