@@ -36,10 +36,6 @@ module.exports = {
         if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
-
-
-        console.log('REQ::::::::::>>',req.body.inputJSON)
-
         let object = {
             add_new_campus: JSON.parse(req.body.inputJSON)
         }
@@ -52,8 +48,8 @@ module.exports = {
 
     },
 
-    single: (req, res) => {
-        Campuses.getCampusById(req.query.Id).then(result => {
+    findOne: (req, res) => {
+        Campuses.findOne(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset[0]
@@ -62,16 +58,13 @@ module.exports = {
     },
 
     update: (req, res) => {
-
         let object = {
-            update_campuses: req.body.inputJSON
+            update_campuses: JSON.parse(req.body.inputJSON)
         }
-
         Campuses.update(object).then(result => {
-            res.json({
-                status: 200,
-                result: result.recordset
-            })
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 

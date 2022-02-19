@@ -58,18 +58,18 @@ module.exports = class Campuses {
         })
     }
 
-    static getCampusById(id) {
+    static findOne(id) {
         return poolConnection.then(pool => {
             let request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`SELECT id, campus_id, campus_abbr, campus_name_40_char, campus_description FROM [dbo].campuses  WHERE id = @id`)
+            return request.query(`SELECT id, campus_id, campus_abbr, campus_name_40_char, campus_description, CONVERT(NVARCHAR, active) AS active FROM [dbo].campuses  WHERE id = @id`)
         }).catch(error => {
             throw error
         })
     }
 
 
-    static update(body) {
+    static update(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -100,7 +100,7 @@ module.exports = class Campuses {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcont)} id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
-            FROM [dbo].campuses WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword AND active = 1 ORDER BY id DESC`)
+            FROM [dbo].campuses WHERE active = 1 AND (campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword ) ORDER BY id DESC`)
         }).catch(error => {
             throw error
         })
