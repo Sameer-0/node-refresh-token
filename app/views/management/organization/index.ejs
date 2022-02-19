@@ -15,7 +15,8 @@
                 <button class="btn ms-auto add-btn" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-organizations add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-organizations add-btn "><img src="/icons/delete.png" alt="" width="26px" height="32px"></button>
+                <button class="btn ms-auto bulk-delete-organizations add-btn "><img src="/icons/delete.png" alt=""
+                        width="24px" height="32px"></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -197,8 +198,8 @@
         }
     })
 
-       //Select All Organizations
-       $("#organizationTable").on('click','.selectAll-org', function () {
+    //Select All Organizations
+    $("#organizationTable").on('click', '.selectAll-org', function () {
         console.log('checked!!')
         if (this.checked) {
             // Iterate each checkbox
@@ -218,6 +219,7 @@
         let orgCount = orgElems.length;
         let orgJson = [];
         orgElems.each(function (index, elem) {
+         
             let orgId = $(elem).find(`input[name='orgId']`).val()
             let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
             let orgName = $(elem).find(`input[name='orgName']`).val()
@@ -261,8 +263,8 @@
 
         ajaxApi(ApiObj).then(result => {
             console.log('Result:::::::::::', result)
-        //   location.reload()
-        notify();
+            //   location.reload()
+            notify();
         }).catch(error => {
 
             let errors = JSON.parse(error.responseJSON)
@@ -309,7 +311,7 @@
             $("#add-org-modal").modal('show')
         }).catch(error => {
 
-let errors = error.responseJSON.message
+            let errors = error.responseJSON.message
             console.log('Error:::::::::::', errors)
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
@@ -321,52 +323,91 @@ let errors = error.responseJSON.message
             })
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)     
+            $("#errorHtml").html(errorHtml)
         })
     })
 
     $(".updateOrg").on('click', function () {
-        $.ajax({
-            url: '/management/organization',
-            method: 'PUT',
-            type: 'JSON',
-            data: {
-                id: $('#orgLid').val(),
-                org_id: $('#orgId').val(),
-                org_abbr: $('#orgAbbr').val(),
-                org_name: $('#orgName').val(),
-                org_complete_name: $('#orgCompleteName').val(),
-                org_type_id: $('#orgType').val()
-            },
-            success: data => {
 
-                console.log('errorHtml::::::::>>', data)
-                if (data.status == 200) {
-                    location.reload()
-                } else {
-                    let errorHtml =
-                        `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    console.log('errorHtml::::::::>>', errorHtml)
-                    $("#errorHtml").html(errorHtml)
+        let orgElems = $('#add-more-org-table tbody tr');
+        let orgCount = orgElems.length;
+        let orgJson = [];
+        orgElems.each(function (index, elem) {
+            let id = $(elem).find(`input[name='orgLid']`).val()
+            let orgId = $(elem).find(`input[name='orgId']`).val()
+            let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
+            let orgName = $(elem).find(`input[name='orgName']`).val()
+            let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
+            let orgType = $(elem).find(`select[name='orgType']`).val()
+
+
+            if (index < orgCount - 1) {
+                let obj = {
+                    id: id,
+                    org_id: orgId,
+                    org_id_str: orgId,
+                    org_abbr: orgAbbr,
+                    org_name: orgName,
+                    org_complete_name: orgCompleteName,
+                    org_type_id: orgType
                 }
-
-            },
-            error: err => {
-                let error = err.responseJSON.errors
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Errorss</h3>
-                    <ul>`
-                error.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+                orgJson.push(obj)
+            } else {
+                let obj = {
+                    id: id,
+                    org_id: orgId,
+                    org_id_str: orgId,
+                    org_abbr: orgAbbr,
+                    org_name: orgName,
+                    org_complete_name: orgCompleteName,
+                    org_type_id: orgType
+                }
+                orgJson.push(obj)
             }
         })
+
+        if (orgJson.length > 0) {
+
+
+            $.ajax({
+                url: '/management/organizations',
+                method: 'PUT',
+                type: 'JSON',
+                data: {
+                    inputJSON: JSON.stringify(orgJson)
+                },
+                success: data => {
+
+                    console.log('errorHtml::::::::>>', data)
+                    if (data.status == 200) {
+                        location.reload()
+                    } else {
+                        let errorHtml =
+                            `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                        console.log('errorHtml::::::::>>', errorHtml)
+                        $("#errorHtml").html(errorHtml)
+                    }
+
+                },
+                error: err => {
+                    let error = err.responseJSON.errors
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Errorss</h3>
+                    <ul>`
+                    error.map(er => {
+                        errorHtml +=
+                            `<li>${er.msg}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
+                }
+            })
+        } else {
+            alert('Select org First');
+        }
     })
 
 
@@ -383,7 +424,7 @@ let errors = error.responseJSON.message
 
         if (deleteids.length > 0) {
 
-            console.log('deleteids::::::::::::::',deleteids)
+            console.log('deleteids::::::::::::::', deleteids)
             let ApiObj = {
                 url: '/management/organizations',
                 type: 'DELETE',
@@ -394,7 +435,7 @@ let errors = error.responseJSON.message
             }
             ajaxApi(ApiObj).then(result => {
                 notify();
-                
+
 
             }).catch(error => {
                 let errors = error.responseJSON.message
@@ -412,7 +453,7 @@ let errors = error.responseJSON.message
             })
 
         } else {
-          return
+            return
         }
     })
 
@@ -430,28 +471,30 @@ let errors = error.responseJSON.message
         alertMsg()
 
         $('.continue').on('click', () => {
-            console.log('it worked!!!!!')
-        ajaxApi(ApiObj).then(result => {
-            
-            location.reload()
-        }).catch(error => {
-            let errors = error.responseJSON.message
-            console.log('Error:::::::::::', errors)
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+
+            ajaxApi(ApiObj).then(result => {
+
+                location.reload()
+            }).catch(error => {
+                let errors = error.responseJSON.message
+                console.log('Error:::::::::::', errors)
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <ul>`
-            errors.map(er => {
+                errors.map(er => {
+                    errorHtml +=
+                        `<li>${er}</li>`
+                })
                 errorHtml +=
-                    `<li>${er}</li>`
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             })
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
-        })
 
         })
-       
-        $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
+
+        $('.cancel').on('click', () => {
+            $('#alertModal').css('display', 'none');
+        })
 
     })
 

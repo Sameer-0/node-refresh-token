@@ -166,6 +166,9 @@
     </div>
 </div>
 
+<%- include('../partials/notification') %>
+<%- include('../partials/alert') %>
+
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
@@ -366,7 +369,7 @@
         })
 
 
-        //Select All Organizations
+        //Select All campus
         $("#campusTable").on('click', '.selectAll-campus', function () {
             if (this.checked) {
                 // Iterate each checkbox
@@ -387,7 +390,6 @@
             $('.delete-campus:checked').each(function () {
                 let obj = {
                     id: $(this).attr("data-id"),
-                    campus_id: $(this).attr("data-campus-id")
                 }
                 deleteids.push(obj)
             })
@@ -403,7 +405,7 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
+                    notify();
                 }).catch(error => {
                     let errors = error.responseJSON.message
                     console.log('Error:::::::::::', errors)
@@ -435,6 +437,9 @@
                 dataType: 'JSON'
             }
 
+            alertMsg()
+
+            $('.continue').on('click', () => {
             ajaxApi(ApiObj).then(result => {
                 location.reload()
             }).catch(error => {
@@ -451,7 +456,11 @@
                     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                 console.log('errorHtml:::::::', errorHtml)
                 $("#errorHtml").html(errorHtml)
+
             })
+        })
+        $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
+        
         })
 
 
