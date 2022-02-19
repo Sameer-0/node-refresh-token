@@ -100,7 +100,14 @@ module.exports = {
     },
 
     addRoom: (req, res) => {
-        Rooms.add(req.body.roomJson).then(result => {
+        console.log('Req::::::::::',req.body.inputJSON)
+
+        let object = {
+            add_new_rooms: JSON.parse(req.body.inputJSON)
+        }
+
+
+        Rooms.save(object).then(result => {
             res.json({
                 status: 200,
                 message: "success",
