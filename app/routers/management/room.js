@@ -17,8 +17,8 @@ router.get('/rooms', roomcontroller.getPage)
 router.get('/room/single', roomcontroller.getSingleRoom)
 router.put('/room', validate('updateRoom'), roomcontroller.updateRoomById)
 router.delete('/room', validate('delete'), roomcontroller.deleteRoomById)
-//router.post('/room', validate('createRoom') , roomcontroller.addRoom)
-router.post('/room', roomValidate, roomcontroller.addRoom)
+// router.post('/rooms', roomValidate, roomcontroller.addRoom)
+router.post('/rooms',  roomcontroller.addRoom)
 router.get('/room/search', validate('search'), roomcontroller.searchRoom)
 
 

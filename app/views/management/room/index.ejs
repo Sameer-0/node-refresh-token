@@ -125,22 +125,10 @@
 
 
                 <div class="row mt-4 ">
-                    <div class="col-md-4">
-                        <label>Campus</label>
-                        <select class="form-select modalSelect2" name="campusId" id="campus" required>
-                            <option disabled selected value>--Select Campus--</option>
-                            <% for(let campus of campusList) { %>
-                            <option value="<%- campus.id %>">
-                                <%- campus.campus_abbr %>
-                            </option>
-                            <% } %>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label>Building</label>
-                        <select class="form-select modalSelect2" name="buildingId" id="buildingName" required>
-                            <option disabled selected value>--Select Building--</option>
+                        <select class="form-select" name="building_lid" id="building_lid">
+                            <option disabled selected value="">--Select Building--</option>
                             <% for(let building of buildingList) { %>
                             <option value="<%- building.building_id %>">
                                 <%- building.building_name %>
@@ -149,9 +137,9 @@
                         </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label>Handled By</label>
-                        <select class="form-select modalSelect2" name="handledBy" id="handledBy" required>
+                        <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
                             <option disabled selected value>--Select Organization--</option>
                             <% for(let org of orgList) { %>
                             <option value="<%- org.id %>">
@@ -169,7 +157,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-room-table">
+                    <table class="table table-bordered " id="add-room-table">
                         <thead>
                             <th>Room No</th>
                             <th>Room Type</th>
@@ -178,6 +166,7 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Is Basement</th>
+                            <th>Is Processed</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -187,8 +176,8 @@
                                         palceholder="Enter Room no." required>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="roomType" id="roomType" required>
-                                        <option disabled selected value>--Room Type--</option>
+                                    <select class="form-select modalSelect2" name="room_type_id" id="room_type_id">
+                                        <option disabled selected value="">--Room Type--</option>
                                         <% for(let roomType of roomTypeList) { %>
                                         <option value="<%- roomType.roomtypeid %>">
                                             <%- roomType.name %>
@@ -197,15 +186,15 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="floorNo" id="floorNo" class="form-control"
-                                        style="width: 70px;" required>
+                                    <input type="number" name="floor_number" id="floor_number" class="form-control"
+                                        required>
                                 </td>
                                 <td>
-                                    <input type="number" name="capacity" id="capacity" class="form-control"
-                                        style="width: 70px;" required>
+                                    <input type="number" name="capacity" id="capacity" class="form-control" required>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="startTime" id="startTime" required>
+                                    <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
+                                        required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -215,7 +204,8 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="endTime" id="endTime" required>
+                                    <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
+                                        required>
                                         <option disabled selected value>--End Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -225,8 +215,15 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="isBasement" id="isBasement"
-                                        style="width: 70px;" required>
+                                    <select class="form-select modalSelect2" name="is_basement" id="is_basement"
+                                        required>
+                                        <option selected value="0">No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select modalSelect2" name="is_processed" id="is_processed"
+                                        required>
                                         <option selected value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
@@ -338,92 +335,87 @@
         }
         var chart = new ApexCharts(document.querySelector("#chart1"), options);
         chart.render();
-
-        $(".addRoom").on('click', function () {
-            let roomElems = $('#add-more-room-table tbody tr');
+        
+        $("#insertRoom").on('click', function () {
+            let roomElems = $('#add-room-table tbody tr');
             let roomCount = roomElems.length;
-
             let roomJson = [];
-
             roomElems.each(function (index, elem) {
+                let building_lid = $('#building_lid').val();
+                let handled_by = $("#handled_by").val();
                 let roomNumber = $(elem).find(`input[name='roomNo']`).val()
-                let roomType = $(elem).find(`select[name='roomType']`).val();
-                let floorNo = $(elem).find(`input[name='floorNo']`).val();
+                let room_type_id = $(elem).find(`select[name='room_type_id']`).val();
+                let floor_number = $(elem).find(`input[name='floor_number']`).val();
                 let capacity = $(elem).find(`input[name='capacity']`).val();
-                let startTime = $(elem).find(`select[name='startTime']`).val();
-                let endTime = $(elem).find(`select[name='endTime']`).val();
-                let isBasement = $(elem).find(`select[name='isBasement']`).val();
-
-
+                let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
+                let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
+                let is_basement = $(elem).find(`select[name='is_basement']`).val();
+                let is_processed = $(elem).find(`select[name='is_processed']`).val();
 
                 if (index < roomCount - 1) {
                     let obj = {
-                        roomNumber: roomNumber,
-                        roomType: roomType,
-                        floorNo: floorNo,
+                        building_lid: building_lid,
+                        handled_by: handled_by,
+                        room_number: roomNumber,
+                        room_type_id: room_type_id,
+                        floor_number: floor_number,
                         capacity: capacity,
-                        startTime: startTime,
-                        endTime: endTime,
-                        isBasement: isBasement
-
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        is_basement: is_basement,
+                        is_processed: is_processed
                     }
+                    console.log('OBJ1::::::::::>>',obj)
                     roomJson.push(obj)
                 } else {
                     let obj = {
-                        roomNumber: roomNumber,
-                        roomType: roomType,
-                        floorNo: floorNo,
+                        building_lid: building_lid,
+                        handled_by: handled_by,
+                        room_number: roomNumber,
+                        room_type_id: room_type_id,
+                        floor_number: floor_number,
                         capacity: capacity,
-                        startTime: startTime,
-                        endTime: endTime,
-                        isBasement: isBasement
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        is_basement: is_basement,
+                        is_processed: is_processed
                     }
+                    console.log('OBJ2::::::::::>>',obj)
                     roomJson.push(obj)
                 }
             })
-
             console.log('roomJson:::::::>>', roomJson)
-
-            $.ajax({
-                url: '/management/room',
-                method: 'POST',
-                type: 'JSON',
+            let ApiObj = {
+                url: '/management/rooms',
+                type: 'POST',
                 data: {
-                    roomJson: JSON.stringify(roomJson)
+                    inputJSON: JSON.stringify(roomJson)
                 },
-                success: data => {
-                    console.log('data:::::::::::::::::>>', data)
-                    if (data.status == 200) {
-                        // location.reload()
-                    } else {
-                        //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        // <h3>Error</h3>
-                        // <ul>`
-                        //     data.message.forEach(function (item) {
-                        //         errorHtml += `<li>${item}</li>`
-                        //     })
-                        //     errorHtml +=
-                        //         `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        //     console.log('errorHtml::::::::>>', errorHtml)
-                        //     $("#errorHtml").html(errorHtml)
-                    }
+                dataType: 'JSON'
+            }
 
-                },
-                error: err => {
-                    console.log('Error:::::::::::::>>', err)
-                    let error = err.responseJSON.errors
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            ajaxApi(ApiObj).then(result => {
+                console.log('Result:::::::::::', result)
+                //   location.reload()
+                notify();
+            }).catch(error => {
+
+                let errors = JSON.parse(error.responseJSON)
+                console.log('Error:::::::::::', errors)
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
+                    <p>${errors.description}</p>
                     <ul>`
-                    error.map(er => {
-                        errorHtml +=
-                            `<li>${er.msg}</li>`
-                    })
+                errors.data.map(er => {
+                    console.log('Errr:::::::::::>>', er)
                     errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
-                }
+                        `<li>${er.org_id} ${er.org_abbr}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
             })
+
         })
 
         $('#searchkeyword').on('input', delay(function (e) {

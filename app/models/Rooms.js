@@ -119,16 +119,13 @@ module.exports = class Rooms {
         })
     }
 
-    static add(roomJson) {
+    static save(inputJSON) {
         return poolConnection.then(pool => {
-
-        // console.log('body============>>>>>>>> ',roomJson)
-        
-        
-        return pool.request().input('room_json', sql.NVarChar(sql.MAX), roomJson)
-        .output('output', sql.Bit)
-        .output('msg', sql.NVarChar(sql.MAX))
-        .execute('insert_rooms')
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[sp_add_new_rooms]')
         })
+
     }
 }
