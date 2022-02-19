@@ -8,19 +8,17 @@ const {
 const roomcontroller = require('../../controllers/management/rooms')
 const roomslotscontroller = require("../../controllers/management/roomslots")
 const roomtype = require('../../controllers/management/roomtype')
-const validator = require('../../middlewares/validator')
 const validate = require('../../middlewares/validate')
 const roomValidate = require('../../middlewares/roomValidate')
 
 //ROOM ROUTER
 router.get('/rooms', roomcontroller.getPage)
-router.get('/room/single', roomcontroller.getSingleRoom)
-router.put('/room', validate('updateRoom'), roomcontroller.updateRoomById)
-router.delete('/room', validate('delete'), roomcontroller.deleteRoomById)
-// router.post('/rooms', roomValidate, roomcontroller.addRoom)
-router.post('/rooms',  roomcontroller.addRoom)
+router.get('/rooms/findone', roomcontroller.findOne)
+router.put('/rooms', validate('JsonValidator'), roomcontroller.update)
+router.delete('/rooms', roomcontroller.delete)
+router.post('/rooms', validate('JsonValidator'), roomcontroller.addRoom)
 router.get('/room/search', validate('search'), roomcontroller.searchRoom)
-
+router.patch('/rooms', roomcontroller.deleteAll)
 
 //ROOM TYPE ROUTER
 router.get('/room/roomtype', roomtype.getPage)

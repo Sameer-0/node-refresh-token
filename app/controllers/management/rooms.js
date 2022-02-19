@@ -11,6 +11,7 @@ const Organizations = require('../../models/Organizations');
 const Campuses = require('../../models/Campuses');
 
 module.exports = {
+
     getPage: (req, res) => {
         let rowCount = 10
         if (req.method == "GET") {
@@ -23,7 +24,6 @@ module.exports = {
                     roomTypeList: result[4].recordset,
                     timeList: result[3].recordset
                 })
-
             }).catch(error => {
                 throw error
             })
@@ -55,7 +55,6 @@ module.exports = {
                     length: result.recordset.length
 
                 })
-
             }).catch(error => {
                 throw error
             })
@@ -63,26 +62,23 @@ module.exports = {
     },
 
 
-    getSingleRoom: (req, res) => {
-        Rooms.fetchRoomById(req.query.id).then(result => {
+    findOne: (req, res) => {
+        Rooms.findOne(req.query.id).then(result => {
             res.json({
                 status: 200,
                 roomData: result.recordset[0]
             })
         })
-
     },
-    updateRoomById: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+
+    update: (req, res) => {
+  
+        console.log('inputJSON:::::::>>',JSON.parse(req.body.inputJSON))
+        let object = {
+            update_rooms: JSON.parse(req.body.inputJSON)
         }
 
-        Rooms.updateRoomById(req.body).then(result => {
+        Rooms.update(object).then(result => {
             res.json({
                 status: 200
             })
@@ -90,8 +86,14 @@ module.exports = {
     },
 
 
-    deleteRoomById: (req, res) => {
-        Rooms.delete(req.body.roomId).then(result => {
+    delete: (req, res) => {
+
+        console.log('Req ides:::::::>>',JSON.parse(req.body.Ids))
+        let object = {
+            delete_rooms: JSON.parse(req.body.Ids)
+        }
+
+        Rooms.delete(object).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -100,7 +102,7 @@ module.exports = {
     },
 
     addRoom: (req, res) => {
-        console.log('Req::::::::::',req.body.inputJSON)
+        console.log('Req::::::::::', req.body.inputJSON)
 
         let object = {
             add_new_rooms: JSON.parse(req.body.inputJSON)
@@ -136,7 +138,7 @@ module.exports = {
             return;
         }
 
-   
+
         let rowCount = 10;
         Rooms.searchRoom(rowCount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
@@ -159,6 +161,16 @@ module.exports = {
                 status: "500",
                 message: "Something went wrong",
             })
+        })
+    },
+
+    deleteAll: (req, res) => {
+        Rooms.deleteAll().then(result => {
+            res.status(200).json({
+                status: 200
+            })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
         })
     }
 }

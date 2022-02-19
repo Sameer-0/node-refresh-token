@@ -32,44 +32,27 @@ module.exports = class Rooms {
             INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
             INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
             INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.active = 1 and st.active = 1 ORDER BY r.id DESC`)
-
         })
     }
 
-    static fetchRoomById(id) {
+    static findOne(id) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, id)
-                .query(`SELECT r.id as roomid, r.room_number, b.building_name AS building_name, b.id AS buildingid, rt.name AS room_type, rt.id AS roomtypeId, r.floor_number, r.capacity,
-            CONVERT(NVARCHAR, r.start_time, 100) AS start_time, CONVERT(NVARCHAR, r.end_time, 100) AS end_time, o.id AS orgid,
-            o.org_abbr AS handled_by, c.id, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].rooms r
-            INNER JOIN [dbo].[buildings] b ON b.id = r.building_id
-            INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
-            INNER JOIN [dbo].organization_master o ON o.id = r.handled_by
-            INNER JOIN [dbo].campus_master c ON c.id = b.campus_id WHERE r.id = @id`)
+                .query(`SELECT r.id as roomid, r.room_number, b.building_name AS building_name, b.id AS building_lid, rt.name AS room_type, rt.id AS room_type_id, r.floor_number, r.capacity,
+                CONVERT(NVARCHAR, r.start_time_id, 100) AS start_time_id, CONVERT(NVARCHAR, r.end_time_id, 100) AS end_time_id,
+                o.id AS handled_by, CONVERT(NVARCHAR, r.is_basement) AS is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
+                INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
+                INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
+                INNER JOIN [dbo].organizations o ON o.id = r.handled_by WHERE r.id = @id`)
         })
     }
 
-    static updateRoomById(body) {
-        console.log('body:::::::::??', body)
+    static update(inputJSON) {
         return poolConnection.then(pool => {
-            return pool.request().input('roomId', sql.Int, body.roomid)
-                .input('roomNo', sql.NVarChar(50), body.room_number)
-                .input('buildingId', sql.Int, body.buildingid)
-                .input('roomType', sql.Int, body.roomtypeId)
-                .input('floor', sql.Int, body.floor_number)
-                .input('capacity', sql.Int, body.capacity)
-                .input('startTime', sql.Int, body.start_time)
-                .input('endTime', sql.Int, body.end_time)
-                .input('isBasement', sql.Bit, body.is_basement)
-                .input('orgId', sql.Int, body.orgid)
-                .input('isProcessed', sql.Bit, body.is_processed)
-                .query(`UPDATE [dbo].rooms SET room_number = @roomNo, building_id = @buildingId, room_type_id = @roomType, 
-            floor_number = @floor, capacity = @capacity, start_time  = @startTime, end_time = @endTime, handled_by = @orgId,
-            is_basement = @isBasement WHERE id = @roomId`)
-
-        }).catch(error => {
-            console.log('error:::::::::??', error)
-            throw error
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[update_rooms]')
         })
     }
 
@@ -113,11 +96,17 @@ module.exports = class Rooms {
         })
     }
 
-    static delete(id) {
+
+    static delete(inputJSON) {
+        console.log('inputJSON:::::::::::::>>>', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
-            return pool.request().input('id', sql.Int, id).query(`UPDATE [dbo].rooms SET active = 0 WHERE id = @id`)
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].delete_rooms')
         })
     }
+
 
     static save(inputJSON) {
         return poolConnection.then(pool => {
@@ -126,6 +115,11 @@ module.exports = class Rooms {
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_add_new_rooms]')
         })
+    }
 
+    static deleteAll() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`UPDATE [dbo].rooms SET active = 0 WHERE active = 1`)
+        })
     }
 }
