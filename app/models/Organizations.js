@@ -62,7 +62,6 @@ module.exports = class Organizations {
     }
 
     static delete(inputJSON) {
-        console.log('inputJSON:::::::::::::>>>', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))

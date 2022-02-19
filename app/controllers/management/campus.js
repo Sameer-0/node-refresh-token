@@ -6,12 +6,11 @@ const Buildings = require('../../models/Buildings')
 const Organizations = require("../../models/Organizations")
 const Campuses = require("../../models/Campuses")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
-const Settings =  require('../../models/Settings')
+const Settings = require('../../models/Settings')
 
 
 module.exports = {
     getCampusPage: (req, res) => {
-
         if (req.method == "GET") {
             Promise.all([Campuses.fetchAll(10), Campuses.getCount()]).then(result => {
                 res.render('management/campus/index', {
@@ -34,30 +33,21 @@ module.exports = {
 
     create: (req, res) => {
 
-        if(req.body.settingName){
+        if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
-        Campuses.saveWithProc(req.body.inputJSON).then(result => {
-            if (result.output.output) {
-                res.status(200).json({
-                    status: 200,
-                    data: result.recordset,
-                    message: "success"
-                })
-            } else {
-                res.status(409).json({
-                    status: 409,
-                    data: result.recordset,
-                    message: ["Fail! Dublicate entry found"]
-                })
-            }
+
+        console.log('REQ::::::::::>>',req.body.inputJSON)
+
+        let object = {
+            add_new_campus: JSON.parse(req.body.inputJSON)
+        }
+
+        Campuses.saveWithProc(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('error::::::::::::',error)
-            res.status(500).json({
-                status: 500,
-                message: [error]
-            })
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
 
     },
@@ -73,16 +63,11 @@ module.exports = {
 
     update: (req, res) => {
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+        let object = {
+            update_campuses: req.body.inputJSON
         }
-        
-        Campuses.update(req.body).then(result => {
+
+        Campuses.update(object).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset
@@ -91,13 +76,27 @@ module.exports = {
     },
 
     delete: (req, res) => {
-        Campuses.deleteById(req.body.Id).then(result => {
+        let object = {
+            delete_campus: JSON.parse(req.body.Ids)
+        }
+        Campuses.delete(object).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset
             })
         })
     },
+
+    deleteAll: (req, res) => {
+        Campuses.deleteAll().then(result => {
+            res.status(200).json({
+                status: 200
+            })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
+        })
+    },
+
 
     search: (req, res) => {
         //here 10is rowcount
