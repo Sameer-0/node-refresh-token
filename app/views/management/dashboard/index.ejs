@@ -215,19 +215,7 @@
                     ajaxApi(ApiObj).then(result => {
                         console.log('Result:::::::::::>>', result)
                     }).catch(error => {
-
-                        let errors = error.responseJSON.message
-                        console.log('Error:::::::::::>>', errors)
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        errors.map(er => {
-                            errorHtml +=
-                                `<li>${er}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                        showError(error.responseJSON)
                     })
 
                 }
@@ -291,19 +279,7 @@
                     ajaxApi(ApiObj).then(result => {
                         console.log('Result:::::::::::', result)
                     }).catch(error => {
-
-                        let errors = error.responseJSON.message
-                        console.log('Error:::::::::::', errors)
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        errors.map(er => {
-                            errorHtml +=
-                                `<li>${er}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                        showError(error.responseJSON)
                     })
 
                 }
@@ -379,19 +355,7 @@
                     ajaxApi(ApiObj).then(result => {
                         console.log('Result:::::::::::', result)
                     }).catch(error => {
-
-                        let errors = error.responseJSON.message
-                        console.log('Error:::::::::::', errors)
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        errors.map(er => {
-                            errorHtml +=
-                                `<li>${er}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                        showError(error.responseJSON)
                     })
                 }
             } else if (currentFormStep == 4) {
@@ -465,25 +429,33 @@
 
                     ajaxApi(ApiObj).then(result => {
                         console.log('Result:::::::::::>>', result)
+                        location.reload()
                     }).catch(error => {
-
-                        let errors = error.responseJSON.message
-                        console.log('Error:::::::::::>>', errors)
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <h3>Error</h3>
-    <ul>`
-                        errors.map(er => {
-                            errorHtml +=
-                                `<li>${er}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                    showError(error.responseJSON)
                     })
 
                 }
             }
         })
+
+
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            $(errors.data).each(function (key, value) {
+                $.each(this, function (key, value) {
+                    errorHtml +=
+                        `<li>${key} ${value}</li>`
+                });
+            });
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
+
     })
 </script>
 <!-- PAGE LEVEL JS END -->

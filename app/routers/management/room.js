@@ -8,6 +8,7 @@ const {
 const roomcontroller = require('../../controllers/management/rooms')
 const roomslotscontroller = require("../../controllers/management/roomslots")
 const roomtype = require('../../controllers/management/roomtype')
+const bookings = require('../../controllers/management/bookings')
 const validate = require('../../middlewares/validate')
 const roomValidate = require('../../middlewares/roomValidate')
 
@@ -31,5 +32,11 @@ router.patch('/rooms/roomtypes', roomtype.deleteAll)
 
 //ROOM SLOTS ROUTER
 router.get('/room/slots', roomslotscontroller.getPage)
+
+
+//ROOM BOOKING
+
+router.get('/rooms/bookings', bookings.getPage)
+
 
 module.exports = router;
