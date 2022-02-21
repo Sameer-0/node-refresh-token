@@ -54,37 +54,24 @@ module.exports = {
 
     create: (req, res) => {
 
-        // const errors = validationResult(req);
-        // if (!errors.isEmpty()) {
-        //     res.status(422).json({
-        //         statuscode: 422,
-        //         errors: errors.array()
-        //     });
-        //     return;
-        // }
-
         if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
-        Buildings.saveWithProc(req.body.buildingJson)
-        res.json({
-            status: 200,
-            message: "Success"
+        let object = {
+            add_new_buildings: JSON.parse(req.body.inputJSON)
+        }
+
+        Buildings.save(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
-    single: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
+    findOne: (req, res) => {
 
-        Buildings.fetchById(req.query.Id).then(result => {
+        Buildings.findOne(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -93,40 +80,39 @@ module.exports = {
     },
 
     update: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+        let object = {
+            update_buildings: JSON.parse(req.body.inputJSON)
         }
-
-        Buildings.update(req.body).then(result => {
-            res.json({
-                status: 200
-            })
+        Buildings.update(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
     delete: (req, res) => {
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+        console.log('Delete Call', req.body)
+        let object = {
+            delete_buildings: JSON.parse(req.body.Ids)
         }
 
-
-        Buildings.softDeleteById(req.body.id).then(result => {
-            res.json({
-                status: 200
-            })
+        Buildings.delete(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
+
+    deleteAll: (req, res) => {
+        Buildings.deleteAll().then(result => {
+
+            res.status(200).json({status:200,description:"Successfully deleted"})
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
+        })
+    },
+
 
     search: (req, res) => {
 
