@@ -20,15 +20,18 @@ module.exports = function validate(method) {
         case 'JsonValidator': {
 
             return (req, res, next) => {
-                console.log('Validation:::::::::::::::>>', req.body)
+                console.log('Validation:::::::::::::::>>', req.body.inputJSON)
                 let jsonreq = JSON.parse(req.body.inputJSON);
                 let done = false
                 let keyval = [];
                 for (let data of jsonreq) {
                     for (let key in data) {
                         if (!data[key]) {
+                            let obj = {
+                               "" : key + ` must not be empty`
+                            }
                             done = false
-                            keyval.push(key + ` must not be empty`)
+                            keyval.push(obj)
                             break;
                         } else {
                             done = true
@@ -43,7 +46,8 @@ module.exports = function validate(method) {
                     console.log('Fail::::::::::::>>')
                     res.status(403).json({
                         status: 403,
-                        message: keyval
+                        description:'All fields are mandetory',
+                        data: keyval
                     })
                 }
             };

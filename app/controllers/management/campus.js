@@ -23,7 +23,7 @@ module.exports = {
             Campuses.fetchChunkRows(req.body.pageNo).then(result => {
                 res.json({
                     status: "200",
-                    message: "Quotes fetched",
+                    message: "fetched",
                     data: result.recordset,
                     length: result.recordset.length
                 })
@@ -43,7 +43,8 @@ module.exports = {
         Campuses.saveWithProc(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            console.log('error:::::::::',error)
+           res.status(500).json(JSON.parse(error.originalError.info.message))
         })
 
     },

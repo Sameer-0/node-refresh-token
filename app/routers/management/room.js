@@ -21,13 +21,13 @@ router.get('/room/search', validate('search'), roomcontroller.searchRoom)
 router.patch('/rooms', roomcontroller.deleteAll)
 
 //ROOM TYPE ROUTER
-router.get('/room/roomtype', roomtype.getPage)
-router.put('/room/roomtype', validate('updateRoomType'), roomtype.update)
-router.post('/room/roomtype', validate('createRoomType'), roomtype.create)
-router.get('/room/roomtype/single', validate('single'), roomtype.single)
-router.get('/room/roomtype/search', validate('search'), roomtype.search)
-router.delete('/room/roomtype/delete', validate('delete'), roomtype.delete)
-
+router.get('/rooms/roomtypes', roomtype.getPage)
+router.put('/rooms/roomtypes', validate('updateRoomType'), roomtype.update)
+router.post('/rooms/roomtypes', validate('createRoomType'), roomtype.create)
+router.get('/rooms/roomtypes/single', validate('single'), roomtype.single)
+router.get('/rooms/roomtypes/search', validate('search'), roomtype.search)
+router.delete('/rooms/roomtypes', roomtype.delete)
+router.patch('/rooms/roomtypes', roomtype.deleteAll)
 
 //ROOM SLOTS ROUTER
 router.get('/room/slots', roomslotscontroller.getPage)

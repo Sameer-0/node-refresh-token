@@ -16,8 +16,8 @@
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-campuses add-btn "><i class="fas fa-trash"></i> <i
-                        class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt="" width="26px"
+                    height="32px"></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -237,7 +237,6 @@
 
             console.log('campusJson:::::::>>', campusJson)
 
-
             let ApiObj = {
                 type: 'POST',
                 url: '/management/campuses',
@@ -248,26 +247,10 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('Result:::::::::::', result)
                 location.reload()
             }).catch(error => {
-
-                let errors = JSON.parse(error.responseJSON)
-                console.log('Error:::::::::::', errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-                errors.data.map(er => {
-                    console.log('Errr:::::::::::>>', er)
-                    errorHtml +=
-                        `<li>${er.org_id} ${er.org_abbr}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+                showError(error.responseJSON)
             })
-
         })
 
 
@@ -337,31 +320,19 @@
 
 
             if (campusJson.length > 0) {
-                $.ajax({
+                let ApiObj = {
+                    type: 'PUT',
                     url: '/management/campuses',
-                    method: 'PUT',
-                    type: 'JSON',
                     data: {
                         inputJSON: JSON.stringify(campusJson)
                     },
-                    success: data => {
-                        location.reload()
-                    },
-                    error: error => {
-                        let errors = error.responseJSON.message
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        errors.map(er => {
-                            errorHtml +=
-                                `<li>${er}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        console.log('errorHtml:::::::', errorHtml)
-                        $("#errorHtml").html(errorHtml)
+                    dataType: 'JSON'
+                }
 
-                    }
+                ajaxApi(ApiObj).then(result => {
+                    location.reload()
+                }).catch(error => {
+                    showError(error.responseJSON)
                 })
             } else {
                 alert('Select Campus First')
@@ -407,18 +378,7 @@
                 ajaxApi(ApiObj).then(result => {
                     notify();
                 }).catch(error => {
-                    let errors = error.responseJSON.message
-                    console.log('Error:::::::::::', errors)
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    errors.map(er => {
-                        errorHtml +=
-                            `<li>${er}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+                    showError(error.responseJSON)
                 })
 
             } else {
@@ -443,28 +403,13 @@
             ajaxApi(ApiObj).then(result => {
                 location.reload()
             }).catch(error => {
-                let errors = error.responseJSON.message
-                console.log('Error:::::::::::', errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                errors.map(er => {
-                    errorHtml +=
-                        `<li>${er}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                console.log('errorHtml:::::::', errorHtml)
-                $("#errorHtml").html(errorHtml)
+                showError(error.responseJSON)
 
             })
         })
         $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
         
         })
-
-
-
 
 
         //Pagination Here
@@ -496,39 +441,7 @@
                     pageNo: num
                 },
                 success: function (data) {
-                    let campusList = data.data;
-                    console.log('campusList:::::::>>', campusList)
-                    let quoteAjax = `<table class="table custom_row campusTable" id="campusTable">
-                    <thead>
-                        <th>Campus Id</th>
-                        <th>Abbr</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Action</th>
-                        <th>All <input type="checkbox" class="selectAll-campus"></th>
-                    </thead>
-                    <tbody>`;
-                    for (campus of campusList) {
-                        quoteAjax +=
-                            ` <tr>
-                                <td>${campus.campus_id}</td>
-                                <td>${campus.abbr}</td>
-                                <td>${campus.name}</td>
-                                <td>${campus.c_desc}</td>
-                                <td>
-                                    <i class="fas fa-edit text-dark cursor-pointer edit-campus"
-                                        data-campus-id="${campus.id}" data-toggle="modal"
-                                        data-target="#update-campus-modal"></i>
-                                  
-                                </td>
-                                <td>
-                            <input type="checkbox" data-id="${campus.id}" data-campus-id="${campus.campus_id}"
-                                class="delete-campus">
-                        </td>
-                            </tr>`
-                    }
-                    quoteAjax += `<tbody></table>`
-                    $("#campusTable").html(quoteAjax);
+                    showAjaxTable(data.data)
                 }
             })
         });
@@ -544,10 +457,32 @@
                     keyword: keyword
                 },
                 success: function (data) {
-                    console.log('campusList::::::', data)
-                    let campusList = data.data;
+                    showAjaxTable(data.data) //data.data contain campus list
+                }
+            })
+        }, 500));
 
-                    let AjaxTable = `<table class="table table-bordered campusTable" id="campusTable">
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            $(errors.data).each(function (key, value) {
+                $.each(this, function (key, value) {
+                    errorHtml +=
+                        `<li>${key} ${value}</li>`
+                });
+            });
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
+
+
+
+        function showAjaxTable(campusList) {
+            let AjaxTable = `<table class="table table-bordered campusTable" id="campusTable">
                     <thead>
                         <th>Campus Id</th>
                         <th>Abbr</th>
@@ -557,11 +492,10 @@
                         <th>All <input type="checkbox" class="selectAll-campus"></th>
                     </thead>
                     <tbody>`;
-
-                    if (campusList.length > 0) {
-                        for (campus of campusList) {
-                            AjaxTable +=
-                                ` <tr>
+            if (campusList.length > 0) {
+                for (campus of campusList) {
+                    AjaxTable +=
+                        ` <tr>
                                 <td>${campus.campus_id}</td>
                                 <td>${campus.abbr}</td>
                                 <td>${campus.name}</td>
@@ -576,18 +510,19 @@
                                 class="delete-campus">
                         </td>
                             </tr>`;
-                        }
-                    } else {
-                        AjaxTable +=
-                            ` <tr>
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
                                 <td colspan="5">No Data Found</td>
                             </tr>`;
-                    }
-                    AjaxTable += `<tbody></table>`
-                    $("#campusTable").html(AjaxTable);
-                }
-            })
-        }, 500));
+            }
+            AjaxTable += `<tbody></table>`
+            $("#campusTable").html(AjaxTable);
+        }
+
+
+
     })
 </script>
 <%- include("../partials/footerEnd") %>
