@@ -17,7 +17,7 @@ router.get('/rooms/findone', roomcontroller.findOne)
 router.put('/rooms', validate('JsonValidator'), roomcontroller.update)
 router.delete('/rooms', roomcontroller.delete)
 router.post('/rooms', validate('JsonValidator'), roomcontroller.addRoom)
-router.get('/room/search', validate('search'), roomcontroller.searchRoom)
+router.get('/rooms/search', validate('search'), roomcontroller.searchRoom)
 router.patch('/rooms', roomcontroller.deleteAll)
 
 //ROOM TYPE ROUTER

@@ -52,7 +52,7 @@ module.exports = class Rooms {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute('[dbo].[update_rooms]')
+                .execute('[dbo].[sp_update_rooms]')
         })
     }
 
@@ -86,13 +86,16 @@ module.exports = class Rooms {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowCount)} r.room_number, b.building_name AS building_name, rt.name as room_type, r.floor_number, r.capacity,
-                CONVERT(NVARCHAR, r.start_time, 100) AS start_time, CONVERT(NVARCHAR, r.end_time, 100) AS end_time,
+                .query(`SELECT TOP ${Number(rowCount)} r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
+                CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, st.end_time, 100) AS end_time,
                 o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].rooms r
-                inner join [dbo].[buildings] b ON b.id = r.building_id
-                inner join [dbo].room_types rt ON rt.id = r.room_type_id 
-                inner join [dbo].organization_master o ON o.id = r.handled_by
-                inner join [dbo].campus_master c ON c.id = b.campus_id WHERE r.room_number LIKE @keyword OR b.building_name LIKE @keyword OR rt.name LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword  AND r.active = 1 ORDER BY r.id DESC`)
+                INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
+                INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
+                INNER JOIN [dbo].organizations o ON o.id = r.handled_by
+                INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
+                INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
+                INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.active = 1 and st.active = 1 AND r.room_number 
+                LIKE @keyword OR b.building_name LIKE @keyword OR rt.name LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword`)
         })
     }
 
@@ -103,7 +106,7 @@ module.exports = class Rooms {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute('[dbo].delete_rooms')
+                .execute('[dbo].[sp_delete_rooms]')
         })
     }
 

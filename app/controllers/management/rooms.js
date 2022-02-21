@@ -72,8 +72,8 @@ module.exports = {
     },
 
     update: (req, res) => {
-  
-        console.log('inputJSON:::::::>>',JSON.parse(req.body.inputJSON))
+
+        console.log('inputJSON:::::::>>', JSON.parse(req.body.inputJSON))
         let object = {
             update_rooms: JSON.parse(req.body.inputJSON)
         }
@@ -88,7 +88,7 @@ module.exports = {
 
     delete: (req, res) => {
 
-        console.log('Req ides:::::::>>',JSON.parse(req.body.Ids))
+        console.log('Req ides:::::::>>', JSON.parse(req.body.Ids))
         let object = {
             delete_rooms: JSON.parse(req.body.Ids)
         }
@@ -102,26 +102,13 @@ module.exports = {
     },
 
     addRoom: (req, res) => {
-        console.log('Req::::::::::', req.body.inputJSON)
-
         let object = {
             add_new_rooms: JSON.parse(req.body.inputJSON)
         }
-
-
         Rooms.save(object).then(result => {
-            res.json({
-                status: 200,
-                message: "success",
-                data: result.recordset
-            })
-
-        }).catch(err => {
-            res.json({
-                status: 500,
-                message: 'Invalid JSON',
-                err: err
-            })
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
