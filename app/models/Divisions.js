@@ -3,7 +3,6 @@ const {
     poolConnection,
     execPreparedStmt
 } = require('../../config/db')
-const moment = require('moment');
 const { pool } = require('mssql');
 const { body, Result } = require('express-validator');
 

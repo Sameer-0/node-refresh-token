@@ -57,7 +57,6 @@ app.use(
             secure: false,
             maxAge: 1000 * 60 * 30,
             httpOnly: false,
-            domain: 'localhost',
             sameSite: false,
         }
     })
@@ -81,13 +80,6 @@ app.use((req, res, next) => {
 
 app.use(verifySubdomain);
 
-
-
-app.get('/logout', (req, res, next) => {
-    req.session.destroy(function (err) {
-        res.redirect('/login')
-    })
-})
 
 setRouter(app)
 
