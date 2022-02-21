@@ -16,7 +16,7 @@ module.exports = {
         })
     },
 
-   verifyPassword:(password, hash) => {
+   verifyPassword: (password, hash) => {
         return new Promise((resolve, reject) => {
             const [salt, key] = hash.split(":")
             crypto.scrypt(password, salt, 64, (err, derivedKey) => {

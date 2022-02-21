@@ -28,6 +28,9 @@ module.exports = {
             let subDomain = req.headers.host.split(".")[0];
             console.log("subdomain =========>", subDomain);
 
+            if (subDomain === 'timetable')
+                return next()
+
             poolConnection
                 .then(pool => {
                     return pool.request()
@@ -38,7 +41,7 @@ module.exports = {
                         return res.send('Invalid subdomain!!!')
                     }
                     res.locals.slug = result.recordset[0].slug_name
-                    console.log('Domain:::::::',res.locals.slug)
+                    console.log('Domain:::::::', res.locals.slug)
                     next();
                 })
         } else {

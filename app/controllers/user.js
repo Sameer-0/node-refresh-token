@@ -106,24 +106,26 @@ module.exports = {
     },
 
     authenticate: async (req, res, next) => {
-        User.getUserByUsername(req.body.username, res.locals.slug).then(result => {
+        User.getUserByUsername(req.body.username, res.locals.slug).then(async result => {
             let userData = result.recordset[0]
             if (result.recordset.length > 0) {
-                let isVerified = verifyPassword(req.body.password, userData.password)
-                if (isVerified) {
+                let isVerified = await verifyPassword(req.body.password, userData.password)
+
+                console.log('isVerified>>>>> ', isVerified)
+
+                if (isVerified === true) {
+
+                    console.log(">>>>>>>>>>>>> LOGIN SUCCESSFULL")
+                    
                     req.session.username = userData.username;
                     req.session.firstName = userData.f_name;
                     req.session.lastName = userData.l_name;
                     req.session.email = userData.email;
-                    if (userData.role == "management") {
+                    if (userData.role.toLowerCase() == "management") {
+                        
+                        res.redirect('/management/dashboard')
 
-                        Settings.fetchStepForm(res.locals.slug).then(result => {
-                            console.log('SEtting result:::::::::::::::::::>>', result.recordset)
-                            console.log('LOCALS::::::::::::>>>', res.locals)
-                            res.redirect('/management/dashboard')
-                        })
-
-                    } else if (userData.role == "admin") {
+                    } else if (userData.toLowerCase() == "admin") {
                         res.redirect('/admin/dashboard')
                     } else {
                         res.redirect('404')

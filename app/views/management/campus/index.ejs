@@ -16,8 +16,10 @@
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt="" width="26px"
-                    height="32px"></button>
+
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                    width="24px" height="32px"></button>
+
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -171,37 +173,10 @@
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script src="/js/dashboardscript.js"></script>
 <script>
     $(document).ready(function () {
-        $('#add-more-campus').on('click', function () {
-            console.log("Organization Added::::")
-
-            let lastTr = $('#add-more-campus-table tbody tr:last-child')
-            let campusId = lastTr.find(`select[name='campusId']`).val();
-            let campusAbbr = lastTr.find(`select[name='campusAbbr']`).val();
-            let campusName = lastTr.find(`select[name='campusName']`).val();
-            let campusDesc = lastTr.find(`select[name='campusDesc']`).val();
-
-
-            let clonedTr = lastTr.clone();
-            clonedTr.find(`input[name='campusId']`).val('')
-            clonedTr.find(`input[name='campusAbbr']`).val('')
-            clonedTr.find(`select[name='campusName']`).val('')
-            clonedTr.find(`select[name='campusDesc']`).val('')
-
-            $('#add-more-campus-table tbody').append(clonedTr)
-        })
-
-        $('#add-campus-modal').on('click', '.removecampus', function () {
-            let trLength = $('#add-campus-modal tbody tr').length;
-
-            if (trLength > 1) {
-                $(this).closest('tr').remove()
-            } else {
-                alert('Cannot delete this room.')
-            }
-        })
-
+        
 
         //management/campus/add
         $('.createCampus').on('click', function () {
@@ -278,7 +253,7 @@
                 },
                 error: err => {
 
-                }
+                } 
             })
         })
 
@@ -399,7 +374,7 @@
 
             alertMsg()
 
-            $('.continue').on('click', () => {
+            $('.alert-continue').on('click', () => {
             ajaxApi(ApiObj).then(result => {
                 location.reload()
             }).catch(error => {

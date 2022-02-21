@@ -167,51 +167,9 @@
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script src="/js/dashboardscript.js"></script>
 <script>
-    $('#add-more-orgnization').on('click', function () {
-        console.log("Organization Added::::")
-
-        let lastTr = $('#add-more-org-table tbody tr:last-child')
-        let orgId = lastTr.find(`select[name='orgId']`).val();
-        let orgAbbr = lastTr.find(`select[name='orgAbbr']`).val();
-        let orgName = lastTr.find(`select[name='orgName']`).val();
-        let orgCompleteName = lastTr.find(`select[name='orgCompleteName']`).val();
-        let orgType = lastTr.find(`select[name='orgType']`).val();
-
-        let clonedTr = lastTr.clone();
-        clonedTr.find(`input[name='orgId']`).val('')
-        clonedTr.find(`input[name='orgAbbr']`).val('')
-        clonedTr.find(`select[name='orgName']`).val('')
-        clonedTr.find(`select[name='orgCompleteName']`).val('')
-        clonedTr.find(`select[name='orgType']`).val(orgType).trigger('change');
-
-        $('#add-more-org-table tbody').append(clonedTr)
-    })
-
-    $('#add-org-modal').on('click', '.remove', function () {
-        let trLength = $('#add-org-modal tbody tr').length;
-
-        if (trLength > 1) {
-            $(this).closest('tr').remove()
-        } else {
-            alert('Cannot delete this room.')
-        }
-    })
-
-    //Select All Organizations
-    $("#organizationTable").on('click', '.selectAll-org', function () {
-        console.log('checked!!')
-        if (this.checked) {
-            // Iterate each checkbox
-            $('.organizationTable .delete-org:checkbox').each(function () {
-                this.checked = true;
-            });
-        } else {
-            $('.organizationTable .delete-org:checkbox').each(function () {
-                this.checked = false;
-            });
-        }
-    })
+   
 
     //Create 
     $(".createOrg").on('click', function () {
@@ -412,6 +370,20 @@
         }
     })
 
+     //Select All Organizations
+     $("#organizationTable").on('click', '.selectAll-org', function () {
+        console.log('checked!!')
+        if (this.checked) {
+            // Iterate each checkbox
+            $('.organizationTable .delete-org:checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $('.organizationTable .delete-org:checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    })
 
     //Delete Single and mutiple Delete
     $('.delete-organizations').on('click', function () {
@@ -472,7 +444,7 @@
         }
         alertMsg()
 
-        $('.continue').on('click', () => {
+        $('.alert-continue').on('click', () => {
 
             ajaxApi(ApiObj).then(result => {
 

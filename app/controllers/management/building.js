@@ -65,7 +65,9 @@ module.exports = {
         //     return;
         // }
 
+
         if (req.body.settingName) {
+
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 

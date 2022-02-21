@@ -37,11 +37,10 @@ module.exports = class Buildings {
     }
 
 
-    static saveWithProc(buildingJson) {
-        console.log(buildingJson)
+    static saveWithProc(buildingJson) {  
         return poolConnection.then(pool => {
             const request = pool.request();
-            return request.input('JSON', sql.NVarChar(sql.MAX), buildingJson)
+            return request.input('input_json', sql.NVarChar(sql.MAX), buildingJson)
                 .output('output', sql.Bit)
                 .execute(`[dbo].insert_building_data`)
         }).catch(error => {
