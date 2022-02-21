@@ -7,17 +7,23 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
 
-    <%- include("../partials/roomMenu") %>
 
     <div class="card table-card">
-        <div class="card-header table-card-header text-uppercase d-flex align-items-center">
-            <h5>ROOM TRANSACTION TYPES List</h5>
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>ROOM TRANSACTION TYPES List</h5>
+            </div>
+            <div>
+                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+                    data-bs-target="#add-roomtransaction-stages-modal">
+                    <i class="fas fa-plus"></i></button>
+                <button class="btn ms-auto select-delete-rootTransaction add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-root-ransaction-type add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button>
 
-
-            <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
-                data-bs-target="#add-roomtransaction-stages-modal">
-                <i class="fas fa-plus"></i></button>
+            </div>
         </div>
+
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -27,6 +33,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Action</th>
+                    <th>All <input type="checkbox" class="selectAll-campus"></th>
                 </thead>
                 <tbody>
                     <% let count = 1%>
@@ -38,8 +45,10 @@
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-roomtransaction-strage"
                                 data-roomtransaction-stages-id="<%- list.rtsid %>"></i>
-                            <a data-roomtransaction-stages-id="<%- list.rtsid %>"
-                                class="fas fa-trash-alt text-danger delete-RTS"></a>
+                        </td>
+                        <td>
+                            <input type="checkbox" data-roomtransaction-type-id="<%- list.rtsid %>"
+                                class="delete-rootTransaction">
                         </td>
                     </tr>
                     <%})%>
@@ -188,22 +197,80 @@
         })
 
 
-        //Delete
-        $("#rootTransactionTable").on('click', '.delete-RTS', function () {
-            $.ajax({
-                url: '/management/room/rtypes',
-                method: 'DELETE',
-                type: 'JSON',
-                data: {
-                    Id: $(this).attr("data-roomtransaction-stages-id")
-                },
-                success: data => {
-                    location.reload()
-                },
-                error: err => {
-                    console.log('Error: ', err)
+
+
+        //Select All campus
+        $("#rootTransactionTable").on('click', '.selectAll-campus', function () {
+            if (this.checked) {
+                // Iterate each checkbox
+                $('.delete-rootTransaction:checkbox').each(function () {
+                    this.checked = true;
+                });
+            } else {
+                $('.delete-rootTransaction:checkbox').each(function () {
+                    this.checked = false;
+                });
+            }
+        })
+
+
+           //Delete Single and mutiple Delete
+         $('.select-delete-rootTransaction').on('click', function () {
+            let deleteids = []
+            $('.delete-rootTransaction:checked').each(function () {
+                let obj = {
+                    id: $(this).attr("data-roomtransaction-type-id"),
                 }
+                deleteids.push(obj)
             })
+
+            if (deleteids.length > 0) {
+                console.log('deleteids::::::::::::::', deleteids)
+                let ApiObj = {
+                    url: '/management/rooms/transaction-types',
+                    type: 'DELETE',
+                    data: {
+                        Ids: JSON.stringify(deleteids)
+                    },
+                    dataType: 'JSON'
+                }
+                ajaxApi(ApiObj).then(result => {
+                    location.reload()
+                    notify();
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+
+            } else {
+                alert('Select Fields')
+            }
+        })
+
+
+
+         //Bulk Delete
+         $(".bulk-delete-root-ransaction-type").on('click', function () {
+            let ApiObj = {
+                url: '/management/rooms/transaction-types',
+                type: 'PATCH',
+                data: {},
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                location.reload()
+            }).catch(error => {
+                showError(error.responseJSON)
+
+            })
+
+         //   alertMsg()
+
+         //   $('.alert-continue').on('click', () => {
+        
+       // })
+       // $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
+        
         })
 
 

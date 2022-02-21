@@ -41,12 +41,18 @@ module.exports = class RoomTransactionTypes {
 
 
 
-    static delete(id) {
-        console.log(id)
+    static delete(ids) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('rtsId', sql.Int, id)
-                .query(`UPDATE [dbo].room_transaction_types SET active = 0  WHERE id = @rtsId`)
+            JSON.parse(ids).forEach(element => {
+                return request.query(`UPDATE [dbo].[room_transaction_types] SET active = 0  WHERE id = ${element.id}`)
+            });
+        })
+    }
+
+    static deleteAll() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`UPDATE [dbo].[room_transaction_types] SET active = 0 WHERE active = 1`)
         })
     }
 
