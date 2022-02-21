@@ -57,14 +57,12 @@ app.use(
             secure: false,
             maxAge: 1000 * 60 * 30,
             httpOnly: false,
-            domain: 'localhost',
             sameSite: false,
         }
     })
 )
 
 app.use('/set-token', (req, res) => {
-
     req.session.name = "Kapil Sharma"
     res.send('Token set')
 })
