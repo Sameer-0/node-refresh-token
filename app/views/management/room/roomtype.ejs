@@ -6,17 +6,22 @@
 
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
-
     <%- include("../partials/roomMenu") %>
-
-
     <div class="card table-card">
-        <div class="card-header table-card-header text-uppercase d-flex align-items-center">
-            <h5>ROOM TYPE LIST</h5>
-            <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
-                data-bs-target="#add-room-modal">
-                <i class="fas fa-plus"></i></button>
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>ROOM TYPE LIST</h5>
+            </div>
+            <div>
+                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+                    data-bs-target="#add-room-modal">
+                    <i class="fas fa-plus"></i></button>
+                <button class="btn ms-auto delete-selected-rooms-types add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-rooms-types add-btn" title="Bulk Delete"><img src="/icons/delete.png" alt="" width="26px"
+                        height="32px"></button>
+            </div>
         </div>
+
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -26,6 +31,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Action</th>
+                    <th>Check All <input type="checkbox" class="selectAll-rooms-types"></th>
                 </thead>
                 <tbody>
                     <% let count = 1%>
@@ -37,8 +43,9 @@
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-roomtype"
                                 data-roomtype-id="<%- list.roomtypeid %>"></i>
-                            <a data-roomtype-id="<%- list.roomtypeid %>"
-                                class="fas fa-trash-alt text-danger delete-roomtype"></a>
+                        </td>
+                        <td>
+                            <input type="checkbox" data-roomtype-id="<%- list.roomtypeid %>" class="delete-room-types">
                         </td>
                     </tr>
                     <%})%>
@@ -89,7 +96,7 @@
         //Create 
         $(".createRoomType").on('click', function () {
             $.ajax({
-                url: '/management/room/roomtype',
+                url: '/management/rooms/roomtypes',
                 method: 'POST',
                 type: 'JSON',
                 data: {
@@ -125,7 +132,7 @@
             $(".createRoomType").addClass('d-none')
             $(".updateRoomType").removeClass('d-none')
             $.ajax({
-                url: '/management/room/roomtype/single',
+                url: '/management/rooms/roomtypes/single',
                 method: 'GET',
                 type: 'JSON',
                 data: {
@@ -148,7 +155,7 @@
         //Update 
         $(".updateRoomType").on('click', function () {
             $.ajax({
-                url: '/management/room/roomtype',
+                url: '/management/rooms/roomtypes',
                 method: 'PUT',
                 type: 'JSON',
                 data: {
@@ -162,7 +169,6 @@
                     } else {
                         $(".errorMsg").html(data.message)
                     }
-
                 },
                 error: err => {
                     let error = err.responseJSON.errors
@@ -181,24 +187,93 @@
         })
 
 
-        //Delete
-        $("#rootTypeTable").on('click', '.delete-roomtype', function () {
-            $.ajax({
-                url: '/management/room/roomtype/delete',
-                method: 'DELETE',
-                type: 'JSON',
-                data: {
-                    Id: $(this).attr("data-roomtype-id")
-                },
-                success: data => {
-                    location.reload()
-                },
-                error: err => {
-                    console.log('Error: ', err)
-                }
-            })
+
+
+        //Select All Organizations
+        $("#rootTypeTable").on('click', '.selectAll-rooms-types', function () {
+            console.log('checked!!')
+            if (this.checked) {
+                // Iterate each checkbox
+                $('.delete-room-types:checkbox').each(function () {
+                    this.checked = true;
+                });
+            } else {
+                $('.delete-room-types:checkbox').each(function () {
+                    this.checked = false;
+                });
+            }
         })
 
+
+        //Delete Single and mutiple Delete
+        $('.delete-selected-rooms-types').on('click', function () {
+            let deleteids = []
+            $('.delete-room-types:checked').each(function () {
+                deleteids.push($(this).attr("data-roomtype-id"))
+            })
+
+            if (deleteids.length > 0) {
+                let ApiObj = {
+                    url: '/management/rooms/roomtypes',
+                    type: 'DELETE',
+                    data: {
+                        Ids: JSON.stringify(deleteids)
+                    },
+                    dataType: 'JSON'
+                }
+                ajaxApi(ApiObj).then(result => {
+                    location.reload()
+                    // notify();
+                }).catch(error => {
+                    let errors = error.responseJSON.message
+                    console.log('Error:::::::::::', errors)
+                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                    errors.map(er => {
+                        errorHtml +=
+                            `<li>${er}</li>`
+                    })
+                    errorHtml +=
+                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $("#errorHtml").html(errorHtml)
+                })
+
+            } else {
+                alert('Select Data')
+            }
+        })
+
+
+
+        //Bulk Delete
+        $(".bulk-delete-rooms-types").on('click', function () {
+        
+            let ApiObj = {
+                url: '/management/rooms/roomtypes',
+                type: 'PATCH',
+                data: {},
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                location.reload()
+            }).catch(error => {
+                let errors = error.responseJSON.message
+                console.log('Error:::::::::::', errors)
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+                errors.map(er => {
+                    errorHtml +=
+                        `<li>${er}</li>`
+                })
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                console.log('errorHtml:::::::', errorHtml)
+                $("#errorHtml").html(errorHtml)
+            })
+        })
 
 
         //search feature delay function is writter in script.js file which is located in public/js/script.js
@@ -206,7 +281,7 @@
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "GET",
-                url: "/management/room/roomtype/search",
+                url: "/management/rooms/roomtypes/search",
                 data: {
                     keyword: keyword
                 },
@@ -219,6 +294,7 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Action</th>
+                    <th>Check All <input type="checkbox" class="selectAll-rooms-types"></th>
                 </thead>`;
 
                     if (roomTypeList.length > 0) {
@@ -232,8 +308,9 @@
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-roomtype"
                                 data-roomtype-id="${list.roomtypeid}"></i>
-                            <a data-roomtype-id="${list.roomtypeid}"
-                                class="fas fa-trash-alt text-danger delete-roomtype"></a>
+                        </td>
+                        <td>
+                            <input type="checkbox" data-roomtype-id="${list.roomtypeid}" class="delete-room-types">
                         </td>
                     </tr>`
                         }
@@ -248,7 +325,6 @@
                 }
             })
         }, 500));
-
 
     })
 </script>

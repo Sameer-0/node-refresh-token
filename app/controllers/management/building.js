@@ -21,7 +21,7 @@ module.exports = {
                     buildingList: result[0].recordset,
                     orgList: result[1].recordset,
                     campusList: result[2].recordset,
-                    timeList: result[3].recordset, 
+                    timeList: result[3].recordset,
                     pageCount: result[4].recordset[0].count
                 })
             }).catch(error => {
@@ -64,7 +64,7 @@ module.exports = {
         //     return;
         // }
 
-        if(req.body.settingName){
+        if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
@@ -121,7 +121,7 @@ module.exports = {
             return;
         }
 
- 
+
         Buildings.softDeleteById(req.body.id).then(result => {
             res.json({
                 status: 200
