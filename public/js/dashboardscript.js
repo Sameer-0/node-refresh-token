@@ -127,9 +127,8 @@
             })
     
     
-            $('#add-room-modal').on('click', '.removeroom', function () {
+            $('#add-room-table').on('click', '.removeroom', function () {
                 let trLength = $('#add-room-table tbody tr').length;
-    
                 if (trLength > 1) {
                     $(this).closest('tr').remove()
                 } else {
