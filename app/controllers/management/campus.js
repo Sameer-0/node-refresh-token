@@ -71,7 +71,7 @@ module.exports = {
 
     delete: (req, res) => {
         let object = {
-            delete_campus: JSON.parse(req.body.Ids)
+            delete_campuses: JSON.parse(req.body.Ids)
         }
         Campuses.delete(object).then(result => {
             res.json({

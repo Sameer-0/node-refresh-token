@@ -16,8 +16,8 @@
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-campuses add-btn "><i class="fas fa-trash"></i> <i
-                        class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt="" width="26px"
+                    height="32px"></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -165,6 +165,9 @@
         <input name="campusDesc" id="campusDesc" type="text" class="form-control" placeholder="Campus Description">
     </div>
 </div>
+
+<%- include('../partials/notification') %>
+<%- include('../partials/alert') %>
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
@@ -337,7 +340,7 @@
         })
 
 
-        //Select All Organizations
+        //Select All campus
         $("#campusTable").on('click', '.selectAll-campus', function () {
             if (this.checked) {
                 // Iterate each checkbox
@@ -358,7 +361,6 @@
             $('.delete-campus:checked').each(function () {
                 let obj = {
                     id: $(this).attr("data-id"),
-                    campus_id: $(this).attr("data-campus-id")
                 }
                 deleteids.push(obj)
             })
@@ -374,7 +376,7 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
+                    notify();
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
@@ -394,11 +396,19 @@
                 data: {},
                 dataType: 'JSON'
             }
+
+            alertMsg()
+
+            $('.continue').on('click', () => {
             ajaxApi(ApiObj).then(result => {
                 location.reload()
             }).catch(error => {
                 showError(error.responseJSON)
+
             })
+        })
+        $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
+        
         })
 
 

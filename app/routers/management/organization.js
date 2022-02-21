@@ -12,7 +12,7 @@ const validate = require('../../middlewares/validate')
 // ORGANIZATION ROUTER
 router.get('/organizations', organization.getPage)
 router.post('/organizations', validate('JsonValidator'), organization.create)
-router.put('/organization', validate('JsonValidator'), organization.update)
+router.put('/organizations', validate('JsonValidator'), organization.update)
 router.delete('/organizations',  organization.delete)
 router.patch('/organizations',  organization.deleteAll)
 router.post('/organization/pagination', validate('pagination'), organization.getPage)

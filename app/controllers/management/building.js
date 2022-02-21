@@ -9,6 +9,7 @@ const Organizations = require("../../models/Organizations")
 const Campuses = require("../../models/Campuses")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const Settings = require('../../models/Settings');
+
 module.exports = {
 
 

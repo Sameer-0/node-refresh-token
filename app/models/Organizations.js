@@ -48,16 +48,13 @@ module.exports = class Organizations {
         })
     }
 
-    static update(body) {
+    static update(inputJSON) {
+        console.log('INPUT JSON:::::::::::::>>',inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('id', sql.Int, body.id)
-                .input('orgId', sql.Int, body.org_id)
-                .input('orgAbbr', sql.NVarChar(40), body.org_abbr)
-                .input('orgName', sql.NVarChar(100), body.org_name)
-                .input('orgCompleteName', sql.NVarChar(400), body.org_complete_name)
-                .input('orgTypeId', sql.Int, body.org_type_id)
-                .query(`UPDATE  [dbo].organizations SET org_id = @orgId, org_abbr = @orgAbbr, org_name = @orgName, org_complete_name = @orgCompleteName, org_type_id = @orgTypeId WHERE id = @id`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[sp_update_organizations]')
         })
     }
 
@@ -88,8 +85,8 @@ module.exports = class Organizations {
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcont)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
                 FROM [dbo].organizations om JOIN [dbo].organization_types ot ON om.org_type_id = ot.id  
-                WHERE ot.active = 1 AND om.active = 1 and om.id like @keyword or om.org_abbr like @keyword 
-                or om.org_complete_name like @keyword or ot.name like @keyword ORDER BY om.id DESC`)
+                WHERE ot.active = 1 AND om.active = 1 and (om.id like @keyword or om.org_abbr like @keyword 
+                    or om.org_complete_name like @keyword or ot.name like @keyword) ORDER BY om.id DESC`)
         })
     }
 

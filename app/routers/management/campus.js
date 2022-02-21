@@ -18,4 +18,4 @@ router.get('/campus/search', validate('search'), campus.search)
 router.get('/campus/findOne', validate('single'), campus.findOne)
 router.delete('/campuses',  campus.delete)
 router.patch('/campuses',  campus.deleteAll)
-module.exports = router;
+module.exports = router;  
