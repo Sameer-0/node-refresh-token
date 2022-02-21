@@ -66,10 +66,16 @@ module.exports = {
         // }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (req.body.settingName) {
 =======
         if(req.body.settingName) {
 >>>>>>> rajesh_pillai
+=======
+
+        if (req.body.settingName) {
+
+>>>>>>> 6a16d6527c14d2f2aeff03859d3ee5357c6134f4
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
