@@ -34,8 +34,8 @@ module.exports = class Settings {
     static updateByName(slug,settingName) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('Name', sql.NVarChar(100), settingName)
-                .query(`UPDATE  [${slug}].settings set is_submitted = 1 WHERE name = @Name`)
+            return request.input('name', sql.NVarChar(100), settingName)
+                .query(`UPDATE  [${slug}].settings set is_submitted = 1 WHERE name = @name`)
         }).catch(error => {
             throw error
         })

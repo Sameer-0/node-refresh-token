@@ -1,0 +1,311 @@
+<div class="step-form">
+
+<div class="d-flex justify-content-between py-3 time-line stages">
+    <div class="arrow-pointer stage active" data-step="1"> Days </div>
+    <div class="arrow-pointer stage pending" data-step="2">Holidays </div>
+    <div class="arrow-pointer stage pending" data-step="3"> Room</div>
+    <div class="arrow-pointer stage pending" data-step="4"> Program</div>
+    <div class="arrow-pointer stage pending" data-step="5"> Course Workload</div>
+</div>
+
+<div class="step-form-body">
+
+<!-- Days -->
+<form action="/management/organization" method="post" class="step active-form" id="org-form" data-step="1">
+    <div class="modal-header table-card-header ">
+        <h5 class="modal-title text-white" id="add-org-modal-title">Select Days</h5>
+        <button type="button" class="btn add-btn btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> </button>
+    </div>
+    <div id="errorHtml" class="error-show pt-3"></div>
+    <div class="table-responsive">
+        <table class="table" id="add-more-org-table">
+            <thead>
+                <th>Organization Id</th>
+                <th>Organization Abbr</th>
+                <th>Organization Name</th>
+                <th>Organization Complete Name</th>
+                <th>Organization Type</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input name="orgId" id="orgId" type="number" class="form-control" placeholder="Organization Id"
+                            required>
+                    </td>
+                    <td>
+                        <input name="orgAbbr" id="orgAbbr" type="text" class="form-control"
+                            placeholder="Organization Abbr" required>
+                    </td>
+                    <td>
+                        <input name="orgName" id="orgName" type="text" class="form-control"
+                            placeholder="Organization Name" required>
+                    </td>
+                    <td>
+                        <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
+                            placeholder="Organization Complete Name" required>
+                    </td>
+                    <td>
+                        <select class="form-control modalSelect2" name="orgType" id="orgType" required>
+                            <option disabled selected value>--Organization Type--</option>
+                            <% for(let org of orgType) { %>
+                            <option value="<%- org.id %>">
+                                <%- org.name %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </td>
+                    <td>
+                        <i class="far fa-edit d-none"></i>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</form>
+
+<!-- Campus Step Form -->
+<form action="/management/campus" method="post" class="step d-none" id="campus-form" data-step="2">
+    <div class="modal-header table-card-header">
+        <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
+        <button type="button" class="btn add-btn btn-sm" id="add-more-campus"><i class="fas fa-plus"></i> </button>
+    </div>
+    <div id="errorHtml" class="error-show pt-3"></div>
+    <div class="table-responsive">
+        <table class="table" id="add-more-campus-table">
+            <thead>
+                <th>Campus Id</th>
+                <th>Abbr</th>
+                <th>Campus Name</th>
+                <th>Description</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input name="campusId" id="campusId" type="number" class="form-control" placeholder="Campus Id"
+                            required>
+                    </td>
+                    <td>
+                        <input name="campusAbbr" id="campusAbbr" type="text" class="form-control"
+                            placeholder="Campus Abbr" required>
+                    </td>
+                    <td>
+                        <input name="campusName" id="campusName" type="text" class="form-control"
+                            placeholder="Campus Name" required>
+                    </td>
+                    <td>
+                        <input name="campusDesc" id="campusDesc" type="text" class="form-control"
+                            placeholder="Campus Description" required>
+                    </td>
+                    <td>
+                        <i class="far fa-edit d-none"></i>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer removecampus"></i>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</form>
+
+<!-- Building Step Form -->
+<form action="/management/building" method="post" class="step d-none" id="building-form" data-step="3">
+    <div class="modal-header table-card-header">
+        <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
+        <button type="button" class="btn add-btn btn-sm" id="add-more-building"><i class="fas fa-plus"></i> </button>
+    </div>
+    <div class="modal-body">
+        <div id="errorHtml"></div>
+        <input type="hidden" id="roomId" name="roomId">
+        <div class="table-responsive ">
+            <table class="table " id="add-more-building-table">
+                <thead>
+                    <th>Building Name</th>
+                    <th>Building Number</th>
+                    <th>Total Floor Count</th>
+                    <th>Owner</th>
+                    <th>Start time</th>
+                    <th>End time</th>
+                    <th>Handled by</th>
+                    <th>Campus</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input name="buildingName" id="buildingName" type="text" class="form-control"
+                                placeholder="Building Name" required>
+                        </td>
+                        <td>
+                            <input name="buildingNumber" id="buildingNumber" type="number" class="form-control"
+                                placeholder="Building Number" required>
+                        </td>
+                        <td>
+                            <input name="floors" id="floors" type="number" class="form-control"
+                                placeholder="Total Floor Count" required>
+                        </td>
+
+                        <td>
+                            <select class="form-select modalSelect2" name="ownerId" id="ownerId" required>
+                                <option disabled selected>--Owner--</option>
+                                <% for(let owner of orgList) { %>
+                                <option value="<%- owner.id %>">
+                                    <%- owner.org_abbr %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="startTimeId" id="startTimeId" required>
+                                <option disabled selected value>--Start Time--</option>
+                                <% for(let time of timeList) { %>
+                                <option value="<%- time.id %>">
+                                    <%- time.start_time %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="endTimeId" id="endTimeId" required>
+                                <option disabled selected value>--End Time--</option>
+                                <% for(let time of timeList) { %>
+                                <option value="<%- time.id %>">
+                                    <%- time.end_time %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="handledById" id="handledById" required>
+                                <option disabled selected value>--Handled By--</option>
+                                <% for(let handler of orgList) { %>
+                                <option value="<%- handler.id %>">
+                                    <%- handler.org_abbr %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="campusId" id="campusId" required>
+                                <option disabled selected value>--Campus--</option>
+                                <% for(let campus of campusList) { %>
+                                <option value="<%- campus.id %>">
+                                    <%- campus.campus_abbr %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <i class="far fa-edit d-none"></i>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer removebuilding"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</form>
+
+
+<!-- Room step form -->
+<form action="/management/room" method="post" class="step d-none" id="room-form" data-step="4">
+
+    <div class="modal-header table-card-header">
+        <h5 class="modal-title" id="add-room-modal-title">Add New Room</h5>
+        <button type="button" class="btn add-btn btn-sm" id="add-more-room"><i class="fas fa-plus"></i> </button>
+    </div>
+
+    <div class="modal-body">
+        <div id="errorHtml"></div>
+        <input type="hidden" id="roomId" name="roomId">
+
+
+
+        
+        <div class="table-responsive">
+            <table class="table table-bordered" id="add-more-room-table">
+                <thead>
+                    <th>Room No</th>
+                    <th>Room Type</th>
+                    <th>Floor</th>
+                    <th>Capacity</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Is Basement</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" name="roomNo" id="update-roomNo" class="form-control" palceholder="Enter Room no." required>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="roomType" id="roomType" required>
+                                <option disabled selected value>--Room Type--</option>
+                                <% for(let roomType of roomTypeList) { %>
+                                <option value="<%- roomType.roomtypeid %>">
+                                    <%- roomType.name %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="floorNo" id="floorNo" class="form-control"
+                                style="width: 70px;" required>
+                        </td>
+                        <td>
+                            <input type="number" name="capacity" id="capacity" class="form-control"
+                                style="width: 70px;" required>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="startTime" id="startTime" required>
+                                <option disabled selected value>--Start Time--</option>
+                                <% for(let time of timeList) { %>
+                                <option value="<%- time.id %>">
+                                    <%- time.start_time %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="endTime" id="endTime" required>
+                                <option disabled selected value>--End Time--</option>
+                                <% for(let time of timeList) { %>
+                                <option value="<%- time.id %>">
+                                    <%- time.end_time %>
+                                </option>
+                                <% } %>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select modalSelect2" name="isBasement" id="isBasement"
+                                style="width: 70px;" required>
+                                <option selected value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </td>
+                        <td>
+
+                            <i class="far fa-edit d-none"></i>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer removeroom"></i>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+</form>
+</div>
+
+<div class="step-form-footer">
+    <div class="btn-container d-flex justify-content-end">
+        <button type="button" class="nxt-btn" id="next-step">Next</button>
+    </div>
+</div>
+
+</div>
