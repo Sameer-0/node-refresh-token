@@ -65,7 +65,11 @@ module.exports = {
         //     return;
         // }
 
+<<<<<<< HEAD
         if (req.body.settingName) {
+=======
+        if(req.body.settingName) {
+>>>>>>> rajesh_pillai
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
