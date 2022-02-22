@@ -96,7 +96,20 @@
                         <td><%- room.is_basement ? 'Yes' : 'No' %></td>
                         <td><%- room.handled_by %></td>
                         <!-- <td><%- room.campus %></td> -->
-                        <td><%- room.is_processed ? 'Yes' : 'No' %></td>
+                        <td>
+                            <% if(room.is_processed == "1") {%>
+                            <div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input " type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked" disabled checked>
+
+                            </div>
+                            <%}else{%>
+                            <div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input is_processed_click" type="checkbox" role="switch"
+                                    data-is-processed="<%-room.is_processed%>" data-room-id="<%- room.roomid %>">
+                            </div>
+                            <%}%>  
+                        </td>
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-room"
                                 data-room-id="<%- room.roomid %>"></i>
@@ -115,7 +128,6 @@
 </div>
 
 <!-- ADD NEW ROOM MODAL-->
-
 <div class="modal fade" id="add-room-modal" aria-labelledby="add-room-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content modal-inputform">
@@ -126,9 +138,6 @@
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
-
-
-
                 <div class="row mt-4 ">
                     <div class="col-md-6">
                         <label>Building</label>
@@ -171,7 +180,7 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Is Basement</th>
-                            <th>Is Processed</th>
+                            <!-- <th>Is Processed</th> -->
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -227,13 +236,13 @@
                                         <option value="1">Yes</option>
                                     </select>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <select class="form-select modalSelect2" name="is_processed" id="is_processed"
                                         required>
                                         <option selected value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
-                                </td>
+                                </td> -->
                                 <td>
 
                                     <i class="far fa-edit d-none"></i>
@@ -247,8 +256,6 @@
 
             </div>
             <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button> -->
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-room"><i class="fas fa-plus"></i> Add
                     More Room</button>
                 <button type="button" class="btn  modal-inputform-btn addRoom" id="insertRoom">Create Room</button>
@@ -421,90 +428,25 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
-                //   location.reload()
+                location.reload()
                 notify();
             }).catch(error => {
-
-                let errors = JSON.parse(error.responseJSON)
-                console.log('Error:::::::::::', errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-                errors.data.map(er => {
-                    console.log('Errr:::::::::::>>', er)
-                    errorHtml +=
-                        `<li>${er.org_id} ${er.org_abbr}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+                showError(error.responseJSON)
             })
 
         })
 
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
+            console.log('keyword::::::::::', keyword)
             $.ajax({
                 type: "GET",
-                url: "/management/room/search",
+                url: "/management/rooms/search",
                 data: {
                     keyword: keyword
                 },
                 success: function (data) {
-                    console.log('roomList::::::', data)
-                    let roomList = data.data;
-
-                    let quoteAjax = `<table class="table table-bordered" id="roomTable">
-                    <thead>
-                                <th>Room No</th>
-                                <th>Building</th>
-                                <th>Type</th>
-                                <th>Floor</th>
-                                <th>Capacity</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Is Basement</th>
-                                <th>Handled By</th>
-                                <th>Campus</th>
-                                <th>Is Processed</th>
-                                <th>Action</th>
-                    </thead>
-                    <tbody>`;
-
-                    if (roomList.length > 0) {
-                        for (room of roomList) {
-                            quoteAjax +=
-                                ` <tr>
-                                <td>${room.room_number}</td>
-                                <td>${room.building_name}</td>
-                                <td>${room.room_type}</td>
-                                <td>${room.floor_number}</td>
-                                <td>${room.capacity}</td>
-                                <td>${room.start_time}</td>
-                                <td>${room.end_time}</td>
-                                <td>${room.is_basement}</td>
-                                <td>${room.handled_by}</td>
-                                <td>${room.campus}</td>
-                                <td>${room.is_processed ? 'Yes' : 'No'}</td>
-                               <td>
-                                    <i class="fas fa-edit text-dark cursor-pointer edit-room"
-                                        data-room-id="${room.id}"></i>
-                                    <a data-room-id="${room.id}"
-                                        class="fas fa-trash-alt text-danger delete-room"></a>
-                                </td>
-                            </tr>`;
-                        }
-                    } else {
-                        quoteAjax +=
-                            ` <tr>
-                                <td colspan="12">No Data Found</td>
-                            </tr>`;
-                    }
-
-
-                    quoteAjax += `<tbody></table>`
-                    $("#roomTable").html(quoteAjax);
+                    showAjaxTable(data.data)
                 },
 
             })
@@ -606,27 +548,12 @@
                 },
                 dataType: 'JSON'
             }
-
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
-                //   location.reload()
+                location.reload()
                 notify();
             }).catch(error => {
-
-                let errors = JSON.parse(error.responseJSON)
-                console.log('Error:::::::::::', errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-                errors.data.map(er => {
-                    console.log('Errr:::::::::::>>', er)
-                    errorHtml +=
-                        `<li>${er.org_id} ${er.org_abbr}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+                showError(error.responseJSON)
             })
         })
 
@@ -655,6 +582,7 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
+                    location.reload()
                     notify();
                 }).catch(error => {
                     let errors = error.responseJSON.message
@@ -690,21 +618,115 @@
             ajaxApi(ApiObj).then(result => {
                 location.reload()
             }).catch(error => {
-                let errors = error.responseJSON.message
-                console.log('Error:::::::::::', errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                errors.map(er => {
-                    errorHtml +=
-                        `<li>${er}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                console.log('errorHtml:::::::', errorHtml)
-                $("#errorHtml").html(errorHtml)
+                showError(error.responseJSON)
             })
         })
+
+
+        // is_processed API
+        //roomTable
+        $("#roomTable").on('click', '.is_processed_click', function () {
+            let ApiObj = {
+                url: '/management/rooms_isprocessed',
+                type: 'POST',
+                data: {
+                    id: $(this).attr("data-room-id"),
+                    is_processed: $(this).attr("data-is-processed")
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                location.reload()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            $(errors.data).each(function (key, value) {
+                $.each(this, function (key, value) {
+                    errorHtml +=
+                        `<li>${key} ${value}</li>`
+                });
+            });
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
+            $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showAjaxTable(roomList) {
+            let quoteAjax = `<table class="table table-bordered" id="roomTable">
+                    <thead>
+                                <th>Room No</th>
+                                <th>Building</th>
+                                <th>Type</th>
+                                <th>Floor</th>
+                                <th>Capacity</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Is Basement</th>
+                                <th>Handled By</th>
+                                <th>Campus</th>
+                                <th>Is Processed</th>
+                                <th>Action</th>
+                                <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
+                    </thead>
+                    <tbody>`;
+
+            if (roomList.length > 0) {
+                for (room of roomList) {
+                    quoteAjax +=
+                        ` <tr>
+                                <td>${room.room_number}</td>
+                                <td>${room.building_name}</td>
+                                <td>${room.room_type}</td>
+                                <td>${room.floor_number}</td>
+                                <td>${room.capacity}</td>
+                                <td>${room.start_time}</td>
+                                <td>${room.end_time}</td>
+                                <td>${room.is_basement}</td>
+                                <td>${room.handled_by}</td>
+                                <td>${room.campus}</td>
+                                <td>`
+                    if (room.is_processed == '1') {
+                        quoteAjax += `<div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked" checked disabled>
+
+                            </div>`
+                    } else {
+                        quoteAjax += `<div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked">
+                            </div>`
+                    }
+                    quoteAjax += `</td>
+                               <td>
+                                    <i class="fas fa-edit text-dark cursor-pointer edit-room"
+                                        data-room-id="${room.roomid}"></i>
+                                </td>
+                                <td>
+                            <input type="checkbox" data-room-id="${room.roomid}" class="delete-rooms">
+                        </td>
+                            </tr>`;
+                }
+            } else {
+                quoteAjax +=
+                    ` <tr><td colspan="12">No Data Found</td></tr>`;
+            }
+            quoteAjax += `<tbody></table>`
+            $("#roomTable").html(quoteAjax);
+        }
+
+
+
     })
 </script>
 <%- include("../partials/footerEnd") %>

@@ -3,17 +3,15 @@ const RoomTransactions = require("../../models/RoomTransactions")
 module.exports = {
     getPage: (req, res) => {
         RoomTransactions.fetchAll(100).then(result => {
-  
-            res.render('management/room/room_transactions', {
+
+            res.render('management/booking/room_transactions', {
                 transactionList: result.recordset
             })
         })
     },
 
-    viewDetails: (req, res) => {
-        
+    findOne: (req, res) => {
         RoomTransactions.viewTransactionUuId(50, req.body.transid).then(result => {
-        
             res.json({
                 status: 200,
                 data: result.recordset

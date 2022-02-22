@@ -51,14 +51,14 @@
                             <option disabled selected value>--Organization Type--</option>
                             <% for(let org of orgType) { %>
                             <option value="<%- org.id %>">
-                                <%- org.name %>
+                                <%- org.name %> 
                             </option>
                             <% } %>
                         </select>
                     </td>
                     <td>
                         <i class="far fa-edit d-none"></i>
-                        <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-organization"></i>
                     </td>
                 </tr>
             </tbody>
@@ -103,7 +103,7 @@
                     </td>
                     <td>
                         <i class="far fa-edit d-none"></i>
-                        <i class="fas fa-trash-alt text-danger cursor-pointer removecampus"></i>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-campus"></i>
                     </td>
                 </tr>
             </tbody>
@@ -200,7 +200,7 @@
                         </td>
                         <td>
                             <i class="far fa-edit d-none"></i>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer removebuilding"></i>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-building"></i>
                         </td>
                     </tr>
                 </tbody>
@@ -213,7 +213,6 @@
 
 <!-- Room step form -->
 <form action="/management/room" method="post" class="step d-none" id="room-form" data-step="4">
-
     <div class="modal-header table-card-header">
         <h5 class="modal-title" id="add-room-modal-title">Add New Room</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-room"><i class="fas fa-plus"></i> </button>
@@ -222,12 +221,8 @@
     <div class="modal-body">
         <div id="errorHtml"></div>
         <input type="hidden" id="roomId" name="roomId">
-
-
-
-        
         <div class="table-responsive">
-            <table class="table table-bordered" id="add-more-room-table">
+            <table class="table table-bordered " id="add-room-table">
                 <thead>
                     <th>Room No</th>
                     <th>Room Type</th>
@@ -236,33 +231,36 @@
                     <th>Start Time</th>
                     <th>End Time</th>
                     <th>Is Basement</th>
+                    <th>Is Processed</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
                     <tr>
                         <td>
-                            <input type="text" name="roomNo" id="update-roomNo" class="form-control" palceholder="Enter Room no." required>
+                            <input type="hidden" id="roomId" name="roomId">
+                            <input type="number" name="room_number" id="room_number" class="form-control"
+                                palceholder="Enter Room no." required>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="roomType" id="roomType" required>
-                                <option disabled selected value>--Room Type--</option>
+                            <select class="form-select modalSelect2" name="room_type_id" id="room_type_id">
+                                <option disabled selected value="">--Room Type--</option>
                                 <% for(let roomType of roomTypeList) { %>
                                 <option value="<%- roomType.roomtypeid %>">
                                     <%- roomType.name %>
                                 </option>
-                                <% } %>
+                                <% } %>  
                             </select>
                         </td>
                         <td>
-                            <input type="number" name="floorNo" id="floorNo" class="form-control"
-                                style="width: 70px;" required>
+                            <input type="number" name="floor_number" id="floor_number" class="form-control"
+                                required>
                         </td>
                         <td>
-                            <input type="number" name="capacity" id="capacity" class="form-control"
-                                style="width: 70px;" required>
+                            <input type="number" name="capacity" id="capacity" class="form-control" required>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="startTime" id="startTime" required>
+                            <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
+                                required>
                                 <option disabled selected value>--Start Time--</option>
                                 <% for(let time of timeList) { %>
                                 <option value="<%- time.id %>">
@@ -272,7 +270,8 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="endTime" id="endTime" required>
+                            <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
+                                required>
                                 <option disabled selected value>--End Time--</option>
                                 <% for(let time of timeList) { %>
                                 <option value="<%- time.id %>">
@@ -282,24 +281,28 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="isBasement" id="isBasement"
-                                style="width: 70px;" required>
+                            <select class="form-select modalSelect2" name="is_basement" id="is_basement"
+                                required>
                                 <option selected value="0">No</option>
                                 <option value="1">Yes</option>
                             </select>
                         </td>
                         <td>
-
+                            <select class="form-select modalSelect2" name="is_processed" id="is_processed"
+                                required>
+                                <option selected value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </td>
+                        <td>
                             <i class="far fa-edit d-none"></i>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer removeroom"></i>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-room"></i>
 
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-
 </form>
 </div>
 

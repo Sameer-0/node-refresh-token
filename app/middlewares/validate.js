@@ -18,7 +18,6 @@ module.exports = function validate(method) {
         }
 
         case 'JsonValidator': {
-
             return (req, res, next) => {
                 console.log('Validation:::::::::::::::>>', req.body.inputJSON)
                 let jsonreq = JSON.parse(req.body.inputJSON);
@@ -28,7 +27,7 @@ module.exports = function validate(method) {
                     for (let key in data) {
                         if (!data[key]) {
                             let obj = {
-                               "" : key + ` must not be empty`
+                                "": key + ` must not be empty`
                             }
                             done = false
                             keyval.push(obj)
@@ -46,7 +45,7 @@ module.exports = function validate(method) {
                     console.log('Fail::::::::::::>>')
                     res.status(403).json({
                         status: 403,
-                        description:'All fields are mandetory',
+                        description: 'All fields are mandetory',
                         data: keyval
                     })
                 }
@@ -124,6 +123,13 @@ module.exports = function validate(method) {
         case 'createRoomTransType': {
             return [
                 check('rtsName').not().isEmpty().withMessage('Room Transaction Type must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'Holiday': {
+            return [
+                check('name').not().isEmpty().withMessage('Name must not be empty'),
                 check('description').not().isEmpty().withMessage('Description must not be empty')
             ]
         }
