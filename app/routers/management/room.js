@@ -70,4 +70,8 @@ router.get('/rooms/bookings/transactions', transaction.getPage)
 router.post('/rooms/bookings/transactions/findOne', transaction.findOne)
 router.post('/rooms/bookings/transactions/approve-trans', transaction.approveTrans)
 router.get('/rooms/bookings/transactions/search', validate('search'), transaction.search)
+
+
+//HOLIDAY
+
 module.exports = router;

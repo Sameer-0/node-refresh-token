@@ -64,9 +64,9 @@ module.exports = class Holidays {
         })
     }
 
-    static fetchAll() {
+    static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT * FROM [dbo].[holidays] WHERE active  = 1 ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} hd.id, hd.calendar_id, hd.calendar_name, hd.campus_id, hd.campus_lid, hd.org_lid, hd.calendar_year, hd.h_date, hd.reason, hd.holiday_type_id, hd.active FROM dbo.holidays hd WHERE hd.active = 1 ORDER BY hd.id DESC`)
         })
     }
 

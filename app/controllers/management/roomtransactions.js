@@ -3,7 +3,7 @@ const RoomTransactions = require("../../models/RoomTransactions")
 module.exports = {
     getPage: (req, res) => {
         RoomTransactions.fetchAll(100).then(result => {
-  console.log('Room Transaction::::::::::>>',result.recordset)
+
             res.render('management/booking/room_transactions', {
                 transactionList: result.recordset
             })
