@@ -80,13 +80,6 @@ app.use((req, res, next) => {
 app.use(verifySubdomain);
 
 
-
-app.get('/logout', (req, res, next) => {
-    req.session.destroy(function (err) {
-        res.redirect('/login')
-    })
-})
-
 setRouter(app)
 
 app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))

@@ -8,7 +8,6 @@ const Buildings = require('../../models/Buildings')
 const Organizations = require("../../models/Organizations")
 const Campuses = require("../../models/Campuses")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
-const moment = require('moment');
 
 module.exports = {
     getAcadYearPage: (req, res, next) => {
