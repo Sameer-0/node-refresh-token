@@ -45,9 +45,9 @@ module.exports = class HolidayTypes {
         })
     }
 
-    static fetchAll() {
+    static fetchAll(rowcont) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, name, description FROM [dbo].[holiday_types] WHERE active  = 1 ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcont)} id, name, description FROM [dbo].[holiday_types] WHERE active  = 1 ORDER BY id DESC`)
         })
     }
 

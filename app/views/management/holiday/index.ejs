@@ -76,7 +76,7 @@
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="open-holiday-modal-title">Add New Room</h5>
+                <h5 class="modal-title" id="open-holiday-modal-title">Add New Holiday</h5>
                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times"></i></button>
             </div>
@@ -99,10 +99,12 @@
                             <tr>
                                 <td>
                                     <input type="hidden" id="roomId" name="roomId">
-                                    <input type="number" name="calender_id" id="calender_id" class="form-control" required>
+                                    <input type="number" name="calender_id" id="calender_id" class="form-control"
+                                        required>
                                 </td>
                                 <td>
-                                    <input type="text" name="calender_name" id="calender_name" class="form-control" required>
+                                    <input type="text" name="calender_name" id="calender_name" class="form-control"
+                                        required>
                                 </td>
                                 <td>
                                     <select class="form-select" name="campus_lid" id="campus_lid">
@@ -125,12 +127,33 @@
                                         <% } %>
                                     </select>
                                 </td>
+                                <td>
+                                    <input type="text" name="calender_year" id="calender_year"
+                                        placeholder="Calander Year" class="form-control" required>
+                                </td>
+                                <td>
+                                    <input type="date" name="h_date" id="h_date" placeholder="Holiday Date"
+                                        class="form-control" required>
+                                </td>
+                                <td>
+                                    <input type="text" name="reasons" id="reasons" placeholder="Reasons"
+                                        class="form-control" required>
+                                </td>
 
-                             
+                                <td>
+                                    <select class="form-select" name="org_lid" id="org_lid">
+                                        <option disabled selected value="">--Organizations--</option>
+                                        <% for(let htype of holidayTypeList) { %>
+                                        <option value="<%- htype.id %>">
+                                            <%- htype.name %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+
                                 <td>
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer removeroom"></i>
-
                                 </td>
                             </tr>
                         </tbody>
@@ -139,8 +162,9 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-room"><i class="fas fa-plus"></i> Add
-                    More Room</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-holiday"><i class="fas fa-plus"></i>
+                    Add
+                    More Holiday</button>
                 <button type="button" class="btn  modal-inputform-btn addRoom" id="insertRoom">Create Room</button>
                 <button type="button" class="btn  modal-inputform-btn updateRoom d-none">Update Room Data</button>
             </div>

@@ -10,7 +10,7 @@ const HolidayTypes = require('../../models/HolidayTypes')
 module.exports = {
 
     getPage: (req, res) => {
-        HolidayTypes.fetchAll().then(result => {
+        HolidayTypes.fetchAll(10).then(result => {
             res.render('management/holiday/types', {
                 holidayTypeList: result.recordset
             })
