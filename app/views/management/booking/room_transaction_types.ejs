@@ -20,7 +20,6 @@
                 <button class="btn ms-auto select-delete-rootTransaction add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-root-ransaction-type add-btn "><img src="/icons/delete.png"
                         alt="" width="26px" height="32px"></button>
-
             </div>
         </div>
 
@@ -47,7 +46,7 @@
                                 data-roomtransaction-stages-id="<%- list.rtsid %>"></i>
                         </td>
                         <td>
-                            <input type="checkbox" data-roomtransaction-type-id="<%- list.rtsid %>"
+                            <input type="checkbox" data-roomtransaction-stage-id="<%- list.rtsid %>"
                                 class="delete-rootTransaction">
                         </td>
                     </tr>
@@ -101,7 +100,7 @@
         //Create 
         $(".createRoomTransactionStages").on('click', function () {
             $.ajax({
-                url: '/management/rooms/transaction-types',
+                url: '/management/rooms/bookings/transaction-types',
                 method: 'POST',
                 type: 'JSON',
                 data: {
@@ -138,7 +137,7 @@
             $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
 
             let ApiObj = {
-                url: '/management/rooms/transaction-types/findOne',
+                url: '/management/rooms/bookings/transaction-types/findOne',
                 method: 'GET',
                 data: {
                     Id: $(this).attr("data-roomtransaction-stages-id")
@@ -161,7 +160,7 @@
         //Update 
         $(".updateRoomTransactionStages").on('click', function () {
             $.ajax({
-                url: '/management/rooms/transaction-types',
+                url: '/management/rooms/bookings/transaction-types',
                 method: 'PUT',
                 type: 'JSON',
                 data: {
@@ -216,7 +215,7 @@
             let deleteids = []
             $('.delete-rootTransaction:checked').each(function () {
                 let obj = {
-                    id: $(this).attr("data-roomtransaction-type-id"),
+                    id: $(this).attr("data-roomtransaction-stage-id"),
                 }
                 deleteids.push(obj)
             })
@@ -224,7 +223,7 @@
             if (deleteids.length > 0) {
                 console.log('deleteids::::::::::::::', deleteids)
                 let ApiObj = {
-                    url: '/management/rooms/transaction-types',
+                    url: '/management/rooms/bookings/transaction-types',
                     type: 'DELETE',
                     data: {
                         Ids: JSON.stringify(deleteids)
@@ -248,7 +247,7 @@
         //Bulk Delete
         $(".bulk-delete-root-ransaction-type").on('click', function () {
             let ApiObj = {
-                url: '/management/rooms/transaction-types',
+                url: '/management/rooms/bookings/transaction-types',
                 type: 'PATCH',
                 data: {},
                 dataType: 'JSON'
@@ -276,7 +275,7 @@
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "GET",
-                url: '/management/rooms/transaction-types/search',
+                url: '/management/rooms/bookings/transaction-types/search',
                 data: {
                     keyword: keyword
                 },
@@ -306,7 +305,7 @@
                                     data-roomtransaction-stages-id="${list.rtsid}"></i>
                             </td>
                             <td>
-                            <input type="checkbox" data-roomtransaction-type-id="${list.rtsid}"
+                            <input type="checkbox" data-roomtransaction-stage-id="${list.rtsid}"
                                 class="delete-rootTransaction">
                         </td>
                         </tr>`

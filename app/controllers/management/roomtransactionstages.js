@@ -10,7 +10,7 @@ const RoomTransactionStages = require('../../models/RoomTransactionStages')
 module.exports = {
     getPage: (req, res) => {
         RoomTransactionStages.fetchAll(10000).then(result => {
-            res.render('management/room/room_transaction_stages', {
+            res.render('management/booking/room_transaction_stages', {
                 roomTransactionStageList: result.recordset
             })
         })
@@ -34,7 +34,7 @@ module.exports = {
         })
     },
 
-    single: (req, res) => {
+    findOne: (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -73,22 +73,24 @@ module.exports = {
         })
     },
 
+
     delete: (req, res) => {
-
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
-
-        RoomTransactionStages.delete(req.body.Id).then(result => {
+        RoomTransactionStages.delete(req.body.Ids).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
             })
+        })
+    },
+
+
+    deleteAll: (req, res) => {
+        RoomTransactionStages.deleteAll().then(result => {
+            res.status(200).json({
+                status: 200
+            })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
         })
     },
 

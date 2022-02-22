@@ -10,13 +10,7 @@ const validator =  require('../../middlewares/validator')
 const validate = require('../../middlewares/validate')
 
 
-// ROOM TRANSACTION STATGE =  rtstage
-router.get('/room/rtstage', rtscontroller.getPage)
-router.put('/room/rtstage', validate('updateRtstage'), rtscontroller.update)
-router.post('/room/rtstage', validate('createRtstage'), rtscontroller.create)
-router.get('/room/rtstage/single', validate('single'), rtscontroller.single)
-router.get('/room/rtstage/search', validate('search'), rtscontroller.search)
-router.delete('/room/rtstage', validate('delete'), rtscontroller.delete)
+
 
 
 
