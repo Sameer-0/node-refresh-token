@@ -37,16 +37,16 @@
     </div>
 
     <div class="card table-card">
-         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
                 <h5>HOLIDAY LIST</h5>
             </div>
             <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-holiday-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt="" width="26px"
-                    height="32px"></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button>
             </div>
         </div>
 
@@ -61,12 +61,93 @@
                     <th>Sap Academic Session</th>
                 </thead>
                 <tbody>
-               
+
                 </tbody>
             </table>
         </div>
     </div>
 
+</div>
+
+
+
+<!-- ADD NEW ROOM MODAL-->
+<div class="modal fade" id="open-holiday-modal" aria-labelledby="open-holiday-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h5 class="modal-title" id="open-holiday-modal-title">Add New Room</h5>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="errorHtml"></div>
+                <div class="table-responsive">
+                    <table class="table table-bordered " id="add-room-table">
+                        <thead>
+                            <th>Calender</th>
+                            <th>Calender Name</th>
+                            <th>Campus</th>
+                            <th>Organization</th>
+                            <th>Calender Year</th>
+                            <th>Holiday Date</th>
+                            <th>Reasons</th>
+                            <th>Holiday Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="hidden" id="roomId" name="roomId">
+                                    <input type="number" name="calender_id" id="calender_id" class="form-control" required>
+                                </td>
+                                <td>
+                                    <input type="text" name="calender_name" id="calender_name" class="form-control" required>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="campus_lid" id="campus_lid">
+                                        <option disabled selected value="">--Campuses--</option>
+                                        <% for(let campus of campusList) { %>
+                                        <option value="<%- campus.campus_id %>">
+                                            <%- campus.campus_abbr %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <select class="form-select" name="org_lid" id="org_lid">
+                                        <option disabled selected value="">--Organizations--</option>
+                                        <% for(let org of orgList) { %>
+                                        <option value="<%- org.org_id %>">
+                                            <%- org.org_abbr %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+
+                             
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer removeroom"></i>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-room"><i class="fas fa-plus"></i> Add
+                    More Room</button>
+                <button type="button" class="btn  modal-inputform-btn addRoom" id="insertRoom">Create Room</button>
+                <button type="button" class="btn  modal-inputform-btn updateRoom d-none">Update Room Data</button>
+            </div>
+
+
+        </div>
+    </div>
 </div>
 
 <%- include("../partials/footer") %>
