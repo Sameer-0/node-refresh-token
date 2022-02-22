@@ -26,7 +26,7 @@ module.exports = {
             });
             return;
         }
-        
+
         RoomTransactionStages.save(req.body).then(result => {
             res.json({
                 status: 200,
