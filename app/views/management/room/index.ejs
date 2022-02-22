@@ -96,7 +96,20 @@
                         <td><%- room.is_basement ? 'Yes' : 'No' %></td>
                         <td><%- room.handled_by %></td>
                         <!-- <td><%- room.campus %></td> -->
-                        <td><%- room.is_processed ? 'Yes' : 'No' %></td>
+                        <td>
+                            <% if(room.is_processed == true) {%>
+                            <div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked" checked>
+
+                            </div>
+                            <%}else{%>
+                            <div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked">
+                            </div>
+                            <%}%>  
+                        </td>
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-room"
                                 data-room-id="<%- room.roomid %>"></i>
@@ -168,7 +181,7 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Is Basement</th>
-                            <th>Is Processed</th>
+                            <!-- <th>Is Processed</th> -->
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -224,13 +237,13 @@
                                         <option value="1">Yes</option>
                                     </select>
                                 </td>
-                                <td>
+                                <!-- <td>
                                     <select class="form-select modalSelect2" name="is_processed" id="is_processed"
                                         required>
                                         <option selected value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
-                                </td>
+                                </td> -->
                                 <td>
 
                                     <i class="far fa-edit d-none"></i>
@@ -661,7 +674,20 @@
                                 <td>${room.is_basement}</td>
                                 <td>${room.handled_by}</td>
                                 <td>${room.campus}</td>
-                                <td>${room.is_processed ? 'Yes' : 'No'}</td>
+                                <td>`
+                            if(room.is_processed == true) {
+                                quoteAjax += `<div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked" checked>
+
+                            </div>`
+                            }else{
+                                quoteAjax +=   `<div class="form-check form-switch switch-checkbox">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked">
+                            </div>`
+                            }  
+                            quoteAjax +=  `</td>
                                <td>
                                     <i class="fas fa-edit text-dark cursor-pointer edit-room"
                                         data-room-id="${room.roomid}"></i>
