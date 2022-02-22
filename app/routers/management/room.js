@@ -44,12 +44,10 @@ router.get('/rooms/bookings', bookings.getPage)
 router.get('/rooms/transaction-types',transactionTypes.getPage)
 router.delete('/rooms/transaction-types', transactionTypes.delete)
 router.patch('/rooms/transaction-types',  transactionTypes.deleteAll)
-// ROOM TRANSACTION TYPES =  rtypes
-// router.get('/room/rtypes', rtypescontroller.getPage)
-// router.post('/room/rtypes', validate('createRtypes'), rtypescontroller.create)
-// router.get('/room/rtypes/single', validate('single'), rtypescontroller.single)
-// router.put('/room/rtypes', validate('updateRtypes'), rtypescontroller.update)
-// router.delete('/room/rtypes', validate('delete'), rtypescontroller.delete)
-// router.get('/room/rtypes/search', validate('search'), rtypescontroller.search)
+ router.get('/rooms/transaction-types/findOne', validate('single'), transactionTypes.findOne)
+ router.post('/rooms/transaction-types', validate('createRtypes'), transactionTypes.create)
+ router.put('/rooms/transaction-types', validate('updateRtypes'), transactionTypes.update)
+ router.get('/rooms/transaction-types/search', validate('search'), transactionTypes.search)
+
 
 module.exports = router;

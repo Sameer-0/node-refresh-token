@@ -18,8 +18,8 @@
                     data-bs-target="#add-roomtransaction-stages-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-rootTransaction add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-root-ransaction-type add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
+                <button class="btn ms-auto bulk-delete-root-ransaction-type add-btn "><img src="/icons/delete.png"
+                        alt="" width="26px" height="32px"></button>
 
             </div>
         </div>
@@ -27,13 +27,13 @@
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-            <table class="table custom_row" id="rootTransactionTable">
+            <table class="table custom_row" id="roomTransactionTable">
                 <thead>
                     <th>Sr No.</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-campus"></th>
+                    <th>All <input type="checkbox" class="selectAll-Room-Transaction"></th>
                 </thead>
                 <tbody>
                     <% let count = 1%>
@@ -43,7 +43,7 @@
                         <td><%- list.name %></td>
                         <td><%- list.description %></td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-roomtransaction-strage"
+                            <i class="fas fa-edit text-dark cursor-pointer edit-roomtransaction-type"
                                 data-roomtransaction-stages-id="<%- list.rtsid %>"></i>
                         </td>
                         <td>
@@ -86,12 +86,8 @@
             </div>
             <div class="modal-footer">
                 <span class="errorMsg"></span>
-                <button type="submit" class="btn  createRoomTransactionStages modal-inputform-btn">Create Room
-                    Transaction
-                    Stage</button>
-                <button type="submit" class="btn  updateRoomTransactionStages modal-inputform-btn d-none">Update Room
-                    Transaction
-                    Stage</button>
+                <button type="submit" class="btn  createRoomTransactionStages modal-inputform-btn">Create</button>
+                <button type="submit" class="btn  updateRoomTransactionStages modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
@@ -105,7 +101,7 @@
         //Create 
         $(".createRoomTransactionStages").on('click', function () {
             $.ajax({
-                url: '/management/room/rtypes',
+                url: '/management/rooms/transaction-types',
                 method: 'POST',
                 type: 'JSON',
                 data: {
@@ -135,36 +131,37 @@
             })
         })
 
-        //edit
-        $("#rootTransactionTable").on('click', '.edit-roomtransaction-strage', function () {
+        //Edit
+        $('#roomTransactionTable').on('click', '.edit-roomtransaction-type', function () {
             $(".createRoomTransactionStages").addClass('d-none')
             $(".updateRoomTransactionStages").removeClass('d-none')
             $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
-            $.ajax({
-                url: '/management/room/rtypes/single',
+
+            let ApiObj = {
+                url: '/management/rooms/transaction-types/findOne',
                 method: 'GET',
-                type: 'JSON',
                 data: {
                     Id: $(this).attr("data-roomtransaction-stages-id")
                 },
-                success: data => {
-                    let room = data.data
-                    $('#rtsId').val(room.rtsid),
-                        $('#rtsName').val(room.rtsName),
-                        $('#description').val(room.description),
-                        $("#add-roomtransaction-stages-modal").modal('show')
-                },
-                error: err => {
-                    console.log('Error: ', err)
-                }
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                let room = result.data
+                $('#rtsId').val(room.rtsid),
+                    $('#rtsName').val(room.rtsName),
+                    $('#description').val(room.description),
+                    $("#add-roomtransaction-stages-modal").modal('show')
+            }).catch(error => {
+                showError(error.responseJSON)
             })
+
         })
 
 
         //Update 
         $(".updateRoomTransactionStages").on('click', function () {
             $.ajax({
-                url: '/management/room/rtypes',
+                url: '/management/rooms/transaction-types',
                 method: 'PUT',
                 type: 'JSON',
                 data: {
@@ -200,7 +197,7 @@
 
 
         //Select All campus
-        $("#rootTransactionTable").on('click', '.selectAll-campus', function () {
+        $("#roomTransactionTable").on('click', '.selectAll-Room-Transaction', function () {
             if (this.checked) {
                 // Iterate each checkbox
                 $('.delete-rootTransaction:checkbox').each(function () {
@@ -214,8 +211,8 @@
         })
 
 
-           //Delete Single and mutiple Delete
-         $('.select-delete-rootTransaction').on('click', function () {
+        //Delete Single and mutiple Delete
+        $('.select-delete-rootTransaction').on('click', function () {
             let deleteids = []
             $('.delete-rootTransaction:checked').each(function () {
                 let obj = {
@@ -248,8 +245,8 @@
 
 
 
-         //Bulk Delete
-         $(".bulk-delete-root-ransaction-type").on('click', function () {
+        //Bulk Delete
+        $(".bulk-delete-root-ransaction-type").on('click', function () {
             let ApiObj = {
                 url: '/management/rooms/transaction-types',
                 type: 'PATCH',
@@ -264,13 +261,13 @@
 
             })
 
-         //   alertMsg()
+            //   alertMsg()
 
-         //   $('.alert-continue').on('click', () => {
-        
-       // })
-       // $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
-        
+            //   $('.alert-continue').on('click', () => {
+
+            // })
+            // $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
+
         })
 
 
@@ -279,19 +276,20 @@
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "GET",
-                url: "/management/room/rtypes/search",
+                url: '/management/rooms/transaction-types/search',
                 data: {
                     keyword: keyword
                 },
                 success: function (data) {
                     let roomTypeStageList = data.data;
 
-                    let AjaxTable = `<table class="table custom_row" id="rootTransactionTable">
+                    let AjaxTable = `<table class="table custom_row" id="roomTransactionTable">
                     <thead>
                         <th>Sr No.</th>
                         <th>Name</th>
                         <th>Description</th>
                         <th>Action</th>
+                        <th>All <input type="checkbox" class="selectAll-Room-Transaction"></th>
                     </thead>
                     <tbody>`;
 
@@ -304,21 +302,23 @@
                             <td>${list.name}</td>
                             <td>${list.description}</td>
                             <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-roomtransaction-strage"
+                                <i class="fas fa-edit text-dark cursor-pointer edit-roomtransaction-type"
                                     data-roomtransaction-stages-id="${list.rtsid}"></i>
-                                <a data-roomtransaction-stages-id="${list.rtsid}"
-                                    class="fas fa-trash-alt text-danger delete-RTS"></a>
                             </td>
+                            <td>
+                            <input type="checkbox" data-roomtransaction-type-id="${list.rtsid}"
+                                class="delete-rootTransaction">
+                        </td>
                         </tr>`
                         }
                     } else {
                         AjaxTable +=
                             ` <tr>
-                                <td colspan="3">No Data Found</td>
+                                <td colspan="5">No Data Found</td>
                             </tr>`;
                     }
                     AjaxTable += `<tbody></table>`
-                    $("#rootTransactionTable").html(AjaxTable);
+                    $("#roomTransactionTable").html(AjaxTable);
                 }
             })
         }, 500));

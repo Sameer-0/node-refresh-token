@@ -34,7 +34,7 @@ module.exports = {
         })
     },
 
-    single: (req, res) => {
+    findOne: (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -43,6 +43,7 @@ module.exports = {
             });
             return;
         }
+        
         RoomTransactionTypes.getRTSId(req.query.Id).then(result => {
             res.json({
                 status: 200,
