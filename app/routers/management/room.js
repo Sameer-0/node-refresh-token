@@ -11,6 +11,7 @@ const roomtype = require('../../controllers/management/roomtype')
 const bookings = require('../../controllers/management/bookings')
 const validate = require('../../middlewares/validate')
 const roomValidate = require('../../middlewares/roomValidate')
+const transactionTypes = require('../../controllers/management/roomtransactiontypes')
 
 //ROOM ROUTER
 router.get('/rooms', roomcontroller.getPage)
@@ -37,6 +38,16 @@ router.get('/room/slots', roomslotscontroller.getPage)
 //ROOM BOOKING
 
 router.get('/rooms/bookings', bookings.getPage)
+
+
+//ROOM TRANSACTION
+router.get('/rooms/transaction-types',transactionTypes.getPage)
+router.delete('/rooms/transaction-types', transactionTypes.delete)
+router.patch('/rooms/transaction-types',  transactionTypes.deleteAll)
+ router.get('/rooms/transaction-types/findOne', validate('single'), transactionTypes.findOne)
+ router.post('/rooms/transaction-types', validate('createRtypes'), transactionTypes.create)
+ router.put('/rooms/transaction-types', validate('updateRtypes'), transactionTypes.update)
+ router.get('/rooms/transaction-types/search', validate('search'), transactionTypes.search)
 
 
 module.exports = router;

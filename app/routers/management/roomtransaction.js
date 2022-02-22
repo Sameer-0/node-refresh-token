@@ -19,13 +19,7 @@ router.get('/room/rtstage/search', validate('search'), rtscontroller.search)
 router.delete('/room/rtstage', validate('delete'), rtscontroller.delete)
 
 
-// ROOM TRANSACTION TYPES =  rtypes
-router.get('/room/rtypes', rtypescontroller.getPage)
-router.post('/room/rtypes', validate('createRtypes'), rtypescontroller.create)
-router.get('/room/rtypes/single', validate('single'), rtypescontroller.single)
-router.put('/room/rtypes', validate('updateRtypes'), rtypescontroller.update)
-router.delete('/room/rtypes', validate('delete'), rtypescontroller.delete)
-router.get('/room/rtypes/search', validate('search'), rtypescontroller.search)
+
 
 // ROOM TRANSACTION
 router.get('/room/transaction', roomtransactioncontroller.getPage)
