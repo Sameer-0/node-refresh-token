@@ -129,7 +129,6 @@
     
             $('#add-room-modal').on('click', '.remove-room', function () {
                 let trLength = $('#add-room-table tbody tr').length;
-    
                 if (trLength > 1) {
                     $(this).closest('tr').remove()
                 } else {

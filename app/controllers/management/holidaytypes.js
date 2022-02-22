@@ -5,13 +5,14 @@ const {
     Result
 } = require('express-validator');
 
-const RoomTransactionTypes = require('../../models/RoomTransactionTypes')
+const HolidayTypes = require('../../models/HolidayTypes')
 
 module.exports = {
+
     getPage: (req, res) => {
-        RoomTransactionTypes.fetchAll(50).then(result => {
-            res.render('management/booking/room_transaction_types', {
-                roomTransactionTypeList: result.recordset
+        HolidayTypes.fetchAll(10).then(result => {
+            res.render('management/holiday/types', {
+                holidayTypeList: result.recordset
             })
         })
     },
@@ -25,30 +26,21 @@ module.exports = {
             });
             return;
         }
-
-        RoomTransactionTypes.save(req.body).then(result => {
-            res.json({
+        HolidayTypes.insert(req.body).then(result => {
+            res.status(200).json({
                 status: 200,
                 message: "Success"
             })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
         })
     },
 
     findOne: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
-        
-        RoomTransactionTypes.getRTSId(req.query.Id).then(result => {
+        HolidayTypes.findOne(req.query.Id).then(result => {
             res.json({
                 status: 200,
-                message: "Success",
-                data: result.recordset[0]
+                result: result.recordset[0]
             })
         })
     },
@@ -62,25 +54,29 @@ module.exports = {
             });
             return;
         }
-        RoomTransactionTypes.update(req.body).then(result => {
-            res.json({
+        HolidayTypes.update(req.body).then(result => {
+            res.status(200).json({
                 status: 200,
                 message: "Success"
             })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
         })
     },
 
     delete: (req, res) => {
-        RoomTransactionTypes.delete(req.body.Ids).then(result => {
+        HolidayTypes.delete(req.body.Ids).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
             })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
         })
     },
 
     deleteAll: (req, res) => {
-        RoomTransactionTypes.deleteAll().then(result => {
+        HolidayTypes.deleteAll().then(result => {
             res.status(200).json({
                 status: 200
             })
@@ -90,6 +86,7 @@ module.exports = {
     },
 
     search: (req, res) => {
+        
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -98,14 +95,14 @@ module.exports = {
             });
             return;
         }
-        //here 10is rowcount
 
+        //here 10is rowcount
         let rowcont = 10;
-        RoomTransactionTypes.search(rowcont, req.query.keyword).then(result => {
+        HolidayTypes.search(rowcont, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
-                    message: "Room Transaction Type fetched",
+                    message: "Holiday Fetch",
                     data: result.recordset,
                     length: result.recordset.length
                 })

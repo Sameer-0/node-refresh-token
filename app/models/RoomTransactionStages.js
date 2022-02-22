@@ -41,12 +41,12 @@ module.exports = class RoomTransactionStages {
 
 
 
-    static delete(id) {
-        console.log(id)
+    static delete(ids) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('rtsId', sql.Int, id)
-                .query(`UPDATE [dbo].room_transaction_stages SET active = 0  WHERE id = @rtsId`)
+            JSON.parse(ids).forEach(element => {
+                return request.query(`UPDATE [dbo].[room_transaction_stages] SET active = 0  WHERE id = ${element.id}`)
+            });
         })
     }
 
@@ -59,6 +59,11 @@ module.exports = class RoomTransactionStages {
         })
     }
 
+    static deleteAll() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`UPDATE [dbo].[room_transaction_stages] SET active = 0 WHERE active = 1`)
+        })
+    }
 
 
     static getRTSCount() {
