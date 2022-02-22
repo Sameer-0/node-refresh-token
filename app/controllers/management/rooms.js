@@ -87,8 +87,6 @@ module.exports = {
 
 
     delete: (req, res) => {
-
-        console.log('Req ides:::::::>>', JSON.parse(req.body.Ids))
         let object = {
             delete_rooms: JSON.parse(req.body.Ids)
         }
@@ -158,6 +156,14 @@ module.exports = {
             })
         }).catch(error => {
             res.status(500).json(error.originalError.info.message)
+        })
+    },
+
+    isProcessed: (req, res) => {
+        Rooms.isProcessed(object).then(result => {
+            res.json({
+                status: 200
+            })
         })
     }
 }
