@@ -2,7 +2,7 @@ module.exports = {
 
 
     getDashboard: (req, res) => {
-        res.render('admin/dashboard/dashboard')
+        res.render('admin/dashboard/index')
     }
 
 

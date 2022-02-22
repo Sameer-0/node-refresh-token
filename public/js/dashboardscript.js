@@ -18,12 +18,12 @@
                 $('#add-more-org-table tbody').append(clonedTr)
             })
 
-            $('#add-more-org-table').on('click', '.remove', function () {
+            $('#add-more-org-table').on('click', '.remove-organization', function () {
                 let trLength = $('#add-more-org-table tbody tr').length;
                 if (trLength > 1) {
                     $(this).closest('tr').remove()
                 } else {
-                    alert('Cannot delete this room.')
+                    alert('Cannot delete this room.') 
                 }
             })
 
@@ -47,7 +47,7 @@
                 $('#add-more-campus-table tbody').append(clonedTr)
             })
 
-            $('#add-more-campus-table').on('click', '.removecampus', function () {
+            $('#add-more-campus-table').on('click', '.remove-campus', function () {
                 let trLength = $('#add-more-campus-table tbody tr').length;
                 if (trLength > 1) {
                     $(this).closest('tr').remove()
@@ -84,7 +84,7 @@
                 $('#add-more-building-table tbody').append(clonedTr)
             })
 
-            $('#add-more-building-table').on('click', '.removebuilding', function () {
+            $('#add-more-building-table').on('click', '.remove-building', function () {
                 let trLength = $('#add-more-building-table tbody tr').length;
                 if (trLength > 1) {
                     $(this).closest('tr').remove()
@@ -127,7 +127,7 @@
             })
     
     
-            $('#add-room-modal').on('click', '.removeroom', function () {
+            $('#add-room-modal').on('click', '.remove-room', function () {
                 let trLength = $('#add-room-table tbody tr').length;
     
                 if (trLength > 1) {
@@ -138,4 +138,3 @@
             })
 
             //Add more rows in faculty
-            
