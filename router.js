@@ -10,6 +10,7 @@ function setRouter(app) {
     const campus = require("./app/routers/management/campus")
     const organization = require("./app/routers/management/organization")
     const dashboard = require('./app/routers/management/dashboard')
+    const adminDashboard = require('./app/routers/admin/dashboard')
     const slug = require('./app/routers/management/slug')
     const academic = require('./app/routers/management/academic')
     const slotInterval = require('./app/routers/management/slotInterval')
@@ -34,6 +35,7 @@ function setRouter(app) {
     app.use('/management/', isLoggedIn, divisions)
     app.use('/management/', isLoggedIn, program)
     app.use('/management', isLoggedIn, holidays)
+    app.use('/admin/', adminDashboard)
     app.use('/', homeRouter)
     //app.use('/management', isLoggedIn,  management)
 }

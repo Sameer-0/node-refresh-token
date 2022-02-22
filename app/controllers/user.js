@@ -149,8 +149,9 @@ module.exports = {
     },
 
     logout: (req, res) => {
-        console.log('Logout:::::::::>>>')
-        res.redirect('/')
+        req.session.destroy(function (err) {
+            res.redirect('/user/login')
+        })
     }
 
 }
