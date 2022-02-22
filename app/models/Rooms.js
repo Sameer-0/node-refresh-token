@@ -25,7 +25,7 @@ module.exports = class Rooms {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowCount)} r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
             CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, st.end_time, 100) AS end_time,
-            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].rooms r
+            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
             INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
             INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
             INNER JOIN [dbo].organizations o ON o.id = r.handled_by
@@ -62,7 +62,7 @@ module.exports = class Rooms {
             return pool.request().input('pageNo', sql.Int, pageNo)
                 .query(`SELECT r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
             st.start_time AS start_time, et.end_time AS end_time,
-            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].rooms r
+            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
             INNER JOIN [dbo].[buildings] b ON b.id = r.building_id
             INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
             INNER JOIN [dbo].organization_master o ON o.id = r.handled_by
@@ -88,14 +88,14 @@ module.exports = class Rooms {
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowCount)} r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
                 CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, st.end_time, 100) AS end_time,
-                o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, r.is_processed  FROM [dbo].rooms r
+                o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
                 INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
                 INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
                 INNER JOIN [dbo].organizations o ON o.id = r.handled_by
                 INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
                 INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
                 INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.active = 1 and st.active = 1 AND r.room_number 
-                LIKE @keyword OR b.building_name LIKE @keyword OR rt.name LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword`)
+                LIKE @keyword OR b.building_name LIKE @keyword OR rt.name LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR o.org_abbr LIKE @keyword ORDER BY r.id DESC`)
         })
     }
 
@@ -123,6 +123,15 @@ module.exports = class Rooms {
     static deleteAll() {
         return poolConnection.then(pool => {
             return pool.request().query(`UPDATE [dbo].rooms SET active = 0 WHERE active = 1`)
+        })
+    }
+
+    static isProcessed(inputJSON){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[sp_add_new_rooms]')
         })
     }
 }

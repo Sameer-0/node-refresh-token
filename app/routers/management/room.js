@@ -13,7 +13,7 @@ const validate = require('../../middlewares/validate')
 const roomValidate = require('../../middlewares/roomValidate')
 const transactionTypes = require('../../controllers/management/roomtransactiontypes')
 const transactionStage = require('../../controllers/management/roomtransactionstages')
-
+const transaction = require('../../controllers/management/roomtransactions')
 
 
 //ROOM ROUTER
@@ -24,6 +24,7 @@ router.delete('/rooms', roomcontroller.delete)
 router.post('/rooms', validate('JsonValidator'), roomcontroller.addRoom)
 router.get('/rooms/search', validate('search'), roomcontroller.searchRoom)
 router.patch('/rooms', roomcontroller.deleteAll)
+router.post('/rooms/rooms_isprocessed', roomcontroller.isProcessed)
 
 //ROOM TYPE ROUTER
 router.get('/rooms/roomtypes', roomtype.getPage)
@@ -59,7 +60,14 @@ router.put('/rooms/bookings/transaction-stages', validate('updateRtstage'), tran
 router.post('/rooms/bookings/transaction-stages', validate('createRtstage'), transactionStage.create)
 router.get('/rooms/bookings/transaction-stages/findOne', validate('single'), transactionStage.findOne)
 router.get('/rooms/bookings/transaction-stages/search', validate('search'), transactionStage.search)
-//router.delete('/rooms/bookings/transaction-stages', validate('delete'), transactionStage.delete)
 router.delete('/rooms/bookings/transaction-stages', transactionStage.delete)
 router.patch('/rooms/bookings/transaction-stages',  transactionStage.deleteAll)
+
+
+
+// ROOM TRANSACTION
+router.get('/rooms/bookings/transactions', transaction.getPage)
+router.post('/rooms/bookings/transactions/findOne', transaction.findOne)
+router.post('/rooms/bookings/transactions/approve-trans', transaction.approveTrans)
+router.get('/rooms/bookings/transactions/search', validate('search'), transaction.search)
 module.exports = router;
