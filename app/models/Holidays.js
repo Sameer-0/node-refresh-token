@@ -66,7 +66,10 @@ module.exports = class Holidays {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} hd.id, hd.calendar_id, hd.calendar_name, hd.campus_id, hd.campus_lid, hd.org_lid, hd.calendar_year, hd.h_date, hd.reason, hd.holiday_type_id, hd.active FROM dbo.holidays hd WHERE hd.active = 1 ORDER BY hd.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} hd.id, hd.calendar_id, hd.calendar_name, hd.calendar_year, hd.reason, hd.h_date, hd.campus_lid, camp.campus_abbr, org.org_abbr FROM [dbo].holidays hd 
+            INNER JOIN [dbo].campuses camp ON camp.campus_id = hd.campus_lid
+            INNER JOIN [dbo].organizations org ON org.org_id = hd.org_lid
+            INNER JOIN [dbo].holiday_types ht ON ht.id = hd.holiday_type_id WHERE hd.active = 1 and ht.active = 1 and camp.active = 1 and org.active = 1`)
         })
     }
 
@@ -75,6 +78,19 @@ module.exports = class Holidays {
             const request = pool.request();
             return request.input('Id', sql.NVarChar(255), id)
                 .request().query(`SELECT * FROM [dbo].[holidays] WHERE id = @Id`)
+        })
+    }
+
+    static search(rowcount, keyword) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcount)} hd.id, hd.calendar_id, hd.calendar_name, hd.calendar_year, hd.reason, hd.h_date, hd.campus_lid, camp.campus_abbr, org.org_abbr FROM [dbo].holidays hd 
+                INNER JOIN [dbo].campuses camp ON camp.campus_id = hd.campus_lid
+                INNER JOIN [dbo].organizations org ON org.org_id = hd.org_lid
+                INNER JOIN [dbo].holiday_types ht ON ht.id = hd.holiday_type_id 
+                WHERE hd.active = 1 AND ht.active = 1 AND camp.active = 1 AND org.active = 1 AND (
+                hd.calendar_id LIKE @keyword OR hd.calendar_name LIKE @keyword OR hd.calendar_year LIKE @keyword OR camp.campus_abbr LIKE @keyword OR org.org_abbr LIKE @keyword)`)
         })
     }
 
