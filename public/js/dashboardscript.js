@@ -98,7 +98,7 @@
             $('#add-more-room').on('click', function () {
                 console.log("Room Added::::")
     
-                let lastTr = $('#add-room-table tbody tr:last-child')
+                let lastTr = $('#add-more-room-table tbody tr:last-child')
                 // lastTr.find('.modalSelect2').select('destroy');
     
     

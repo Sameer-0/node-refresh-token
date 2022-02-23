@@ -17,9 +17,9 @@
             Organization</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> </button>
     </div>
-    <div id="errorHtml" class="error-show pt-3"></div>
+    <div  class="error-show pt-3 errorHtml"></div>
     <div class="table-responsive">
-        <table class="table" id="add-more-org-table">
+        <table class="table table-bordered organizationTable" id="add-more-org-table">
             <thead>
                 <th>Organization Id</th>
                 <th>Organization Abbr</th>
@@ -31,8 +31,9 @@
             <tbody>
                 <tr>
                     <td>
-                        <input name="orgId" id="orgId" type="number" class="form-control" placeholder="Organization Id"
-                            required>
+                        <input name="orgLid" id="orgLid" type="hidden">
+                        <input name="orgId" id="orgId" type="number" class="form-control"
+                            placeholder="Organization Id" required>
                     </td>
                     <td>
                         <input name="orgAbbr" id="orgAbbr" type="text" class="form-control"
@@ -51,14 +52,18 @@
                             <option disabled selected value>--Organization Type--</option>
                             <% for(let org of orgType) { %>
                             <option value="<%- org.id %>">
-                                <%- org.name %> 
+                                <%- org.name %>
                             </option>
                             <% } %>
                         </select>
                     </td>
+
                     <td>
+
                         <i class="far fa-edit d-none"></i>
                         <i class="fas fa-trash-alt text-danger cursor-pointer remove-organization"></i>
+
+
                     </td>
                 </tr>
             </tbody>
@@ -66,28 +71,32 @@
     </div>
     
 </form>
-
+ 
 <!-- Campus Step Form -->
 <form action="/management/campus" method="post" class="step d-none" id="campus-form" data-step="2">
     <div class="modal-header table-card-header">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-campus"><i class="fas fa-plus"></i> </button>
     </div>
-    <div id="errorHtml" class="error-show pt-3"></div>
+    <div  class="error-show pt-3 errorHtml"></div>
+    
     <div class="table-responsive">
-        <table class="table" id="add-more-campus-table">
+        <table class="table table-bordered" id="add-more-campus-table">
             <thead>
                 <th>Campus Id</th>
-                <th>Abbr</th>
+                <th>Campus Abbr</th>
                 <th>Campus Name</th>
-                <th>Description</th>
+                <th>Campus Description</th>
                 <th>Action</th>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        <input name="campusId" id="campusId" type="number" class="form-control" placeholder="Campus Id"
-                            required>
+                        <input name="Id" id="Id" type="hidden" class="form-control" placeholder="Campus Id">
+                        <input type="hidden" id="campusActive" name="campusActive">
+                        <input name="campusId" id="campusId" type="number" class="form-control"
+                            placeholder="Campus Id" required>
+
                     </td>
                     <td>
                         <input name="campusAbbr" id="campusAbbr" type="text" class="form-control"
@@ -99,7 +108,7 @@
                     </td>
                     <td>
                         <input name="campusDesc" id="campusDesc" type="text" class="form-control"
-                            placeholder="Campus Description" required>
+                            placeholder="Campus Description">
                     </td>
                     <td>
                         <i class="far fa-edit d-none"></i>
@@ -119,7 +128,7 @@
         <button type="button" class="btn add-btn btn-sm" id="add-more-building"><i class="fas fa-plus"></i> </button>
     </div>
     <div class="modal-body">
-        <div id="errorHtml"></div>
+        <div  class="error-show pt-3 errorHtml"></div>
         <input type="hidden" id="roomId" name="roomId">
         <div class="table-responsive ">
             <table class="table " id="add-more-building-table">
@@ -136,20 +145,21 @@
                 <tbody>
                     <tr>
                         <td>
-                            <input name="buildingName" id="buildingName" type="text" class="form-control"
+                            <input type="hidden" name="active" id="active">
+                            <input name="building_name" id="building_name" type="text" class="form-control"
                                 placeholder="Building Name" required>
                         </td>
                         <td>
-                            <input name="buildingNumber" id="buildingNumber" type="number" class="form-control"
-                                placeholder="Building Number" required>
+                            <input name="building_number" id="building_number" type="number"
+                                class="form-control" placeholder="Building Number" required>
                         </td>
                         <td>
-                            <input name="floors" id="floors" type="number" class="form-control"
+                            <input name="total_floors" id="total_floors" type="number" class="form-control"
                                 placeholder="Total Floor Count" required>
                         </td>
 
                         <td>
-                            <select class="form-select modalSelect2" name="ownerId" id="ownerId" required>
+                            <select class="form-select modalSelect2" name="owner_id" id="owner_id" required>
                                 <option disabled selected>--Owner--</option>
                                 <% for(let owner of orgList) { %>
                                 <option value="<%- owner.id %>">
@@ -159,7 +169,8 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="startTimeId" id="startTimeId" required>
+                            <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
+                                required>
                                 <option disabled selected value>--Start Time--</option>
                                 <% for(let time of timeList) { %>
                                 <option value="<%- time.id %>">
@@ -169,7 +180,8 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="endTimeId" id="endTimeId" required>
+                            <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
+                                required>
                                 <option disabled selected value>--End Time--</option>
                                 <% for(let time of timeList) { %>
                                 <option value="<%- time.id %>">
@@ -179,7 +191,8 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="handledById" id="handledById" required>
+                            <select class="form-select modalSelect2" name="handled_by" id="handled_by"
+                                required>
                                 <option disabled selected value>--Handled By--</option>
                                 <% for(let handler of orgList) { %>
                                 <option value="<%- handler.id %>">
@@ -189,7 +202,8 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select modalSelect2" name="campusId" id="campusId" required>
+                            <select class="form-select modalSelect2" name="campus_lid" id="campus_lid"
+                                required>
                                 <option disabled selected value>--Campus--</option>
                                 <% for(let campus of campusList) { %>
                                 <option value="<%- campus.id %>">
@@ -218,9 +232,48 @@
         <button type="button" class="btn add-btn btn-sm" id="add-more-room"><i class="fas fa-plus"></i> </button>
     </div>
 
-    <div class="modal-body">
-        <div id="errorHtml"></div>
+    <div class="modal-body" id="add-room-modal">
+        <div  class="error-show pt-3 errorHtml"></div>
         <input type="hidden" id="roomId" name="roomId">
+
+        <div class="row mt-4 ">
+            <div class="col-md-4">
+                <label>Campuses</label>
+                <select class="form-select campus_lid_filter" name="campus_lid" id="campus_lid">
+                    <option disabled selected value="">--Select Campus--</option>
+                    <% for(let campus of campusList) { %>
+                    <option value="<%- campus.id %>">
+                        <%- campus.campus_abbr %>
+                    </option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Building</label>
+                <select class="form-select" name="building_lid" id="building_lid">
+                    <option disabled selected value="">--Select Building--</option>
+                    <% for(let building of buildingList) { %>
+                    <option value="<%- building.building_id %>">
+                        <%- building.building_name %>
+                    </option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Handled By</label>
+                <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
+                    <option disabled selected value>--Select Organization--</option>
+                    <% for(let org of orgList) { %>
+                    <option value="<%- org.id %>">
+                        <%- org.org_abbr %>/<%- org.org_id %>
+                    </option>
+                    <% } %>
+                </select>
+            </div>
+        </div>
+
         <div class="table-responsive">
             <table class="table table-bordered " id="add-room-table">
                 <thead>

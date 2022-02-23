@@ -16,6 +16,7 @@ module.exports = {
         let rowCount = 10
         if (req.method == "GET") {
             Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
+                console.log('result[2].recordset', result[2].recordset)
                 res.render('management/room/index', {
                     roomList: result[0].recordset,
                     campusList: result[2].recordset,
@@ -164,6 +165,16 @@ module.exports = {
             res.json({
                 status: 200
             })
+        })
+    },
+
+    buildingList: (req, res) => {
+        Rooms.getBuildingByCampusId(req.body.campus_lid).then(result => {
+            res.json({
+                status: 200,
+                data:result.recordset
+            })
+
         })
     }
 }

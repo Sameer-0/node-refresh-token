@@ -126,12 +126,21 @@ module.exports = class Rooms {
         })
     }
 
-    static isProcessed(inputJSON){
+    static isProcessed(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_add_new_rooms]')
+        })
+    }
+
+    static getBuildingByCampusId(campus_lid) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('campusLid', sql.Int, campus_lid)
+                .query(`SELECT id, building_name, building_number, total_floors, owner_id, handled_by, start_time_id, end_time_id FROM [dbo].buildings
+            WHERE campus_lid = @campusLid`)
         })
     }
 }
