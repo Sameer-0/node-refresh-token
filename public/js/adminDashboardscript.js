@@ -57,7 +57,7 @@ $('#add-more-holidays-table').on('click', '.remove-holidays', function () {
 
 //Add more room
 $('#add-more-room').on('click', function () {
-    console.log("holidays Added::::")
+    console.log("Room Added::::")
     let lastTr = $('#add-more-room-table tbody tr:last-child')
     let roomNumber = lastTr.find(`input[name='roomNumber']`).val();
     let roomType = lastTr.find(`input[name='roomType']`).val();

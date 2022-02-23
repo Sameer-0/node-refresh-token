@@ -115,17 +115,15 @@ module.exports = {
 
                 if (isVerified === true) {
 
-                    console.log(">>>>>>>>>>>>> LOGIN SUCCESSFULL")
+                    console.log(">>>>>>>>>>>>> LOGIN SUCCESSFULL",userData)
                     
                     req.session.username = userData.username;
                     req.session.firstName = userData.f_name;
                     req.session.lastName = userData.l_name;
                     req.session.email = userData.email;
                     if (userData.role.toLowerCase() == "management") {
-                        
                         res.redirect('/management/dashboard')
-
-                    } else if (userData.toLowerCase() == "admin") {
+                    } else if (userData.role.toLowerCase() == "admin") {
                         res.redirect('/admin/dashboard')
                     } else {
                         res.redirect('404')

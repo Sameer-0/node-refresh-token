@@ -10,7 +10,6 @@ module.exports = {
     getDashboard: (req, res) => {
         Promise.all([Buildings.fetchAll(10), Organizations.fetchAll(50), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.fetchStepForm(res.locals.slug), OrganizationTypes.fetchAll(50), Rooms.fetchAll(50),RoomTypes.fetchAll(500)]).then(result => {
                      console.log('Room Type List',result[7].recordset)
-
             res.render('management/dashboard', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
