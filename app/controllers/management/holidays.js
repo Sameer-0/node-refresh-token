@@ -1,16 +1,55 @@
+const {
+    check,
+    oneOf,
+    validationResult,
+    Result
+} = require('express-validator');
+
 const Holidays = require('../../models/Holidays')
-const Campuses = require('../../models/Campuses')
-const Organizations = require('../../models/Organizations')
-const HolidayTypes = require('../../models/HolidayTypes')
+
+
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([Holidays.fetchAll(10), Campuses.fetchAll(100), Organizations.fetchAll(100),HolidayTypes.fetchAll(100)]).then(result => {
-            console.log('List:::::::::::::::::>',result[2].recordset)
+        Holidays.fetchAll(10).then(result => {
+            console.log('List:::::::::::::::::>', result.recordset)
             res.render('management/holiday/index', {
-                holidayList: result[0].recordset,
-                campusList: result[1].recordset,
-                orgList: result[2].recordset,
-                holidayTypeList:result[3].recordset
+                holidayList: result.recordset
+            })
+        })
+    },
+    search: (req, res) => {
+        
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        //here 10is rowcount
+        let rowcont = 10;
+        Holidays.search(rowcont, req.query.keyword).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Holiday Fetch",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            res.json({
+                status: "500",
+                message: "Something went wrong",
             })
         })
     }

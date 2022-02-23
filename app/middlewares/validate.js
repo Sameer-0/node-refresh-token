@@ -134,6 +134,13 @@ module.exports = function validate(method) {
             ]
         }
 
+        case 'FacultyType': {
+            return [
+                check('name').not().isEmpty().withMessage('Name must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
         case 'updateRoomTransType': {
             return [
                 check('rtsId').not().isEmpty().withMessage('roomTransactionTypeId must not be empty'),

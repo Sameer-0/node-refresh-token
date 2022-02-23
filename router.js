@@ -20,6 +20,7 @@ function setRouter(app) {
     const divisions = require('./app/routers/management/divisions')
     const program = require('./app/routers/management/program')
     const holidays = require('./app/routers/management/holidays')
+    const faculties = require('./app/routers/management/faculties')
 
     app.use('/user', userRouter)
     app.use('/management/', isLoggedIn, building)
@@ -35,6 +36,7 @@ function setRouter(app) {
     app.use('/management/', isLoggedIn, divisions)
     app.use('/management/', isLoggedIn, program)
     app.use('/management', isLoggedIn, holidays)
+    app.use('/management', isLoggedIn, faculties)
     app.use('/admin/', adminDashboard)
     app.use('/', homeRouter)
     //app.use('/management', isLoggedIn,  management)

@@ -41,27 +41,55 @@
             <div>
                 <h5>HOLIDAY LIST</h5>
             </div>
-            <div>
+            <!-- <div>
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-holiday-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button>
-            </div>
+            </div> -->
         </div>
 
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
-            <table class="table custom_row" id="acadSessionTable">
+            <table class="table custom_row" id="holidayTable">
                 <thead>
-                    <th>Id</th>
-                    <th>Acad Session</th>
-                    <th>Sap Academic Session</th>
+                    <th>Calender Id</th>
+                    <th>Calender Name</th>
+                    <th>Calendar Year</th>
+                    <th>Reason</th>
+                    <th>Holiday Date</th>
+                    <th>Campus</th>
+                    <th>Organization</th>
                 </thead>
                 <tbody>
-
+                    <% for (let holiday of holidayList) { %>
+                    <tr>
+                        <td>
+                            <%- holiday.calendar_id %>
+                        </td>
+                        <td>
+                            <%- holiday.calendar_name %>
+                        </td>
+                        <td>
+                            <%- holiday.calendar_year %>
+                        </td>
+                        <td>
+                            <%- holiday.reason %>
+                        </td>
+                        <td>
+                            <%- holiday.h_date %>
+                        </td>
+                        <td>
+                            <%- holiday.campus_abbr %>
+                        </td>
+                        <td>
+                            <%- holiday.org_abbr %>
+                        </td>
+                    </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>
@@ -71,108 +99,6 @@
 
 
 
-<!-- ADD NEW ROOM MODAL-->
-<div class="modal fade" id="open-holiday-modal" aria-labelledby="open-holiday-modal" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content modal-inputform">
-            <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="open-holiday-modal-title">Add New Holiday</h5>
-                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
-                        class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <div class="table-responsive">
-                    <table class="table table-bordered " id="add-room-table">
-                        <thead>
-                            <th>Calender</th>
-                            <th>Calender Name</th>
-                            <th>Campus</th>
-                            <th>Organization</th>
-                            <th>Calender Year</th>
-                            <th>Holiday Date</th>
-                            <th>Reasons</th>
-                            <th>Holiday Type</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="hidden" id="roomId" name="roomId">
-                                    <input type="number" name="calender_id" id="calender_id" class="form-control"
-                                        required>
-                                </td>
-                                <td>
-                                    <input type="text" name="calender_name" id="calender_name" class="form-control"
-                                        required>
-                                </td>
-                                <td>
-                                    <select class="form-select" name="campus_lid" id="campus_lid">
-                                        <option disabled selected value="">--Campuses--</option>
-                                        <% for(let campus of campusList) { %>
-                                        <option value="<%- campus.campus_id %>">
-                                            <%- campus.campus_abbr %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-
-                                <td>
-                                    <select class="form-select" name="org_lid" id="org_lid">
-                                        <option disabled selected value="">--Organizations--</option>
-                                        <% for(let org of orgList) { %>
-                                        <option value="<%- org.org_id %>">
-                                            <%- org.org_abbr %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" name="calender_year" id="calender_year"
-                                        placeholder="Calander Year" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="date" name="h_date" id="h_date" placeholder="Holiday Date"
-                                        class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="text" name="reasons" id="reasons" placeholder="Reasons"
-                                        class="form-control" required>
-                                </td>
-
-                                <td>
-                                    <select class="form-select" name="org_lid" id="org_lid">
-                                        <option disabled selected value="">--Organizations--</option>
-                                        <% for(let htype of holidayTypeList) { %>
-                                        <option value="<%- htype.id %>">
-                                            <%- htype.name %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer removeroom"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-holiday"><i class="fas fa-plus"></i>
-                    Add
-                    More Holiday</button>
-                <button type="button" class="btn  modal-inputform-btn addRoom" id="insertRoom">Create Room</button>
-                <button type="button" class="btn  modal-inputform-btn updateRoom d-none">Update Room Data</button>
-            </div>
-
-
-        </div>
-    </div>
-</div>
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
@@ -180,7 +106,67 @@
 <script>
     $(document).ready(function () {
 
+        //search feature delay function is writter in script.js file which is located in public/js/script.js
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "GET",
+                url: '/management/holidays/search',
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    let holidayList = data.data;
+                    let AjaxTable = `<table class="table custom_row" id="holidayTable">
+                <thead>
+                    <th>Calender Id</th>
+                    <th>Calender Name</th>
+                    <th>Calendar Year</th>
+                    <th>Reason</th>
+                    <th>Holiday Date</th>
+                    <th>Campus</th>
+                    <th>Organization</th>
+                </thead> 
+                <tbody>`;
 
+                    if (holidayList.length > 0) {
+                        for (holiday of holidayList) {
+                            AjaxTable +=
+                                `<tr>
+                        <td>
+                            ${holiday.calendar_id}
+                        </td>
+                        <td>
+                            ${holiday.calendar_name}
+                        </td>
+                        <td>
+                            ${holiday.calendar_year}
+                        </td>
+                        <td>
+                            ${holiday.reason}
+                        </td>
+                        <td>
+                            ${holiday.h_date}
+                        </td>
+                        <td>
+                            ${holiday.campus_abbr}
+                        </td>
+                        <td>
+                            ${holiday.org_abbr}
+                        </td>
+                    </tr>`
+                        }
+                    } else {
+                        AjaxTable +=
+                            ` <tr>
+                                <td colspan="7">No Data Found</td>
+                            </tr>`;
+                    }
+                    AjaxTable += `<tbody></table>`
+                    $("#holidayTable").html(AjaxTable);
+                }
+            })
+        }, 500));
     })
 </script>
 <%- include("../partials/footerEnd") %>

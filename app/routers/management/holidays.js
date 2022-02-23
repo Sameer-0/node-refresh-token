@@ -11,16 +11,8 @@ const validate = require('../../middlewares/validate')
 
 
 // HOLIDAY ROUTER
- router.get('/holidays', holiday.getPage)
-// router.post('/organizations', validate('JsonValidator'), organization.create)
-// router.put('/organizations', validate('JsonValidator'), organization.update)
-// router.delete('/organizations',  organization.delete)
-// router.patch('/organizations',  organization.deleteAll)
-// router.post('/organization/pagination', validate('pagination'), organization.getPage)
-// router.post('/organization/single', validate('single'), organization.single)
-// router.post('/organization/search', validate('search'), organization.search)
-
-
+router.get('/holidays', holiday.getPage)
+router.get('/holidays/search', holiday.search)
 
 // HOLIDAY TYPES ROUTER
 router.get('/holidays/types', holidaytype.getPage)
