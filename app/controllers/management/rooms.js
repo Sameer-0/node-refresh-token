@@ -9,6 +9,7 @@ const RoomTypes = require('../../models/RoomTypes')
 const Buildings = require('../../models/Buildings');
 const Organizations = require('../../models/Organizations');
 const Campuses = require('../../models/Campuses');
+const Settings = require('../../models/Settings')
 
 module.exports = {
 
@@ -101,6 +102,11 @@ module.exports = {
     },
 
     addRoom: (req, res) => {
+
+        if (req.body.settingName) {
+            Settings.updateByName(res.locals.slug, req.body.settingName)
+        }
+
         let object = {
             add_new_rooms: JSON.parse(req.body.inputJSON)
         }
@@ -111,7 +117,7 @@ module.exports = {
         })
     },
 
-
+ 
 
     searchRoom: (req, res) => {
 
