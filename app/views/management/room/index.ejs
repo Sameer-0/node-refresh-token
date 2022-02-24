@@ -20,7 +20,7 @@
                 <div class="card-body">
                     <h6>Total Room</h6>
                     <div id="chart1"></div>
-                    <h1>100 </h1>
+                    <h1><%- roomcount %> </h1>
                     <div id="count">Room Count</div>
                 </div>
             </div>
@@ -283,7 +283,7 @@
 
 
 
-
+<%- include("../partials/notification") %>
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
@@ -441,7 +441,7 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
-                location.reload()
+                
                 notify();
             }).catch(error => {
                 showError(error.responseJSON)
@@ -563,7 +563,7 @@
             }
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
-                location.reload()
+                
                 notify();
             }).catch(error => {
                 showError(error.responseJSON)
@@ -595,7 +595,7 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
+                    
                     notify();
                 }).catch(error => {
                     let errors = error.responseJSON.message
@@ -629,7 +629,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                location.reload()
+                alertMsg();
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -670,9 +670,10 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-               let buildingList =``;
+               let buildingList =`<select class="form-select" name="campus_lid" id="campus_lid">`;
 
                if(result.data.length > 0){
+                   buildingList += `<option disabled selected value="">--Select Campus--</option>`;
                 result.data.forEach(element => {
                 buildingList += `<option value="${element.id}">
                                 ${element.building_name}
@@ -683,6 +684,7 @@
                                 No Building Found!
                             </option>`
                }
+               buildingList += `</select>`;
                $("#building_lid").html(buildingList)
             }).catch(error => {
                 showError(error.responseJSON)
