@@ -1,8 +1,8 @@
 <div class="step-form">
 
 <div class="d-flex justify-content-between py-3 time-line stages">
-    <div class="arrow-pointer stage active" data-step="1"> Organization </div>
-    <div class="arrow-pointer stage pending" data-step="2">Campus </div>
+    <div class="arrow-pointer stage active" data-step="1"> Campus</div>
+    <div class="arrow-pointer stage pending" data-step="2">Organization  </div>
     <div class="arrow-pointer stage pending" data-step="3"> Building</div>
     <div class="arrow-pointer stage pending" data-step="4"> Room</div>
     <div class="arrow-pointer stage pending" data-step="5"> Faculty</div>
@@ -10,70 +10,8 @@
 
 <div class="step-form-body">
 
-<!-- organization -->
-<form action="/management/organization" method="post" class="step active-form" id="org-form" data-step="1">
-    <div class="modal-header table-card-header ">
-        <h5 class="modal-title text-white" id="add-org-modal-title">Add New
-            Organization</h5>
-        <button type="button" class="btn add-btn btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> </button>
-    </div>
-    <div  class="error-show pt-3 errorHtml"></div>
-    <div class="table-responsive">
-        <table class="table table-bordered organizationTable" id="add-more-org-table">
-            <thead>
-                <th>Organization Id</th>
-                <th>Organization Abbr</th>
-                <th>Organization Name</th>
-                <th>Organization Complete Name</th>
-                <th>Organization Type</th>
-                <th>Action</th>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <input name="orgLid" id="orgLid" type="hidden">
-                        <input name="orgId" id="orgId" type="number" class="form-control"
-                            placeholder="Organization Id" required>
-                    </td>
-                    <td>
-                        <input name="orgAbbr" id="orgAbbr" type="text" class="form-control"
-                            placeholder="Organization Abbr" required>
-                    </td>
-                    <td>
-                        <input name="orgName" id="orgName" type="text" class="form-control"
-                            placeholder="Organization Name" required>
-                    </td>
-                    <td>
-                        <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
-                            placeholder="Organization Complete Name" required>
-                    </td>
-                    <td>
-                        <select class="form-control modalSelect2" name="orgType" id="orgType" required>
-                            <option disabled selected value>--Organization Type--</option>
-                            <% for(let org of orgType) { %>
-                            <option value="<%- org.id %>">
-                                <%- org.name %>
-                            </option>
-                            <% } %>
-                        </select>
-                    </td>
-
-                    <td>
-
-                        <i class="far fa-edit d-none"></i>
-                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-organization"></i>
-
-
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
-</form>
- 
 <!-- Campus Step Form -->
-<form action="/management/campus" method="post" class="step d-none" id="campus-form" data-step="2">
+<form action="/management/campus" method="post" class="step d-none" id="campus-form" data-step="1">
     <div class="modal-header table-card-header">
         <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
         <button type="button" class="btn add-btn btn-sm" id="add-more-campus"><i class="fas fa-plus"></i> </button>
@@ -121,6 +59,80 @@
     
 </form>
 
+<!-- organization -->
+<form action="/management/organization" method="post" class="step active-form" id="org-form" data-step="2">
+    <div class="modal-header table-card-header ">
+        <h5 class="modal-title text-white" id="add-org-modal-title">Add New
+            Organization</h5>
+        <button type="button" class="btn add-btn btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> </button>
+    </div>
+    <div  class="error-show pt-3 errorHtml"></div>
+    <div class="table-responsive">
+        <table class="table table-bordered organizationTable" id="add-more-org-table">
+            <thead>
+                <th>Organization Id</th>
+                <th>Organization Abbr</th>
+                <th>Organization Name</th>
+                <th>Organization Complete Name</th>
+                <th>Organization Type</th>
+                <th>Campus</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input name="orgLid" id="orgLid" type="hidden">
+                        <input name="orgId" id="orgId" type="number" class="form-control"
+                            placeholder="Organization Id" required>
+                    </td>
+                    <td>
+                        <input name="orgAbbr" id="orgAbbr" type="text" class="form-control"
+                            placeholder="Organization Abbr" required>
+                    </td>
+                    <td>
+                        <input name="orgName" id="orgName" type="text" class="form-control"
+                            placeholder="Organization Name" required>
+                    </td>
+                    <td>
+                        <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
+                            placeholder="Organization Complete Name" required>
+                    </td>
+                    <td>
+                        <select class="form-control modalSelect2" name="orgType" id="orgType" required>
+                            <option disabled selected value>--Organization Type--</option>
+                            <% for(let org of orgType) { %>
+                            <option value="<%- org.id %>">
+                                <%- org.name %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select modalSelect2" name="orgCampus_lid" id="orgCampus_lid"
+                        required>
+                        <option disabled selected value>--Campus--</option>
+                        <% for(let campus of campusList) { %>
+                        <option value="<%- campus.id %>">
+                            <%- campus.campus_abbr %>
+                        </option>
+                        <% } %>
+                    </select>
+                    </td>
+
+                    <td>
+
+                        <i class="far fa-edit d-none"></i>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-organization"></i>
+
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</form>
+ 
 <!-- Building Step Form -->
 <form action="/management/building" method="post" class="step d-none" id="building-form" data-step="3">
     <div class="modal-header table-card-header">
@@ -141,6 +153,7 @@
                     <th>End time</th>
                     <th>Handled by</th>
                     <th>Campus</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     <tr>
@@ -223,7 +236,6 @@
         
     </div>
 </form>
-
 
 <!-- Room step form -->
 <form action="/management/rooms" method="post" class="step d-none" id="room-form" data-step="4">
@@ -357,7 +369,6 @@
         </div>
     </div>
 </form>
-
 
 <!-- Faculty step form -->
 <form action="/management/faculties" method="post" class="step d-none" id="faculty-form" data-step="5">

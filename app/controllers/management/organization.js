@@ -39,11 +39,9 @@ module.exports = {
             generate_organization: JSON.parse(req.body.inputJSON)
         }
         Organizations.save(object).then(result => {
-            console.log('Response result:::::::::::::::>>', result.output.output_json)
-            res.status(200).json(result.output.output_json)
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('ERRRPRR::::::::::::::::::::>>', JSON.parse(error.originalError.info.message))
-            res.status(500).json(error.originalError.info.message)
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
@@ -65,6 +63,7 @@ module.exports = {
         Organizations.update(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            console.log('error',error)
             res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
@@ -95,9 +94,14 @@ module.exports = {
 
 
     search: (req, res) => {
+
+
+        console.log('Req::::::::::::::',req.body.keyword)
+
         //here 10is rowcount
         let rowcont = 10;
         Organizations.searchOrg(rowcont, req.body.keyword).then(result => {
+            console.log('result',result)
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

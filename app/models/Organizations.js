@@ -28,8 +28,11 @@ module.exports = class Organizations {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-            FROM [dbo].organizations om JOIN [dbo].organization_types ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type,camp.campus_abbr
+                FROM [dbo].organizations org 
+                INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
+                INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
+                WHERE ot.active = 1 AND org.active = 1 ORDER BY org.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -37,7 +40,7 @@ module.exports = class Organizations {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('id', sql.Int, id)
-                .query(`SELECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id FROM [dbo].organizations WHERE id = @id`)
+                .query(`SELECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id, campus_lid, CONVERT(NVARCHAR, active) AS active FROM [dbo].organizations WHERE id = @id`)
         })
     }
 
@@ -87,10 +90,13 @@ module.exports = class Organizations {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcont)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-                FROM [dbo].organizations om JOIN [dbo].organization_types ot ON om.org_type_id = ot.id  
-                WHERE ot.active = 1 AND om.active = 1 and (om.id like @keyword or om.org_abbr like @keyword 
-                    or om.org_complete_name like @keyword or ot.name like @keyword) ORDER BY om.id DESC`)
+                .query(`SELECT TOP ${Number(rowcont)} org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , 
+                org.org_name AS org_type, camp.campus_abbr
+                FROM [dbo].organizations org 
+                INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
+                INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
+                WHERE ot.active = 1 AND org.active = 1 and (org.id like @keyword or org.org_abbr like @keyword 
+                or org.org_complete_name like @keyword or ot.name like @keyword OR camp.campus_abbr LIKE @keyword) ORDER BY org.id DESC`)
         })
     }
 

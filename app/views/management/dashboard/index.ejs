@@ -150,7 +150,7 @@
         $("#next-step").on('click', function () {
                 console.log('Click::::>>')
 
-                if (currentFormStep == 1) {
+                if (currentFormStep == 2) {
 
                     let orgElems = $('#add-more-org-table tbody tr');
                     let orgCount = orgElems.length;
@@ -162,6 +162,7 @@
                         let orgName = $(elem).find(`input[name='orgName']`).val()
                         let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
                         let orgType = $(elem).find(`select[name='orgType']`).val()
+                        let campus_lid = $(elem).find(`select[name='orgCampus_lid']`).val()
 
                         if (index < orgCount - 1) {
                             let obj = {
@@ -170,7 +171,8 @@
                                 org_abbr: orgAbbr,
                                 org_name: orgName,
                                 org_complete_name: orgCompleteName,
-                                org_type_id: orgType
+                                org_type_id: orgType,
+                                campus_lid:campus_lid
                             }
                             orgJson.push(obj)
                         } else {
@@ -180,7 +182,8 @@
                                 org_abbr: orgAbbr,
                                 org_name: orgName,
                                 org_complete_name: orgCompleteName,
-                                org_type_id: orgType
+                                org_type_id: orgType,
+                                campus_lid:campus_lid
                             }
                             orgJson.push(obj)
                         }
@@ -206,11 +209,12 @@
                         formStepNext()
                         
                     }).catch(error => {
+                        console.log('error.responseJSON::::::::::::>>>',error.responseJSON)
                         showError(error.responseJSON)
                     })
 
 
-                } else if (currentFormStep == 2) {
+                } else if (currentFormStep == 1) {
                     let campusElems = $('#add-more-campus-table tbody tr');
                     let campusCount = campusElems.length;
 
@@ -496,8 +500,10 @@
             showError(error.responseJSON)
         })
     })
+    
 
     function showError(errors) {
+        console.log('errorrrr',errors)
         let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error!</h3>
                     <p>${errors.description}</p>

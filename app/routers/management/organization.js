@@ -16,8 +16,8 @@ router.put('/organizations', validate('JsonValidator'), organization.update)
 router.delete('/organizations',  organization.delete)
 router.patch('/organizations',  organization.deleteAll)
 router.post('/organization/pagination', validate('pagination'), organization.getPage)
-router.post('/organization/single', validate('single'), organization.single)
-router.post('/organization/search', validate('search'), organization.search)
+router.post('/organizations/single', validate('single'), organization.single)
+router.post('/organizations/search', validate('search'), organization.search)
 
 
 module.exports = router;
