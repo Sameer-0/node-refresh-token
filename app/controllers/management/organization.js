@@ -6,14 +6,16 @@ const {
 const Organizations = require("../../models/Organizations")
 const OrganizationTypes = require("../../models/OrganizationTypes");
 const Settings = require('../../models/Settings');
+const Campuses = require('../../models/Campuses');
 module.exports = {
     getPage: (req, res) => {
         if (req.method == "GET") {
-            Promise.all([Organizations.fetchAll(10), OrganizationTypes.fetchAll(50), Organizations.getCount()]).then(result => {
+            Promise.all([Organizations.fetchAll(10), OrganizationTypes.fetchAll(50), Organizations.getCount(), Campuses.fetchAll(100)]).then(result => {
                 res.render('management/organization/index', {
                     orgList: result[0].recordset,
                     orgtypeList: result[1].recordset,
-                    pageCount: result[2].recordset[0].count
+                    pageCount: result[2].recordset[0].count,
+                    campusList: result[3].recordset
                 })
             })
         } else if (req.method == "POST") {
