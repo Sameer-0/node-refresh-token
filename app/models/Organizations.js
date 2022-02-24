@@ -15,8 +15,12 @@ module.exports = class Organizations {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} om.id, om.org_id, om.org_abbr, om.org_name, om.org_complete_name, om.org_type_id , ot.name AS org_type
-            FROM [dbo].organizations om JOIN [dbo].organization_types ot ON om.org_type_id = ot.id  WHERE ot.active = 1 AND om.active = 1 ORDER BY om.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type,
+            camp.campus_abbr
+            FROM [dbo].organizations org 
+            INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
+            INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
+            WHERE ot.active = 1 AND org.active = 1 AND camp.active = 1 ORDER BY org.id DESC`)
         })
     }
 
@@ -49,7 +53,7 @@ module.exports = class Organizations {
     }
 
     static update(inputJSON) {
-        console.log('INPUT JSON:::::::::::::>>',inputJSON)
+        console.log('INPUT JSON:::::::::::::>>', inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -67,7 +71,7 @@ module.exports = class Organizations {
         })
     }
 
-    static deleteAll(){
+    static deleteAll() {
         return poolConnection.then(pool => {
             return pool.request().query(`UPDATE [dbo].organizations SET active = 0 WHERE active = 1`)
         })

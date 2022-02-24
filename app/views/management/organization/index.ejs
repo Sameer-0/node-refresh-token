@@ -102,6 +102,7 @@
                             <th>Organization Name</th>
                             <th>Organization Complete Name</th>
                             <th>Organization Type</th>
+                            <th>Campus</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -129,6 +130,18 @@
                                         <% for(let orgType of orgtypeList) { %>
                                         <option value="<%- orgType.id %>">
                                             <%- orgType.name %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+
+
+                                <td>
+                                    <select class="form-control modalSelect2" name="campus_lid" id="campus_lid" required>
+                                        <option disabled selected value>--Select Campus--</option>
+                                        <% for(let campus of campusList) { %>
+                                        <option value="<%- campus.id %>">
+                                            <%- campus.campus_abbr %>
                                         </option>
                                         <% } %>
                                     </select>
@@ -183,6 +196,7 @@
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
             let orgType = $(elem).find(`select[name='orgType']`).val()
+            let campus_lid = $(elem).find(`select[name='campus_lid']`).val()
 
             if (index < orgCount - 1) {
                 let obj = {
@@ -191,7 +205,8 @@
                     org_abbr: orgAbbr,
                     org_name: orgName,
                     org_complete_name: orgCompleteName,
-                    org_type_id: orgType
+                    org_type_id: orgType,
+                    campus_lid:campus_lid
                 }
                 orgJson.push(obj)
             } else {
@@ -201,7 +216,8 @@
                     org_abbr: orgAbbr,
                     org_name: orgName,
                     org_complete_name: orgCompleteName,
-                    org_type_id: orgType
+                    org_type_id: orgType,
+                    campus_lid:campus_lid
                 }
                 orgJson.push(obj)
             }
@@ -299,7 +315,7 @@
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
             let orgType = $(elem).find(`select[name='orgType']`).val()
-
+            let campus_lid = $(elem).find(`select[name='campus_lid']`).val()
 
             if (index < orgCount - 1) {
                 let obj = {
@@ -309,7 +325,8 @@
                     org_abbr: orgAbbr,
                     org_name: orgName,
                     org_complete_name: orgCompleteName,
-                    org_type_id: orgType
+                    org_type_id: orgType,
+                    campus_lid:campus_lid
                 }
                 orgJson.push(obj)
             } else {
@@ -320,15 +337,14 @@
                     org_abbr: orgAbbr,
                     org_name: orgName,
                     org_complete_name: orgCompleteName,
-                    org_type_id: orgType
+                    org_type_id: orgType,
+                    campus_lid:campus_lid
                 }
                 orgJson.push(obj)
             }
         })
 
         if (orgJson.length > 0) {
-
-
             $.ajax({
                 url: '/management/organizations',
                 method: 'PUT',
