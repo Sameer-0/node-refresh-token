@@ -82,4 +82,10 @@ app.use(verifySubdomain);
 
 setRouter(app)
 
+
+app.use(function(req, res){
+    res.status(404).render('404')
+})
+
+
 app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
