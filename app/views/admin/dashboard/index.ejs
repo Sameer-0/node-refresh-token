@@ -3,16 +3,36 @@
 <!-- PAGE LEVEL CSSS START -->
 
 <!-- PAGE LEVEL CSSS END -->
+<style>
+    .stage:nth-child(-n + <%- currentFormStep-1 %>) {
+        background: #3cc58c;
+        color: #fff;
 
+    }
+
+    .stage:nth-child(-n + <%- currentFormStep-1 %>)::before {
+        border-left: 25px solid #3cc58c;
+    }
+
+    .stage:nth-child(<%- currentFormStep %>) {
+        background: #ffc800;
+        color: #000;
+
+    }
+
+    .stage:nth-child(<%- currentFormStep %>)::before {
+        border-left: 25px solid #ffc800;
+    }
+</style>
 <%- include ('../partials/leftSidebar') %> 
 <%- include ('../partials/header') %>
 
 <!-- MAIN-CONTENT -->
 <div class="main-content">
  
-    <%#  include('./stepform.ejs')  %>
+    <%-  include('./stepform.ejs')  %>
 
-    <%- include('./dashboard.ejs') %>
+    <%# include('./dashboard.ejs') %>
 </div>
 </main>
 
@@ -25,9 +45,41 @@
 
 <script src="/js/adminDashboardscript.js"></script>
 
+
+
 <script>
 
+    $(document).ready(function(){
+      
+        let currentFormStep = `<%- currentFormStep %>`;
+        
+        $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
+        $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
+            'active-form');
+
+            function formStepNext() {
+            currentFormStep++;
+            console.log('clicked!!')
+            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
+                'submitted');
+            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass(
+                'active');
+
+
+            $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
+            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
+                'active-form');
+                console.log(currentFormStep);
+        }
+
+        $('#next-step').on('click',function(){
+            formStepNext()
+        })
   
+    })
+ 
+ 
 </script>
+
 <!-- PAGE LEVEL JS END -->
 <%- include('../partials/footerEnd') %>
