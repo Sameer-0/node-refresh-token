@@ -8,5 +8,5 @@ const {
 const days =  require('../../controllers/admin/days')
 
 router.get('/days', days.getPage)
-
+router.post('/days', days.changeStatus)
 module.exports = router;
