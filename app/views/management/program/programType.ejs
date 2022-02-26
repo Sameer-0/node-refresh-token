@@ -86,24 +86,13 @@
                         programName: $('#programName').val(),
                     },
                     success: (data) => {
-                        if (data.status == 200) {
+                   
                             location.reload()
-                        } else {
-                            $(".errorMsg").html(data.message)
-                        }
+                    
                     },
                     error: err => {
-                        let error = err.responseJSON.errors
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        error.map(er => {
-                            errorHtml +=
-                                `<li>${er.msg}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                        console.log('JSON ERROR::::::::::::>>',err.responseJSON)
+                        showError(err.responseJSON)
                     }
                 })
             })
@@ -131,7 +120,8 @@
                         $("#add-room-modal").modal('show')
                     },
                     error: err => {
-                        console.log('Error: ', err)
+                   
+                        showError(err.responseJSON)
                     }
                 })
             })
@@ -155,17 +145,7 @@
                         }
                     },
                     error: err => {
-                        let error = err.responseJSON.errors
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        error.map(er => {
-                            errorHtml +=
-                                `<li>${er.msg}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                        showError(err.responseJSON)
                     }
                 })
             })
@@ -185,17 +165,7 @@
                         location.reload()
                     },
                     error: err => {
-                        let error = err.responseJSON.errors
-                        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        error.map(er => {
-                            errorHtml +=
-                                `<li>${er.msg}</li>`
-                        })
-                        errorHtml +=
-                            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        $("#errorHtml").html(errorHtml)
+                        showError(err.responseJSON)
                     }
                 })
             })
@@ -246,6 +216,26 @@
                     }
                 })
             }, 500));
+
+
+
+            function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
 
         })
     </script>
