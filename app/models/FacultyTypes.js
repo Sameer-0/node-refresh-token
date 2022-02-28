@@ -30,6 +30,7 @@ module.exports = class FacultyTypes {
             return request.query(stmt)
         })
     }
+    
     static delete(ids) {
         return poolConnection.then(pool => {
             let request = pool.request();
