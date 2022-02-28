@@ -77,5 +77,19 @@ module.exports = class HolidayTypes {
         })
     }
 
+    static fetchChunkRows(rowcount, pageNo) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT id, name, description FROM [dbo].holiday_types WHERE active = 1 ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].holiday_types WHERE active = 1`)
+        })
+    }
 
 }

@@ -22,4 +22,5 @@ router.get('/holidays/types/search', validate('search'), holidaytype.search)
 router.put('/holidays/types', validate('Holiday'), holidaytype.update)
 router.delete('/holidays/types', holidaytype.delete)
 router.patch('/holidays/types', holidaytype.deleteAll)
+router.post('/holidays/types/pagination', validate('pagination'), holidaytype.pagination)
 module.exports = router;
