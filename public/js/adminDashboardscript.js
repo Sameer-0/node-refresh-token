@@ -3,13 +3,13 @@ console.log("Admin dashboard!!!!")
 $('#add-more-days').on('click', function () {
     console.log("days Added::::")
     let lastTr = $('#add-more-days-table tbody tr:last-child')
-    let startDate = lastTr.find(`input[name='startDate']`).val();
-    let endDate = lastTr.find(`input[name='endDate']`).val();
+    let startDate = lastTr.find(`select[name='startDate']`).val();
+    let endDate = lastTr.find(`select[name='endDate']`).val();
 
 
     let clonedTr = lastTr.clone();
-    clonedTr.find(`input[name='startDate']`).val('')
-    clonedTr.find(`input[name='endDate']`).val('')
+    clonedTr.find(`select[name='startDate']`).val('')
+    clonedTr.find(`select[name='endDate']`).val('')
    
     $('#add-more-days-table tbody').append(clonedTr)
 })
@@ -163,4 +163,4 @@ $('#add-more-room-table').on('click', '.remove-room', function () {
 
 let element = document.querySelector('.div3');
 
-element.scrollIntoView({'block':'end'})
+element.addEventListener
