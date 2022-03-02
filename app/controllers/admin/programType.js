@@ -9,7 +9,7 @@ module.exports = {
     getProgramTypePage: (req, res) => {
 
         Promise.all([programTypeModel.fetchAll(), programTypeModel.getCount()]).then(result => {
-            res.render('management/program/programType', {
+            res.render('admin/programs/programType', {
                 programList: result[0].recordset,
                 pageCount:result[1].recordset[0].count
             })

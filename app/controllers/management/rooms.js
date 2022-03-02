@@ -15,53 +15,20 @@ module.exports = {
 
     getPage: (req, res) => {
         let rowCount = 10
-        if (req.method == "GET") {
-            Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
-                console.log('result[2].recordset', result[2].recordset)
-                res.render('management/room/index', {
-                    roomList: result[0].recordset,
-                    campusList: result[2].recordset,
-                    buildingList: result[5].recordset,
-                    orgList: result[1].recordset,
-                    roomTypeList: result[4].recordset,
-                    timeList: result[3].recordset,
-                    roomcount: result[6].recordset[0] ? result[6].recordset[0].count : ''
-                })
-            }).catch(error => {
-                throw error
+        Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
+            console.log('result[2].recordset', result[2].recordset)
+            res.render('management/room/index', {
+                roomList: result[0].recordset,
+                campusList: result[2].recordset,
+                buildingList: result[5].recordset,
+                orgList: result[1].recordset,
+                roomTypeList: result[4].recordset,
+                timeList: result[3].recordset,
+                roomcount: result[6].recordset[0] ? result[6].recordset[0].count : ''
             })
-
-        } else if (req.method == 'POST') {
-            Rooms.fetchChunkRows(rowCount, req.body.pageNo).then(result => {
-                let roomList = []
-                result.recordset.map(item => {
-                    let rooms = {
-                        room_number: item.room_number,
-                        building_name: item.building_name,
-                        room_type: item.room_type,
-                        floor_number: item.floor_number,
-                        capacity: item.capacity,
-                        start_time: moment(item.start_time).format('LTS'),
-                        end_time: moment(item.end_time).format('LTS'),
-                        handled_by: item.handled_by,
-                        campus_abbr: item.campus_abbr,
-                        is_basement: item.is_basement,
-                        is_processed: item.is_processed
-                    }
-
-                    roomList.push(rooms)
-                })
-                res.json({
-                    status: "200",
-                    message: "Quotes fetched",
-                    data: roomList,
-                    length: result.recordset.length
-
-                })
-            }).catch(error => {
-                throw error
-            })
-        }
+        }).catch(error => {
+            throw error
+        })
     },
 
 
@@ -118,7 +85,7 @@ module.exports = {
         })
     },
 
- 
+
 
     searchRoom: (req, res) => {
 
@@ -179,9 +146,32 @@ module.exports = {
         Rooms.getBuildingByCampusId(req.body.campus_lid).then(result => {
             res.json({
                 status: 200,
-                data:result.recordset
+                data: result.recordset
             })
 
+        })
+    },
+
+    pagination: (req, res) => {
+        
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        Rooms.fetchChunkRows(10, req.body.pageNo).then(result => {
+            res.json({
+                status: "200",
+                message: "Quotes fetched",
+                data: result.recordset,
+                length: result.recordset.length
+            })
+        }).catch(error => {
+            throw error
         })
     }
 }

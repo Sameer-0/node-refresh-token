@@ -26,7 +26,7 @@ router.get('/rooms/search', validate('search'), roomcontroller.searchRoom)
 router.patch('/rooms', roomcontroller.deleteAll)
 router.post('/rooms/rooms_isprocessed', roomcontroller.isProcessed)
 router.post('/rooms/buildinglist', roomcontroller.buildingList)
-
+router.post('/rooms/pagination', validate('pagination'), roomcontroller.pagination)
 
 //ROOM TYPE ROUTER
 router.get('/rooms/roomtypes', roomtype.getPage)
