@@ -1,6 +1,6 @@
-<div class="step-form">
+<div class="step-form" >
 
-    <div class="d-flex py-3 time-line stages" style="overflow-x: scroll;">
+    <div class="d-flex pt-3 pb-4 time-line stages" style="overflow-x: scroll;">
         <div class="arrow-pointer stage active my-1" data-step="1"> Days </div>
         <div class="arrow-pointer stage pending my-1" data-step="2">Holidays </div>
         <div class="arrow-pointer stage pending my-1" data-step="3"> Room</div>
@@ -14,10 +14,9 @@
         <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty </div>
         <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Workload</div>
         <div class="arrow-pointer stage pending my-1" data-step="13"> Faculty Timetable preference</div>
-
     </div>
 
-    <div class="step-form-body">
+    <div class="step-form-body pt-3">
         <!-- Days -->
         <form action="/admin/days" method="post" class="step active-form" id="days-form" data-step="1">
             <div class="modal-header table-card-header ">
@@ -28,19 +27,49 @@
             <div id="errorHtml" class="error-show pt-3"></div>
             <div class="table-responsive">
                 <table class="table" id="add-more-days-table">
-                    <thead>
+                    <thead> 
                         <th>Day of Week</th>
-                        <th>Day Name</th>
+                        <th>Active</th>
+                        <th>Action</th>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-                                <input name="startDate" id="startDate" type="date" class="form-control"
+                                    <select name="startDate" id="startDate" type="date" class="form-control"
                                     placeholder="Day of week" required>
+                                        <option>--Day--</option>
+
+                                        <option value="">
+                                            1
+                                        </option>
+                                        <option value="">
+                                            2
+                                        </option>
+                                        <option value="">
+                                            3
+                                        </option>
+                                        <option value="">
+                                            4
+                                        </option>
+                                        <option value="">
+                                            5
+                                        </option>
+                                        <option value="">
+                                            6
+                                        </option>
+                                        <option value="">
+                                            7
+                                        </option>
+
+                                    </select>
                             </td>
                             <td>
-                                <input name="endDate" id="endDate" type="date" class="form-control"
-                                    placeholder="Day" required>
+                                <label class="switch">
+                                    <input type="checkbox" class="changeStatus" data-id="<%- day.id %>"
+                                        value="<%- day.is_lecture %>" data-status="<%- day.is_lecture_status %>"
+                                        <%- day.is_lecture == 'Yes' ? 'Checked' :  ''  %>>
+                                    <span class="switch-slider round"></span>
+                                </label>
                             </td>
 
                             <td>
@@ -70,33 +99,29 @@
                         <th>Caldendar Year</th>
                         <th>Holiday Date</th>
                         <th>Holiday Reason</th>
+                        <th>Action</th>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-                                <input name="calendarId" id="calendarId" type="number" class="form-control"
-                                    placeholder="Caldendar Id" required>
+                                
                             </td>
                             <td>
-                                <input name="calendarName" id="calendarName" type="text" class="form-control"
-                                    placeholder="Campus Name" required>
+                               
                             </td>
                             <td>
-                                <input name="campusId" id="campusId" type="number" class="form-control"
-                                    placeholder="Campus Name" required>
+                                
                             </td>
                             <td>
-                                <input name="calendarYear" id="calendarYear" type="month" class="form-control"
-                                    placeholder="Campus Year" required>
+                              
                             </td>
                             <td>
-                                <input name="holidayDate" id="holidayDate" type="date" class="form-control"
-                                    placeholder="Holiday Date" required>
+                                
                             </td>
                             <td>
-                                <input name="holidayReason" id="holidayReason" type="text" class="form-control"
-                                    placeholder="Holiday Reason" required>
+                               
                             </td>
+
                             <td>
                                 <i class="far fa-edit d-none"></i>
                                 <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
@@ -115,22 +140,43 @@
                 <button type="button" class="btn add-btn btn-sm" id="add-more-room"><i class="fas fa-plus"></i>
                 </button>
             </div>
+            
             <div class="modal-body">
                 <div id="errorHtml"></div>
+                <div class="row mt-4 ">
+
+                    <div class="col-md-4">
+                        <label>Campuses</label>
+                        <select class="form-select" name="campus_lid" id="campus_lid">
+                            
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Building</label>
+                        <select class="form-select" name="building_lid" id="building_lid">
+                          
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Handled By</label>
+                        <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
+               
+                        </select>
+                    </div>
+
+                </div>
+
                 <input type="hidden" id="roomId" name="roomId">
-                <div class="table-responsive ">
+                <div class="table-responsive">
                     <table class="table " id="add-more-room-table">
                         <thead>
                             <th>Room Number</th>
                             <th>Room Type</th>
                             <th>Campus Id</th>
-                            <th>Floor</th>
-                            <th>Capacity</th>
-                            <th>Building Name</th>
-                            <th>Building no.</th>
-                            <th>Owner</th>
-                            <th>Handled By</th>
-
+                            <th>Building Id</th>
+                            <th>Action</th>
                         </thead>
                         <tbody>
                             <tr>
@@ -150,42 +196,6 @@
                                     <input name="floor" id="floor" type="number" class="form-control"
                                         placeholder="Floor" required>
                                 </td>
-                                <td>
-                                    <input type="number" name="capacity" id="capacity" class="form-control"
-                                        style="width: 70px;" placeholder="capacity" required>
-                                </td>
-                                <td>
-                                    <input name="buildingName" id="buildingName" type="text" class="form-control"
-                                        placeholder="Building Name" required>
-                                </td>
-                                <td>
-                                    <input name="buildingNumber" id="buildingNumber" type="number" class="form-control"
-                                        placeholder="Building Number" required>
-                                </td>
-
-                                <td>
-                                    <select class="form-select modalSelect2" name="ownerId" id="ownerId" required>
-                                        <option disabled selected>--Owner--</option>
-
-                                        <option value="">
-                                            SVKM
-                                        </option>
-
-                                    </select>
-                                </td>
-
-                                <td>
-                                    <select class="form-select modalSelect2" name="handledById" id="handledById"
-                                        required>
-                                        <option disabled selected value>--Handled By--</option>
-
-                                        <option value="">
-                                            3
-                                        </option>
-
-                                    </select>
-                                </td>
-
                                 <td>
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-room"></i>
@@ -213,6 +223,7 @@
                         <thead>
                             <th>Porgram Id</th>
                             <th>Program Name</th>
+                            <th>Action</th>
 
                         </thead>
                         <tbody>
@@ -264,7 +275,6 @@
                             <th>Module Id</th>
                             <th>Acad Session</th>
                             <th>Practical per week per semester</th>
-
                         </thead>
                         <tbody>
                             <tr>
@@ -333,7 +343,8 @@
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-sessionDate-table">
                         <thead>
-                            <th>Acad Session</t>
+                            <th>Acad Session</th>
+                            <th>Action</th>
 
                         </thead>
                         <tbody>
