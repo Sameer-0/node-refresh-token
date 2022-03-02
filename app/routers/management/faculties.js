@@ -24,13 +24,13 @@ router.patch('/faculties', faculties.deleteAll)
 
 // FACULTY TYPES ROUTER
 router.get('/faculties/types', types.getPage)
-router.post('/faculties/types', validate('FacultyType'), types.create)
+router.post('/faculties/types', validate('JsonValidator'), types.create)
 router.get('/faculties/types/findOne', validate('single'), types.findOne)
 router.get('/faculties/types/search', validate('search'), types.search)
-router.put('/faculties/types', validate('FacultyType'), types.update)
+router.put('/faculties/types', validate('JsonValidator'), types.update)
 router.delete('/faculties/types', types.delete)
 router.patch('/faculties/types', types.deleteAll)
-
+router.post('/faculties/pagination', validate('pagination'), types.pagination)
 
 // FACULTY SLOATS ROUTER
 router.get('/faculties/slots', slots.getPage)
