@@ -73,4 +73,11 @@ module.exports = class RoomTransactions {
     }
 
 
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].room_transactions WHERE active = 1`)
+        })
+    }    
+
 }
