@@ -96,6 +96,23 @@ module.exports = class AcademicCalender {
     }
 
 
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].academic_calendar WHERE active = 1`)
+        })
+    } 
+
+
+
+    static fetchChunkRows(pageNo) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT  ac.id, CONVERT(NVARCHAR, ac.date_str,110) AS date_str,  CONVERT(NVARCHAR, ac.date, 101) AS date, ac.day, ac.day_name, ac.week, ac.iso_week, ac.day_of_week, ac.month, ac.month_name, ac.quarter,ac.year, ac.day_of_year FROM [dbo].academic_calendar ac WHERE ac.active = 1 ORDER BY ac.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
 
 
 }

@@ -39,6 +39,15 @@
                     <% } %>
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %>
+                    </p>
+                </div>
+                <div>
+                    <p id="pagination"></p>
+                </div>
+            </div>
         </div>
     </div>
     <!--DASHBOARD CONTENT END-->
@@ -195,10 +204,67 @@
         }
 
         ajaxApi(ApiObj).then(result => {
-            console.log('result::::::::::::::::>>', result)
-            let acadSessionList = result.data;
+             AjaxTable(result.data)
+        }).catch(error => {
 
-            let AjaxTable = `<table class="table custom_row" id="acadSessionTable">
+            let errors = error.responseJSON.message
+            console.log('Error:::::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <ul>`
+            errors.map(er => {
+                errorHtml +=
+                    `<li>${er}</li>`
+            })
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        })
+    }, 500));
+
+
+
+
+
+
+
+    //Pagination Here
+    let pageCount = `<%- pageCount %>`
+        console.log("Page Count=====>>>", pageCount)
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+            $.ajax({
+                type: "POST",
+                url: "/management/academic/session/pagination",
+                data: {
+                    pageNo: num
+                },
+                success: function (data) {
+                    AjaxTable(data.data) 
+                }
+            })
+        });
+
+
+function AjaxTable(acadSessionList){
+    let AjaxTable = `<table class="table custom_row" id="acadSessionTable">
                 <thead>
                     <th>Id</th>
                     <th>Acad Session</th>
@@ -229,24 +295,7 @@
             }
             AjaxTable += `<tbody></table>`
             $("#acadSessionTable").html(AjaxTable);
+}
 
-
-
-        }).catch(error => {
-
-            let errors = error.responseJSON.message
-            console.log('Error:::::::::::', errors)
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-            errors.map(er => {
-                errorHtml +=
-                    `<li>${er}</li>`
-            })
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
-        })
-    }, 500));
 </script>
 <%- include("../partials/footerEnd") %>

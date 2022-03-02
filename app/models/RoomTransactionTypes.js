@@ -85,4 +85,20 @@ module.exports = class RoomTransactionTypes {
     }
 
 
+
+    static fetchChunkRows(rowcount, pageNo) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts WHERE rts.active = 1 ORDER BY rts.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].[room_transaction_types] WHERE active = 1`)
+        })
+    }
+
 }
