@@ -19,34 +19,34 @@ module.exports = class RoomTransactionTypes {
     }
 
 
-    static save(body) {
+    static save(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('rtsName', sql.NVarChar(50), body.rtsName)
-                .input('description', sql.NVarChar(100), body.description)
-                .query(`INSERT INTO [dbo].room_transaction_types (name, description) VALUES (@rtsName,  @description)`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[add_room_transaction_types]')
         })
     }
 
 
-    static update(body) {
+    static update(inputJSON) {
+        console.log('inputJSON',inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('rtsId', sql.Int, body.rtsId)
-                .input('rtsName', sql.NVarChar(100), body.rtsName)
-                .input('description', sql.NVarChar(200), body.description)
-                .query(`UPDATE [dbo].room_transaction_types SET name = @rtsName, description = @description  WHERE id = @rtsId`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[sp_update_room_transaction_types]')
         })
     }
 
 
 
-    static delete(ids) {
+    static delete(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [dbo].[room_transaction_types] SET active = 0  WHERE id = ${element.id}`)
-            });
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[delete_room_transaction_types]')
         })
     }
 
@@ -61,7 +61,7 @@ module.exports = class RoomTransactionTypes {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('rtsId', sql.Int, id)
-                .query(`SELECT  rts.id as rtsid, rts.name as rtsName, rts.description FROM [dbo].room_transaction_types rts WHERE rts.id  =  @rtsId`)
+                .query(`SELECT  rts.id as rtsid, rts.name as rtsName, rts.description, CONVERT(NVARCHAR, rts.active) AS active FROM [dbo].room_transaction_types rts WHERE rts.id  =  @rtsId`)
         })
     }
 

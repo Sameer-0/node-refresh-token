@@ -63,7 +63,7 @@
 <!-- Modal -->
 <div class="modal fade" id="add-roomtransaction-stages-modal" tabindex="-1"
     aria-labelledby="add-roomtransaction-stages-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog  modal-xl">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h5 class="modal-title" id="add-roomtransaction-stages-title">ADD ROOM TRANSACTION TYPES</h5>
@@ -72,21 +72,38 @@
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
-                <div class="mb-3">
-                    <label for="roomName" class="form-label">Enter Room Transaction Type</label>
-                    <input type="text" class="form-control" id="rtsName" placeholder="Enter Name">
-                    <input type="hidden" id="rtsId">
+                <div class="table-responsive">
+                    <table class="table " id="add-more-roomtransaction-types-table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name">
+                                    <input type="hidden" id="Id" name="Id">
+                                    <input type="hidden" id="active" name="active">
+                                </td>
+                                <td>
+                                    <textarea class="form-control" rows="1" id="description" name="description"
+                                        placeholder="Enter Description"></textarea>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer removefaculty"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Enter Description</label>
-                    <textarea class="form-control" id="description" placeholder="Enter Description"></textarea>
-                </div>
-            </div>
             <div class="modal-footer">
-                <span class="errorMsg"></span>
-                <button type="submit" class="btn  createRoomTransactionStages modal-inputform-btn">Create</button>
-                <button type="submit" class="btn  updateRoomTransactionStages modal-inputform-btn d-none">Update</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction-types"><i
+                    class="fas fa-plus"></i>
+                Add
+                More</button>
+                <button type="submit" class="btn  createRoomTransactionTypes modal-inputform-btn">Create</button>
+                <button type="submit" class="btn  updateRoomTransactionTypes modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
@@ -97,43 +114,72 @@
 <script>
     $(document).ready(function () {
 
-        //Create 
-        $(".createRoomTransactionStages").on('click', function () {
-            $.ajax({
-                url: '/management/rooms/bookings/transaction-types',
-                method: 'POST',
-                type: 'JSON',
-                data: {
-                    rtsName: $('#rtsName').val(),
-                    description: $('#description').val(),
-                },
-                success: data => {
-                    if (data.status == 200) {
-                        location.reload()
-                    } else {
-                        $(".errorMsg").html(data.message)
-                    }
-                },
-                error: err => {
-                    let error = err.responseJSON.errors
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    error.map(er => {
-                        errorHtml +=
-                            `<li>${er.msg}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+
+            // Add more rows
+            $('#add-more-roomtransaction-types').on('click', function () {
+                console.log("Organization Added::::")
+                let lastTr = $('#add-more-roomtransaction-types-table tbody tr:last-child')
+                let name = lastTr.find(`select[name='name']`).val()
+                let description = lastTr.find(`select[name='description']`).val()
+                let clonedTr = lastTr.clone();
+                clonedTr.find(`input[name='name']`).val('')
+                clonedTr.find(`input[name='description']`).val('')
+                $('#add-more-roomtransaction-types-table tbody').append(clonedTr)
+            })
+
+            $('#add-more-roomtransaction-types-table').on('click', '.removefaculty', function () {
+                let trLength = $('#add-more-roomtransaction-types-table tbody tr').length;
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this room.')
                 }
             })
+
+        //Create 
+        $(".createRoomTransactionTypes").on('click', function () {
+            let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
+                let transCount = transactionElems.length;
+                let transJson = [];
+                transactionElems.each(function (index, elem) {
+                    let name = $(elem).find(`input[name='name']`).val()
+                    let description = $(elem).find(`textarea[name='description']`).val();
+
+                    if (index < transCount - 1) {
+                        let obj = {
+                            name: name,
+                            description: description
+                        }
+                        transJson.push(obj)
+                    } else {
+                        let obj = {
+                            name: name,
+                            description: description
+                        }
+                        transJson.push(obj)
+                    }
+                })
+
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/management/rooms/bookings/transaction-types',
+                    data: {
+                        inputJSON: JSON.stringify(transJson)
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    location.reload()
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
         })
 
         //Edit
         $('#roomTransactionTable').on('click', '.edit-roomtransaction-type', function () {
-            $(".createRoomTransactionStages").addClass('d-none')
-            $(".updateRoomTransactionStages").removeClass('d-none')
+            $(".createRoomTransactionTypes").addClass('d-none')
+            $(".updateRoomTransactionTypes").removeClass('d-none')
             $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
 
             let ApiObj = {
@@ -146,9 +192,10 @@
             }
             ajaxApi(ApiObj).then(result => {
                 let room = result.data
-                $('#rtsId').val(room.rtsid),
-                    $('#rtsName').val(room.rtsName),
+                $('#Id').val(room.rtsid),
+                    $('#name').val(room.rtsName),
                     $('#description').val(room.description),
+                    $('#active').val(room.active),
                     $("#add-roomtransaction-stages-modal").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
@@ -158,38 +205,50 @@
 
 
         //Update 
-        $(".updateRoomTransactionStages").on('click', function () {
-            $.ajax({
-                url: '/management/rooms/bookings/transaction-types',
-                method: 'PUT',
-                type: 'JSON',
-                data: {
-                    rtsId: $("#rtsId").val(),
-                    rtsName: $('#rtsName').val(),
-                    description: $('#description').val(),
-                },
-                success: data => {
-                    if (data.status == 200) {
-                        location.reload()
+        $(".updateRoomTransactionTypes").on('click', function () {
+            let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
+                let transCount = transactionElems.length;
+                let transJson = [];
+                transactionElems.each(function (index, elem) {
+                    let name = $(elem).find(`input[name='name']`).val()
+                    let description = $(elem).find(`textarea[name='description']`).val();
+                    let active = $(elem).find(`input[name='active']`).val();
+                    let id = $(elem).find(`input[name='Id']`).val();
+                    if (index < transCount - 1) {
+                        let obj = {
+                            id: id,
+                            name: name,
+                            description: description,
+                            active: active
+                        }
+                        transJson.push(obj)
                     } else {
-                        $(".errorMsg").html(data.message)
+                        let obj = {
+                            id: id,
+                            name: name,
+                            description: description,
+                            active: active
+                        }
+                        transJson.push(obj)
                     }
+                })
 
-                },
-                error: err => {
-                    let error = err.responseJSON.errors
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    error.map(er => {
-                        errorHtml +=
-                            `<li>${er.msg}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+                console.log('JSON', JSON.stringify(transJson))
+
+                let ApiObj = {
+                    type: 'PUT',
+                    url: '/management/rooms/bookings/transaction-types',
+                    data: {
+                        inputJSON: JSON.stringify(transJson)
+                    },
+                    dataType: 'JSON'
                 }
-            })
+
+                ajaxApi(ApiObj).then(result => {
+                 location.reload()
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
         })
 
 
@@ -220,13 +279,15 @@
                 deleteids.push(obj)
             })
 
+
+            console.log('JSON.stringify(deleteids)',JSON.stringify(deleteids))
+
             if (deleteids.length > 0) {
-                console.log('deleteids::::::::::::::', deleteids)
                 let ApiObj = {
                     url: '/management/rooms/bookings/transaction-types',
                     type: 'DELETE',
                     data: {
-                        Ids: JSON.stringify(deleteids)
+                        inputJSON: JSON.stringify(deleteids)
                     },
                     dataType: 'JSON'
                 }
@@ -280,9 +341,36 @@
                     keyword: keyword
                 },
                 success: function (data) {
-                    let roomTypeStageList = data.data;
+                    AjaxTable(data.data)
+                }
+            })
+        }, 500));
 
-                    let AjaxTable = `<table class="table custom_row" id="roomTransactionTable">
+
+
+
+
+        function showError(errors) {
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+                if (errors.data.length > 0) {
+                    $(errors.data).each(function (key, value) {
+                        $.each(this, function (key, value) {
+                            errorHtml +=
+                                `<li>${key} ${value}</li>`
+                        });
+                    });
+                }
+                errorHtml +=
+                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+            }
+
+
+            function AjaxTable(roomTypeStageList){
+                let AjaxTable = `<table class="table custom_row" id="roomTransactionTable">
                     <thead>
                         <th>Sr No.</th>
                         <th>Name</th>
@@ -318,9 +406,7 @@
                     }
                     AjaxTable += `<tbody></table>`
                     $("#roomTransactionTable").html(AjaxTable);
-                }
-            })
-        }, 500));
+            }
 
     })
 </script>
