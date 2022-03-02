@@ -53,6 +53,15 @@
                     <%})%>
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %>
+                    </p>
+                </div>
+                <div>
+                    <p id="pagination"></p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -111,6 +120,7 @@
 
 
 <%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script>
     $(document).ready(function () {
 
@@ -345,6 +355,46 @@
                 }
             })
         }, 500));
+
+
+
+
+
+
+
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
+        console.log("Page Count=====>>>", pageCount)
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+            $.ajax({
+                type: "POST",
+                url: "/management/rooms/bookings/transaction-types/pagination",
+                data: {
+                    pageNo: num
+                },
+                success: function (data) {
+                    AjaxTable(data.data) 
+                }
+            })
+        });
 
 
 
