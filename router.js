@@ -13,7 +13,6 @@ function setRouter(app) {
     app.use('/', homeRouter)
 
 
-
     //Managemnt Router 
      Management(app)
      //Admin Router

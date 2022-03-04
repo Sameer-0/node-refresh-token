@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const {
-    isLoggedIn
+    isLoggedIn,
+    check,
+    checkPermission
 } = require("../../middlewares/user")
 
 function Management(app) {
@@ -21,19 +23,19 @@ function Management(app) {
     const holidays = require('../../routers/management/holidays')
     const faculties = require('../../routers/management/faculties')
 
-    app.use('/management/', isLoggedIn, building)
-    app.use('/management/', isLoggedIn, campus)
-    app.use('/management/', isLoggedIn, organization)
-    app.use('/management/', isLoggedIn, dashboard)
-    app.use('/management/', isLoggedIn, slug)
-    app.use('/management/', isLoggedIn, academic)
-    app.use('/management/', isLoggedIn, slotInterval)
-    app.use('/management/', isLoggedIn, room)
-    app.use('/management/', isLoggedIn, booking)
-    app.use('/management/', isLoggedIn, todos)
-    app.use('/management/', isLoggedIn, divisions)
-    app.use('/management/', isLoggedIn, program)
-    app.use('/management', isLoggedIn, holidays)
-    app.use('/management', isLoggedIn, faculties)
+    app.use('/management/', isLoggedIn, checkPermission, building)
+    app.use('/management/', isLoggedIn, checkPermission, campus)
+    app.use('/management/', isLoggedIn, checkPermission, organization)
+    app.use('/management/', isLoggedIn, checkPermission, dashboard)
+    app.use('/management/', isLoggedIn, checkPermission, slug)
+    app.use('/management/', isLoggedIn, checkPermission, academic)
+    app.use('/management/', isLoggedIn, checkPermission, slotInterval)
+    app.use('/management/', isLoggedIn, checkPermission, room)
+    app.use('/management/', isLoggedIn, checkPermission, booking)
+    app.use('/management/', isLoggedIn, checkPermission, todos)
+    app.use('/management/', isLoggedIn, checkPermission, divisions)
+    app.use('/management/', isLoggedIn, checkPermission, program)
+    app.use('/management/', isLoggedIn, checkPermission, holidays)
+    app.use('/management/', isLoggedIn, checkPermission, faculties)
 }
 module.exports = Management

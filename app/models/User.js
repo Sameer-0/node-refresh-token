@@ -92,10 +92,18 @@ module.exports = class User {
         return poolConnection.then(pool => {
             return pool.request()
             .input('username', sql.NVarChar(50), username)
-         .query(`select u.id, u.username, u.password, u.f_name, u.l_name,u.employee_id, u.email,u.contact_number, r.name as role from [${slug}].users u join [dbo].[roles] r on u.role_id = r.id where u.active =1 and r.active = 1  and u.username =  @username`)
+         .query(`SELECT u.id, u.username, u.password, u.f_name, u.l_name, u.employee_id, u.email, u.contact_number FROM [${slug}].users u WHERE u.active = 1 AND u.username =  @username`)
         })
     }
 
+
+    static getUserModules(userId, slug) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('userId', sql.Int, userId)
+         .query(`SELECT DISTINCT app.name FROM [${slug}].users u INNER JOIN [bncp-mum].user_permissions p ON p.user_id = u.id INNER JOIN app_urls app ON app.id = p.endpoint_id WHERE app.parent_id IS NULL AND u.id = @userId AND p.is_permitted = 1`)
+        })
+    }
 
 
 
