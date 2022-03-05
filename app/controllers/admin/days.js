@@ -7,6 +7,7 @@ module.exports = {
 
     getPage: (req, res) => {
         Days.fetchAll(10, res.locals.slug).then(result => {
+            console.log(result)
             res.render('admin/days/index', {
                 dayList: result.recordset
             })
@@ -14,7 +15,6 @@ module.exports = {
     },
 
     changeStatus: (req, res) => {
-        
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -23,6 +23,8 @@ module.exports = {
             });
             return;
         }
+
+        console.log('REQL:L:L:L:L:L:L:L:L:L:L:', req.body)
 
         Days.update(req.body, res.locals.slug).then(result => {
             res.status(200).json({
@@ -34,5 +36,15 @@ module.exports = {
             res.status(500).json(error.originalError.info.message)
         })
     },
+
+    GetAll: (req, res) => {
+        Days.fetchAll(10, res.locals.slug).then(result => {
+            res.status(200).json({
+                result: result.recordset
+            })
+        }).catch(error=>{
+            res.status(500).json({status:500, message:"Error occured"})
+        })
+    }
 
 }
