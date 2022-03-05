@@ -5,8 +5,8 @@ const {
     body
 } = require('express-validator');
 
-const program = require("../../controllers/admin/program")
-const programType = require('../../controllers/admin/programType')
+const program = require("../../controllers/admin/programs/program")
+const programType = require('../../controllers/admin/programs/programType')
 const validator =  require('../../middlewares/validator')
 const validate = require('../../middlewares/validate')
 
