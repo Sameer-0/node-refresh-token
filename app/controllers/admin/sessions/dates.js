@@ -4,11 +4,11 @@ const {
     validationResult
 } = require('express-validator');
 
-const SessionTypes = require('../../../models/SessionTypes')
+const SessionDates = require('../../../models/SessionDates')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([SessionTypes.fetchAll(10, res.locals.slug), SessionTypes.getCount(res.locals.slug)]).then(result => {
+        Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionTypes.getCount(res.locals.slug)]).then(result => {
             console.log('result:::::',result)
             res.render('admin/sessions/type.ejs', {
                 sessionList: result[0].recordset,

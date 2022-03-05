@@ -65,6 +65,7 @@ module.exports = class {
         })
     }
 
+
     static pagination(pageNo, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
