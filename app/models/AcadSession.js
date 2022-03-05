@@ -65,4 +65,20 @@ module.exports = class AcadSession {
             .query(`SELECT  ac.id AS acadSessionId, ac.acad_session FROM [dbo].acad_sessions ac WHERE ac.active = 1 AND ac.id = @Id`)
         })
     }
+
+    static fetchChunkRows(pageNo) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT  ac.id AS acadSessionId, ac.acad_session, ac.sap_acad_session_id FROM [dbo].acad_sessions ac WHERE ac.active = 1 ORDER BY ac.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].acad_sessions WHERE active = 1`)
+        })
+    }
 }

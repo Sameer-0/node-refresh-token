@@ -26,7 +26,7 @@ router.get('/rooms/search', validate('search'), roomcontroller.searchRoom)
 router.patch('/rooms', roomcontroller.deleteAll)
 router.post('/rooms/rooms_isprocessed', roomcontroller.isProcessed)
 router.post('/rooms/buildinglist', roomcontroller.buildingList)
-
+router.post('/rooms/pagination', validate('pagination'), roomcontroller.pagination)
 
 //ROOM TYPE ROUTER
 router.get('/rooms/roomtypes', roomtype.getPage)
@@ -47,14 +47,14 @@ router.get('/rooms/bookings', bookings.getPage)
 
 
 //ROOM TRANSACTION
-router.get('/rooms/bookings/transaction-types',transactionTypes.getPage)
+router.get('/rooms/bookings/transaction-types', transactionTypes.getPage)
 router.delete('/rooms/bookings/transaction-types', transactionTypes.delete)
-router.patch('/rooms/bookings/transaction-types',  transactionTypes.deleteAll)
- router.get('/rooms/bookings/transaction-types/findOne', validate('single'), transactionTypes.findOne)
- router.post('/rooms/bookings/transaction-types', validate('createRtypes'), transactionTypes.create)
- router.put('/rooms/bookings/transaction-types', validate('updateRtypes'), transactionTypes.update)
- router.get('/rooms/bookings/transaction-types/search', validate('search'), transactionTypes.search)
-
+router.patch('/rooms/bookings/transaction-types', transactionTypes.deleteAll)
+router.get('/rooms/bookings/transaction-types/findOne', validate('single'), transactionTypes.findOne)
+router.post('/rooms/bookings/transaction-types', validate('JsonValidator'), transactionTypes.create)
+router.put('/rooms/bookings/transaction-types', validate('JsonValidator'), transactionTypes.update)
+router.get('/rooms/bookings/transaction-types/search', validate('search'), transactionTypes.search)
+router.post('/rooms/bookings/transaction-types/pagination', validate('pagination'), transactionTypes.pagination)
 
 //ROOM TRANSACTION STAGE:
 router.get('/rooms/bookings/transaction-stages', transactionStage.getPage)
@@ -63,7 +63,7 @@ router.post('/rooms/bookings/transaction-stages', validate('createRtstage'), tra
 router.get('/rooms/bookings/transaction-stages/findOne', validate('single'), transactionStage.findOne)
 router.get('/rooms/bookings/transaction-stages/search', validate('search'), transactionStage.search)
 router.delete('/rooms/bookings/transaction-stages', transactionStage.delete)
-router.patch('/rooms/bookings/transaction-stages',  transactionStage.deleteAll)
+router.patch('/rooms/bookings/transaction-stages', transactionStage.deleteAll)
 
 
 

@@ -10,33 +10,31 @@ module.exports = class FacultyTypes {
         this.description = description;
     }
 
-    static insert(body) {
+
+    static save(inputJSON) {
         return poolConnection.then(pool => {
-            const request = pool.request();
-            request.input('Name', sql.NVarChar(255), body.name)
-                .input('Description', sql.NVarChar(50), body.description)
-            let stmt = `INSERT INTO  [dbo].[faculty_types] (name, description)  VALUES (@Name, @Description)`
-            return request.query(stmt)
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[add_faculty_types]')
         })
     }
 
-    static update(body) {
+    static update(inputJSON) {
         return poolConnection.then(pool => {
-            const request = pool.request();
-            request.input('Id', sql.NVarChar(255), body.id)
-                .input('Name', sql.NVarChar(255), body.name)
-                .input('Description', sql.NVarChar(50), body.description)
-            let stmt = `UPDATE [dbo].[faculty_types] SET name = @Name, description =  @Description WHERE id =  @Id`
-            return request.query(stmt)
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[sp_update_faculty_types]')
         })
     }
     
-    static delete(ids) {
+    static delete(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [dbo].[faculty_types] SET active = 0  WHERE id = ${element.id}`)
-            });
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[delete_faculty_types]')
         })
     }
 
@@ -65,7 +63,7 @@ module.exports = class FacultyTypes {
         return poolConnection.then(pool => {
             let request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`SELECT id, name, description FROM  [dbo].[faculty_types]  WHERE id = @id`)
+            return request.query(`SELECT id, name, description, CONVERT(NVARCHAR, active) AS active FROM  [dbo].[faculty_types]  WHERE id = @id`)
         })
     }
 
@@ -78,5 +76,21 @@ module.exports = class FacultyTypes {
         })
     }
 
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].[faculty_types] WHERE active = 1`)
+        })
+    }
+
+
+    static fetchChunkRows(rowcount, pageNo) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT id, name, description, CONVERT(NVARCHAR, active) AS active FROM  [dbo].[faculty_types] ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
 
 }

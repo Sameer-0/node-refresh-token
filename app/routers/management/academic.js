@@ -26,10 +26,10 @@ router.post('/academic/session', validate('createSession'), acadsessioncontrolle
 router.put('/academic/session', validate('updateSession'), acadsessioncontroller.update)
 router.get('/academic/session/search', validate('search'), acadsessioncontroller.search)
 router.get('/academic/session/single', validate('single'), acadsessioncontroller.single)
-
+router.post('/academic/session/pagination', validate('pagination'), acadsessioncontroller.pagination)
 
 //ACADEMIC CALENDER
 router.get('/academic/calender', acadCalender.getPage)
 router.get('/academic/calender/search', validate('search'), acadCalender.search)
-
+router.post('/academic/calender/pagination', validate('pagination'), acadCalender.pagination)
 module.exports = router;

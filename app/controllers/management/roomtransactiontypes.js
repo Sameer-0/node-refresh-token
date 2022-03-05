@@ -9,28 +9,26 @@ const RoomTransactionTypes = require('../../models/RoomTransactionTypes')
 
 module.exports = {
     getPage: (req, res) => {
-        RoomTransactionTypes.fetchAll(50).then(result => {
+
+        Promise.all([RoomTransactionTypes.fetchAll(10), RoomTransactionTypes.getCount()]).then(result => {
             res.render('management/booking/room_transaction_types', {
-                roomTransactionTypeList: result.recordset
+                roomTransactionTypeList: result[0].recordset,
+                pageCount: result[1].recordset[0].count
             })
         })
+
     },
 
     create: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+
+        let object = {
+            add_room_transaction_types: JSON.parse(req.body.inputJSON)
         }
 
-        RoomTransactionTypes.save(req.body).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
+        RoomTransactionTypes.save(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
@@ -43,7 +41,7 @@ module.exports = {
             });
             return;
         }
-        
+
         RoomTransactionTypes.getRTSId(req.query.Id).then(result => {
             res.json({
                 status: 200,
@@ -54,28 +52,29 @@ module.exports = {
     },
 
     update: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+
+        let object = {
+            update_room_transaction_types: JSON.parse(req.body.inputJSON)
         }
-        RoomTransactionTypes.update(req.body).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
+
+        RoomTransactionTypes.update(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            console.log('error', error)
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
     delete: (req, res) => {
-        RoomTransactionTypes.delete(req.body.Ids).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
+
+        let object = {
+            delete_room_transaction_types: JSON.parse(req.body.inputJSON)
+        }
+
+        RoomTransactionTypes.delete(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
         })
     },
 
@@ -122,6 +121,28 @@ module.exports = {
                 status: "500",
                 message: "Something went wrong",
             })
+        })
+    },
+
+    pagination: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        RoomTransactionTypes.fetchChunkRows(rowcount, req.body.pageNo).then(result => {
+            res.json({
+                status: "200",
+                message: "Quotes fetched",
+                data: result.recordset,
+                length: result.recordset.length
+            })
+        }).catch(error => {
+            throw error
         })
     }
 }
