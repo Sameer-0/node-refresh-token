@@ -1,4 +1,4 @@
-const programTypeModel = require('../../models/programType')
+const programTypeModel = require('../../../models/programType')
 const {
     check,
     oneOf,
