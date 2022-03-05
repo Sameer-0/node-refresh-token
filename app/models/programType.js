@@ -1,7 +1,4 @@
 const {
-    pool
-} = require('mssql');
-const {
     sql,
     poolConnection,
     execPreparedStmt

@@ -14,11 +14,12 @@ module.exports = class Days {
     }
 
     static update(body, slug) {
+        console.log('slug',slug)
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('Id', sql.NVarChar(255), body.id)
-                .input('Status', sql.NVarChar(255), body.status)
-            let stmt = `UPDATE [${slug}].[days] SET is_lecture = @Status WHERE id =  @Id`
+            request.input('Id', sql.Int, body.id)
+                .input('Status', sql.TinyInt, body.status)
+            let stmt = `UPDATE [${slug}].days SET status = @Status WHERE id =  @Id`
             return request.query(stmt)
         })
     }
@@ -26,7 +27,7 @@ module.exports = class Days {
 
     static fetchAll(rowcont, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcont)} id, day_of_week, day_name, IIF(is_lecture = 1,'Yes','No') as is_lecture, is_lecture as is_lecture_status  FROM [${slug}].[days] WHERE active  = 1 ORDER BY id ASC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcont)} id, day_name, active,  IIF(status = 1,'Yes','No') as status FROM [${slug}].[days] where active = 1  ORDER BY id ASC`)
         })
     }
 

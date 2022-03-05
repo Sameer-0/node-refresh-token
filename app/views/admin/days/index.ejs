@@ -23,19 +23,19 @@
                 <thead>
                     <th>Day of week</th>
                     <th>Day Name</th>
-                    <th>is Lecture</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
                     <%for(day of dayList){%>
                     <tr>
-                        <td><%- day.day_of_week %></td>
+                        <td><%- day.id %></td>
                         <td><%- day.day_name %></td>
-                        <td><%- day.is_lecture %></td>
+                        <td><%- day.status %></td>
                         <td> <label class="switch">
                                 <input type="checkbox" class="changeStatus" data-id="<%- day.id %>"
-                                    value="<%- day.is_lecture %>" data-status="<%- day.is_lecture_status %>"
-                                    <%- day.is_lecture == 'Yes' ? 'Checked' :  ''  %>>
+                                    data-status="<%- day.status %>"
+                                    <%- day.status == 'Yes' ? 'Checked' :  ''  %>>
                                 <span class="switch-slider round"></span>
                             </label></td>
 
@@ -58,14 +58,13 @@
 
                             //Create 
                             $('#dayTable').on('change', '.changeStatus', function () {
-                                console.log($(this).attr('data-id'))
-                                console.log($(this).attr('data-status'))
-
+                                //console.log($(this).attr('data-id'))
+                                //console.log($(this).attr('data-status'))
                                 if ($(this).is(':checked')) {
-                                    console.log('Yes')
+                                    //console.log('Yes')
                                     chnageStatus($(this).attr('data-id'), 1)
                                 } else {
-                                    console.log('No')
+                                    //console.log('No')
                                     chnageStatus($(this).attr('data-id'), 0)
                                 }
                             })
@@ -82,12 +81,54 @@
                                 }
 
                                 ajaxApi(ApiObj).then(result => {
-                                    location.reload()
+                                loadDays()
                                 }).catch(error => {
 
                                 })
                             }
 
+                            function loadDays(){
+                                let ApiObj = {
+                                    url: '/admin/days/GetAll',
+                                    type: 'GET',
+                                    data: { },
+                                    dataType: 'JSON'
+                                }
+
+                                ajaxApi(ApiObj).then(result => {
+                                  AjaxTable(result.result)
+                                }).catch(error => {
+
+                                })
+                            }
+
+                            function AjaxTable(days){
+let htmlTable = `<table class="table custom_row" id="dayTable">
+                <thead>
+                    <th>Day of week</th>
+                    <th>Day Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>`
+                    days.forEach(day => {
+                        htmlTable +=`<tr>
+                        <td>${day.id}</td>
+                        <td>${day.day_name}</td>
+                        <td>${day.status}</td>
+                        <td> <label class="switch">
+                                <input type="checkbox" class="changeStatus" data-id="${day.id}"
+                                    data-status="${day.status}"
+                                    ${day.status == 'Yes' ? 'Checked' :  ''}>
+                                <span class="switch-slider round"></span>
+                            </label></td>
+
+                    </tr>`
+                    });
+                  
+                    htmlTable += `</tbody></table>`;
+                    $("#dayTable").html(htmlTable)
+                            }
 
                         })
                     </script>
