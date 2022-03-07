@@ -43,7 +43,7 @@
                         <td><%- session.description %></td>
                         <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-session"
-                                data-session-type-id="<%- session.id %>"></i>
+                                data-session-date-id="<%- session.id %>"></i>
                         </td>
                         <td>
                             <input type="checkbox" data-session-type-id="<%- session.id %>" class="delete-session-type">
@@ -157,7 +157,7 @@
                 $("#add-session-modal-title").html('UPDATE SESSION DATE')
 
                 $.ajax({
-                    url: '/admin/sessions/types/findOne',
+                    url: '/admin/sessions/dates/findOne',
                     method: 'GET',
                     type: 'JSON',
                     data: {
@@ -173,13 +173,12 @@
                         $("#add-session-modal").modal('show')
                     },
                     error: err => {
-
                         showError(err.responseJSON)
                     }
                 })
             })
 
-            //Select All campus 
+            //Select All campus
             $("#sessionDateTable").on('click', '.selectAll-Session-dates', function () {
                 if (this.checked) {
                     // Iterate each checkbox
@@ -192,7 +191,6 @@
                     });
                 }
             })
-
 
             // UPDATE PROGRAM TYPE 
             $(".updateSessionDate").on('click', function () {
@@ -217,7 +215,6 @@
                     }
                 })
             })
-
 
             //Delete Single and mutiple Delete
             $('.select-delete-session-type').on('click', function () {
@@ -268,9 +265,7 @@
 
             })
 
-
             // SEARCH PROGRAM TYPE
-
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
@@ -321,8 +316,6 @@
                 }
             })
         });
-
-
 
             function AjaxtTable(programTypeList) {
                 let AjaxTable = `<table class="table custom_row" id="sessionTypeTable">
@@ -378,7 +371,6 @@
                     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                 $("#errorHtml").html(errorHtml)
             }
-
         })
     </script>
     <%- include("../partials/footerEnd") %>
