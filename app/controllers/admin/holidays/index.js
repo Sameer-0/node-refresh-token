@@ -1,3 +1,9 @@
+const {
+    check,
+    validationResult,
+    body
+} = require('express-validator');
+
 const Holidays = require('../../../models/Holidays')
 const HolidayType = require('../../../models/HolidayTypes')
 module.exports = {
@@ -73,7 +79,6 @@ module.exports = {
 
 
     search: (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -85,12 +90,11 @@ module.exports = {
 
         //here 10is rowcount
         let rowcount = 10;
-
-        Holidays.search(rowcount, req.query.keyword).then(result => {
+        Holidays.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
-                    message: "Building fetched",
+                    message: "Holiday fetched",
                     data: result.recordset,
                     length: result.recordset.length
                 })
@@ -108,6 +112,28 @@ module.exports = {
                 status: "500",
                 message: "Something went wrong",
             })
+        })
+    },
+
+    pagination: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+        Holidays.pagination(req.body.pageNo, res.locals.slug).then(result => {
+            res.json({
+                status: "200",
+                message: "Holiday fetched",
+                data: result.recordset,
+                length: result.recordset.length
+            })
+        }).catch(error => {
+            console.log(error)
+            throw error
         })
     }
 
