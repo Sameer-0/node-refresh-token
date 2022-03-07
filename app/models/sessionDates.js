@@ -5,23 +5,27 @@ const {
 } = require('../../config/db')
 
 module.exports = class {
-    constructor(name, description) {
-        this.name = name;
-        this.description = description;
+    constructor(program_session_lid, session_type_lid, start_date_id, end_date_id) {
+        this.program_session_lid = program_session_lid;
+        this.session_type_lid = session_type_lid;
+        this.start_date_id = start_date_id;
+        this.end_date_id = end_date_id;
     }
 
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, name, description FROM [${slug}].session_types WHERE active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, program_session_lid, session_type_lid, start_date_id, end_date_id FROM [${slug}].session_dates WHERE active = 1`)
         })
     }
 
     static save(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('Name', sql.NVarChar(50), body.name)
-                .input('Description', sql.NVarChar(50), body.description)
-                .query(`INSERT INTO [${slug}].session_types (name, description) VALUES (@Name, @Description)`)
+            return pool.request().input('Program Session', sql.Int, body.programSession)
+                .input('Session Type', sql.Int, body.sessionType)
+                .input('Start Date', sql.Int, body.startDate)
+                .input('End Date', sql.Int, body.endDate)
+                .query(`INSERT INTO [${slug}].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id) VALUES (@Program Session, @Session Type, @Start Date, @End Date)`)
         })
     }
 

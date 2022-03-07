@@ -7,6 +7,7 @@ const {
 
 const session =  require('../../controllers/admin/sessions/sessions')
 const types =  require('../../controllers/admin/sessions/types')
+const dates =  require('../../controllers/admin/sessions/dates')
 
 //Session
 router.get('/sessions', session.getPage)
@@ -28,12 +29,12 @@ router.get('/sessions/types/search', types.search)
 router.post('/sessions/types/pagination', types.pagination)
 
 //Session Dates
-router.get('/sessions/dates', types.getPage)
-router.post('/sessions/dates', types.create)
-router.put('/sessions/dates', types.update)
-router.delete('/sessions/dates', types.delete)
-router.patch('/sessions/dates', types.deleteAll)
-router.get('/sessions/dates/findOne', types.findOne)
-router.get('/sessions/dates/search', types.search)
-router.post('/sessions/dates/pagination', types.pagination)
+router.get('/sessions/dates', dates.getPage)
+router.post('/sessions/dates', dates.create)
+router.put('/sessions/dates', dates.update)
+router.delete('/sessions/dates', dates.delete)
+router.patch('/sessions/dates', dates.deleteAll)
+router.get('/sessions/dates/findOne', dates.findOne)
+router.get('/sessions/dates/search', dates.search)
+router.post('/sessions/dates/pagination', dates.pagination)
 module.exports = router;

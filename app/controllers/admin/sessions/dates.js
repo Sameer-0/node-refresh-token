@@ -5,14 +5,17 @@ const {
 } = require('express-validator');
 
 const SessionDates = require('../../../models/SessionDates')
-
+const AcademicCalender  = require('../../../models/AcademicCalender')
+const SessionTypes  = require('../../../models/SessionTypes')
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionTypes.getCount(res.locals.slug)]).then(result => {
+        Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionDates.getCount(res.locals.slug), AcademicCalender.fetchAll(100), SessionTypes.fetchAll(10, res.locals.slug)]).then(result => {
             console.log('result:::::',result)
-            res.render('admin/sessions/type.ejs', {
-                sessionList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+            res.render('admin/sessions/sessiondates.ejs', {
+                sessionDateList: result[0].recordset,
+                pageCount: result[1].recordset[0].count,
+                AcademicCalenderList: result[2].recordset,
+                sessionTypes: result[3].recordset
             })
         })
     },
@@ -26,7 +29,7 @@ module.exports = {
             });
             return;
         }
-        SessionTypes.save(req.body, res.locals.slug).then(result => {
+        SessionDates.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
                 message: "Success"
