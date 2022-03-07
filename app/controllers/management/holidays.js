@@ -5,7 +5,7 @@ const {
     Result
 } = require('express-validator');
 
-const Holidays = require('../../models/Holidays')
+const Holidays = require('../../models/HolidayDbo')
 
 
 module.exports = {

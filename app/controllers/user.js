@@ -116,6 +116,7 @@ module.exports = {
         try {
 
             let userData = await User.getUserByUsername(req.body.username, res.locals.slug);
+       
 
             if (userData.recordset.length == 0) {
                 //return res.status(200).send('Invalid username or password..!');
@@ -148,6 +149,8 @@ module.exports = {
             //let userModules = await User.getUserModules(userData.recordset[0].id, res.locals.slug);
 
             let userDataSet = await Promise.all([User.getUserModules(userData.recordset[0].id, res.locals.slug), UserPermission.getPermissionsByUserId(userData.recordset[0].id, res.locals.slug)]).then(results => results);
+
+            console.log('userDataSet::::::',userDataSet)
 
             req.session.permissions = userDataSet[1].recordset;
 

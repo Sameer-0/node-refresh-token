@@ -28,7 +28,7 @@ module.exports = class FacultyTypes {
                 .execute('[dbo].[sp_update_faculty_types]')
         })
     }
-    
+
     static delete(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();

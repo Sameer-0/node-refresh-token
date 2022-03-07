@@ -101,7 +101,7 @@ module.exports = class User {
         return poolConnection.then(pool => {
             return pool.request()
             .input('userId', sql.Int, userId)
-         .query(`SELECT DISTINCT app.name FROM [${slug}].users u INNER JOIN [bncp-mum].user_permissions p ON p.user_id = u.id INNER JOIN app_urls app ON app.id = p.endpoint_id WHERE app.parent_id IS NULL AND u.id = @userId AND p.is_permitted = 1`)
+         .query(`SELECT DISTINCT app.name FROM [${slug}].users u INNER JOIN [${slug}].user_permissions p ON p.user_id = u.id INNER JOIN app_urls app ON app.id = p.endpoint_id WHERE app.parent_id IS NULL AND u.id = @userId AND p.is_permitted = 1`)
         })
     }
 
