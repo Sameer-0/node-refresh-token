@@ -9,14 +9,14 @@
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>SESSION LIST</h5>
+                <h5>EVENT TYPE LIST</h5>
             </div>
             <div>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
-                    data-bs-target="#add-session-modal">
+                    data-bs-target="#add-event-modal">
                     <i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto select-delete-session-type add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-session-type add-btn "><img src="/icons/delete.png" alt=""
+                <button class="btn ms-auto select-delete-event-type add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-event-type add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button>
             </div>
         </div>
@@ -25,27 +25,27 @@
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
-            <table class="table custom_row" id="sessionTypeTable">
+            <table class="table custom_row" id="eventTypeTable">
                 <thead>
                     <th>Sr No.</th>
                     <th>Name</th>
-                    <th>Description</th>
+                    <th>Abbr</th>
                     <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-Session-Types"></th>
+                    <th>All <input type="checkbox" class="selectAll-Event-Types"></th>
                 </thead>
                 <tbody>
                     <% let count = 1%>
-                    <% for (let session of sessionList) { %>
+                    <% for (let type of evtTypeList) { %>
                     <tr>
                         <td><%- count++ %></td>
-                        <td><%- session.name %></td>
-                        <td><%- session.description %></td>
+                        <td><%- type.name %></td>
+                        <td><%- type.abbr %></td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-session"
-                                data-session-type-id="<%- session.id %>"></i>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-eventType"
+                                data-event-type-id="<%- type.id %>"></i>
                         </td>
                         <td>
-                            <input type="checkbox" data-session-type-id="<%- session.id %>" class="delete-session-type">
+                            <input type="checkbox" data-event-type-id="<%- type.id %>" class="delete-event-type">
                         </td>
                     </tr>
 
@@ -67,30 +67,30 @@
 <!--DASHBOARD CONTENT END-->
 
 <!--ADD Modal -->
-<div class="modal fade" id="add-session-modal" tabindex="-1" aria-labelledby="add-session-modal" aria-hidden="true">
+<div class="modal fade" id="add-event-modal" tabindex="-1" aria-labelledby="add-event-modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="add-session-modal-title">ADD SESSION TYPE</h5>
+                <h5 class="modal-title" id="add-event-modal-title">ADD EVENT TYPE</h5>
                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <div class="mb-3">
-                    <label for="sessionName" class="form-label">Enter Session Name</label>
-                    <input type="text" class="form-control" id="sessionName" placeholder="Enter Name">
+                    <label for="name" class="form-label">Enter Event Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Enter Name">
                     <input type="hidden" id="Id">
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Enter Description Name</label>
-                    <input type="text" class="form-control" id="description" placeholder="Enter Description">
+                    <label for="abbr" class="form-label">Enter Abbr</label>
+                    <input type="text" class="form-control" id="abbr" placeholder="Enter abbr">
                 </div>
                 <div class="modal-footer">
                     <span class="errorMsg"></span>
-                    <button type="submit" class="btn  createSessionType modal-inputform-btn">Create Session</button>
-                    <button type="submit" class="btn  updateSessionType modal-inputform-btn d-none">Update
-                        Session</button>
+                    <button type="submit" class="btn  createEventType modal-inputform-btn">Create Event</button>
+                    <button type="submit" class="btn  updateEventType modal-inputform-btn d-none">Update
+                        Event</button>
                 </div>
             </div>
         </div>
@@ -103,62 +103,63 @@
     <script>
         $(document).ready(function () {
 
-            $('.createSessionType').on('click', function () {
+            $('.createEventType').on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
+                    url: '/admin/events/types',
                     method: 'POST',
                     type: 'JSON',
                     data: {
-                        name: $('#sessionName').val(),
-                        description: $('#description').val(),
+                        name: $('#name').val(),
+                        abbr: $('#abbr').val(),
                     },
                     success: (data) => {
                         location.reload()
                     },
                     error: err => {
-                        console.log('err::::::::>>',err)
                         showError(err.responseJSON)
                     }
                 })
             })
 
             //EDIT PROGRAM TYPE
-            $("#sessionTypeTable").on('click', '.edit-session', function () {
-                $(".createSessionType").addClass('d-none')
-                $(".updateSessionType").removeClass('d-none')
-                $("#add-session-modal-title").html('UPDATE SESSION TYPE')
+            $("#eventTypeTable").on('click', '.edit-eventType', function () {
+                $(".createEventType").addClass('d-none')
+                $(".updateEventType").removeClass('d-none')
+                $("#add-event-modal-title").html('UPDATE EVENT TYPE')
+                console.log('CLicl')
 
                 $.ajax({
-                    url: '/admin/sessions/types/findOne',
+                    url: '/admin/events/types/findOne',
                     method: 'GET',
                     type: 'JSON',
                     data: {
-                        id: $(this).attr('data-session-type-id')
+                        id: $(this).attr('data-event-type-id')
                     },
                     success: data => {
                         console.log(data)
                         let Sessionobj = data.SessionData;
-                        console.log('Sessionobj',Sessionobj)
-                         $('#sessionName').val(Sessionobj.name)
-                        $('#description').val(Sessionobj.description)
+                        console.log('Sessionobj', Sessionobj)
+                        $('#name').val(Sessionobj.name)
+                        $('#abbr').val(Sessionobj.abbr)
                         $('#Id').val(Sessionobj.id)
-                        $("#add-session-modal").modal('show')
+                        $("#add-event-modal").modal('show')
                     },
                     error: err => {
+
                         showError(err.responseJSON)
                     }
                 })
             })
 
             //Select All campus
-            $("#sessionTypeTable").on('click', '.selectAll-Session-Types', function () {
+            $("#eventTypeTable").on('click', '.selectAll-Event-Types', function () {
                 if (this.checked) {
                     // Iterate each checkbox
-                    $('.delete-session-type:checkbox').each(function () {
+                    $('.delete-event-type:checkbox').each(function () {
                         this.checked = true;
                     });
                 } else {
-                    $('.delete-session-type:checkbox').each(function () {
+                    $('.delete-event-type:checkbox').each(function () {
                         this.checked = false;
                     });
                 }
@@ -166,15 +167,15 @@
 
 
             // UPDATE PROGRAM TYPE
-            $(".updateSessionType").on('click', function () {
+            $(".updateEventType").on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
+                    url: '/admin/events/types',
                     method: 'PUT',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
-                        name: $('#sessionName').val(),
-                        description: $('#description').val()
+                        name: $('#name').val(),
+                        abbr: $('#abbr').val()
                     },
                     success: (data) => {
                         if (data.status == 200) {
@@ -191,11 +192,11 @@
 
 
             //Delete Single and mutiple Delete
-            $('.select-delete-session-type').on('click', function () {
+            $('.select-delete-event-type').on('click', function () {
                 let deleteids = []
-                $('.delete-session-type:checked').each(function () {
+                $('.delete-event-type:checked').each(function () {
                     let obj = {
-                        id: $(this).attr("data-session-type-id"),
+                        id: $(this).attr("data-event-type-id"),
                     }
                     deleteids.push(obj)
                 })
@@ -203,7 +204,7 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/sessions/types',
+                        url: '/admin/events/types',
                         type: 'DELETE',
                         data: {
                             Ids: JSON.stringify(deleteids)
@@ -222,9 +223,9 @@
             })
 
             //Bulk Delete
-            $(".bulk-delete-session-type").on('click', function () {
+            $(".bulk-delete-event-type").on('click', function () {
                 let ApiObj = {
-                    url: '/admin/sessions/types',
+                    url: '/admin/events/types',
                     type: 'PATCH',
                     data: {},
                     dataType: 'JSON'
@@ -246,7 +247,7 @@
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
                     type: "GET",
-                    url: "/admin/sessions/types/search",
+                    url: "/admin/events/types/search",
                     data: {
                         keyword: keyword
                     },
@@ -258,51 +259,51 @@
 
 
 
-        //Pagination Here
-        let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
-        let pageNos = Math.ceil(Number(pageCount) / 10)
+            //Pagination Here
+            let pageCount = `<%- pageCount %>`
+            console.log("Page Count=====>>>", pageCount)
+            let pageNos = Math.ceil(Number(pageCount) / 10)
 
-        console.log("Page Numbers", pageNos)
-        $('#pagination').bootpag({
-            total: pageNos,
-            page: 1,
-            maxVisible: 10,
-            leaps: true,
-            firstLastUse: true,
-            first: '←',
-            last: '→',
-            wrapClass: 'pagination',
-            activeClass: 'active',
-            disabledClass: 'disabled',
-            nextClass: 'next',
-            prevClass: 'prev',
-            lastClass: 'last',
-            firstClass: 'first'
-        }).on("page", function (event, num) {
-            $.ajax({
-                type: "POST",
-                url: "/admin/sessions/types/pagination",
-                data: {
-                    pageNo: num
-                },
-                success: function (data) {
-                    console.log('data',data)
-                    AjaxtTable(data.data) 
-                }
-            })
-        });
+            console.log("Page Numbers", pageNos)
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/events/types/pagination",
+                    data: {
+                        pageNo: num
+                    },
+                    success: function (data) {
+                        console.log('data', data)
+                        AjaxtTable(data.data)
+                    }
+                })
+            });
 
 
 
             function AjaxtTable(programTypeList) {
-                let AjaxTable = `<table class="table custom_row" id="sessionTypeTable">
+                let AjaxTable = `<table class="table custom_row" id="eventTypeTable">
                 <thead>
                     <th>Sr No.</th>
                     <th>Name</th>
-                    <th>Description</th>
+                    <th>Abbr</th>
                     <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-Session-Types"></th>
+                    <th>All <input type="checkbox" class="selectAll-Event-Types"></th>
                 </thead>`;
                 if (programTypeList.length > 0) {
                     let count = 1;
@@ -311,13 +312,13 @@
                             `<tr>
                         <td>${count++}</td>
                         <td>${list.name}</td>
-                        <td>${list.description}</td>
+                        <td>${list.abbr}</td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-session"
-                                data-session-type-id="${list.id}"></i>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-eventType"
+                                data-event-type-id="${list.id}"></i>
                         </td>
                         <td>
-                            <input type="checkbox" data-session-type-id="${list.id}" class="delete-session-type">
+                            <input type="checkbox" data-event-type-id="${list.id}" class="delete-event-type">
                         </td>
                     </tr>`
                     }
@@ -328,20 +329,20 @@
                             </tr>`;
                 }
                 AjaxTable += `<tbody></table>`
-                $("#sessionTypeTable").html(AjaxTable);
+                $("#eventTypeTable").html(AjaxTable);
             }
 
             function showError(errors) {
-                console.log('errors',errors)
                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                        errors.errors.map(er => {
+                    <h3>Error</h3>`;
+                errorHtml += `<ul>`;
+                errors.errors.map(er => {
                     errorHtml +=
                         `<li>${er.msg}</li>`
                 })
+
                 errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                 $("#errorHtml").html(errorHtml)
             }
 

@@ -7,7 +7,7 @@ const {
 
 const session =  require('../../controllers/admin/sessions/sessions')
 const types =  require('../../controllers/admin/sessions/types')
-
+const validate = require('../../middlewares/validate')
 //Session
 router.get('/sessions', session.getPage)
 
@@ -20,8 +20,8 @@ router.get('/sessions/pagination', session.getPage)
 
 //Session Type
 router.get('/sessions/types', types.getPage)
-router.post('/sessions/types', types.create)
-router.put('/sessions/types', types.update)
+router.post('/sessions/types', validate('SessionType') , types.create)
+router.put('/sessions/types', validate('SessionType'), types.update)
 router.delete('/sessions/types', types.delete)
 router.patch('/sessions/types', types.deleteAll)
 router.get('/sessions/types/findOne', types.findOne)

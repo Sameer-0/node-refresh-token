@@ -1,3 +1,9 @@
+const {
+    sql,
+    poolConnection,
+    execPreparedStmt
+} = require('../../config/db')
+
 module.exports = class {
     constructor(name, abbr) {
         this.name = name;
@@ -6,70 +12,72 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, name, abbr FROM [${slug}].event_types WHERE active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, name, abbr FROM [${slug}].event_types WHERE active = 1`)
         })
     }
 
-    static save(inputJson, slug) {
+    static save(body, slug) {
         return poolConnection.then(pool => {
-            const request = pool.request();
-            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
-           .query(``)
+            return pool.request().input('Name', sql.NVarChar(100), body.name)
+                .input('Abbr', sql.NVarChar(4), body.abbr)
+                .query(`INSERT INTO [${slug}].event_types (name, abbr) VALUES (@Name, @Abbr)`)
         })
     }
 
-    static getProgramTypeById(id) {
+    static findById(id, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('programId', sql.Int, id)
-                .query(`SELECT id, name from [dbo].program_types WHERE id = @programId`)
+            return pool.request().input('Id', sql.Int, id)
+                .query(`SELECT id, name, abbr from [${slug}].event_types WHERE id = @Id`)
         })
     }
 
-    static update(body) {
+    static update(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('programId', sql.Int, body.id)
-                .input('programName', sql.NVarChar(100), body.programName)
-                .query(`UPDATE [dbo].program_types SET name = @programName WHERE id = @programId`)
+            return pool.request().input('Id', sql.Int, body.id)
+                .input('Name', sql.NVarChar(100), body.name)
+                .input('Abbr', sql.NVarChar(4), body.abbr)
+                .query(`UPDATE [${slug}].event_types SET name = @Name, abbr = @Abbr WHERE id = @Id`)
         })
     }
 
 
-    static delete(ids) {
+    static delete(ids, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
             JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [dbo].[program_types] SET active = 0  WHERE id = ${element.id}`)
+                return request.query(`UPDATE [${slug}].event_types SET active = 0  WHERE id = ${element.id}`)
             });
         })
     }
 
-    static deleteAll() {
+    static deleteAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [dbo].[program_types] SET active = 0 WHERE active = 1`)
+            return pool.request().query(`UPDATE [${slug}].event_types SET active = 0 WHERE active = 1`)
         })
     }
 
-    static searchProgramType(rowcount, keyword) {
+    static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(` SELECT TOP ${Number(rowcount)}  pt.id as id, pt.name FROM 
-                        [dbo].program_types pt WHERE pt.active = 1 AND pt.name LIKE @keyword ORDER BY pt.id DESC`)
+                .query(` SELECT TOP ${Number(rowcount)}  et.id, et.name, et.abbr  FROM 
+                [${slug}].event_types et WHERE et.active = 1 AND (et.name LIKE @keyword OR et.abbr LIKE @keyword) ORDER BY et.id DESC`)
         })
     }
 
 
-    static fetchChunkRows(rowcount, pageNo) {
+    static pagination(pageNo, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT id, name, active FROM [dbo].program_types WHERE active = 1 ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT id, name, abbr active FROM [${slug}].event_types WHERE active = 1 ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
-    static getCount() {
+    static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].program_types WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].event_types WHERE active = 1`)
         })
     }
+
 }

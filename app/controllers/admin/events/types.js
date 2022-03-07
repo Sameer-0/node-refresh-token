@@ -4,19 +4,21 @@ const {
     validationResult
 } = require('express-validator');
 
-const SessionTypes = require('../../../models/SessionTypes')
+const EventType = require('../../../models/EventType')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([SessionTypes.fetchAll(10, res.locals.slug), SessionTypes.getCount(res.locals.slug)]).then(result => {
-            res.render('admin/sessions/type.ejs', {
-                sessionList: result[0].recordset,
+        Promise.all([EventType.fetchAll(10, res.locals.slug), EventType.getCount(res.locals.slug)]).then(result => {
+            res.render('admin/events/types', {
+                evtTypeList: result[0].recordset,
                 pageCount: result[1].recordset[0].count
             })
         })
     },
 
+
     create: (req, res) => {
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -25,7 +27,7 @@ module.exports = {
             });
             return;
         }
-        SessionTypes.save(req.body, res.locals.slug).then(result => {
+        EventType.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
                 message: "Success"
@@ -37,7 +39,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        SessionTypes.findById(req.query.id, res.locals.slug).then(result => {
+        EventType.findById(req.query.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -58,7 +60,7 @@ module.exports = {
             return;
         }
 
-        SessionTypes.update(req.body, res.locals.slug).then(result => {
+        EventType.update(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -70,7 +72,7 @@ module.exports = {
     },
 
     delete: (req, res) => {
-        SessionTypes.delete(req.body.Ids, res.locals.slug).then(result => {
+        EventType.delete(req.body.Ids, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -81,7 +83,7 @@ module.exports = {
     },
 
     deleteAll: (req, res) => {
-        SessionTypes.deleteAll(res.locals.slug).then(result => {
+        EventType.deleteAll(res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200
             })
@@ -92,7 +94,7 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        SessionTypes.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        EventType.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -122,8 +124,7 @@ module.exports = {
             });
             return;
         }
-
-        SessionTypes.pagination(req.body.pageNo, res.locals.slug).then(result => {
+        EventType.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",

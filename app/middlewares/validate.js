@@ -141,6 +141,23 @@ module.exports = function validate(method) {
             ]
         }
 
+        case 'SessionType': {
+            return [
+                check('name').not().isEmpty().withMessage('Name must not be empty'),
+                check('description').not().isEmpty().withMessage('Description must not be empty')
+            ]
+        }
+
+        case 'EventType': {
+            return [
+                check('name').not().isEmpty().withMessage('Name must not be empty'),
+                check('abbr').not().isEmpty().withMessage('Abbr must not be empty').isLength({
+                    min: 1,
+                    max: 4
+                }).withMessage('Abbr must be between 1 and 4 characters')
+            ]
+        }
+
         case 'updateRoomTransType': {
             return [
                 check('rtsId').not().isEmpty().withMessage('roomTransactionTypeId must not be empty'),
