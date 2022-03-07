@@ -27,7 +27,7 @@
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-holiday-modal">
                     <i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto select-delete-session-type add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto select-delete-holidays add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-session-type add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button>
             </div>
@@ -45,7 +45,7 @@
                     <th>Holiday Type</th>
                     <th>Reason</th>
                     <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-Session-Types"></th>
+                    <th>All <input type="checkbox" class="selectAll-Holiday-Types"></th>
                 </thead>
                 <tbody>
                     <% let count = 1%>
@@ -277,7 +277,7 @@
                 let reason = $(elem).find(`input[name='reason']`).val()
                 let id = $(elem).find(`input[name='Id']`).val()
                 let active = $(elem).find(`input[name='Active']`).val()
-                
+
                 if (index < holidayCount - 1) {
                     let obj = {
                         id:id,
@@ -300,8 +300,6 @@
                     holidayJson.push(obj)
                 }
             })
-
-            console.log('Update holidayJson:::::::::::::::::>',holidayJson)
             let ApiObj = {
                 type: 'PUT',
                 url: '/admin/holidays',
@@ -318,6 +316,150 @@
             })
         })
 
+
+          // SEARCH PROGRAM TYPE
+
+            $('#searchkeyword').on('input', delay(function (e) {
+                let keyword = $("#searchkeyword").val()
+                $.ajax({
+                    type: "GET",
+                    url: "/admin/holidays/search",
+                    data: {
+                        keyword: keyword
+                    },
+                    success: function (data) {
+                        console.log('data::::::::::',data)
+                        AjaxtTable(data.data)
+                    }
+                })
+            }, 500));
+
+
+
+             //Pagination Here
+             let pageCount = `<%- pageCount %>`
+            console.log("Page Count=====>>>", pageCount)
+            let pageNos = Math.ceil(Number(pageCount) / 10)
+
+            console.log("Page Numbers", pageNos)
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/holidays/pagination",
+                    data: {
+                        pageNo: num
+                    },
+                    success: function (data) {
+                        console.log('data', data)
+                        AjaxtTable(data.data)
+                    }
+                })
+            });
+
+
+                        //Select All campus
+         $("#holidayTable").on('click', '.selectAll-Holiday-Types', function () {
+                if (this.checked) {
+                    // Iterate each checkbox
+                    $('.delete-holiday-type:checkbox').each(function () {
+                        this.checked = true;
+                    });
+                } else {
+                    $('.delete-holiday-type:checkbox').each(function () {
+                        this.checked = false;
+                    });
+                }
+            })
+
+             //Delete Single and mutiple Delete
+             $('.select-delete-holidays').on('click', function () {
+                let deleteids = []
+                $('.delete-holiday-type:checked').each(function () {
+                    let obj = {
+                        id: $(this).attr("data-holiday-id"),
+                    }
+                    deleteids.push(obj)
+                })
+
+                if (deleteids.length > 0) {
+
+                    let ApiObj = {
+                        url: '/admin/holidays',
+                        type: 'DELETE',
+                        data: {
+                            Ids: JSON.stringify(deleteids)
+                        },
+                        dataType: 'JSON'
+                    }
+                    ajaxApi(ApiObj).then(result => {
+                        location.reload()
+                        notify();
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+                } else {
+                    alert('Select Fields')
+                }
+            })
+
+
+
+
+            function AjaxtTable(programTypeList) {
+                let AjaxTable = `<table class="table custom_row" id="holidayTable">
+                <thead>
+                    <th>Sr No.</th>
+                    <th>Calender Year</th>
+                    <th>Holiday Date</th>
+                    <th>Holiday Type</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+                    <th>All <input type="checkbox" class="selectAll-Holiday-Types"></th>
+                </thead>
+                <tbody>`;
+                if (programTypeList.length > 0) {
+                    let count = 1;
+                    for (holiday of programTypeList) {
+                        AjaxTable +=
+                            `<tr>
+                        <td>${count++}</td>
+                        <td>${holiday.calendar_year}</td>
+                        <td>${holiday.h_date}</td>
+                        <td>${holiday.holiday_type}</td>
+                        <td>${holiday.reason}</td>
+                        <td>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-holiday"
+                                data-holiday-id="${holiday.id}"></i>
+                        </td>
+                        <td>
+                            <input type="checkbox" data-holiday-id="${holiday.id}" class="delete-holiday-type">
+                        </td>
+                    </tr>`
+                    }
+                } else {
+                    AjaxTable +=
+                        ` <tr>
+                                <td colspan="7">No Data Found</td>
+                            </tr>`;
+                }
+                AjaxTable += `<tbody></table>`
+                $("#holidayTable").html(AjaxTable);
+            }
 
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
