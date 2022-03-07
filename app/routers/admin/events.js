@@ -13,7 +13,6 @@ const validate = require('../../middlewares/validate')
 
 router.get('/events', events.getPage)
 
-
 //EVENT TPES
 router.get('/events/types', types.getPage)
 router.post('/events/types', validate('EventType') , types.create)

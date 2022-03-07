@@ -1,97 +1,108 @@
+//Holiday for schema level
 const {
     sql,
     poolConnection,
     execPreparedStmt
 } = require('../../config/db')
-
-module.exports = class Holidays {
-    constructor(calenderId, calenderName, campusId, campusLid, ordLid, calenderYear, hDate, Reason, holidayTypeId) {
-        this.calenderId = calenderId;
-        this.calenderName = calenderName;
-        this.campusId = campusId;
-        this.campusLid = campusLid;
-        this.ordLid = ordLid;
+module.exports = class {
+    constructor(calenderYear, hDate, Reason, holidayTypeId) {
         this.calenderYear = calenderYear;
         this.hDate = hDate;
         this.Reason = Reason;
         this.holidayTypeId = holidayTypeId;
     }
 
+    static fetchAll(rowcount, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.active = 1 and ht.active = 1`)
+        })
+    }
 
-    static insert(body) {
+    static getCount(slug) {
+        return poolConnection.then(pool => {
+            return pool.query(`SELECT COUNT(*) as count FROM [${slug}].holidays WHERE active = 1`)
+        })
+    }
+
+
+    static save(inputJSON, slug) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('calenderId', sql.Int, body.calenderId)
-                .input('calenderName', sql.NVarChar(20), body.calenderName)
-                .input('campusId', sql.NVarChar(15), body.campusId)
-                .input('campusLid', sql.Int, body.campusLid)
-                .input('ordLid', sql.Int, body.ordLid)
-                .input('calenderYear', sql.SmallInt, body.calenderYear)
-                .input('hDate', sql.Date, body.hDate)
-                .input('Reason', sql.NVarChar(100), body.Reason)
-                .input('holidayTypeId', sql.Int, body.holidayTypeId)
-            let stmt = `INSERT INTO  [dbo].[holidays] (calender_id, calender_name, campus_id, campus_lid, ord_lid, calender_year, h_date, reason, holiday_type_id)  VALUES (@calenderId, @calenderName, @campusId, @campusLid, @ordLid, @calenderYear, @hDate, @Reason, @holidayTypeId)`
-            return request.query(stmt)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[add_holidays]`)
         })
     }
 
-
-    static update(body) {
+    static findOne(id, slug) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('calenderId', sql.Int, body.calenderId)
-                .input('calenderName', sql.NVarChar(20), body.calenderName)
-                .input('campusId', sql.NVarChar(15), body.campusId)
-                .input('campusLid', sql.Int, body.campusLid)
-                .input('ordLid', sql.Int, body.ordLid)
-                .input('calenderYear', sql.SmallInt, body.calenderYear)
-                .input('hDate', sql.Date, body.hDate)
-                .input('Reason', sql.NVarChar(100), body.Reason)
-                .input('holidayTypeId', sql.Int, body.holidayTypeId)
-                .input('Id', sql.Int, body.Id)
-            let stmt = `INSERT INTO  [dbo].[holidays] (calender_id, calender_name, campus_id, campus_lid, ord_lid, calender_year, h_date, reason, holiday_type_id)  VALUES (@calenderId, @calenderName, @campusId, @campusLid, @ordLid, @calenderYear, @hDate, @Reason, @holidayTypeId)`
-            return request.query(stmt)
+            request.input('id', sql.Int, id)
+            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 120) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid, CONVERT(NVARCHAR, h.active) AS active FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.active = 1 and ht.active = 1 AND h.id = @Id`)
         })
     }
 
 
-    static delete(id) {
+    static update(inputJSON, slug) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('Id', sql.NVarChar(255), id)
-            let stmt = `UPDATE [dbo].[holidays] SET active  = 0 WHERE id =  @Id`
-            return request.query(stmt)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_update_holidays]`)
         })
     }
 
-    static fetchAll(rowcount) {
+    static delete(inputJSON) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} hd.id, hd.calendar_id, hd.calendar_name, hd.calendar_year, hd.reason, hd.h_date, hd.campus_lid, camp.campus_abbr, org.org_abbr FROM [dbo].holidays hd 
-            INNER JOIN [dbo].campuses camp ON camp.campus_id = hd.campus_lid
-            INNER JOIN [dbo].organizations org ON org.org_id = hd.org_lid
-            INNER JOIN [dbo].holiday_types ht ON ht.id = hd.holiday_type_id WHERE hd.active = 1 and ht.active = 1 and camp.active = 1 and org.active = 1`)
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[delete_buildings]')
         })
     }
 
-    static fetchById(id) {
+    static pegination(pageNo, slug) {
         return poolConnection.then(pool => {
-            const request = pool.request();
-            return request.input('Id', sql.NVarChar(255), id)
-                .request().query(`SELECT * FROM [dbo].[holidays] WHERE id = @Id`)
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.active = 1 and ht.active = 1 ORDER BY h.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        }).catch(error => {
+            throw error
         })
     }
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].buildings WHERE active = 1`)
+        })
+    }
+
 
     static search(rowcount, keyword) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} hd.id, hd.calendar_id, hd.calendar_name, hd.calendar_year, hd.reason, hd.h_date, hd.campus_lid, camp.campus_abbr, org.org_abbr FROM [dbo].holidays hd 
-                INNER JOIN [dbo].campuses camp ON camp.campus_id = hd.campus_lid
-                INNER JOIN [dbo].organizations org ON org.org_id = hd.org_lid
-                INNER JOIN [dbo].holiday_types ht ON ht.id = hd.holiday_type_id 
-                WHERE hd.active = 1 AND ht.active = 1 AND camp.active = 1 AND org.active = 1 AND (
-                hd.calendar_id LIKE @keyword OR hd.calendar_name LIKE @keyword OR hd.calendar_year LIKE @keyword OR camp.campus_abbr LIKE @keyword OR org.org_abbr LIKE @keyword)`)
+                .query(`SELECT TOP ${Number(rowcount)} b.id AS building_id, b.building_name, b.building_number, 
+                b.total_floors, org_o.org_abbr AS owner, org_h.org_abbr AS handled_by, CONVERT(NVARCHAR, st.start_time, 100) AS start_time, 
+                CONVERT(NVARCHAR, et.end_time, 100) AS end_time, c.campus_abbr FROM dbo.buildings b 
+                INNER JOIN dbo.organizations org_o ON org_o.id = b.owner_id 
+                INNER JOIN dbo.organizations org_h ON org_h.id = b.handled_by 
+                INNER JOIN dbo.slot_interval_timings st ON st.id = b.start_time_id 
+                INNER JOIN dbo.slot_interval_timings et ON et.id = b.end_time_id 
+                INNER JOIN dbo.campuses c ON c.id = b.campus_lid WHERE b.active = 1 
+                AND st.active = 1 AND org_h.active = 1 and b.building_name like @keyword or  b.building_number like @keyword 
+                or b.total_floors like @keyword or org_o.org_abbr like @keyword or org_h.org_abbr like @keyword or  st.start_time like @keyword or
+                et.end_time like @keyword or c.campus_abbr like @keyword
+                ORDER BY b.id DESC`)
         })
     }
+
+    static deleteAll() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`UPDATE [dbo].buildings SET active = 0 WHERE active = 1`)
+        })
+    }
+
 
 }
