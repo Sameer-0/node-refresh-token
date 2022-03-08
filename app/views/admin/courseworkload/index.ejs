@@ -19,9 +19,32 @@
     </div> -->
 
     <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase ">
+            <h5>Fetch course workload from sap</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label>Select Year</label>
+                    <input type="text" class="form-control" value="<%- acadYear %>">
+                </div>
+                <div class="col-md-6">
+                    <label>Select Program</label>
+                    <input type="text" class="form-control" placeholder="State" aria-label="State">
+                </div>
+                <div class="col-md-6">
+                    <label>Select Session</label>
+                    <input type="text" class="form-control" placeholder="Zip" aria-label="Zip">
+                </div>
+            </div>
+            <button class="btn btn-danger mt-3"><i class="fa fa-download"></i> Fetch From SAP</button>
+        </div>
+    </div>
+
+    <div class="card table-card mt-3">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>HOLIDAY LIST</h5>
+                <h5>COURSE WORKLOAD</h5>
             </div>
             <div>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
@@ -40,32 +63,24 @@
             <table class="table custom_row" id="holidayTable">
                 <thead>
                     <th>Sr No.</th>
-                    <th>Calender Year</th>
-                    <th>Holiday Date</th>
-                    <th>Holiday Type</th>
-                    <th>Reason</th>
+                    <th>Module Name</th>
+                    <th>Module Id</th>
+                    <th>Program Id</th>
+                    <th>Electives</th>
+                    <th>Intake</th>
+                    <th>Student per division</th>
+                    <th>Lecture per Week per Division</th>
+                    <th>Practical per Week per Division</th>
+                    <th>Tutorial per Week per Division</th>
+                    <th>Workshop per Week per Division</th>
+                    <th>Session Events per Semester</th>
+                    <th>Acad Session</th>
+                    <th>Continuous</th>
                     <th>Action</th>
                     <th>All <input type="checkbox" class="selectAll-Holiday-Types"></th>
                 </thead>
                 <tbody>
-                    <% let count = 1%>
-                    <% for (let holiday of holidayList) { %>
-                    <tr>
-                        <td><%- count++ %></td>
-                        <td><%- holiday.calendar_year %></td>
-                        <td><%- holiday.h_date %></td>
-                        <td><%- holiday.holiday_type %></td>
-                        <td><%- holiday.reason %></td>
-                        <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-holiday"
-                                data-holiday-id="<%- holiday.id %>"></i>
-                        </td>
-                        <td>
-                            <input type="checkbox" data-holiday-id="<%- holiday.id %>" class="delete-holiday-type">
-                        </td>
-                    </tr>
 
-                    <% } %>
                 </tbody>
             </table>
             <div class="d-flex justify-content-between">
@@ -98,46 +113,7 @@
                 <div id="errorHtml"></div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-holidays-table">
-                        <thead>
-                            <th>Calender Year</th>
-                            <th>Holiday Date</th>
-                            <th>Holiday Type</th>
-                            <th>Reasons</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input name="Id" id="Id" type="hidden" class="form-control" >
-                                    <input type="hidden" id="Active" name="Active">
-                                    <input name="calendar_year" id="calendar_year" type="number" class="form-control"
-                                    placeholder="Calender Year" required>
-
-                                </td>
-                                <td>
-                                    <input name="holiday_date" id="holiday_date" type="date" class="form-control"
-                                        placeholder="Holiday Date" required>
-                                </td>
-                                <td>
-                                    <select class="form-control" name="holiday_type" id="holiday_type">
-                                        <% for(let type of holidayType){%>
-                                        <option value="<%- type.id %>"><%- type.name %></option>
-                                        <%}%>
-                                    </select>
-                                   
-                                </td>
-                                <td>
-                                    <input name="reason" id="reason" type="text" class="form-control"
-                                        placeholder="Reason">
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <!-- Table -->
                 </div>
 
             </div>
@@ -167,27 +143,27 @@
     $(document).ready(function () {
 
         $('#add-more-holidays').on('click', function () {
-                let lastTr = $('#add-more-holidays-table tbody tr:last-child')
-                let calendar_year = lastTr.find(`select[name='calendar_year']`).val();
-                let holiday_date = lastTr.find(`select[name='holiday_date']`).val();
-                let holiday_type = lastTr.find(`select[name='holiday_type']`).val();
-                let reason = lastTr.find(`select[name='reason']`).val();
-                let clonedTr = lastTr.clone();
-                clonedTr.find(`input[name='calendar_year']`).val('')
-                clonedTr.find(`input[name='holiday_date']`).val('')
-                clonedTr.find(`select[name='holiday_type']`).val('')
-                clonedTr.find(`select[name='reason']`).val('')
-                $('#add-more-holidays-table tbody').append(clonedTr)
-            })
+            let lastTr = $('#add-more-holidays-table tbody tr:last-child')
+            let calendar_year = lastTr.find(`select[name='calendar_year']`).val();
+            let holiday_date = lastTr.find(`select[name='holiday_date']`).val();
+            let holiday_type = lastTr.find(`select[name='holiday_type']`).val();
+            let reason = lastTr.find(`select[name='reason']`).val();
+            let clonedTr = lastTr.clone();
+            clonedTr.find(`input[name='calendar_year']`).val('')
+            clonedTr.find(`input[name='holiday_date']`).val('')
+            clonedTr.find(`select[name='holiday_type']`).val('')
+            clonedTr.find(`select[name='reason']`).val('')
+            $('#add-more-holidays-table tbody').append(clonedTr)
+        })
 
-            $('#add-more-holidays-table').on('click', '.remove-holidays', function () {
-                let trLength = $('#add-more-holidays-table tbody tr').length;
-                if (trLength > 1) {
-                    $(this).closest('tr').remove()
-                } else {
-                    alert('Cannot delete this room.')
-                }
-            })
+        $('#add-more-holidays-table').on('click', '.remove-holidays', function () {
+            let trLength = $('#add-more-holidays-table tbody tr').length;
+            if (trLength > 1) {
+                $(this).closest('tr').remove()
+            } else {
+                alert('Cannot delete this room.')
+            }
+        })
 
 
         //admin/holiday
@@ -239,7 +215,7 @@
         //Edit Holiday
         //edit-holiday
 
-        $('#holidayTable').on('click','.edit-holiday', function () {
+        $('#holidayTable').on('click', '.edit-holiday', function () {
             $("#add-more-holidays").addClass('d-none')
             $(".createHoliday").addClass('d-none')
             $(".updateHoliday").removeClass('d-none')
@@ -280,8 +256,8 @@
 
                 if (index < holidayCount - 1) {
                     let obj = {
-                        id:id,
-                        active:active,
+                        id: id,
+                        active: active,
                         calendar_year: calendar_year,
                         h_date: holiday_date,
                         holiday_type_lid: holiday_type,
@@ -290,8 +266,8 @@
                     holidayJson.push(obj)
                 } else {
                     let obj = {
-                        id:id,
-                        active:active,
+                        id: id,
+                        active: active,
                         calendar_year: calendar_year,
                         h_date: holiday_date,
                         holiday_type_lid: holiday_type,
@@ -317,131 +293,131 @@
         })
 
 
-          // SEARCH PROGRAM TYPE
+        // SEARCH PROGRAM TYPE
 
-            $('#searchkeyword').on('input', delay(function (e) {
-                let keyword = $("#searchkeyword").val()
-                $.ajax({
-                    type: "GET",
-                    url: "/admin/holidays/search",
-                    data: {
-                        keyword: keyword
-                    },
-                    success: function (data) {
-                        console.log('data::::::::::',data)
-                        AjaxtTable(data.data)
-                    }
-                })
-            }, 500));
-
-
-
-             //Pagination Here
-             let pageCount = `<%- pageCount %>`
-            console.log("Page Count=====>>>", pageCount)
-            let pageNos = Math.ceil(Number(pageCount) / 10)
-
-            console.log("Page Numbers", pageNos)
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active',
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-                $.ajax({
-                    type: "POST",
-                    url: "/admin/holidays/pagination",
-                    data: {
-                        pageNo: num
-                    },
-                    success: function (data) {
-                        console.log('data', data)
-                        AjaxtTable(data.data)
-                    }
-                })
-            });
-
-
-                        //Select All campus
-         $("#holidayTable").on('click', '.selectAll-Holiday-Types', function () {
-                if (this.checked) {
-                    // Iterate each checkbox
-                    $('.delete-holiday-type:checkbox').each(function () {
-                        this.checked = true;
-                    });
-                } else {
-                    $('.delete-holiday-type:checkbox').each(function () {
-                        this.checked = false;
-                    });
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "GET",
+                url: "/admin/holidays/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    console.log('data::::::::::', data)
+                    AjaxtTable(data.data)
                 }
             })
+        }, 500));
 
-             //Delete Single and mutiple Delete
-             $('.select-delete-holidays').on('click', function () {
-                let deleteids = []
-                $('.delete-holiday-type:checked').each(function () {
-                    let obj = {
-                        id: $(this).attr("data-holiday-id"),
-                    }
-                    deleteids.push(obj)
-                })
 
-                if (deleteids.length > 0) {
 
-                    let ApiObj = {
-                        url: '/admin/holidays',
-                        type: 'DELETE',
-                        data: {
-                            Ids: JSON.stringify(deleteids)
-                        },
-                        dataType: 'JSON'
-                    }
-                    ajaxApi(ApiObj).then(result => {
-                        location.reload()
-                        notify();
-                    }).catch(error => {
-                        showError(error.responseJSON)
-                    })
-                } else {
-                    alert('Select Fields')
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
+        console.log("Page Count=====>>>", pageCount)
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+            $.ajax({
+                type: "POST",
+                url: "/admin/holidays/pagination",
+                data: {
+                    pageNo: num
+                },
+                success: function (data) {
+                    console.log('data', data)
+                    AjaxtTable(data.data)
                 }
             })
+        });
 
 
+        //Select All campus
+        $("#holidayTable").on('click', '.selectAll-Holiday-Types', function () {
+            if (this.checked) {
+                // Iterate each checkbox
+                $('.delete-holiday-type:checkbox').each(function () {
+                    this.checked = true;
+                });
+            } else {
+                $('.delete-holiday-type:checkbox').each(function () {
+                    this.checked = false;
+                });
+            }
+        })
 
-                        //Bulk Delete
-               $(".bulk-delete-holiday").on('click', function () {
+        //Delete Single and mutiple Delete
+        $('.select-delete-holidays').on('click', function () {
+            let deleteids = []
+            $('.delete-holiday-type:checked').each(function () {
+                let obj = {
+                    id: $(this).attr("data-holiday-id"),
+                }
+                deleteids.push(obj)
+            })
+
+            if (deleteids.length > 0) {
+
                 let ApiObj = {
                     url: '/admin/holidays',
-                    type: 'PATCH',
-                    data: {},
+                    type: 'DELETE',
+                    data: {
+                        Ids: JSON.stringify(deleteids)
+                    },
                     dataType: 'JSON'
                 }
-
                 ajaxApi(ApiObj).then(result => {
                     location.reload()
+                    notify();
                 }).catch(error => {
                     showError(error.responseJSON)
-
                 })
+            } else {
+                alert('Select Fields')
+            }
+        })
+
+
+
+        //Bulk Delete
+        $(".bulk-delete-holiday").on('click', function () {
+            let ApiObj = {
+                url: '/admin/holidays',
+                type: 'PATCH',
+                data: {},
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                location.reload()
+            }).catch(error => {
+                showError(error.responseJSON)
 
             })
 
+        })
 
 
 
-            function AjaxtTable(programTypeList) {
-                let AjaxTable = `<table class="table custom_row" id="holidayTable">
+
+        function AjaxtTable(programTypeList) {
+            let AjaxTable = `<table class="table custom_row" id="holidayTable">
                 <thead>
                     <th>Sr No.</th>
                     <th>Calender Year</th>
@@ -452,11 +428,11 @@
                     <th>All <input type="checkbox" class="selectAll-Holiday-Types"></th>
                 </thead>
                 <tbody>`;
-                if (programTypeList.length > 0) {
-                    let count = 1;
-                    for (holiday of programTypeList) {
-                        AjaxTable +=
-                            `<tr>
+            if (programTypeList.length > 0) {
+                let count = 1;
+                for (holiday of programTypeList) {
+                    AjaxTable +=
+                        `<tr>
                         <td>${count++}</td>
                         <td>${holiday.calendar_year}</td>
                         <td>${holiday.h_date}</td>
@@ -470,16 +446,16 @@
                             <input type="checkbox" data-holiday-id="${holiday.id}" class="delete-holiday-type">
                         </td>
                     </tr>`
-                    }
-                } else {
-                    AjaxTable +=
-                        ` <tr>
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
                                 <td colspan="7">No Data Found</td>
                             </tr>`;
-                }
-                AjaxTable += `<tbody></table>`
-                $("#holidayTable").html(AjaxTable);
             }
+            AjaxTable += `<tbody></table>`
+            $("#holidayTable").html(AjaxTable);
+        }
 
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
