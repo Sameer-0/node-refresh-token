@@ -21,11 +21,11 @@ module.exports = class {
 
     static save(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('Program Session', sql.Int, body.programSession)
-                .input('Session Type', sql.Int, body.sessionType)
-                .input('Start Date', sql.Int, body.startDate)
-                .input('End Date', sql.Int, body.endDate)
-                .query(`INSERT INTO [${slug}].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id) VALUES (@Program Session, @Session Type, @Start Date, @End Date)`)
+            return pool.request().input('ProgramSession', sql.Int, body.programSession)
+                .input('SessionType', sql.Int, body.sessionType)
+                .input('StartDate', sql.Int, body.startDate)
+                .input('EndDate', sql.Int, body.endDate)
+                .query(`INSERT INTO [${slug}].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id) VALUES (@ProgramSession, @SessionType, @StartDate, @EndDate)`)
         })
     }
 

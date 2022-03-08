@@ -4,7 +4,7 @@ const {
     validationResult
 } = require('express-validator');
 const divisionModel = require('../../models/Divisions')
-const courseModel = require('../../models/InitialCourseWorkload')
+const CourseWorkload = require('../../models/CourseWorkload')
 
 
 
@@ -12,7 +12,7 @@ module.exports = {
     getPage: (req, res) => {
         let rowcount = 50;
 
-        Promise.all([divisionModel.fetchAll(rowcount), courseModel.fetchAll()]).then(result => {
+        Promise.all([divisionModel.fetchAll(rowcount), CourseWorkload.fetchAll()]).then(result => {
             res.render('management/division/index', {
                 divisionList: result[0].recordset,
                 courseList: result[1].recordset
