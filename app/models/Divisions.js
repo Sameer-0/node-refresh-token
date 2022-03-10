@@ -3,100 +3,49 @@ const {
     poolConnection,
     execPreparedStmt
 } = require('../../config/db')
-const { pool } = require('mssql');
-const { body, Result } = require('express-validator');
+const {
+    pool
+} = require('mssql');
+const {
+    body,
+    Result
+} = require('express-validator');
 
 module.exports = class Divisions {
-    constructor(courseId, division, divisionNum, divisionCount, status1, countForTheoryBatch, countForPracticalBatch, countForTutorialBatch, countForWorkshopBatch) {
-        this.courseId = courseId;
-        this.divisionNum = divisionNum;
-        this.divisionCount = divisionCount;
-        this.status1 = status1;
-        this.countForPracticalBatch = countForPracticalBatch;
-        this.countForTheoryBatch = countForTheoryBatch;
-        this.division = division;
-        this.countForTutorialBatch = countForTutorialBatch;
-        this.countForWorkshopBatch = countForWorkshopBatch;
-    }
 
-    static fetchAll(rowcount) {
+    static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} d.id , cw.module_name AS course,
-            d.division, d.division_num, d.division_count, d.status1, d.count_for_theory_batch, d.count_for_practical_batch,
-            d.count_for_tutorial_batch, d.count_for_workshop_batch FROM [bncp-mum].divisions d
-            INNER JOIN [bncp-mum].initial_course_workload cw ON cw.id = d.course_id WHERE d.active = 1 ORDER BY d.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} d.id, d.division, d.division_num, d.division_count, IIF(d.count_for_theory_batch IS NULL , 0, d.count_for_theory_batch) AS count_for_theory_batch, IIF(d.count_for_practical_batch IS NULL , 0 , d.count_for_practical_batch) AS count_for_practical_batch, IIF(d.count_for_tutorial_batch IS NULL ,0, d.count_for_tutorial_batch) AS count_for_tutorial_batch, IIF(d.count_for_workshop_batch IS NULL ,0 , d.count_for_workshop_batch) AS count_for_workshop_batch, icw.module_name, CONVERT(NVARCHAR, d.active) as active, IIF(d.active = 1 ,'Yes', 'No') as status
+            FROM [${slug}].divisions d INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid WHERE d.active = 1 AND icw.active = 1 ORDER BY d.id DESC`)
         })
     }
 
-    static addDivision(body) {
+
+    static getCount(slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('courseId', sql.Int, body.courseId)
-            .input('division', sql.Char, body.division)
-            .input('divisionNum', sql.Int, body.divisionNum)
-            .input('divisionCount', sql.Int, body.divisionCount)
-            .input('countTheoryBatch', sql.Int, body.countTheoryBatch)
-            .input('countPracticalBatch', sql.Int, body.countPracticalBatch)
-            .input('countTutorialBatch', sql.Int, body.countTutorialBatch)
-            .input('countWorkshopBatch', sql.Int, body.countWorkshopBatch)
-            .query(`INSERT INTO [bncp-mum].divisions (course_id, division, division_num, division_count, 
-                count_for_theory_batch, count_for_practical_batch, count_for_tutorial_batch, count_for_workshop_batch) VAlUES (@courseId, @division,
-                    @divisionNum, @divisionCount, @countTheoryBatch, @countPracticalBatch, @countTutorialBatch, @countWorkshopBatch)`)
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].divisions WHERE active = 1`)
         })
     }
 
-    static getDivision(id) {
+
+    static pegination(pageNo, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('id', sql.Int, id).query(`SELECT id, course_id, division, division_num, division_count, count_for_theory_batch, count_for_practical_batch, count_for_tutorial_batch, count_for_workshop_batch FROM [bncp-mum].[divisions] WHERE id = @id`)
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT d.id, d.division, d.division_num, d.division_count, IIF(d.count_for_theory_batch IS NULL , 0, d.count_for_theory_batch) AS count_for_theory_batch, IIF(d.count_for_practical_batch IS NULL , 0 , d.count_for_practical_batch) AS count_for_practical_batch, IIF(d.count_for_tutorial_batch IS NULL ,0, d.count_for_tutorial_batch) AS count_for_tutorial_batch, IIF(d.count_for_workshop_batch IS NULL ,0 , d.count_for_workshop_batch) AS count_for_workshop_batch, icw.module_name, CONVERT(NVARCHAR, d.active) as active, IIF(d.active = 1 ,'Yes', 'No') as status
+                FROM [${slug}].divisions d INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid WHERE d.active = 1 AND icw.active = 1 ORDER BY d.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
-    static updateDivision(body) {
-        return poolConnection.then(pool => {
-            return pool.request().input('id', sql.Int, body.id)
-            .input('courseId', sql.Int, body.courseId)
-            .input('division', sql.Char, body.division)
-            .input('divisionNum', sql.Int, body.divisionNum)
-            .input('divisionCount', sql.Int, body.divisionCount)
-            .input('countTheoryBatch', sql.Int, body.countTheoryBatch)
-            .input('countPracticalBatch', sql.Int, body.countPracticalBatch)
-            .input('countTutorialBatch', sql.Int, body.countTutorialBatch)
-            .input('countWorkshopBatch', sql.Int, body.countWorkshopBatch)
-            .query(`UPDATE [bncp-mum].[divisions] SET course_id = @courseId, division = @division, division_num = @divisionNum, division_count = @divisionCount,
-             count_for_theory_batch = @countTheoryBatch, count_for_practical_batch = @countPracticalBatch, count_for_tutorial_batch = @countTutorialBatch, count_for_workshop_batch = @countWorkshopBatch WHERE id = @id`)
-        })
-    }
-
-    static search(rowcount, keyword) {
+    static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-            // .query(`SELECT TOP ${Number(rowcount)} d.id , cw.module_name AS course,
-            // d.division, d.division_num, d.division_count, d.status1, d.count_for_theory_batch, d.count_for_practical_batch,
-            // d.count_for_tutorial_batch, d.count_for_workshop_batch FROM [bncp-mum].divisions d
-            // INNER JOIN [bncp-mum].initial_course_workload cw ON cw.id = d.course_id WHERE d.active = 1
-            // AND cw.module_name LIKE @keyword OR d.division LIKE @keyword OR d.division_num LIKE @keyword OR d.division_count LIKE @keyword
-            // OR d.count_for_theory_batch LIKE @keyword OR d.count_for_practical_batch LIKE @keyword OR d.count_for_tutorial_batch LIKE @keyword
-            // OR d.count_for_workshop_batch LIKE @keyword ORDER BY d.id DESC`)
-            .query(`SELECT TOP ${Number(rowcount)} d.id , cw.module_name AS course,
-            d.division, d.division_num, d.division_count, d.status1,
-            CASE WHEN d.count_for_theory_batch  IS NULL THEN '' ELSE d.count_for_theory_batch END as count_for_theory_batch,
-            CASE WHEN d.count_for_practical_batch  IS NULL THEN '' ELSE d.count_for_practical_batch END as count_for_practical_batch,
-            CASE WHEN d.count_for_tutorial_batch  IS NULL THEN '' ELSE d.count_for_tutorial_batch END as count_for_tutorial_batch,
-            CASE WHEN d.count_for_workshop_batch  IS NULL THEN '' ELSE d.count_for_workshop_batch END as count_for_workshop_batch
-            FROM [bncp-mum].divisions d
-            INNER JOIN [bncp-mum].initial_course_workload cw ON cw.id = d.course_id WHERE d.active = 1
-            AND cw.module_name LIKE @keyword OR d.division LIKE @keyword OR d.division_num LIKE @keyword OR d.division_count LIKE @keyword
-            OR d.count_for_theory_batch LIKE @keyword OR d.count_for_practical_batch LIKE @keyword OR d.count_for_tutorial_batch LIKE @keyword
-            OR d.count_for_workshop_batch LIKE @keyword ORDER BY d.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} d.id, d.division, d.division_num, d.division_count, IIF(d.count_for_theory_batch IS NULL , 0, d.count_for_theory_batch) AS count_for_theory_batch, IIF(d.count_for_practical_batch IS NULL , 0 , d.count_for_practical_batch) AS count_for_practical_batch, IIF(d.count_for_tutorial_batch IS NULL ,0, d.count_for_tutorial_batch) AS count_for_tutorial_batch, IIF(d.count_for_workshop_batch IS NULL ,0 , d.count_for_workshop_batch) AS count_for_workshop_batch, icw.module_name, CONVERT(NVARCHAR, d.active) as active, IIF(d.active = 1 ,'Yes', 'No') as status
+                FROM [${slug}].divisions d INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid WHERE d.active = 1 AND icw.active = 1 AND (d.division LIKE @keyword OR d.division_count LIKE @keyword OR d.division_num LIKE @keyword OR d.count_for_theory_batch LIKE @keyword OR d.count_for_tutorial_batch LIKE @keyword OR d.count_for_workshop_batch LIKE @keyword OR icw.module_name LIKE @keyword) ORDER BY d.id DESC`)
         })
     }
 
 
-    static deleteDivision(id) {
-        return poolConnection.then(pool => {
-            return pool.request().input('id', sql.Int, id)
-            .query(`UPDATE [bncp-mum].divisions SET active = 0 WHERE id = @id`)
-        })
-    }
+
 }
-
-
