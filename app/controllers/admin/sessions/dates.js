@@ -7,15 +7,17 @@ const {
 const SessionDates = require('../../../models/SessionDates')
 const AcademicCalender  = require('../../../models/AcademicCalender')
 const SessionTypes  = require('../../../models/SessionTypes')
+const ProgramSessions = require('../../../models/ProgramSessions')
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionDates.getCount(res.locals.slug), AcademicCalender.fetchAll(100), SessionTypes.fetchAll(10, res.locals.slug)]).then(result => {
-            console.log('result:::::',result)
+        Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionDates.getCount(res.locals.slug), AcademicCalender.fetchAll(100), SessionTypes.fetchAll(10, res.locals.slug), ProgramSessions.fetchAll(10, res.locals.slug)]).then(result => {
+            console.log('result:::::programsession',result[0].recordset)
             res.render('admin/sessions/sessiondates.ejs', {
-                sessionDateList: result[0].recordset,
+                sessionDateList: result[4].recordset,
                 pageCount: result[1].recordset[0].count,
                 AcademicCalenderList: result[2].recordset,
-                sessionTypes: result[3].recordset
+                sessionTypes: result[3].recordset,
+                programSessions: result[4].recordset
             })
         })
     },
@@ -29,25 +31,31 @@ module.exports = {
             });
             return;
         }
+
+        console.log('req.body:::::::::',req.body)
+
         SessionDates.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
                 message: "Success"
             })
         }).catch(error => {
+            console.log('error:::::::::::',error)
             res.status(500).json(error.originalError.info.message)
         })
 
     },
 
     findOne: (req, res) => {
-        SessionTypes.findById(req.query.id, res.locals.slug).then(result => {
+       
+        SessionDates.findById(req.query.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
-                SessionData: result.recordset[0]
+                data: result.recordset[0]
             })
         }).catch(error => {
+            console.log("error:::::::::>>", error)
             res.status(500).json(error.originalError.info.message)
         })
     },
@@ -64,7 +72,7 @@ module.exports = {
 
         console.log('req.body::::::::::',req.body)
 
-        SessionTypes.update(req.body, res.locals.slug).then(result => {
+        SessionDates.update(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",

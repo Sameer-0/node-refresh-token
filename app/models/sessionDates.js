@@ -12,36 +12,44 @@ module.exports = class {
         this.end_date_id = end_date_id;
     }
 
-
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, program_session_lid, session_type_lid, start_date_id, end_date_id FROM [${slug}].session_dates WHERE active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
+            FROM [${slug}].session_dates sd 
+            INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
+            INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
+            INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
+            INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
+            INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
+            WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 ORDER BY sd.id DESC`)
         })
     }
 
     static save(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('Program Session', sql.Int, body.programSession)
-                .input('Session Type', sql.Int, body.sessionType)
-                .input('Start Date', sql.Int, body.startDate)
-                .input('End Date', sql.Int, body.endDate)
-                .query(`INSERT INTO [${slug}].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id) VALUES (@Program Session, @Session Type, @Start Date, @End Date)`)
+            return pool.request().input('ProgramSession', sql.Int, body.programId)
+                .input('SessionType', sql.Int, body.sessionType)
+                .input('StartDate', sql.Int, body.startDate)
+                .input('EndDate', sql.Int, body.endDate)
+                .query(`INSERT INTO [${slug}].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id) VALUES (@ProgramSession, @SessionType, @StartDate, @EndDate)`)
         })
     }
 
     static findById(id, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('Id', sql.Int, id)
-                .query(`SELECT id, name, description from [${slug}].session_types WHERE id = @Id`)
+                .query(`SELECT id, program_session_lid, session_type_lid, start_date_id, end_date_id FROM [${slug}].session_dates WHERE id = @Id`)
         })
     }
 
     static update(body, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('Id', sql.Int, body.id)
-                .input('Name', sql.NVarChar(50), body.name)
-                .input('Description', sql.NVarChar(100), body.description)
-                .query(`UPDATE [${slug}].session_types SET name = @Name, description = @Description WHERE id = @Id`)
+                .input('AcadSessionLid', sql.Int, body.acadSession)
+                .input('SessionTypeLid', sql.NVarChar(100), body.sessionType)
+                .input('StartDateId', sql.NVarChar(100), body.startDate)
+                .input('EndDateId', sql.NVarChar(100), body.endDate)
+                .query(`UPDATE [${slug}].session_dates SET program_sessions_lid = @AcadSessionLid, session_type_lid = @SessionTypeLid, start_date_id = @StartDateId, end_date_id = @EndDateId  WHERE id = @Id`)
         })
     }
 
@@ -64,8 +72,14 @@ module.exports = class {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(` SELECT TOP ${Number(rowcount)}  pt.id , pt.name, pt.description FROM 
-                [${slug}].session_types pt WHERE pt.active = 1 AND (pt.name LIKE @keyword OR pt.description LIKE @keyword) ORDER BY pt.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
+                FROM [${slug}].session_dates sd 
+                INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
+                INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
+                INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
+                INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
+                INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
+                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 AND (ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword) ORDER BY sd.id DESC`)
         })
     }
 
@@ -74,14 +88,21 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT id, name, description, active FROM [${slug}].session_types WHERE active = 1 ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
+                FROM [${slug}].session_dates sd 
+                INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
+                INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
+                INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
+                INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
+                INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
+                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 ORDER BY sd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [${slug}].session_types WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].session_dates WHERE active = 1`)
         })
     }
 

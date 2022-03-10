@@ -28,25 +28,28 @@
             <table class="table custom_row" id="sessionDateTable">
                 <thead>
                     <th>Sr No.</th>
-                    <th>Program</th>
+                    <th>Acad session</th>
                     <th>Session type</th>
                     <th>Session start date</th>
                     <th>Session end date</th>
+                    <th>Action</th>
                     <th>All <input type="checkbox" class="selectAll-Session-dates"></th>
                 </thead>
                 <tbody>
                     <% let count = 1 %>
-                    <% for (let session of sessionDateList) { %> 
+                    <% for (let program of sessionDateList) { %> 
                     <tr>
                         <td><%- count++ %></td>
-                        <td><%- session.name %></td>
-                        <td><%- session.description %></td>
+                        <td><%- program.acad_session %></td>
+                        <td><%- program.session_type %></td>
+                        <td><%- program.startDate %></td>
+                        <td><%- program.endDate %></td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-session"
-                                data-session-date-id="<%- session.id %>"></i>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-session-date"
+                                data-session-date-id="<%- program.id %>"></i>
                         </td>
                         <td>
-                            <input type="checkbox" data-session-type-id="<%- session.id %>" class="delete-session-type">
+                            <input type="checkbox" data-session-type-id="<%- program.id %>" class="delete-session-type">
                         </td>
                     </tr>
 
@@ -79,14 +82,19 @@
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <div class="mb-3">
-                    <label for="programSession" class="form-label">Enter Program Session</label>
-                    <input type="number" class="form-control" id="programSession" placeholder="Enter Name">
-                    <input type="hidden" id="Id">
+                    <label for="acadSession" class="form-label">Enter Acad session</label>
+                    <select name="acadSession" id="acadSession" class="form-control" >
+                        <option  disabled>--select--</option>
+                        <%for (let program of programSessions){%>
+                      <option value="<%- program.id %>"><%-program.acad_session %></option>
+                        <%}%>
+                    </select>
+                    <input type="hidden" id="Id">   
                 </div>
+
                 <div class="mb-3">
                     <label for="sessionType" class="form-label">Enter Session type</label>
-                  
-                    <select name="endtDate" id="endtDate" class="form-control" >
+                    <select name="sessionType" id="sessionType" class="form-control" >
                         <option value="" disabled>--select--</option>
                         <%for (let session of sessionTypes){%>
                       <option value="<%- session.id %>"><%-session.name %></option>
@@ -130,28 +138,28 @@
         $(document).ready(function () {
 
             $('.createSessionDate').on('click', function () {
-               
                 $.ajax({
                     url: '/admin/sessions/dates',
                     method: 'POST',
                     type: 'JSON',
                     data: {
-                        programSession: $('#programSession').val(),
-                        sessionType: $('#sessionType option').val(),
-                        startDate: $('#startDate option').val(),
-                        endDate: $('#endDate option').val(),
+                        programId: $('#programName').val(),
+                        sessionType: $('#sessionType').val(),
+                        startDate: $('#startDate').val(),
+                        endDate: $('#endtDate').val(),
                     },
                     success: (data) => {
                         location.reload()
                     },
                     error: err => {
+                        console.log('err::::::::',err)
                         showError(err.responseJSON)
                     }
                 })
             })
 
             //EDIT SESSION DATE TYPE
-            $("#sessionDateTable").on('click', '.edit-session', function () {
+            $("#sessionDateTable").on('click', '.edit-session-date', function () {
                 $(".createSessionDate").addClass('d-none')
                 $(".updateSessionDate").removeClass('d-none')
                 $("#add-session-modal-title").html('UPDATE SESSION DATE')
@@ -165,12 +173,14 @@
                     },
                     success: data => {
                         console.log(data)
-                        let Sessionobj = data.SessionData;
-                        console.log('Sessionobj',Sessionobj)
-                        $('#sessionName').val(Sessionobj.name)
-                        $('#description').val(Sessionobj.description)
-                        $('#Id').val(Sessionobj.id)
-                        $("#add-session-modal").modal('show')
+                        let obj = data.data;
+                    
+                        $('#programName').val(obj.program_session_lid).trigger('change')
+                        $('#sessionType').val(obj.session_type_lid).trigger('change')
+                        $('#startDate').val(obj.start_date_id).trigger('change')
+                        $('#endtDate').val(obj.end_date_id).trigger('change')
+                        $('#Id').val(obj.id)
+                        $("#add-sessiondate-modal").modal('show')
                     },
                     error: err => {
                         showError(err.responseJSON)
@@ -192,16 +202,19 @@
                 }
             })
 
-            // UPDATE PROGRAM TYPE 
+            // UPDATE SESSION DATE 
             $(".updateSessionDate").on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
+                    url: '/admin/sessions/dates',
                     method: 'PUT',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
-                        name: $('#sessionName').val(),
-                        description: $('#description').val()
+                        acadSession: $('#acadSession').val(),
+                        sessionType: $('#sessionType').val(),
+                        startDate: $('#startDate').val(),
+                        endDate: $('#endtDate').val(),
+
                     },
                     success: (data) => {
                         if (data.status == 200) {
@@ -210,7 +223,7 @@
                             $(".errorMsg").html(data.message)
                         }
                     },
-                    error: err => {
+                    error: err => { 
                         showError(err.responseJSON)
                     }
                 })
@@ -229,7 +242,7 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/sessions/types',
+                        url: '/admin/sessions/dates',
                         type: 'DELETE',
                         data: {
                             Ids: JSON.stringify(deleteids)
@@ -250,7 +263,7 @@
             //Bulk Delete
             $(".bulk-delete-session-type").on('click', function () {
                 let ApiObj = {
-                    url: '/admin/sessions/types',
+                    url: '/admin/sessions/dates',
                     type: 'PATCH',
                     data: {},
                     dataType: 'JSON'
@@ -270,7 +283,7 @@
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
                     type: "GET",
-                    url: "/admin/sessions/types/search",
+                    url: "/admin/sessions/dates/search",
                     data: {
                         keyword: keyword
                     },
@@ -306,7 +319,7 @@
         }).on("page", function (event, num) {
             $.ajax({
                 type: "POST",
-                url: "/admin/sessions/types/pagination",
+                url: "/admin/sessions/dates/pagination",
                 data: {
                     pageNo: num
                 },
@@ -354,23 +367,39 @@
             }
 
 
+            
             function showError(errors) {
                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-                if (errors.data.length > 0) {
-                    $(errors.data).each(function (key, value) {
-                        $.each(this, function (key, value) {
-                            errorHtml +=
-                                `<li>${key} ${value}</li>`
-                        });
-                    });
-                }
+                    <h3>Error</h3>`;
+                errorHtml += `<ul>`;
+                errors.errors.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+
                 errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                 $("#errorHtml").html(errorHtml)
             }
+
+
+            // function showError(errors) {
+            //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            //         <h3>Error</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            //     if (errors.data.length > 0) {
+            //         $(errors.data).each(function (key, value) {
+            //             $.each(this, function (key, value) {
+            //                 errorHtml +=
+            //                     `<li>${key} ${value}</li>`
+            //             });
+            //         });
+            //     }
+            //     errorHtml +=
+            //         `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            //     $("#errorHtml").html(errorHtml)
+            // }
         })
     </script>
     <%- include("../partials/footerEnd") %>
