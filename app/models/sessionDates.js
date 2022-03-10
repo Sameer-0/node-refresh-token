@@ -58,18 +58,19 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request();
             JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [${slug}].session_types SET active = 0  WHERE id = ${element.id}`)
+                return request.query(`UPDATE [${slug}].session_dates SET active = 0  WHERE id = ${element.id}`)
             });
         })
     }
 
     static deleteAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [${slug}].session_types SET active = 0 WHERE active = 1`)
+            return pool.request().query(`UPDATE [${slug}].session_dates SET active = 0 WHERE active = 1`)
         })
     }
 
     static search(rowcount, keyword, slug) {
+        console.log(rowcount, keyword, slug)
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
@@ -79,10 +80,10 @@ module.exports = class {
                 INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
-                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 AND (ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword) ORDER BY sd.id DESC`)
+                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 AND (ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword OR acs.acad_session LIKE @keyword) 
+				ORDER BY sd.id DESC`)
         })
     }
-
 
     static pagination(pageNo, slug) {
         return poolConnection.then(pool => {
