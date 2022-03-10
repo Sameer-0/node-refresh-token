@@ -81,21 +81,21 @@
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
+                <input type="hidden" id="Id">
                 <div class="mb-3">
                     <label for="acadSession" class="form-label">Enter Acad session</label>
                     <select name="acadSession" id="acadSession" class="form-control" >
-                        <option  disabled>--select--</option>
+                        <option  value="">--select--</option>
                         <%for (let program of programSessions){%>
                       <option value="<%- program.id %>"><%-program.acad_session %></option>
                         <%}%>
                     </select>
-                    <input type="hidden" id="Id">   
                 </div>
 
                 <div class="mb-3">
                     <label for="sessionType" class="form-label">Enter Session type</label>
                     <select name="sessionType" id="sessionType" class="form-control" >
-                        <option value="" disabled>--select--</option>
+                        <option value="" >--select--</option>
                         <%for (let session of sessionTypes){%>
                       <option value="<%- session.id %>"><%-session.name %></option>
                         <%}%>
@@ -105,7 +105,7 @@
                 <div class="mb-3">
                     <label for="startDate" class="form-label">Enter Start Date</label>
                     <select name="startDate" id="startDate" class="form-control" >
-                        <option value="" disabled>--select--</option>
+                        <option value="" >--select--</option>
                         <%for (let slot of AcademicCalenderList){%>
                       <option value="<%- slot.id %>"><%-slot.date %></option>
                         <%}%>
@@ -115,7 +115,7 @@
                 <div class="mb-3">
                     <label for="endDate" class="form-label">Enter End Date</label>
                     <select name="endtDate" id="endtDate" class="form-control" >
-                        <option value="" disabled>--select--</option>
+                        <option value="" >--select--</option>
                         <%for (let slot of AcademicCalenderList){%>
                       <option value="<%- slot.id %>"><%-slot.date %></option>
                         <%}%>
@@ -138,12 +138,13 @@
         $(document).ready(function () {
 
             $('.createSessionDate').on('click', function () {
+                console.log($('#acadSession').val())
                 $.ajax({
                     url: '/admin/sessions/dates',
                     method: 'POST',
                     type: 'JSON',
                     data: {
-                        programId: $('#programName').val(),
+                        acadSession: $('#acadSession').val(),
                         sessionType: $('#sessionType').val(),
                         startDate: $('#startDate').val(),
                         endDate: $('#endtDate').val(),

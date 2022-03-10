@@ -53,7 +53,6 @@ module.exports = function validate(method) {
         }
 
 
-
         case 'createSlug': {
             return [
                 check('slugName').not().isEmpty().withMessage('slug name not be empty'),
@@ -366,6 +365,25 @@ module.exports = function validate(method) {
                 check('task').not().isEmpty().withMessage('task must not be empty'),
                 check('description').not().isEmpty().withMessage('description must not be empty'),
                 check('tags').not().isEmpty().withMessage('tags must not be empty')
+            ]
+        }
+
+        case 'SessionDate':{
+            return[
+                check('acadSession').not().isEmpty().trim().escape().withMessage('Acad Session must not be empty'),
+                check('sessionType').not().isEmpty().trim().escape().withMessage('Session type must not be empty'),
+                check('startDate').not().isEmpty().trim().escape().withMessage('Start Date must not be empty'),
+                check('endDate').not().isEmpty().trim().escape().withMessage('End Date must not be empty')
+            ]
+        }
+
+        case 'SessionDateUpdate':{
+            return[
+                check('id').not().isEmpty().trim().escape().isNumeric().withMessage('Id must not be empty'),
+                check('acadSession').not().isEmpty().trim().escape().withMessage('Acad Session must not be empty'),
+                check('sessionType').not().isEmpty().trim().escape().withMessage('Session type must not be empty'),
+                check('startDate').not().isEmpty().trim().escape().withMessage('Start Date must not be empty'),
+                check('endDate').not().isEmpty().trim().escape().withMessage('End Date must not be empty')
             ]
         }
 

@@ -13,7 +13,7 @@ module.exports = {
         Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionDates.getCount(res.locals.slug), AcademicCalender.fetchAll(100), SessionTypes.fetchAll(10, res.locals.slug), ProgramSessions.fetchAll(10, res.locals.slug)]).then(result => {
             console.log('result:::::programsession',result[0].recordset)
             res.render('admin/sessions/sessiondates.ejs', {
-                sessionDateList: result[4].recordset,
+                sessionDateList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 AcademicCalenderList: result[2].recordset,
                 sessionTypes: result[3].recordset,
@@ -79,6 +79,7 @@ module.exports = {
 
             })
         }).catch(error => {
+            console.log('error::::::::::>>',error)
             res.status(500).json(error.originalError.info.message)
         })
     },

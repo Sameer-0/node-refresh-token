@@ -27,7 +27,7 @@ module.exports = class {
 
     static save(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('ProgramSession', sql.Int, body.programId)
+            return pool.request().input('ProgramSession', sql.Int, body.acadSession)
                 .input('SessionType', sql.Int, body.sessionType)
                 .input('StartDate', sql.Int, body.startDate)
                 .input('EndDate', sql.Int, body.endDate)
@@ -46,10 +46,10 @@ module.exports = class {
         return poolConnection.then(pool => {
             return pool.request().input('Id', sql.Int, body.id)
                 .input('AcadSessionLid', sql.Int, body.acadSession)
-                .input('SessionTypeLid', sql.NVarChar(100), body.sessionType)
-                .input('StartDateId', sql.NVarChar(100), body.startDate)
-                .input('EndDateId', sql.NVarChar(100), body.endDate)
-                .query(`UPDATE [${slug}].session_dates SET program_sessions_lid = @AcadSessionLid, session_type_lid = @SessionTypeLid, start_date_id = @StartDateId, end_date_id = @EndDateId  WHERE id = @Id`)
+                .input('SessionTypeLid', sql.Int, body.sessionType)
+                .input('StartDateId', sql.Int, body.startDate)
+                .input('EndDateId', sql.Int, body.endDate)
+                .query(`UPDATE [${slug}].session_dates SET program_session_lid = @AcadSessionLid, session_type_lid = @SessionTypeLid, start_date_id = @StartDateId, end_date_id = @EndDateId  WHERE id = @Id`)
         })
     }
 
