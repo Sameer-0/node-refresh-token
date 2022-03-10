@@ -56,8 +56,6 @@ module.exports = class {
     }
 
 
-
-
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
@@ -74,9 +72,9 @@ module.exports = class {
         })
     }
 
-    static deleteAll() {
+    static deleteAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [dbo].buildings SET active = 0 WHERE active = 1`)
+            return pool.request().query(`UPDATE [${slug}].holidays SET active = 0 WHERE active = 1`)
         })
     }
 

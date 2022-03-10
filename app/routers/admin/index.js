@@ -9,13 +9,16 @@ function AdminRoute(app){
     const sessions = require('../../routers/admin/sessions');
     const events = require('../../routers/admin/events');
     const holidays = require('../../routers/admin/holidays');
+    const courseworkload = require('../../routers/admin/courseworkload');
 
+    
     app.use('/admin/', isLoggedIn, adminDashboard);
     app.use('/admin/', isLoggedIn, days);
     app.use('/admin/', isLoggedIn, program);
     app.use('/admin/', isLoggedIn, sessions);
     app.use('/admin/', isLoggedIn, events);
     app.use('/admin/', isLoggedIn, holidays);
+    app.use('/admin/', isLoggedIn, courseworkload);
 }
 
 module.exports = AdminRoute;
