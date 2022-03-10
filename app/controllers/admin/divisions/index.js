@@ -5,26 +5,22 @@ const {
 } = require('express-validator');
 
 
-const Programs = require('../../../models/Programs')
-const ProgramTypes = require('../../../models/programType')
+
+const Divisions = require('../../../models/Divisions')
+
 module.exports = {
     getPage: (req, res) => {
-
-        Promise.all([Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), Programs.getCount(res.locals.slug)]).then(result => {
-            console.log('result[0].recordset:::::::::', result[0].recordset)
-            console.log('result[0].recordset:::::::::', result[1].recordset)
-            console.log('result[0].recordset:::::::::', result[2].recordset)
-            res.render('admin/programs/index', {
-                programList: result[0].recordset,
-                programTypeList: result[1].recordset,
-                pageCount: result[2].recordset[0].count
+        Promise.all([Divisions.fetchAll(10, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
+            res.render('admin/divisions/index', {
+                divisionList: result[0].recordset,
+                pageCount: result[1].recordset[0].count
             })
         })
     },
 
     search: (req, res) => {
         let rowcount = 10;
-        Programs.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        Divisions.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -45,8 +41,7 @@ module.exports = {
         })
     },
 
-    pagination: (req, res) => {
-
+    pagination: (req, res, ) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -56,12 +51,23 @@ module.exports = {
             return;
         }
 
-        Programs.pegination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
+        Divisions.pegination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
                 data: result.recordset,
                 length: result.recordset.length
+            })
+        }).catch(error => {
+            throw error
+        })
+    },
+
+    changestatus: (req, res) => {
+        Divisions.changeStatus(req.body, res.locals.slug).then(result => {
+            res.json({
+                status: "200",
+                message: "Success",
             })
         }).catch(error => {
             throw error

@@ -10,7 +10,7 @@ function AdminRoute(app){
     const events = require('../../routers/admin/events');
     const holidays = require('../../routers/admin/holidays');
     const courseworkload = require('../../routers/admin/courseworkload');
-
+    const divisions = require('../../routers/admin/divisions');
     
     app.use('/admin/', isLoggedIn, adminDashboard);
     app.use('/admin/', isLoggedIn, days);
@@ -19,6 +19,7 @@ function AdminRoute(app){
     app.use('/admin/', isLoggedIn, events);
     app.use('/admin/', isLoggedIn, holidays);
     app.use('/admin/', isLoggedIn, courseworkload);
+    app.use('/admin/', isLoggedIn, divisions);
 }
 
 module.exports = AdminRoute;
