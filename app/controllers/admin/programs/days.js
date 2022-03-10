@@ -13,7 +13,6 @@ module.exports = {
     },
 
     search: (req, res) => {
-        console.log('HERE::::::::::::::>>')
         let rowcount = 10;
         ProgramDays.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
