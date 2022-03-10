@@ -23,7 +23,7 @@ module.exports = {
             add_holidays: JSON.parse(req.body.inputJSON)
         }
 
-        console.log('object:::::::::::::',object)
+        console.log('object:::::::::::::', object)
 
         Holidays.save(object, res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
@@ -71,7 +71,10 @@ module.exports = {
     deleteAll: (req, res) => {
         Holidays.deleteAll(res.locals.slug).then(result => {
 
-            res.status(200).json({status:200,description:"Successfully deleted"})
+            res.status(200).json({
+                status: 200,
+                description: "Successfully deleted"
+            })
         }).catch(error => {
             res.status(500).json(error.originalError.info.message)
         })
@@ -137,5 +140,5 @@ module.exports = {
         })
     }
 
-    
+
 }

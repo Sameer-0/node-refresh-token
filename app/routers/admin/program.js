@@ -6,6 +6,7 @@ const {
 } = require('express-validator');
 
 const program = require("../../controllers/admin/programs/program")
+const days = require("../../controllers/admin/programs/days")
 const programType = require('../../controllers/admin/programs/programType')
 const validator =  require('../../middlewares/validator')
 const validate = require('../../middlewares/validate')
@@ -23,4 +24,10 @@ router.get('/programs/types/findOne', programType.findOne)
 router.get('/programs/types/search', validate('search'), programType.search)
 router.patch('/programs/types',  programType.deleteAll)
 router.post('/programs/pagination', validate('pagination'), programType.pagination)
+
+
+//PROGRAM DAYS
+router.get('/programs/days', days.getPage)
+router.post('/programs/days/pagination', days.pagination)
+router.get('/programs/days/search', days.search)
 module.exports = router;
