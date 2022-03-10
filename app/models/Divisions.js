@@ -47,5 +47,16 @@ module.exports = class Divisions {
     }
 
 
+    static changeStatus(body, slug) {
+        console.log(body, slug)
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('Id', sql.Int, body.id)
+            .input('Status', sql.Bit, body.status)
+            .query(`UPDATE [${slug}].divisions SET active = @Status WHERE id = @Id`)
+        })
+    }
+
+
 
 }

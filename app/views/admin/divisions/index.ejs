@@ -66,11 +66,11 @@
                         <td><%- division.count_for_workshop_batch %></td>
                         <td><%- division.module_name %></td>
                         <td><label class="switch">
-                            <input type="checkbox" class="changeStatus" data-id="<%- division.id %>"
-                                data-status="<%- division.status %>"
-                                <%- division.status == 'Yes' ? 'Checked' :  ''  %>>
-                            <span class="switch-slider round"></span>
-                        </label></td>
+                                <input type="checkbox" class="changeStatus" data-id="<%- division.id %>"
+                                    data-status="<%- division.status %>"
+                                    <%- division.status == 'Yes' ? 'Checked' :  ''  %>>
+                                <span class="switch-slider round"></span>
+                            </label></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -110,6 +110,25 @@
                 chnageStatus($(this).attr('data-id'), 0)
             }
         })
+
+        function chnageStatus(id, status) {
+            let ApiObj = {
+                url: '/admin/divisions/changestatus',
+                type: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                //loadDays()
+            }).catch(error => {
+
+            })
+        }
 
 
         // SEARCH PROGRAM TYPE

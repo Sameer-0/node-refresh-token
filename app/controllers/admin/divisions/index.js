@@ -5,14 +5,15 @@ const {
 } = require('express-validator');
 
 
+
 const Divisions = require('../../../models/Divisions')
 
 module.exports = {
     getPage: (req, res) => {
         Promise.all([Divisions.fetchAll(10, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
-            res.render('admin/divisions/index',{
+            res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
-                pageCount:result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count
             })
         })
     },
@@ -56,6 +57,17 @@ module.exports = {
                 message: "Quotes fetched",
                 data: result.recordset,
                 length: result.recordset.length
+            })
+        }).catch(error => {
+            throw error
+        })
+    },
+
+    changestatus: (req, res) => {
+        Divisions.changeStatus(req.body, res.locals.slug).then(result => {
+            res.json({
+                status: "200",
+                message: "Success",
             })
         }).catch(error => {
             throw error
