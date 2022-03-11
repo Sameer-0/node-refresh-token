@@ -112,6 +112,7 @@
         })
 
         function chnageStatus(id, status) {
+            console.log(id, status)
             let ApiObj = {
                 url: '/admin/divisions/changestatus',
                 type: 'POST',
@@ -123,8 +124,25 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log(result)
-                //loadDays()
+               
+                loadAll()
+            }).catch(error => {
+
+            })
+        }
+
+
+        function loadAll() {
+            let ApiObj = {
+                url: '/admin/divisions/getAll',
+                type: 'GET',
+                data: {},
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('Result::::::::::::::::::::',result.result)
+                AjaxTable(result.result)
             }).catch(error => {
 
             })

@@ -12,7 +12,7 @@ router.get('/divisions', index.getPage)
 router.get('/divisions/search', index.search)
 router.post('/divisions/pagination', index.pagination)
 router.post('/divisions/changestatus', index.changestatus)
-
+router.get('/divisions/getAll', index.getAll)
 //BATCHES
 router.get('/divisions/batches', batches.getPage)
 
