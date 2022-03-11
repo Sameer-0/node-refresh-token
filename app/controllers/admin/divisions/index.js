@@ -3,6 +3,7 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
+const res = require('express/lib/response');
 
 
 
@@ -14,6 +15,15 @@ module.exports = {
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count
+            })
+        })
+    },
+
+    getAll: (req, res) => {
+        Divisions.fetchAll(10, res.locals.slug).then(result => {
+            res.status(200).json({
+                status: 200,
+                result: result.recordset
             })
         })
     },
