@@ -1,4 +1,4 @@
-const RoomTransactions = require("../../models/RoomTransactions")
+const RoomTransactions = require("../../models/RoomTransactionsDbo")
 
 module.exports = {
     getPage: (req, res) => {

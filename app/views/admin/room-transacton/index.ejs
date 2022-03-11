@@ -1,0 +1,280 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+
+    <!-- <div class="row my-3 gx-3 gy-3 row1-data">
+        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
+            <div class="card row1-data-card text-center">
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <a href="/admin/programs/types"><img src="/icon_imgs/room-type.PNG" alt="">
+                        <p class="fw-normal pt-1">BATCHES</p>
+                    </a></div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>ROOM TRANSACTIONS</h5>
+            </div>
+            <div>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-transaction-modal"><i
+                        class="fas fa-plus"></i></button>
+                <!-- <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button> -->
+            </div>
+        </div>
+
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            <table class="table custom_row" id="roomTransactionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Transaction Type</th>
+                    <th>Stage</th>
+                    <th>Org Name</th>
+                    <th>Campus</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <%let count = 1;%>
+                    <% for(let trans of transactionList) {%>
+                    <tr>
+                        <td><%- count++ %></td>
+                        <td><%- trans.transaction_type %></td>
+                        <td><%- trans.stage %></td>
+                        <td><%- trans.org_name %></td>
+                        <td><%- trans.campus_abbr %></td>
+                        <td><%- trans.username %></td>
+                        <td><a data-id="<%- trans.id %>"><i class="fa fa-edit"></i></a>
+                            <a title="view details" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries: <%- pageCount %> </p>
+        </div>
+        <div>
+            <p id="pagination"></p>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="open-transaction-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">ADD ROOM TRANSACTIONS</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="table-responsive ">
+                <table class="table " id="add-more-building-table">
+                    <thead>
+                        <th>Transaction Type</th>
+                        <th>Stage</th>
+                        <th>Org Name</th>
+                        <th>Campus</th>
+                        <th>Username</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input name="building_name" id="building_name" type="text" class="form-control"
+                                placeholder="Building Name" required></td>
+                            <td><input name="building_name" id="building_name" type="text" class="form-control"
+                                placeholder="Building Name" required></td>
+                            <td><input name="building_name" id="building_name" type="text" class="form-control"
+                                placeholder="Building Name" required></td>
+                            <td><input name="building_name" id="building_name" type="text" class="form-control"
+                                placeholder="Building Name" required></td>
+                            <td><input name="building_name" id="building_name" type="text" class="form-control"
+                                placeholder="Building Name" required></td>
+                            <td><input name="building_name" id="building_name" type="text" class="form-control"
+                                placeholder="Building Name" required></td>
+                        </tr>
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div id="errorMsg"></div>
+            <button type="button" class="btn btn-success  btn-sm" id="add-more-building"><i
+                    class="fas fa-plus"></i>
+                Add
+                More Fields</button>
+            <button type="submit" class="btn  createBuilding modal-inputform-btn">Create</button>
+            <button type="submit" class="btn  updateBuilding modal-inputform-btn d-none">Update
+                </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
+</script>
+<script>
+    $(document).ready(function () {
+
+
+        //Create 
+        $('#roomTransactionTable').on('change', '.changeStatus', function () {
+            //console.log($(this).attr('data-id'))
+            //console.log($(this).attr('data-status'))
+            if ($(this).is(':checked')) {
+                //console.log('Yes')
+                chnageStatus($(this).attr('data-id'), 1)
+            } else {
+                //console.log('No')
+                chnageStatus($(this).attr('data-id'), 0)
+            }
+        })
+
+        function chnageStatus(id, status) {
+            console.log(id, status)
+            let ApiObj = {
+                url: '/admin/room-transactions/changestatus',
+                type: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                loadAll()
+            }).catch(error => {
+
+            })
+        }
+
+
+        function loadAll() {
+            let ApiObj = {
+                url: '/admin/room-transactions/getAll',
+                type: 'GET',
+                data: {},
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                AjaxTable(result.result)
+            }).catch(error => {
+
+            })
+        }
+
+
+        // SEARCH PROGRAM TYPE
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "GET",
+                url: "/admin/room-transactions/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    AjaxtTable(data.data)
+                }
+            })
+        }, 500));
+
+
+
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
+        console.log("Page Count=====>>>", pageCount)
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+            $.ajax({
+                type: "POST",
+                url: "/admin/room-transactions/pagination",
+                data: {
+                    pageNo: num
+                },
+                success: function (data) {
+                    AjaxtTable(data.data)
+                }
+            })
+        });
+
+
+        function AjaxtTable(divisionList) {
+            let AjaxTable = `<table class="table custom_row" id="roomTransactionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Transaction Type</th>
+                    <th>Stage</th>
+                    <th>Org Name</th>
+                    <th>Campus</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                </thead>`;
+            if (divisionList.length > 0) {
+                let count = 1;
+                for (let trans of divisionList) {
+                    AjaxTable +=
+                        `<tr>
+                            <td>${count++}</td>
+                        <td>${trans.transaction_type}</td>
+                        <td>${trans.stage}</td>
+                        <td>${trans.org_name}</td>
+                        <td>${trans.campus_abbr}</td>
+                        <td>${trans.username}</td>
+                        <td><a data-id="${trans.id}"><i class="fa fa-edit"></i></a></td>
+                            </tr>`
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                                <td colspan="7">No Data Found</td>
+                            </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+            $("#roomTransactionTable").html(AjaxTable);
+        }
+
+
+    })
+</script>
+<%- include("../partials/footerEnd") %>

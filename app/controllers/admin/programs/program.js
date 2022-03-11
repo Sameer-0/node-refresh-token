@@ -11,9 +11,6 @@ module.exports = {
     getPage: (req, res) => {
 
         Promise.all([Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), Programs.getCount(res.locals.slug)]).then(result => {
-            console.log('result[0].recordset:::::::::', result[0].recordset)
-            console.log('result[0].recordset:::::::::', result[1].recordset)
-            console.log('result[0].recordset:::::::::', result[2].recordset)
             res.render('admin/programs/index', {
                 programList: result[0].recordset,
                 programTypeList: result[1].recordset,
