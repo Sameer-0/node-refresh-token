@@ -4,24 +4,21 @@ const {
     validationResult
 } = require('express-validator');
 
+const RoomTransactions = require('../../../models/RoomTransactions')
 
-const Programs = require('../../../models/Programs')
-const ProgramTypes = require('../../../models/programType')
 module.exports = {
     getPage: (req, res) => {
-
-        Promise.all([Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), Programs.getCount(res.locals.slug)]).then(result => {
-            res.render('admin/programs/index', {
-                programList: result[0].recordset,
-                programTypeList: result[1].recordset,
-                pageCount: result[2].recordset[0].count
+        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug)]).then(result => {
+            res.render('admin/room-transacton/index', {
+                transactionList: result[0].recordset,
+                pageCount: result[1].recordset[0].count
             })
         })
     },
 
     search: (req, res) => {
         let rowcount = 10;
-        Programs.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        RoomTransactions.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -42,8 +39,7 @@ module.exports = {
         })
     },
 
-    pagination: (req, res) => {
-
+    pagination: (req, res, ) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -53,7 +49,7 @@ module.exports = {
             return;
         }
 
-        Programs.pegination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
+        RoomTransactions.pegination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
@@ -63,5 +59,5 @@ module.exports = {
         }).catch(error => {
             throw error
         })
-    }
+    },
 }
