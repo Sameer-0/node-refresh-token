@@ -4,30 +4,21 @@ const {
     validationResult
 } = require('express-validator');
 
-const Divisions = require('../../../models/Divisions')
+const RoomTransactions = require('../../../models/RoomTransactions')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([Divisions.fetchAll(10, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
-            res.render('admin/divisions/index', {
-                divisionList: result[0].recordset,
+        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug)]).then(result => {
+            res.render('admin/room-transacton/index', {
+                transactionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count
-            })
-        })
-    },
-
-    getAll: (req, res) => {
-        Divisions.fetchAll(10, res.locals.slug).then(result => {
-            res.status(200).json({
-                status: 200,
-                result: result.recordset
             })
         })
     },
 
     search: (req, res) => {
         let rowcount = 10;
-        Divisions.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        RoomTransactions.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -58,7 +49,7 @@ module.exports = {
             return;
         }
 
-        Divisions.pegination(req.body.pageNo, res.locals.slug).then(result => {
+        RoomTransactions.pegination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
@@ -69,15 +60,4 @@ module.exports = {
             throw error
         })
     },
-
-    changestatus: (req, res) => {
-        Divisions.changeStatus(req.body, res.locals.slug).then(result => {
-            res.json({
-                status: "200",
-                message: "Success",
-            })
-        }).catch(error => {
-            throw error
-        })
-    }
 }

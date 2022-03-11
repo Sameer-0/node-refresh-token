@@ -11,6 +11,7 @@ function AdminRoute(app){
     const holidays = require('../../routers/admin/holidays');
     const courseworkload = require('../../routers/admin/courseworkload');
     const divisions = require('../../routers/admin/divisions');
+    const roomtransacton = require('../../routers/admin/room-transacton');
     
     app.use('/admin/', isLoggedIn, adminDashboard);
     app.use('/admin/', isLoggedIn, days);
@@ -20,6 +21,7 @@ function AdminRoute(app){
     app.use('/admin/', isLoggedIn, holidays);
     app.use('/admin/', isLoggedIn, courseworkload);
     app.use('/admin/', isLoggedIn, divisions);
+    app.use('/admin/', isLoggedIn, roomtransacton);
 }
 
 module.exports = AdminRoute;
