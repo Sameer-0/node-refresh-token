@@ -60,13 +60,13 @@ module.exports = {
 
     checkPermission: (req, res, next) => {
 
-
+        console.log('req.sessionID>>>>>>>>>>>>>> : ', req.sessionID)
         console.log('endpoint>>>>>>>>>>>>>> : ', req.originalUrl)
         console.log('method>>>>>>>>>>>>>> : ', req.method)
     
         let UserPermission = store.get(req.sessionID, async (err, result) => {
             if (result.permissions) {
-                console.log(result.permissions)
+                console.log('Resulr::::::::::',result.permissions)
                 for(let permission of result.permissions) {
                     if(permission.url_path === req.originalUrl && permission.name === req.method) {
                         return next();
