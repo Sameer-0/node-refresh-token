@@ -67,7 +67,7 @@ module.exports = class DivisionBatches {
 
     static getCount(slug) {
         return poolConnection.then(pool => {
-            let request = pool.request()
+            let request = pool.request() 
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].division_batches WHERE active = 1`)
         })
     }

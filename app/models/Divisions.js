@@ -22,7 +22,7 @@ module.exports = class Divisions {
 
 
     static getCount(slug) {
-        return poolConnection.then(pool => {
+        return poolConnection.then(pool => { 
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].divisions WHERE active = 1`)
         })
