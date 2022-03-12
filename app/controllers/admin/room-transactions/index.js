@@ -5,13 +5,22 @@ const {
 } = require('express-validator');
 
 const RoomTransactions = require('../../../models/RoomTransactions')
+const RoomTransactionTypes = require('../../../models/RoomTransactionTypes')
+const RoomTransactionStage =  require('../../../models/RoomTransactionStages')
+const Organizations =  require('../../../models/Organizations')
+const Campuses =  require('../../../models/Campuses')
+
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug)]).then(result => {
+        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), RoomTransactionStage.fetchAll(100), Organizations.fetchAll(100), Campuses.fetchAll(100)]).then(result => {
             res.render('admin/room-transacton/index', {
                 transactionList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                transactionTypes: result[2].recordset,
+                transactionStage: result[3].recordset,
+                orgnizations:result[4].recordset,
+                campuses:result[5].recordset
             })
         })
     },

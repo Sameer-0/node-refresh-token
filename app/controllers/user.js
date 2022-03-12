@@ -150,7 +150,7 @@ module.exports = {
 
             let userDataSet = await Promise.all([User.getUserModules(userData.recordset[0].id, res.locals.slug), UserPermission.getPermissionsByUserId(userData.recordset[0].id, res.locals.slug)]).then(results => results);
 
-            console.log('userDataSet::::::',userDataSet)
+            console.log('userDataSet::::::::::::::::>>>',userDataSet[1].recordset)
 
             req.session.permissions = userDataSet[1].recordset;
 
