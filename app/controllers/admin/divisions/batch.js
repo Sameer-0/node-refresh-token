@@ -28,7 +28,7 @@ module.exports = {
     },
 
     getAll: (req, res) => {
-        Divisions.fetchAll(10, res.locals.slug).then(result => {
+        DivisionBatches.fetchAll(10, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
                 result: result.recordset
@@ -38,7 +38,8 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        Divisions.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        DivisionBatches.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+            console.log('req.query.keyword::::',req.query.keyword)
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -82,7 +83,7 @@ module.exports = {
     },
 
     changestatus: (req, res) => {
-        Divisions.changeStatus(req.body, res.locals.slug).then(result => {
+        DivisionBatches.changeStatus(req.body, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Success",

@@ -88,10 +88,10 @@
         $('#batchesTable').on('change', '.changeStatus', function () {
   
             if ($(this).is(':checked')) {
-                //console.log('Yes')
+           
                 chnageStatus($(this).attr('data-id'), 1)
             } else {
-                //console.log('No')
+               
                 chnageStatus($(this).attr('data-id'), 0)
             }
         })
@@ -119,7 +119,7 @@
 
         function loadAll() {
             let ApiObj = {
-                url: '/admin/divisions/getAll',
+                url: '/admin/divisions/batches/getAll',
                 type: 'GET',
                 data: {},
                 dataType: 'JSON'
@@ -136,10 +136,12 @@
 
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
+            
             let keyword = $("#searchkeyword").val()
+            console.log('searching',keyword)
             $.ajax({
                 type: "GET",
-                url: "/admin/divisions/search",
+                url: "/admin/divisions/batches/search",
                 data: {
                     keyword: keyword
                 },
