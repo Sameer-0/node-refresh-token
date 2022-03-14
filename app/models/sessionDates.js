@@ -26,7 +26,7 @@ module.exports = class {
     }
 
     static save(body, slug) {
-        return poolConnection.then(pool => {
+        return poolConnection.then(pool => { 
             return pool.request().input('ProgramSession', sql.Int, body.acadSession)
                 .input('SessionType', sql.Int, body.sessionType)
                 .input('StartDate', sql.Int, body.startDate)

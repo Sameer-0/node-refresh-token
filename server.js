@@ -55,7 +55,7 @@ app.use(
         name: 'token',
         cookie: {
             secure: false,
-            maxAge: 1000 * 60 * 30,
+            maxAge: 1000 * 60 * 60,
             httpOnly: false,
             sameSite: false,
             path: '/'

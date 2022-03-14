@@ -76,7 +76,7 @@
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h5 class="modal-title" id="add-roomtransaction-stages-title">ADD ROOM TRANSACTION TYPES</h5>
-                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
@@ -90,7 +90,8 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name">
+                                <td> <input type="text" class="form-control" id="name" name="name"
+                                        placeholder="Enter Name">
                                     <input type="hidden" id="Id" name="Id">
                                     <input type="hidden" id="active" name="active">
                                 </td>
@@ -106,23 +107,24 @@
                         </tbody>
                     </table>
                 </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction-types"><i
-                    class="fas fa-plus"></i>
-                Add
-                More</button>
-                <button type="submit" class="btn  createRoomTransactionTypes modal-inputform-btn">Create</button>
-                <button type="submit" class="btn  updateRoomTransactionTypes modal-inputform-btn d-none">Update</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction-types">
+                        <i class="fas fa-plus"></i>
+                        Add More
+                    </button>
+                    <button type="submit" class="btn  createRoomTransactionTypes modal-inputform-btn">Create</button>
+                    <button type="submit"
+                        class="btn  updateRoomTransactionTypes modal-inputform-btn d-none">Update</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<%- include("../partials/footer") %>
-<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-<script>
-    $(document).ready(function () {
+    <%- include("../partials/footer") %>
+    <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+    <script>
+        $(document).ready(function () {
 
 
             // Add more rows
@@ -146,9 +148,9 @@
                 }
             })
 
-        //Create 
-        $(".createRoomTransactionTypes").on('click', function () {
-            let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
+            //Create 
+            $(".createRoomTransactionTypes").on('click', function () {
+                let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
                 let transCount = transactionElems.length;
                 let transJson = [];
                 transactionElems.each(function (index, elem) {
@@ -184,39 +186,39 @@
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
-        })
-
-        //Edit
-        $('#roomTransactionTable').on('click', '.edit-roomtransaction-type', function () {
-            $(".createRoomTransactionTypes").addClass('d-none')
-            $(".updateRoomTransactionTypes").removeClass('d-none')
-            $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
-
-            let ApiObj = {
-                url: '/management/rooms/bookings/transaction-types/findOne',
-                method: 'GET',
-                data: {
-                    Id: $(this).attr("data-roomtransaction-stages-id")
-                },
-                dataType: 'JSON'
-            }
-            ajaxApi(ApiObj).then(result => {
-                let room = result.data
-                $('#Id').val(room.rtsid),
-                    $('#name').val(room.rtsName),
-                    $('#description').val(room.description),
-                    $('#active').val(room.active),
-                    $("#add-roomtransaction-stages-modal").modal('show')
-            }).catch(error => {
-                showError(error.responseJSON)
             })
 
-        })
+            //Edit
+            $('#roomTransactionTable').on('click', '.edit-roomtransaction-type', function () {
+                $(".createRoomTransactionTypes").addClass('d-none')
+                $(".updateRoomTransactionTypes").removeClass('d-none')
+                $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
+
+                let ApiObj = {
+                    url: '/management/rooms/bookings/transaction-types/findOne',
+                    method: 'GET',
+                    data: {
+                        Id: $(this).attr("data-roomtransaction-stages-id")
+                    },
+                    dataType: 'JSON'
+                }
+                ajaxApi(ApiObj).then(result => {
+                    let room = result.data
+                    $('#Id').val(room.rtsid),
+                        $('#name').val(room.rtsName),
+                        $('#description').val(room.description),
+                        $('#active').val(room.active),
+                        $("#add-roomtransaction-stages-modal").modal('show')
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+
+            })
 
 
-        //Update 
-        $(".updateRoomTransactionTypes").on('click', function () {
-            let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
+            //Update 
+            $(".updateRoomTransactionTypes").on('click', function () {
+                let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
                 let transCount = transactionElems.length;
                 let transJson = [];
                 transactionElems.each(function (index, elem) {
@@ -255,106 +257,106 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-                 location.reload()
+                    location.reload()
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
-        })
-
-
-
-
-        //Select All campus
-        $("#roomTransactionTable").on('click', '.selectAll-Room-Transaction', function () {
-            if (this.checked) {
-                // Iterate each checkbox
-                $('.delete-rootTransaction:checkbox').each(function () {
-                    this.checked = true;
-                });
-            } else {
-                $('.delete-rootTransaction:checkbox').each(function () {
-                    this.checked = false;
-                });
-            }
-        })
-
-
-        //Delete Single and mutiple Delete
-        $('.select-delete-rootTransaction').on('click', function () {
-            let deleteids = []
-            $('.delete-rootTransaction:checked').each(function () {
-                let obj = {
-                    id: $(this).attr("data-roomtransaction-stage-id"),
-                }
-                deleteids.push(obj)
             })
 
 
-            console.log('JSON.stringify(deleteids)',JSON.stringify(deleteids))
 
-            if (deleteids.length > 0) {
+
+            //Select All campus
+            $("#roomTransactionTable").on('click', '.selectAll-Room-Transaction', function () {
+                if (this.checked) {
+                    // Iterate each checkbox
+                    $('.delete-rootTransaction:checkbox').each(function () {
+                        this.checked = true;
+                    });
+                } else {
+                    $('.delete-rootTransaction:checkbox').each(function () {
+                        this.checked = false;
+                    });
+                }
+            })
+
+
+            //Delete Single and mutiple Delete
+            $('.select-delete-rootTransaction').on('click', function () {
+                let deleteids = []
+                $('.delete-rootTransaction:checked').each(function () {
+                    let obj = {
+                        id: $(this).attr("data-roomtransaction-stage-id"),
+                    }
+                    deleteids.push(obj)
+                })
+
+
+                console.log('JSON.stringify(deleteids)', JSON.stringify(deleteids))
+
+                if (deleteids.length > 0) {
+                    let ApiObj = {
+                        url: '/management/rooms/bookings/transaction-types',
+                        type: 'DELETE',
+                        data: {
+                            inputJSON: JSON.stringify(deleteids)
+                        },
+                        dataType: 'JSON'
+                    }
+                    ajaxApi(ApiObj).then(result => {
+                        location.reload()
+                        notify();
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+
+                } else {
+                    alert('Select Fields')
+                }
+            })
+
+
+
+            //Bulk Delete
+            $(".bulk-delete-root-ransaction-type").on('click', function () {
                 let ApiObj = {
                     url: '/management/rooms/bookings/transaction-types',
-                    type: 'DELETE',
-                    data: {
-                        inputJSON: JSON.stringify(deleteids)
-                    },
+                    type: 'PATCH',
+                    data: {},
                     dataType: 'JSON'
                 }
+
                 ajaxApi(ApiObj).then(result => {
                     location.reload()
-                    notify();
                 }).catch(error => {
                     showError(error.responseJSON)
+
                 })
 
-            } else {
-                alert('Select Fields')
-            }
-        })
+                //   alertMsg()
 
+                //   $('.alert-continue').on('click', () => {
 
-
-        //Bulk Delete
-        $(".bulk-delete-root-ransaction-type").on('click', function () {
-            let ApiObj = {
-                url: '/management/rooms/bookings/transaction-types',
-                type: 'PATCH',
-                data: {},
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                location.reload()
-            }).catch(error => {
-                showError(error.responseJSON)
+                // })
+                // $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
 
             })
 
-            //   alertMsg()
 
-            //   $('.alert-continue').on('click', () => {
-
-            // })
-            // $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
-
-        })
-
-
-        //search feature delay function is writter in script.js file which is located in public/js/script.js
-        $('#searchkeyword').on('input', delay(function (e) {
-            let keyword = $("#searchkeyword").val()
-            $.ajax({
-                type: "GET",
-                url: '/management/rooms/bookings/transaction-types/search',
-                data: {
-                    keyword: keyword
-                },
-                success: function (data) {
-                    AjaxTable(data.data)
-                }
-            })
-        }, 500));
+            //search feature delay function is writter in script.js file which is located in public/js/script.js
+            $('#searchkeyword').on('input', delay(function (e) {
+                let keyword = $("#searchkeyword").val()
+                $.ajax({
+                    type: "GET",
+                    url: '/management/rooms/bookings/transaction-types/search',
+                    data: {
+                        keyword: keyword
+                    },
+                    success: function (data) {
+                        AjaxTable(data.data)
+                    }
+                })
+            }, 500));
 
 
 
@@ -362,45 +364,45 @@
 
 
 
-        //Pagination Here
-        let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
-        let pageNos = Math.ceil(Number(pageCount) / 10)
+            //Pagination Here
+            let pageCount = `<%- pageCount %>`
+            console.log("Page Count=====>>>", pageCount)
+            let pageNos = Math.ceil(Number(pageCount) / 10)
 
-        console.log("Page Numbers", pageNos)
-        $('#pagination').bootpag({
-            total: pageNos,
-            page: 1,
-            maxVisible: 10,
-            leaps: true,
-            firstLastUse: true,
-            first: '←',
-            last: '→',
-            wrapClass: 'pagination',
-            activeClass: 'active',
-            disabledClass: 'disabled',
-            nextClass: 'next',
-            prevClass: 'prev',
-            lastClass: 'last',
-            firstClass: 'first'
-        }).on("page", function (event, num) {
-            $.ajax({
-                type: "POST",
-                url: "/management/rooms/bookings/transaction-types/pagination",
-                data: {
-                    pageNo: num
-                },
-                success: function (data) {
-                    AjaxTable(data.data) 
-                }
-            })
-        });
-
-
+            console.log("Page Numbers", pageNos)
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                $.ajax({
+                    type: "POST",
+                    url: "/management/rooms/bookings/transaction-types/pagination",
+                    data: {
+                        pageNo: num
+                    },
+                    success: function (data) {
+                        AjaxTable(data.data)
+                    }
+                })
+            });
 
 
 
-        function showError(errors) {
+
+
+            function showError(errors) {
                 let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <p>${errors.description}</p>
@@ -419,7 +421,7 @@
             }
 
 
-            function AjaxTable(roomTypeStageList){
+            function AjaxTable(roomTypeStageList) {
                 let AjaxTable = `<table class="table custom_row" id="roomTransactionTable">
                     <thead>
                         <th>Sr No.</th>
@@ -430,11 +432,11 @@
                     </thead>
                     <tbody>`;
 
-                    if (roomTypeStageList.length > 0) {
-                        let count = 1;
-                        for (list of roomTypeStageList) {
-                            AjaxTable +=
-                                ` <tr>
+                if (roomTypeStageList.length > 0) {
+                    let count = 1;
+                    for (list of roomTypeStageList) {
+                        AjaxTable +=
+                            ` <tr>
                             <td>${count++}</td>
                             <td>${list.name}</td>
                             <td>${list.description}</td>
@@ -447,17 +449,17 @@
                                 class="delete-rootTransaction">
                         </td>
                         </tr>`
-                        }
-                    } else {
-                        AjaxTable +=
-                            ` <tr>
+                    }
+                } else {
+                    AjaxTable +=
+                        ` <tr>
                                 <td colspan="5">No Data Found</td>
                             </tr>`;
-                    }
-                    AjaxTable += `<tbody></table>`
-                    $("#roomTransactionTable").html(AjaxTable);
+                }
+                AjaxTable += `<tbody></table>`
+                $("#roomTransactionTable").html(AjaxTable);
             }
 
-    })
-</script>
-<%- include("../partials/footerEnd") %>
+        })
+    </script>
+    <%- include("../partials/footerEnd") %>
