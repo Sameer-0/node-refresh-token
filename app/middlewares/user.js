@@ -23,7 +23,7 @@ module.exports = {
                     res.redirect('/user/login')
                  
                 } else {
-                   
+                    res.locals.userid =  result.userid
                     next();
                 }
             })

@@ -17,10 +17,10 @@ module.exports = class User {
         this.role = role;
     }
 
-    static fetchAll() {
+    static fetchAll(rowcount, slug) {
 
         return poolConnection.then(pool => {
-            return pool.request().input().query(`SELECT id, username, password, f_name, l_name, employee_id, email, contact_number, role_id  FROM [bncp-mum].users WHERE active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, username, password, f_name, l_name, employee_id, email, contact_number FROM [${slug}].users WHERE active = 1`)
         })
     }
 

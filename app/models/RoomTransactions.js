@@ -28,6 +28,16 @@ module.exports = class RoomTransactions {
         })
     }
 
+    static save(slug, inputJson) {
+        console.log('JOSN FORM FE:::::::::::::::>>>',JSON.stringify(inputJson))
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_add_new_room_transactions]`)
+        })
+    }
+
 
     static pegination(pageNo, slug) {
         return poolConnection.then(pool => {
