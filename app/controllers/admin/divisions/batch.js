@@ -70,7 +70,7 @@ module.exports = {
             return;
         }
 
-        Divisions.pagination(req.body.pageNo, res.locals.slug).then(result => {
+        DivisionBatches.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",

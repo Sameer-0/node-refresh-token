@@ -65,8 +65,8 @@
                 <div>
                     <p>Total entries:<%- pageCount %>
                     </p>
-        </div>
-        <div>
+                </div>
+            <div>
             <p id="pagination"></p>
         </div>
     </div>
@@ -149,7 +149,7 @@
                     AjaxtTable(data.data)
                 }
             })
-        }, 500));
+        }, 1500));
 
 
 
@@ -177,7 +177,7 @@
         }).on("page", function (event, num) {
             $.ajax({
                 type: "POST",
-                url: "/admin/divisions/pagination",
+                url: "/admin/divisions/batches/pagination",
                 data: {
                     pageNo: num
                 },
@@ -188,38 +188,36 @@
         });
 
 
-        function AjaxtTable(divisionList) {
+        function AjaxtTable(divisionBatchList) {
             let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
                     <th>Division</th>
-                    <th>Division no</th>
-                    <th>Division count</th>
-                    <th>Count for theory batch</th>
-                    <th>Count for practical batch</th>
-                    <th>Count for tutorial batch</th>
-                    <th>Count for workshop batch</th>
-                    <th>Module name</th>
+                    <th>Batch</th>
+                    <th>Event Name</th>
+                    <th>Division Count</th>
+                    <th>Batch Count</th>
+                    <th>Input Batch Count</th>
+                    <th>Faculty Count</th>
                     <th>Action</th>
                 </thead>`;
-            if (divisionList.length > 0) {
+            if (divisionBatchList.length > 0) {
                 let count = 1;
-                for (let division of divisionList) {
+                for (let batch of divisionBatchList) {
                     AjaxTable +=
                         `<tr>
                             <td>${count++}</td>
-                        <td>${division.division}</td>
-                        <td>${division.division_num}</td>
-                        <td>${division.division_count}</td>
-                        <td>${division.count_for_theory_batch}</td>
-                        <td>${division.count_for_practical_batch}</td>
-                        <td>${division.count_for_tutorial_batch}</td>
-                        <td>${division.count_for_workshop_batch}</td>
-                        <td>${division.module_name}</td>
+                            <td>${batch.division}</td>
+                        <td>${batch.batch}</td>
+                        <td>${batch.name}</td>
+                        <td>${batch.divison_count}</td>
+                        <td>${batch.batch_count}</td>
+                        <td>${batch.input_batch_count}</td>
+                        <td>${batch.faculty_count}</td>
                         <td><label class="switch">
-                            <input type="checkbox" class="changeStatus" data-id="${division.id }"
-                                data-status="${division.status}"
-                                ${division.status == 'Yes' ? 'Checked' :  '' }>
+                            <input type="checkbox" class="changeStatus" data-id="${batch.id }"
+                                data-status="${batch.status}"
+                                ${batch.status == 'Yes' ? 'Checked' :  '' }>
                             <span class="switch-slider round"></span>
                         </label></td>
                             </tr>`
@@ -231,7 +229,7 @@
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
-            $("#divisionTable").html(AjaxTable);
+            $("#batchesTable").html(AjaxTable);
         }
 
 
