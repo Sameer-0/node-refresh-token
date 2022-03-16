@@ -31,8 +31,8 @@ router.post('/sessions/types/pagination', types.pagination)
 
 //Session Dates
 router.get('/sessions/dates', dates.getPage)
-router.post('/sessions/dates', dates.create)
-router.put('/sessions/dates', dates.update)
+router.post('/sessions/dates', validate('SessionDate'), dates.create)
+router.put('/sessions/dates', validate('SessionDateUpdate'), dates.update)
 router.delete('/sessions/dates', dates.delete)
 router.patch('/sessions/dates', dates.deleteAll)
 router.get('/sessions/dates/findOne', dates.findOne)

@@ -93,180 +93,281 @@
 
     </div>
 </div>
-    <!-- ADD NEW BUILDING MODAL -->
-    <!-- Modal -->
-    <div class="modal fade" id="add-building-modal" tabindex="-1" aria-labelledby="add-building-modal"
-        aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen modal-lg">
-            <div class="modal-content modal-inputform">
-                <div class="modal-header modal-inputform-header">
-                    <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
-                    <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
-                            class="fas fa-times text-dark"></i></button>
+<!-- ADD NEW BUILDING MODAL -->
+<!-- Modal -->
+<div class="modal fade" id="add-building-modal" tabindex="-1" aria-labelledby="add-building-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-lg">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
+                <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times text-dark"></i></button>
+            </div>
+
+
+            <div class="modal-body">
+                <div id="errorHtml"></div>
+                <input type="hidden" name="buildingId" id="buildingId">
+                <div class="table-responsive ">
+                    <table class="table " id="add-more-building-table">
+                        <thead>
+                            <th>Building Name</th>
+                            <th>Building Number</th>
+                            <th>Total Floor Count</th>
+                            <th>Owner</th>
+                            <th>Start time</th>
+                            <th>End time</th>
+                            <th>Handled by</th>
+                            <th>Campus</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="active" id="active">
+                                    <input name="building_name" id="building_name" type="text" class="form-control"
+                                        placeholder="Building Name" required>
+                                </td>
+                                <td>
+                                    <input name="building_number" id="building_number" type="number"
+                                        class="form-control" placeholder="Building Number" required>
+                                </td>
+                                <td>
+                                    <input name="total_floors" id="total_floors" type="number" class="form-control"
+                                        placeholder="Total Floor Count" required>
+                                </td>
+
+                                <td>
+                                    <select class="form-select modalSelect2" name="owner_id" id="owner_id" required>
+                                        <option disabled selected>--Owner--</option>
+                                        <% for(let owner of orgList) { %>
+                                        <option value="<%- owner.id %>">
+                                            <%- owner.org_abbr %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
+                                        required>
+                                        <option disabled selected value>--Start Time--</option>
+                                        <% for(let time of timeList) { %>
+                                        <option value="<%- time.id %>">
+                                            <%- time.start_time %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
+                                        required>
+                                        <option disabled selected value>--End Time--</option>
+                                        <% for(let time of timeList) { %>
+                                        <option value="<%- time.id %>">
+                                            <%- time.end_time %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
+                                        <option disabled selected value>--Handled By--</option>
+                                        <% for(let handler of orgList) { %>
+                                        <option value="<%- handler.id %>">
+                                            <%- handler.org_abbr %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select modalSelect2" name="campus_lid" id="campus_lid" required>
+                                        <option disabled selected value>--Campus--</option>
+                                        <% for(let campus of campusList) { %>
+                                        <option value="<%- campus.id %>">
+                                            <%- campus.campus_abbr %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer removebuilding"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
+            </div>
 
-                <div class="modal-body">
-                    <div id="errorHtml"></div>
-                    <input type="hidden" name="buildingId" id="buildingId">
-                    <div class="table-responsive ">
-                        <table class="table " id="add-more-building-table">
-                            <thead>
-                                <th>Building Name</th>
-                                <th>Building Number</th>
-                                <th>Total Floor Count</th>
-                                <th>Owner</th>
-                                <th>Start time</th>
-                                <th>End time</th>
-                                <th>Handled by</th>
-                                <th>Campus</th>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <input type="hidden" name="active" id="active">
-                                        <input name="building_name" id="building_name" type="text" class="form-control"
-                                            placeholder="Building Name" required>
-                                    </td>
-                                    <td>
-                                        <input name="building_number" id="building_number" type="number"
-                                            class="form-control" placeholder="Building Number" required>
-                                    </td>
-                                    <td>
-                                        <input name="total_floors" id="total_floors" type="number" class="form-control"
-                                            placeholder="Total Floor Count" required>
-                                    </td>
-
-                                    <td>
-                                        <select class="form-select modalSelect2" name="owner_id" id="owner_id" required>
-                                            <option disabled selected>--Owner--</option>
-                                            <% for(let owner of orgList) { %>
-                                            <option value="<%- owner.id %>">
-                                                <%- owner.org_abbr %>
-                                            </option>
-                                            <% } %>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
-                                            required>
-                                            <option disabled selected value>--Start Time--</option>
-                                            <% for(let time of timeList) { %>
-                                            <option value="<%- time.id %>">
-                                                <%- time.start_time %>
-                                            </option>
-                                            <% } %>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
-                                            required>
-                                            <option disabled selected value>--End Time--</option>
-                                            <% for(let time of timeList) { %>
-                                            <option value="<%- time.id %>">
-                                                <%- time.end_time %>
-                                            </option>
-                                            <% } %>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-select modalSelect2" name="handled_by" id="handled_by"
-                                            required>
-                                            <option disabled selected value>--Handled By--</option>
-                                            <% for(let handler of orgList) { %>
-                                            <option value="<%- handler.id %>">
-                                                <%- handler.org_abbr %>
-                                            </option>
-                                            <% } %>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select class="form-select modalSelect2" name="campus_lid" id="campus_lid"
-                                            required>
-                                            <option disabled selected value>--Campus--</option>
-                                            <% for(let campus of campusList) { %>
-                                            <option value="<%- campus.id %>">
-                                                <%- campus.campus_abbr %>
-                                            </option>
-                                            <% } %>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <i class="far fa-edit d-none"></i>
-                                        <i class="fas fa-trash-alt text-danger cursor-pointer removebuilding"></i>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <div id="errorMsg"></div>
-                    <button type="button" class="btn btn-success  btn-sm" id="add-more-building"><i
-                            class="fas fa-plus"></i>
-                        Add
-                        More Building</button>
-                    <button type="submit" class="btn  createBuilding modal-inputform-btn">Create Building</button>
-                    <button type="submit" class="btn  updateBuilding modal-inputform-btn d-none">Update
-                        Building</button>
-                </div>
+            <div class="modal-footer">
+                <div id="errorMsg"></div>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-building">
+                    <i class="fas fa-plus"></i>
+                    Add More Building
+                </button>
+                <button type="submit" class="btn  createBuilding modal-inputform-btn">Create Building</button>
+                <button type="submit" class="btn  updateBuilding modal-inputform-btn d-none">Update Building</button>
             </div>
         </div>
     </div>
+</div>
 
 
 
 
-    <%- include("../partials/footer") %>
-    <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-    <script src="/js/dashboardscript.js"></script>
-    <script src="/js/leftsidebartoggle.js"></script>
-    <script>
-        $(".createBuilding").on('click', function () {
-            let buildingElems = $('#add-more-building-table tbody tr');
-            let buildingCount = buildingElems.length;
-            let buildingJson = [];
-            buildingElems.each(function (index, elem) {
-                let building_name = $(elem).find(`input[name='building_name']`).val()
-                let building_number = $(elem).find(`input[name='building_number']`).val();
-                let total_floors = $(elem).find(`input[name='total_floors']`).val();
-                let owner_id = $(elem).find(`select[name='owner_id']`).val();
-                let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
-                let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
-                let handled_by = $(elem).find(`select[name='handled_by']`).val();
-                let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
+<%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script src="/js/dashboardscript.js"></script>
+<script src="/js/leftsidebartoggle.js"></script>
+<script>
+    $(".createBuilding").on('click', function () {
+        let buildingElems = $('#add-more-building-table tbody tr');
+        let buildingCount = buildingElems.length;
+        let buildingJson = [];
+        buildingElems.each(function (index, elem) {
+            let building_name = $(elem).find(`input[name='building_name']`).val()
+            let building_number = $(elem).find(`input[name='building_number']`).val();
+            let total_floors = $(elem).find(`input[name='total_floors']`).val();
+            let owner_id = $(elem).find(`select[name='owner_id']`).val();
+            let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
+            let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
+            let handled_by = $(elem).find(`select[name='handled_by']`).val();
+            let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
 
 
-                if (index < buildingCount - 1) {
-                    let obj = {
-                        building_name: building_name,
-                        building_number: building_number,
-                        total_floors: total_floors,
-                        owner_id: owner_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        handled_by: handled_by,
-                        campus_lid: campus_lid
-                    }
-                    buildingJson.push(obj)
-                } else {
-                    let obj = {
-                        building_name: building_name,
-                        building_number: building_number,
-                        total_floors: total_floors,
-                        owner_id: owner_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        handled_by: handled_by,
-                        campus_lid: campus_lid
-                    }
-                    buildingJson.push(obj)
+            if (index < buildingCount - 1) {
+                let obj = {
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid
                 }
-            })
+                buildingJson.push(obj)
+            } else {
+                let obj = {
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid
+                }
+                buildingJson.push(obj)
+            }
+        })
+        let ApiObj = {
+            type: 'POST',
+            url: '/management/buildings',
+            data: {
+                inputJSON: JSON.stringify(buildingJson)
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            location.reload()
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+
+    })
+
+
+
+    $('#buildingTable').on('click', '.edit-building', function () {
+        $("#add-building-modal-title").html('Update Building')
+        $(".createBuilding").addClass('d-none')
+        $(".updateBuilding").removeClass('d-none')
+        $("#add-more-building").addClass('d-none')
+        let ApiObj = {
+            type: 'GET',
+            url: '/management/buildings/findOne',
+            data: {
+                Id: $(this).attr('data-building-id')
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            let building = result.buildingData;
+            console.log('Success: ', building)
+            $("#buildingId").val(building.id),
+                $("#building_name").val(building.building_name),
+                $("#building_number").val(building.building_number),
+                $("#total_floors").val(building.total_floors),
+                $("#owner_id").val(building.owner_id).trigger('change'),
+                $("#handled_by").val(building.handled_by).trigger('change'),
+                $("#start_time_id").val(building.start_time_id).trigger('change'),
+                $("#end_time_id").val(building.end_time_id).trigger('change'),
+                $("#campus_lid").val(building.campus_lid).trigger('change'),
+                $("#active").val(building.active),
+                $("#add-building-modal").modal('show')
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+    })
+
+
+    $(".updateBuilding").on('click', function () {
+
+        let buildingElems = $('#add-more-building-table tbody tr');
+        let buildingCount = buildingElems.length;
+
+        let buildingJson = [];
+
+        buildingElems.each(function (index, elem) {
+            let buildingId = $("#buildingId").val()
+            let active = $(elem).find(`input[name='active']`).val()
+            let building_name = $(elem).find(`input[name='building_name']`).val()
+            let building_number = $(elem).find(`input[name='building_number']`).val();
+            let total_floors = $(elem).find(`input[name='total_floors']`).val();
+            let owner_id = $(elem).find(`select[name='owner_id']`).val();
+            let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
+            let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
+            let handled_by = $(elem).find(`select[name='handled_by']`).val();
+            let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
+
+
+            if (index < buildingCount - 1) {
+                let obj = {
+                    id: buildingId,
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid,
+                    active: active
+                }
+                buildingJson.push(obj)
+            } else {
+                let obj = {
+                    id: buildingId,
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid,
+                    active: active
+                }
+                buildingJson.push(obj)
+            }
+        })
+
+        if (buildingJson.length > 0) {
             let ApiObj = {
-                type: 'POST',
+                type: 'PUT',
                 url: '/management/buildings',
                 data: {
                     inputJSON: JSON.stringify(buildingJson)
@@ -279,270 +380,165 @@
             }).catch(error => {
                 showError(error.responseJSON)
             })
+        } else {
+            alert('Select Building First')
+        }
+    })
 
-        })
 
 
 
-        $('#buildingTable').on('click', '.edit-building', function () {
-            $("#add-building-modal-title").html('Update Building')
-            $(".createBuilding").addClass('d-none')
-            $(".updateBuilding").removeClass('d-none')
-            $("#add-more-building").addClass('d-none')
-            let ApiObj = {
-                type: 'GET',
-                url: '/management/buildings/findOne',
-                data: {
-                    Id: $(this).attr('data-building-id')
-                },
-                dataType: 'JSON'
+    //Select All campus
+    $("#buildingTable").on('click', '.selectAll-building', function () {
+        if (this.checked) {
+            // Iterate each checkbox
+            $('.delete-building:checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $('.delete-building:checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    })
+
+
+    //Delete Single and mutiple Delete
+    $('.delete-buildings').on('click', function () {
+        let deleteids = []
+        $('.delete-building:checked').each(function () {
+            let obj = {
+                id: $(this).attr('data-building-id')
             }
+            deleteids.push(obj)
+        })
+        let ApiObj = {
+            url: '/management/buildings',
+            type: 'DELETE',
+            data: {
+                Ids: JSON.stringify(deleteids)
+            },
+            dataType: 'JSON'
+        }
 
+        if (deleteids.length > 0) {
             ajaxApi(ApiObj).then(result => {
-                let building = result.buildingData;
-                console.log('Success: ', building)
-                $("#buildingId").val(building.id),
-                    $("#building_name").val(building.building_name),
-                    $("#building_number").val(building.building_number),
-                    $("#total_floors").val(building.total_floors),
-                    $("#owner_id").val(building.owner_id).trigger('change'),
-                    $("#handled_by").val(building.handled_by).trigger('change'),
-                    $("#start_time_id").val(building.start_time_id).trigger('change'),
-                    $("#end_time_id").val(building.end_time_id).trigger('change'),
-                    $("#campus_lid").val(building.campus_lid).trigger('change'),
-                    $("#active").val(building.active),
-                    $("#add-building-modal").modal('show')
+                // showError(result)
+                location.reload()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+
+        } else {
+            alert('Select building for deleting')
+        }
+    })
+
+
+    //Bulk Delete
+    $(".bulk-delete-buildings").on('click', function () {
+        console.log('Click')
+        let ApiObj = {
+            url: '/management/buildings',
+            type: 'PATCH',
+            data: {},
+            dataType: 'JSON'
+        }
+
+        // ajaxApi(ApiObj).then(result => {
+        //         location.reload()
+        //     }).catch(error => {
+        //         showError(error.responseJSON)
+        // })
+
+        alertMsg()
+        $('.alert-continue').on('click', () => {
+            ajaxApi(ApiObj).then(result => {
+                location.reload()
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
-
-
-        $(".updateBuilding").on('click', function () {
-
-            let buildingElems = $('#add-more-building-table tbody tr');
-            let buildingCount = buildingElems.length;
-
-            let buildingJson = [];
-
-            buildingElems.each(function (index, elem) {
-                let buildingId = $("#buildingId").val()
-                let active = $(elem).find(`input[name='active']`).val()
-                let building_name = $(elem).find(`input[name='building_name']`).val()
-                let building_number = $(elem).find(`input[name='building_number']`).val();
-                let total_floors = $(elem).find(`input[name='total_floors']`).val();
-                let owner_id = $(elem).find(`select[name='owner_id']`).val();
-                let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
-                let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
-                let handled_by = $(elem).find(`select[name='handled_by']`).val();
-                let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
-
-
-                if (index < buildingCount - 1) {
-                    let obj = {
-                        id: buildingId,
-                        building_name: building_name,
-                        building_number: building_number,
-                        total_floors: total_floors,
-                        owner_id: owner_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        handled_by: handled_by,
-                        campus_lid: campus_lid,
-                        active: active
-                    }
-                    buildingJson.push(obj)
-                } else {
-                    let obj = {
-                        id: buildingId,
-                        building_name: building_name,
-                        building_number: building_number,
-                        total_floors: total_floors,
-                        owner_id: owner_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        handled_by: handled_by,
-                        campus_lid: campus_lid,
-                        active: active
-                    }
-                    buildingJson.push(obj)
-                }
-            })
-
-            if (buildingJson.length > 0) {
-                let ApiObj = {
-                    type: 'PUT',
-                    url: '/management/buildings',
-                    data: {
-                        inputJSON: JSON.stringify(buildingJson)
-                    },
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-            } else {
-                alert('Select Building First')
-            }
+        $('.cancel').on('click', () => {
+            $('#alertModal').css('display', 'none');
         })
 
+    })
 
 
+    //Pagination Here
+    let pageCount = `<%- pageCount %>`
+    console.log("Page Count=====>>>", pageCount)
+    let pageNos = Math.ceil(Number(pageCount) / 10)
 
-        //Select All campus
-        $("#buildingTable").on('click', '.selectAll-building', function () {
-            if (this.checked) {
-                // Iterate each checkbox
-                $('.delete-building:checkbox').each(function () {
-                    this.checked = true;
-                });
-            } else {
-                $('.delete-building:checkbox').each(function () {
-                    this.checked = false;
-                });
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active',
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
+        $.ajax({
+            type: "POST",
+            url: "/management/building/pagination",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                showAjaxTable(data.data) // Building List
             }
         })
+    });
 
 
-        //Delete Single and mutiple Delete
-        $('.delete-buildings').on('click', function () {
-            let deleteids = []
-            $('.delete-building:checked').each(function () {
-                let obj = {
-                    id: $(this).attr('data-building-id')
-                }
-                deleteids.push(obj)
-            })
-            let ApiObj = {
-                url: '/management/buildings',
-                type: 'DELETE',
-                data: {
-                    Ids: JSON.stringify(deleteids)
-                },
-                dataType: 'JSON'
-            }
 
-            if (deleteids.length > 0) {
-                ajaxApi(ApiObj).then(result => {
-                    // showError(result)
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-
-            } else {
-                alert('Select building for deleting')
+    //search feature delay function is writter in script.js file which is located in public/js/script.js
+    $('#searchkeyword').on('input', delay(function (e) {
+        let keyword = $("#searchkeyword").val()
+        $.ajax({
+            type: "GET",
+            url: "/management/building/search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                showAjaxTable(data.data) // Building List
             }
         })
+    }, 500));
 
 
-        //Bulk Delete
-        $(".bulk-delete-buildings").on('click', function () {
-            console.log('Click')
-            let ApiObj = {
-                url: '/management/buildings',
-                type: 'PATCH',
-                data: {},
-                dataType: 'JSON'
-            }
-
-            // ajaxApi(ApiObj).then(result => {
-            //         location.reload()
-            //     }).catch(error => {
-            //         showError(error.responseJSON)
-            // })
-
-            alertMsg()
-            $('.alert-continue').on('click', () => {
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-            })
-            $('.cancel').on('click', () => {
-                $('#alertModal').css('display', 'none');
-            })
-
-        })
-
-
-        //Pagination Here
-        let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
-        let pageNos = Math.ceil(Number(pageCount) / 10)
-
-        console.log("Page Numbers", pageNos)
-        $('#pagination').bootpag({
-            total: pageNos,
-            page: 1,
-            maxVisible: 10,
-            leaps: true,
-            firstLastUse: true,
-            first: '←',
-            last: '→',
-            wrapClass: 'pagination',
-            activeClass: 'active',
-            disabledClass: 'disabled',
-            nextClass: 'next',
-            prevClass: 'prev',
-            lastClass: 'last',
-            firstClass: 'first'
-        }).on("page", function (event, num) {
-            $.ajax({
-                type: "POST",
-                url: "/management/building/pagination",
-                data: {
-                    pageNo: num
-                },
-                success: function (data) {
-                    showAjaxTable(data.data) // Building List
-                }
-            })
-        });
-
-
-
-        //search feature delay function is writter in script.js file which is located in public/js/script.js
-        $('#searchkeyword').on('input', delay(function (e) {
-            let keyword = $("#searchkeyword").val()
-            $.ajax({
-                type: "GET",
-                url: "/management/building/search",
-                data: {
-                    keyword: keyword
-                },
-                success: function (data) {
-                    showAjaxTable(data.data) // Building List
-                }
-            })
-        }, 500));
-
-
-        function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    function showError(errors) {
+        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <p>${errors.description}</p>
                     <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
+        if (errors.data.length > 0) {
+            $(errors.data).each(function (key, value) {
+                $.each(this, function (key, value) {
+                    errorHtml +=
+                        `<li>${key} ${value}</li>`
                 });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            });
         }
+        errorHtml +=
+            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        $("#errorHtml").html(errorHtml)
+    }
 
 
-        function showAjaxTable(buildingList) {
-            let AjaxTable = `<table class="table table-bordered" id="buildingTable">
+    function showAjaxTable(buildingList) {
+        let AjaxTable = `<table class="table table-bordered" id="buildingTable">
                     <thead>
                         <th>Name</th>
                         <th>Number</th>
@@ -557,10 +553,10 @@
                     </thead>
                     <tbody>`;
 
-            if (buildingList.length > 0) {
-                for (building of buildingList) {
-                    AjaxTable +=
-                        `<tr>
+        if (buildingList.length > 0) {
+            for (building of buildingList) {
+                AjaxTable +=
+                    `<tr>
                             <td>${building.building_name}</td>
                             <td>${building.building_number}</td>
                             <td>${building.total_floors}</td>
@@ -578,15 +574,15 @@
                                 class="delete-building">
                         </td>
                         </tr>`
-                }
-            } else {
-                AjaxTable +=
-                    ` <tr>
+            }
+        } else {
+            AjaxTable +=
+                ` <tr>
                                 <td colspan="9">No Data Found</td>
                             </tr>`;
-            }
-            AjaxTable += `<tbody></table>`
-            $("#buildingTable").html(AjaxTable);
         }
-    </script>
-    <%- include("../partials/footerEnd") %>
+        AjaxTable += `<tbody></table>`
+        $("#buildingTable").html(AjaxTable);
+    }
+</script>
+<%- include("../partials/footerEnd") %>

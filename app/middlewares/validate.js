@@ -1,9 +1,10 @@
 const {
     check,
-    body
+    body,
+    oneOf
 } = require('express-validator');
 
-
+const validator = require('validator')
 
 module.exports = function validate(method) {
 
@@ -51,7 +52,6 @@ module.exports = function validate(method) {
                 }
             };
         }
-
 
 
         case 'createSlug': {
@@ -366,6 +366,60 @@ module.exports = function validate(method) {
                 check('task').not().isEmpty().withMessage('task must not be empty'),
                 check('description').not().isEmpty().withMessage('description must not be empty'),
                 check('tags').not().isEmpty().withMessage('tags must not be empty')
+            ]
+        }
+
+        case 'SessionDate': {
+            // return[
+            //     check('acadSession').not().isEmpty().trim().escape().withMessage('Acad Session must not be empty'),
+            //     check('sessionType').not().isEmpty().trim().escape().withMessage('Session type must not be empty'),
+            //     check('startDate').not().isEmpty().trim().escape().withMessage('Start Date must not be empty'),
+            //     check('endDate').not().isEmpty().trim().escape().withMessage('End Date must not be empty'),
+            //     check('endDate').isAfter(new Date('startDate').toDateString()).withMessage('End date of lab must be valid and after start date')
+            // ]
+
+
+            return [
+                check('acadSession').not().isEmpty().trim().escape().withMessage('Acad Session must not be empty'),
+                check('sessionType').not().isEmpty().trim().escape().withMessage('Session type must not be empty'),
+                check('startDate').not().isEmpty(),
+                check('startDate').not().isEmpty(),
+
+                check('endDate').custom((value, {
+                    req,
+                    res
+                }) => {
+                    if (value >= req.body.startDate) {
+                        console.log('>>>>>>>>>>>>> ENTER HERE')
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }).withMessage('Start date cannot be greater than end date.')
+
+
+            ]
+
+            // return (req, res, next) => {
+            //     check('acadSession').not().isEmpty().trim().escape().withMessage('Acad Session must not be empty'),
+            //     check('sessionType').not().isEmpty().trim().escape().withMessage('Session type must not be empty')
+
+            //     if (req.body.startDate <= req.body.endDate) {
+            //         console.log('True')
+            //     } else {
+            //         console.log('FALSE')
+            //     }
+            // }
+        }
+
+        case 'SessionDateUpdate': {
+            return [
+                check('id').not().isEmpty().trim().escape().isNumeric().withMessage('Id must not be empty'),
+                check('acadSession').not().isEmpty().trim().escape().withMessage('Acad Session must not be empty'),
+                check('sessionType').not().isEmpty().trim().escape().withMessage('Session type must not be empty'),
+                check('startDate').not().isEmpty().trim().escape().withMessage('Start Date must not be empty'),
+                check('endDate').not().isEmpty().trim().escape().withMessage('End Date must not be empty'),
+
             ]
         }
 

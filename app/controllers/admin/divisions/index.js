@@ -3,7 +3,10 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
+const res = require('express/lib/response');
 
+
+ 
 const Divisions = require('../../../models/Divisions')
 
 module.exports = {
@@ -58,7 +61,7 @@ module.exports = {
             return;
         }
 
-        Divisions.pegination(req.body.pageNo, res.locals.slug).then(result => {
+        Divisions.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",

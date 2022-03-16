@@ -13,7 +13,7 @@ module.exports = {
         Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionDates.getCount(res.locals.slug), AcademicCalender.fetchAll(100), SessionTypes.fetchAll(10, res.locals.slug), ProgramSessions.fetchAll(10, res.locals.slug)]).then(result => {
             console.log('result:::::programsession',result[0].recordset)
             res.render('admin/sessions/sessiondates.ejs', {
-                sessionDateList: result[4].recordset,
+                sessionDateList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 AcademicCalenderList: result[2].recordset,
                 sessionTypes: result[3].recordset,
@@ -23,7 +23,7 @@ module.exports = {
     },
 
     create: (req, res) => {
-        const errors = validationResult(req);
+        const errors = validationResult(req); 
         if (!errors.isEmpty()) {
             res.status(422).json({
                 statuscode: 422,
@@ -70,8 +70,6 @@ module.exports = {
             return;
         }
 
-        console.log('req.body::::::::::',req.body)
-
         SessionDates.update(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
@@ -79,12 +77,15 @@ module.exports = {
 
             })
         }).catch(error => {
+            console.log('error::::::::::>>',error)
             res.status(500).json(error.originalError.info.message)
         })
     },
 
     delete: (req, res) => {
-        SessionTypes.delete(req.body.Ids, res.locals.slug).then(result => {
+
+        console.log('req.body.Ids::::::::::',req.body.Ids)
+        SessionDates.delete(req.body.Ids, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success"
@@ -95,7 +96,8 @@ module.exports = {
     },
 
     deleteAll: (req, res) => {
-        SessionTypes.deleteAll(res.locals.slug).then(result => {
+        console.log('all delete!!!!!!!')
+        SessionDates.deleteAll(res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200
             })
@@ -106,21 +108,28 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        SessionTypes.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+ 
+        SessionDates.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+            console.log('Search result.recordset',result.recordset)
             if (result.recordset.length > 0) {
+                
                 res.json({
                     status: "200",
                     message: "Room Type fetched",
                     data: result.recordset,
                     length: result.recordset.length
                 })
+          
+
             } else {
+                console.log(result.recordset+result.recordset.length)
                 res.json({
                     status: "400",
                     message: "No data found",
                     data: result.recordset,
                     length: result.recordset.length
                 })
+           
             }
         }).catch(error => {
             res.status(500).json(error.originalError.info.message)
@@ -137,7 +146,7 @@ module.exports = {
             return;
         }
 
-        SessionTypes.pagination(req.body.pageNo, res.locals.slug).then(result => {
+        SessionDates.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
