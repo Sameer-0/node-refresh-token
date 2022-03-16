@@ -14,7 +14,7 @@ module.exports = class RoomTransactionTypes {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)}  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts WHERE rts.active = 1 ORDER BY rts.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} rts.id, rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts WHERE rts.active = 1 ORDER BY rts.id DESC`)
         })
     }
 
