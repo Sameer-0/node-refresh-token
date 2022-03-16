@@ -72,7 +72,7 @@ module.exports = class AcademicCalender {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id, CONVERT(NVARCHAR, ac.date_str,110) AS date_str,  CONVERT(NVARCHAR, ac.date, 101) AS date, ac.day, ac.day_name, ac.week, ac.iso_week, ac.day_of_week, ac.month, ac.month_name, ac.quarter,ac.year, ac.day_of_year FROM [dbo].academic_calendar ac WHERE ac.active = 1 ORDER BY ac.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id, CONVERT(NVARCHAR, ac.date_str,110) AS date_str,  CONVERT(NVARCHAR, ac.date, 101) AS date, ac.day, ac.day_name, ac.week, ac.iso_week, ac.day_of_week, ac.month, ac.month_name, ac.quarter,ac.year, ac.day_of_year FROM [dbo].academic_calendar ac WHERE ac.active = 1 ORDER BY ac.id ASC`)
         })
     }
 

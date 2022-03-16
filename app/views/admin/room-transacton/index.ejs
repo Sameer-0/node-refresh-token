@@ -180,7 +180,10 @@
                     class="fas fa-plus"></i>
                 Add
                 More Fields</button>
-            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn">Create</button>
+            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <span class="statusText">Create</span>
+                </button>
             <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update
                 </button>
         </div>
@@ -196,6 +199,7 @@
     </script>
     <script>
         $(document).ready(function () {
+            
             let username = `<%- locals.userid %>`;
     console.log('Username:::::::::::::::::::', username)
     //Add more rows for building
@@ -284,77 +288,71 @@
                     roomJson.push(obj)
                 }
             })
+
+
+
             console.log('roomJson:::::::::',roomJson)
-            let ApiObj = {
+           
+
+            $.ajax({
                 type: 'POST',
                 url: '/admin/room-transactions',
-                data: {
+                 data: {
                     inputJSON: JSON.stringify(roomJson)
                 },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-               // location.reload()
-            }).catch(error => {
+                dataType: 'JSON',
+            beforeSend: function(){
+               // $('#image').show();
+               $(".spinner-border").removeClass('d-none')
+            $(".statusText").html('creating...')
+               console.log('Show beforeSend::::::::>')
+            },
+            complete: function(){
+                $(".spinner-border").addClass('d-none')
+                $(".statusText").html('create')
+               console.log('Show complete::::::::>')
+            },
+            success: function(result){
+            //$('.info').append(html);
+            showSuccess(result)
+            console.log('Show Succces::::::::>',result)
+            },
+            error: function(error){
                 showError(error.responseJSON)
-            })
+            }
+        });
 
-        })
+        // $(".spinner-border").removeClass('d-none')
+        //     $(".statusText").html('creating...')
 
+        //     let ApiObj = {
+        //         type: 'POST',
+        //         url: '/admin/room-transactions',
+        //         data: {
+        //             inputJSON: JSON.stringify(roomJson)
+        //         },
+        //         dataType: 'JSON'
+        //     }
 
+        //     ajaxApi(ApiObj).then(result => {
+        //         $(".spinner-border").addClass('d-none')
+        //         console.log('result::::::',result)
+        //         showSuccess(result)
+        //     }).catch(error => {
+        //         $(".spinner-border").addClass('d-none')
+        //         showError(error.responseJSON)
+        //     })
 
-
-
-
-
-
-  
-    $('#roomTransactionTable').on('change', '.changeStatus',
-    function () {
-    //console.log($(this).attr('data-id'))
-    //console.log($(this).attr('data-status'))
-    if ($(this).is(':checked')) {
-    //console.log('Yes')
-    chnageStatus($(this).attr('data-id'), 1)
-    } else {
-    //console.log('No')
-    chnageStatus($(this).attr('data-id'), 0)
-    }
-    })
-
-
-
-
-    function chnageStatus(id, status) {
-    console.log(id, status)
-    let ApiObj = {
-    url: '/admin/room-transactions/changestatus',
-    type: 'POST',
-    data: {
-    id: id,
-    status: status
-    },
-    dataType: 'JSON'
-    }
-    ajaxApi(ApiObj).then(result => {
-    loadAll()
-    }).catch(error => {
-    })}
+        // })
 
 
-    function loadAll() {
-    let ApiObj = {
-    url: '/admin/room-transactions/getAll',
-    type: 'GET',
-    data: {},
-    dataType: 'JSON'
-    }
-    ajaxApi(ApiObj).then(result => {
-    AjaxTable(result.result)
-    }).catch(error => {
-    })
-    }
+
+
+
+
+
+
+
 
 
     // SEARCH PROGRAM TYPE
@@ -447,6 +445,25 @@
     function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
                     <p>${errors.description}</p>
                     <ul>`
             if (errors.data.length > 0) {
