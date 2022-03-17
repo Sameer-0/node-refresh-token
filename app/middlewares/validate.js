@@ -20,7 +20,6 @@ module.exports = function validate(method) {
 
         case 'JsonValidator': {
             return (req, res, next) => {
-                console.log('Validation:::::::::::::::>>', req.body.inputJSON)
                 let jsonreq = JSON.parse(req.body.inputJSON);
                 let done = false
                 let keyval = [];
@@ -36,6 +35,49 @@ module.exports = function validate(method) {
                         } else {
                             done = true
                             console.log('NExt', data[key])
+                        }
+                    }
+                }
+                if (done) {
+                    console.log('Success:::::::::>>')
+                    next()
+                } else {
+                    console.log('Fail::::::::::::>>')
+                    res.status(403).json({
+                        status: 403,
+                        description: 'All fields are mandetory',
+                        data: keyval
+                    })
+                }
+            };
+        }
+
+        case 'ValRoomTransaction': {
+            return (req, res, next) => {
+                let jsonreq = JSON.parse(req.body.inputJSON);
+                let done = false
+                let keyval = [];
+                for (let data of jsonreq) {
+                    for (let key in data) {
+                        console.log('key::::::::::>>',key)
+                       // console.log('key::::::::::>>',data,key ,data[key])
+                        if (!data[key]) {
+                            let obj = {
+                                "": key + ` must not be empty`
+                            }
+
+                            if(key.start_date_id >= key.end_date_id){
+                                console.log('TRUE')
+                            }else{
+                                console.log('FALSE')
+                            }
+
+                            done = false
+                            keyval.push(obj)
+                            break;
+                        } else {
+                            done = true
+                           // console.log('NExt', data[key])
                         }
                     }
                 }
