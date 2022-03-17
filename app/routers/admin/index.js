@@ -13,6 +13,9 @@ function AdminRoute(app){
     const divisions = require('../../routers/admin/divisions');
     const roomtransacton = require('../../routers/admin/room-transacton');
     const faculty = require('../../routers/admin/faculty');
+    const timeTableGeneration = require('../../routers/admin/timeTableGeneration')
+    const weeklyConstraint = require('../../routers/admin/weeklyConstraint')
+
 
 
     app.use('/admin/', isLoggedIn, adminDashboard);
@@ -25,6 +28,8 @@ function AdminRoute(app){
     app.use('/admin/', isLoggedIn, divisions);
     app.use('/admin/', isLoggedIn, roomtransacton);
     app.use('/admin/', isLoggedIn, faculty);
+    app.use('/admin/', isLoggedIn, timeTableGeneration)
+    app.use('/admin/', isLoggedIn, weeklyConstraint)
 }
 
 module.exports = AdminRoute;
