@@ -16,17 +16,18 @@ module.exports = class {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} id, tag_id, name, event_type, rule_on, repeatable
-            FROM [dbo].weekly_constraint WHERE active = 1`)
+            FROM [dbo].weekly_constraints WHERE active = 1`)
         })
     }
 
     static save(body, slug) {
         return poolConnection.then(pool => { 
-            return pool.request().input('ProgramSession', sql.Int, body.acadSession)
-                .input('SessionType', sql.Int, body.sessionType)
-                .input('StartDate', sql.Int, body.startDate)
-                .input('EndDate', sql.Int, body.endDate)
-                .query(`INSERT INTO [${slug}].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id) VALUES (@ProgramSession, @SessionType, @StartDate, @EndDate)`)
+            return pool.request().input('tagId', sql.Int, body.tagId)
+                .input('constraintName', sql.NVarChar(60), body.constraintName)
+                .input('eventType', sql.NVarChar(5), body.eventType)
+                .input('ruleOn', sql.NVarChar(30), body.ruleOn)
+                .input('repeatable', sql.Bit, body.repeatable)
+                .query(`INSERT INTO [dbo].weekly_constraints (tag_id, name, event_type, rule_on, repeatable) VALUES (@tagId, @constraintName, @eventType, @ruleOn, @repeatable)`)
         })
     }
 
@@ -97,7 +98,7 @@ module.exports = class {
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].weekly_constraint WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].weekly_constraints WHERE active = 1`)
         })
     }
 

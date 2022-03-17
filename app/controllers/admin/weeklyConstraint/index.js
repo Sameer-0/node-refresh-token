@@ -29,7 +29,7 @@ module.exports = {
 
         console.log('req.body:::::::::',req.body)
 
-        SessionDates.save(req.body, res.locals.slug).then(result => {
+        WeeklyConstraint.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
                 message: "Success"
