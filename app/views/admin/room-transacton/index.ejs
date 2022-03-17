@@ -56,7 +56,7 @@
                         <td><%- trans.campus_abbr %></td>
                         <td><%- trans.username %></td>
                         <td><a data-id="<%- trans.id %>"><i class="fa fa-edit"></i></a>
-                            <a title="view details" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
+                            <a title="view details" class="viewtransactioninfo" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
                         </td>
                     </tr>
                     <%}%>
@@ -180,22 +180,40 @@
                     class="fas fa-plus"></i>
                 Add
                 More Fields</button>
-            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn">Create</button>
+            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn">
+               Create
+                </button>
             <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update
                 </button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="show-transaction-details" tabindex="-1" aria-labelledby="show-transaction-details" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="show-transaction-details-title">Show Transactions</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         <div id="ShowTransactionTable"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
   </div>
 
 
-
   <%- include("../partials/footer") %>
-    <script
-        src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
-    </script>
+    <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"> </script>
     <script>
         $(document).ready(function () {
+            
             let username = `<%- locals.userid %>`;
     console.log('Username:::::::::::::::::::', username)
     //Add more rows for building
@@ -284,7 +302,7 @@
                     roomJson.push(obj)
                 }
             })
-            console.log('roomJson:::::::::',roomJson)
+
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/room-transactions',
@@ -295,7 +313,12 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-               // location.reload()
+
+                console.log('result::::::',result)
+                showSuccess(result)
+                setTimeout(function(){
+                    location.reload()
+                },3000)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -309,55 +332,10 @@
 
 
 
-  
-    $('#roomTransactionTable').on('change', '.changeStatus',
-    function () {
-    //console.log($(this).attr('data-id'))
-    //console.log($(this).attr('data-status'))
-    if ($(this).is(':checked')) {
-    //console.log('Yes')
-    chnageStatus($(this).attr('data-id'), 1)
-    } else {
-    //console.log('No')
-    chnageStatus($(this).attr('data-id'), 0)
-    }
-    })
 
 
 
-
-    function chnageStatus(id, status) {
-    console.log(id, status)
-    let ApiObj = {
-    url: '/admin/room-transactions/changestatus',
-    type: 'POST',
-    data: {
-    id: id,
-    status: status
-    },
-    dataType: 'JSON'
-    }
-    ajaxApi(ApiObj).then(result => {
-    loadAll()
-    }).catch(error => {
-    })}
-
-
-    function loadAll() {
-    let ApiObj = {
-    url: '/admin/room-transactions/getAll',
-    type: 'GET',
-    data: {},
-    dataType: 'JSON'
-    }
-    ajaxApi(ApiObj).then(result => {
-    AjaxTable(result.result)
-    }).catch(error => {
-    })
-    }
-
-
-    // SEARCH PROGRAM TYPE
+   // SEARCH PROGRAM TYPE
     $('#searchkeyword').on('input', delay(function (e) {
     let keyword = $("#searchkeyword").val()
     $.ajax({
@@ -406,42 +384,97 @@
     }
     })
     });
-    function AjaxtTable(divisionList) {
-    let AjaxTable = `<table class="table custom_row" id="roomTransactionTable">
-        <thead>
-            <th>#</th>
-            <th>Transaction Type</th>
-            <th>Stage</th>
-            <th>Org Name</th>
-            <th>Campus</th>
-            <th>Username</th>
-            <th>Action</th>
-        </thead>`;
-        if (divisionList.length > 0) {
-        let count = 1;
-        for (let trans of divisionList) {
-        AjaxTable +=
-        `<tr>
-            <td>${count++}</td>
-            <td>${trans.transaction_type}</td>
-            <td>${trans.stage}</td>
-            <td>${trans.org_name}</td>
-            <td>${trans.campus_abbr}</td>
-            <td>${trans.username}</td>
-            <td><a data-id="${trans.id}"><i class="fa fa-edit"></i></a></td>
-        </tr>`
-        }
-        } else {
-        AjaxTable +=
-        ` <tr>
-            <td colspan="7">No Data Found</td>
-        </tr>`;
-        }
-        AjaxTable += `<tbody>
-    </table>`
-    $("#roomTransactionTable").html(AjaxTable);
-    }
+    
 
+
+    $("#roomTransactionTable").on('click','.viewtransactioninfo',function(){
+        let trand_lid = $(this).attr('data-id')
+        let ApiObj = {
+                type: 'GET',
+                url: '/admin/room-transactions/details',
+                data: {
+                    id: trand_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                let htmlTable = `<table class="table table-borderd">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Room No</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>    
+                    </thead>
+                    <tbody>`
+                        let count = 1
+                       result.data.forEach(function(item){
+                        htmlTable+=` <tr>
+                        <td>${count++}</td>
+                        <td>${item.room_number}</td>
+                        <td>${item.start_time}</td>
+                        <td>${item.end_time}</td>
+                        <td>${item.start_date}</td>
+                        <td>${item.end_date}</td>
+                                    </tr>`
+                       })
+                       htmlTable+= `</tbody></table>`;
+               
+
+                console.log(htmlTable)
+
+                $("#ShowTransactionTable").html(htmlTable)
+$("#show-transaction-details").modal('show')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+
+    })
+
+
+
+    function AjaxtTable(transactionList){
+        let AjaxTable = `<table class="table custom_row table-bordered" id="roomTransactionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Transaction Type</th>
+                    <th>Stage</th>
+                    <th>Org Name</th>
+                    <th>Campus</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>`;
+                if (transactionList.length > 0) {
+                    let count = 1;
+                    for (trans of transactionList) {
+                        AjaxTable +=
+                            `<tr>
+                        <td>${count++}</td>
+                        <td>${trans.transaction_type}</td>
+                        <td>${trans.stage}</td>
+                        <td>${trans.org_name}</td>
+                        <td>${trans.campus_abbr}</td>
+                        <td>${trans.username}</td>
+                        <td><a data-id="${trans.id}"><i class="fa fa-edit"></i></a>
+                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>`
+                    }
+                } else {
+                    AjaxTable +=
+                        ` <tr>
+                                <td colspan="7">No Data Found</td>
+                            </tr>`;
+                }
+                AjaxTable += `<tbody></table>`
+                $("#roomTransactionTable").html(AjaxTable);
+    }
 
 
     function showError(errors) {
@@ -463,8 +496,27 @@
         }
 
 
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
+
+
 
 
     })
     </script>
-<%- include("../partials/footerEnd") %>
+    <%- include("../partials/footerEnd") %>

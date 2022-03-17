@@ -20,7 +20,6 @@ module.exports = function validate(method) {
 
         case 'JsonValidator': {
             return (req, res, next) => {
-                console.log('Validation:::::::::::::::>>', req.body.inputJSON)
                 let jsonreq = JSON.parse(req.body.inputJSON);
                 let done = false
                 let keyval = [];
@@ -53,6 +52,7 @@ module.exports = function validate(method) {
             };
         }
 
+     
 
         case 'createSlug': {
             return [
