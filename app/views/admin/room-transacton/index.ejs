@@ -56,7 +56,7 @@
                         <td><%- trans.campus_abbr %></td>
                         <td><%- trans.username %></td>
                         <td><a data-id="<%- trans.id %>"><i class="fa fa-edit"></i></a>
-                            <a title="view details" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
+                            <a title="view details" class="viewtransactioninfo" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
                         </td>
                     </tr>
                     <%}%>
@@ -188,8 +188,25 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
 
+
+<div class="modal fade" id="show-transaction-details" tabindex="-1" aria-labelledby="show-transaction-details" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="show-transaction-details-title">Show Transactions</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         <div id="ShowTransactionTable"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
   <%- include("../partials/footer") %>
@@ -286,11 +303,6 @@
                 }
             })
 
-
-
-            console.log('roomJson:::::::::',roomJson)
-     
-
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/room-transactions',
@@ -301,14 +313,13 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                $(".spinner-border").addClass('d-none')
+
                 console.log('result::::::',result)
                 showSuccess(result)
                 setTimeout(function(){
                     location.reload()
                 },3000)
             }).catch(error => {
-                $(".spinner-border").addClass('d-none')
                 showError(error.responseJSON)
             })
 
@@ -369,12 +380,61 @@
     pageNo: num
     },
     success: function (data) {
-        console.log('data::::::::::::::::::::',data)
     AjaxtTable(data.data)
     }
     })
     });
     
+
+
+    $("#roomTransactionTable").on('click','.viewtransactioninfo',function(){
+        let trand_lid = $(this).attr('data-id')
+        let ApiObj = {
+                type: 'GET',
+                url: '/admin/room-transactions/details',
+                data: {
+                    id: trand_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                let htmlTable = `<table class="table table-borderd">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Room No</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>    
+                    </thead>
+                    <tbody>`
+                        let count = 1
+                       result.data.forEach(function(item){
+                        htmlTable+=` <tr>
+                        <td>${count++}</td>
+                        <td>${item.room_number}</td>
+                        <td>${item.start_time}</td>
+                        <td>${item.end_time}</td>
+                        <td>${item.start_date}</td>
+                        <td>${item.end_date}</td>
+                                    </tr>`
+                       })
+                       htmlTable+= `</tbody></table>`;
+               
+
+                console.log(htmlTable)
+
+                $("#ShowTransactionTable").html(htmlTable)
+$("#show-transaction-details").modal('show')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+
+    })
 
 
 
@@ -402,7 +462,7 @@
                         <td>${trans.campus_abbr}</td>
                         <td>${trans.username}</td>
                         <td><a data-id="${trans.id}"><i class="fa fa-edit"></i></a>
-                            <a title="view details" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
+                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
                         </td>
                     </tr>`
                     }
