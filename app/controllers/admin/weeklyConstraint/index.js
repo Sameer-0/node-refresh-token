@@ -9,7 +9,7 @@ const WeeklyConstraint = require('../../../models/WeeklyConstraint')
 module.exports = {
     getPage: (req, res) => {
         Promise.all([WeeklyConstraint.fetchAll(10, res.locals.slug), WeeklyConstraint.getCount(res.locals.slug)]).then(result => {
-            console.log('result:::::programsession',result[0].recordset)
+           
             res.render('admin/weekly-constraint/index.ejs', {
                 weeklyConstraintList: result[0].recordset,
                 pageCount: result[1].recordset[0].count
@@ -27,8 +27,6 @@ module.exports = {
             return;
         }
 
-        console.log('req.body:::::::::',req.body)
-
         WeeklyConstraint.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
@@ -43,7 +41,7 @@ module.exports = {
 
     findOne: (req, res) => {
        
-        SessionDates.findById(req.query.id, res.locals.slug).then(result => {
+        WeeklyConstraint.findById(req.query.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -65,7 +63,8 @@ module.exports = {
             return;
         }
 
-        SessionDates.update(req.body, res.locals.slug).then(result => {
+        console.log('uPDATE DATA req.body::::',req.body)
+        WeeklyConstraint.update(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -80,7 +79,7 @@ module.exports = {
     delete: (req, res) => {
 
         console.log('req.body.Ids::::::::::',req.body.Ids)
-        SessionDates.delete(req.body.Ids, res.locals.slug).then(result => {
+        WeeklyConstraint.delete(req.body.Ids, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success"

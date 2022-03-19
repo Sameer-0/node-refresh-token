@@ -15,7 +15,7 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, tag_id, name, event_type, rule_on, repeatable
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, tag_id, name, event_type, rule_on, IIF(repeatable = 1, 'YES', 'NO') AS repeatable
             FROM [dbo].weekly_constraints WHERE active = 1`)
         })
     }
@@ -26,7 +26,7 @@ module.exports = class {
                 .input('constraintName', sql.NVarChar(60), body.constraintName)
                 .input('eventType', sql.NVarChar(5), body.eventType)
                 .input('ruleOn', sql.NVarChar(30), body.ruleOn)
-                .input('repeatable', sql.Bit, body.repeatable)
+                .input('repeatable', sql.TinyInt, body.repeatable)
                 .query(`INSERT INTO [dbo].weekly_constraints (tag_id, name, event_type, rule_on, repeatable) VALUES (@tagId, @constraintName, @eventType, @ruleOn, @repeatable)`)
         })
     }
@@ -34,18 +34,20 @@ module.exports = class {
     static findById(id, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('Id', sql.Int, id)
-                .query(`SELECT id, program_session_lid, session_type_lid, start_date_id, end_date_id FROM [${slug}].session_dates WHERE id = @Id`)
+                .query(`SELECT id, tag_id, name, event_type, rule_on, CONVERT(NVARCHAR, repeatable) as repeatable
+                FROM [dbo].weekly_constraints WHERE id = @Id`)
         })
     }
 
     static update(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('Id', sql.Int, body.id)
-                .input('AcadSessionLid', sql.Int, body.acadSession)
-                .input('SessionTypeLid', sql.Int, body.sessionType)
-                .input('StartDateId', sql.Int, body.startDate)
-                .input('EndDateId', sql.Int, body.endDate)
-                .query(`UPDATE [${slug}].session_dates SET program_session_lid = @AcadSessionLid, session_type_lid = @SessionTypeLid, start_date_id = @StartDateId, end_date_id = @EndDateId  WHERE id = @Id`)
+            return pool.request().input('id', sql.Int, body.id)
+                .input('tagId', sql.Int, body.tagId)
+                .input('constraintName', sql.NVarChar, body.constraintName)
+                .input('eventType', sql.NVarChar, body.eventType)
+                .input('ruleOn', sql.NVarChar, body.ruleOn)
+                .input('repeatable', sql.TinyInt, body.repeatable)
+                .query(`UPDATE [dbo].weekly_constraints SET tag_id = @tagId, name = @constraintName, event_type = @eventType, rule_on = @ruleOn, repeatable =  @repeatable WHERE id = @id`)
         })
     }
 
@@ -53,7 +55,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request();
             JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [${slug}].session_dates SET active = 0  WHERE id = ${element.id}`)
+                return request.query(`UPDATE [dbo].weekly_constraints SET active = 0  WHERE id = ${element.id}`)
             });
         })
     }
