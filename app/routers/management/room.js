@@ -14,7 +14,7 @@ const roomValidate = require('../../middlewares/roomValidate')
 const transactionTypes = require('../../controllers/management/roomtransactiontypes')
 const transactionStage = require('../../controllers/management/roomtransactionstages')
 const transaction = require('../../controllers/management/roomtransactions')
-
+const RoomRequest = require('../../controllers/management/RoomRequest')
 
 //ROOM ROUTER
 router.get('/rooms', roomcontroller.getPage)
@@ -74,6 +74,7 @@ router.post('/rooms/bookings/transactions/approve-trans', transaction.approveTra
 router.get('/rooms/bookings/transactions/search', validate('search'), transaction.search)
 
 
-//HOLIDAY
+//ROOM REQUESTS
+router.get('/rooms/requests', RoomRequest.getPage)
 
 module.exports = router;
