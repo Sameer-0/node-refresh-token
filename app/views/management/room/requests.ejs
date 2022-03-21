@@ -10,15 +10,15 @@
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>ROOM TYPE LIST</h5>
+                <h5>ROOM REQUESTS</h5>
             </div>
             <div>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-room-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-selected-rooms-types add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-rooms-types add-btn" title="Bulk Delete"><img src="/icons/delete.png" alt="" width="26px"
-                        height="32px"></button>
+                <button class="btn ms-auto bulk-delete-rooms-types add-btn" title="Bulk Delete"><img
+                        src="/icons/delete.png" alt="" width="26px" height="32px"></button>
             </div>
         </div>
 
@@ -28,11 +28,25 @@
             <table class="table custom_row" id="rootTypeTable">
                 <thead>
                     <th>Sr No.</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                    <th>Check All <input type="checkbox" class="selectAll-rooms-types"></th>
+                    <th>Transaction Type</th>
+                    <th>Stage</th>
+                    <th>Orgnization</th>
+                    <th>Campus</th>
                 </thead>
+                <tbody>
+                    <%let count = 1%>
+                        <% for(let request of transactionList){%>
+                        <tr>
+                            <td><%- count++%></td>
+                            <td><%-request.transaction_type %></td>
+                            <td><%-request.stage %></td>
+                            <td><%-request.org_abbr %></td>
+                            <td><%-request.campus_abbr %></td>
+                         
+                        </tr>
+                        <%}%>   
+                   
+                </tbody>
               
             </table>
         </div>
@@ -43,23 +57,23 @@
 
 
 <%- include("../partials/footer") %>
-<script>
-    $(document).ready(function () {
+                        <script>
+                            $(document).ready(function () {
 
 
-        //search feature delay function is writter in script.js file which is located in public/js/script.js
-        $('#searchkeyword').on('input', delay(function (e) {
-            let keyword = $("#searchkeyword").val()
-            $.ajax({
-                type: "GET",
-                url: "/management/rooms/roomtypes/search",
-                data: {
-                    keyword: keyword
-                },
-                success: function (data) {
-                    let roomTypeList = data.data;
+                                //search feature delay function is writter in script.js file which is located in public/js/script.js
+                                $('#searchkeyword').on('input', delay(function (e) {
+                                    let keyword = $("#searchkeyword").val()
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "/management/rooms/roomtypes/search",
+                                        data: {
+                                            keyword: keyword
+                                        },
+                                        success: function (data) {
+                                            let roomTypeList = data.data;
 
-                    let AjaxTable = `<table class="table custom_row" id="rootTypeTable">
+                                            let AjaxTable = `<table class="table custom_row" id="rootTypeTable">
                 <thead>
                     <th>Sr No.</th>
                     <th>Name</th>
@@ -68,11 +82,11 @@
                     <th>Check All <input type="checkbox" class="selectAll-rooms-types"></th>
                 </thead>`;
 
-                    if (roomTypeList.length > 0) {
-                        let count = 1;
-                        for (list of roomTypeList) {
-                            AjaxTable +=
-                                `<tr>
+                                            if (roomTypeList.length > 0) {
+                                                let count = 1;
+                                                for (list of roomTypeList) {
+                                                    AjaxTable +=
+                                                        `<tr>
                         <td>${count++}</td>
                         <td>${list.name}</td>
                         <td>${list.description}</td>
@@ -84,19 +98,19 @@
                             <input type="checkbox" data-roomtype-id="${list.roomtypeid}" class="delete-room-types">
                         </td>
                     </tr>`
-                        }
-                    } else {
-                        AjaxTable +=
-                            ` <tr>
+                                                }
+                                            } else {
+                                                AjaxTable +=
+                                                    ` <tr>
                                 <td colspan="3">No Data Found</td>
                             </tr>`;
-                    }
-                    AjaxTable += `<tbody></table>`
-                    $("#rootTypeTable").html(AjaxTable);
-                }
-            })
-        }, 500));
+                                            }
+                                            AjaxTable += `<tbody></table>`
+                                            $("#rootTypeTable").html(AjaxTable);
+                                        }
+                                    })
+                                }, 500));
 
-    })
-</script>
-<%- include("../partials/footerEnd") %>
+                            })
+                        </script>
+                        <%- include("../partials/footerEnd") %>
