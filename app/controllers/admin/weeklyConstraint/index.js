@@ -104,7 +104,7 @@ module.exports = {
         let rowcount = 10;
  
         SessionDates.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
-            console.log('Search result.recordset',result.recordset)
+            console.log('Search result.recordset', result.recordset)
             if (result.recordset.length > 0) {
                 
                 res.json({

@@ -60,7 +60,7 @@ module.exports = class {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(` SELECT TOP ${Number(rowcount)}  pt.id , pt.name, pt.description FROM 
+                .query(`SELECT TOP ${Number(rowcount)}  pt.id , pt.name, pt.description FROM 
                 [dbo].session_types pt WHERE pt.active = 1 AND (pt.name LIKE @keyword OR pt.description LIKE @keyword) ORDER BY pt.id DESC`)
         })
     }

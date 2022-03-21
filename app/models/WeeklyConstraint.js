@@ -62,7 +62,7 @@ module.exports = class {
 
     static deleteAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [${slug}].session_dates SET active = 0 WHERE active = 1`)
+            return pool.request().query(`UPDATE [dbo].weekly_constraints SET active = 0 WHERE active = 1`)
         })
     }
 
@@ -70,15 +70,10 @@ module.exports = class {
         console.log(rowcount, keyword, slug)
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
-                FROM [${slug}].session_dates sd 
-                INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
-                INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
-                INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
-                INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
-                INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
-                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 AND (ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword OR acs.acad_session LIKE @keyword) 
-				ORDER BY sd.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} id, tag_id, name, event_type, rule_on
+                FROM [dbo].weekly_constraints 
+                WHERE active = 1 AND (id LIKE @keyword OR tag_id LIKE @keyword OR name LIKE @keyword OR event_type LIKE @keyword OR rule_on LIKE @keyword) 
+				ORDER BY id DESC`)
         })
     }
 
@@ -86,7 +81,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
+                .query(`SELECT sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate, CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
                 FROM [${slug}].session_dates sd 
                 INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
                 INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
