@@ -3,13 +3,7 @@ const {
     poolConnection,
     execPreparedStmt
 } = require('../../config/db')
-const {
-    pool
-} = require('mssql');
-const {
-    body,
-    Result
-} = require('express-validator');
+
 
 module.exports = class RoomTransactions {
 
@@ -82,6 +76,16 @@ module.exports = class RoomTransactions {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].room_transactions WHERE active = 1`)
+        })
+    }
+
+    // ROOM REQUESTS
+
+    static RoomRequest(rowcount, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT TOP ${Number(rowcount)} id, transaction_type_lid, stage_lid, created_on, updated_on, org_lid, campus_lid, user_lid, active, last_changed, tenant_id, tenant_room_transaction_id
+            FROM [${slug}].room_transactions WHERE active = 1`)
         })
     }
 
