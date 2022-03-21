@@ -9,12 +9,13 @@ module.exports = class {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} ps.id, p.program_name, adc.acad_session, ps.active FROM [${slug}].program_sessions ps 
             INNER JOIN [${slug}].programs p ON ps.program_lid = p.id
+            INNER JOIN [${slug}].programs p ON ps.program_lid = p.program_code
             INNER JOIN [dbo].acad_sessions adc ON adc.id = ps.acad_session_lid
             WHERE ps.active = 1 AND p.active = 1 AND adc.active = 1 ORDER BY ps.id DESC`)
         })
     }
 
-    static pegination(rowcount, pageNo, slug) {
+    static pagination(rowcount, pageNo, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
