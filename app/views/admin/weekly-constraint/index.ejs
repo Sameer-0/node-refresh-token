@@ -28,6 +28,7 @@
 
             <table class="table custom_row table-bordered" id="weeklyConstraintTable">
                 <thead>
+                    <td>Sr.no.</td>
                     <th>Tag Id</th>
                     <th>Name</th>
                     <th>Event type</th>
@@ -47,11 +48,11 @@
                         <td><%- constraint.rule_on %></td>
                         <td><%- constraint.repeatable %></td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-session-date"
-                                data-session-date-id="<%- constraint.id %>"></i>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-weekly-constraint"
+                                data-weekly-constraint-id="<%- constraint.id %>"></i>
                         </td>
                         <td>
-                            <input type="checkbox" data-session-date-id="<%- constraint.id %>" class="delete-session-type">
+                            <input type="checkbox" data-weekly-constraint-id="<%- constraint.id %>" class="delete-weekly-constraint">
                         </td>
                     </tr>
 
@@ -100,12 +101,16 @@
                 </div>
                 <div class="mb-3">
                     <label for="repeatable" class="form-label">Repeatable</label>
-                    <input type="text" name="repeatable" id="repeatable" class="form-control">
+                    <select name="repeatable" id="repeatable" class="form-control">
+                        <option value="">--SELECT--</option>
+                        <option value="1">YES</option>
+                        <option value="0">NO</option>
+                    </select>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <span class="errorMsg"></span>
                     <button type="submit" class="btn createWeeklyConstraint modal-inputform-btn">Create Session Date</button>
-                    <button type="submit" class="btn updateWeeklyConstarint modal-inputform-btn d-none">Update Session Date</button>
+                    <button type="submit" class="btn updateWeeklyConstraint modal-inputform-btn d-none">Update Session Date</button>
                 </div>
             </div>
         </div>
@@ -117,7 +122,7 @@
         $(document).ready(function () {
 
             $('.createWeeklyConstraint').on('click', function () {
-                console.log('WEEKLY CONSTRAINT')
+                console.log('Valuese::::::', $('#repeatable').val())
                 $.ajax({
                     url: '/admin/weekly-constraint',
                     method: 'POST',
@@ -140,28 +145,29 @@
             })
 
             //EDIT SESSION DATE TYPE
-            $("#sessionDateTable").on('click', '.edit-session-date', function () {
-                $(".createSessionDate").addClass('d-none')
-                $(".updateSessionDate").removeClass('d-none')
-                $("#add-session-modal-title").html('UPDATE SESSION DATE')
+            $("#weeklyConstraintTable").on('click', '.edit-weekly-constraint', function () {
+                $(".createWeeklyConstraint").addClass('d-none')
+                $(".updateWeeklyConstraint").removeClass('d-none')
+                $("#add-weeklyconstraint-modal-title").html('UPDATE WEEKLY CONSTRAINT')
 
                 $.ajax({
-                    url: '/admin/sessions/dates/findOne',
+                    url: '/admin/weekly-constraint/findOne',
                     method: 'GET',
                     type: 'JSON',
                     data: {
-                        id: $(this).attr('data-session-date-id')
+                        id: $(this).attr('data-weekly-constraint-id')
                     },
                     success: data => {
-                        console.log(data)
+                        console.log(data.data)
                         let obj = data.data;
                     
-                        $('#programName').val(obj.program_session_lid).trigger('change')
-                        $('#sessionType').val(obj.session_type_lid).trigger('change')
-                        $('#startDate').val(obj.start_date_id).trigger('change')
-                        $('#endtDate').val(obj.end_date_id).trigger('change')
-                        $('#Id').val(obj.id)
-                        $("#add-sessiondate-modal").modal('show')
+                        $('#tagId').val(obj.tag_id).trigger('change')
+                        $('#constraintName').val(obj.name).trigger('change')
+                        $('#eventType').val(obj.event_type).trigger('change')
+                        $('#ruleOn').val(obj.rule_on).trigger('change')
+                        $('#repeatable').val(obj.repeatable).trigger('change')
+                        $('#Id').val(obj.id).trigger('change')
+                        $("#add-weeklyconstraint-modal").modal('show')
                     },
                     error: err => {
                         showError(err.responseJSON)
@@ -170,31 +176,33 @@
             })
 
             //Select All campus
-            $("#sessionDateTable").on('click', '.selectAll-Session-dates', function () {
+            $("#weeklyConstraintTable").on('click', '.selectAll-weekly-constraint', function () {
                 if (this.checked) {
                     // Iterate each checkbox
-                    $('.delete-session-type:checkbox').each(function () {
+                    $('.delete-weekly-constraint:checkbox').each(function () {
                         this.checked = true;
                     });
                 } else {
-                    $('.delete-session-type:checkbox').each(function () {
+                    $('.delete-weekly-constraint:checkbox').each(function () {
                         this.checked = false;
                     });
                 }
             })
 
             // UPDATE SESSION DATE 
-            $(".updateSessionDate").on('click', function () {
+            $(".updateWeeklyConstraint").on('click', function () {
+                console.log($('#repeatable').val())
                 $.ajax({
-                    url: '/admin/sessions/dates',
+                    url: '/admin/weekly-constraint',
                     method: 'PUT',
                     type: 'JSON',
                     data: {
-                        id: $("#Id").val(),
-                        acadSession: $('#acadSession').val(),
-                        sessionType: $('#sessionType').val(),
-                        startDate: $('#startDate').val(),
-                        endDate: $('#endtDate').val(),
+                        tagId: $("#tagId").val(),
+                        constraintName: $('#constraintName').val(),
+                        eventType: $('#eventType').val(),
+                        ruleOn: $('#ruleOn').val(),
+                        repeatable: $('#repeatable').val(),
+                        id: $('#Id').val()
 
                     },
                     success: (data) => {
@@ -211,11 +219,11 @@
             })
 
             //Delete Single and mutiple Delete
-            $('.select-delete-sessiondate').on('click', function () {
+            $('.select-delete-weeklyconstraint').on('click', function () {
                 let deleteids = []
-                $('.delete-session-type:checked').each(function () {
+                $('.delete-weekly-constraint:checked').each(function () {
                     let obj = {
-                        id: $(this).attr("data-session-date-id"),
+                        id: $(this).attr("data-weekly-constraint-id"),
                     }
                     deleteids.push(obj) 
                 })
@@ -224,8 +232,8 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/sessions/dates',
-                        type: 'DELETE',
+                        url: '/admin/weekly-constraint',
+                        method:'DELETE',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
@@ -243,10 +251,10 @@
             })
 
             //Bulk Delete
-            $(".bulk-delete-sessiondate").on('click', function () {
+            $(".bulk-delete-weeklyconstraint").on('click', function () {
                 console.log('delete all')
                 let ApiObj = {
-                    url: '/admin/sessions/dates',
+                    url: '/admin/weekly-constraint',
                     type: 'PATCH',
                     data: {},
                     dataType: 'JSON'
@@ -267,7 +275,7 @@
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
                     type: "GET",
-                    url: "/admin/sessions/dates/search",
+                    url: "/admin/weekly-constraint/search",
                     data: {
                         keyword: keyword
                     },
@@ -276,7 +284,7 @@
                         console.log(data.data);
                     }
                 })
-            }, 500));
+            }, 1500));
 
 
 

@@ -58,7 +58,7 @@
             <table class="table custom_row table-bordered" id="programTable">
                 <thead>
                     <th>#</th>
-                    <th>Program Id</th>
+                    <th>Program Code</th>
                     <th>Program Name</th>
                     <th>Program Type</th>
                     <th>Abbr</th>
@@ -68,7 +68,7 @@
                     <%for(let program of programList) {%>
                     <tr>
                         <td><%- count++ %></td>
-                        <td><%-program.program_id %></td>
+                        <td><%-program.program_code %></td>
                         <td><%-program.program_name %></td>
                         <td><%-program.program_type %></td>
                         <td><%-program.abbr %></td>
@@ -157,7 +157,7 @@
             let AjaxTable = `<table class="table custom_row table-bordered" id="programTable">
                 <thead>
                     <th>#</th>
-                    <th>Program Id</th>
+                    <th>Program Code</th>
                     <th>Program Name</th>
                     <th>Program Type</th>
                     <th>Abbr</th>
@@ -166,19 +166,21 @@
                 let count = 1;
                 for (let program of programTypeList) {
                     AjaxTable +=
-                        `<td>${count++}</td>
-                        <td>${program.program_id}</td>
+                        `<tbody>
+                        <td>${count++}</td>
+                        <td>${program.program_code}</td>
                         <td>${program.program_name}</td>
                         <td>${program.program_type}</td>
                         <td>${program.abbr}</td>`
                 }
             } else {
                 AjaxTable +=
-                    ` <tr>
+                    `<tbody>
+                            <tr>
                                 <td colspan="5">No Data Found</td>
                             </tr>`;
             }
-            AjaxTable += `<tbody></table>`
+            AjaxTable += `</tbody></table>`
             $("#programTable").html(AjaxTable);
         }
 
