@@ -23,12 +23,12 @@ module.exports = class {
     }
 
 
-    static fetchAll() {
+    static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select cw.id, cw.module_name, cw.program_id, cw.module_id, cw.acad_session_id, cw.electives, cw.intake, cw.student_per_division, cw.lec_per_week_per_division, cw.practical_per_week_per_division, cw.tutorial_per_week_per_division, cw.workshop_per_week_per_division,
-            cw.continuous, cw.session_per_semester, cw.acad_session_id, cw.lec_per_week_per_batch, cw.practical_per_week_per_batch, cw.tutorial_per_week_per_batch, cw.workshop_per_week_per_batch from [bncp-mum].initial_course_workload cw`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, active, last_changed, module_code, IIF(active = 1, 'Yes', 'No') as status
+            FROM [${slug}].initial_course_workload ORDER BY id DESC`)
         })
-}
+    }
 
     static getCount(slug) {
         return poolConnection.then(pool => {
@@ -36,5 +36,37 @@ module.exports = class {
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].initial_course_workload WHERE active = 1`)
         })
     }
+
+    static changeStatus(body, slug) {
+        console.log(body, slug)
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('Id', sql.Int, body.id)
+            .input('Status', sql.TinyInt, body.status)
+            .query(`UPDATE [${slug}].initial_course_workload SET active = @Status WHERE id = @Id`)
+        })
+    }
+
+
+    static pagination(pageNo, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, active, last_changed, module_code, IIF(active = 1, 'Yes', 'No') as status
+                FROM [${slug}].initial_course_workload ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static search(rowcount, keyword, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, 
+                practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, 
+                acad_session_lid, active, last_changed, module_code, IIF(active = 1, 'Yes', 'No') as status
+                FROM [${slug}].initial_course_workload 
+                WHERE module_name LIKE @keyword OR program_id LIKE @keyword OR electives LIKE @keyword OR intake LIKE @keyword OR student_per_division LIKE @keyword OR lec_per_week_per_division LIKE @keyword OR tutorial_per_week_per_division LIKE @keyword OR workshop_per_week_per_division LIKE @keyword OR continuous LIKE @keyword OR session_events_per_semester LIKE @keyword OR module_code LIKE @keyword ORDER BY id DESC`)
+        })
+    }
+
 
 }

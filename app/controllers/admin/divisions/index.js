@@ -3,10 +3,7 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
-const res = require('express/lib/response');
 
-
- 
 const Divisions = require('../../../models/Divisions')
 
 module.exports = {
