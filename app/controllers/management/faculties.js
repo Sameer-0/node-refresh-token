@@ -1,7 +1,7 @@
 const SlotIntervalTimings = require('../../models/SlotIntervalTimings')
 const Organizations = require('../../models/Organizations')
 const Campuses = require('../../models/Campuses')
-const Faculties = require('../../models/Faculties')
+const Faculties = require('../../models/FacultyDbo')
 const Settings = require('../../models/Settings')
 module.exports = {
     getPage: (req, res) => {
