@@ -71,21 +71,20 @@
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                method: "GET",
+                type: "GET",
                 dataType:"JSON",
                 url: "/management/rooms/requests/search",
                 data: {
                     keyword: keyword
                 },
                 success: function (data) {
-                    console.log('data:::::::',data)
+                    console.log('data:::::::',data.data)
                     showAjaxTable(data.data)
                 },
-                error:function(error){
-                    console.log('Eroor',error)
-                }
+               
             })
         }, 500));
+
 
         //Pagination Here
         let pageCount = `<%- pageCount %>`

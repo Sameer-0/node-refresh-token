@@ -29,8 +29,8 @@ module.exports = {
                     length: result.recordset.length
                 })
             } else {
-                res.status(400).json({
-                    status: "400",
+                res.status(200).json({
+                    status: "200",
                     message: "No data found",
                     data: result.recordset,
                     length: result.recordset.length
