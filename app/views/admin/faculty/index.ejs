@@ -209,25 +209,22 @@
         })
 
         //search selected faculty
-       
-
-        $('.selected-faculties').on('input','#searchSelectedFaculty', function () {
+        
+        $('#searchSelectedFaculty').on('input', function () {
             let selectedFaculties = $('#selectedList li')
-        console.log('slectedfaculties',selectedFaculties)
-
-            var text = $('#searchSelectedFaculty').val().toLowerCase();
-console.log(text)
-            for (let faculty of selectedFaculties) {
-                console.log('im inn')
-                if (faculty.innerText.toLowerCase().indexOf(text) > -1) {
-                    console.log('ohh yess')
-                    faculty.style.display = "block";
-                } else {
-                    faculty.style.display = "none";
-                }
-            };
-        })
-
+var text = $('#searchSelectedFaculty').val().toLowerCase();
+console.log('text:::::::::',selectedFaculties)
+for (let faculty of selectedFaculties) {
+    console.log('faculty:::::::::',faculty)
+    if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
+      //  faculty.style.display = "block";
+        $(faculty).removeClass("d-none");
+    } else {
+        $(faculty).addClass("d-none");
+    }
+};
+})
+       
 
         // Add more rows for orgnization
         $('#add-more-faculties').on('click', function () {
