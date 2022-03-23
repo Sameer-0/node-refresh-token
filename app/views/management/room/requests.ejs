@@ -42,7 +42,6 @@
                         <td><%-request.stage %></td>
                         <td><%-request.org_abbr %></td>
                         <td><%-request.campus_abbr %></td>
-
                     </tr>
                     <%}%>   
                    
@@ -72,13 +71,18 @@
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "GET",
-                url: "/management/rooms/roomtypes/search",
+                method: "GET",
+                dataType:"JSON",
+                url: "/management/rooms/requests/search",
                 data: {
                     keyword: keyword
                 },
                 success: function (data) {
+                    console.log('data:::::::',data)
                     showAjaxTable(data.data)
+                },
+                error:function(error){
+                    console.log('Eroor',error)
                 }
             })
         }, 500));
@@ -107,12 +111,12 @@
         }).on("page", function (event, num) {
             $.ajax({
                 type: "POST",
-                url: "/management/building/pagination",
+                url: "/management/rooms/requests/pagination",
                 data: {
                     pageNo: num
                 },
                 success: function (data) {
-                    showAjaxTable(data.data) // Building List
+                    showAjaxTable(data.data)
                 }
             })
         });
@@ -121,31 +125,27 @@
             let AjaxTable = `<table class="table custom_row" id="rootTypeTable">
                 <thead>
                     <th>Sr No.</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                    <th>Check All <input type="checkbox" class="selectAll-rooms-types"></th>
-                </thead>`;
+                    <th>Transaction Type</th>
+                    <th>Stage</th>
+                    <th>Orgnization</th>
+                    <th>Campus</th>
+                </thead>
+                <tbody>`;
             if (roomTypeList.length > 0) {
                 let count = 1;
-                for (list of roomTypeList) {
+                for (request of roomTypeList) {
                     AjaxTable +=
                         `<tr>
-                        <td>${count++}</td>
-                        <td>${list.name}</td>
-                        <td>${list.description}</td>
-                        <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-roomtype"
-                                data-roomtype-id="${list.roomtypeid}"></i>
-                        </td>
-                        <td>
-                            <input type="checkbox" data-roomtype-id="${list.roomtypeid}" class="delete-room-types">
-                        </td>
+                        <td>${ count++}</td>
+                        <td>${request.transaction_type}</td>
+                        <td>${request.stage}</td>
+                        <td>${request.org_abbr}</td>
+                        <td>${request.campus_abbr}</td>
                     </tr>`
                 }
             } else {
                 AjaxTable +=
-                    ` <tr><td colspan="3">No Data Found</td></tr>`;
+                    ` <tr><td colspan="5">No Data Found</td></tr>`;
             }
             AjaxTable += `<tbody></table>`
             $("#rootTypeTable").html(AjaxTable);
