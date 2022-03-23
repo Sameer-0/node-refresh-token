@@ -116,46 +116,36 @@
     <div class="modal-dialog modal-fullscreen modal-lg">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="open-faculty-modal-title">Add New Faculty</h5>
+                <h3 class="modal-title" id="open-faculty-modal-title">Add New Faculty</h3>
                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times text-dark"></i></button>
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
-                <div class="table-responsive">
-                    <table class="table " id="add-more-faculty-table">
-                        <thead>
-                            <th>Faculty Info</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select class="form-select " name="faculty_id" id="faculty_id" required>
-                                            <option disabled selected value>--Faculty Id--</option>
-                                            <% for(let faculty of faculties) { %>
-                    <option value="<%- faculty.id %>">
-                        <%- faculty.faculty_name %> (<%- faculty.faculty_id %>)
-                        <%- faculty.faculty_name %> (<%- faculty.faculty_name %>)
-                    </option>
-                    <% } %>
-                    </select>
-                    </td>
+               
+                
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="text-center">Select Faculties</h4>
+                    <ul class="list-group" id="AddFaculty">
+                        <input type="text" name="" id="searchFaculty" placeholder="Search Faculty" class="form-control">
+                        <% for (let faculty of faculties) { %>
+                        <li class="list-group-item" data-faculty-name="<%- faculty.faculty_name %>" data-faculty-id="<%- faculty.faculty_id%>"><%- faculty.faculty_name %>(<%- faculty.faculty_id%>) %></li>
+                        <% } %>
+                    </ul>
+                </div>
+                <div class="col-md-6 selected-faculties" >
+                    <h4 class="text-center">Selected Faculties</h4>
+                    <ul class="list-group" id="selectedList">
+                        <input type="text" name="" id="searchSelectedFaculty" placeholder="Search Selected Faculty" class="form-control">
+                    </ul>
 
-                    <td>
-                        <i class="far fa-edit d-none"></i>
-                        <i class="fas fa-trash-alt text-danger cursor-pointer removefaculty"></i>
-                    </td>
-                    </tr>
-                </tbody>
-            </table>
+                </div>
+           
         </div>
     </div>
     <div class="modal-footer">
         <div id="errorMsg"></div>
-        <button type="button" class="btn btn-success  btn-sm" id="add-more-faculties"><i class="fas fa-plus"></i>
-            Add
-            More Faculty</button>
         <button type="submit" class="btn  createFaculty modal-inputform-btn">Create Faculty</button>
         <button type="submit" class="btn  updateFaculty modal-inputform-btn d-none">Update Building</button>
     </div>
@@ -172,6 +162,72 @@
 
 <script>
     $(document).ready(function () {
+        //DATALIST
+
+        $("#AddFaculty").on('click', '.list-group-item', function () {
+            $("#selectedList").append(`<li class="list-group-item d-flex justify-content-between align-items-center clicktoremove"  data-position="${$(this).text()}">${$(this).text()}
+			<span class="badge bg-danger rounded-pill">Remove</span>
+			</li>
+	`
+    )
+            //remove current element when added to right sidebar
+            $($(this)).fadeOut(500, function() {
+                $($(this)).remove()
+        })
+           
+    })
+
+        //Remove Element
+
+        $("#selectedList").on('click', '.clicktoremove', function () {
+            console.log($(this))
+
+            $("#AddFaculty").append(`<li class="list-group-item" >${$(this).attr("data-position")}
+			</li>
+	`)
+
+    $($(this)).fadeOut(500, function() {
+                $($(this)).remove()
+        })
+        })
+
+        //search 
+        let faculties = $('#AddFaculty li')
+        console.log(faculties)
+
+        $('#searchFaculty').on('input', function () {
+
+            var text = $('#searchFaculty').val().toLowerCase();
+
+            for (let faculty of faculties) {
+                if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
+                    faculty.style.display = "block";
+                } else {
+                    faculty.style.display = "none";
+                }
+            };
+        })
+
+        //search selected faculty
+       
+
+        $('.selected-faculties').on('input','#searchSelectedFaculty', function () {
+            let selectedFaculties = $('#selectedList li')
+        console.log('slectedfaculties',selectedFaculties)
+
+            var text = $('#searchSelectedFaculty').val().toLowerCase();
+console.log(text)
+            for (let faculty of selectedFaculties) {
+                console.log('im inn')
+                if (faculty.innerText.toLowerCase().indexOf(text) > -1) {
+                    console.log('ohh yess')
+                    faculty.style.display = "block";
+                } else {
+                    faculty.style.display = "none";
+                }
+            };
+        })
+
 
         // Add more rows for orgnization
         $('#add-more-faculties').on('click', function () {
