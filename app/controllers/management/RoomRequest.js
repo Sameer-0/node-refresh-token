@@ -22,14 +22,14 @@ module.exports = {
         let rowcount = 10;
         RoomTransactionRequest.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
-                res.json({
+                res.status(200).json({
                     status: "200",
                     message: "Room Type fetched",
                     data: result.recordset,
                     length: result.recordset.length
                 })
             } else {
-                res.json({
+                res.status(400).json({
                     status: "400",
                     message: "No data found",
                     data: result.recordset,
