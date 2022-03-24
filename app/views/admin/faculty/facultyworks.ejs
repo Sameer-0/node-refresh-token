@@ -89,7 +89,7 @@
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <div class="table-responsive ">
-                    <table class="table table-bordered" id="add-more-roomstrans-table">
+                    <table class="table table-bordered" id="add-more-facultywork-table">
                         <thead>
                             <th>Facilty</th>
                             <th>Program Session</th>
@@ -104,7 +104,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="form-control">
+                                    <select class="form-control" name="faculty_lid">
                                         <% for(faculty of facultyList) {%>
                                         <option value="<%- faculty.id %>">
                                             <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
@@ -112,35 +112,55 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-control">
+                                    <select class="form-control" name="program_session_lid">
                                         <% for(session of programSession) {%>
                                         <option value="<%- session.id %>"><%- session.acad_session %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
+                                    <select class="form-control" name="module_lid">
+                                        <% for(course of courseWorkload) {%>
+                                        <option value="<%- course.id %>">
+                                            <%- course.module_name %>(<%- course.module_id %>)</option>
+                                        <%}%>
+                                    </select>
                                 </td>
                                 <td>
+                                    <input type="number" name="lecture_per_week" class="form-control">
                                 </td>
                                 <td>
-
+                                    <input type="number" name="practical_per_week" class="form-control">
                                 </td>
                                 <td>
+                                    <input type="number" name="tutorial_per_week" class="form-control">
                                 </td>
-                                <td></td>
+                                <td><input type="number" name="workshop_per_week" class="form-control"></td>
                                 <td>
-
+                                    <input type="number" name="is_batch_preference_set" class="form-control">
                                 </td>
 
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-roomtransaction"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworkfield"></i>
                                 </td>
                             </tr>
                         </tbody>
 
                     </table>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <div id="errorMsg"></div>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-facultyworkfields"><i
+                        class="fas fa-plus"></i>
+                    Add
+                    More Fields</button>
+                <button type="submit" class="btn  createRoomTransaction modal-inputform-btn">
+                   Create
+                    </button>
+                <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update
+                    </button>
             </div>
         </div>
     </div>
@@ -151,7 +171,46 @@
                                         </script>
                                         <script>
                                             $(document).ready(function () {
+    //Add more rows for building
+    $('#add-more-facultyworkfields').on('click', function () {
+    console.log("Adding faculty work fields::::")
+    let lastTr = $('#add-more-facultywork-table tbody tr:last-child')
+    let faculty_lid = lastTr.find(`select[name='faculty_lid']`).val();
+    let program_session_lid = lastTr.find(`select[name='program_session_lid']`).val();
+    let module_lid = lastTr.find(`select[name='module_lid']`).val();
+    let lecture_per_week = lastTr.find(`select[name='lecture_per_week']`).val();
+    let practical_per_week = lastTr.find(`select[name='practical_per_week']`).val();
+    let tutorial_per_week = lastTr.find(`select[name='tutorial_per_week']`).val();
+    let workshop_per_week = lastTr.find(`select[name='workshop_per_week']`).val();
+    let is_batch_preference_set = lastTr.find(`select[name='is_batch_preference_set']`).val();
+    let clonedTr = lastTr.clone();
 
+    console.log('faculty_lid::::::::::',faculty_lid)
+
+    clonedTr.find(`select[name='faculty_lid']`).val(faculty_lid).trigger('chnage')
+    clonedTr.find(`select[name='program_session_lid']`).val(program_session_lid).trigger('chnage')
+    clonedTr.find(`select[name='module_lid']`).val('module_lid')
+    clonedTr.find(`select[name='lecture_per_week']`).val('')
+    clonedTr.find(`select[name='practical_per_week']`).val('')
+    clonedTr.find(`select[name='tutorial_per_week']`).val('')
+    clonedTr.find(`select[name='workshop_per_week']`).val('')
+    clonedTr.find(`select[name='is_batch_preference_set']`).val(is_batch_preference_set).trigger('chnage')
+    $('#add-more-facultywork-table tbody').append(
+    clonedTr)
+    })
+
+
+    $('#add-more-facultywork-table').on('click', '.remove-facultyworkfield',
+    function () {
+    let trLength = $(
+    '#add-more-facultywork-table tbody tr')
+    .length;
+    if (trLength > 1) {
+    $(this).closest('tr').remove()
+    } else {
+    alert('Cannot delete this room.')
+    }
+    })
 
                                             })
                                         </script>
