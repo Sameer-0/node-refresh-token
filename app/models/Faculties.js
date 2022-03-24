@@ -25,8 +25,8 @@ module.exports = class Faculties {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(10)} faculty_id, faculty_name FROM [${slug}].faculties 
-           WHERE active =1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, faculty_id, faculty_name, faculty_dbo_lid FROM [${slug}].faculties 
+           WHERE active = 1`)
         })
     }
 
