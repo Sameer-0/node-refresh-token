@@ -1,0 +1,461 @@
+<%- include("../partials/head") %>
+
+
+
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!-- MAIN-CONTENT -->
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Faculty Date Time</h5>
+            </div>
+            <div>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i
+                        class="fas fa-plus"></i></button>
+                <button class="btn ms-auto delete-buildings add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-buildings add-btn "><img src="/icons/delete.png" alt=""
+                        width="24px" height="32px"></button>
+            </div>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            <table class="table custom_row" id="buildingTable">
+                <thead>
+                    <th>Sr.No.</th>
+                    <th>Faculty Name(Id)</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Action</th>
+                    <th>All <input type="checkbox" class="selectAll-building"></th>
+                </thead>
+                <tbody>
+                   <%  let count =1; %>
+                    <% for (let faculty of facultyDateTimeList) { %>
+       
+                    <tr>
+                        <td><%- count++ %></td>
+                        <td>
+                            <%- faculty.faculty_name %>
+                        </td>
+                        <td>
+                            <%- faculty.faculty_id %>
+                        </td>
+                        <td>
+                            <%- faculty.start_date %>
+                        </td>
+                        <td>
+                            <%- faculty.end_date %>
+                        </td>
+                        <td>
+                            <%-faculty.start_time %>
+                        </td>
+                        <td>
+                            <%- faculty.end_time %>
+                        </td>
+                        <td>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                                data-building-id="<%- building.building_id %>"></i>
+
+                        </td>
+                        <td>
+                            <input type="checkbox" data-building-id="<%- building.building_id %>"
+                                class="delete-building">
+                        </td>
+                    </tr>
+
+                    <% } %>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %>
+                    </p>
+                </div>
+                <div>
+                    <p id="pagination"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script src="/js/dashboardscript.js"></script>
+<script src="/js/leftsidebartoggle.js"></script>
+<script>
+    $(".createBuilding").on('click', function () {
+        let buildingElems = $('#add-more-building-table tbody tr');
+        let buildingCount = buildingElems.length;
+        let buildingJson = [];
+        buildingElems.each(function (index, elem) {
+            let building_name = $(elem).find(`input[name='building_name']`).val()
+            let building_number = $(elem).find(`input[name='building_number']`).val();
+            let total_floors = $(elem).find(`input[name='total_floors']`).val();
+            let owner_id = $(elem).find(`select[name='owner_id']`).val();
+            let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
+            let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
+            let handled_by = $(elem).find(`select[name='handled_by']`).val();
+            let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
+
+
+            if (index < buildingCount - 1) {
+                let obj = {
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid
+                }
+                buildingJson.push(obj)
+            } else {
+                let obj = {
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid
+                }
+                buildingJson.push(obj)
+            }
+        })
+        let ApiObj = {
+            type: 'POST',
+            url: '/management/buildings',
+            data: {
+                inputJSON: JSON.stringify(buildingJson)
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            location.reload()
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+
+    })
+
+
+
+    $('#buildingTable').on('click', '.edit-building', function () {
+        $("#add-building-modal-title").html('Update Building')
+        $(".createBuilding").addClass('d-none')
+        $(".updateBuilding").removeClass('d-none')
+        $("#add-more-building").addClass('d-none')
+        let ApiObj = {
+            type: 'GET',
+            url: '/management/buildings/findOne',
+            data: {
+                Id: $(this).attr('data-building-id')
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            let building = result.buildingData;
+            console.log('Success: ', building)
+            $("#buildingId").val(building.id),
+                $("#building_name").val(building.building_name),
+                $("#building_number").val(building.building_number),
+                $("#total_floors").val(building.total_floors),
+                $("#owner_id").val(building.owner_id).trigger('change'),
+                $("#handled_by").val(building.handled_by).trigger('change'),
+                $("#start_time_id").val(building.start_time_id).trigger('change'),
+                $("#end_time_id").val(building.end_time_id).trigger('change'),
+                $("#campus_lid").val(building.campus_lid).trigger('change'),
+                $("#active").val(building.active),
+                $("#add-building-modal").modal('show')
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+    })
+
+
+    $(".updateBuilding").on('click', function () {
+
+        let buildingElems = $('#add-more-building-table tbody tr');
+        let buildingCount = buildingElems.length;
+
+        let buildingJson = [];
+
+        buildingElems.each(function (index, elem) {
+            let buildingId = $("#buildingId").val()
+            let active = $(elem).find(`input[name='active']`).val()
+            let building_name = $(elem).find(`input[name='building_name']`).val()
+            let building_number = $(elem).find(`input[name='building_number']`).val();
+            let total_floors = $(elem).find(`input[name='total_floors']`).val();
+            let owner_id = $(elem).find(`select[name='owner_id']`).val();
+            let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
+            let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
+            let handled_by = $(elem).find(`select[name='handled_by']`).val();
+            let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
+
+
+            if (index < buildingCount - 1) {
+                let obj = {
+                    id: buildingId,
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid,
+                    active: active
+                }
+                buildingJson.push(obj)
+            } else {
+                let obj = {
+                    id: buildingId,
+                    building_name: building_name,
+                    building_number: building_number,
+                    total_floors: total_floors,
+                    owner_id: owner_id,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id,
+                    handled_by: handled_by,
+                    campus_lid: campus_lid,
+                    active: active
+                }
+                buildingJson.push(obj)
+            }
+        })
+
+        if (buildingJson.length > 0) {
+            let ApiObj = {
+                type: 'PUT',
+                url: '/management/buildings',
+                data: {
+                    inputJSON: JSON.stringify(buildingJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                location.reload()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        } else {
+            alert('Select Building First')
+        }
+    })
+
+
+
+
+    //Select All campus
+    $("#buildingTable").on('click', '.selectAll-building', function () {
+        if (this.checked) {
+            // Iterate each checkbox
+            $('.delete-building:checkbox').each(function () {
+                this.checked = true;
+            });
+        } else {
+            $('.delete-building:checkbox').each(function () {
+                this.checked = false;
+            });
+        }
+    })
+
+
+    //Delete Single and mutiple Delete
+    $('.delete-buildings').on('click', function () {
+        let deleteids = []
+        $('.delete-building:checked').each(function () {
+            let obj = {
+                id: $(this).attr('data-building-id')
+            }
+            deleteids.push(obj)
+        })
+        let ApiObj = {
+            url: '/management/buildings',
+            type: 'DELETE',
+            data: {
+                Ids: JSON.stringify(deleteids)
+            },
+            dataType: 'JSON'
+        }
+
+        if (deleteids.length > 0) {
+            ajaxApi(ApiObj).then(result => {
+                // showError(result)
+                location.reload()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+
+        } else {
+            alert('Select building for deleting')
+        }
+    })
+
+
+    //Bulk Delete
+    $(".bulk-delete-buildings").on('click', function () {
+        console.log('Click')
+        let ApiObj = {
+            url: '/management/buildings',
+            type: 'PATCH',
+            data: {},
+            dataType: 'JSON'
+        }
+
+        // ajaxApi(ApiObj).then(result => {
+        //         location.reload()
+        //     }).catch(error => {
+        //         showError(error.responseJSON)
+        // })
+
+        alertMsg()
+        $('.alert-continue').on('click', () => {
+            ajaxApi(ApiObj).then(result => {
+                location.reload()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+        $('.cancel').on('click', () => {
+            $('#alertModal').css('display', 'none');
+        })
+
+    })
+
+
+    //Pagination Here
+    let pageCount = `<%- pageCount %>`
+    console.log("Page Count=====>>>", pageCount)
+    let pageNos = Math.ceil(Number(pageCount) / 10)
+
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active',
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
+        $.ajax({
+            type: "POST",
+            url: "/management/building/pagination",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                showAjaxTable(data.data) // Building List
+            }
+        })
+    });
+
+
+
+    //search feature delay function is writter in script.js file which is located in public/js/script.js
+    $('#searchkeyword').on('input', delay(function (e) {
+        let keyword = $("#searchkeyword").val()
+        $.ajax({
+            type: "GET",
+            url: "/management/building/search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                showAjaxTable(data.data) // Building List
+            }
+        })
+    }, 500));
+
+
+    function showError(errors) {
+        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+        if (errors.data.length > 0) {
+            $(errors.data).each(function (key, value) {
+                $.each(this, function (key, value) {
+                    errorHtml +=
+                        `<li>${key} ${value}</li>`
+                });
+            });
+        }
+        errorHtml +=
+            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        $("#errorHtml").html(errorHtml)
+    }
+
+
+    function showAjaxTable(buildingList) {
+        let AjaxTable = `<table class="table table-bordered" id="buildingTable">
+                    <thead>
+                        <th>Name</th>
+                        <th>Number</th>
+                        <th>Floors</th>
+                        <th>Owner</th>
+                        <th>Handled By</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Campus</th>
+                        <th>Action</th>
+                        <th>All <input type="checkbox" class="selectAll-building"></th>
+                    </thead>
+                    <tbody>`;
+
+        if (buildingList.length > 0) {
+            for (building of buildingList) {
+                AjaxTable +=
+                    `<tr>
+                            <td>${building.building_name}</td>
+                            <td>${building.building_number}</td>
+                            <td>${building.total_floors}</td>
+                            <td>${building.owner}</td>
+                            <td>${building.handled_by}</td>
+                            <td>${building.start_time}</td>
+                            <td>${building.end_time}</td>
+                            <td>${building.campus_abbr}</td>
+                            <td>
+                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
+                                    data-building-id="${building.building_id}" ></i>
+                            </td>
+                            <td>
+                            <input type="checkbox" data-building-id="${building.building_id}" 
+                                class="delete-building">
+                        </td>
+                        </tr>`
+            }
+        } else {
+            AjaxTable +=
+                ` <tr>
+                                <td colspan="9">No Data Found</td>
+                            </tr>`;
+        }
+        AjaxTable += `<tbody></table>`
+        $("#buildingTable").html(AjaxTable);
+    }
+</script>
+<%- include("../partials/footerEnd") %>
