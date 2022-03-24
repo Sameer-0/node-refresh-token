@@ -9,7 +9,7 @@ const WeeklyConstraint = require('../../../models/WeeklyConstraint')
 module.exports = {
     getPage: (req, res) => {
         Promise.all([WeeklyConstraint.fetchAll(10, res.locals.slug), WeeklyConstraint.getCount(res.locals.slug)]).then(result => {
-           
+
             res.render('admin/weekly-constraint/index.ejs', {
                 weeklyConstraintList: result[0].recordset,
                 pageCount: result[1].recordset[0].count
@@ -18,7 +18,7 @@ module.exports = {
     },
 
     create: (req, res) => {
-        const errors = validationResult(req); 
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
                 statuscode: 422,
@@ -33,14 +33,14 @@ module.exports = {
                 message: "Success"
             })
         }).catch(error => {
-            console.log('error:::::::::::',error)
+            console.log('error:::::::::::', error)
             res.status(500).json(error.originalError.info.message)
         })
 
     },
 
     findOne: (req, res) => {
-       
+
         WeeklyConstraint.findById(req.query.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
@@ -63,7 +63,7 @@ module.exports = {
             return;
         }
 
-        console.log('uPDATE DATA req.body::::',req.body)
+        console.log('uPDATE DATA req.body::::', req.body)
         WeeklyConstraint.update(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
@@ -71,14 +71,14 @@ module.exports = {
 
             })
         }).catch(error => {
-            console.log('error::::::::::>>',error)
+            console.log('error::::::::::>>', error)
             res.status(500).json(error.originalError.info.message)
         })
     },
 
     delete: (req, res) => {
 
-        console.log('req.body.Ids::::::::::',req.body.Ids)
+        console.log('req.body.Ids::::::::::', req.body.Ids)
         WeeklyConstraint.delete(req.body.Ids, res.locals.slug).then(result => {
             res.json({
                 status: 200,
@@ -91,7 +91,7 @@ module.exports = {
 
     deleteAll: (req, res) => {
         console.log('all delete!!!!!!!')
-        SessionDates.deleteAll(res.locals.slug).then(result => {
+        WeeklyConstraint.deleteAll(res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200
             })
@@ -102,18 +102,26 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
- 
-        SessionDates.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+
+        console.log(req.query.keyword)
+
+        // res.json({
+        //     status: "200",
+        //     message: "Room Type fetched",
+        //     data: [1,2,3,4,5,6]
+        // })
+
+        WeeklyConstraint.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             console.log('Search result.recordset', result.recordset)
             if (result.recordset.length > 0) {
-                
+
                 res.json({
                     status: "200",
                     message: "Room Type fetched",
                     data: result.recordset,
                     length: result.recordset.length
                 })
-          
+
 
             } else {
                 console.log(result.recordset+result.recordset.length)
@@ -123,7 +131,7 @@ module.exports = {
                     data: result.recordset,
                     length: result.recordset.length
                 })
-           
+
             }
         }).catch(error => {
             res.status(500).json(error.originalError.info.message)
@@ -140,7 +148,7 @@ module.exports = {
             return;
         }
 
-        SessionDates.pagination(req.body.pageNo, res.locals.slug).then(result => {
+        WeeklyConstraint.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
