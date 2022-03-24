@@ -3,10 +3,8 @@ module.exports = {
         res.render('admin/faculty/index')
     }
 } 
-
-
-const FacultyList = require('../../../models/Faculties');
-const Faculty = require('../../../models/FacultyDbo')
+const Faculties = require('../../../models/Faculties');
+const FacultyDbo = require('../../../models/FacultyDbo')
 const {
     check,
     oneOf,
@@ -16,7 +14,7 @@ const {
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([FacultyList.fetchAll(), Faculty.getCount(), Faculty.fetchAll(1000)]).then(result => {
+        Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(1000)]).then(result => {
             console.log(result[2].recordset);
             res.render('admin/faculty/index', {
                 facultyList: result[0].recordset,
