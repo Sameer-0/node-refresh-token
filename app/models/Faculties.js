@@ -23,9 +23,9 @@ module.exports = class Faculties {
         })
     }
 
-    static fetchAll(rowcount) {
+    static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(10)} faculty_id, faculty_name FROM [bncp-mum].faculties 
+            return pool.request().query(`SELECT TOP ${Number(10)} faculty_id, faculty_name FROM [${slug}].faculties 
            WHERE active =1`)
         })
     }

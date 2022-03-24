@@ -7,7 +7,7 @@ const {
     pool
 } = require('mssql');
 
-module.exports = class Faculties {
+module.exports = class FacultyDbo {
     constructor(facultyId, facultyName, startTimeId, endTimeId, campusId, orgId) {
         this.facultyId = facultyId;
         this.facultyName = facultyName;

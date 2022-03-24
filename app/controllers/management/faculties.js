@@ -1,11 +1,11 @@
 const SlotIntervalTimings = require('../../models/SlotIntervalTimings')
 const Organizations = require('../../models/Organizations')
 const Campuses = require('../../models/Campuses')
-const Faculties = require('../../models/FacultyDbo')
+const FacultyDbo = require('../../models/FacultyDbo')
 const Settings = require('../../models/Settings')
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([SlotIntervalTimings.fetchAll(100), Organizations.fetchAll(100), Campuses.fetchAll(100), Faculties.fetchAll(10)]).then(result => {
+        Promise.all([SlotIntervalTimings.fetchAll(100), Organizations.fetchAll(100), Campuses.fetchAll(100), FacultyDbo.fetchAll(10)]).then(result => {
             res.render('management/faculties/index', {
                 timeList: result[0].recordset,
                 orgList: result[1].recordset,
@@ -24,7 +24,7 @@ module.exports = {
             add_new_buildings: JSON.parse(req.body.inputJSON)
         }
 
-        Faculties.save(object).then(result => {
+        FacultyDbo.save(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
@@ -45,7 +45,7 @@ module.exports = {
         let object = {
             update_buildings: JSON.parse(req.body.inputJSON)
         }
-        Faculties.update(object).then(result => {
+        FacultyDbo.update(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
@@ -59,7 +59,7 @@ module.exports = {
             delete_buildings: JSON.parse(req.body.Ids)
         }
 
-        Faculties.delete(object).then(result => {
+        FacultyDbo.delete(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
@@ -93,7 +93,7 @@ module.exports = {
         //here 10is rowcount
         let rowcount = 10;
 
-        Faculties.search(rowcount, req.query.keyword).then(result => {
+        FacultyDbo.search(rowcount, req.query.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
