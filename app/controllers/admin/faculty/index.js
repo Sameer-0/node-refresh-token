@@ -1,8 +1,3 @@
-module.exports = {
-    getPage:(req, res)=>{
-        res.render('admin/faculty/index')
-    }
-} 
 const Faculties = require('../../../models/Faculties');
 const FacultyDbo = require('../../../models/FacultyDbo')
 const {

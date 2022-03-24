@@ -53,6 +53,7 @@ module.exports = class {
         })
     }
 
+
     static delete(ids, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
