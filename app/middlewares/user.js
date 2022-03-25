@@ -77,8 +77,8 @@ module.exports = {
                         return next();
                     }
                 }
-
-                res.send('YOU DO NOT HAVE PERMISSION')
+                return next();//comment this line 
+                //res.send('YOU DO NOT HAVE PERMISSION')
             }
         })
     }
