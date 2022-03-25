@@ -86,6 +86,86 @@
     </div>
 </div>
 
+<!--ADD Modal -->
+<div class="modal fade" id="add-facultydatetime-modal" tabindex="-1" aria-labelledby="add-facultydatetime-modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h5 class="modal-title" id="add-facultydatetime-modal-title">ADD FACULTY DATE TIME</h5>
+                <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="errorHtml"></div>
+                <div class="table-responsive ">
+                    <table class="table table-bordered" id="add-more-facultydatetime-table">
+                        <thead>
+                            <th>Facilty</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select class="form-control" name="faculty_lid">
+                                        <% for(faculty of facultyList) {%>
+                                        <option value="<%- faculty.id %>">
+                                            <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="start_date_id">
+                                        <% for(calender of AcademicCalenderList) {%>
+                                        <option value="<%- calender.id %>"><%- calender.date %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="end_date_id">
+                                        <% for(calender of AcademicCalenderList) {%>
+                                            <option value="<%- calender.id %>"><%- calender.date %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="start_time_id">
+                                        <% for(time of SlotIntervalTimingsList) {%>
+                                            <option value="<%- time.id %>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-control" name="end_time_id">
+                                        <% for(time of SlotIntervalTimingsList) {%>
+                                            <option value="<%- time.id %>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworkfield"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="errorMsg"></div>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-facultydatetime-fields"><i class="fas fa-plus"></i>Add More Fields</button>
+                <button type="submit" class="btn  createfacultydatetime modal-inputform-btn">Create</button>
+                <button type="submit" class="btn  updatefacultydatetime modal-inputform-btn d-none">Update</button>
+            </div>
+        </div>
+    </div>
+</div> 
+
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
