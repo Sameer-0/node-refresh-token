@@ -145,6 +145,7 @@ module.exports = {
             req.session.lastName = userData.recordset[0].l_name;
             req.session.email = userData.recordset[0].email;
             req.session.subDomain = res.locals.slug;
+            
 
             //let userModules = await User.getUserModules(userData.recordset[0].id, res.locals.slug);
 
