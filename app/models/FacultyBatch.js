@@ -20,8 +20,8 @@ module.exports = class FacultyBatch {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch, f.faculty_name, f.faculty_id
-            FROM [bncp-mum].faculty_batches fb
-            INNER JOIN [bncp-mum].[faculties] f ON fb.faculty_lid =  f.id         
+            FROM [${slug}].faculty_batches fb
+            INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id         
             WHERE fb.active = 1 AND f.active = 1 ORDER BY fb.id DESC`)
         })
     }
