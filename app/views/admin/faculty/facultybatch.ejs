@@ -32,27 +32,24 @@
                     <th>Action</th>
                     <th>All <input type="checkbox" class="selectAll-facultybatch"></th>
                 </thead>
-                <tbody>
+                <tbody> 
                    <%  let count =1; %>
-                    <% for (let faculty of FacultyDateTimeList) { %>
+                    <% for (let faculty of FacultyBatchList) { %>
        
                     <tr>
                         <td><%- count++ %></td>
                         <td>
-                            <%- faculty.faculty_name %>
+                            <%- faculty.faculty_name %> (<%- faculty.faculty_id %>)
                         </td>
                         <td>
-                            <%- faculty.faculty_id %>
+                            <%- faculty.faculty_batch %>
                         </td>
                         <td>
-                            <%- faculty.batch %>
+                            <i class="fas fa-edit text-dark cursor-pointer edit-facultybatch"
+                                data-faculty-id="<%- faculty.id %>"></i>
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                data-faculty-id="<%- faculty.faculty_id %>"></i>
-                        </td>
-                        <td>
-                            <input type="checkbox" data-faculty-id="<%- faculty.fcaulty_id %>"
+                            <input type="checkbox" data-faculty-id="<%- faculty.id %>"
                                 class="delete-facultybatch">
                         </td>
                     </tr>
@@ -90,7 +87,7 @@
                         <thead>
                             <th>Faculty</th>
                             <th>Batch</th>
-                            <th>Action</th>
+                            <th>Action</th> 
                         </thead>
                         <tbody>
                             <tr>
@@ -99,21 +96,23 @@
                                         <option value="">--select--</option>
                                         <% for(faculty of facultyList) {%>
                                         <option value="<%- faculty.id %>">
-                                            <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
+                                            <%- faculty.faculty_name %>- (<%- faculty.faculty_id %>)</option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select class="form-control" name="end_time_id">
                                         <option value="">--select--</option>
-                                        <% for(time of SlotIntervalTimingsList) {%>
-                                            <option value="<%- time.id %>"><%- time.end_time %></option>
-                                        <%}%>
+                                        
+                                            <option value="">Batch1</option>
+                                            <option value="">Batch2</option>
+                                            <option value="">Batch3</option>
+                                        
                                     </select>
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultydatetimefield"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultybatchfield"></i>
                                 </td>
                             </tr>
                         </tbody>

@@ -14,7 +14,7 @@ function setRouter(app) {
 
 
     //Managemnt Router 
-     Management(app)
+     Management(app) 
      //Admin Router
      AdminRoute(app)
 }
