@@ -101,12 +101,12 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-control" name="end_time_id">
+                                    <select class="form-control" name="faculty_batch">
                                         <option value="">--select--</option>
-                                        
-                                            <option value="">Batch1</option>
-                                            <option value="">Batch2</option>
-                                            <option value="">Batch3</option>
+                        
+                                        <option value="">Batch1</option>
+                                        <option value="">Batch2</option>
+                                        <option value="">Batch3</option>
                                         
                                     </select>
                                 </td>
@@ -138,17 +138,19 @@
 <script>
 
     $('#add-more-facultybatch-fields').on('click', function () {
-        console.log("Adding facultybatch fields::::")
+        
+        
         let lastTr = $('#add-more-facultybatch-table tbody tr:last-child')
-    
+        
+        console.log('addd::::lastTr', lastTr)
         let faculty_lid = lastTr.find(`select[name="faculty_lid"]`).val();
-        let batch_id = lastTr.find(`select[name="start_date_id"]`).val();
+        let batch_id = lastTr.find(`select[name="faculty_batch"]`).val();
         
         let clonedTr = lastTr.clone();
        
 
         clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change')
-        clonedTr.find(`select[name="faculty_batch"]`).val(faculty_batch).trigger('change')
+        clonedTr.find(`select[name="faculty_batch"]`).val(batch_id).trigger('change')
         
         $('#add-more-facultybatch-table tbody').append(clonedTr)
         })
@@ -165,7 +167,7 @@
                 }
     })
 
-    $(".createfacultydatetime").on('click', function () {
+    $(".createfacultybatch").on('click', function () {
         let facultyBatchElems = $('#add-more-facultybatch-table tbody tr');
         let facultyBatchCount = facultyBatchElems.length;
         let facultyBatchJson = [];

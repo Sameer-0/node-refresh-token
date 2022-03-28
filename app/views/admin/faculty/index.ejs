@@ -7,32 +7,10 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
     <div class="row my-3 gx-3 gy-3 row1-data">
-
-        <!-- <div class="col-xl-2 col-lg-4 col-md-6">
-            <a href="/admin/sessions/types">
-                <div class="card row1-data-card text-center">
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <img src="/icon_imgs/room-type.PNG" alt="">
-                        <p class="fw-normal pt-1">ADD FACULTY</p>
-                    </div>
-                </div>
-            </a>
-        </div> -->
-
+        
         <div class="col-xl-2 col-lg-4 col-md-6">
-            <a href="/admin/faculties/batch">
-                <div class="card row1-data-card text-center">
-                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                        <img src="/icon_imgs/room-type.PNG" alt="">
-                        <p class="fw-normal pt-1">FACULTY BATCH</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/admin/faculties/date-time">
             <div class="card row1-data-card text-center">
-                <a href="/admin/faculties/date-time">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <img src="/icon_imgs/room-type.PNG" alt="">
                         <p class="fw-normal pt-1">FACULTY DATE TIME</p>
@@ -53,8 +31,8 @@
         </div>
 
         <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/admin/faculties/works">
             <div class="card row1-data-card text-center">
-                <a href="/admin/faculties/works">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <img src="/icon_imgs/room-type.PNG" alt="">
                         <p class="fw-normal pt-1">FACULTY WORKS</p>
@@ -62,6 +40,18 @@
             </div>
             </a>
         </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/admin/faculties/batch">
+                <div class="card row1-data-card text-center">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="/icon_imgs/room-type.PNG" alt="">
+                        <p class="fw-normal pt-1">FACULTY BATCH</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
     </div>
 
 
@@ -131,7 +121,7 @@
                        
                         <% for (let faculty of faculties) { %>
                     <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
-                        data-faculty-id="<%- faculty.faculty_id%>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                        data-faculty-id="<%- faculty.faculty_id%>" data-clickable="true"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
                         %></li>
                     <% } %>
                     </ul>
@@ -167,41 +157,52 @@
         //DATALIST
 
         $("#addFaculty").on('click', '.list-group-item', function () {
-            $("#selectedList").append(`<li class="list-group-item d-flex justify-content-between align-items-center my-1 border-top"  data-faculty-name="${$(this).attr("data-faculty-name")}" data-faculty-id="${$(this).attr("data-faculty-id")}">${$(this).text()} <span class="badge bg-danger rounded-pill clicktoremove ms-auto me-2">Remove</span>
-			<div class="form-check form-switch ms-3" data-faculty-id="${$(this).attr("data-faculty-id")}">
-                <input class="form-check-input faculty-switch" type="checkbox" id="flexSwitchCheckDefault">
-                <label class="form-check-label label-core" style="width:45px" for="flexSwitchCheckDefault" data-core="${$(this).attr("data-faculty-id")}">Core</label>
-                <label class="form-check-label label-visiting d-none" style="width:45px" for="flexSwitchCheck" data-visit="${$(this).attr("data-faculty-id")}">Visiting</label>
-            </div>
-			</li>
-	    `)
+
             //remove current element when added to right sidebar
-            $($(this)).fadeOut(500, function () {
+            if($(this).attr('data-clickable') == 'true'){
+                $("#selectedList").append(`<li class="list-group-item d-flex justify-content-between align-items-center my-1 border-top"  data-faculty-name="${$(this).attr  ("data-faculty-name")}" data-faculty-id="${$(this).attr("data-faculty-id")}" data-clickable="true">${$(this).text()} <span class="badge bg-danger rounded-pill clicktoremove ms-auto me-2">Remove</span>
+                    <div class="form-check form-switch ms-3" data-faculty-id="${$(this).attr("data-faculty-id")}">
+                        <input class="form-check-input faculty-switch" type="checkbox" id="flexSwitchCheckDefault">
+                        <label class="form-check-label label-core" style="width:45px" for="flexSwitchCheckDefault" data-core="">Core</label>
+                    </div>
+                    </li> `)
+            }
+      
+            $(this).attr('data-clickable','false');
+
+            $($(this)).fadeOut(300, function () {
                 $($(this)).remove()
             })
+        
+        })
+
+        $("#selectedList").on('click','.faculty-switch', function() {
+            
+            if($(this).parent().find('label').text() == 'Core'){
+                $(this).parent().find('label').text("Visiting");
+            }
+            else{
+                $(this).parent().find('label').text("Core");
+            }
 
         })
-$("#selectedList").on('click','.faculty-switch', function() {
-    
-    console.log($(this).parent().attr('data-faculty-id'))
-    let id = $(this).parent().attr('data-faculty-id');
-    $(`.label-core[data-core='${id}']`).toggleClass('d-none');
-    $(`.label-visiting[data-visit='${id}']`).toggleClass('d-none');
-})
 
         //Remove Element
 
         $("#selectedList").on('click', '.clicktoremove', function () {
 
-            $("#addFaculty").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).attr("data-faculty-name")}" data-faculty-id="${$(this).attr("data-faculty-id")}"> ${$(this).parent().attr("data-faculty-name")} (${$(this).parent().attr("data-faculty-id")})
-			</li>
-	`)
+            if($(this).parent().attr('data-clickable') == 'true'){
+                    $("#addFaculty").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().attr("data-faculty-name")} (${$(this).parent().attr("data-faculty-id")})
+			        </li>`)
+            }
 
-            $($(this)).fadeOut(500, function () {
+            $(this).parent().attr('data-clickable','false')
+
+            $($(this)).fadeOut(300, function () {
                 $($(this).parent()).remove()
             })
         })
-
+       
         //search 
         let faculties = $('#addFaculty li')
     
