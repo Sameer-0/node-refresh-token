@@ -17,11 +17,9 @@ module.exports = {
 
         if (req.sessionID) {
             store.get(req.sessionID, async (err, result) => {
-                 console.log('result::::::::::::::::::>> ', err, result)
+                // console.log('isLoggedIn::::::::::::::::::>> ', err, result)
                 if (!result) {
-
                     res.redirect('/user/login')
-
                 } else {
                     res.locals.userid = result.userid
                     res.locals.firstName = result.firstName
@@ -67,11 +65,11 @@ module.exports = {
 
         let UserPermission = store.get(req.sessionID, async (err, result) => {
             if (result.permissions) {
-                console.log('Resulr::::::::::', result.permissions)
-                console.log('originalUrl::::::::::', req.Url)
-                console.log('originalUrl::::::::::', req._parsedOriginalUrl.pathname)
+                // console.log('Resulr::::::::::', result.permissions)
+                // console.log('originalUrl::::::::::', req.Url)
+                // console.log('originalUrl::::::::::', req._parsedOriginalUrl.pathname)
                 for (let permission of result.permissions) {
-                    console.log('req.originalUrl', req.originalUrl)
+                    //console.log('req.originalUrl', req.originalUrl)
 
                     //permission.url_path === req.originalUrl && permission.name === req.method
                     if (permission.url_path === req._parsedOriginalUrl.pathname && permission.name === req.method) {
