@@ -4,16 +4,15 @@ function ajaxApi(obj) {
         url: obj.url,
         data: obj.data,
         beforeSend: function () {
-            // $('#image').show();
             $(".modal-loader").removeClass('d-none')
             console.log('Show beforeSend::::::::>')
+        },
+        success: data => {
+            return data
         },
         complete: function () {
             $(".modal-loader").addClass('d-none')
             console.log('Show complete::::::::>')
-        },
-        success: data => {
-            return data
         },
         showSuccess(result) {
             console.log('Show Succces::::::::>', result)

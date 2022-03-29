@@ -85,7 +85,7 @@
                     <%for(let faculty of facultyList){%>
                     <tr>
                         <td><%- count++ %></td>
-                        <td><%- faculty.faculty_id %></td>
+                        <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
                         <td><%- faculty.faculty_name %></td>
                         <td><%- faculty.id %></td>
                         <td><%- faculty.id %></td>
@@ -109,9 +109,8 @@
                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times text-dark"></i></button>
             </div>
+           
             <div class="modal-body py-0">
-                <div id="errorHtml"></div>
-               
                 
             <div class="row">
                 <div class="col-md-6 select-faculties">
@@ -121,7 +120,7 @@
                        
                         <% for (let faculty of faculties) { %>
                     <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
-                        data-faculty-id="<%- faculty.faculty_id%>" data-clickable="true"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                        data-faculty-id="<%- faculty.id%>" data-clickable="true"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
                         %></li>
                     <% } %>
                     </ul>
@@ -138,8 +137,8 @@
 
     </div>
 </div>
+<div class="px-3" id="errorHtml"></div>
 <div class="modal-footer">
-    <div id="errorMsg"></div>
     <button type="submit" class="btn  createFaculty modal-inputform-btn">Create Faculty</button>
     <button type="submit" class="btn  updateFaculty modal-inputform-btn d-none">Update Building</button>
 </div>
@@ -147,10 +146,10 @@
 </div>
 </div>
 
-
+<%- include("../partials/notification") %>
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-
+<script src="/js/leftsidebartoggle.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -243,7 +242,6 @@
             let facultiesList = $('#selectedList li');
             let facultyCount = facultiesList.length;
             let facultyJson = [];
-           
             facultiesList.each(function (index, elem) {
                 let faculty_id = $(elem).attr("data-faculty-id")
                 let faculty_name = $(elem).attr("data-faculty-name")
@@ -252,14 +250,14 @@
 
                 if (index < facultyCount - 1) {
                     let obj = {
-                        faculty_id: faculty_id,
-                        faculty_name: faculty_name,
+                        id: faculty_id,
+                        
                     }
                     facultyJson.push(obj)
                 } else {
                     let obj = {
-                        faculty_id: faculty_id,
-                        faculty_name: faculty_name,
+                        id: faculty_id,
+                      
                     }
                     facultyJson.push(obj)
                 }
@@ -268,7 +266,7 @@
             console.log('facultyJson::::::::::::>>', facultyJson)
             let ApiObj = {
                 type: 'POST',
-                url: '/management/faculties',
+                url: '/admin/faculties',
                 data: {
                     inputJSON: JSON.stringify(facultyJson)
                 },
@@ -276,11 +274,47 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                location.reload()
+                console.log('sucess:::::::::',result)
+                notify()
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
+
+    
+    //PAGINATION
+    let pageCount = `<%- pageCount %>`
+    
+    let pageNos = Math.ceil(Number(pageCount) / 10)
+
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active',
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
+        $.ajax({
+            type: "POST",
+            url: "/admin/faculties/pagination",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                showAjaxTable(data.data) 
+            }
+        })
+    });
 
 
 
@@ -302,8 +336,9 @@
 
 
         function showError(errors) {
+            console.log('Error:::::::::',errors)
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
+                    <h3>Error!</h3>
                     <p>${errors.description}</p>
                     <ul>`
             if (errors.data.length > 0) {
@@ -316,6 +351,7 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                console.log(errorHtml)
             $("#errorHtml").html(errorHtml)
         }
 
