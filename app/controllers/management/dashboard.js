@@ -5,18 +5,17 @@ const Settings = require("../../models/Settings")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const OrganizationTypes = require("../../models/OrganizationTypes")
 const Rooms = require("../../models/Rooms")
-const RoomTypes =  require("../../models/RoomTypes")
+const RoomTypes = require("../../models/RoomTypes")
 module.exports = {
     getDashboard: (req, res) => {
-        Promise.all([Buildings.fetchAll(10), Organizations.fetchAll(50), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.fetchStepForm(res.locals.slug), OrganizationTypes.fetchAll(50), Rooms.fetchAll(50),RoomTypes.fetchAll(500)]).then(result => {
-                     console.log('Room Type List',result[7].recordset)
+        Promise.all([Buildings.fetchAll(10), Organizations.fetchAll(50), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.fetchStepForm(res.locals.slug), OrganizationTypes.fetchAll(50), Rooms.fetchAll(50), RoomTypes.fetchAll(500)]).then(result => {
             res.render('management/dashboard', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
                 campusList: result[2].recordset,
                 timeList: result[3].recordset,
                 pageCount: result[4].recordset[0].count,
-                currentFormStep: result[5].recordset[0] ? result[5].recordset[0].seq : '' ,
+                currentFormStep: result[5].recordset[0] ? result[5].recordset[0].seq : '',
                 orgType: result[6].recordset,
                 roomList: result[7].recordset,
                 roomTypeList: result[8].recordset

@@ -1,6 +1,7 @@
 // const saltRounds = 10;
 const express = require('express')
 const session = require('express-session')
+const DeviceDetector = require("device-detector-js");
 const {
     v4: uuidv4
 } = require('uuid');
@@ -32,7 +33,7 @@ let store = new RedisStore({
     ttl: 260
 })
 
-
+const deviceDetector = new DeviceDetector();
 module.exports = {
 
     renderLoginPage: (req, res, next) => {
@@ -135,10 +136,10 @@ module.exports = {
                 })
             }
 
-            console.log(">>>>> userData.recordset[0].username : ", userData.recordset[0].username)
-            console.log(">>>>> userData.recordset[0].f_name : ", userData.recordset[0].f_name)
-            console.log(">>>>> userData.recordset[0].l_name : ", userData.recordset[0].l_name)
-            console.log(">>>>> userData.recordset[0].email : ", userData.recordset[0].email)
+            // console.log(">>>>> userData.recordset[0].username : ", userData.recordset[0].username)
+            // console.log(">>>>> userData.recordset[0].f_name : ", userData.recordset[0].f_name)
+            // console.log(">>>>> userData.recordset[0].l_name : ", userData.recordset[0].l_name)
+            // console.log(">>>>> userData.recordset[0].email : ", userData.recordset[0].email)
             req.session.userid = userData.recordset[0].id;
             req.session.username = userData.recordset[0].username;
             req.session.firstName = userData.recordset[0].f_name;
@@ -151,11 +152,13 @@ module.exports = {
 
             let userDataSet = await Promise.all([User.getUserModules(userData.recordset[0].id, res.locals.slug), UserPermission.getPermissionsByUserId(userData.recordset[0].id, res.locals.slug)]).then(results => results);
 
-            console.log('userDataSet::::::::::::::::>>>',userDataSet[1].recordset)
+            //console.log('userDataSet::::::::::::::::>>>',userDataSet[1].recordset)
 
             req.session.permissions = userDataSet[1].recordset;
 
             req.session.modules = userDataSet[0].recordset;
+            const device = deviceDetector.parse(req.headers["user-agent"]);
+            console.log('device:::::::::::>>',device)
 
             if (userDataSet[0].recordset.length > 1) {
                 return res.redirect('/user/select-dashboard');
