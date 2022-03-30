@@ -26,7 +26,7 @@ const {
     redisClient,
     session
 } = require('./config/redis')
-
+const device = require('express-device');
 
 app.use(express.json());
 app.use(
@@ -79,7 +79,7 @@ app.use((req, res, next) => {
 })
 
 app.use(verifySubdomain);
-
+app.use(device.capture());
 
 setRouter(app)
 

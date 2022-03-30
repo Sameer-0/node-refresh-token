@@ -1,4 +1,3 @@
-const { v4: uuidv4 } = require('uuid');
 
 const Buildings = require('../../models/Buildings')
 const Organizations = require("../../models/Organizations")
@@ -8,12 +7,10 @@ const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const OrganizationTypes = require("../../models/OrganizationTypes")
 const Rooms = require("../../models/Rooms")
 const RoomTypes = require("../../models/RoomTypes")
-const {encrypt, decrypt} =  require('../../utils/crypto')
+
 module.exports = {
     getDashboard: (req, res) => {
         Promise.all([Buildings.fetchAll(10), Organizations.fetchAll(50), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.fetchStepForm(res.locals.slug), OrganizationTypes.fetchAll(50), Rooms.fetchAll(50), RoomTypes.fetchAll(500)]).then(result => {
-            console.log('SEssionID:::::::::::::::::::>>',encrypt(uuidv4()))
-            console.log('SEssionID:::::::::::::::::::>>',decrypt(encrypt(uuidv4())))
             res.render('management/dashboard', {
                 buildingList: result[0].recordset,
                 orgList: result[1].recordset,
@@ -24,7 +21,7 @@ module.exports = {
                 orgType: result[6].recordset,
                 roomList: result[7].recordset,
                 roomTypeList: result[8].recordset,
-                userSession : encrypt(uuidv4())
+                userSession : req.session.usersecretkey
             })
         }).catch(error => {
             throw error
