@@ -1,7 +1,6 @@
 // const saltRounds = 10;
 const express = require('express')
 const session = require('express-session')
-const DeviceDetector = require("device-detector-js");
 const {
     v4: uuidv4
 } = require('uuid');
@@ -12,6 +11,7 @@ const {
 const User = require('../models/User');
 const USerPermission = require('../models/USerPermission');
 const Settings = require('../models/Settings');
+const {AccountVerification, SigninWithNewDevice} = require('../utils/emailTemplate');
 // const res = require('express/lib/response');
 
 
@@ -33,7 +33,6 @@ let store = new RedisStore({
     ttl: 260
 })
 
-const deviceDetector = new DeviceDetector();
 module.exports = {
 
     renderLoginPage: (req, res, next) => {
@@ -157,8 +156,23 @@ module.exports = {
             req.session.permissions = userDataSet[1].recordset;
 
             req.session.modules = userDataSet[0].recordset;
-            const device = deviceDetector.parse(req.headers["user-agent"]);
-            console.log('device:::::::::::>>',device)
+
+            console.log('device:::::::::::>>',req)
+
+            const headers = {
+                ip: req.ip,
+                platform:req.headers["user-agent"]
+            };
+
+            
+           
+
+          //  console.log('req:::::::::::::::::>>>',req)
+            //IF USER WILL SIGN IN WITH NEW DEVICE THEN EMAIL WILL TRIGGER FROM HERE
+            if(!req.body.devicecheck){
+                console.log('Here::::::::::::::::>>>>', userData.recordset[0].email)
+                SigninWithNewDevice(userData.recordset[0].email, headers)
+            }
 
             if (userDataSet[0].recordset.length > 1) {
                 return res.redirect('/user/select-dashboard');
