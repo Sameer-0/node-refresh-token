@@ -8,6 +8,7 @@ const Rooms = require("../../models/Rooms")
 const RoomTypes = require("../../models/RoomTypes")
 module.exports = {
     getDashboard: (req, res) => {
+        console.log('management stepform dashoard')
         Promise.all([Buildings.fetchAll(10), Organizations.fetchAll(50), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount(res), Settings.fetchStepForm(res.locals.slug), OrganizationTypes.fetchAll(50), Rooms.fetchAll(50), RoomTypes.fetchAll(500)]).then(result => {
             res.render('management/dashboard', {
                 buildingList: result[0].recordset,
@@ -26,6 +27,7 @@ module.exports = {
     },
 
     dashboardStepForm: (req, res) => {
+        
         Promise.all([Buildings.getCount(), Organizations.getCount(), Campuses.getCount(), Room.getCount()]).then(result => {
             console.log('result:::::::::::>>>', result[0].recordset[0].count)
             res.json({
