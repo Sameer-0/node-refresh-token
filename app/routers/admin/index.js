@@ -11,7 +11,7 @@ function AdminRoute(app){
     const holidays = require('../../routers/admin/holidays');
     const courseworkload = require('../../routers/admin/courseworkload');
     const divisions = require('../../routers/admin/divisions');
-    const roomtransacton = require('../../routers/admin/room-transacton');
+    const roomtransacton = require('./rooms');
     const faculty = require('../../routers/admin/faculty');
     const timeTableGeneration = require('../../routers/admin/timeTableGeneration')
     const weeklyConstraint = require('../../routers/admin/weeklyConstraint')
