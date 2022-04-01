@@ -189,7 +189,10 @@ module.exports = {
                 }
 
                 Client.save(obj, res.locals.slug)
-                
+                Client.fetch(obj, res.locals.slug).then(result => {
+                    console.log('Result::::::::::::::::::::::', result.recordset[0])
+                })
+
                 //SEND EMAIL IF LOGGEDIN WITH NEW DEVICE
                 SigninWithNewDevice(userData.recordset[0].email, headers)
             }

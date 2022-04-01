@@ -18,7 +18,7 @@ module.exports = {
     getPage: (req, res) => {
         Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), Organizations.fetchAll(100), Campuses.fetchAll(100), Rooms.fetchAll(1000), SlotIntervalTimings.fetchAll(1000), AcademicCalender.fetchAll(1000)]).then(result => {
             console.log('Rooms:::::::::::::::::',result[2].recordset)
-            res.render('admin/room-transacton/index', {
+            res.render('admin/rooms/index', {
                 transactionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 transactionTypes: result[2].recordset,

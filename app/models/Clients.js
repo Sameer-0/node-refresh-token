@@ -31,8 +31,8 @@ module.exports = class Client {
             let request = pool.request()
             return request.input('userLid', sql.Int, obj.userLid)
                 .query(`SELECT TOP 1 user_lid, client_id, client_secret, client_name, client_os, is_trusted, created_at, expiry_date, 
-                DATEDIFF(DAY, CURRENT_TIMESTAMP, expiry_date) as remaing_date 
-                FROM [${slug}].clients WHERE user_lid = @userLid ORDER BY expiry_date desc`)
+                DATEDIFF(DAY, CURRENT_TIMESTAMP, expiry_date ) as remaing_day 
+                FROM [${slug}].clients WHERE user_lid = @userLid ORDER BY created_at desc`)
         })
     }
 
