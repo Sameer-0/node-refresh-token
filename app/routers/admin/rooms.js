@@ -25,5 +25,5 @@ router.get('/rooms/details', details.findByLid)
 
 
 //ROOM APPROVAL
-router.get('/rooms/approval', approval.getPage)
+router.post('/rooms/approval', approval.ApproveRequest)
 module.exports = router

@@ -7,7 +7,7 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
 
-    <div class="row my-3 gx-3 gy-3 row1-data">
+    <!-- <div class="row my-3 gx-3 gy-3 row1-data">
         <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
             <div class="card row1-data-card text-center">
                 <div class="card-body d-flex align-items-center justify-content-center">
@@ -16,7 +16,7 @@
                     </a></div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
@@ -55,7 +55,7 @@
                         <td><%- trans.org_name %></td>
                         <td><%- trans.campus_abbr %></td>
                         <td><%- trans.username %></td>
-                        <td><a data-id="<%- trans.id %>"><i class="fa fa-edit"></i></a>
+                        <td>
                             <a title="view details" class="viewtransactioninfo" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
                         </td>
                     </tr>
@@ -64,7 +64,7 @@
             </table>
             <div class="d-flex justify-content-between">
                 <div>
-                    <p>Total entries: <%- pageCount %> </p>
+                    <p>Total entries: <%- totalentries %> </p>
         </div>
         <div>
             <p id="pagination"></p>
@@ -199,9 +199,13 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            <div id="errorHtml"></div>
          <div id="ShowTransactionTable"></div>
+        
         </div>
         <div class="modal-footer">
+            <button type="button" class="btn btn-success ApprovedBtn" data-status="1">Approve</button>
+            <button type="button" class="btn btn-danger RejectBtn" data-status="0">Reject</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
@@ -316,7 +320,6 @@
 
             ajaxApi(ApiObj).then(result => {
 
-                console.log('result::::::',result)
                 showSuccess(result)
                 setTimeout(function(){
                     location.reload()
@@ -389,7 +392,7 @@
     
 
 
-    $("#roomTransactionTable").on('click','.viewtransactioninfo',function(){
+    $("#roomTransactionTable").on('click','.viewtransactioninfo',function() {
         let trand_lid = $(this).attr('data-id')
         let ApiObj = {
                 type: 'GET',
@@ -401,7 +404,6 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-
                 let htmlTable = `<table class="table table-borderd">
                     <thead>
                     <tr>
@@ -426,18 +428,41 @@
                                     </tr>`
                        })
                        htmlTable+= `</tbody></table>`;
-               
-
                 console.log(htmlTable)
-
                 $("#ShowTransactionTable").html(htmlTable)
-$("#show-transaction-details").modal('show')
+                $(".ApprovedBtn").attr("data-transactionId",trand_lid);
+                $("#show-transaction-details").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
             })
-
     })
 
+
+
+
+
+
+
+        $(".ApprovedBtn").on('click',function(){
+            console.log('ApprovedBtn:::::>>',$(this).attr("data-transactionId"))
+            console.log('ApprovedBtn:::::>>',$(this).attr("data-status"))
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/approval',
+                data: {
+                    input_room_request_lid: $(this).attr("data-transactionId"),
+                    approval_flag: $(this).attr("data-status")
+                },
+                dataType: 'JSON'
+            }
+
+
+            ajaxApi(ApiObj).then(result => {
+              console.log('result::::::::::::::',result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
 
     function AjaxtTable(transactionList){
@@ -480,6 +505,7 @@ $("#show-transaction-details").modal('show')
 
 
     function showError(errors) {
+        console.log('error::::::::::::::',errors)
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <p>${errors.description}</p>
