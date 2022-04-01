@@ -26,7 +26,8 @@ module.exports = {
                 campuses: result[4].recordset,
                 roomList: result[5].recordset,
                 slotIntervalTimings: result[6].recordset,
-                academicCalender: result[7].recordset
+                academicCalender: result[7].recordset,
+                totalentries: result[0].recordset.length ? result[0].recordset.length : 0
             })
         })
     },
