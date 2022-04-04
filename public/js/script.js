@@ -100,7 +100,7 @@ let isSearchableListShowing = false;
         document.addEventListener('click', function (e) {
 
         if (e.target.parentNode.classList.contains('custom-datalist')) {
-          e.target.parentNode.parentNode.querySelector('input').value = e.target.innerText;
+          e.target.parentNode.parentNode.querySelector('input').value = e.target.innerText.trim();
         }
 
       })
@@ -110,6 +110,7 @@ let isSearchableListShowing = false;
 
         if (e.target.classList.contains('data-list-input')) {
 
+          console.log('management input clicked')
           let text = e.target.value.toUpperCase();
           let options = e.target.parentNode.querySelectorAll('.custom-datalist option');
 

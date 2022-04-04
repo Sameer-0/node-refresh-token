@@ -99,7 +99,7 @@
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <input type="hidden" id="roomId" name="roomId">
-                <div class="table-responsive">
+                <div class="">
                     <table class="table table-bordered organizationTable" id="add-more-org-table">
                         <thead>
                             <th>Organization Id</th>
@@ -118,47 +118,51 @@
                                     <input name="orgId" id="orgId" type="number" class="form-control"
                                         placeholder="Organization Id" required>
                                 </td>
+
                                 <td>
                                     <input name="orgAbbr" id="orgAbbr" type="text" class="form-control"
                                         placeholder="Organization Abbr" required>
                                 </td>
+
                                 <td>
                                     <input name="orgName" id="orgName" type="text" class="form-control"
                                         placeholder="Organization Name" required>
                                 </td>
+
                                 <td>
                                     <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
                                         placeholder="Organization Complete Name" required>
                                 </td>
-                                <td>
-                                    <select class="form-control modalSelect2" name="orgType" id="orgType" required>
-                                        <option disabled selected value>--Organization Type--</option>
-                                        <% for(let orgType of orgtypeList) { %>
-                                        <option value="<%- orgType.id %>">
-                                            <%- orgType.name %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-
 
                                 <td>
-                                    <select class="form-control modalSelect2" name="campus_lid" id="campus_lid" required>
-                                        <option disabled selected value>--Select Campus--</option>
-                                        <% for(let campus of campusList) { %>
-                                        <option value="<%- campus.id %>">
-                                            <%- campus.campus_abbr %>
-                                        </option>
-                                        <% } %>
-                                    </select>
+                                    <div class="data-searchable-wrapper">
+                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="orgType" required placeholder="--select--" data-is-visible="false">
+                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="orgType" id="orgType">
+                                            <% for(let orgType of orgtypeList) { %>
+                                                <option value="<%- orgType.id %>">
+                                                    <%- orgType.name %>
+                                                </option>
+                                                <% } %>
+                                        </datalist>
+                                    </div>
                                 </td>
 
                                 <td>
+                                    <div class="data-searchable-wrapper">
+                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="campus_lid" required placeholder="--select--" data-is-visible="false">
+                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="campus_lid" id="campus_lid">
+                                            <% for(let campus of campusList) { %>
+                                                <option value="<%- campus.id %>">
+                                                    <%- campus.campus_abbr %>
+                                                </option>
+                                                <% } %>
+                                        </datalist>
+                                    </div>
+                                </td>
 
+                                <td> 
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
-
-
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-organization"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -167,15 +171,9 @@
 
             </div>
             <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button> -->
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-orgnization"><i
-                        class="fas fa-plus"></i> Add
-                    More Organization</button>
-                <button type="submit" class="btn  createOrg modal-inputform-btn">Create
-                    Organization</button>
-                <button type="submit" class="btn  updateOrg modal-inputform-btn d-none">Update
-                    Organization</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> Add More Organization</button>
+                <button type="submit" class="btn createOrg modal-inputform-btn">Create Organization</button>
+                <button type="submit" class="btn updateOrg modal-inputform-btn d-none">Update Organization</button>
             </div>
 
         </div>

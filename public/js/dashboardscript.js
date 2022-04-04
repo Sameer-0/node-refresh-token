@@ -6,14 +6,15 @@
                 let orgAbbr = lastTr.find(`select[name='orgAbbr']`).val();
                 let orgName = lastTr.find(`select[name='orgName']`).val();
                 let orgCompleteName = lastTr.find(`select[name='orgCompleteName']`).val();
-                let orgType = lastTr.find(`datalist[name='orgType']`).val();
+                let orgType = lastTr.find(`input[name="orgType"]`).val();
+                console.log('yelo', orgType)
 
                 let clonedTr = lastTr.clone();
                 clonedTr.find(`input[name='orgId']`).val('')
                 clonedTr.find(`input[name='orgAbbr']`).val('')
                 clonedTr.find(`select[name='orgName']`).val('')
                 clonedTr.find(`select[name='orgCompleteName']`).val('')
-                clonedTr.find(`select[name='orgType']`).val('');
+                clonedTr.find(`input[name="orgType"]`).val('');
 
                 $('#add-more-org-table tbody').append(clonedTr)
             })
@@ -23,7 +24,7 @@
                 if (trLength > 1) {
                     $(this).closest('tr').remove()
                 } else {
-                    alert('Cannot delete this room.') 
+                    alert('Cannot delete this room.')  
                 }
             })
 
@@ -37,7 +38,6 @@
                 let campusAbbr = lastTr.find(`select[name='campusAbbr']`).val();
                 let campusName = lastTr.find(`select[name='campusName']`).val();
                 let campusDesc = lastTr.find(`select[name='campusDesc']`).val();
-
 
                 let clonedTr = lastTr.clone();
                 clonedTr.find(`input[name='campusId']`).val('')

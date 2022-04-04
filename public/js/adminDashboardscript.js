@@ -116,7 +116,7 @@ $('#add-more-program-table').on('click', '.remove-program', function () {
     if (trLength > 1) {
         $(this).closest('tr').remove()
     } else {
-        alert('Cannot delete this room.')
+        alert('Cannot delete this room!!!!')
     }
 })
 
