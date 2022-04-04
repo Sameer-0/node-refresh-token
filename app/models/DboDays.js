@@ -7,13 +7,13 @@ const {
 
 module.exports = class DboDays {
 
-    constructor(dayOfWeek, dayName, isLecture) {
-        this.dayOfWeek = dayOfWeek;
-        this.dayName = dayName;
-        this.isLecture = isLecture;
+    constructor(id, day_name, day_of_week) {
+        this.id = id;
+        this.day_name = day_name;
+        this.day_of_week = day_of_week;
     }
 
-    static fetchAll(rowcont, slug) {
+    static fetchAll(rowcont) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcont)} id, day_name, day_of_week, active as status FROM [dbo].[days] where active = 1  ORDER BY id ASC`)
         })

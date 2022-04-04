@@ -6,14 +6,14 @@
                 let orgAbbr = lastTr.find(`select[name='orgAbbr']`).val();
                 let orgName = lastTr.find(`select[name='orgName']`).val();
                 let orgCompleteName = lastTr.find(`select[name='orgCompleteName']`).val();
-                let orgType = lastTr.find(`select[name='orgType']`).val();
+                let orgType = lastTr.find(`datalist[name='orgType']`).val();
 
                 let clonedTr = lastTr.clone();
                 clonedTr.find(`input[name='orgId']`).val('')
                 clonedTr.find(`input[name='orgAbbr']`).val('')
                 clonedTr.find(`select[name='orgName']`).val('')
                 clonedTr.find(`select[name='orgCompleteName']`).val('')
-                clonedTr.find(`select[name='orgType']`).val(orgType).trigger('change');
+                clonedTr.find(`select[name='orgType']`).val('');
 
                 $('#add-more-org-table tbody').append(clonedTr)
             })

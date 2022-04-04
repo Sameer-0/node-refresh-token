@@ -49,9 +49,14 @@
 
 
 <script src="/js/dashboardscript.js"></script>
+<script src="/js/script.js"></script>
 
 <script>
     $(document).ready(function () {
+
+        let userSession = `<%-userSession%>`
+        console.log('userSession::::::::::::',userSession)
+        localStorage.setItem('devicecheck',userSession)
 
         let currentFormStep = `<%- currentFormStep %>`;
         console.log('currentFormStep',currentFormStep)
@@ -163,7 +168,7 @@
                         let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
                         let orgType = $(elem).find(`datalist[name='orgType']`).val()
                         let campus_lid = $(elem).find(`datalist[name='orgCampus_lid']`).val()
-console.log('orgType', orgType)
+
                         if (index < orgCount - 1) {
                             let obj = {
                                 org_id: orgId,
