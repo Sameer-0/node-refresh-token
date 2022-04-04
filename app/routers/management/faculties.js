@@ -15,12 +15,13 @@ const validate = require('../../middlewares/validate')
 router.get('/faculties', faculties.getPage)
 router.post('/faculties', validate('JsonValidator'), faculties.create)
 router.put('/faculties', validate('JsonValidator'), faculties.update)
-router.post('/faculties/pagination', validate('pagination'), faculties.getPage)
+router.post('/faculties/pagination', validate('pagination'), faculties.pagination)
 router.get('/faculties/findOne', validate('single'), faculties.findOne)
 router.get('/faculties/search', validate('search'), faculties.search)
 router.delete('/faculties', faculties.delete)
 router.patch('/faculties', faculties.deleteAll)
-
+router.post('/faculties/processing', faculties.processing)
+router.get('/faculties/GetAll', faculties.GetAll)
 
 // FACULTY TYPES ROUTER
 router.get('/faculties/types', types.getPage)
