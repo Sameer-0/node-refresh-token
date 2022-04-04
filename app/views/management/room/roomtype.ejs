@@ -88,7 +88,8 @@
     </div>
 </div>
 
-
+<%- include('../partials/notification') %>
+<%- include('../partials/alert') %>
 <%- include("../partials/footer") %>
 <script>
     $(document).ready(function () {
@@ -165,7 +166,7 @@
                 },
                 success: data => {
                     if (data.status == 200) {
-                        location.reload()
+                        notify();
                     } else {
                         $(".errorMsg").html(data.message)
                     }
@@ -222,8 +223,8 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                    // notify();
+                    
+                    notify();
                 }).catch(error => {
                     let errors = error.responseJSON.message
                     console.log('Error:::::::::::', errors)
@@ -248,7 +249,10 @@
 
         //Bulk Delete
         $(".bulk-delete-rooms-types").on('click', function () {
-        
+
+        //Alert confirm
+            alertMsg()
+
             let ApiObj = {
                 url: '/management/rooms/roomtypes',
                 type: 'PATCH',
@@ -256,23 +260,17 @@
                 dataType: 'JSON'
             }
 
+            $('.alert-continue').on('click', () => {
             ajaxApi(ApiObj).then(result => {
                 location.reload()
             }).catch(error => {
-                let errors = error.responseJSON.message
-                console.log('Error:::::::::::', errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                errors.map(er => {
-                    errorHtml +=
-                        `<li>${er}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                console.log('errorHtml:::::::', errorHtml)
-                $("#errorHtml").html(errorHtml)
+                showError(error.responseJSON)
             })
+        })
+        $('.cancel').on('click', () => {
+            $('#alertModal').css('display', 'none');
+        })
+
         })
 
 
@@ -325,6 +323,24 @@
                 }
             })
         }, 500));
+
+        function showError(errors) {
+        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+        if (errors.data.length > 0) {
+            $(errors.data).each(function (key, value) {
+                $.each(this, function (key, value) {
+                    errorHtml +=
+                        `<li>${key} ${value}</li>`
+                });
+            });
+        }
+        errorHtml +=
+            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        $("#errorHtml").html(errorHtml)
+    }
 
     })
 </script>

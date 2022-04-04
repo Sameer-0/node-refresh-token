@@ -7,6 +7,7 @@
                 let orgName = lastTr.find(`select[name='orgName']`).val();
                 let orgCompleteName = lastTr.find(`select[name='orgCompleteName']`).val();
                 let orgType = lastTr.find(`input[name="orgType"]`).val();
+                let campus = lastTr.find(`input[name="campus"]`).val();
                 console.log('yelo', orgType)
 
                 let clonedTr = lastTr.clone();
@@ -14,7 +15,8 @@
                 clonedTr.find(`input[name='orgAbbr']`).val('')
                 clonedTr.find(`select[name='orgName']`).val('')
                 clonedTr.find(`select[name='orgCompleteName']`).val('')
-                clonedTr.find(`input[name="orgType"]`).val('');
+                clonedTr.find(`input[name='orgType']`).val('');
+                clonedTr.find(`input[name='campus']`).val('');
 
                 $('#add-more-org-table tbody').append(clonedTr)
             })
@@ -61,25 +63,25 @@
             $('#add-more-building').on('click', function () {
                 console.log("Organization Added::::")
                 let lastTr = $('#add-more-building-table tbody tr:last-child')
-                let buildingName = lastTr.find(`select[name='buildingName']`).val();
-                let buildingNumber = lastTr.find(`select[name='buildingNumber']`).val();
-                let floors = lastTr.find(`select[name='floors']`).val();
-                let ownerId = lastTr.find(`select[name='ownerId']`).val();
-                let startTimeId = lastTr.find(`select[name='startTimeId']`).val();
-                let endTimeId = lastTr.find(`select[name='endTimeId']`).val();
-                let handledById = lastTr.find(`select[name='handledById']`).val();
-                let campusId = lastTr.find(`select[name='campusId']`).val();
+                let buildingName = lastTr.find(`input[name='building_name']`).val();
+                let buildingNumber = lastTr.find(`input[name='building_number']`).val();
+                let floors = lastTr.find(`input[name='floors']`).val();
+                let ownerId = lastTr.find(`input[name='owner_id']`).val();
+                let startTimeId = lastTr.find(`input[name='start_time_id']`).val();
+                let endTimeId = lastTr.find(`input[name='end_time_id']`).val();
+                let handledById = lastTr.find(`input[name='handled_by']`).val();
+                let campusId = lastTr.find(`input[name='campus_lid']`).val();
 
 
                 let clonedTr = lastTr.clone();
-                clonedTr.find(`input[name='buildingName']`).val('')
-                clonedTr.find(`input[name='buildingNumber']`).val('')
-                clonedTr.find(`select[name='floors']`).val('')
-                clonedTr.find(`select[name='ownerId']`).val('')
-                clonedTr.find(`select[name='startTimeId']`).val('')
-                clonedTr.find(`select[name='endTimeId']`).val('')
-                clonedTr.find(`select[name='handledById']`).val('')
-                clonedTr.find(`select[name='campusId']`).val('')
+                clonedTr.find(`input[name='building_name']`).val('')
+                clonedTr.find(`input[name='building_number']`).val('')
+                clonedTr.find(`input[name='floors']`).val('')
+                clonedTr.find(`input[name='owner_id']`).val('')
+                clonedTr.find(`input[name='start_time_id']`).val('')
+                clonedTr.find(`input[name='end_time_id']`).val('')
+                clonedTr.find(`input[name='handled_by']`).val('')
+                clonedTr.find(`input[name='campus_lid']`).val('')
 
                 $('#add-more-building-table tbody').append(clonedTr)
             })

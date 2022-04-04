@@ -149,8 +149,8 @@
 
                                 <td>
                                     <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="campus_lid" required placeholder="--select--" data-is-visible="false">
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="campus_lid" id="campus_lid">
+                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="campus" required placeholder="--select--" data-is-visible="false">
+                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="campus" id="campus">
                                             <% for(let campus of campusList) { %>
                                                 <option value="<%- campus.id %>">
                                                     <%- campus.campus_abbr %>
@@ -200,7 +200,7 @@
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
             let orgType = $(elem).find(`select[name='orgType']`).val()
-            let campus_lid = $(elem).find(`select[name='campus_lid']`).val()
+            let campus_lid = $(elem).find(`select[name='campus']`).val()
 
             if (index < orgCount - 1) {
                 let obj = {
@@ -275,7 +275,7 @@
             $('#orgCompleteName').val(org.org_complete_name)
             $('#active').val(org.active)
             $('#orgType').val(org.org_type_id).trigger('change')
-            $("#campus_lid").val(org.campus_lid).trigger('change')
+            $("#campus").val(org.campus_lid).trigger('change')
             $("#add-org-modal").modal('show')
         }).catch(error => {
             showError(error.responseJSON)
@@ -294,7 +294,7 @@
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
             let orgType = $(elem).find(`select[name='orgType']`).val()
-            let campus_lid = $(elem).find(`select[name='campus_lid']`).val()
+            let campus_lid = $(elem).find(`select[name='campus']`).val()
             let active = $(elem).find(`input[name='active']`).val()
 
             if (index < orgCount - 1) {
@@ -412,7 +412,10 @@
 
     //Bulk Delete
     $(".bulk-delete-organizations").on('click', function () {
-        console.log('bulk-delete-organizations')
+
+        //Alert confirm
+        alertMsg()
+      
         let ApiObj = {
             url: '/management/organizations',
             type: 'PATCH',
@@ -421,7 +424,7 @@
             },
             dataType: 'JSON'
         }
-        alertMsg()
+        
 
         $('.alert-continue').on('click', () => {
 

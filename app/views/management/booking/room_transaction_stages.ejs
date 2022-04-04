@@ -12,15 +12,11 @@
                 <h5>ROOM TRANSACTION STAGE List</h5>
             </div>
             <div>
-                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
-                    data-bs-target="#add-roomtransaction-stages-modal">
-                    <i class="fas fa-plus"></i></button>
+                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-roomtransaction-stages-modal"><i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-rootTransaction add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-root-ransaction-tage add-btn "><img src="/icons/delete.png"
-                        alt="" width="26px" height="32px"></button>
+                <button class="btn ms-auto bulk-delete-roomTansaction-stage add-btn "><img src="/icons/delete.png" alt="" width="26px" height="32px"></button>
             </div>
         </div>
-
 
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
@@ -83,15 +79,16 @@
             </div>
             <div class="modal-footer d-flex justify-content-center">
                 <span class="errorMsg"></span>
-                <button type="submit" class="btn  createRoomTransactionStages modal-inputform-btn">Create</button>
-                <button type="submit"
-                    class="btn  updateRoomTransactionStages modal-inputform-btn d-none">Update</button>
+                <button type="submit" class="btn createRoomTransactionStages modal-inputform-btn">Create</button>
+                <button type="submit" class="btn updateRoomTransactionStages modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
 </div>
 
 
+<%- include('../partials/notification') %>
+<%- include('../partials/alert') %>
 <%- include("../partials/footer") %>
 <script>
     $(document).ready(function () {
@@ -248,7 +245,7 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
+
                     notify();
                 }).catch(error => {
                     showError(error.responseJSON)
@@ -262,7 +259,8 @@
 
 
         //Bulk Delete
-        $(".bulk-delete-root-ransaction-tage").on('click', function () {
+        $(".bulk-delete-roomTansaction-stage").on('click', function () {
+            console.log('bulk delete::::')
             let ApiObj = {
                 url: '/management/rooms/bookings/transaction-stages',
                 type: 'PATCH',
@@ -270,19 +268,22 @@
                 dataType: 'JSON'
             }
 
-            ajaxApi(ApiObj).then(result => {
-                location.reload()
-            }).catch(error => {
-                showError(error.responseJSON)
+            //Alert confirm
+            alertMsg()
 
+        
+
+            $('.alert-continue').on('click', () => {
+                ajaxApi(ApiObj).then(result => {
+                    location.reload()
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+            })
+            $('.cancel').on('click', () => {
+                $('#alertModal').css('display', 'none');
             })
 
-            //   alertMsg()
-
-            //   $('.alert-continue').on('click', () => {
-
-            // })
-            // $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
 
         })
 
@@ -338,6 +339,24 @@
                 }
             })
         }, 500));
+
+        function showError(errors) {
+        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+        if (errors.data.length > 0) {
+            $(errors.data).each(function (key, value) {
+                $.each(this, function (key, value) {
+                    errorHtml +=
+                        `<li>${key} ${value}</li>`
+                });
+            });
+        }
+        errorHtml +=
+            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        $("#errorHtml").html(errorHtml)
+    }
 
     })
 </script>

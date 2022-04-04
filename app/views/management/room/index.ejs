@@ -55,8 +55,7 @@
                 <h5>ROOM DATA</h5>
             </div>
             <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i
-                        class="fas fa-plus"></i></button>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-selected-rooms add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-rooms add-btn "><img src="/icons/delete.png" alt="" width="26px"
                         height="32px"></button>
@@ -122,7 +121,7 @@
                     <% } %>
                 </tbody>
             </table>
-			<div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between">
                 <div>
                     <p>Total entries:<%- roomcount %>
                     </p>
@@ -150,38 +149,53 @@
 
                     <div class="col-md-4">
                         <label>Campuses</label>
-                        <select class="form-select" name="campus_lid" id="campus_lid">
-                            <option disabled selected value="">--Select Campus--</option>
-                            <% for(let campus of campusList) { %>
-                            <option value="<%- campus.id %>">
-                                <%- campus.campus_abbr %>
-                            </option>
-                            <% } %>
-                        </select>
+
+                        <div class="data-searchable-wrapper">
+                            <input autocomplete="off" role="combobox" list="" class="data-list-input form-control"
+                                name="campus_lid" required placeholder="--select--" data-is-visible="false">
+                            <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="campus_lid"
+                                id="campus_lid">
+                                <% for(let campus of campusList) { %>
+                                <option value="<%- campus.id %>">
+                                    <%- campus.campus_abbr %>
+                                </option>
+                                <% } %>
+                            </datalist>
+                        </div>
                     </div>
 
                     <div class="col-md-4">
                         <label>Building</label>
-                        <select class="form-select" name="building_lid" id="building_lid">
-                            <option disabled selected value="">--Select Building--</option>
-                            <% for(let building of buildingList) { %>
-                            <option value="<%- building.building_id %>">
-                                <%- building.building_name %>
-                            </option>
-                            <% } %>
-                        </select>
+
+                        <div class="data-searchable-wrapper">
+                            <input autocomplete="off" role="combobox" list="" class="data-list-input form-control"
+                                name="building_lid" required placeholder="--select--" data-is-visible="false">
+                            <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="building_lid"
+                                id="building_lid">
+                                <% for(let building of buildingList) { %>
+                                <option value="<%- building.building_id %>">
+                                    <%- building.building_name %>
+                                </option>
+                                <% } %>
+                            </datalist>
+                        </div>
                     </div>
 
                     <div class="col-md-4">
                         <label>Handled By</label>
-                        <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
-                            <option disabled selected value>--Select Organization--</option>
-                            <% for(let org of orgList) { %>
-                            <option value="<%- org.id %>">
-                                <%- org.org_abbr %>/<%- org.org_id %>
-                            </option>
-                            <% } %>
-                        </select>
+
+                        <div class="data-searchable-wrapper">
+                            <input autocomplete="off" role="combobox" list="" class="data-list-input form-control"
+                                name="handled_by" required placeholder="--select--" data-is-visible="false">
+                            <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="handled_by"
+                                id="handled_by">
+                                <% for(let org of orgList) { %>
+                                <option value="<%- org.id %>">
+                                    <%- org.org_abbr %>/<%- org.org_id %>
+                                </option>
+                                <% } %>
+                            </datalist>
+                        </div>
                     </div>
                 </div>
 
@@ -291,7 +305,8 @@
 
 
 
-<%- include("../partials/notification") %>
+<%- include('../partials/notification') %>
+<%- include('../partials/alert') %>
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
@@ -449,7 +464,7 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
-                
+
                 notify();
             }).catch(error => {
                 showError(error.responseJSON)
@@ -571,7 +586,7 @@
             }
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
-                
+
                 notify();
             }).catch(error => {
                 showError(error.responseJSON)
@@ -603,7 +618,7 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    
+
                     notify();
                 }).catch(error => {
                     let errors = error.responseJSON.message
@@ -629,6 +644,10 @@
 
         //Bulk Delete
         $(".bulk-delete-rooms").on('click', function () {
+
+            //Alert confirm
+            alertMsg()
+
             let ApiObj = {
                 url: '/management/rooms',
                 type: 'PATCH',
@@ -636,10 +655,15 @@
                 dataType: 'JSON'
             }
 
-            ajaxApi(ApiObj).then(result => {
-                alertMsg();
-            }).catch(error => {
-                showError(error.responseJSON)
+            $('.alert-continue').on('click', () => {
+                ajaxApi(ApiObj).then(result => {
+                    location.reload()
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+            })
+            $('.cancel').on('click', () => {
+                $('#alertModal').css('display', 'none');
             })
         })
 
@@ -666,8 +690,8 @@
 
 
         //Getting capus Bulding List
-        $("#campus_lid").on('change',function(){
-            let campus_lid =  $(this).val()
+        $("#campus_lid").on('change', function () {
+            let campus_lid = $(this).val()
             let ApiObj = {
                 url: '/management/rooms/buildinglist',
                 type: 'POST',
@@ -678,22 +702,24 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-               let buildingList =`<select class="form-select" name="campus_lid" id="campus_lid">`;
+                let buildingList =
+                    `<select class="form-select" name="campus_lid" id="campus_lid">`;
 
-               if(result.data.length > 0){
-                   buildingList += `<option disabled selected value="">--Select Campus--</option>`;
-                result.data.forEach(element => {
-                buildingList += `<option value="${element.id}">
+                if (result.data.length > 0) {
+                    buildingList +=
+                        `<option disabled selected value="">--Select Campus--</option>`;
+                    result.data.forEach(element => {
+                        buildingList += `<option value="${element.id}">
                                 ${element.building_name}
                             </option>`
-               });
-               }else{
-                buildingList += `<option value="">
+                    });
+                } else {
+                    buildingList += `<option value="">
                                 No Building Found!
                             </option>`
-               }
-               buildingList += `</select>`;
-               $("#building_lid").html(buildingList)
+                }
+                buildingList += `</select>`;
+                $("#building_lid").html(buildingList)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -731,7 +757,7 @@
                     pageNo: num
                 },
                 success: function (data) {
-                    showAjaxTable(data.data) 
+                    showAjaxTable(data.data)
                 }
             })
         });
