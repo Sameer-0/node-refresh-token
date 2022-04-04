@@ -1,9 +1,4 @@
-const {
-    body
-} = require('express-validator');
-const {
-    pool
-} = require('mssql');
+
 const {
     sql,
     poolConnection,

@@ -11,9 +11,15 @@ const {
 const User = require('../models/User');
 const USerPermission = require('../models/USerPermission');
 const Settings = require('../models/Settings');
-const {AccountVerification, SigninWithNewDevice} = require('../utils/emailTemplate');
+const {
+    AccountVerification,
+    SigninWithNewDevice
+} = require('../utils/emailTemplate');
 // const res = require('express/lib/response');
-
+const {
+    encrypt,
+    decrypt
+} = require('../utils/crypto')
 
 const {
     RedisStore,
@@ -27,7 +33,7 @@ const {
 } = require('express-validator');
 const hash = require('../utils/hash');
 const UserPermission = require('../models/USerPermission');
-
+const Client = require('../models/Clients');
 let store = new RedisStore({
     client: redisClient,
     ttl: 260
@@ -116,7 +122,7 @@ module.exports = {
         try {
 
             let userData = await User.getUserByUsername(req.body.username, res.locals.slug);
-       
+
 
             if (userData.recordset.length == 0) {
                 //return res.status(200).send('Invalid username or password..!');
@@ -145,7 +151,7 @@ module.exports = {
             req.session.lastName = userData.recordset[0].l_name;
             req.session.email = userData.recordset[0].email;
             req.session.subDomain = res.locals.slug;
-            
+
 
             //let userModules = await User.getUserModules(userData.recordset[0].id, res.locals.slug);
 
@@ -157,22 +163,40 @@ module.exports = {
 
             req.session.modules = userDataSet[0].recordset;
 
-            console.log('device:::::::::::>>',req)
+            console.log('device:::::::::::>>', req.device.type.toUpperCase())
 
-            const headers = {
-                ip: req.ip,
-                platform:req.headers["user-agent"]
-            };
+
+            console.log('is_trusted::::::::::::::::::>>>', req.body.is_trusted)
 
             
-           
 
-          //  console.log('req:::::::::::::::::>>>',req)
-            //IF USER WILL SIGN IN WITH NEW DEVICE THEN EMAIL WILL TRIGGER FROM HERE
-            if(!req.body.devicecheck){
+            // IF CHECKED WITH DEVICE TRUSTED
+            if (req.body.is_trusted == "on") {
+                req.session.usersecretkey = encrypt(uuidv4())
+                    console.log('is checked:::::::::::>>')
+                    const headers = {
+                        ip: req.ip,
+                        platform: req.headers["user-agent"]
+                    };
+                   
                 console.log('Here::::::::::::::::>>>>', userData.recordset[0].email)
+                //INSERT IN DATABASE
+                let obj = {
+                    userLid: userData.recordset[0].id,
+                    clientSecret: encrypt(uuidv4()),
+                    clientName: '',
+                    clientOS: ''
+                }
+
+                Client.save(obj, res.locals.slug)
+                Client.fetch(obj, res.locals.slug).then(result => {
+                    console.log('Result::::::::::::::::::::::', result.recordset[0])
+                })
+
+                //SEND EMAIL IF LOGGEDIN WITH NEW DEVICE
                 SigninWithNewDevice(userData.recordset[0].email, headers)
             }
+
 
             if (userDataSet[0].recordset.length > 1) {
                 return res.redirect('/user/select-dashboard');
