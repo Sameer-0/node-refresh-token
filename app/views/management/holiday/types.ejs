@@ -122,13 +122,8 @@
                         $(".errorMsg").html(data.message)
                     }
                 },
-                error: err => {
-                    let errorHtml =
-                        `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>Dublicate entry found!</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+                error: error => {
+                    showError(error.responseJSON)
                 }
             })
         })
@@ -138,9 +133,6 @@
             $(".createHolidayTypes").addClass('d-none')
             $(".updateHolidayTypes").removeClass('d-none')
             $("#add-holiday-type-title").html(`UPDATE HOLIDAY TYPES`)
-
-console.log('ID:::::::::::::::::::>>',$(this).attr("data-holiday-type-id"))
-
             let ApiObj = {
                 url: '/management/holidays/types/findOne',
                 method: 'GET',
@@ -182,13 +174,8 @@ console.log('ID:::::::::::::::::::>>',$(this).attr("data-holiday-type-id"))
                     }
 
                 },
-                error: err => {
-                    let errorHtml =
-                        `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>Dublicate entry found!</p>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+                error: error => {
+                    showError(error.responseJSON)
                 }
             })
         })
@@ -222,7 +209,6 @@ console.log('ID:::::::::::::::::::>>',$(this).attr("data-holiday-type-id"))
             })
 
             if (deleteids.length > 0) {
-                console.log('deleteids::::::::::::::', deleteids)
                 let ApiObj = {
                     url: '/management/holidays/types',
                     type: 'DELETE',
@@ -315,6 +301,19 @@ console.log('ID:::::::::::::::::::>>',$(this).attr("data-holiday-type-id"))
             })
         }, 500));
 
+        function showError(errors) {
+                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>`;
+                errorHtml += `<ul>`;
+                errors.errors.map(er => {
+                    errorHtml +=
+                        `<li>${er.msg}</li>`
+                })
+
+                errorHtml +=
+                    `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+            }
     })
 </script>
 <%- include("../partials/footerEnd") %>

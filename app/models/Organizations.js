@@ -20,7 +20,7 @@ module.exports = class Organizations {
             FROM [dbo].organizations org 
             INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
             INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
-            WHERE ot.active = 1 AND org.active = 1 AND camp.active = 1 ORDER BY org.id DESC`)
+            ORDER BY org.id DESC`)
         })
     }
 
@@ -32,7 +32,7 @@ module.exports = class Organizations {
                 FROM [dbo].organizations org 
                 INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
                 INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
-                WHERE ot.active = 1 AND org.active = 1 ORDER BY org.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                 ORDER BY org.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -40,7 +40,7 @@ module.exports = class Organizations {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('id', sql.Int, id)
-                .query(`SELECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id, campus_lid, CONVERT(NVARCHAR, active) AS active FROM [dbo].organizations WHERE id = @id`)
+                .query(`SELECT id, org_id, org_abbr, org_name, org_complete_name, org_type_id, campus_lid FROM [dbo].organizations WHERE id = @id`)
         })
     }
 
@@ -82,7 +82,7 @@ module.exports = class Organizations {
 
     static getCount() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].organizations WHERE active = 1`)
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [dbo].organizations`)
         })
     }
 
@@ -95,8 +95,8 @@ module.exports = class Organizations {
                 FROM [dbo].organizations org 
                 INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
                 INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
-                WHERE ot.active = 1 AND org.active = 1 and (org.id like @keyword or org.org_abbr like @keyword 
-                or org.org_complete_name like @keyword or ot.name like @keyword OR camp.campus_abbr LIKE @keyword) ORDER BY org.id DESC`)
+                WHERE org.id like @keyword or org.org_abbr like @keyword 
+                or org.org_complete_name like @keyword or ot.name like @keyword OR camp.campus_abbr LIKE @keyword ORDER BY org.id DESC`)
         })
     }
 

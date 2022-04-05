@@ -15,7 +15,6 @@ const validate = require('../../middlewares/validate')
 //ACADEMIC YEAR ROUTER
 router.get('/academic/academic-year', acadYearcontroller.getAcadYearPage)
 router.post('/academic/academic-year', validate('createAcadYear'), acadYearcontroller.updateAcadYear)
-router.put('/academic/academic-year', acadYearcontroller.switchAcadYear)
 
 // ACADEMIC ROUTER
 router.get('/academic', academiccontroller.getPage)

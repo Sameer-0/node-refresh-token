@@ -34,20 +34,20 @@ module.exports = class HolidayTypes {
         return poolConnection.then(pool => {
             let request = pool.request();
             JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [dbo].[holiday_types] SET active = 0  WHERE id = ${element.id}`)
+                return request.query(`DELETE FROM [dbo].holiday_types WHERE id = ${element.id}`)
             });
         })
     }
 
     static deleteAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [dbo].[holiday_types] SET active = 0 WHERE active = 1`)
+            return pool.request().query(`DELETE FROM [dbo].[holiday_types] `)
         })
     }
 
     static fetchAll(rowcont) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcont)} id, name, description FROM [dbo].[holiday_types] WHERE active  = 1 ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcont)} id, name, description FROM [dbo].[holiday_types] ORDER BY id DESC`)
         })
     }
 
@@ -73,7 +73,7 @@ module.exports = class HolidayTypes {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)}  id , name, description FROM [dbo].[holiday_types]  WHERE active = 1 AND (name LIKE @keyword OR description LIKE @keyword) ORDER BY id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)}  id , name, description FROM [dbo].[holiday_types]  WHERE name LIKE @keyword OR description LIKE @keyword ORDER BY id DESC`)
         })
     }
 
@@ -81,14 +81,14 @@ module.exports = class HolidayTypes {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT id, name, description FROM [dbo].holiday_types WHERE active = 1 ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT id, name, description FROM [dbo].holiday_types ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].holiday_types WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].holiday_types`)
         })
     }
 

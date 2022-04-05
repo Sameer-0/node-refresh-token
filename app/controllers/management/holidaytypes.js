@@ -11,15 +11,16 @@ module.exports = {
 
     getPage: (req, res) => {
 
-        Promise.all([HolidayTypes.fetchAll(10), HolidayTypes.getCount()]).then(result=>{
+        Promise.all([HolidayTypes.fetchAll(10), HolidayTypes.getCount()]).then(result => {
             res.render('management/holiday/types', {
                 holidayTypeList: result[0].recordset,
-                pageCount:result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count
             })
         })
     },
 
     create: (req, res) => {
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -28,12 +29,14 @@ module.exports = {
             });
             return;
         }
+
         HolidayTypes.insert(req.body).then(result => {
             res.status(200).json({
                 status: 200,
                 message: "Success"
             })
         }).catch(error => {
+            console.log(error)
             res.status(500).json(error.originalError.info.message)
         })
     },

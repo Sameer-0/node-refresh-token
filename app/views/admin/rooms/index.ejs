@@ -430,22 +430,36 @@
                        htmlTable+= `</tbody></table>`;
                 console.log(htmlTable)
                 $("#ShowTransactionTable").html(htmlTable)
-                $(".ApprovedBtn").attr("data-transactionId",trand_lid);
+                $(".ApprovedBtn").attr("data-transactionId", trand_lid);
+                $(".RejectBtn").attr("data-transactionId", trand_lid);
                 $("#show-transaction-details").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
             })
     })
 
-
-
-
-
-
-
+//Approve 
         $(".ApprovedBtn").on('click',function(){
-            console.log('ApprovedBtn:::::>>',$(this).attr("data-transactionId"))
-            console.log('ApprovedBtn:::::>>',$(this).attr("data-status"))
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/approval',
+                data: {
+                    input_room_request_lid: $(this).attr("data-transactionId"),
+                    approval_flag: $(this).attr("data-status")
+                },
+                dataType: 'JSON'
+            }
+
+
+            ajaxApi(ApiObj).then(result => {
+              console.log('result::::::::::::::',result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //Reject 
+        $(".RejectBtn").on('click',function(){
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/rooms/approval',
