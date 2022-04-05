@@ -31,6 +31,24 @@ module.exports = {
         })
     },
 
+    getRoomPage: (req, res) => {
+        let rowCount = 10
+        Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
+            console.log('result[2].recordset', result[2].recordset)
+            res.render('management/room/room', {
+                roomList: result[0].recordset,
+                campusList: result[2].recordset,
+                buildingList: result[5].recordset,
+                orgList: result[1].recordset,
+                roomTypeList: result[4].recordset,
+                timeList: result[3].recordset,
+                roomcount: result[6].recordset[0] ? result[6].recordset[0].count : ''
+            })
+        }).catch(error => {
+            throw error
+        })
+    },
+
 
     findOne: (req, res) => {
         Rooms.findOne(req.query.id).then(result => {

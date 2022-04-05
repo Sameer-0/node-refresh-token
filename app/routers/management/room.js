@@ -18,6 +18,7 @@ const RoomRequest = require('../../controllers/management/RoomRequest')
 
 //ROOM ROUTER
 router.get('/rooms', roomcontroller.getPage)
+router.get('/rooms/room', roomcontroller.getRoomPage)
 router.get('/rooms/findone', roomcontroller.findOne)
 router.put('/rooms', validate('JsonValidator'), roomcontroller.update)
 router.delete('/rooms', roomcontroller.delete)

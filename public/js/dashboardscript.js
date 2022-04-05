@@ -135,7 +135,6 @@
                 });
             })
     
-    
             $('#add-more-room-table').on('click', '.remove-room', function () {
                 let trLength = $('#add-more-room-table tbody tr').length;
                 if (trLength > 1) {
@@ -178,7 +177,6 @@
                     dropdownParent: $('#add-more-faculty-modal')
                 });
             })
-    
     
             $('#add-more-faculty-table').on('click', '.remove-faculty', function () {
                 let trLength = $('#add-more-faculty-table tbody tr').length;

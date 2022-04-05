@@ -7,6 +7,8 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
 
+    <%- include("../partials/roomSubMenu") %>
+
 
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
@@ -125,7 +127,7 @@
 
             // Add more rows
             $('#add-more-roomtransaction-types').on('click', function () {
-                console.log("Organization Added::::")
+                console.log("Room Added::::")
                 let lastTr = $('#add-more-roomtransaction-types-table tbody tr:last-child')
                 let name = lastTr.find(`select[name='name']`).val()
                 let description = lastTr.find(`select[name='description']`).val()
@@ -146,6 +148,7 @@
 
             //Create 
             $(".createRoomTransactionTypes").on('click', function () {
+                console.log('room added 2')
                 let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
                 let transCount = transactionElems.length;
                 let transJson = [];
@@ -314,15 +317,15 @@
             $(".bulk-delete-roomtransaction-type").on('click', function () {
 
                 console.log('bulk delete working')
+                //Alert confirm
+                alertMsg()
+
                 let ApiObj = {
                     url: '/management/rooms/bookings/transaction-types',
                     type: 'PATCH',
                     data: {},
                     dataType: 'JSON'
                 }
-
-                //Alert confirm
-                alertMsg()
 
                 $('.alert-continue').on('click', () => {
                     ajaxApi(ApiObj).then(result => {
@@ -331,6 +334,7 @@
                         showError(error.responseJSON)
                     })
                 })
+                
                 $('.cancel').on('click', () => {
                     $('#alertModal').css('display', 'none');
                 })

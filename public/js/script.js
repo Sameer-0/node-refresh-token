@@ -77,7 +77,7 @@ let isSearchableListShowing = false;
 
         if (!isSearchableListShowing && e.target.classList.contains('data-list-input') && e.target.getAttribute(
             'data-is-visible') == "false") {
-          console.log("GONNA EXECUTE", e.target.parentNode)
+       
           e.target.parentNode.querySelector('.custom-datalist').style.display = 'block';
           e.target.setAttribute('data-is-visible', true);
           e.target.parentNode.querySelector('.custom-datalist').setAttribute('data-is-visible', true);
@@ -85,8 +85,6 @@ let isSearchableListShowing = false;
         }
 
       })
-
-
 
       $('#addMore').on('click', function () {
         console.log("Rows Added::::")
@@ -101,6 +99,7 @@ let isSearchableListShowing = false;
 
         if (e.target.parentNode.classList.contains('custom-datalist')) {
           e.target.parentNode.parentNode.querySelector('input').value = e.target.innerText.trim();
+          e.target.parentNode.parentNode.querySelector('input').setAttribute('data-value',e.target.value.trim());
         }
 
       })

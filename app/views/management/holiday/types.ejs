@@ -100,7 +100,8 @@
     </div>
 </div>
 
-
+<%- include('../partials/notification') %>
+<%- include('../partials/alert') %>
 <%- include("../partials/footer") %>
 <script>
     $(document).ready(function () {
@@ -247,6 +248,10 @@ console.log('ID:::::::::::::::::::>>',$(this).attr("data-holiday-type-id"))
 
         //Bulk Delete
         $(".bulk-delete-holiday-type").on('click', function () {
+
+            //Alert confirm
+            alertMsg()
+
             let ApiObj = {
                 url: '/management/holidays/types',
                 type: 'PATCH',
@@ -254,13 +259,17 @@ console.log('ID:::::::::::::::::::>>',$(this).attr("data-holiday-type-id"))
                 dataType: 'JSON'
             }
 
-            ajaxApi(ApiObj).then(result => {
-                location.reload()
-            }).catch(error => {
-                showError(error.responseJSON)
-
-            })
-
+           $('.alert-continue').on('click', () => {
+                    ajaxApi(ApiObj).then(result => {
+                        location.reload()
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+                })
+                
+                $('.cancel').on('click', () => {
+                    $('#alertModal').css('display', 'none');
+                })
         })
 
 
