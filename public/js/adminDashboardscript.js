@@ -125,7 +125,7 @@ $('#add-more-program-table').on('click', '.remove-program', function () {
 $('#add-more-courseWorkload').on('click', function () {
     console.log("courseWorload Added::::")
     let lastTr = $('#add-more-courseWorkload-table tbody tr:last-child')
-    let programId = lastTr.find(`input[name='semester']`).val();
+    let semester = lastTr.find(`input[name='semester']`).val();
     let courseName = lastTr.find(`input[name='courseName']`).val();
     let noOfDivisions = lastTr.find(`input[name='noOfDivisions']`).val();
     let lecturePerDivision = lastTr.find(`input[name='lecturePerDivision']`).val();

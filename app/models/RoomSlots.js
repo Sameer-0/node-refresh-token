@@ -17,7 +17,7 @@ module.exports = class RoomSlots {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, date, room_id, slot_id, alloted_to, b_transaction_id, is_booked, active, b_transaction_uuid FROM [dbo].room_slots WHERE active  = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, date, room_id, slot_id, alloted_to, b_transaction_id, is_booked, b_transaction_uuid FROM [dbo].room_slots`)
         })
     }
 

@@ -25,15 +25,14 @@ module.exports = class Faculties {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, faculty_id, faculty_name, faculty_dbo_lid FROM [${slug}].faculties 
-           WHERE active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, faculty_id, faculty_name, faculty_dbo_lid FROM [${slug}].faculties`)
         })
     }
 
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [bncp-mum].faculties WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [bncp-mum].faculties`)
         })
     }
 
@@ -41,8 +40,7 @@ module.exports = class Faculties {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT TOP ${Number(rowcount)} id, faculty_id, faculty_name, faculty_dbo_lid FROM [${slug}].faculties 
-                WHERE active = 1 ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT TOP ${Number(rowcount)} id, faculty_id, faculty_name, faculty_dbo_lid FROM [${slug}].faculties ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         }).catch(error => {
             throw error
         })

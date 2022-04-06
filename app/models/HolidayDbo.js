@@ -61,7 +61,7 @@ module.exports = class Holidays {
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('Id', sql.NVarChar(255), id)
-            let stmt = `UPDATE [dbo].[holidays] SET active  = 0 WHERE id =  @Id`
+            let stmt = `DELETE FROM [dbo].[holidays]  WHERE id =  @Id`
             return request.query(stmt)
         })
     }
@@ -71,7 +71,7 @@ module.exports = class Holidays {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} hd.id, hd.calendar_id, hd.calendar_name, hd.calendar_year, hd.reason, hd.h_date, hd.campus_lid, camp.campus_abbr, org.org_abbr FROM [dbo].holidays hd 
             INNER JOIN [dbo].campuses camp ON camp.campus_id = hd.campus_lid
             INNER JOIN [dbo].organizations org ON org.org_id = hd.org_lid
-            INNER JOIN [dbo].holiday_types ht ON ht.id = hd.holiday_type_id WHERE hd.active = 1 and ht.active = 1 and camp.active = 1 and org.active = 1`)
+            INNER JOIN [dbo].holiday_types ht ON ht.id = hd.holiday_type_id`)
         })
     }
 
@@ -91,8 +91,7 @@ module.exports = class Holidays {
                 INNER JOIN [dbo].campuses camp ON camp.campus_id = hd.campus_lid
                 INNER JOIN [dbo].organizations org ON org.org_id = hd.org_lid
                 INNER JOIN [dbo].holiday_types ht ON ht.id = hd.holiday_type_id 
-                WHERE hd.active = 1 AND ht.active = 1 AND camp.active = 1 AND org.active = 1 AND (
-                hd.calendar_id LIKE @keyword OR hd.calendar_name LIKE @keyword OR hd.calendar_year LIKE @keyword OR camp.campus_abbr LIKE @keyword OR org.org_abbr LIKE @keyword)`)
+                WHERE  hd.calendar_id LIKE @keyword OR hd.calendar_name LIKE @keyword OR hd.calendar_year LIKE @keyword OR camp.campus_abbr LIKE @keyword OR org.org_abbr LIKE @keyword`)
         })
     }
 

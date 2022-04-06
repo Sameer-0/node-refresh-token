@@ -21,7 +21,7 @@ module.exports = class {
             INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
             INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
             INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
-            WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 ORDER BY sd.id DESC`)
+            ORDER BY sd.id DESC`)
         })
     }
 
@@ -80,7 +80,7 @@ module.exports = class {
                 INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
-                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 AND (ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword OR acs.acad_session LIKE @keyword) 
+                WHERE ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword OR acs.acad_session LIKE @keyword
 				ORDER BY sd.id DESC`)
         })
     }
@@ -96,14 +96,14 @@ module.exports = class {
                 INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
-                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 ORDER BY sd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                ORDER BY sd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [${slug}].session_dates WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].session_dates`)
         })
     }
 

@@ -31,7 +31,7 @@ module.exports = class Rooms {
             INNER JOIN [dbo].organizations o ON o.id = r.handled_by
             INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
             INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
-            INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.active = 1 and st.active = 1 ORDER BY r.id DESC`)
+            INNER JOIN [dbo].campuses c ON c.id = b.campus_lid ORDER BY r.id DESC`)
         })
     }
 
@@ -68,7 +68,7 @@ module.exports = class Rooms {
                 INNER JOIN [dbo].organizations o ON o.id = r.handled_by
                 INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
                 INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
-                INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.active = 1 and st.active = 1 ORDER BY r.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                INNER JOIN [dbo].campuses c ON c.id = b.campus_lid ORDER BY r.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -76,7 +76,7 @@ module.exports = class Rooms {
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) AS count FROM [dbo].rooms WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) AS count FROM [dbo].rooms`)
         })
     }
 
@@ -92,7 +92,7 @@ module.exports = class Rooms {
                 INNER JOIN [dbo].organizations o ON o.id = r.handled_by
                 INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
                 INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
-                INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.active = 1 and st.active = 1 AND r.room_number 
+                INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.room_number 
                 LIKE @keyword OR b.building_name LIKE @keyword OR rt.name LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR o.org_abbr LIKE @keyword ORDER BY r.id DESC`)
         })
     }
@@ -120,7 +120,7 @@ module.exports = class Rooms {
 
     static deleteAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [dbo].rooms SET active = 0 WHERE active = 1`)
+            return pool.request().query(`DELETE FROM [dbo].rooms`)
         })
     }
 

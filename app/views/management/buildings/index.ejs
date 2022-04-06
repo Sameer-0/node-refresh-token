@@ -121,7 +121,6 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <input type="hidden" name="active" id="active">
                                     <input name="building_name" id="building_name" type="text" class="form-control"
                                         placeholder="Building Name" required>
                                 </td>
@@ -304,7 +303,6 @@
                 $("#start_time_id").val(building.start_time_id).trigger('change'),
                 $("#end_time_id").val(building.end_time_id).trigger('change'),
                 $("#campus_lid").val(building.campus_lid).trigger('change'),
-                $("#active").val(building.active),
                 $("#add-building-modal").modal('show')
         }).catch(error => {
             showError(error.responseJSON)
@@ -321,7 +319,6 @@
 
         buildingElems.each(function (index, elem) {
             let buildingId = $("#buildingId").val()
-            let active = $(elem).find(`input[name='active']`).val()
             let building_name = $(elem).find(`input[name='building_name']`).val()
             let building_number = $(elem).find(`input[name='building_number']`).val();
             let total_floors = $(elem).find(`input[name='total_floors']`).val();
@@ -342,8 +339,7 @@
                     start_time_id: start_time_id,
                     end_time_id: end_time_id,
                     handled_by: handled_by,
-                    campus_lid: campus_lid,
-                    active: active
+                    campus_lid: campus_lid
                 }
                 buildingJson.push(obj)
             } else {
@@ -356,8 +352,7 @@
                     start_time_id: start_time_id,
                     end_time_id: end_time_id,
                     handled_by: handled_by,
-                    campus_lid: campus_lid,
-                    active: active
+                    campus_lid: campus_lid
                 }
                 buildingJson.push(obj)
             }

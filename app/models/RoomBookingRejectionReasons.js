@@ -17,7 +17,7 @@ module.exports = class RoomBookingRejectionReasons {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, transaction_uuid, reason, active FROM [dbo].room_booking_rejection_reasons WHERE active = 1  ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, transaction_uuid, reason, active FROM [dbo].room_booking_rejection_reasons  ORDER BY id DESC`)
         }).catch(error => {
             throw error
         })
@@ -59,7 +59,7 @@ module.exports = class RoomBookingRejectionReasons {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
-                .query(`UPDATE [dbo].room_booking_rejection_reasons SET active = 0 WHERE id = @Id`)
+                .query(`DELETE FROM [dbo].room_booking_rejection_reasons WHERE id = @Id`)
         }).catch(error=>{
             throw error
         })
@@ -70,7 +70,7 @@ module.exports = class RoomBookingRejectionReasons {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} id, transaction_uuid, reason, active FROM [dbo].room_booking_rejection_reasons WHERE active = 1 AND transaction_uuid LIKE  @keyword OR reason LIKE  @keyword AND active  = 1 ORDER BY id DESC `)
+                .query(`SELECT TOP ${Number(rowcount)} id, transaction_uuid, reason FROM [dbo].room_booking_rejection_reasons WHERE transaction_uuid LIKE  @keyword OR reason LIKE  @keyword ORDER BY id DESC `)
         }).catch(error=>{
             throw error
         })

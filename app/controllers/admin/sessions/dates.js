@@ -19,6 +19,8 @@ module.exports = {
                 sessionTypes: result[3].recordset,
                 programSessions: result[4].recordset
             })
+        }).catch(error=>{
+            console.log('Error::::::::::::::::>>>',error)
         })
     },
 
