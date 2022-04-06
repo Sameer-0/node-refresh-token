@@ -25,7 +25,7 @@ module.exports = class RoomTransactions {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowcount)}  transaction_uuid, applicant_name, applicant_sap_id FROM [dbo].room_transactions WHERE active = 1`)
+            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowcount)}  transaction_uuid, applicant_name, applicant_sap_id FROM [dbo].room_transactions`)
         }).catch(error=>{
             throw error
         })
@@ -66,7 +66,7 @@ module.exports = class RoomTransactions {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT DISTINCT TOP ${Number(rowcount)} transaction_uuid, applicant_name, applicant_sap_id FROM [dbo].room_transactions 
-                WHERE active = 1 AND transaction_uuid LIKE @keyword OR applicant_name LIKE @keyword OR applicant_sap_id LIKE @keyword`)
+                WHERE  transaction_uuid LIKE @keyword OR applicant_name LIKE @keyword OR applicant_sap_id LIKE @keyword`)
         }).catch(error=>{
             throw error
         })
@@ -76,7 +76,7 @@ module.exports = class RoomTransactions {
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].room_transactions WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].room_transactions`)
         })
     }    
 

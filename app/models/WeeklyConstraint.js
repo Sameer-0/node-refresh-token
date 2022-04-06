@@ -16,7 +16,7 @@ module.exports = class {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} id, tag_id, name, event_type, rule_on, IIF(repeatable = 1, 'YES', 'NO') AS repeatable
-            FROM [dbo].weekly_constraints WHERE active = 1`)
+            FROM [dbo].weekly_constraints`)
         })
     }
 
@@ -55,14 +55,14 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request();
             JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [dbo].weekly_constraints SET active = 0  WHERE id = ${element.id}`)
+                return request.query(`DELETE FROM [dbo].weekly_constraints  WHERE id = ${element.id}`)
             });
         })
     }
 
     static deleteAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [dbo].weekly_constraints SET active = 0 WHERE active = 1`)
+            return pool.request().query(`DELETE FROM [dbo].weekly_constraints`)
         })
     }
 

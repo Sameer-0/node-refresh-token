@@ -76,7 +76,7 @@ module.exports = class Organizations {
 
     static deleteAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [dbo].organizations SET active = 0 WHERE active = 1`)
+            return pool.request().query(`DELETE FROM [dbo].organizations`)
         })
     }
 

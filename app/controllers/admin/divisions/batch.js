@@ -1,18 +1,9 @@
-module.exports = {
-    getPage: (req, res) => {
-        res.render('admin/divisions/batches')
-    }
-}
-
 const {
     check,
     oneOf,
     validationResult
 } = require('express-validator');
 const res = require('express/lib/response');
-
-
- 
 const Divisions = require('../../../models/Divisions')
 const DivisionBatches = require('../../../models/DivisionBatches')
 
@@ -39,7 +30,6 @@ module.exports = {
     search: (req, res) => {
         let rowcount = 10;
         DivisionBatches.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
-            console.log('req.query.keyword::::',req.query.keyword)
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

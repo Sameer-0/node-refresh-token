@@ -89,7 +89,7 @@ module.exports = class FacultyTypes {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT id, name, description, CONVERT(NVARCHAR, active) AS active FROM  [dbo].[faculty_types] ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT id, name, description FROM  [dbo].[faculty_types] ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

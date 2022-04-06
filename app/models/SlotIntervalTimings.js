@@ -13,7 +13,7 @@ module.exports = class SlotIntervalTimings {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, CONVERT(NVARCHAR, start_time, 0) AS start_time, CONVERT(NVARCHAR,end_time,0) AS end_time, slot_name FROM [dbo].slot_interval_timings WHERE active = 1 ORDER BY id ASC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, CONVERT(NVARCHAR, start_time, 0) AS start_time, CONVERT(NVARCHAR,end_time,0) AS end_time, slot_name FROM [dbo].slot_interval_timings ORDER BY id ASC`)
         }).catch(error => {
             throw error
         })
@@ -23,7 +23,7 @@ module.exports = class SlotIntervalTimings {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
-                .query(`SELECT  id, CONVERT(char(5), start_time, 108) AS start_time, CONVERT(char(5), end_time, 108) AS end_time, slot_name FROM [dbo].slot_interval_timings WHERE active = 1 AND id = @Id`)
+                .query(`SELECT  id, CONVERT(char(5), start_time, 108) AS start_time, CONVERT(char(5), end_time, 108) AS end_time, slot_name FROM [dbo].slot_interval_timings WHERE id = @Id`)
         }).catch(error => {
             throw error
         })
@@ -60,7 +60,7 @@ module.exports = class SlotIntervalTimings {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
-                .query(`UPDATE [dbo].slot_interval_timings SET active  = 0  WHERE id = @Id`)
+                .query(`DELETE FROM [dbo].slot_interval_timings  WHERE id = @Id`)
         }).catch(error => {
             throw error
         })
@@ -71,7 +71,7 @@ module.exports = class SlotIntervalTimings {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} id, slot_name, CONVERT(NVARCHAR, start_time, 0) AS start_time, CONVERT(NVARCHAR, end_time, 0) AS end_time FROM  [dbo].slot_interval_timings WHERE active = 1 AND (slot_name LIKE @keyword  OR end_time LIKE @keyword OR  end_time LIKE @keyword) ORDER BY id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} id, slot_name, CONVERT(NVARCHAR, start_time, 0) AS start_time, CONVERT(NVARCHAR, end_time, 0) AS end_time FROM  [dbo].slot_interval_timings WHERE slot_name LIKE @keyword  OR end_time LIKE @keyword OR  end_time LIKE @keyword ORDER BY id DESC`)
         }).catch(error => {
             throw error
         })
@@ -81,7 +81,7 @@ module.exports = class SlotIntervalTimings {
     static count() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].slot_interval_timings WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].slot_interval_timings`)
         }).catch(error => {
             throw error
         })

@@ -97,7 +97,7 @@ module.exports = class Buildings {
 
     static deleteAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].buildings WHERE active = 1`)
+            return pool.request().query(`DELETE FROM [dbo].buildings`)
         })
     }
 

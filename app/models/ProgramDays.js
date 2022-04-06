@@ -12,7 +12,7 @@ module.exports = class {
             FROM [${slug}].program_days pd
             INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
             INNER JOIN [${slug}].days d ON pd.day_lid = d.id
-            WHERE pd.active = 1 AND pd.active = 1 AND p.active = 1 AND d.active = 1`)
+            ORDER BY pd.id DESC`)
         })
     }
 
@@ -24,7 +24,7 @@ module.exports = class {
                 FROM [${slug}].program_days pd
                 INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
                 INNER JOIN [${slug}].days d ON pd.day_lid = d.id
-                WHERE pd.active = 1 AND pd.active = 1 AND p.active = 1 AND d.active = 1 ORDER BY pd.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                ORDER BY pd.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -35,7 +35,7 @@ module.exports = class {
                 FROM [${slug}].program_days pd
                 INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
                 INNER JOIN [${slug}].days d ON pd.day_lid = d.id
-                WHERE pd.active = 1 AND pd.active = 1 AND p.active = 1 AND d.active = 1 AND (p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword) ORDER BY pd.id DESC`)
+                WHERE p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword ORDER BY pd.id DESC`)
         })
     }
 
@@ -43,7 +43,7 @@ module.exports = class {
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [${slug}].program_days WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].program_days`)
         })
     }
 }

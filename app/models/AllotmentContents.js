@@ -18,7 +18,7 @@ module.exports = class AllotmentContents {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id as allotContentId, ac.program_id, ac.acad_year, ac.acad_session, ac.division, ac.batch, ac.event_name FROM  [dbo].allotment_contents ac WHERE ac.active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id as allotContentId, ac.program_id, ac.acad_year, ac.acad_session, ac.division, ac.batch, ac.event_name FROM  [dbo].allotment_contents ac`)
         })
     }
 
@@ -38,7 +38,7 @@ module.exports = class AllotmentContents {
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].allotment_contents WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].allotment_contents`)
         })
     }
 
@@ -62,7 +62,7 @@ module.exports = class AllotmentContents {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('allotContentId', sql.Int, id)
-                .query(`UPDATE [dbo].allotment_contents SET active = 0 WHERE id = @allotContentId`)
+                .query(`DELETE FROM [dbo].allotment_contents WHERE id = @allotContentId`)
         }).catch(error => {
             throw error
         })
