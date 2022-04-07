@@ -52,7 +52,7 @@
                         </td>
                         <td>
                             <%- building.handled_by %>
-                        </td>
+                        </td> 
                         <td>
                             <%- building.start_time %>
                         </td>
@@ -133,64 +133,56 @@
                                         placeholder="Total Floor Count" required>
                                 </td>
                                 <td>
-                                    <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="owner_id" required placeholder="--select--" data-is-visible="false">
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="owner_id" id="owner_id">
-                                            <% for(let owner of orgList) { %>
-                                                <option value="<%- owner.id %>">
-                                                    <%- owner.org_abbr %>
-                                                </option>
-                                                <% } %>
-                                        </datalist>
-                                    </div>
+                                    <select name="owner_id" id="owner_id" class="select2">
+                                        <option>--select--</option>
+                                        <% for(let owner of orgList) { %>
+                                            <option value="<%- owner.id %>">
+                                                <%- owner.org_abbr %>
+                                            </option>
+                                            <% } %>
+                                    </select>
                                 </td>
                                 <td>
-                                    <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="start_time_id" required placeholder="--select--" data-is-visible="false">
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="start_time_id" id="start_time_id">
-                                            <% for(let time of timeList) { %>
-                                                <option value="<%- time.id %>">
-                                                    <%- time.start_time %>
-                                                </option>
-                                                <% } %>
-                                        </datalist>
-                                    </div>
+                                    <select name="start_time_id" id="start_time_id" class="select2">
+                                        <option>--select--</option>
+                                        <% for(let time of timeList) { %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.start_time %>
+                                            </option>
+                                            <% } %>
+                                    </select>
                                 </td>
                                 <td>
-                                    <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="end_time_id" required placeholder="--select--" data-is-visible="false">
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="end_time_id" id="end_time_id">
-                                            <% for(let time of timeList) { %>
-                                                <option value="<%- time.id %>">
-                                                    <%- time.end_time %>
-                                                </option>
-                                                <% } %>
-                                        </datalist>
-                                    </div>
+                                    <select name="end_time_id" id="end_time_id" class="select2">
+                                        <option>--select--</option>
+                                        <% for(let time of timeList) { %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.end_time %>
+                                            </option>
+                                            <% } %>
+                                    </select>
                                 </td>
                                 <td>
-                                    <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="handled_by" required placeholder="--select--" data-is-visible="false">
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="handled_by" id="handled_by">
-                                            <% for(let handler of orgList) { %>
-                                                <option value="<%- handler.id %>">
-                                                    <%- handler.org_abbr %>
-                                                </option>
-                                                <% } %>
-                                        </datalist>
-                                    </div>
+                                  
+                                    <select name="handled_by" id="handled_by" class="select2">
+                                        <option>--select--</option>
+                                        <% for(let handler of orgList) { %>
+                                            <option value="<%- handler.id %>">
+                                                <%- handler.org_abbr %>
+                                            </option>
+                                            <% } %>
+                                    </select>
                                 </td>
                                 <td>
-                                    <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="campus_lid" required placeholder="--select--" data-is-visible="false">
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="campus_lid" id="campus_lid">
+                                        <select name="campus_lid" id="campus_lid" class="select2">
+                                            <option>--select--</option>
                                             <% for(let campus of campusList) { %>
                                                 <option value="<%- campus.id %>">
                                                     <%- campus.campus_abbr %>
                                                 </option>
                                                 <% } %>
-                                        </datalist>
-                                    </div>
+                                        </select>
+                                    
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
@@ -215,12 +207,17 @@
 
 <%- include('../partials/notification') %>
 <%- include('../partials/alert') %>
-
 <%- include("../partials/footer") %>
+
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
 <script src="/js/leftsidebartoggle.js"></script>
 <script>
+//    $('#add-building-modal .select2').select2();
+   $('.select2').select2({
+        dropdownParent: $('#add-building-modal')
+    });
+
     $(".createBuilding").on('click', function () {
         let buildingElems = $('#add-more-building-table tbody tr');
         let buildingCount = buildingElems.length;

@@ -147,52 +147,41 @@
                     <div class="col-md-4">
                         <label>Campuses</label>
 
-                        <div class="data-searchable-wrapper">
-                            <input autocomplete="off" role="combobox" list="" class="data-list-input form-control"
-                                name="campus_lid" required placeholder="--select--" data-is-visible="false">
-                            <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="campus_lid"
-                                id="campus_lid">
-                                <% for(let campus of campusList) { %>
+                        <select name="campus_lid" id="campus_lid" class="select2">
+                            <option>--select--</option>
+                            <% for(let campus of campusList) { %>
                                 <option value="<%- campus.id %>">
                                     <%- campus.campus_abbr %>
                                 </option>
                                 <% } %>
-                            </datalist>
-                        </div>
+                        </select>
                     </div>
 
                     <div class="col-md-4">
                         <label>Building</label>
 
-                        <div class="data-searchable-wrapper">
-                            <input autocomplete="off" role="combobox" list="" class="data-list-input form-control"
-                                name="building_lid" required placeholder="--select--" data-is-visible="false">
-                            <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="building_lid"
-                                id="building_lid">
-                                <% for(let building of buildingList) { %>
+                        <select name="building_lid"  id="building_lid" class="select2">
+                            <option>--select--</option>
+                            <% for(let building of buildingList) { %>
                                 <option value="<%- building.building_id %>">
                                     <%- building.building_name %>
                                 </option>
                                 <% } %>
-                            </datalist>
-                        </div>
+                        </select>
+                        
                     </div>
 
                     <div class="col-md-4">
                         <label>Handled By</label>
 
-                        <div class="data-searchable-wrapper">
-                            <input autocomplete="off" role="combobox" list="" class="data-list-input form-control"
-                                name="handled_by" required placeholder="--select--" data-is-visible="false">
-                            <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="handled_by"
-                                id="handled_by">
-                                <% for(let org of orgList) { %>
+                        <select name="handled_by" id="handled_by" class="select2">
+                            <option>--select--</option>
+                            <% for(let org of orgList) { %>
                                 <option value="<%- org.id %>">
                                     <%- org.org_abbr %>/<%- org.org_id %>
                                 </option>
                                 <% } %>
-                            </datalist>
-                        </div>
+                        </select>
                     </div>
                 </div>
 
@@ -203,7 +192,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered " id="add-more-room-table">
+                    <table class="table table-bordered" id="add-more-room-table">
                         <thead>
                             <th>Room No</th>
                             <th>Room Type</th>
@@ -223,7 +212,7 @@
                                         palceholder="Enter Room no." required>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="room_type_id" id="room_type_id">
+                                    <select class="select2" name="room_type_id" id="room_type_id">
                                         <option disabled selected value="">--Room Type--</option>
                                         <% for(let roomType of roomTypeList) { %>
                                         <option value="<%- roomType.roomtypeid %>">
@@ -240,8 +229,7 @@
                                     <input type="number" name="capacity" id="capacity" class="form-control" required>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
-                                        required>
+                                    <select class="select2" name="start_time_id" id="start_time_id" required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -251,8 +239,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
-                                        required>
+                                    <select class="select2" name="end_time_id" id="end_time_id" required>
                                         <option disabled selected value>--End Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -262,7 +249,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="is_basement" id="is_basement" required>
+                                    <select class="select2" name="is_basement" id="is_basement" required>
                                         <option selected value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
@@ -275,10 +262,8 @@
                                     </select>
                                 </td> -->
                                 <td>
-
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-room"></i>
-
                                 </td>
                             </tr>
                         </tbody>
@@ -286,20 +271,16 @@
                 </div>
 
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-room"><i class="fas fa-plus"></i> Add
-                    More Room</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-room"><i class="fas fa-plus"></i> Add More Room</button>
                 <button type="button" class="btn  modal-inputform-btn addRoom" id="insertRoom">Create Room</button>
                 <button type="button" class="btn  modal-inputform-btn updateRoom d-none">Update Room Data</button>
             </div>
 
-
         </div>
     </div>
 </div>
-
-
-
 
 <%- include('../partials/notification') %>
 <%- include('../partials/alert') %>
@@ -310,6 +291,9 @@
 
 <script>
     $(document).ready(function () {
+
+        $('.select2').select2({
+        dropdownParent: $('#add-room-modal')});
 
 
         $(".homeCard .border").hover(function () {

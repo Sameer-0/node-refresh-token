@@ -102,7 +102,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="form-control" name="room_lid" id="room_lid">
+                                    <select class="select2" name="room_lid" id="room_lid">
                                         <option value="">Select Room No</option>
                                         <%for(let room of roomList){%>
                                         <option value="<%-room.id%>"><%- room.room_number %></option>
@@ -110,7 +110,7 @@
                                 </select>
                                 </td>
                                 <td>
-                                    <select class="form-control" name="transaction_type_id" id="transaction_type_id">
+                                    <select class="select2" name="transaction_type_id" id="transaction_type_id">
                                         <option value="">Select Transaction Type</option>
                                         <%for(let type of transactionTypes){%>
                                         <option value="<%-type.id%>"><%- type.name %></option>
@@ -118,7 +118,7 @@
                                 </select>
                                 </td>
                             <td>
-                                <select class="form-control" name="start_time_id" id="start_time_id">
+                                <select class="select2" name="start_time_id" id="start_time_id">
                                     <option value="">Select Start Time</option>
                                     <%for(let startlist of slotIntervalTimings){%>
                                         <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
@@ -126,7 +126,7 @@
                             </select>
                             </td>
                             <td>
-                                <select class="form-control" name="end_time_id" id="end_time_id">
+                                <select class="select2" name="end_time_id" id="end_time_id">
                                     <option value="">Select End Time</option>
                                     <%for(let endlist of slotIntervalTimings){%>
                                         <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
@@ -134,7 +134,7 @@
                             </select>
                             </td>
                             <td>
-                                <select class="form-control" name="start_date_id" id="start_date_id">
+                                <select class="select2" name="start_date_id" id="start_date_id">
                                     <option value="">Select Start Date</option>
                                     <%for(let startdate of academicCalender){%>
                                         <option value="<%-startdate.id%>"><%- startdate.date %></option>
@@ -142,21 +142,21 @@
                             </select>
                             </td>
                             <td>
-                                <select class="form-control" name="end_date_id" id="end_date_id">
+                                <select class="select2" name="end_date_id" id="end_date_id">
                                     <option value="">Select End Date</option>
                                     <%for(let enddate of academicCalender){%>
                                         <option value="<%-enddate.id%>"><%- enddate.date %></option>
                                         <%}%>
                             </select>
                             </td>
-                            <td><select class="form-control" name="org_lid" id="org_lid"> 
+                            <td><select class="select2" name="org_lid" id="org_lid"> 
                                 <option value="">Select orgnization</option>
                                 <%for(let org of orgnizations){%>
                                         <option value="<%-org.id%>"><%- org.org_abbr %></option>
                                         <%}%>
                         </select></td>
                             <td>
-                                <select class="form-control" name="campus_lid" id="campus_lid"> 
+                                <select class="select2" name="campus_lid" id="campus_lid"> 
                                     <option value="">Select Campus</option>
                                     <%for(let campus of campuses){%>
                                         <option value="<%-campus.id%>"><%- campus.campus_abbr %></option>
@@ -176,20 +176,13 @@
         </div>
         <div class="modal-footer">
             <div id="errorMsg"></div>
-            <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction"><i
-                    class="fas fa-plus"></i>
-                Add
-                More Fields</button>
-            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn">
-               Create
-                </button>
-            <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update
-                </button>
+            <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction"><i class="fas fa-plus"></i>Add More Fields</button>
+            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn"> Create</button>
+            <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update</button>
         </div>
       </div>
     </div>
 </div>
-
 
 <div class="modal fade" id="show-transaction-details" tabindex="-1" aria-labelledby="show-transaction-details" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
@@ -200,8 +193,7 @@
         </div>
         <div class="modal-body">
             <div id="errorHtml"></div>
-         <div id="ShowTransactionTable"></div>
-        
+            <div id="ShowTransactionTable"></div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success ApprovedBtn" data-status="1">Approve</button>
@@ -218,6 +210,9 @@
     <script>
         $(document).ready(function () {
             
+            $('.select2').select2({
+        dropdownParent: $('#open-transaction-modal')});
+
             let username = `<%- locals.userid %>`;
     console.log('Username:::::::::::::::::::', username)
     //Add more rows for building

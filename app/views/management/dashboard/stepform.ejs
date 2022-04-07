@@ -97,25 +97,24 @@
                                     placeholder="Organization Complete Name" required>
                             </td>
                             <td>
-                                <div class="data-searchable-wrapper">
-                                <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="orgType" placeholder="--select--" data-is-visible="false">
-                                <datalist class="custom-datalist" role="listbox" data-is-visible="false" id="orgType" name="orgType">
-                                    <% for(let org of orgType) { %>
-                                        <option value="<%- org.id %>">
-                                            <%- org.name %> </option>
-                                            <% } %>  
-                                </datalist>
-                                </div>
+                                <select name="orgType" id="orgType" class="select2">
+                                    <option value="">--select--</option>
+                                    <% for(let orgType of orgtypeList) { %>
+                                        <option value="<%- orgType.id %>">
+                                            <%- orgType.name %>
+                                        </option>
+                                        <% } %>
+                                </select>
                             </td>
                             <td>
-                                <input autocomplete="off" role="combobox" list="orgCampus_lid" id="input"
-                                    placeholder="--select--" class="form-control">
-                                <datalist class="" id="orgCampus_lid" required="" name="orgCampus_lid">
-                                    <!-- <option disabled selected value>--Campus--</option> -->
+                                <select name="campus" id="campus" class="select2">
+                                    <option value="">--select--</option>
                                     <% for(let campus of campusList) { %>
-                                    <option value="<%- campus.campus_abbr%>">
+                                        <option value="<%- campus.id %>">
+                                            <%- campus.campus_abbr %>
+                                        </option>
                                         <% } %>
-                                </datalist>
+                                </select>
                             </td>
                             <td>
                                 <i class="far fa-edit d-none"></i>
@@ -168,55 +167,53 @@
                                 </td>
 
                                 <td>
-                                    <select class="form-select modalSelect2" name="owner_id" id="owner_id" required>
-                                        <option disabled selected>--Owner--</option>
+                                    <select name="owner_id" id="owner_id" class="select2">
+                                        <option>--select--</option>
                                         <% for(let owner of orgList) { %>
-                                        <option value="<%- owner.id %>">
-                                            <%- owner.org_abbr %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- owner.id %>">
+                                                <%- owner.org_abbr %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
-                                        required>
-                                        <option disabled selected value>--Start Time--</option>
+                                    <select name="start_time_id" id="start_time_id" class="select2">
+                                        <option>--select--</option>
                                         <% for(let time of timeList) { %>
-                                        <option value="<%- time.id %>">
-                                            <%- time.start_time %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.start_time %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
-                                        required>
-                                        <option disabled selected value>--End Time--</option>
+                                    <select name="end_time_id" id="end_time_id" class="select2">
+                                        <option>--select--</option>
                                         <% for(let time of timeList) { %>
-                                        <option value="<%- time.id %>">
-                                            <%- time.end_time %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.end_time %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
-                                        <option disabled selected value>--Handled By--</option>
+                                    <select name="handled_by" id="handled_by" class="select2">
+                                        <option>--select--</option>
                                         <% for(let handler of orgList) { %>
-                                        <option value="<%- handler.id %>">
-                                            <%- handler.org_abbr %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- handler.id %>">
+                                                <%- handler.org_abbr %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="campus_lid" id="campus_lid" required>
-                                        <option disabled selected value>--Campus--</option>
+                                    <select name="campus_lid" id="campus_lid" class="select2">
+                                        <option>--select--</option>
                                         <% for(let campus of campusList) { %>
-                                        <option value="<%- campus.id %>">
-                                            <%- campus.campus_abbr %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- campus.id %>">
+                                                <%- campus.campus_abbr %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
@@ -246,37 +243,37 @@
                 <div class="row mt-4 ">
                     <div class="col-md-4">
                         <label>Campuses</label>
-                        <select class="form-select campus_lid_filter" name="campus_lid" id="campus_lid">
-                            <option disabled selected value="">--Select Campus--</option>
+                        <select name="campus_lid" id="campus_lid" class="select2">
+                            <option>--select--</option>
                             <% for(let campus of campusList) { %>
-                            <option value="<%- campus.id %>">
-                                <%- campus.campus_abbr %>
-                            </option>
-                            <% } %>
+                                <option value="<%- campus.id %>">
+                                    <%- campus.campus_abbr %>
+                                </option>
+                                <% } %>
                         </select>
                     </div>
 
                     <div class="col-md-4">
-                        <label>Building</label>
-                        <select class="form-select" name="building_lid" id="building_lid">
-                            <option disabled selected value="">--Select Building--</option>
+                        <label>Building</label> 
+                        <select name="building_lid"  id="building_lid" class="select2">
+                            <option>--select--</option>
                             <% for(let building of buildingList) { %>
-                            <option value="<%- building.building_id %>">
-                                <%- building.building_name %>
-                            </option>
-                            <% } %>
+                                <option value="<%- building.building_id %>">
+                                    <%- building.building_name %>
+                                </option>
+                                <% } %>
                         </select>
                     </div>
 
                     <div class="col-md-4">
                         <label>Handled By</label>
-                        <select class="form-select modalSelect2" name="roomHandled_by" id="roomHandled_by" required>
-                            <option disabled selected value>--Select Organization--</option>
+                        <select name="handled_by" id="handled_by" class="select2">
+                            <option>--select--</option>
                             <% for(let org of orgList) { %>
-                            <option value="<%- org.id %>">
-                                <%- org.org_abbr %>/<%- org.org_id %>
-                            </option>
-                            <% } %>
+                                <option value="<%- org.id %>">
+                                    <%- org.org_abbr %>/<%- org.org_id %>
+                                </option>
+                                <% } %>
                         </select>
                     </div>
                 </div>
@@ -302,7 +299,7 @@
                                         palceholder="Enter Room no." required>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="room_type_id" id="room_type_id">
+                                    <select class="select2" name="room_type_id" id="room_type_id">
                                         <option disabled selected value="">--Room Type--</option>
                                         <% for(let roomType of roomTypeList) { %>
                                         <option value="<%- roomType.roomtypeid %>">
@@ -319,8 +316,7 @@
                                     <input type="number" name="capacity" id="capacity" class="form-control" required>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
-                                        required>
+                                    <select class="select2" name="start_time_id" id="start_time_id" required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -330,8 +326,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
-                                        required>
+                                    <select class="select2" name="end_time_id" id="end_time_id" required>
                                         <option disabled selected value>--End Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -341,8 +336,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="is_basement" id="is_basement"
-                                        required>
+                                    <select class="select2" name="is_basement" id="is_basement" required>
                                         <option selected value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
@@ -399,17 +393,17 @@
                                         placeholder="Faculty name" required>
                                 </td>
                                 <td>
-                                    <select class="form-select " name="start_time_id" id="start_time_id" required>
+                                    <select class="select2" name="start_time_id" id="start_time_id" required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
                                             <%- time.start_time %>
                                         </option>
                                         <% } %>
-                                    </select>
+                                        </select>
                                 </td>
-                                <td>
-                                    <select class="form-select" name="end_time_id" id="end_time_id" required>
+                                <td> 
+                                    <select class="select2" name="end_time_id" id="end_time_id" required>
                                         <option disabled selected value>--End Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -419,7 +413,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="org_lid" id="org_lid" required>
+                                    <select class="select2" name="org_lid" id="org_lid" required>
                                         <option disabled selected value>--Organization--</option>
                                         <% for(let handler of orgList) { %>
                                         <option value="<%- handler.id %>">
@@ -429,7 +423,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="campus_lid" id="campus_lid" required>
+                                    <select class="select2" name="campus_lid" id="campus_lid" required>
                                         <option disabled selected value>--Campus--</option>
                                         <% for(let campus of campusList) { %>
                                         <option value="<%- campus.id %>">

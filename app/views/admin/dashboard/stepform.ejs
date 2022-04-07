@@ -17,52 +17,12 @@
     </div>
 
     <div class="step-form-body pt-3">
-        <!-- Days -->
-        <form action="/admin/days" method="post" class="step active-form" id="days-form" data-step="1">
-            <div class="modal-header table-card-header ">
-                <h5 class="modal-title text-white" id="add-days-modal-title">Select Days</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-days"><i class="fas fa-plus"></i>
-                </button>
-            </div>
-            <div id="errorHtml" class="error-show pt-3"></div>
-            <div class="table-responsive">
-                <table class="table" id="add-more-days-table">
-                    <thead>
-                        <th>Day & Day of week</th>
-
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="data-searchable-wrapper">
-                                <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="day" placeholder="--select--" data-is-visible="false">
-                                <datalist class="custom-datalist" role="listbox" data-is-visible="false">
-                                    <%for (days of dayList) {%>
-                                    <option value="<%- days.id %>">
-                                        <%- days.day_name%> (<%- days.day_of_week%>)
-                                    </option>
-                                    <% }%>
-                                </datalist>
-                                </div>
-                            </td>
-
-                            <td>
-                                <i class="far fa-edit d-none"></i>
-                                <i class="fas fa-trash-alt text-danger cursor-pointer remove-days"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </form>
-
+ 
         <!-- Holidays -->
         <form action="/admin/holidays" method="post" class="step d-none" id="holidays-form" data-step="2">
             <div class="modal-header table-card-header">
                 <h5 class="modal-title text-white" id="add-holidays-modal-title">Add New Holidays</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-holidays"><i
-                        class="fas fa-plus"></i></button>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i></button>
             </div>
             <div id="errorHtml" class="error-show pt-3"></div>
             <div class="table-responsive">
@@ -74,7 +34,7 @@
                         <th>Holiday Reason</th>
                         <th>Holiday Type</th>
                         <th>Action</th>
-                    </thead>
+                    </thead> 
                     <tbody>
                         <tr>
                             <td>
@@ -105,76 +65,98 @@
 
         <!-- Room -->
         <form action="/admin/room" method="post" class="step d-none" id="room-form" data-step="3">
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-room-modal-title">Add New room</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-room"><i class="fas fa-plus"></i>
-                </button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ADD ROOM TRANSACTIONS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
             <div class="modal-body">
                 <div id="errorHtml"></div>
-                <div class="row mt-4 ">
-
-                    <div class="col-md-4">
-                        <label>Campuses</label>
-                        <select class="form-select" name="campus_lid" id="campus_lid">
-
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Building</label>
-                        <select class="form-select" name="building_lid" id="building_lid">
-
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Handled By</label>
-                        <select class="form-select" name="handled_by" id="handled_by" required>
-
-                        </select>
-                    </div>
-
-                </div>
-
-                <input type="hidden" id="roomId" name="roomId">
-                <div class="table-responsive">
-                    <table class="table " id="add-more-room-table">
+                <div class="table-responsive ">
+                    <table class="table table-bordered" id="add-more-roomstrans-table">
                         <thead>
-                            <th>Room Number</th>
-                            <th>Room Type</th>
-                            <th>Campus Id</th>
-                            <th>Building Id</th>
+                            <th>Room No</th>
+                            <th>Transaction Type</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Org Name</th>
+                            <th>Campus</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <input name="roomNumber" id="roomNumber" type="number" class="form-control"
-                                        placeholder="Room Number" required>
+                                    <select class="select2" name="room_lid" id="room_lid">
+                                        <option value="">Select Room No</option>
+                                        <%for(let room of roomList){%>
+                                        <option value="<%-room.id%>"><%- room.room_number %></option>
+                                        <%}%>
+                                </select>
                                 </td>
                                 <td>
-                                    <input name="roomType" id="roomType" type="text" class="form-control"
-                                        placeholder="Building Number" required>
+                                    <select class="select2" name="transaction_type_id" id="transaction_type_id">
+                                        <option value="">Select Transaction Type</option>
+                                        <%for(let type of transactionTypes){%>
+                                        <option value="<%-type.id%>"><%- type.name %></option>
+                                        <%}%>
+                                </select>
                                 </td>
-                                <td>
-                                    <input name="campusId" id="campusId" type="number" class="form-control"
-                                        placeholder="Campus Id" required>
-                                </td>
-                                <td>
-                                    <input name="floor" id="floor" type="number" class="form-control"
-                                        placeholder="Floor" required>
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-room"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                            <td>
+                                <select class="select2" name="start_time_id" id="start_time_id">
+                                    <option value="">Select Start Time</option>
+                                    <%for(let startlist of slotIntervalTimings){%>
+                                        <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td>
+                                <select class="select2" name="end_time_id" id="end_time_id">
+                                    <option value="">Select End Time</option>
+                                    <%for(let endlist of slotIntervalTimings){%>
+                                        <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td>
+                                <select class="select2" name="start_date_id" id="start_date_id">
+                                    <option value="">Select Start Date</option>
+                                    <%for(let startdate of academicCalender){%>
+                                        <option value="<%-startdate.id%>"><%- startdate.date %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td>
+                                <select class="select2" name="end_date_id" id="end_date_id">
+                                    <option value="">Select End Date</option>
+                                    <%for(let enddate of academicCalender){%>
+                                        <option value="<%-enddate.id%>"><%- enddate.date %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td><select class="select2" name="org_lid" id="org_lid"> 
+                                <option value="">Select orgnization</option>
+                                <%for(let org of orgnizations){%>
+                                        <option value="<%-org.id%>"><%- org.org_abbr %></option>
+                                        <%}%>
+                        </select></td>
+                            <td>
+                                <select class="select2" name="campus_lid" id="campus_lid"> 
+                                    <option value="">Select Campus</option>
+                                    <%for(let campus of campuses){%>
+                                        <option value="<%-campus.id%>"><%- campus.campus_abbr %></option>
+                                        <%}%>
+                            </select>
+                            </td>
 
+                            <td>
+                                <i class="far fa-edit d-none"></i>
+                                <i class="fas fa-trash-alt text-danger cursor-pointer remove-roomtransaction"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                    
+                </table>
             </div>
         </form>
 

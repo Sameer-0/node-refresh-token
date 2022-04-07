@@ -135,29 +135,25 @@
                                 </td>
 
                                 <td>
-                                    <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="orgType" required placeholder="--select--" data-is-visible="false" >
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="orgType" id="orgType">
-                                            <% for(let orgType of orgtypeList) { %>
-                                                <option value="<%- orgType.id %>">
-                                                    <%- orgType.name %>
-                                                </option>
-                                                <% } %>
-                                        </datalist>
-                                    </div>
+                                    <select name="orgType" id="orgType" class="select2">
+                                        <option value="">--select--</option>
+                                        <% for(let orgType of orgtypeList) { %>
+                                            <option value="<%- orgType.id %>">
+                                                <%- orgType.name %>
+                                            </option>
+                                            <% } %>
+                                    </select>
                                 </td>
 
                                 <td>
-                                    <div class="data-searchable-wrapper">
-                                        <input autocomplete="off" role="combobox" list="" class="data-list-input form-control" name="campus" required placeholder="--select--" data-is-visible="false">
-                                        <datalist class="custom-datalist" role="listbox" data-is-visible="false" name="campus" id="campus">
+                                    <select name="campus" id="campus" class="select2">
+                                            <option value="">--select--</option>
                                             <% for(let campus of campusList) { %>
                                                 <option value="<%- campus.id %>">
                                                     <%- campus.campus_abbr %>
                                                 </option>
-                                                <% } %>
-                                        </datalist>
-                                    </div>
+                                            <% } %>
+                                    </select>
                                 </td>
 
                                 <td> 
@@ -171,7 +167,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> Add More Organization</button>
+                <button type="button" class="btn btn-success btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> Add More Organization</button>
                 <button type="submit" class="btn createOrg modal-inputform-btn">Create Organization</button>
                 <button type="submit" class="btn updateOrg modal-inputform-btn d-none">Update Organization</button>
             </div>
@@ -185,25 +181,29 @@
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
+
 <script>
    
+   $('document').ready(function(){
 
+    $('.select2').select2({
+        dropdownParent: $('#add-org-modal')
+    });
     //Create 
     $(".createOrg").on('click', function () {
         let orgElems = $('#add-more-org-table tbody tr');
         let orgCount = orgElems.length;
         let orgJson = [];
+
         orgElems.each(function (index, elem) {
          
             let orgId = $(elem).find(`input[name='orgId']`).val()
             let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
-            let orgType = $(elem).find(`input[name='orgType']`).data('value');
-            let campus_lid = $(elem).find(`input[data-value]`).val()
-            //let orgType = $(elem).attr("data-value")
+            let orgType = $(elem).find(`select[name='orgType']`).val();
+            let campus_lid = $(elem).find(`select[name="campus"]`).val()
             
-console.log('orgType::::::::::::::::',$(elem).find())
             if (index < orgCount - 1) {
                 let obj = {
                     org_id: orgId,
@@ -591,5 +591,6 @@ function AjaxTable (orgList){
 
     //     })
     // })
+})
 </script>
 <%- include("../partials/footerEnd") %>

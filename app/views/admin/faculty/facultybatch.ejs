@@ -92,7 +92,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="form-control" name="faculty_lid">
+                                    <select class="select2" name="faculty_lid">
                                         <option value="">--select--</option>
                                         <% for(faculty of facultyList) {%>
                                         <option value="<%- faculty.id %>">
@@ -101,9 +101,8 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-control" name="faculty_batch">
+                                    <select class="select2" name="faculty_batch">
                                         <option value="">--select--</option>
-                        
                                         <option value="">Batch1</option>
                                         <option value="">Batch2</option>
                                         <option value="">Batch3</option>
@@ -137,8 +136,10 @@
 <script src="/js/leftsidebartoggle.js"></script>
 <script>
 
+        $('.select2').select2({
+         dropdownParent: $('#add-facultybatch-modal')});
+
     $('#add-more-facultybatch-fields').on('click', function () {
-        
         
         let lastTr = $('#add-more-facultybatch-table tbody tr:last-child')
         
@@ -147,7 +148,6 @@
         let batch_id = lastTr.find(`select[name="faculty_batch"]`).val();
         
         let clonedTr = lastTr.clone();
-       
 
         clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change')
         clonedTr.find(`select[name="faculty_batch"]`).val(batch_id).trigger('change')
