@@ -99,7 +99,7 @@
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <input type="hidden" id="roomId" name="roomId">
-                <div class="table-responsive">
+                <div class="">
                     <table class="table table-bordered organizationTable" id="add-more-org-table">
                         <thead>
                             <th>Organization Id</th>
@@ -117,47 +117,47 @@
                                     <input name="orgId" id="orgId" type="number" class="form-control"
                                         placeholder="Organization Id" required>
                                 </td>
+
                                 <td>
                                     <input name="orgAbbr" id="orgAbbr" type="text" class="form-control"
                                         placeholder="Organization Abbr" required>
                                 </td>
+
                                 <td>
                                     <input name="orgName" id="orgName" type="text" class="form-control"
                                         placeholder="Organization Name" required>
                                 </td>
+
                                 <td>
                                     <input name="orgCompleteName" id="orgCompleteName" type="text" class="form-control"
                                         placeholder="Organization Complete Name" required>
                                 </td>
+
                                 <td>
-                                    <select class="form-control modalSelect2" name="orgType" id="orgType" required>
-                                        <option disabled selected value>--Organization Type--</option>
+                                    <select name="orgType" id="orgType" class="select2">
+                                        <option value="">--select--</option>
                                         <% for(let orgType of orgtypeList) { %>
-                                        <option value="<%- orgType.id %>">
-                                            <%- orgType.name %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-
-
-                                <td>
-                                    <select class="form-control modalSelect2" name="campus_lid" id="campus_lid" required>
-                                        <option disabled selected value>--Select Campus--</option>
-                                        <% for(let campus of campusList) { %>
-                                        <option value="<%- campus.id %>">
-                                            <%- campus.campus_abbr %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- orgType.id %>">
+                                                <%- orgType.name %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
 
                                 <td>
+                                    <select name="campus" id="campus" class="select2">
+                                            <option value="">--select--</option>
+                                            <% for(let campus of campusList) { %>
+                                                <option value="<%- campus.id %>">
+                                                    <%- campus.campus_abbr %>
+                                                </option>
+                                            <% } %>
+                                    </select>
+                                </td>
 
+                                <td> 
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove"></i>
-
-
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-organization"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -166,15 +166,9 @@
 
             </div>
             <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save changes</button> -->
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-orgnization"><i
-                        class="fas fa-plus"></i> Add
-                    More Organization</button>
-                <button type="submit" class="btn  createOrg modal-inputform-btn">Create
-                    Organization</button>
-                <button type="submit" class="btn  updateOrg modal-inputform-btn d-none">Update
-                    Organization</button>
+                <button type="button" class="btn btn-success btn-sm" id="add-more-orgnization"><i class="fas fa-plus"></i> Add More Organization</button>
+                <button type="submit" class="btn createOrg modal-inputform-btn">Create Organization</button>
+                <button type="submit" class="btn updateOrg modal-inputform-btn d-none">Update Organization</button>
             </div>
 
         </div>
@@ -186,23 +180,29 @@
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
+
 <script>
    
+   $('document').ready(function(){
 
+    $('.select2').select2({
+        dropdownParent: $('#add-org-modal')
+    });
     //Create 
     $(".createOrg").on('click', function () {
         let orgElems = $('#add-more-org-table tbody tr');
         let orgCount = orgElems.length;
         let orgJson = [];
+
         orgElems.each(function (index, elem) {
          
             let orgId = $(elem).find(`input[name='orgId']`).val()
             let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
-            let orgType = $(elem).find(`select[name='orgType']`).val()
-            let campus_lid = $(elem).find(`select[name='campus_lid']`).val()
-
+            let orgType = $(elem).find(`select[name='orgType']`).val();
+            let campus_lid = $(elem).find(`select[name="campus"]`).val()
+            
             if (index < orgCount - 1) {
                 let obj = {
                     org_id: orgId,
@@ -275,7 +275,7 @@
             $('#orgName').val(org.org_name)
             $('#orgCompleteName').val(org.org_complete_name)
             $('#orgType').val(org.org_type_id).trigger('change')
-            $("#campus_lid").val(org.campus_lid).trigger('change')
+            $("#campus").val(org.campus_lid).trigger('change')
             $("#add-org-modal").modal('show')
         }).catch(error => {
             showError(error.responseJSON)
@@ -294,7 +294,9 @@
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
             let orgType = $(elem).find(`select[name='orgType']`).val()
-            let campus_lid = $(elem).find(`select[name='campus_lid']`).val()
+
+            let campus_lid = $(elem).find(`select[name='campus']`).val()
+            let active = $(elem).find(`input[name='active']`).val()
 
 
             if (index < orgCount - 1) {
@@ -410,7 +412,10 @@
 
     //Bulk Delete
     $(".bulk-delete-organizations").on('click', function () {
-        console.log('bulk-delete-organizations')
+
+        //Alert confirm
+        alertMsg()
+      
         let ApiObj = {
             url: '/management/organizations',
             type: 'PATCH',
@@ -419,7 +424,7 @@
             },
             dataType: 'JSON'
         }
-        alertMsg()
+        
 
         $('.alert-continue').on('click', () => {
 
@@ -576,6 +581,15 @@ function AjaxTable (orgList){
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             $("#errorHtml").html(errorHtml)
         }
+
+    //Select Checkbox
+
+    // $(document).ready(function(){
+    //     $(".organizationTable").on('click',function(){
+
+    //     })
+    // })
+})
 
 </script>
 <%- include("../partials/footerEnd") %>

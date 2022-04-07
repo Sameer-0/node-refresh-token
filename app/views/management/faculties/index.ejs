@@ -8,13 +8,15 @@
     <!--DASHBOARD CONTENT START-->
 
     <div class="row my-3 gx-3 gy-3 row1-data">
-        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
-            <div class="card row1-data-card text-center">
-                <div class="card-body d-flex align-items-center justify-content-center"><a
-                        href="/management/faculties/types"><img src="/icon_imgs/faculties.png" alt="">
+        <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/management/faculties/types">
+                <div class="card row1-data-card text-center">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="/icon_imgs/faculties.png" alt="">
                         <p class="fw-normal pt-1">FACULTY TYPE</p>
-                    </a></div>
-            </div>
+                    </div>
+                </div>
+            </a>
         </div>
 
         <!-- <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
@@ -127,70 +129,65 @@
                                         placeholder="Faculty name" required>
                                 </td>
                                 <td>
-                                    <select class="form-select " name="start_time_id" id="start_time_id" required>
+                                    <select class="select2" name="start_time_id" id="start_time_id" required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
                                             <%- time.start_time %>
                                         </option>
                                         <% } %>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-select" name="end_time_id" id="end_time_id" required>
-                                        <option disabled selected value>--End Time--</option>
-                                        <% for(let time of timeList) { %>
-                                        <option value="<%- time.id %>">
-                                            <%- time.end_time %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-select" name="org_lid" id="org_lid" required>
-                                        <option disabled selected value>--Organization--</option>
-                                        <% for(let handler of orgList) { %>
-                                        <option value="<%- handler.id %>">
-                                            <%- handler.org_abbr %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-select" name="campus_lid" id="campus_lid" required>
-                                        <option disabled selected value>--Campus--</option>
-                                        <% for(let campus of campusList) { %>
-                                        <option value="<%- campus.id %>">
-                                            <%- campus.campus_abbr %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer removefaculty"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div id="errorMsg"></div>
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-faculties"><i
-                        class="fas fa-plus"></i>
-                    Add
-                    More Faculty</button>
-                <button type="submit" class="btn  createFaculty modal-inputform-btn">Create Faculty</button>
-                <button type="submit" class="btn  updateFaculty modal-inputform-btn d-none">Update
-                    Building</button>
-            </div>
+
+                                        </select>
+                    </td>
+                    <td>
+                        <select class="select2" name="end_time_id" id="end_time_id" required>
+                            <option disabled selected value>--End Time--</option>
+                            <% for(let time of timeList) { %>
+                            <option value="<%- time.id %>">
+                                <%- time.end_time %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="select2" name="org_lid" id="org_lid" required>
+                            <option disabled selected value>--Organization--</option>
+                            <% for(let handler of orgList) { %>
+                            <option value="<%- handler.id %>">
+                                <%- handler.org_abbr %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="select2" name="campus_lid" id="campus_lid" required>
+                            <option disabled selected value>--Campus--</option>
+                            <% for(let campus of campusList) { %>
+                            <option value="<%- campus.id %>">
+                                <%- campus.campus_abbr %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </td>
+                    <td>
+                        <i class="far fa-edit d-none"></i>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer removefaculty"></i>
+                    </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
+    <div class="modal-footer">
+        <div id="errorMsg"></div>
+        <button type="button" class="btn btn-success  btn-sm" id="add-more-faculties"><i class="fas fa-plus"></i>Add More Faculty</button>
+        <button type="submit" class="btn  createFaculty modal-inputform-btn">Create Faculty</button>
+        <button type="submit" class="btn  updateFaculty modal-inputform-btn d-none">Update Building</button>
+    </div>
+</div>
 </div>
 
-
-
+</div>
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
@@ -198,6 +195,9 @@
 
 <script>
     $(document).ready(function () {
+
+        $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
 
         // Add more rows for orgnization
         $('#add-more-faculties').on('click', function () {

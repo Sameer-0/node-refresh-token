@@ -13,21 +13,15 @@ const batch = require('../../controllers/admin/faculty/batch')
 const validate = require('../../middlewares/validate')
 
 router.get('/faculties', index.getPage)
-router.post('/faculties',  validate('JsonValidator'), index.create)
-
-
+router.post('/faculties', validate('JsonValidator'), index.create)
+// router.post('/faculties', index.pagination)
 
 router.get('/faculties/date-time', dateTimes.getPage)
 
-
 router.get('/faculties/batch', batch.getPage)
-
 
 //faculty works
 router.get('/faculties/works', works.getPage)
-
-
-
 
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)

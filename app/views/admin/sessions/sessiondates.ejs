@@ -95,7 +95,7 @@
                 <input type="hidden" id="Id">
                 <div class="mb-3">
                     <label for="acadSession" class="form-label">Enter Acad session</label>
-                    <select name="acadSession" id="acadSession" class="form-control" >
+                    <select class="select2" name="end_time_id" id="end_time_id" required>
                         <option  value="">--select--</option>
                         <%for (let program of programSessions){%>
                       <option value="<%- program.id %>"><%-program.acad_session %></option>
@@ -105,7 +105,7 @@
 
                 <div class="mb-3">
                     <label for="sessionType" class="form-label">Enter Session type</label>
-                    <select name="sessionType" id="sessionType" class="form-control" >
+                    <select name="sessionType" id="sessionType" class="select2" >
                         <option value="" >--select--</option>
                         <%for (let session of sessionTypes){%>
                       <option value="<%- session.id %>"><%-session.name %></option>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="startDate" class="form-label">Enter Start Date</label>
-                    <select name="startDate" id="startDate" class="form-control" >
+                    <select name="startDate" id="startDate" class="select2" >
                         <option value="" >--select--</option>
                         <%for (let slot of AcademicCalenderList){%>
                       <option value="<%- slot.id %>"><%-slot.date %></option>
@@ -125,7 +125,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="endDate" class="form-label">Enter End Date</label>
-                    <select name="endtDate" id="endtDate" class="form-control" >
+                    <select name="endtDate" id="endtDate" class="select2" >
                         <option value="" >--select--</option>
                         <%for (let slot of AcademicCalenderList){%>
                       <option value="<%- slot.id %>"><%-slot.date %></option>
@@ -135,8 +135,7 @@
                 <div class="modal-footer d-flex justify-content-center">
                     <span class="errorMsg"></span>
                     <button type="submit" class="btn createSessionDate modal-inputform-btn">Create Session Date</button>
-                    <button type="submit" class="btn updateSessionDate modal-inputform-btn d-none">Update
-                        Session Date</button>
+                    <button type="submit" class="btn updateSessionDate modal-inputform-btn d-none">Update Session Date</button>
                 </div>
             </div>
         </div>
@@ -147,6 +146,10 @@
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
     <script>
         $(document).ready(function () {
+
+            $('.select2').select2({
+        dropdownParent: $('#add-sessiondate-modal')});
+
 
             $('.createSessionDate').on('click', function () {
                 console.log($('#acadSession').val())

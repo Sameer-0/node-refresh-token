@@ -119,6 +119,8 @@
     </div>
 
 
+    <%- include('../partials/notification') %>
+    <%- include('../partials/alert') %>
     <%- include("../partials/footer") %>
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 
@@ -308,6 +310,9 @@
 
             //Bulk Delete
             $(".bulk-delete-faculty-type").on('click', function () {
+                  //Alert confirm
+                  alertMsg()
+
                 let ApiObj = {
                     url: '/management/faculties/types',
                     type: 'PATCH',
@@ -315,11 +320,16 @@
                     dataType: 'JSON'
                 }
 
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
+                $('.alert-continue').on('click', () => {
+                    ajaxApi(ApiObj).then(result => {
+                        location.reload()
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+                })
+                
+                $('.cancel').on('click', () => {
+                    $('#alertModal').css('display', 'none');
                 })
             })
 
