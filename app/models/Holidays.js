@@ -88,4 +88,13 @@ module.exports = class {
         })
     }
 
+    static fetchHolidaySap(inputJSON, slug){
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), inputJSON)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_insert_holidays_wsdl]`)
+        })
+    }
+
 }
