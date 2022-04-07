@@ -19,11 +19,10 @@ module.exports = class DivisionBatches {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`  SELECT TOP ${Number(rowcount)} db.id, db.division_lid, db.batch, db.event_type_lid, db.divison_count, db.batch_count, 
-            db.input_batch_count, db.faculty_count, IIF(db.active = 1 ,'Yes', 'No') as status, d.division, et.name FROM [${slug}].[division_batches] db
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} db.id, db.division_lid, db.batch, db.event_type_lid, db.divison_count, db.batch_count, 
+            db.input_batch_count, db.faculty_count, d.division, et.name FROM [${slug}].[division_batches] db
             INNER JOIN [${slug}].[divisions] d on d.id = db.division_lid
-			INNER JOIN [dbo].[event_types] et on et.id = db.event_type_lid
-            where d.active = 1 AND db.active = 1 AND et.active = 1`)
+			INNER JOIN [dbo].[event_types] et on et.id = db.event_type_lid`)
         })
     }
 
@@ -66,7 +65,7 @@ module.exports = class DivisionBatches {
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request() 
-            return request.query(`SELECT COUNT(*) as count FROM [${slug}].division_batches WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].division_batches`)
         })
     }
 
@@ -86,10 +85,10 @@ module.exports = class DivisionBatches {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
                 .query(`SELECT db.id, db.division_lid, db.batch, db.event_type_lid, db.divison_count, db.batch_count, 
-                db.input_batch_count, db.faculty_count, IIF(db.active = 1 ,'Yes', 'No') as status, d.division, et.name FROM [${slug}].[division_batches] db
+                db.input_batch_count, db.faculty_count, d.division, et.name FROM [${slug}].[division_batches] db
                 INNER JOIN [${slug}].[divisions] d on d.id = db.division_lid
                 INNER JOIN [dbo].[event_types] et on et.id = db.event_type_lid
-                where d.active = 1 AND db.active = 1 AND et.active = 1 AND ORDER BY d.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                ORDER BY d.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -97,10 +96,10 @@ module.exports = class DivisionBatches {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcount)} db.id, db.division_lid, db.batch, db.event_type_lid, db.divison_count, db.batch_count, 
-                db.input_batch_count, db.faculty_count, IIF(db.active = 1 ,'Yes', 'No') as status, d.division, et.name FROM [${slug}].[division_batches] db
+                db.input_batch_count, db.faculty_count, d.division, et.name FROM [${slug}].[division_batches] db
                 INNER JOIN [${slug}].[divisions] d on d.id = db.division_lid
                 INNER JOIN [dbo].[event_types] et on et.id = db.event_type_lid
-                where d.active = 1 AND db.active = 1 AND et.active = 1 AND (db.division_lid LIKE @keyword OR db.batch LIKE @keyword OR db.event_type_lid LIKE @keyword OR db.divison_count LIKE @keyword OR db.batch_count LIKE @keyword OR db.input_batch_count LIKE @keyword OR db.faculty_count LIKE @keyword OR d.division LIKE @keyword OR et.name LIKE @keyword) ORDER BY d.id DESC`)
+                WHERE db.division_lid LIKE @keyword OR db.batch LIKE @keyword OR db.event_type_lid LIKE @keyword OR db.divison_count LIKE @keyword OR db.batch_count LIKE @keyword OR db.input_batch_count LIKE @keyword OR db.faculty_count LIKE @keyword OR d.division LIKE @keyword OR et.name LIKE @keyword ORDER BY d.id DESC`)
         })
     }
 }

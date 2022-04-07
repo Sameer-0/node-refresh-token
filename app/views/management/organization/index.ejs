@@ -72,7 +72,7 @@
 
             <div class="d-flex justify-content-between">
                 <div>
-                    <p>Total entries:<%- pageCount %>
+                    <p>Total entries:<%- totalentries %>
                     </p>
                 </div>
                 <div>
@@ -113,7 +113,6 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <input name="active" id="active" type="hidden">
                                     <input name="orgLid" id="orgLid" type="hidden">
                                     <input name="orgId" id="orgId" type="number" class="form-control"
                                         placeholder="Organization Id" required>
@@ -275,7 +274,6 @@
             $('#orgAbbr').val(org.org_abbr)
             $('#orgName').val(org.org_name)
             $('#orgCompleteName').val(org.org_complete_name)
-            $('#active').val(org.active)
             $('#orgType').val(org.org_type_id).trigger('change')
             $("#campus").val(org.campus_lid).trigger('change')
             $("#add-org-modal").modal('show')
@@ -296,8 +294,10 @@
             let orgName = $(elem).find(`input[name='orgName']`).val()
             let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
             let orgType = $(elem).find(`select[name='orgType']`).val()
+
             let campus_lid = $(elem).find(`select[name='campus']`).val()
             let active = $(elem).find(`input[name='active']`).val()
+
 
             if (index < orgCount - 1) {
                 let obj = {
@@ -309,7 +309,6 @@
                     org_complete_name: orgCompleteName,
                     org_type_id: orgType,
                     campus_lid:campus_lid,
-                    active:active
                 }
                 orgJson.push(obj)
             } else {
@@ -322,7 +321,6 @@
                     org_complete_name: orgCompleteName,
                     org_type_id: orgType,
                     campus_lid:campus_lid,
-                    active:active
                 }
                 orgJson.push(obj)
             }
@@ -592,5 +590,6 @@ function AjaxTable (orgList){
     //     })
     // })
 })
+
 </script>
 <%- include("../partials/footerEnd") %>

@@ -25,7 +25,7 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, active, last_changed, module_code, IIF(active = 1, 'Yes', 'No') as status
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, module_code
             FROM [${slug}].initial_course_workload ORDER BY id DESC`)
         })
     }
@@ -33,7 +33,7 @@ module.exports = class {
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [${slug}].initial_course_workload WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].initial_course_workload`)
         })
     }
 
@@ -52,7 +52,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, active, last_changed, module_code, IIF(active = 1, 'Yes', 'No') as status
+                .query(`SELECT id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, last_changed, module_code
                 FROM [${slug}].initial_course_workload ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -62,9 +62,19 @@ module.exports = class {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, 
                 practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, 
-                acad_session_lid, active, last_changed, module_code, IIF(active = 1, 'Yes', 'No') as status
+                acad_session_lid, last_changed, module_code
                 FROM [${slug}].initial_course_workload 
                 WHERE module_name LIKE @keyword OR program_id LIKE @keyword OR electives LIKE @keyword OR intake LIKE @keyword OR student_per_division LIKE @keyword OR lec_per_week_per_division LIKE @keyword OR tutorial_per_week_per_division LIKE @keyword OR workshop_per_week_per_division LIKE @keyword OR continuous LIKE @keyword OR session_events_per_semester LIKE @keyword OR module_code LIKE @keyword ORDER BY id DESC`)
+        })
+    }
+
+
+    static fetchCourseWorklaodSap(inputJson, slug) {
+        return poolConnection.then(pool => {
+            pool.request()
+            .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].[sp_insert_course_work_wsdl]`)
         })
     }
 

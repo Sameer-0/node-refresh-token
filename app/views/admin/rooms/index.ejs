@@ -425,22 +425,36 @@
                        htmlTable+= `</tbody></table>`;
                 console.log(htmlTable)
                 $("#ShowTransactionTable").html(htmlTable)
-                $(".ApprovedBtn").attr("data-transactionId",trand_lid);
+                $(".ApprovedBtn").attr("data-transactionId", trand_lid);
+                $(".RejectBtn").attr("data-transactionId", trand_lid);
                 $("#show-transaction-details").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
             })
     })
 
-
-
-
-
-
-
+//Approve 
         $(".ApprovedBtn").on('click',function(){
-            console.log('ApprovedBtn:::::>>',$(this).attr("data-transactionId"))
-            console.log('ApprovedBtn:::::>>',$(this).attr("data-status"))
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/approval',
+                data: {
+                    input_room_request_lid: $(this).attr("data-transactionId"),
+                    approval_flag: $(this).attr("data-status")
+                },
+                dataType: 'JSON'
+            }
+
+
+            ajaxApi(ApiObj).then(result => {
+              console.log('result::::::::::::::',result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //Reject 
+        $(".RejectBtn").on('click',function(){
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/rooms/approval',
@@ -483,7 +497,7 @@
                         <td>${trans.org_name}</td>
                         <td>${trans.campus_abbr}</td>
                         <td>${trans.username}</td>
-                        <td><a data-id="${trans.id}"><i class="fa fa-edit"></i></a>
+                        <td>
                             <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
                         </td>
                     </tr>`
@@ -500,7 +514,7 @@
 
 
     function showError(errors) {
-        console.log('error::::::::::::::',errors)
+        console.log('error::::::::::::::',errors.data.length)
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
                     <p>${errors.description}</p>
@@ -515,7 +529,8 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+                console.log('error::::::::::::::',errorHtml)
+                $("#errorHtml").html(errorHtml)
         }
 
 
@@ -534,7 +549,7 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            $("#open-transaction-modal #errorHtml").html(errorHtml)
         }
 
 

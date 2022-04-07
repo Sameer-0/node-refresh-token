@@ -26,7 +26,7 @@ module.exports = class AcademicYear {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT ac.id, ac.name, CONVERT(NVARCHAR, ac.start_date, 23) as start_date, CONVERT(NVARCHAR, ac.end_date, 23) as end_date, TRIM(ac.input_acad_year) as input_acad_year, CONVERT(NVARCHAR(10), ac.active) AS active FROM [dbo].academic_year ac `)
+            return pool.request().query(`SELECT ac.id, ac.name, CONVERT(NVARCHAR, ac.start_date, 23) as start_date, CONVERT(NVARCHAR, ac.end_date, 23) as end_date, TRIM(ac.input_acad_year) as input_acad_year FROM [dbo].academic_year ac`)
         })
     }
 
@@ -47,19 +47,10 @@ module.exports = class AcademicYear {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('acadYearId', sql.Int, id)
-                .query(`UPDATE [dbo].academic_year SET active = 0 WHERE id = @acadYearId`)
+                .query(`DELETE FROM  [dbo].academic_year  WHERE id = @acadYearId`)
         }).catch(error => {
             throw error
         })
     }
 
-    static switchonOff(active) {
-        return poolConnection.then(pool => {
-            const request = pool.request();
-            return request.input('active', sql.Bit, active)
-                .query(`UPDATE [dbo].academic_year SET active = @active`)
-        }).catch(error => {
-            throw error
-        })
-    }
 }

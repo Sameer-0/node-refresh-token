@@ -14,7 +14,7 @@ module.exports = class slotIntervalSetting {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, name, interval_in_mins, FORMAT (start_date, 'dd-MM-yyyy') AS start_date, FORMAT (end_date, 'dd-MM-yyyy') as end_date  FROM  [dbo].slot_interval_settings WHERE active = 1 ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, name, interval_in_mins, FORMAT (start_date, 'dd-MM-yyyy') AS start_date, FORMAT (end_date, 'dd-MM-yyyy') as end_date  FROM  [dbo].slot_interval_settings ORDER BY id DESC`)
         })
     }
 
@@ -22,7 +22,7 @@ module.exports = class slotIntervalSetting {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
-                .query(`SELECT id, name, interval_in_mins, FORMAT (start_date, 'yyyy-MM-dd') AS start_date, FORMAT (end_date, 'yyyy-MM-dd')as end_date FROM  [dbo].slot_interval_settings WHERE active = 1 AND id = @Id`)
+                .query(`SELECT id, name, interval_in_mins, FORMAT (start_date, 'yyyy-MM-dd') AS start_date, FORMAT (end_date, 'yyyy-MM-dd')as end_date FROM  [dbo].slot_interval_settings WHERE id = @Id`)
         })
     }
 
@@ -54,7 +54,7 @@ module.exports = class slotIntervalSetting {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
-                .query(`UPDATE [dbo].slot_interval_settings SET active  = 0  WHERE id = @Id`)
+                .query(`DELETE FROM [dbo].slot_interval_settings WHERE id = @Id`)
         })
     }
 
@@ -63,7 +63,7 @@ module.exports = class slotIntervalSetting {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} id, name, interval_in_mins, FORMAT (start_date, 'dd-MM-yyyy') AS start_date, FORMAT (end_date, 'dd-MM-yyyy') AS end_date FROM  [dbo].slot_interval_settings WHERE active = 1 AND (name LIKE @keyword OR interval_in_mins LIKE @keyword OR start_date LIKE @keyword OR  end_date LIKE @keyword) ORDER BY id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} id, name, interval_in_mins, FORMAT (start_date, 'dd-MM-yyyy') AS start_date, FORMAT (end_date, 'dd-MM-yyyy') AS end_date FROM  [dbo].slot_interval_settings WHERE name LIKE @keyword OR interval_in_mins LIKE @keyword OR start_date LIKE @keyword OR  end_date LIKE @keyword ORDER BY id DESC`)
         })
     }
 
@@ -71,7 +71,7 @@ module.exports = class slotIntervalSetting {
     static count() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].slot_interval_settings WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].slot_interval_settings`)
         })
     }
 

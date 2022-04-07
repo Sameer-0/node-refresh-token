@@ -16,7 +16,7 @@ module.exports = class RoomTransactionDetails {
             INNER JOIN [dbo].rooms room  ON room.id =  rtd.room_lid 
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id =  rtd.start_time_id
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
-            WHERE ac.active = 1 AND _ac.active = 1 AND sit.active = 1 AND _sit.active = 1 AND room.active = 1 AND rtd.active = 1 AND rtd.room_transaction_lid = @RoomLid
+            WHERE  rtd.room_transaction_lid = @RoomLid
             ORDER BY rtd.id DESC`)
         }).catch(error => {
             throw error

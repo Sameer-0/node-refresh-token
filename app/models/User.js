@@ -20,7 +20,7 @@ module.exports = class User {
     static fetchAll(rowcount, slug) {
 
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, username, password, f_name, l_name, employee_id, email, contact_number FROM [${slug}].users WHERE active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, username, password, f_name, l_name, employee_id, email, contact_number FROM [${slug}].users`)
         })
     }
 
@@ -92,7 +92,7 @@ module.exports = class User {
         return poolConnection.then(pool => {
             return pool.request()
             .input('username', sql.NVarChar(50), username)
-         .query(`SELECT u.id, u.username, u.password, u.f_name, u.l_name, u.employee_id, u.email, u.contact_number FROM [${slug}].users u WHERE u.active = 1 AND u.username =  @username`)
+         .query(`SELECT u.id, u.username, u.password, u.f_name, u.l_name, u.employee_id, u.email, u.contact_number FROM [${slug}].users u WHERE u.username =  @username`)
         })
     }
 

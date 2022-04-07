@@ -36,8 +36,8 @@
                 <h5>FACULTY LIST</h5>
             </div>
             <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-faculty-modal"><i
-                        class="fas fa-plus"></i></button>
+                <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-faculty-modal"><i
+                        class="fas fa-plus"></i></button> -->
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button>
@@ -47,7 +47,7 @@
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-            <table class="table custom_row" id="holidayTable">
+            <table class="table custom_row" id="facultyTable">
                 <thead>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
@@ -55,11 +55,10 @@
                     <th>End Time</th>
                     <th>Campus</th>
                     <th>Organization</th>
-                    <th>Action</th>
+                    <th>Is Processed</th>
                     <th>All <input type="checkbox" class="selectAll-faculties"></th>
                 </thead>
                 <tbody>
-
                     <%for(let faculty of facultyList){%>
                     <tr>
                         <td><%- faculty.faculty_id %></td>
@@ -68,14 +67,31 @@
                         <td><%- faculty.end_time %></td>
                         <td><%- faculty.campus_abbr %></td>
                         <td><%- faculty.org_abbr %></td>
-                        <td><%- faculty.id %></td>
-                        <td><%- faculty.id %></td>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" class="changeStatus" data-id="<%- faculty.id %>"
+                                    data-status="<%- faculty.is_processed_status %>"
+                                    <%- faculty.is_processed_status == 'Yes' ? 'Checked' :  ''  %>>
+                                <span class="switch-slider round"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <input type="checkbox" data-faculty-type-id="<%- faculty.id %>" class="delete-faculties">
+                        </td>
                     </tr>
                     <%}%>
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %></p>
+        </div>
+        <div>
+            <p id="pagination"></p>
         </div>
     </div>
+</div>
+</div>
 </div>
 
 
@@ -120,6 +136,7 @@
                                             <%- time.start_time %>
                                         </option>
                                         <% } %>
+
                                         </select>
                     </td>
                     <td>
@@ -169,6 +186,7 @@
     </div>
 </div>
 </div>
+
 </div>
 
 <%- include("../partials/footer") %>
@@ -278,10 +296,111 @@
                     keyword: keyword
                 },
                 success: function (data) {
+                    console.log('search data::::::::',data.data)
                     showAjaxTable(data.data) // Facilty List
                 }
             })
         }, 500));
+
+
+        //Create 
+        $('#facultyTable').on('change', '.changeStatus', function () {
+
+            if ($(this).is(':checked')) {
+                //console.log('Yes')
+                chnageStatus($(this).attr('data-id'), 1)
+            } else {
+                //console.log('No')
+                chnageStatus($(this).attr('data-id'), 0)
+            }
+        })
+
+
+        function chnageStatus(id, status) {
+            let ApiObj = {
+                url: '/management/faculties/processing',
+                type: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                loadDays()
+            }).catch(error => {
+
+            })
+        }
+
+
+        function loadDays() {
+            let ApiObj = {
+                url: '/management/faculties/GetAll',
+                type: 'GET',
+                data: {},
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                showAjaxTable(result.result)
+            }).catch(error => {
+            })
+        }
+
+
+
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
+        console.log("Page Count=====>>>", pageCount)
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+            $.ajax({
+                type: "POST",
+                url: "/management/faculties/pagination",
+                data: {
+                    pageNo: num
+                },
+                success: function (data) {
+                    showAjaxTable(data.data)
+                }
+            })
+        });
+
+
+
+                    //Select All campus
+            $("#facultyTable").on('click', '.selectAll-faculties', function () {
+                if (this.checked) {
+                    // Iterate each checkbox
+                    $('.delete-faculties:checkbox').each(function () {
+                        this.checked = true;
+                    });
+                } else {
+                    $('.delete-faculties:checkbox').each(function () {
+                        this.checked = false;
+                    });
+                }
+            })
+
+
 
 
 
@@ -303,6 +422,8 @@
             $("#errorHtml").html(errorHtml)
         }
 
+
+
         function showAjaxTable(facultiesList) {
             let AjaxTable = `<table class="table custom_row" id="holidayTable">
                 <thead>
@@ -312,42 +433,42 @@
                     <th>End Time</th>
                     <th>Campus</th>
                     <th>Organization</th>
-                    <th>Action</th>
+                    <th>Is Processed</th>
                     <th>All <input type="checkbox" class="selectAll-faculties"></th>
                 </thead>
                     <tbody>`;
 
             if (facultiesList.length > 0) {
-                for (building of facultiesList) {
+                for (faculty of facultiesList) {
                     AjaxTable +=
                         `<tr>
-                            <td>${building.building_name}</td>
-                            <td>${building.building_number}</td>
-                            <td>${building.total_floors}</td>
-                            <td>${building.owner}</td>
-                            <td>${building.handled_by}</td>
-                            <td>${building.start_time}</td>
-                            <td>${building.end_time}</td>
-                            <td>${building.campus_abbr}</td>
-                            <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                    data-building-id="${building.building_id}" ></i>
-                            </td>
-                            <td>
-                            <input type="checkbox" data-building-id="${building.building_id}" 
-                                class="delete-building">
+                        <td>${faculty.faculty_id}</td>
+                        <td>${faculty.faculty_name}</td>
+                        <td>${faculty.start_time}</td>
+                        <td>${faculty.end_time}</td>
+                        <td>${faculty.campus_abbr}</td>
+                        <td>${faculty.org_abbr}</td>
+                        <td>
+                            <label class="switch">
+                                <input type="checkbox" class="changeStatus" data-id="${faculty.id}"
+                                    data-status="${ faculty.is_processed_status }"
+                                    ${ faculty.is_processed_status == 'Yes' ? 'Checked' :  ''  }>
+                                <span class="switch-slider round"></span>
+                            </label>
                         </td>
-                        </tr>`
+                        <td>
+                            <input type="checkbox" data-faculty-type-id="${faculty.id}" class="delete-faculties">
+                        </td>
+                    </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="9">No Data Found</td>
+                                <td colspan="8">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
-            $("#buildingTable").html(AjaxTable);
-
+            $("#facultyTable").html(AjaxTable);
         }
 
     })

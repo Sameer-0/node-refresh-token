@@ -28,14 +28,14 @@ module.exports = class FacultyDateTimes {
 			INNER JOIN [dbo].[academic_calendar] ac ON fdt.start_date_id =  ac.id
             INNER JOIN [dbo].[academic_calendar] ac1 ON fdt.end_date_id =  ac1.id
             INNER JOIN [dbo].[slot_interval_timings] sit ON fdt.start_time_id = sit.id           
-            WHERE fdt.active = 1 AND f.active = 1 AND ac.active = 1 AND ac1.active = 1 AND sit.active = 1  ORDER BY fdt.id DESC`)
+            ORDER BY fdt.id DESC`)
         })
     }
 
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [bncp-mum].faculty_date_times WHERE active = 1`)  
+            return request.query(`SELECT COUNT(*) as count FROM [bncp-mum].faculty_date_times`)  
         })
     }
 

@@ -110,7 +110,6 @@
                             <tr>
                                 <td>
                                     <input name="Id" id="Id" type="hidden" class="form-control" >
-                                    <input type="hidden" id="Active" name="Active">
                                     <input name="calendar_year" id="calendar_year" type="number" class="form-control"
                                     placeholder="Calender Year" required>
 
@@ -256,7 +255,6 @@
                 $("#calendar_year").val(result.data.calendar_year)
                 $("#holiday_date").val(result.data.h_date)
                 $("#holiday_type").val(result.data.holiday_type_lid).trigger('change')
-                $("#Active").val(result.data.active)
                 $("#Id").val(result.data.id)
                 $("#reason").val(result.data.reason)
                 $("#add-holiday-modal").modal('show')
@@ -276,12 +274,9 @@
                 let holiday_type = $(elem).find(`select[name='holiday_type']`).val()
                 let reason = $(elem).find(`input[name='reason']`).val()
                 let id = $(elem).find(`input[name='Id']`).val()
-                let active = $(elem).find(`input[name='Active']`).val()
-
                 if (index < holidayCount - 1) {
                     let obj = {
                         id:id,
-                        active:active,
                         calendar_year: calendar_year,
                         h_date: holiday_date,
                         holiday_type_lid: holiday_type,
@@ -291,7 +286,6 @@
                 } else {
                     let obj = {
                         id:id,
-                        active:active,
                         calendar_year: calendar_year,
                         h_date: holiday_date,
                         holiday_type_lid: holiday_type,

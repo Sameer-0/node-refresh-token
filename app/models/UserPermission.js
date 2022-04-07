@@ -23,7 +23,7 @@ module.exports = class UserPermission {
             return pool.request().input('userId', sql.Int, userId).query(`SELECT p.url_path, m.name FROM [${slug}].user_permissions p 
             INNER JOIN [dbo].http_methods m
             ON m.id = p.http_method_id
-            WHERE p.user_id = @userId AND p.active = 1 AND p.is_permitted = 1`)
+            WHERE p.user_id = @userId  AND p.is_permitted = 1`)
         })
     }
 

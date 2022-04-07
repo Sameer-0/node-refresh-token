@@ -14,7 +14,7 @@ module.exports = class CancellationReasons {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr where cr.active = 1`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr`)
         }).catch(error => {
             throw error
         })
@@ -45,7 +45,7 @@ module.exports = class CancellationReasons {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
-                .query(`SELECT  cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr where cr.active = 1 AND id = @Id`)
+                .query(`SELECT  cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr where  id = @Id`)
         }).catch(error => {
             throw error
         })
@@ -55,7 +55,7 @@ module.exports = class CancellationReasons {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
-                .query(`UPDATE [dbo].cancellation_reasons SET active = 0 WHERE id = @Id `)
+                .query(`DELETE FROM [dbo].cancellation_reasons WHERE id = @Id `)
         })
     }
 
@@ -64,7 +64,7 @@ module.exports = class CancellationReasons {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr where cr.active = 1 AND  cr.type_of_cancellation LIKE  @keyword OR cr.reason_text LIKE  @keyword OR cr.sap_id LIKE @keyword`)
+                .query(`SELECT TOP ${Number(rowcount)} cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr where cr.type_of_cancellation LIKE  @keyword OR cr.reason_text LIKE  @keyword OR cr.sap_id LIKE @keyword`)
         })
     }
 }
