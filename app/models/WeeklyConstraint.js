@@ -72,7 +72,7 @@ module.exports = class {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcount)} id, tag_id, name, event_type, rule_on
                 FROM [dbo].weekly_constraints 
-                WHERE active = 1 AND (id LIKE @keyword OR tag_id LIKE @keyword OR name LIKE @keyword OR event_type LIKE @keyword OR rule_on LIKE @keyword) 
+                WHERE id LIKE @keyword OR tag_id LIKE @keyword OR name LIKE @keyword OR event_type LIKE @keyword OR rule_on LIKE @keyword
 				ORDER BY id DESC`)
         })
     }
@@ -88,14 +88,14 @@ module.exports = class {
                 INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.program_lid
-                WHERE sd.active = 1 AND ac.active = 1 AND ac1.active = 1 AND st.active = 1 AND ps.active = 1 AND acs.active = 1 ORDER BY sd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                ORDER BY sd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [dbo].weekly_constraints WHERE active = 1`)
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].weekly_constraints`)
         })
     }
 
