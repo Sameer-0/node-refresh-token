@@ -119,6 +119,7 @@ module.exports = {
     },
 
     pagination: (req, res) => {
+       
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -128,6 +129,7 @@ module.exports = {
             return;
         }
 
+        console.log('hitting pagination')
         Faculties.fetchChunkRows(rowcount, req.body.pageNo).then(result => {
             res.json({
                 status: "200",

@@ -14,11 +14,9 @@
                 <h5>Building List</h5>
             </div>
             <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i
-                        class="fas fa-plus"></i></button>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-buildings add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-buildings add-btn "><img src="/icons/delete.png" alt=""
-                        width="24px" height="32px"></button>
+                <button class="btn ms-auto bulk-delete-buildings add-btn "><img src="/icons/delete.png" alt="" width="24px" height="32px"></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -54,7 +52,7 @@
                         </td>
                         <td>
                             <%- building.handled_by %>
-                        </td>
+                        </td> 
                         <td>
                             <%- building.start_time %>
                         </td>
@@ -96,6 +94,7 @@
 <div class="modal fade" id="add-building-modal" tabindex="-1" aria-labelledby="add-building-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen modal-lg">
         <div class="modal-content modal-inputform">
+            
             <div class="modal-header modal-inputform-header">
                 <h5 class="modal-title" id="add-building-modal-title">Add New Building</h5>
                 <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
@@ -106,7 +105,7 @@
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <input type="hidden" name="buildingId" id="buildingId">
-                <div class="table-responsive ">
+                <div class="">
                     <table class="table " id="add-more-building-table">
                         <thead>
                             <th>Building Name</th>
@@ -132,62 +131,61 @@
                                     <input name="total_floors" id="total_floors" type="number" class="form-control"
                                         placeholder="Total Floor Count" required>
                                 </td>
-
                                 <td>
-                                    <select class="form-select modalSelect2" name="owner_id" id="owner_id" required>
-                                        <option disabled selected>--Owner--</option>
+                                    <select name="owner_id" id="owner_id" class="select2">
+                                        <option>--select--</option>
                                         <% for(let owner of orgList) { %>
-                                        <option value="<%- owner.id %>">
-                                            <%- owner.org_abbr %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- owner.id %>">
+                                                <%- owner.org_abbr %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="start_time_id" id="start_time_id"
-                                        required>
-                                        <option disabled selected value>--Start Time--</option>
+                                    <select name="start_time_id" id="start_time_id" class="select2">
+                                        <option>--select--</option>
                                         <% for(let time of timeList) { %>
-                                        <option value="<%- time.id %>">
-                                            <%- time.start_time %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.start_time %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="end_time_id" id="end_time_id"
-                                        required>
-                                        <option disabled selected value>--End Time--</option>
+                                    <select name="end_time_id" id="end_time_id" class="select2">
+                                        <option>--select--</option>
                                         <% for(let time of timeList) { %>
-                                        <option value="<%- time.id %>">
-                                            <%- time.end_time %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- time.id %>">
+                                                <%- time.end_time %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
-                                        <option disabled selected value>--Handled By--</option>
+                                  
+                                    <select name="handled_by" id="handled_by" class="select2">
+                                        <option>--select--</option>
                                         <% for(let handler of orgList) { %>
-                                        <option value="<%- handler.id %>">
-                                            <%- handler.org_abbr %>
-                                        </option>
-                                        <% } %>
+                                            <option value="<%- handler.id %>">
+                                                <%- handler.org_abbr %>
+                                            </option>
+                                            <% } %>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select modalSelect2" name="campus_lid" id="campus_lid" required>
-                                        <option disabled selected value>--Campus--</option>
-                                        <% for(let campus of campusList) { %>
-                                        <option value="<%- campus.id %>">
-                                            <%- campus.campus_abbr %>
-                                        </option>
-                                        <% } %>
-                                    </select>
+                                        <select name="campus_lid" id="campus_lid" class="select2">
+                                            <option>--select--</option>
+                                            <% for(let campus of campusList) { %>
+                                                <option value="<%- campus.id %>">
+                                                    <%- campus.campus_abbr %>
+                                                </option>
+                                                <% } %>
+                                        </select>
+                                    
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer removebuilding"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-building"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -198,10 +196,7 @@
 
             <div class="modal-footer">
                 <div id="errorMsg"></div>
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-building">
-                    <i class="fas fa-plus"></i>
-                    Add More Building
-                </button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-building"><i class="fas fa-plus"></i>Add More Building</button>
                 <button type="submit" class="btn  createBuilding modal-inputform-btn">Create Building</button>
                 <button type="submit" class="btn  updateBuilding modal-inputform-btn d-none">Update Building</button>
             </div>
@@ -209,14 +204,19 @@
     </div>
 </div>
 
-
-
-
+<%- include('../partials/notification') %>
+<%- include('../partials/alert') %>
 <%- include("../partials/footer") %>
+
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
 <script src="/js/leftsidebartoggle.js"></script>
 <script>
+//    $('#add-building-modal .select2').select2();
+   $('.select2').select2({
+        dropdownParent: $('#add-building-modal')
+    });
+
     $(".createBuilding").on('click', function () {
         let buildingElems = $('#add-more-building-table tbody tr');
         let buildingCount = buildingElems.length;
@@ -268,7 +268,7 @@
         }
 
         ajaxApi(ApiObj).then(result => {
-            location.reload()
+            notify();
         }).catch(error => {
             showError(error.responseJSON)
         })
@@ -369,7 +369,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                location.reload()
+              notify();
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -377,8 +377,6 @@
             alert('Select Building First')
         }
     })
-
-
 
 
     //Select All campus
@@ -430,10 +428,12 @@
 
     //Bulk Delete
     $(".bulk-delete-buildings").on('click', function () {
-        console.log('Click')
+        
+        console.log('delete all clicked')
+
         let ApiObj = {
             url: '/management/buildings',
-            type: 'PATCH',
+            method: 'PATCH',
             data: {},
             dataType: 'JSON'
         }
@@ -444,7 +444,9 @@
         //         showError(error.responseJSON)
         // })
 
-        alertMsg()
+        //Alert confirm
+         alertMsg()
+        
         $('.alert-continue').on('click', () => {
             ajaxApi(ApiObj).then(result => {
                 location.reload()

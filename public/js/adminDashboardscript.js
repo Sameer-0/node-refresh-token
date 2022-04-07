@@ -3,13 +3,12 @@ console.log("Admin dashboard!!!!")
 $('#add-more-days').on('click', function () {
     console.log("days Added::::")
     let lastTr = $('#add-more-days-table tbody tr:last-child')
-    let startDate = lastTr.find(`select[name='startDate']`).val();
-    let endDate = lastTr.find(`select[name='endDate']`).val();
+    let day = lastTr.find(`input`).val("").trigger('change');
+    console.log('checkTR', day)
 
 
     let clonedTr = lastTr.clone();
-    clonedTr.find(`select[name='startDate']`).val('')
-    clonedTr.find(`select[name='endDate']`).val('')
+    clonedTr.find(`select[name='day']`).val('').trigger('change')
    
     $('#add-more-days-table tbody').append(clonedTr)
 })
@@ -17,7 +16,7 @@ $('#add-more-days').on('click', function () {
 $('#add-more-days-table').on('click', '.remove-days', function () {
     let trLength = $('#add-more-days-table tbody tr').length;
     if (trLength > 1) {
-        $(this).closest('tr').remove()
+        $(this).closest('tr').remove();
     } else {
         alert('Cannot delete this room.')
     }
@@ -117,7 +116,7 @@ $('#add-more-program-table').on('click', '.remove-program', function () {
     if (trLength > 1) {
         $(this).closest('tr').remove()
     } else {
-        alert('Cannot delete this room.')
+        alert('Cannot delete this room!!!!')
     }
 })
 
@@ -131,7 +130,7 @@ $('#add-more-courseWorkload').on('click', function () {
     let lecturePerDivision = lastTr.find(`input[name='lecturePerDivision']`).val();
     let totalSessionPerSemester = lastTr.find(`input[name='totalSessionPerSemester']`).val();
     let sessionPerWeek = lastTr.find(`input[name='sessionPerWeek']`).val();
-    let programId = lastTr.find(`input[name='programId']`).val();
+
     let acadSession = lastTr.find(`input[name='acadSession']`).val();
     let practicalPerWeekPerSession = lastTr.find(`input[name='practicalPerWeekPerSession']`).val();
    

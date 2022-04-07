@@ -7,6 +7,8 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
 
+    <%- include("../partials/roomSubMenu") %>
+
 
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
@@ -17,8 +19,8 @@
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-roomtransaction-stages-modal">
                     <i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto select-delete-rootTransaction add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-root-ransaction-type add-btn "><img src="/icons/delete.png"
+                <button class="btn ms-auto select-delete-roomTransaction add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-roomtransaction-type add-btn "><img src="/icons/delete.png"
                         alt="" width="26px" height="32px"></button>
             </div>
         </div>
@@ -67,12 +69,10 @@
 </div>
 <!--DASHBOARD CONTENT END-->
 
-
-
 <!-- Modal -->
 <div class="modal fade" id="add-roomtransaction-stages-modal" tabindex="-1"
     aria-labelledby="add-roomtransaction-stages-modal" aria-hidden="true">
-    <div class="modal-dialog  modal-xl">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h5 class="modal-title" id="add-roomtransaction-stages-title">ADD ROOM TRANSACTION TYPES</h5>
@@ -107,29 +107,27 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction-types">
-                        <i class="fas fa-plus"></i>
-                        Add More
-                    </button>
-                    <button type="submit" class="btn  createRoomTransactionTypes modal-inputform-btn">Create</button>
-                    <button type="submit"
-                        class="btn  updateRoomTransactionTypes modal-inputform-btn d-none">Update</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction-types"><i class="fas fa-plus"></i> Add More</button>
+                <button type="submit" class="btn  createRoomTransactionTypes modal-inputform-btn">Create</button>
+                <button type="submit" class="btn  updateRoomTransactionTypes modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
 
 
+    <%- include('../partials/notification') %>
+    <%- include('../partials/alert') %>
     <%- include("../partials/footer") %>
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+    <script src="/js/leftsidebartoggle.js"></script>
     <script>
         $(document).ready(function () {
 
-
             // Add more rows
             $('#add-more-roomtransaction-types').on('click', function () {
-                console.log("Organization Added::::")
+                console.log("Room Added::::")
                 let lastTr = $('#add-more-roomtransaction-types-table tbody tr:last-child')
                 let name = lastTr.find(`select[name='name']`).val()
                 let description = lastTr.find(`select[name='description']`).val()
@@ -150,6 +148,7 @@
 
             //Create 
             $(".createRoomTransactionTypes").on('click', function () {
+                console.log('room added 2')
                 let transactionElems = $('#add-more-roomtransaction-types-table tbody tr');
                 let transCount = transactionElems.length;
                 let transJson = [];
@@ -264,9 +263,7 @@
             })
 
 
-
-
-            //Select All campus
+            //Select All 
             $("#roomTransactionTable").on('click', '.selectAll-Room-Transaction', function () {
                 if (this.checked) {
                     // Iterate each checkbox
@@ -282,7 +279,7 @@
 
 
             //Delete Single and mutiple Delete
-            $('.select-delete-rootTransaction').on('click', function () {
+            $('.select-delete-roomTransaction').on('click', function () {
                 let deleteids = []
                 $('.delete-rootTransaction:checked').each(function () {
                     let obj = {
@@ -304,7 +301,6 @@
                         dataType: 'JSON'
                     }
                     ajaxApi(ApiObj).then(result => {
-                        location.reload()
                         notify();
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -318,7 +314,12 @@
 
 
             //Bulk Delete
-            $(".bulk-delete-root-ransaction-type").on('click', function () {
+            $(".bulk-delete-roomtransaction-type").on('click', function () {
+
+                console.log('bulk delete working')
+                //Alert confirm
+                alertMsg()
+
                 let ApiObj = {
                     url: '/management/rooms/bookings/transaction-types',
                     type: 'PATCH',
@@ -326,19 +327,17 @@
                     dataType: 'JSON'
                 }
 
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
+                $('.alert-continue').on('click', () => {
+                    ajaxApi(ApiObj).then(result => {
+                        location.reload()
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
                 })
-
-                //   alertMsg()
-
-                //   $('.alert-continue').on('click', () => {
-
-                // })
-                // $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
+                
+                $('.cancel').on('click', () => {
+                    $('#alertModal').css('display', 'none');
+                })
 
             })
 
@@ -357,11 +356,6 @@
                     }
                 })
             }, 500));
-
-
-
-
-
 
 
             //Pagination Here
@@ -397,9 +391,6 @@
                     }
                 })
             });
-
-
-
 
 
             function showError(errors) {
