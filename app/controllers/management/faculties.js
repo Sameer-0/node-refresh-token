@@ -149,8 +149,11 @@ module.exports = {
             res.status(200).json({
                 result: result.recordset
             })
-        }).catch(error=>{
-            res.status(500).json({status:500, message:"Error occured"})
+        }).catch(error => {
+            res.status(500).json({
+                status: 500,
+                message: "Error occured"
+            })
         })
     },
 
@@ -177,4 +180,49 @@ module.exports = {
             throw error
         })
     },
+
+    fetchFromSAP: async (req, res, next) => {
+
+        let {acadYear} = req.body;
+        var wsdlUrl = path.join(
+            process.env.WSDL_PATH,
+            "zhr_holiday_date_jp_bin_sep_20211129.wsdl"
+          );
+          let soapClient = await new Promise(resolve => {
+            soap.createClient(wsdlUrl, async function (err, soapClient) {
+              if (err) {
+                next(err);
+              }
+              resolve(soapClient);
+            })
+          })  
+
+          console.log('soapClient:::::::::::::::::>>>',soapClient)
+
+          let facultyList = await new Promise(async resolve => {
+            await soapClient.ZhrHolidayDateJp({
+                Acadyear: "2018",
+                Campusid: "00004533",
+                Schoolobjectid: "00004533",
+              },
+              async function (err, result) {
+                let output = await result;
+                console.log('output::::::::::::::>>>',output)
+                resolve(1);
+              });
+          })
+
+        //   FacultyDbo.fetchFacultyFromSap(JSON.stringify(facultyList), res.locals.slug).then(data => {
+        //     console.log('Data>>> ', data)
+        //     res.status(200).json({
+        //       data: courseWorkloadList
+        //     });
+        //   }).catch(err => {
+        //     console.log(err)
+        //   });
+
+        res.status(200).json({
+              data: facultyList
+            });
+    }
 }

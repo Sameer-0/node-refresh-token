@@ -190,8 +190,6 @@ module.exports = {
         res.status(200).json({
               data: holidayList
             });
-          
-
     }
 
 
