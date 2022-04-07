@@ -1,25 +1,25 @@
 <div class="step-form">
 
     <div class="d-flex pt-3 pb-4 time-line stages" style="overflow-x: scroll;">
-        <div class="arrow-pointer stage active my-1" data-step="1"> Days </div>
-        <div class="arrow-pointer stage pending my-1" data-step="2">Holidays </div>
-        <div class="arrow-pointer stage pending my-1" data-step="3"> Room</div>
-        <div class="arrow-pointer stage pending my-1" data-step="4"> Program</div>
-        <div class="arrow-pointer stage pending my-1" data-step="5"> Course Workload</div>
-        <div class="arrow-pointer stage pending my-1" data-step="6"> Session Date</div>
-        <div class="arrow-pointer stage pending my-1" data-step="7"> Session types</div>
-        <div class="arrow-pointer stage pending my-1" data-step="8"> Session types date range</div>
-        <div class="arrow-pointer stage pending my-1" data-step="9"> Division</div>
-        <div class="arrow-pointer stage pending my-1" data-step="10"> Weekly Constraint</div>
-        <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty </div>
-        <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Workload</div>
-        <div class="arrow-pointer stage pending my-1" data-step="13"> Faculty Timetable preference</div>
+
+        <div class="arrow-pointer stage pending my-1" data-step="1">Holidays </div>
+        <div class="arrow-pointer stage pending my-1" data-step="2"> Room</div>
+        <div class="arrow-pointer stage pending my-1" data-step="3"> Program</div>
+        <div class="arrow-pointer stage pending my-1" data-step="4"> Course Workload</div>
+        <div class="arrow-pointer stage pending my-1" data-step="5"> Session Date</div>
+        <div class="arrow-pointer stage pending my-1" data-step="6"> Session types</div>
+        <div class="arrow-pointer stage pending my-1" data-step="7"> Session types date range</div>
+        <div class="arrow-pointer stage pending my-1" data-step="8"> Division</div>
+        <div class="arrow-pointer stage pending my-1" data-step="9"> Weekly Constraint</div>
+        <div class="arrow-pointer stage pending my-1" data-step="10"> Faculty </div>
+        <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty Workload</div>
+        <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Timetable preference</div>
     </div>
 
     <div class="step-form-body pt-3">
  
         <!-- Holidays -->
-        <form action="/admin/holidays" method="post" class="step d-none" id="holidays-form" data-step="2">
+        <form action="/admin/holidays" method="post" class="step" id="holidays-form" data-step="1">
             <div class="modal-header table-card-header">
                 <h5 class="modal-title text-white" id="add-holidays-modal-title">Add New Holidays</h5>
                 <button type="button" class="btn add-btn btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i></button>
@@ -64,14 +64,15 @@
         </form>
 
         <!-- Room -->
-        <form action="/admin/room" method="post" class="step d-none" id="room-form" data-step="3">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">ADD ROOM TRANSACTIONS</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <form action="/admin/room" method="post" class="step d-none" id="room-form" data-step="2">
+            <div class="modal-header table-card-header">
+                <h5 class="modal-title text-white" id="add-room-modal-title">Import Rooms</h5>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-rooms"><i class="fas fa-plus"></i></button>
             </div>
+            <div id="errorHtml" class="error-show pt-3"></div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
-                <div class="table-responsive ">
+                <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-roomstrans-table">
                         <thead>
                             <th>Room No</th>
@@ -88,64 +89,43 @@
                             <tr>
                                 <td>
                                     <select class="select2" name="room_lid" id="room_lid">
-                                        <option value="">Select Room No</option>
-                                        <%for(let room of roomList){%>
-                                        <option value="<%-room.id%>"><%- room.room_number %></option>
-                                        <%}%>
+                                        
                                 </select>
                                 </td>
                                 <td>
                                     <select class="select2" name="transaction_type_id" id="transaction_type_id">
-                                        <option value="">Select Transaction Type</option>
-                                        <%for(let type of transactionTypes){%>
-                                        <option value="<%-type.id%>"><%- type.name %></option>
-                                        <%}%>
+                                        
                                 </select>
                                 </td>
                             <td>
                                 <select class="select2" name="start_time_id" id="start_time_id">
-                                    <option value="">Select Start Time</option>
-                                    <%for(let startlist of slotIntervalTimings){%>
-                                        <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
-                                        <%}%>
+                                    
                             </select>
                             </td>
                             <td>
                                 <select class="select2" name="end_time_id" id="end_time_id">
-                                    <option value="">Select End Time</option>
-                                    <%for(let endlist of slotIntervalTimings){%>
-                                        <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
-                                        <%}%>
+                                    
                             </select>
                             </td>
                             <td>
                                 <select class="select2" name="start_date_id" id="start_date_id">
-                                    <option value="">Select Start Date</option>
-                                    <%for(let startdate of academicCalender){%>
-                                        <option value="<%-startdate.id%>"><%- startdate.date %></option>
-                                        <%}%>
+                                    
                             </select>
                             </td>
                             <td>
                                 <select class="select2" name="end_date_id" id="end_date_id">
-                                    <option value="">Select End Date</option>
-                                    <%for(let enddate of academicCalender){%>
-                                        <option value="<%-enddate.id%>"><%- enddate.date %></option>
-                                        <%}%>
+                                    
                             </select>
                             </td>
-                            <td><select class="select2" name="org_lid" id="org_lid"> 
-                                <option value="">Select orgnization</option>
-                                <%for(let org of orgnizations){%>
-                                        <option value="<%-org.id%>"><%- org.org_abbr %></option>
-                                        <%}%>
-                        </select></td>
+                            <td>
+                               <select class="select2" name="org_lid" id="org_lid"> 
+                                
+                               </select>
+                            </td>
+
                             <td>
                                 <select class="select2" name="campus_lid" id="campus_lid"> 
-                                    <option value="">Select Campus</option>
-                                    <%for(let campus of campuses){%>
-                                        <option value="<%-campus.id%>"><%- campus.campus_abbr %></option>
-                                        <%}%>
+                                    
                             </select>
                             </td>
 
@@ -161,7 +141,7 @@
         </form>
 
         <!--Program -->
-        <form action="/admin/program" method="post" class="step d-none" id="program-form" data-step="4">
+        <form action="/admin/program" method="post" class="step d-none" id="program-form" data-step="3">
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-program-modal-title">Add New Program</h5>
                 <button type="button" class="btn add-btn btn-sm" id="add-more-program"><i class="fas fa-plus"></i>
@@ -199,7 +179,7 @@
         </form>
 
         <!-- Course Workload -->
-        <form action="/admin/courseworkload" method="post" class="step d-none" id="courseWorkload-form" data-step="5">
+        <form action="/admin/courseworkload" method="post" class="step d-none" id="courseWorkload-form" data-step="4">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-courseWorkload-modal-title">Add New Course workload</h5>
@@ -277,7 +257,7 @@
         </form>
 
         <!-- Session date -->
-        <form action="/admin/sessiondate" method="post" class="step d-none" id="sessionDate-form" data-step="6">
+        <form action="/admin/sessiondate" method="post" class="step d-none" id="sessionDate-form" data-step="5">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-sessionDate-modal-title">Add Session Date</h5>
@@ -316,7 +296,7 @@
 
 
         <!-- Session Type -->
-        <form action="/admin/sessiontype" method="post" class="step d-none" id="sessionType-form" data-step="7">
+        <form action="/admin/sessiontype" method="post" class="step d-none" id="sessionType-form" data-step="6">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-sessionType-modal-title">Add New Course workload</h5>
@@ -356,7 +336,7 @@
         </form>
 
         <!-- Session date range -->
-        <form action="/admin/sessionrange" method="post" class="step d-none" id="sessionRange-form" data-step="8">
+        <form action="/admin/sessionrange" method="post" class="step d-none" id="sessionRange-form" data-step="7">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-sessionRange-modal-title">Add New Course workload</h5>
@@ -404,7 +384,7 @@
         </form>
 
         <!-- Division -->
-        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="9">
+        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="8">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-division-modal-title">Add New Course workload</h5>
@@ -443,7 +423,7 @@
         </form>
 
         <!-- Division Batches -->
-        <form action="/admin/divisionbatches" method="post" class="step d-none" id="divisionBatches" data-step="10">
+        <form action="/admin/divisionbatches" method="post" class="step d-none" id="divisionBatches" data-step="9">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-divisionBatches-modal-title">Add New batches</h5>
@@ -481,7 +461,7 @@
         </form>
 
         <!-- Weekly constraint -->
-        <form action="/admin/weeklyConstraint" method="post" class="step d-none" id="weeklyConstraint" data-step="11">
+        <form action="/admin/weeklyConstraint" method="post" class="step d-none" id="weeklyConstraint" data-step="10">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-weeklyConstraint-modal-title">Add New Weekly constraint</h5>
@@ -530,7 +510,7 @@
         </form>
 
         <!-- Faculty -->
-        <form action="/admin/faculty" method="post" class="step d-none" id="faculty" data-step="12">
+        <form action="/admin/faculty" method="post" class="step d-none" id="faculty" data-step="11">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-faculty-modal-title">Add New Faculty</h5>
@@ -582,7 +562,7 @@
         </form>
 
         <!-- Faculty Time Preference -->
-        <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="13">
+        <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="12">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-facultyPreference-modal-title">Add New Faculty</h5>
