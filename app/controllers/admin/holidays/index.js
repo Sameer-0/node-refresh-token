@@ -7,18 +7,20 @@ const {
 const Holidays = require('../../../models/Holidays')
 const HolidayType = require('../../../models/HolidayTypes')
 const AcadYear = require('../../../models/AcademicYear')
+const AcademicCalender =  require('../../../models/AcademicCalender')
 const path = require("path");
 var soap = require("soap");
 
 module.exports = {
 
     getPage: (req, res) => {
-        Promise.all([Holidays.fetchAll(10, res.locals.slug), HolidayType.fetchAll(100), Holidays.getCount(res.locals.slug), AcadYear.fetchAll()]).then(result => {
+        Promise.all([Holidays.fetchAll(10, res.locals.slug), HolidayType.fetchAll(100), Holidays.getCount(res.locals.slug), AcadYear.fetchAll(), AcademicCalender.fetchAll(10000)]).then(result => {
             res.render('admin/holidays/index', {
                 holidayList: result[0].recordset,
                 holidayType: result[1].recordset,
                 pageCount: result[2].recordset[0].count,
                 acadYear: result[3].recordset[0].input_acad_year,
+                academicCalender : result[4].recordset
             })
         })
     },
@@ -26,7 +28,7 @@ module.exports = {
     create: (req, res) => {
 
         let object = {
-            add_holidays: JSON.parse(req.body.inputJSON)
+            insert_new_holidays: JSON.parse(req.body.inputJSON)
         }
 
         console.log('object:::::::::::::', object)

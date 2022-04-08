@@ -24,7 +24,7 @@ module.exports = class {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[add_holidays]`)
+                .execute(`[${slug}].[sp_create_new_holidays]`)
         })
     }
 
