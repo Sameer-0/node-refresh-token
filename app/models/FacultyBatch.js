@@ -10,11 +10,10 @@ const slug = require('../controllers/management/slug');
 
 module.exports = class FacultyBatch {
     constructor(faculty_id, faculty_name, batch) {
-        this.id= id,
+        this.id = id;
         this.faculty_id = faculty_id;
         this.faculty_name = faculty_name;
         this.faculty_batch = batch;
-       
     }
 
     static fetchAll(rowcount, slug) {
@@ -26,10 +25,10 @@ module.exports = class FacultyBatch {
         })
     }
 
-    static getCount() {
+    static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [bncp-mum].faculty_batches`)  
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].faculty_batches`)
         })
     }
 

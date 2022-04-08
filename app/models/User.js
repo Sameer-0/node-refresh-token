@@ -24,15 +24,15 @@ module.exports = class User {
         })
     }
 
-    static fetchUserById(id) {
+    static fetchUserById(id, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`SELECT username, password, f_name, l_name, employee_id, email, contact_number, role_id FROM [bncp-mum].[users] WHERE id = @id`)
+            return request.query(`SELECT username, password, f_name, l_name, employee_id, email, contact_number, role_id FROM [${slug}].[users] WHERE id = @id`)
         })
     }
 
-    static updateUserById(body) {
+    static updateUserById(body, slug) {
         // console.log(body)
 
         return poolConnection.then(pool => {
@@ -47,14 +47,14 @@ module.exports = class User {
                 .input('contactNumber', sql.NVarChar(15), body.contact)
                 .input('roleId', sql.Int, body.role_id)
 
-                .query(`UPDATE [bncp-mum].[users] SET username = @username, password = @password, f_name = @fName, l_name= @lName,
+                .query(`UPDATE [${slug}].[users] SET username = @username, password = @password, f_name = @fName, l_name= @lName,
             employee_id = @empId, email = @email, contact_number = @contactNumber, role_id = @roleId WHERE id = @id`);
 
         })
     }
 
 
-    static addUser(body) {
+    static addUser(body, slug) {
 
         return poolConnection.then(pool => {
             return pool.request().input('username', sql.NVarChar(100), body.username)
@@ -66,25 +66,25 @@ module.exports = class User {
                 .input('contactNumber', sql.NVarChar(15), body.contactNumber)
                 .input('roleId', sql.Int, body.role)
 
-                .query(`INSERT INTO [bncp-mum].[users] (username, password, f_name, l_name, employee_id, email,
+                .query(`INSERT INTO [${slug}].[users] (username, password, f_name, l_name, employee_id, email,
                 contact_number, role_id ) VALUES (@username, @password, @fName, @lName,
                 @empId, @email, @contactNumber, @roleId)`)
         })
     }
 
-    static deleteUser(id) {
+    static deleteUser(id, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             request.input('id', sql.Int, id)
-            return request.query(`UPDATE FROM [bncp-mum].[users] SET active = 0 WHERE id = @id`)
+            return request.query(`UPDATE FROM [${slug}].[users] SET active = 0 WHERE id = @id`)
         })
     }
 
 
-    static findUserByUsername(username) {
+    static findUserByUsername(username, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('username', sql.NVarChar(50), username)
-                .query(`SELECT f_name, l_name, employee_id, email, contact_number, role_id FROM [bncp-mum].users WHERE username = @username`)
+                .query(`SELECT f_name, l_name, employee_id, email, contact_number, role_id FROM [${slug}].users WHERE username = @username`)
         })
     }
 

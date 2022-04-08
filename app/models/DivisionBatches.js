@@ -26,7 +26,7 @@ module.exports = class DivisionBatches {
         })
     }
 
-    static addBatch(body) {
+    static addBatch(body, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('divisionId', sql.Int, body.divisionId)
             .input('batch', sql.Int, body.batch)
@@ -35,19 +35,19 @@ module.exports = class DivisionBatches {
             .input('batchCount', sql.Int, body.batchCount)
             .input('inputBatchCount', sql.Int, body.inputBatchCount)
             .input('facultyCount', sql.SmallInt, body.facultyCount)
-            .query(`INSERT INTO [bncp-mum].[division_batches] (division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count) 
+            .query(`INSERT INTO [${slug}].[division_batches] (division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count) 
             values (@divisionId, @batch, @eventType, @divisionCount, @batchCount, @inputBatchCount, @facultyCount)`)
         })
     }
 
-    static getBatch(id) {
+    static getBatch(id, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, id)
-            .query(`SELECT id, division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count FROM [bncp-mum].division_batches WHERE id = @id`)
+            .query(`SELECT id, division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count FROM [${slug}].division_batches WHERE id = @id`)
         })
     }
 
-    static updateBatch(body) {
+    static updateBatch(body, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, body.id)
             .input('divisionId', sql.Int, body.divisionId)
@@ -57,7 +57,7 @@ module.exports = class DivisionBatches {
             .input('batchCount', sql.Int, body.batchCount)
             .input('inputBatchCount', sql.Int, body.inputBatchCount)
             .input('facultyCount', sql.SmallInt, body.facultyCount)
-            .query(`UPDATE [bncp-mum].division_batches SET division_id = @divisionId, batch = @batch, event_type =@eventType, division_count =@divisionCount,
+            .query(`UPDATE [${slug}].division_batches SET division_id = @divisionId, batch = @batch, event_type =@eventType, division_count =@divisionCount,
             batch_count =@batchCount, input_batch_count =@inputBatchCount, faculty_count =@facultyCount WHERE id = @id`)
         })
     }

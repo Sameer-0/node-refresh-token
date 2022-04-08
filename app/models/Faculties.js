@@ -29,10 +29,10 @@ module.exports = class Faculties {
         })
     }
 
-    static getCount() {
+    static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [bncp-mum].faculties`)
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].faculties`)
         })
     }
 
