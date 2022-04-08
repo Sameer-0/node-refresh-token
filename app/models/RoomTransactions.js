@@ -27,7 +27,8 @@ module.exports = class RoomTransactions {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[request_for_room_bookings]`)
+                //.execute(`[${slug}].[request_for_room_bookings]`)
+                .execute(`[${slug}].[sp_add_new_room_transactions]`)
         })
     }
 

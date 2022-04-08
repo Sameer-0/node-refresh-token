@@ -141,4 +141,15 @@ module.exports = class Rooms {
             WHERE campus_lid = @campusLid`)
         })
     }
+
+    static RoomRequest(slug, body){
+        console.log('Body:::::::::::::::::>>>',slug, body)
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('room_transaction_lid', sql.Int, body.input_room_request_lid)
+                .input('input_json', sql.TinyInt, body.approval_flag)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[request_for_room_bookings]`)
+        })
+    }
 }
