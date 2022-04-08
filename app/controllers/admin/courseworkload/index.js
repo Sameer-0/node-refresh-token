@@ -64,7 +64,9 @@ module.exports = {
         });
     })
 
-    CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), res.locals.slug).then(data => {
+    console.log(courseWorkloadList)
+
+    CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
 
       console.log('Data>>> ', data)
 

@@ -25,7 +25,7 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, electives, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, module_code
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, module_type_lid, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, module_code
             FROM [${slug}].initial_course_workload ORDER BY id DESC`)
         })
     }
@@ -69,10 +69,11 @@ module.exports = class {
     }
 
 
-    static fetchCourseWorklaodSap(inputJson, slug) {
+    static fetchCourseWorklaodSap(inputJson, userId, slug) {
         return poolConnection.then(pool => {
-            pool.request()
+            return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+            .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_insert_course_work_wsdl]`)
         })
