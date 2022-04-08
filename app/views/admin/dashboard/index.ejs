@@ -53,13 +53,62 @@
 <script>
     $(document).ready(function () {
 
+        let campu = `<%-campusList%>`;
+
+        console.log('campu', JSON.parse(campu));
+
+        let date = `<%- acadCalender%>`;
+        let acadDate = JSON.parse(date);
+
+        let slotTime = `<%- slotTiming %>`
+
+        let slotObj = JSON.parse(slotTime);
+
+        let optionStartTime;
+        let optionEndTime;
+        let startDate;
+        let endDate;
+
+        for (let obj of slotObj) {
+
+            optionStartTime += `<option>${obj.start_time}</option>`;
+        }
+
+        for (let obj of slotObj) {
+
+            optionEndTime += `<option>${obj.end_time}</option>`;
+        }
+        for (let obj of acadDate) {
+
+            startDate += `<option>${obj.date}</option>`;
+        }
+        for (let obj of acadDate) {
+            endDate += `<option>${obj.date}</option>`;
+        }
+
         $("#selectList").on('click', '.list-group-item', function () {
 
+            console.log('yello')
             //remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
-                $("#selectedList").append(
-                    `<li class="list-group-item d-flex justify-content-between align-items-center my-1 border-top" data-faculty-name="${$(this).text()}" data-faculty-id="${$(this).attr("data-faculty-id")}" data-clickable="true">${$(this).text()} <span class="badge bg-danger rounded-pill clicktoremove ms-auto me-2">Remove</span></li> `
-                    )
+                $("#selectedList table tbody").append(
+                    `<tr>
+                        <td>${$(this).text()}</td>
+                        <td>
+                            <select class="select2">${optionStartTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2">${optionEndTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2">${startDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2">${endDate}</select>
+                        </td>
+                    </tr>
+                    `
+                )
             }
 
             $(this).attr('data-clickable', 'false');
@@ -123,7 +172,7 @@
 
         //Step form Start
         let currentFormStep = 1;
-       
+
 
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
@@ -132,7 +181,7 @@
 
         function formStepNext() {
             currentFormStep++;
-          
+
             console.log('clicked!!')
             $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
                 'submitted');
@@ -145,17 +194,59 @@
             console.log(currentFormStep);
         }
 
-       
+
 
         $('#next-step').on('click', function () {
             let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep+1}"]`);
             console.log('stepformscroll', ele);
-          
-            ele.scrollIntoView({behavior: "smooth", inline:'start'})
+
+            ele.scrollIntoView({
+                behavior: "smooth",
+                inline: 'start'
+            })
             formStepNext()
         })
 
 
+        //Getting capus Bulding List
+        $("#campus_lid").on('change', function () {
+            let campus_lid = $(this).val()
+            let ApiObj = {
+                url: '/management/rooms/buildinglist',
+                type: 'POST',
+                data: {
+                    campus_lid: campus_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                let buildingList =
+                    `<select class="form-select" name="campus_lid" id="campus_lid">`;
+
+                if (result.data.length > 0) {
+                    buildingList +=
+                        `<option disabled selected value="">--Select Campus--</option>`;
+                    result.data.forEach(element => {
+                        buildingList += `<option value="${element.id}">
+                                ${element.building_name}
+                            </option>`
+                    });
+                } else {
+                    buildingList += `<option value="">
+                                No Building Found!
+                            </option>`
+                }
+                buildingList += `</select>`;
+                $("#building_lid").html(buildingList)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        $('.select2').select2({
+            dropdownParent: $('#open-room-modal')
+        });
 
     })
 </script>
