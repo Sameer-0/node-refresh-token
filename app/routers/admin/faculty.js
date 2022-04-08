@@ -14,7 +14,11 @@ const validate = require('../../middlewares/validate')
 
 router.get('/faculties', index.getPage)
 router.post('/faculties', validate('JsonValidator'), index.create)
-// router.post('/faculties', index.pagination)
+router.get('/faculties/search', validate('search'), index.search)
+router.post('/faculties/pagination', index.pagination)
+
+
+
 
 router.get('/faculties/date-time', dateTimes.getPage)
 

@@ -1,10 +1,12 @@
-const Faculties = require('../../../models/Faculties');
-const FacultyDbo = require('../../../models/FacultyDbo')
 const {
     check,
     oneOf,
     validationResult
 } = require('express-validator');
+
+
+const Faculties = require('../../../models/Faculties');
+const FacultyDbo = require('../../../models/FacultyDbo')
 
 module.exports = {
     getPage: (req, res) => {
@@ -13,26 +15,20 @@ module.exports = {
             console.log(result[2].recordset);
             res.render('admin/faculty/index', {
                 facultyList: result[0].recordset,
-                pageCount:result[1].recordset[0].count,
-                faculties: result[2].recordset
+                pageCount: result[1].recordset[0].count,
+                faculties: result[2].recordset,
+                // totalentries: result[0].recordset ? result[0].recordset.length : 0
             })
         })
-
     },
 
     create: (req, res) => {
-
-
         let object = {
-            insert_faculties: JSON.parse(req.body.inputJSON)
+            import_faculties: JSON.parse(req.body.inputJSON)
         }
-
-        console.log('ENTERD:::::::::::>>',object)
-
-        Faculties.save(object, res.locals.slug).then(result => {
+        Faculties.save(object, res.locals.slug, res.locals.userid).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('error::::::::::::::<<<',error)
             res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
@@ -50,6 +46,7 @@ module.exports = {
             res.status(500).json(error.originalError.info.message)
         })
     },
+
 
     update: (req, res) => {
         const errors = validationResult(req);
@@ -85,6 +82,7 @@ module.exports = {
         })
     },
 
+
     deleteAll: (req, res) => {
         programTypeModel.deleteAll().then(result => {
             res.status(200).json({
@@ -96,8 +94,9 @@ module.exports = {
     },
 
     search: (req, res) => {
+
         let rowcount = 10;
-        programTypeModel.searchProgramType(rowcount, req.query.keyword).then(result => {
+        Faculties.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -119,7 +118,7 @@ module.exports = {
     },
 
     pagination: (req, res) => {
-       
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -130,7 +129,7 @@ module.exports = {
         }
 
         console.log('hitting pagination')
-        Faculties.fetchChunkRows(rowcount, req.body.pageNo).then(result => {
+        Faculties.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
@@ -141,7 +140,5 @@ module.exports = {
             throw error
         })
     }
-
-
 
 }
