@@ -123,6 +123,7 @@
 
         //Step form Start
         let currentFormStep = 1;
+       
 
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
@@ -131,6 +132,7 @@
 
         function formStepNext() {
             currentFormStep++;
+          
             console.log('clicked!!')
             $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
                 'submitted');
@@ -143,10 +145,17 @@
             console.log(currentFormStep);
         }
 
+       
+
         $('#next-step').on('click', function () {
-            console.log('yello');
+            let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep+1}"]`);
+            console.log('stepformscroll', ele);
+          
+            ele.scrollIntoView({behavior: "smooth", inline:'start'})
             formStepNext()
         })
+
+
 
     })
 </script>
