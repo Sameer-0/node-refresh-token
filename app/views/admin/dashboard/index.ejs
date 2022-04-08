@@ -4,7 +4,7 @@
 
 <!-- PAGE LEVEL CSSS END -->
 
-<%- include ('../partials/leftSidebar') %> 
+<%- include ('../partials/leftSidebar') %>
 <%- include ('../partials/header') %>
 
 <style>
@@ -31,12 +31,12 @@
 
 <!-- MAIN-CONTENT -->
 <div class="main-content">
- 
+
     <% if (currentFormStep) { %>
-        <%- include('./stepform.ejs') %>
-        <% } else { %>
-        <%- include('./dashboard.ejs') %>
-        <% } %>
+    <%- include('./stepform.ejs') %>
+    <% } else { %>
+    <%- include('./dashboard.ejs') %>
+    <% } %>
 
 </div>
 </main>
@@ -51,106 +51,113 @@
 <script src="/js/adminDashboardscript.js"></script>
 
 <script>
+    $(document).ready(function () {
 
-    $(document).ready(function(){
+        $("#selectList").on('click', '.list-group-item', function () {
 
-      
-        let currentFormStep = `<%- currentFormStep %>`;
-        
+            //remove current element when added to right sidebar
+            if ($(this).attr('data-clickable') == 'true') {
+                $("#selectedList").append(
+                    `<li class="list-group-item d-flex justify-content-between align-items-center my-1 border-top" data-faculty-name="${$(this).text()}" data-faculty-id="${$(this).attr("data-faculty-id")}" data-clickable="true">${$(this).text()} <span class="badge bg-danger rounded-pill clicktoremove ms-auto me-2">Remove</span></li> `
+                    )
+            }
+
+            $(this).attr('data-clickable', 'false');
+
+            $($(this)).fadeOut(300, function () {
+                $($(this)).remove()
+            })
+
+        })
+
+        //Remove Element
+
+        $("#selectedList").on('click', '.clicktoremove', function () {
+
+            if ($(this).parent().attr('data-clickable') == 'true') {
+                $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().attr("data-faculty-name")} 
+        </li>`)
+            }
+
+            $(this).parent().attr('data-clickable', 'false')
+
+            $($(this)).fadeOut(300, function () {
+                $($(this).parent()).remove()
+            })
+        })
+
+        //search 
+        let selectItems = $('#selectList li')
+
+
+        $('#searchItem').on('input', function () {
+
+            var text = $('#searchItem').val().toLowerCase();
+
+            for (let item of selectItems) {
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+        })
+
+        //search selected faculty
+
+        $('#searchSelectedFaculty').on('input', function () {
+            let selectedItems = $('#selectedList li')
+            var text = $('#searchSelectedFaculty').val().toLowerCase();
+            console.log('text:::::::::', selectedItems)
+            for (let item of selectedItems) {
+                console.log('faculty:::::::::', item)
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+        })
+
+
+        //Step form Start
+        let currentFormStep = 1;
+       
+
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
         $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
             'active-form');
 
-            function formStepNext() {
+        function formStepNext() {
             currentFormStep++;
+          
             console.log('clicked!!')
-            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass('submitted');
-            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass('active');
+            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
+                'submitted');
+            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass(
+                'active');
 
             $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
-            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
-                console.log(currentFormStep);
+            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
+                'active-form');
+            console.log(currentFormStep);
         }
 
-        $('#next-step').on('click', function(){
-            console.log('yello');
+       
+
+        $('#next-step').on('click', function () {
+            let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep+1}"]`);
+            console.log('stepformscroll', ele);
+          
+            ele.scrollIntoView({behavior: "smooth", inline:'start'})
             formStepNext()
         })
-  
+
+
+
     })
-
-    $("#next-step").on('click', function () {
-                console.log('Click::::>>')
-
-                if (currentFormStep == 1) {
-
-                    let dayElems = $('#add-more-days-table tbody tr');
-                    let dayCount = dayElems.length;
-                    let dayJson = [];
-                   dayElems.each(function (index, elem) {
-
-                        let dayId = $(elem).find(`input[name='orgId']`).val()
-                        let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
-                        let orgName = $(elem).find(`input[name='orgName']`).val()
-                        let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
-                        let orgType = $(elem).find(`datalist[name='orgType']`).val()
-                        let campus_lid = $(elem).find(`datalist[name='orgCampus_lid']`).val()
-
-                        if (index < orgCount - 1) {
-                            let obj = {
-                                org_id: orgId,
-                                org_id_str: orgId,
-                                org_abbr: orgAbbr,
-                                org_name: orgName,
-                                org_complete_name: orgCompleteName,
-                                org_type_id: orgType,
-                                campus_lid:campus_lid
-                            }
-                            orgJson.push(obj)
-                        } else {
-                            let obj = {
-                                org_id: orgId,
-                                org_id_str: orgId,
-                                org_abbr: orgAbbr,
-                                org_name: orgName,
-                                org_complete_name: orgCompleteName,
-                                org_type_id: orgType,
-                                campus_lid:campus_lid
-                            }
-                            orgJson.push(obj)
-                        }
-                    })
-
-
-                    console.log('orgJson::::::::::::::::::::>>>', orgJson)
-
-                    let ApiObj = {
-                        type: 'POST',
-                        url: '/management/organizations',
-                        data: {
-                            inputJSON: JSON.stringify(orgJson),
-                            settingName: 'Organization'
-                        },
-                        dataType: 'JSON'
-                    }
-
-                    ajaxApi(ApiObj).then(result => {
-                        console.log('Result:::::::::::', result)
-                        //   location.reload()
-
-                        formStepNext()
-                        
-                    }).catch(error => {
-                        console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
-                        showError(error.responseJSON)
-                    })
-
-
-                }
-            })
- 
- 
 </script>
 
 <!-- PAGE LEVEL JS END -->
