@@ -104,8 +104,7 @@
 </div>
 
 
-
-<!-- ADD NEW BUILDING MODAL -->
+<!-- IMPORT FACULTY MODAL -->
 <!-- Modal -->
 <div class="modal fade" id="open-faculty-modal" tabindex="-1" aria-labelledby="open-faculty-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen modal-lg">
@@ -119,23 +118,23 @@
             <div class="modal-body py-0">
                 
             <div class="row">
-                <div class="col-md-6 select-faculties">
+                <div class="col-md-6 select-items">
                     <h4 class="text-center py-1">Select Faculties</h4>
-                    <input type="text" name="" id="searchFaculty" placeholder="Search Faculty" class="form-control">
-                    <ul class="list-group" id="addFaculty">
+                    <input type="text" name="" id="searchItem" placeholder="Search Faculty" class="form-control">
+                    <ul class="list-group custom-select-list" id="selectList">
                        
                         <% for (let faculty of faculties) { %>
                     <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
-                        data-faculty-id="<%- faculty.id%>" data-clickable="true"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                        data-faculty-id="<%- faculty.faculty_id%>" data-clickable="true"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
                         %></li>
                     <% } %>
                     </ul>
         </div>
-        <div class="col-md-6 selected-faculties">
+        <div class="col-md-6 selected-items">
             <h4 class="text-center py-1">Selected Faculties</h4>
-            <input type="text" name="" id="searchSelectedFaculty" placeholder="Search Selected Faculty"
+            <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty"
                 class="form-control">
-            <ul class="list-group" id="selectedList">
+            <ul class="list-group custom-select-list" id="selectedList">
 
             </ul>
 
@@ -146,7 +145,6 @@
 <div class="px-3" id="errorHtml"></div>
 <div class="modal-footer">
     <button type="submit" class="btn  createFaculty modal-inputform-btn">Create Faculty</button>
-    <button type="submit" class="btn  updateFaculty modal-inputform-btn d-none">Update Building</button>
 </div>
 </div>
 </div>
@@ -161,7 +159,7 @@
     $(document).ready(function () {
         //DATALIST
 
-        $("#addFaculty").on('click', '.list-group-item', function () {
+        $("#selectList").on('click', '.list-group-item', function () {
 
             //remove current element when added to right sidebar
             if($(this).attr('data-clickable') == 'true'){
@@ -197,7 +195,7 @@
         $("#selectedList").on('click', '.clicktoremove', function () {
 
             if($(this).parent().attr('data-clickable') == 'true'){
-                    $("#addFaculty").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().attr("data-faculty-name")} (${$(this).parent().attr("data-faculty-id")})
+                    $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().attr("data-faculty-name")} (${$(this).parent().attr("data-faculty-id")})
 			        </li>`)
             }
 
@@ -209,12 +207,12 @@
         })
        
         //search 
-        let faculties = $('#addFaculty li')
+        let faculties = $('#selectList li')
     
 
-        $('#searchFaculty').on('input', function () {
+        $('#searchItem').on('input', function () {
 
-            var text = $('#searchFaculty').val().toLowerCase();
+            var text = $('#searchItem').val().toLowerCase();
 
             for (let faculty of faculties) {
                 if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
@@ -227,9 +225,9 @@
 
         //search selected faculty
 
-        $('#searchSelectedFaculty').on('input', function () {
+        $('#searchSelectedItem').on('input', function () {
             let selectedFaculties = $('#selectedList li')
-            var text = $('#searchSelectedFaculty').val().toLowerCase();
+            var text = $('#searchSelectedItem').val().toLowerCase();
             console.log('text:::::::::', selectedFaculties)
             for (let faculty of selectedFaculties) {
                 console.log('faculty:::::::::', faculty)
@@ -241,7 +239,6 @@
                 }
             };
         })
-
 
         //Create New Faculty Entry
         $(".createFaculty").on('click', function () {

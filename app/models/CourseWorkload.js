@@ -69,10 +69,11 @@ module.exports = class {
     }
 
 
-    static fetchCourseWorklaodSap(inputJson, slug) {
+    static fetchCourseWorklaodSap(inputJson, userId, slug) {
         return poolConnection.then(pool => {
-            pool.request()
+            return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+            .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_insert_course_work_wsdl]`)
         })

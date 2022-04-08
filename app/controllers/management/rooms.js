@@ -16,7 +16,7 @@ module.exports = {
     getPage: (req, res) => {
         let rowCount = 10
         Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
-            console.log('result[2].recordset', result[2].recordset)
+       
             res.render('management/room/index', {
                 roomList: result[0].recordset,
                 campusList: result[2].recordset,
@@ -29,12 +29,12 @@ module.exports = {
         }).catch(error => {
             throw error
         })
-    },
+    }, 
 
     getRoomPage: (req, res) => {
         let rowCount = 10
         Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
-            console.log('result[2].recordset', result[2].recordset)
+            console.log('result[2].recordset showww', result[2].recordset)
             res.render('management/room/room', {
                 roomList: result[0].recordset,
                 campusList: result[2].recordset,
