@@ -18,6 +18,27 @@
         </div>
     </div> -->
 
+    <div class="card table-card mb-3">
+        <div class="card-header table-card-header text-uppercase ">
+            <h5>Fetch course workload from sap</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex bd-highlight">
+                <div class="p-2 flex-grow-1 bd-highlight">
+                   <h3> Fetch course workload from sap</h3>
+                </div>
+                <div class="p-2 bd-highlight">
+                    <label>Select Year</label>
+                    <input type="text" class="form-control" id="acadYear" value="<%- acadYear %>">
+                </div>
+                <div class="p-2 bd-highlight mt-2">
+                    <button class="btn btn-danger mt-3 fetchFromSAP"><i class="fa fa-download"></i> Fetch From SAP</button>
+                </div>
+              </div>
+        </div>
+    </div>
+
+
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -119,7 +140,7 @@
                                         placeholder="Holiday Date" required>
                                 </td>
                                 <td>
-                                    <select class="form-control" name="holiday_type" id="holiday_type">
+                                    <select class="select2" name="holiday_type" id="holiday_type">
                                         <% for(let type of holidayType){%>
                                         <option value="<%- type.id %>"><%- type.name %></option>
                                         <%}%>
@@ -164,6 +185,34 @@
 
 <script>
     $(document).ready(function () {
+
+
+
+            //Fetch form SAP
+            $(".fetchFromSAP").on('click', function () {
+            let acadYear = $("#acadYear").val()
+
+            let ApiObj = {
+                url: '/admin/holidays/fetchformsap',
+                type: 'POST',
+                data: {
+                    acadYear: acadYear
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('Response ::::::::::::::::::::::', result.data)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                // showError(error.responseJSON)
+            })
+        })
+
+
+
+
+
 
         $('#add-more-holidays').on('click', function () {
                 let lastTr = $('#add-more-holidays-table tbody tr:last-child')

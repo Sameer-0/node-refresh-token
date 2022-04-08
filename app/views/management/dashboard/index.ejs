@@ -49,6 +49,7 @@
 
 
 <script src="/js/dashboardscript.js"></script>
+<script src="/js/script.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -62,7 +63,11 @@
         }
 
 
-        let currentFormStep = `<%- currentFormStep %>`;
+        userSession = `<%-userSession%>`
+        console.log('userSession::::::::::::',userSession)
+        localStorage.setItem('devicecheck',userSession)
+
+        let currentFormStep = 1;
         console.log('currentFormStep',currentFormStep)
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
         $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
@@ -142,22 +147,18 @@
         function formStepNext() {
             currentFormStep++;
             console.log('clicked!!')
-            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
-                'submitted');
-            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass(
-                'active');
-
+            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass('submitted');
+            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass('active');
 
             $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
-            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
-                'active-form');
+            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
                 console.log(currentFormStep);
         }
         console.log(currentFormStep);
         //Calling Apies
 
         $("#next-step").on('click', function () {
-                console.log('Click::::>>')
+                console.log('Click::::>>', currentFormStep)
 
                 if (currentFormStep == 2) {
 
@@ -172,7 +173,7 @@
                         let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
                         let orgType = $(elem).find(`datalist[name='orgType']`).val()
                         let campus_lid = $(elem).find(`datalist[name='orgCampus_lid']`).val()
-console.log('orgType', orgType)
+
                         if (index < orgCount - 1) {
                             let obj = {
                                 org_id: orgId,
@@ -181,7 +182,7 @@ console.log('orgType', orgType)
                                 org_name: orgName,
                                 org_complete_name: orgCompleteName,
                                 org_type_id: orgType,
-                                campus_lid:campus_lid
+                                campus_lid: campus_lid
                             }
                             orgJson.push(obj)
                         } else {
@@ -210,6 +211,7 @@ console.log('orgType', orgType)
                         },
                         dataType: 'JSON'
                     }
+
 
                     ajaxApi(ApiObj).then(result => {
                         console.log('Result:::::::::::', result)
@@ -265,6 +267,7 @@ console.log('orgType', orgType)
                         },
                         dataType: 'JSON'
                     }
+                   
 
                     ajaxApi(ApiObj).then(result => {
                         // location.reload()
@@ -326,6 +329,7 @@ console.log('orgType', orgType)
                         },
                         dataType: 'JSON'
                     }
+                    
 
                     ajaxApi(ApiObj).then(result => {
                         formStepNext()
@@ -399,6 +403,8 @@ console.log('orgType', orgType)
                         }
                     })
 
+     
+
                     let ApiObj = {
                         type: 'POST',
                         url: '/management/rooms',
@@ -461,6 +467,7 @@ console.log('orgType', orgType)
                         },
                         dataType: 'JSON'
                     }
+
 
                     ajaxApi(ApiObj).then(result => {
                         formStepNext()

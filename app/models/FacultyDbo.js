@@ -113,4 +113,13 @@ module.exports = class FacultyDbo {
                 INNER JOIN [dbo].organizations org ON org.id =  fs.org_lid ORDER BY fs.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
+
+    static fetchFacultyFromSap(inputJSON, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), inputJSON)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[${slug}].[sp_insert_faculty_wsdl]')
+        })
+    }
 }

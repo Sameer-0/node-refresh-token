@@ -6,13 +6,19 @@ const {
 
 const Holidays = require('../../../models/Holidays')
 const HolidayType = require('../../../models/HolidayTypes')
+const AcadYear = require('../../../models/AcademicYear')
+const path = require("path");
+var soap = require("soap");
+
 module.exports = {
+
     getPage: (req, res) => {
-        Promise.all([Holidays.fetchAll(10, res.locals.slug), HolidayType.fetchAll(100), Holidays.getCount(res.locals.slug)]).then(result => {
+        Promise.all([Holidays.fetchAll(10, res.locals.slug), HolidayType.fetchAll(100), Holidays.getCount(res.locals.slug), AcadYear.fetchAll()]).then(result => {
             res.render('admin/holidays/index', {
                 holidayList: result[0].recordset,
                 holidayType: result[1].recordset,
-                pageCount: result[2].recordset[0].count
+                pageCount: result[2].recordset[0].count,
+                acadYear: result[3].recordset[0].input_acad_year,
             })
         })
     },
@@ -138,6 +144,52 @@ module.exports = {
             console.log(error)
             throw error
         })
+    },
+
+    fetchFromSAP: async (req, res, next) => {
+        let {acadYear} = req.body;
+        var wsdlUrl = path.join(
+            process.env.WSDL_PATH,
+            "zhr_holiday_date_jp_bin_sep_20211129.wsdl"
+          );
+          console.log('wsdlUrl::::::::::::::::', wsdlUrl)    
+
+          let soapClient = await new Promise(resolve => {
+            soap.createClient(wsdlUrl, async function (err, soapClient) {
+              if (err) {
+                next(err);
+              }
+              resolve(soapClient);
+            })
+          })  
+
+          console.log('soapClient:::::::::::::::::>>>',soapClient)
+
+          let holidayList = await new Promise(async resolve => {
+            await soapClient.ZhrHolidayDateJp({
+                Acadyear: "2018",
+                Campusid: "00004533",
+                Schoolobjectid: "00004533",
+              },
+              async function (err, result) {
+                let output = await result;
+                console.log('output::::::::::::::>>>',output)
+                resolve(1);
+              });
+          })
+
+        //   Holidays.fetchHolidaySap(JSON.stringify(holidayList), res.locals.slug).then(data => {
+        //     console.log('Data>>> ', data)
+        //     res.status(200).json({
+        //       data: courseWorkloadList
+        //     });
+        //   }).catch(err => {
+        //     console.log(err)
+        //   });
+
+        res.status(200).json({
+              data: holidayList
+            });
     }
 
 

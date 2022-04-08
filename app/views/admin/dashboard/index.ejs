@@ -3,6 +3,10 @@
 <!-- PAGE LEVEL CSSS START -->
 
 <!-- PAGE LEVEL CSSS END -->
+
+<%- include ('../partials/leftSidebar') %> 
+<%- include ('../partials/header') %>
+
 <style>
     .stage:nth-child(-n + <%- currentFormStep-1 %>) {
         background: #3cc58c;
@@ -24,8 +28,6 @@
         border-left: 25px solid #ffc800;
     }
 </style>
-<%- include ('../partials/leftSidebar') %> 
-<%- include ('../partials/header') %>
 
 <!-- MAIN-CONTENT -->
 <div class="main-content">
@@ -48,38 +50,105 @@
 
 <script src="/js/adminDashboardscript.js"></script>
 
-
-
 <script>
 
     $(document).ready(function(){
+
       
         let currentFormStep = `<%- currentFormStep %>`;
         
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
+
         $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
             'active-form');
 
             function formStepNext() {
             currentFormStep++;
             console.log('clicked!!')
-            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
-                'submitted');
-            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass(
-                'active');
-
+            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass('submitted');
+            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass('active');
 
             $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
-            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
-                'active-form');
+            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
                 console.log(currentFormStep);
         }
 
-        $('#next-step').on('click',function(){
+        $('#next-step').on('click', function(){
+            console.log('yello');
             formStepNext()
         })
   
     })
+
+    $("#next-step").on('click', function () {
+                console.log('Click::::>>')
+
+                if (currentFormStep == 1) {
+
+                    let dayElems = $('#add-more-days-table tbody tr');
+                    let dayCount = dayElems.length;
+                    let dayJson = [];
+                   dayElems.each(function (index, elem) {
+
+                        let dayId = $(elem).find(`input[name='orgId']`).val()
+                        let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
+                        let orgName = $(elem).find(`input[name='orgName']`).val()
+                        let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
+                        let orgType = $(elem).find(`datalist[name='orgType']`).val()
+                        let campus_lid = $(elem).find(`datalist[name='orgCampus_lid']`).val()
+
+                        if (index < orgCount - 1) {
+                            let obj = {
+                                org_id: orgId,
+                                org_id_str: orgId,
+                                org_abbr: orgAbbr,
+                                org_name: orgName,
+                                org_complete_name: orgCompleteName,
+                                org_type_id: orgType,
+                                campus_lid:campus_lid
+                            }
+                            orgJson.push(obj)
+                        } else {
+                            let obj = {
+                                org_id: orgId,
+                                org_id_str: orgId,
+                                org_abbr: orgAbbr,
+                                org_name: orgName,
+                                org_complete_name: orgCompleteName,
+                                org_type_id: orgType,
+                                campus_lid:campus_lid
+                            }
+                            orgJson.push(obj)
+                        }
+                    })
+
+
+                    console.log('orgJson::::::::::::::::::::>>>', orgJson)
+
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/management/organizations',
+                        data: {
+                            inputJSON: JSON.stringify(orgJson),
+                            settingName: 'Organization'
+                        },
+                        dataType: 'JSON'
+                    }
+
+                    ajaxApi(ApiObj).then(result => {
+                        console.log('Result:::::::::::', result)
+                        //   location.reload()
+
+                        formStepNext()
+                        
+                    }).catch(error => {
+                        console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
+                        showError(error.responseJSON)
+                    })
+
+
+                }
+            })
  
  
 </script>
