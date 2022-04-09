@@ -12,7 +12,7 @@ module.exports = {
     getPage: (req, res) => {
 
         Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(1000)]).then(result => {
-            console.log(result[2].recordset);
+
             res.render('admin/faculty/index', {
                 facultyList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
