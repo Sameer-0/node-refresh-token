@@ -92,8 +92,8 @@
             //remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
                 $("#selectedList table tbody").append(
-                    `<tr>
-                        <td>${$(this).text()}</td>
+                    `<tr data-clickable="true">
+                        <td data-value="${$(this).text()}">${$(this).text()}</td>
                         <td>
                             <select class="select2">${optionStartTime}</select>
                         </td>
@@ -105,6 +105,9 @@
                         </td>
                         <td>
                             <select class="select2">${endDate}</select>
+                        </td>
+                        <td>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
                         </td>
                     </tr>
                     `
@@ -123,15 +126,15 @@
 
         $("#selectedList").on('click', '.clicktoremove', function () {
 
-            if ($(this).parent().attr('data-clickable') == 'true') {
-                $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().attr("data-faculty-name")} 
+            if ($(this).parent().parent().attr('data-clickable') == 'true') {
+                $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
         </li>`)
             }
 
             $(this).parent().attr('data-clickable', 'false')
 
             $($(this)).fadeOut(300, function () {
-                $($(this).parent()).remove()
+                $($(this).parent().parent()).remove()
             })
         })
 
@@ -154,14 +157,13 @@
 
         //search selected faculty
 
-        $('#searchSelectedFaculty').on('input', function () {
-            let selectedItems = $('#selectedList li')
-            var text = $('#searchSelectedFaculty').val().toLowerCase();
+        $('#searchSelectedItem').on('input', function () {
+            let selectedItems = $('#selectedList table tbody tr')
+            var text = $('#searchSelectedItem').val().toLowerCase();
             console.log('text:::::::::', selectedItems)
             for (let item of selectedItems) {
                 console.log('faculty:::::::::', item)
                 if (item.textContent.toLowerCase().indexOf(text) > -1) {
-
                     $(item).removeClass("d-none");
                 } else {
                     $(item).addClass("d-none");
@@ -247,6 +249,7 @@
         $('.select2').select2({
             dropdownParent: $('#open-room-modal')
         });
+       
 
     })
 </script>

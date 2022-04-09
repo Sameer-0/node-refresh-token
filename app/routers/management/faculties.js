@@ -22,6 +22,7 @@ router.delete('/faculties', faculties.delete)
 router.patch('/faculties', faculties.deleteAll)
 router.post('/faculties/processing', faculties.processing)
 router.get('/faculties/GetAll', faculties.GetAll)
+router.post('/faculties/fetchformsap', faculties.fetchFromSAP)
 
 // FACULTY TYPES ROUTER
 router.get('/faculties/types', types.getPage)

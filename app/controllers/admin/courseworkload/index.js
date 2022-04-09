@@ -30,9 +30,13 @@ module.exports = {
       acadSessionLid
     } = req.body;
 
-    acadSessionLid ? (acadSessionLid = acadSessionLid) : (acadSessionLid = "");
-    programLid ? (programLid = programLid) : (programLid = "");
-
+    if(!acadSessionLid) {
+      acadSessionLid = "";
+    }
+    if(!programLid) {
+      programLid = "";
+    }
+    
     var wsdlUrl = path.join(
       process.env.WSDL_PATH,
       "zacad_student_workload_seh.wsdl"
@@ -64,7 +68,9 @@ module.exports = {
         });
     })
 
-    CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), res.locals.slug).then(data => {
+    console.log(courseWorkloadList)
+
+    CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
 
       console.log('Data>>> ', data)
 

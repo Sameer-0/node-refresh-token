@@ -145,7 +145,7 @@ module.exports = {
             // console.log(">>>>> userData.recordset[0].f_name : ", userData.recordset[0].f_name)
             // console.log(">>>>> userData.recordset[0].l_name : ", userData.recordset[0].l_name)
             // console.log(">>>>> userData.recordset[0].email : ", userData.recordset[0].email)
-            req.session.userid = userData.recordset[0].id;
+            req.session.userId = userData.recordset[0].id;
             req.session.username = userData.recordset[0].username;
             req.session.firstName = userData.recordset[0].f_name;
             req.session.lastName = userData.recordset[0].l_name;
@@ -164,11 +164,7 @@ module.exports = {
             req.session.modules = userDataSet[0].recordset;
 
             console.log('device:::::::::::>>', req.device.type.toUpperCase())
-
-
             console.log('is_trusted::::::::::::::::::>>>', req.body.is_trusted)
-
-            
 
             // IF CHECKED WITH DEVICE TRUSTED
             if (req.body.is_trusted == "on") {

@@ -63,9 +63,9 @@
             <div>
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-faculty-modal"><i
                         class="fas fa-plus"></i></button>
-                <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
+                <!-- <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
+                        width="26px" height="32px"></button> -->
             </div>
         </div>
 
@@ -77,8 +77,7 @@
                     <th>Sr.No.</th>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
-                    <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-faculties"></th>
+
                 </thead>
                 <tbody>
                     <% let count = 1%>
@@ -87,8 +86,6 @@
                         <td><%- count++ %></td>
                         <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
                         <td><%- faculty.faculty_name %></td>
-                        <td><%- faculty.id %></td>
-                        <td><%- faculty.id %></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -330,16 +327,17 @@
         //search feature delay function is writter in script.js file which is located in public/js/script.js
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
+            console.log('keyword:::::::::::::::::',keyword)
             $.ajax({
                 type: "GET",
-                url: "/management/faculties/search",
-                data: {
-                    keyword: keyword
-                },
-                success: function (data) {
-                    showAjaxTable(data.data) // Facilty List
-                }
-            })
+            url: "/admin/faculties/search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                showAjaxTable(data.data) // Facilty List
+            }
+        })
         }, 500));
 
 
@@ -365,49 +363,32 @@
         }
 
         function showAjaxTable(facultiesList) {
-            let AjaxTable = `<table class="table custom_row" id="holidayTable">
+            let AjaxTable = `<table class="table custom_row" id="facultyTable">
                 <thead>
+                    <th>Sr.No.</th>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Campus</th>
-                    <th>Organization</th>
-                    <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-faculties"></th>
                 </thead>
-                    <tbody>`;
+                <tbody>`;
 
             if (facultiesList.length > 0) {
-                for (building of facultiesList) {
+                let count  = 1;
+                for (faculty of facultiesList) {
                     AjaxTable +=
                         `<tr>
-                            <td>${building.building_name}</td>
-                            <td>${building.building_number}</td>
-                            <td>${building.total_floors}</td>
-                            <td>${building.owner}</td>
-                            <td>${building.handled_by}</td>
-                            <td>${building.start_time}</td>
-                            <td>${building.end_time}</td>
-                            <td>${building.campus_abbr}</td>
-                            <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                    data-building-id="${building.building_id}" ></i>
-                            </td>
-                            <td>
-                            <input type="checkbox" data-building-id="${building.building_id}" 
-                                class="delete-building">
-                        </td>
-                        </tr>`
+                        <td>${count++}</td>
+                        <td data-faculty-id="${faculty.id}">${faculty.faculty_id}</td>
+                        <td>${faculty.faculty_name}</td>
+                    </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="9">No Data Found</td>
+                                <td colspan="3">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
-            $("#buildingTable").html(AjaxTable);
+            $("#facultyTable").html(AjaxTable);
 
         }
 
