@@ -30,9 +30,13 @@ module.exports = {
       acadSessionLid
     } = req.body;
 
-    acadSessionLid ? (acadSessionLid = acadSessionLid) : (acadSessionLid = "");
-    programLid ? (programLid = programLid) : (programLid = "");
-
+    if(!acadSessionLid) {
+      acadSessionLid = "";
+    }
+    if(!programLid) {
+      programLid = "";
+    }
+    
     var wsdlUrl = path.join(
       process.env.WSDL_PATH,
       "zacad_student_workload_seh.wsdl"
