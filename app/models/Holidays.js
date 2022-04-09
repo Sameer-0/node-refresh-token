@@ -27,6 +27,7 @@ module.exports = class {
                 .execute(`[${slug}].[sp_create_new_holidays]`)
         })
     }
+    
 
     static findOne(id, slug) {
         return poolConnection.then(pool => {
