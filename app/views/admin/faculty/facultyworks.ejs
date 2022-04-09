@@ -148,79 +148,82 @@
 
 
 
-    <%- include("../partials/footer") %>
-<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-                                        
-<script>
-                                            $(document).ready(function () {
-
-$('.select2').select2({
-        dropdownParent: $('#add-facultywork-modal')});
-
-                                                //Add more rows for FacultyWorks
-                                                $('#add-more-facultyworkfields').on('click', function () {
-                                                    console.log("Adding faculty work fields::::")
-                                                    let lastTr = $(
-                                                        '#add-more-facultywork-table tbody tr:last-child'
-                                                    )
-
-                                                    let faculty_lid = lastTr.find(
-                                                        `select[name='faculty_lid']`).val();
-                                                    let program_session_lid = lastTr.find(
-                                                        `select[name='program_session_lid']`).val();
-                                                    let module_lid = lastTr.find(
-                                                        `select[name='module_lid']`).val();
-                                                    let lecture_per_week = lastTr.find(
-                                                        `select[name='lecture_per_week']`).val();
-                                                    let practical_per_week = lastTr.find(
-                                                        `select[name='practical_per_week']`).val();
-                                                    let tutorial_per_week = lastTr.find(
-                                                        `select[name='tutorial_per_week']`).val();
-                                                    let workshop_per_week = lastTr.find(
-                                                        `select[name='workshop_per_week']`).val();
-                                                    let is_batch_preference_set = lastTr.find(
-                                                            `select[name='is_batch_preference_set']`)
-                                                        .val();
-                                                    let clonedTr = lastTr.clone();
-                                                    console.log(lastTr.find(`select[name='module_lid']`)
-                                                        .val())
-                                                    console.log('faculty_lid::::::::::', module_lid)
-
-                                                    clonedTr.find(`select[name='faculty_lid']`).val(
-                                                        faculty_lid).trigger('change')
-                                                    clonedTr.find(`select[name='program_session_lid']`)
-                                                        .val(program_session_lid).trigger('change')
-                                                    clonedTr.find(`select[name='module_lid']`).val(
-                                                        module_lid).trigger('change')
-                                                    clonedTr.find(`select[name='lecture_per_week']`)
-                                                        .val('')
-                                                    clonedTr.find(`select[name='practical_per_week']`)
-                                                        .val('')
-                                                    clonedTr.find(`select[name='tutorial_per_week']`)
-                                                        .val('')
-                                                    clonedTr.find(`select[name='workshop_per_week']`)
-                                                        .val('')
-                                                    clonedTr.find(
-                                                            `select[name='is_batch_preference_set']`)
-                                                        .val(is_batch_preference_set).trigger('change')
-                                                    $('#add-more-facultywork-table tbody').append(
-                                                        clonedTr)
-                                                })
-
-
-                                                $('#add-more-facultywork-table').on('click',
-                                                    '.remove-facultyworkfield',
-                                                    function () {
-                                                        let trLength = $(
-                                                                '#add-more-facultywork-table tbody tr')
-                                                            .length;
-                                                        if (trLength > 1) {
-                                                            $(this).closest('tr').remove()
-                                                        } else {
-                                                            alert('Cannot delete this room.')
-                                                        }
-                                                    })
-
-                                            })
+<%- include("../partials/footer") %>
+<script
+src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
 </script>
-                                        <%- include("../partials/footerEnd") %>
+
+<script>
+$(document).ready(function () {
+
+    $('.select2').select2({
+        dropdownParent: $('#add-facultywork-modal')
+    });
+
+    //Add more rows for FacultyWorks
+    $('#add-more-facultyworkfields').on('click', function () {
+        console.log("Adding faculty work fields::::")
+        let lastTr = $(
+            '#add-more-facultywork-table tbody tr:last-child'
+        )
+
+        let faculty_lid = lastTr.find(
+            `select[name='faculty_lid']`).val();
+        let program_session_lid = lastTr.find(
+            `select[name='program_session_lid']`).val();
+        let module_lid = lastTr.find(
+            `select[name='module_lid']`).val();
+        let lecture_per_week = lastTr.find(
+            `select[name='lecture_per_week']`).val();
+        let practical_per_week = lastTr.find(
+            `select[name='practical_per_week']`).val();
+        let tutorial_per_week = lastTr.find(
+            `select[name='tutorial_per_week']`).val();
+        let workshop_per_week = lastTr.find(
+            `select[name='workshop_per_week']`).val();
+        let is_batch_preference_set = lastTr.find(
+                `select[name='is_batch_preference_set']`)
+            .val();
+        let clonedTr = lastTr.clone();
+        console.log(lastTr.find(`select[name='module_lid']`)
+            .val())
+        console.log('faculty_lid::::::::::', module_lid)
+
+        clonedTr.find(`select[name='faculty_lid']`).val(
+            faculty_lid).trigger('change')
+        clonedTr.find(`select[name='program_session_lid']`)
+            .val(program_session_lid).trigger('change')
+        clonedTr.find(`select[name='module_lid']`).val(
+            module_lid).trigger('change')
+        clonedTr.find(`select[name='lecture_per_week']`)
+            .val('')
+        clonedTr.find(`select[name='practical_per_week']`)
+            .val('')
+        clonedTr.find(`select[name='tutorial_per_week']`)
+            .val('')
+        clonedTr.find(`select[name='workshop_per_week']`)
+            .val('')
+        clonedTr.find(
+                `select[name='is_batch_preference_set']`)
+            .val(is_batch_preference_set).trigger('change')
+        $('#add-more-facultywork-table tbody').append(
+            clonedTr)
+    })
+
+
+    $('#add-more-facultywork-table').on('click',
+        '.remove-facultyworkfield',
+        function () {
+            let trLength = $(
+                    '#add-more-facultywork-table tbody tr')
+                .length;
+            if (trLength > 1) {
+                $(this).closest('tr').remove()
+            } else {
+                alert('Cannot delete this room.')
+            }
+        })
+
+})
+</script>
+<%- include("../partials/footerEnd") %>
