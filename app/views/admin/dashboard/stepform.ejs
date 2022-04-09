@@ -163,6 +163,48 @@
                                     <h4 class="text-center py-1 select-room-header">Select Rooms</h4>
                                     <input type="text" name="" id="searchItem" placeholder="Search Room"
                                         class="form-control searchItemRoom">
+                                        <div style="margin-top: 100px;">
+                                        <div class="col-md-12">
+                                            <label>Campus</label>
+                    
+                                            <select name="campus_lid" id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let campus of campusList) { %>
+                                                    <option value="<%- campus.id %>">
+                                                        <%- campus.campus_abbr %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                    
+                                        <div class="col-md-12">
+                                            <label>Building</label>
+                    
+                                            <select name="building_lid"  id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let building of buildingList) { %>
+                                                    <option value="<%- building.building_id %>">
+                                                        <%- building.building_name %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                            
+                                        </div>
+                    
+                                        <div class="col-md-12">
+                                            <label>Organization</label>
+                    
+                                            <select name="handled_by" id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let org of orgList) { %>
+                                                    <option value="<%- org.id %>">
+                                                        <%- org.org_abbr %>/<%- org.org_id %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <ul class="list-group custom-select-list" id="selectList">
                                         <% for (let room of RoomList){ %>
                                         <li class="list-group-item" data-clickable="true"><%- room.room_number%></li>
@@ -176,7 +218,7 @@
                                         <div class="row selected-room-filter">
 
                                             <div class="col-md-4">
-                                                <label>Campuses</label>
+                                                <label>Book for Campus</label>
                         
                                                 <select name="campus_lid" id="campus_lid" class="select2">
                                                     <option>--select--</option>
@@ -189,7 +231,7 @@
                                             </div>
                         
                                             <div class="col-md-4">
-                                                <label>Building</label>
+                                                <label>Book for building</label>
                         
                                                 <select name="building_lid"  id="building_lid" class="select2">
                                                     <option>--select--</option>
@@ -203,7 +245,7 @@
                                             </div>
                         
                                             <div class="col-md-4">
-                                                <label>Handled By</label>
+                                                <label>Book for Organization</label>
                         
                                                 <select name="handled_by" id="handled_by" class="select2">
                                                     <option>--select--</option>
@@ -225,6 +267,7 @@
                                                 <th>end Time</th>
                                                 <th>start Date</th>
                                                 <th>end Date</th>
+                                                <th>Action</th>
                                             </thead>
                                             <tbody>
 
