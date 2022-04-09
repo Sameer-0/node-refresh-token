@@ -62,8 +62,6 @@ let isSearchableListShowing = false;
       let customDataList = document.querySelector('.custom-datalist');
 
       document.addEventListener('click', function (e) {
-       // console.log('targetttttt::', e.target)
-
         if (isSearchableListShowing === true && (e.target.getAttribute('data-is-visible') == "false" || !e
             .target.getAttribute('data-is-visible'))) {
           console.log('Executing the first block')

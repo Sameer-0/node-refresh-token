@@ -164,11 +164,7 @@ module.exports = {
             req.session.modules = userDataSet[0].recordset;
 
             console.log('device:::::::::::>>', req.device.type.toUpperCase())
-
-
             console.log('is_trusted::::::::::::::::::>>>', req.body.is_trusted)
-
-            
 
             // IF CHECKED WITH DEVICE TRUSTED
             if (req.body.is_trusted == "on") {

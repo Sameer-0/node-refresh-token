@@ -14,7 +14,7 @@
         <div class="arrow-pointer stage pending my-1" data-step="10"> Weekly Constraint</div>
         <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty </div>
         <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Preference</div>
-       
+
     </div>
 
     <div class="step-form-body pt-3">
@@ -68,101 +68,79 @@
         </form>
 
         <!-- Room -->
-        <form action="/admin/room" method="post" class="step d-none" id="room-form" data-step="2">
-            <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
-                <div>
-                    <h5 class="modal-title text-white" id="add-room-modal-title">Import Rooms</h5>
-                </div>
-                <div>
-                    <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-room-modal"><i
-                            class="fas fa-plus"></i></button>
-                    <!-- <button class="btn ms-auto delete-room add-btn "><i class="fas fa-trash"></i></button> -->
-                    <!-- <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
-                            width="26px" height="32px"></button> -->
-                </div>
+
+        <!-- <form action="/admin/room" method="post" class="step d-none" id="room-form" data-step="2"> -->
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5 class="modal-title text-white" id="add-room-modal-title">Import Rooms</h5>
             </div>
-            <div id="errorHtml" class="error-show pt-3"></div>
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <div class="row mt-4">
-
-                    <div class="col-md-4">
-                        <label>Building</label>
-                        <select class="form-select" name="building_lid" id="building_lid" required>
-                            <%for (let list of buildingList){%>
-                            <option><%- list.building_name %></option>
-                            <%}%>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label>Handled By</label>
-                        <select class="form-select modalSelect2" name="handled_by" id="handled_by" required>
-                            <%for (let list of orgList){%>
-                                <option><%- list.org_name %></option>
-                                <%}%>
-                        </select>
-                    </div>
-
-                </div>
+            <div>
+                <button class="add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-room-modal"><i
+                        class="fas fa-plus"></i></button>
+            </div>
+        </div>
+        <div id="errorHtml" class="error-show pt-3"></div>
+        <div class="modal-body">
+            <div id="errorHtml"></div>
+            
 
                 <input type="hidden" id="roomId" name="roomId">
                 <div class="table-responsive">
                     <table class="table " id="add-more-room-table">
                         <thead>
                             <th>Room No</th>
-                    <th>Building</th>
-                    <th>Type</th>
-                    <th>Floor</th>
-                    <th>Capacity</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Is Basement</th>
-                    <th>Handled By</th>
-                    <th>UUID</th>
-                    <th>Is Processed</th>
-                    <th>Action</th>
-                    <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
+                            <th>Building</th>
+                            <th>Type</th>
+                            <th>Floor</th>
+                            <th>Capacity</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Is Basement</th>
+                            <th>Handled By</th>
+                            <th>UUID</th>
+                            <th>Is Processed</th>
+                            <th>Action</th>
+                            <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
                         </thead>
                         <tbody>
                             <% for (let room of RoomList) { %>
-                                <tr>
-                                    <td><%- room.room_number %></td>
-                                    <td><%- room.building_name %></td>
-                                    <td><%- room.room_type %></td>
-                                    <td><%- room.floor_number %></td>
-                                    <td><%- room.capacity %></td>
-                                    <td><%- room.start_time %></td>
-                                    <td><%- room.end_time %></td>
-                                    <td><%- room.is_basement ? 'Yes' : 'No' %></td>
-                                    <td><%- room.handled_by %></td>
-                                    <td></td>
-                                    <td>
-                                        <% if(room.is_processed == "1") {%>
-                                        <div class="form-check form-switch switch-checkbox">
-                                            <input class="form-check-input " type="checkbox" role="switch"
-                                                id="flexSwitchCheckChecked" disabled checked>
-            
-                                        </div>
-                                        <%}else{%>
-                                        <div class="form-check form-switch switch-checkbox">
-                                            <input class="form-check-input is_processed_click" type="checkbox" role="switch"
-                                                data-is-processed="<%-room.is_processed%>" data-room-id="<%- room.roomid %>">
-                                        </div>
-                                        <%}%>  
+                        <tr>
+                            <td><%- room.room_number %></td>
+                            <td><%- room.building_name %></td>
+                            <td><%- room.room_type %></td>
+                            <td><%- room.floor_number %></td>
+                            <td><%- room.capacity %></td>
+                            <td><%- room.start_time %></td>
+                            <td><%- room.end_time %></td>
+                            <td><%- room.is_basement ? 'Yes' : 'No' %></td>
+                            <td><%- room.handled_by %></td>
+                            <td></td>
+                            <td>
+                                <% if(room.is_processed == "1") {%>
+                                <div class="form-check form-switch switch-checkbox">
+                                    <input class="form-check-input " type="checkbox" role="switch"
+                                        id="flexSwitchCheckChecked" disabled checked>
+
+                                </div>
+                                <%}else{%>
+                                <div class="form-check form-switch switch-checkbox">
+                                    <input class="form-check-input is_processed_click" type="checkbox" role="switch"
+                                        data-is-processed="<%-room.is_processed%>" data-room-id="<%- room.roomid %>">
+                                </div>
+                                <%}%>  
                                     </td>
                                     <td>
                                         <i class="fas fa-edit text-dark cursor-pointer edit-room"
                                             data-room-id="<%- room.roomid %>"></i>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" data-room-id="<%- room.roomid %>" class="delete-rooms">
-                                    </td>
-                                </tr>
-            
-                                <% } %>
+                            </td>
+                            <td>
+                                <input type="checkbox" data-room-id="<%- room.roomid %>" class="delete-rooms">
+                            </td>
+                        </tr>
+
+                        <% } %>
                         </tbody>
-                    </table>
+                        </table>
                 </div>
 
             </div>
@@ -170,7 +148,7 @@
             <!-- Modal -->
             <div class="modal fade" id="open-room-modal" tabindex="-1" aria-labelledby="open-room-modal"
                 aria-hidden="true">
-                <div class="modal-dialog modal-fullscreen modal-lg">
+                <div class="modal-dialog modal-fullscreen">
                     <div class="modal-content modal-inputform">
                         <div class="modal-header modal-inputform-header">
                             <h3 class="modal-title" id="open-room-modal-title">Import Room</h3>
@@ -181,325 +159,450 @@
                         <div class="modal-body py-0">
 
                             <div class="row">
-                                <div class="col-md-6 select-items">
-                                    <h4 class="text-center py-1">Select Rooms</h4>
-                                    <input type="text" name="" id="searchItem" placeholder="Search Room" class="form-control">
+                                <div class="col-md-3 col-xxl-3 select-items">
+                                    <h4 class="text-center py-1 select-room-header">Select Rooms</h4>
+                                    <input type="text" name="" id="searchItem" placeholder="Search Room"
+                                        class="form-control searchItemRoom">
+                                        <div style="margin-top: 100px;">
+                                        <div class="col-md-12">
+                                            <label>Campus</label>
+                    
+                                            <select name="campus_lid" id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let campus of campusList) { %>
+                                                    <option value="<%- campus.id %>">
+                                                        <%- campus.campus_abbr %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                    
+                                        <div class="col-md-12">
+                                            <label>Building</label>
+                    
+                                            <select name="building_lid"  id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let building of buildingList) { %>
+                                                    <option value="<%- building.building_id %>">
+                                                        <%- building.building_name %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                            
+                                        </div>
+                    
+                                        <div class="col-md-12">
+                                            <label>Organization</label>
+                    
+                                            <select name="handled_by" id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let org of orgList) { %>
+                                                    <option value="<%- org.id %>">
+                                                        <%- org.org_abbr %>/<%- org.org_id %>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <ul class="list-group custom-select-list" id="selectList">
                                         <% for (let room of RoomList){ %>
-                                            <li class="list-group-item" data-clickable="true"><%- room.room_number%></li>
-                                            <% }%>
+                                        <li class="list-group-item" data-clickable="true"><%- room.room_number%></li>
+                                        <% }%>
                                     </ul>
                                 </div>
-                                <div class="col-md-6 selected-items">
-                                    <h4 class="text-center py-1">Selected Rooms</h4>
-                                    <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty" class="form-control">
-                                    <ul class="list-group custom-select-list" id="selectedList">
+                                <div class="col-md-9 col-xxl-9 selected-items">
+                                    <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Rooms</h4>
+                                    <input type="text" name="" id="searchSelectedItem"
+                                        placeholder="Search Selected Faculty" class="form-control searchSelectedRoom">
+                                        <div class="row selected-room-filter">
 
+                                            <div class="col-md-4">
+                                                <label>Book for Campus</label>
+                        
+                                                <select name="campus_lid" id="campus_lid" class="select2">
+                                                    <option>--select--</option>
+                                                    <% for(let campus of campusList) { %>
+                                                        <option value="<%- campus.id %>">
+                                                            <%- campus.campus_abbr %>
+                                                        </option>
+                                                        <% } %>
+                                                </select>
+                                            </div>
+                        
+                                            <div class="col-md-4">
+                                                <label>Book for building</label>
+                        
+                                                <select name="building_lid"  id="building_lid" class="select2">
+                                                    <option>--select--</option>
+                                                    <% for(let building of buildingList) { %>
+                                                        <option value="<%- building.building_id %>">
+                                                            <%- building.building_name %>
+                                                        </option>
+                                                        <% } %>
+                                                </select>
+                                                
+                                            </div>
+                        
+                                            <div class="col-md-4">
+                                                <label>Book for Organization</label>
+                        
+                                                <select name="handled_by" id="handled_by" class="select2">
+                                                    <option>--select--</option>
+                                                    <% for(let org of orgList) { %>
+                                                        <option value="<%- org.id %>">
+                                                            <%- org.org_abbr %>/<%- org.org_id %>
+                                                        </option>
+                                                        <% } %>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                    <ul class="list-group custom-select-list" id="selectedList">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <th>room</th>
+                                                <th>start Time</th>
+                                                <th>end Time</th>
+                                                <th>start Date</th>
+                                                <th>end Date</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
                                     </ul>
 
                                 </div>
 
                             </div>
                         </div>
-                        <div class="px-3" id="errorHtml"></div>
+
                         <div class="modal-footer">
-                            <button type="submit" class="btn  createFaculty modal-inputform-btn">Create Faculty</button>
+                            <button type="submit" class="btn  createFaculty modal-inputform-btn">Import Room</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
+            <!-- </form> -->
 
-        <!-- Course Workload -->
-        <form action="/admin/courseworkload" method="post" class="step d-none" id="courseWorkload-form" data-step="3">
 
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
-                <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
-            </div>
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="programId" name="programId">
+            <!-- Course Workload -->
+            <form action="/admin/courseworkload" method="post" class="step d-none" id="courseWorkload-form"
+                data-step="3">
 
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-courseWorkload-table">
-                        <thead>
-                            <th>Module Name</th>
-                            <th>Program Id</th>
-                            <th>Module Id</th>
-                            <th>Elective</th>
-                            <th>Intake</th>
-                            <th>Student per division</th>
-                            <th>Lecture per week per division</th>
-                            <th>Practical per week per division</th>
-                            <th>Tutorial per week per division</th>
-                            <th>Workshop per week per division</th>
-                            <th>Continous</th>
-                            <th>Session events per semester</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="number" name="module_name" id="module_name" class="form-control"
-                                        palceholder="Module Name" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="programId" id="programId" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="moduleId" id="moduleId" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="elective" id="elective" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="intake" id="intake" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="studentPerDivision" id="studentPerDivision" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="lecPerWeekPerDiv" id="lecPerWeekPerDiv" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="pracPerWeekPerDiv" id="pracPerWeekPerDiv" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="tutPerWeekPerDiv" id="tutPerWeekPerDiv" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="workshopPerWeekPerDiv" id="workshopPerWeekPerDiv" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="continous" id="continous" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="sessionWeekPerSem" id="sessionWeekPerSem" class="form-control" required>
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-courseWorkload"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="modal-header table-card-header">
+                    <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
+                    <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From
+                        SAP</button>
                 </div>
-            </div>
-        </form>
+                <div class="modal-body">
+                    <div id="errorHtml"></div>
+                    <input type="hidden" id="programId" name="programId">
 
-        <!--Program -->
-        <form action="/admin/program" method="post" class="step d-none" id="program-form" data-step="4">
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-program-modal-title">Add New Program</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-program"><i class="fas fa-plus"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="programId" name="programId">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-program-table">
-                        <thead>
-                            <th>Porgram Id</th>
-                            <th>Program Name</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="number" name="programId" id="programId" class="form-control" palceholder="Program Id" required>
-                                </td>
-
-                                <td>
-                                    <input type="text" name="programName" id="programName" class="form-control" required>
-                                </td>
-
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-program"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="add-more-courseWorkload-table">
+                            <thead>
+                                <th>Module Name</th>
+                                <th>Program Id</th>
+                                <th>Module Id</th>
+                                <th>Elective</th>
+                                <th>Intake</th>
+                                <th>Student per division</th>
+                                <th>Lecture per week per division</th>
+                                <th>Practical per week per division</th>
+                                <th>Tutorial per week per division</th>
+                                <th>Workshop per week per division</th>
+                                <th>Continous</th>
+                                <th>Session events per semester</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="number" name="module_name" id="module_name" class="form-control"
+                                            palceholder="Module Name" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="programId" id="programId" class="form-control"
+                                            required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="moduleId" id="moduleId" class="form-control"
+                                            required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="elective" id="elective" class="form-control"
+                                            required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="intake" id="intake" class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="studentPerDivision" id="studentPerDivision"
+                                            class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="lecPerWeekPerDiv" id="lecPerWeekPerDiv"
+                                            class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="pracPerWeekPerDiv" id="pracPerWeekPerDiv"
+                                            class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="tutPerWeekPerDiv" id="tutPerWeekPerDiv"
+                                            class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="workshopPerWeekPerDiv" id="workshopPerWeekPerDiv"
+                                            class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="continous" id="continous" class="form-control"
+                                            required>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="sessionWeekPerSem" id="sessionWeekPerSem"
+                                            class="form-control" required>
+                                    </td>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i
+                                            class="fas fa-trash-alt text-danger cursor-pointer remove-courseWorkload"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
 
-        <!-- Session date -->
-        <form action="/admin/sessiondate" method="post" class="step d-none" id="sessionDate-form" data-step="5">
-
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-sessionDate-modal-title">Add Session Date</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-sessionDate"><i class="fas fa-plus"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="sessionDate" name="sessionDate">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-sessionDate-table">
-                        <thead>
-                            <th>Acad Session</th>
-                            <th>Action</th>
-
-                        </thead>
-                        <tbody>
-                            <tr> 
-                                <td>
-                                    <input type="number" name="acadSession" id="acadSession" class="form-control"
-                                        palceholder="Acad Session" required>
-                                </td>
-
-
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-session"></i>
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    </table>
+            <!--Program -->
+            <form action="/admin/program" method="post" class="step d-none" id="program-form" data-step="4">
+                <div class="modal-header table-card-header">
+                    <h5 class="modal-title" id="add-program-modal-title">Add New Program</h5>
+                    <button type="button" class="btn add-btn btn-sm" id="add-more-program"><i class="fas fa-plus"></i>
+                    </button>
                 </div>
-            </div>
-        </form>
+                <div class="modal-body">
+                    <div id="errorHtml"></div>
+                    <input type="hidden" id="programId" name="programId">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="add-more-program-table">
+                            <thead>
+                                <th>Porgram Id</th>
+                                <th>Program Name</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="number" name="programId" id="programId" class="form-control"
+                                            palceholder="Program Id" required>
+                                    </td>
 
-        <!-- Session Type -->
-        <form action="/admin/sessiontype" method="post" class="step d-none" id="sessionType-form" data-step="6">
+                                    <td>
+                                        <input type="text" name="programName" id="programName" class="form-control"
+                                            required>
+                                    </td>
 
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-sessionType-modal-title">Session Type</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-sessionType"><i class="fas fa-plus"></i>
-                </button>
-            </div>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-program"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
 
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="sessionType" name="sessionType">
+            <!-- Session date -->
+            <form action="/admin/sessiondate" method="post" class="step d-none" id="sessionDate-form" data-step="5">
 
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-sessionType-table">
-                        <thead>
-                            <th>Acad Session</t>
+                <div class="modal-header table-card-header">
+                    <h5 class="modal-title" id="add-sessionDate-modal-title">Add Session Date</h5>
+                    <button type="button" class="btn add-btn btn-sm" id="add-more-sessionDate"><i
+                            class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="errorHtml"></div>
+                    <input type="hidden" id="sessionDate" name="sessionDate">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="add-more-sessionDate-table">
+                            <thead>
+                                <th>Acad Session</th>
+                                <th>Action</th>
 
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="text" name="sessionType" id="sessionType" class="form-control"
-                                        palceholder="Session Type" required>
-                                </td>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="number" name="acadSession" id="acadSession" class="form-control"
+                                            palceholder="Acad Session" required>
+                                    </td>
 
 
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-session-type"></i>
-                                </td>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-session"></i>
+                                    </td>
 
-                            </tr>
-                        </tbody>
-                    </table>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Session Type -->
+            <form action="/admin/sessiontype" method="post" class="step d-none" id="sessionType-form" data-step="6">
+
+                <div class="modal-header table-card-header">
+                    <h5 class="modal-title" id="add-sessionType-modal-title">Session Type</h5>
+                    <button type="button" class="btn add-btn btn-sm" id="add-more-sessionType"><i
+                            class="fas fa-plus"></i>
+                    </button>
                 </div>
 
-            </div>
-        </form>
+                <div class="modal-body">
+                    <div id="errorHtml"></div>
+                    <input type="hidden" id="sessionType" name="sessionType">
 
-        <!-- Session date range -->
-        <form action="/admin/sessionrange" method="post" class="step d-none" id="sessionRange-form" data-step="7">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="add-more-sessionType-table">
+                            <thead>
+                                <th>Acad Session</t>
 
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-sessionRange-modal-title">Session types date range</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-sessionRange"><i class="fas fa-plus"></i>
-                </button>
-            </div>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="text" name="sessionType" id="sessionType" class="form-control"
+                                            palceholder="Session Type" required>
+                                    </td>
 
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="sessionRange" name="sessionRange">
 
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-sessionRange-table">
-                        <thead>
-                            <th>Acad Session</th>
-                            <th>Session Range</th>
-                            <th>Session Range</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="text" name="sessionType" id="sessionType" class="form-control"
-                                        palceholder="Session Type" required>
-                                </td>
-                                <td>
-                                    <input type="date" name="sessionRange" id="sessionRange" class="form-control"
-                                        palceholder="Session From" required>
-                                </td>
-                                <td>
-                                    <input type="date" name="sessionRange" id="sessionRange" class="form-control"
-                                        palceholder="Session To" required>
-                                </td>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-session-type"></i>
+                                    </td>
 
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-program"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </form>
+
+            <!-- Session date range -->
+            <form action="/admin/sessionrange" method="post" class="step d-none" id="sessionRange-form" data-step="7">
+
+                <div class="modal-header table-card-header">
+                    <h5 class="modal-title" id="add-sessionRange-modal-title">Session types date range</h5>
+                    <button type="button" class="btn add-btn btn-sm" id="add-more-sessionRange"><i
+                            class="fas fa-plus"></i>
+                    </button>
                 </div>
 
-            </div>
-        </form>
+                <div class="modal-body">
+                    <div id="errorHtml"></div>
+                    <input type="hidden" id="sessionRange" name="sessionRange">
 
-        <!-- Division -->
-        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="8">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="add-more-sessionRange-table">
+                            <thead>
+                                <th>Acad Session</th>
+                                <th>Session Range</th>
+                                <th>Session Range</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="text" name="sessionType" id="sessionType" class="form-control"
+                                            palceholder="Session Type" required>
+                                    </td>
+                                    <td>
+                                        <input type="date" name="sessionRange" id="sessionRange" class="form-control"
+                                            palceholder="Session From" required>
+                                    </td>
+                                    <td>
+                                        <input type="date" name="sessionRange" id="sessionRange" class="form-control"
+                                            palceholder="Session To" required>
+                                    </td>
 
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-division"><i class="fas fa-plus"></i>
-                </button>
-            </div>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-program"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="division" name="division">
+                </div>
+            </form>
 
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-division-table">
-                        <thead>
-                            <th>#</th>
-                            <th>Division</th>
-                            <th>Division no</th>
-                            <th>Division count</th>
-                            <th>Count for theory batch</th>
-                            <th>Count for practical batch</th>
-                            <th>Count for tutorial batch</th>
-                            <th>Count for workshop batch</th>
-                            <th>Module name</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <%let count = 1;%>
-                            <% for(let division of divisionList) {%>
-                            <tr>
-                                <td><%- count++ %></td>
-                                <td><input type="text" class="form-control" value="<%- division.division %>"></td>
-                                <td><input type="text" class="form-control" value="<%- division.division_num %>"></td>
-                                <td><input type="text" class="form-control" value="<%- division.division_count %>"></td>
-                                <td><input type="text" class="form-control" value="<%- division.count_for_theory_batch %>"></td>
-                                <td><input type="text" class="form-control" value="<%- division.count_for_practical_batch %>"></td>
-                                <td><input type="text" class="form-control" value="<%- division.count_for_tutorial_batch %>"></td>
-                                <td><input type="text" class="form-control" value="<%- division.count_for_workshop_batch %>"></td>
-                                <td><%- division.module_name %></td>
-                                <td><label class="switch">
-                                        <input type="checkbox" class="changeStatus" data-id="<%- division.id %>"
-                                            data-status="<%- division.status %>"
-                                            <%- division.status == 'Yes' ? 'Checked' :  ''  %>>
-                                        <span class="switch-slider round"></span>
-                                    </label></td>
-                            </tr>
-                            <%}%>
+            <!-- Division -->
+            <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="8">
+
+                <div class="modal-header table-card-header">
+                    <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
+                    <button type="button" class="btn add-btn btn-sm" id="add-more-division"><i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="errorHtml"></div>
+                    <input type="hidden" id="division" name="division">
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="add-more-division-table">
+                            <thead>
+                                <th>#</th>
+                                <th>Division</th>
+                                <th>Division no</th>
+                                <th>Division count</th>
+                                <th>Count for theory batch</th>
+                                <th>Count for practical batch</th>
+                                <th>Count for tutorial batch</th>
+                                <th>Count for workshop batch</th>
+                                <th>Module name</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <%let count = 1;%>
+                                <% for(let division of divisionList) {%>
+                                <tr>
+                                    <td><%- count++ %></td>
+                                    <td><input type="text" class="form-control" value="<%- division.division %>"></td>
+                                    <td><input type="text" class="form-control" value="<%- division.division_num %>">
+                                    </td>
+                                    <td><input type="text" class="form-control" value="<%- division.division_count %>">
+                                    </td>
+                                    <td><input type="text" class="form-control"
+                                            value="<%- division.count_for_theory_batch %>"></td>
+                                    <td><input type="text" class="form-control"
+                                            value="<%- division.count_for_practical_batch %>"></td>
+                                    <td><input type="text" class="form-control"
+                                            value="<%- division.count_for_tutorial_batch %>"></td>
+                                    <td><input type="text" class="form-control"
+                                            value="<%- division.count_for_workshop_batch %>"></td>
+                                    <td><%- division.module_name %></td>
+                                    <td><label class="switch">
+                                            <input type="checkbox" class="changeStatus" data-id="<%- division.id %>"
+                                                data-status="<%- division.status %>"
+                                                <%- division.status == 'Yes' ? 'Checked' :  ''  %>>
+                                            <span class="switch-slider round"></span>
+                                        </label></td>
+                                </tr>
+                                <%}%>
                         </tbody>
 
                     </table>
