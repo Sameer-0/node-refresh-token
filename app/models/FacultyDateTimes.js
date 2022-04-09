@@ -9,6 +9,7 @@ const {
 const slug = require('../controllers/management/slug');
 
 module.exports = class FacultyDateTimes {
+
     constructor(faculty_id, faculty_name, start_date, end_date, start_time, end_time) {
         this.faculty_id = faculty_id;
         this.faculty_name = faculty_name;
@@ -19,7 +20,6 @@ module.exports = class FacultyDateTimes {
     }
 
     static save(inputJSON, slug, userid) {
-        console.log('req::::::::::::::::>>',inputJSON)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -28,7 +28,6 @@ module.exports = class FacultyDateTimes {
                 .execute(`[${slug}].[sp_add_faculty_date_times]`)
         })
     }
-
 
 
     static fetchAll(rowcount, slug) {

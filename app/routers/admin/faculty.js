@@ -29,6 +29,9 @@ router.get('/faculties/batch', batch.getPage)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
+router.post('/faculties/works', validate('JsonValidator'), works.create)
+router.get('/faculties/works/search', validate('search'), works.search)
+router.post('/faculties/works/pagination', works.pagination)
 
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)

@@ -30,8 +30,6 @@ module.exports = {
             add_faculty_date_times: JSON.parse(req.body.inputJSON)
         }
 
-      
-
         FacultyDateTimes.save(object, res.locals.slug, res.locals.userid).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
@@ -54,7 +52,6 @@ module.exports = {
         //here 10is rowcount
         let rowcount = 10;
         FacultyDateTimes.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
-            console.log('HereLLLLLLLLLLL',result)
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
