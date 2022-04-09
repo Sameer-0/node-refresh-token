@@ -36,7 +36,7 @@ module.exports = {
     if(!programLid) {
       programLid = "";
     }
-    
+
     var wsdlUrl = path.join(
       process.env.WSDL_PATH,
       "zacad_student_workload_seh.wsdl"
@@ -64,15 +64,17 @@ module.exports = {
         },
         async function (err, result) {
           let output = await result;
-          resolve(output.WORKLOAD_DETAILS.item);
+          resolve(output.WORKLOAD_DETAILS ? output.WORKLOAD_DETAILS.item : []);
         });
     })
 
     console.log(courseWorkloadList)
+    
 
     CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
 
       console.log('Data>>> ', data)
+      console.log("acadSessionLif>>> ", acadSessionLid)
 
       res.status(200).json({
         data: courseWorkloadList
