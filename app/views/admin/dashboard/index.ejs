@@ -250,6 +250,33 @@
         });
        
 
+
+        //Fetch course workload form SAP
+        $(".fetchFromSAP").on('click', function () {
+            let acadYear = $("#acadYear").val()
+            let programLid = $("#programLid").val()
+            let acadSessionLid = $("#acadSessionLid").val()
+            console.log('Cllicke', acadYear, programLid, acadSessionLid)
+            let ApiObj = {
+                url: '/admin/courseworkload',
+                type: 'POST',
+                data: {
+                    acadYear: acadYear,
+                    programLid: programLid,
+                    acadSessionLid: acadSessionLid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('Response ::::::::::::::::::::::', result.data)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                // showError(error.responseJSON)
+            })
+        })
+
+
     })
 </script>
 

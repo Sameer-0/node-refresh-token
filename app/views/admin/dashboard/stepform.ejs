@@ -1,7 +1,5 @@
 <div class="step-form">
-
     <div class="d-flex pt-3 pb-4 time-line stages" style="overflow-x: scroll;">
-
         <div class="arrow-pointer stage pending my-1" data-step="1">Holidays </div>
         <div class="arrow-pointer stage pending my-1" data-step="2"> Room</div>
         <div class="arrow-pointer stage pending my-1" data-step="3"> Program</div>
@@ -14,11 +12,9 @@
         <div class="arrow-pointer stage pending my-1" data-step="10"> Weekly Constraint</div>
         <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty </div>
         <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Preference</div>
-
     </div>
 
     <div class="step-form-body pt-3">
-
         <!-- Holidays -->
         <form action="/admin/holidays" method="post" class="step" id="holidays-form" data-step="1">
             <div class="modal-header table-card-header">
@@ -386,13 +382,36 @@
         </form>
 
 
-        <!-- Course Workload -->
+        <!-- Course Workload-->
         <form action="/admin/courseworkload" method="post" class="step d-none" id="courseWorkload-form" data-step="4">
 
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
-                <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From
-                    SAP</button>
+            <div class="modal-header table-card-header d-flex justify-content-between">
+                      <div>
+                        <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
+                      </div>
+                      <div>
+                        <input type="text"  class="form-control" id="acadYear" value="<%- acadYear %>">
+                      </div>
+                      <div>
+                        <select  id="programLid" name="programLid">
+                            <option value="">Select program</option>
+                            <% for(let program of programList) {%>
+                            <option value="<%-program.program_id %>"><%-program.program_name %></option>
+                            <%}%>
+                        </select>
+                      </div>
+                      <div>
+                        <select  id="acadSessionLid" name="acadSessionLid">
+                            <option value="">Select Session</option>
+                            <% for(let acadsession of AcadSessionList) {%>
+                            <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
+                            <%}%>
+                        </select>
+                      </div>
+                      <div>
+                        <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From
+                            SAP</button>
+                      </div>
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>

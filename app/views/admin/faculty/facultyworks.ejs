@@ -136,7 +136,7 @@
                         class="fas fa-plus"></i>
                     Add
                     More Fields</button>
-                <button type="submit" class="btn  createRoomTransaction modal-inputform-btn">
+                <button type="submit" class="btn  createFacultyWorkLoad modal-inputform-btn">
                    Create
                     </button>
                 <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update
@@ -222,6 +222,71 @@ $(document).ready(function () {
             } else {
                 alert('Cannot delete this room.')
             }
+        })
+
+        //Create facultyworkload
+        $(".createFacultyWorkLoad").on('click', function(){
+            console.log('create function calling..')
+            let facultyElems = $('#add-more-facultywork-table tbody tr');
+            let facultyCount = facultyElems.length;
+            let facultyJson = [];
+            facultyElems.each(function (index, elem) {
+                let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
+                let program_session_lid = $(elem).find(`select[name='program_session_lid']`).val();
+                let module_lid = $(elem).find(`select[name='module_lid']`).val();
+                let lecture_per_week = $(elem).find(`select[name='lecture_per_week']`).val();
+                let practical_per_week = $(elem).find(`select[name='practical_per_week']`).val();
+                let tutorial_per_week = $(elem).find(`select[name='tutorial_per_week']`).val();
+                let workshop_per_week = $(elem).find(`select[name='workshop_per_week']`).val();
+                let is_batch_preference_set = $(elem).find(`select[name='is_batch_preference_set']`).val();
+
+
+                if (index < facultyCount - 1) {
+                    let obj = {
+                        faculty_lid: faculty_lid,
+                        program_session_lid: program_session_lid,
+                        module_lid: module_lid,
+                        lecture_per_week: lecture_per_week,
+                        practical_per_week: practical_per_week,
+                        tutorial_per_week: tutorial_per_week,
+                        workshop_per_week: workshop_per_week,
+                        is_batch_preference_set: is_batch_preference_set
+                    }
+                    facultyJson.push(obj)
+                } else {
+                    let obj = {
+                        faculty_lid: faculty_lid,
+                        program_session_lid: program_session_lid,
+                        module_lid: module_lid,
+                        lecture_per_week: lecture_per_week,
+                        practical_per_week: practical_per_week,
+                        tutorial_per_week: tutorial_per_week,
+                        workshop_per_week: workshop_per_week,
+                        is_batch_preference_set: is_batch_preference_set
+                    }
+                    facultyJson.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',facultyJson)
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/works',
+                data: {
+                    inputJSON: JSON.stringify(facultyJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                showSuccess(result)
+                // setTimeout(function(){
+                //     location.reload()
+                // },3000)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
         })
 
 })
