@@ -86,12 +86,12 @@
             endDate += `<option>${obj.date}</option>`;
         }
 
-        $("#selectList").on('click', '.list-group-item', function () {
+        $(".selectList").on('click', '.list-group-item', function () {
 
             console.log('yello')
             //remove current element when added to right sidebar
-            if ($(this).attr('data-clickable') == 'true') {
-                $("#selectedList table tbody").append(
+            // if ($(this).attr('data-clickable') == 'true') {
+                $(".selectedList table tbody").append(
                     `<tr data-clickable="true">
                         <td data-value="${$(this).text()}">${$(this).text()}</td>
                         <td>
@@ -112,24 +112,24 @@
                     </tr>
                     `
                 )
-            }
+            // }
 
             $(this).attr('data-clickable', 'false');
 
-            $($(this)).fadeOut(300, function () {
-                $($(this)).remove()
-            })
+            // $($(this)).fadeOut(300, function () {
+            //     $($(this)).remove()
+            // })
 
         })
 
         //Remove Element
 
-        $("#selectedList").on('click', '.clicktoremove', function () {
+        $(".selectedList").on('click', '.clicktoremove', function () {
 
-            if ($(this).parent().parent().attr('data-clickable') == 'true') {
-                $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
-        </li>`)
-            }
+        //     if ($(this).parent().parent().attr('data-clickable') == 'true') {
+        //         $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
+        // </li>`)
+        //     }
 
             $(this).parent().attr('data-clickable', 'false')
 
@@ -139,7 +139,7 @@
         })
 
         //search 
-        let selectItems = $('#selectList li')
+        let selectItems = $('.selectList li')
 
 
         $('#searchItem').on('input', function () {
@@ -158,7 +158,7 @@
         //search selected faculty
 
         $('#searchSelectedItem').on('input', function () {
-            let selectedItems = $('#selectedList table tbody tr')
+            let selectedItems = $('.selectedList table tbody tr')
             var text = $('#searchSelectedItem').val().toLowerCase();
             console.log('text:::::::::', selectedItems)
             for (let item of selectedItems) {
@@ -174,7 +174,6 @@
 
         //Step form Start
         let currentFormStep = 1;
-
 
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 

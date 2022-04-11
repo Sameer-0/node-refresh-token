@@ -17,15 +17,14 @@ module.exports = {
         Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(10, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug)]).then(result => {
            
             console.log('Programs:::::::::>>>>', result[9].recordset);
-            console.log('ProgramTypeList:::::::::>>>>', result[10].recordset);
             
             res.render('admin/dashboard/index', {
                 currentFormStep: result[0].recordset[0] ? result[0].recordset[0].seq : '',
                 dayList: result[1].recordset,
                 RoomList: result[2].recordset,
                 divisionList: result[3].recordset,
-                buildingList: result[4].recordset,
-                orgList: JSON.stringify(result[5].recordset),
+                orgList: result[4].recordset,
+                buildingList: result[5].recordset,
                 slotTiming:JSON.stringify(result[6].recordset),
                 campusList: result[7].recordset, 
                 acadCalender: JSON.stringify(result[8].recordset),
