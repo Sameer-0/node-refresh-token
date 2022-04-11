@@ -54,20 +54,18 @@
     $(document).ready(function () {
 
         let campu = `<%-campusList%>`;
-
-      
-
         let date = `<%- acadCalender%>`;
         let acadDate = JSON.parse(date);
-
         let slotTime = `<%- slotTiming %>`
-
         let slotObj = JSON.parse(slotTime);
+        let programType = JSON.parse(`<%- programTypeList%>`);
+        console.log('programType::::::>', programType)
 
         let optionStartTime;
         let optionEndTime;
         let startDate;
         let endDate;
+        let programTypeList;
 
         for (let obj of slotObj) {
 
@@ -85,14 +83,19 @@
         for (let obj of acadDate) {
             endDate += `<option>${obj.date}</option>`;
         }
+        for(let obj of programType){
+            programTypeList += `<option>${obj.name}</option>`
+        }
 
+
+        //DATA SELECT FOR ROOM
         $(".selectList").on('click', '.list-group-item', function () {
 
             console.log('yello')
             //remove current element when added to right sidebar
             // if ($(this).attr('data-clickable') == 'true') {
-                $(".selectedList table tbody").append(
-                    `<tr data-clickable="true">
+            $(".selectedList table tbody").append(
+                `<tr data-clickable="true">
                         <td data-value="${$(this).text()}">${$(this).text()}</td>
                         <td>
                             <select class="select2">${optionStartTime}</select>
@@ -111,7 +114,7 @@
                         </td>
                     </tr>
                     `
-                )
+            )
             // }
 
             $(this).attr('data-clickable', 'false');
@@ -126,10 +129,10 @@
 
         $(".selectedList").on('click', '.clicktoremove', function () {
 
-        //     if ($(this).parent().parent().attr('data-clickable') == 'true') {
-        //         $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
-        // </li>`)
-        //     }
+            //     if ($(this).parent().parent().attr('data-clickable') == 'true') {
+            //         $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
+            // </li>`)
+            //     }
 
             $(this).parent().attr('data-clickable', 'false')
 
@@ -171,9 +174,87 @@
             };
         })
 
+        //DATA SELECT FOR PROGRAM
+        $(".selectListProgram").on('click', '.list-group-item', function () {
+
+            // remove current element when added to right sidebar
+            // if ($(this).attr('data-clickable') == 'true') {
+                console.log('appending:::::>>')
+            $(".selectedListProgram table tbody").append(
+                `<tr data-clickable="true">
+            <td data-value="${$(this).text()}">${$(this).text()}</td>
+            <td>
+                <select class="select2">${programTypeList}</select>
+            </td>
+            <td>
+                <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+            </td>
+        </tr>
+        `
+            )
+            // }
+
+            $(this).attr('data-clickable', 'false');
+
+            $($(this)).fadeOut(300, function () {
+                $($(this)).remove()
+            })
+
+        })
+
+        //Remove Element
+
+        $(".selectedListProgram").on('click', '.clicktoremove', function () {
+
+                if ($(this).parent().parent().attr('data-clickable') == 'true') {
+                  
+                    $(".selectListProgram").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
+            </li>`)
+                }
+
+            $(this).parent().attr('data-clickable', 'false')
+
+            $($(this)).fadeOut(300, function () {
+                $($(this).parent().parent()).remove()
+            })
+        })
+
+        //search 
+     selectItems = $('.selectListProgram li')
+
+
+        $('.searchItemProgram').on('input', function () {
+
+            var text = $('.searchItemProgram').val().toLowerCase();
+
+            for (let item of selectItems) {
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+        })
+
+        //search selected faculty
+
+        $('.searchSelectedItemProgram').on('input', function () {
+            let selectedItems = $('.selectedListProgram table tbody tr')
+            var text = $('.searchSelectedItemProgram').val().toLowerCase();
+            console.log('text:::::::::', selectedItems)
+            for (let item of selectedItems) {
+                console.log('faculty:::::::::', item) 
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+        })
+
 
         //Step form Start
-        let currentFormStep = 1;
+        let currentFormStep = `<%- currentFormStep%>`;
 
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
@@ -205,9 +286,32 @@
                 behavior: "smooth",
                 inline: 'start'
             })
-            formStepNext()
-        })
+            if(currentFormStep == 1){
+            let ApiObj = {
+                        type: 'POST',
+                        url: '/management/organizations',
+                        data: {
+                            inputJSON: JSON.stringify(orgJson),
+                            settingName: 'Organization'
+                        },
+                        dataType: 'JSON'
+                    }
 
+
+                    ajaxApi(ApiObj).then(result => {
+                        console.log('Result:::::::::::', result)
+                        //   location.reload()
+
+                        formStepNext()
+                        
+                    }).catch(error => {
+                        console.log('error.responseJSON::::::::::::>>>',error.responseJSON)
+                        showError(error.responseJSON)
+                    })
+            formStepNext()
+                }
+        })
+    
 
         //Getting capus Bulding List
         $("#campus_lid").on('change', function () {
@@ -248,7 +352,7 @@
         $('.select2').select2({
             dropdownParent: $('#open-room-modal')
         });
-       
+
 
 
         //Fetch course workload form SAP
