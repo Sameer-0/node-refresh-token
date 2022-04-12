@@ -15,7 +15,8 @@ const AcadSession = require('../../models/AcadSession')
 module.exports = {
     getDashboard: (req, res) => {
         Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(10, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(),AcadSession.fetchAll(1000)]).then(result => {
-            console.log('Programs:::::::::>>>>', result[9].recordset);
+            console.log('Room:::::::::>>>>', result[2].recordset);
+            
             res.render('admin/dashboard/index', {
                 currentFormStep: result[0].recordset[0] ? result[0].recordset[0].seq : '',
                 dayList: result[1].recordset,
