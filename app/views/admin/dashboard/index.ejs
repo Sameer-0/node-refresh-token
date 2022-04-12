@@ -254,7 +254,7 @@
 
 
         //Step form Start
-        let currentFormStep = `<%- currentFormStep%>`;
+        let currentFormStep = 1;
 
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
@@ -286,32 +286,11 @@
                 behavior: "smooth",
                 inline: 'start'
             })
-            if(currentFormStep == 1){
-            let ApiObj = {
-                        type: 'POST',
-                        url: '/management/organizations',
-                        data: {
-                            inputJSON: JSON.stringify(orgJson),
-                            settingName: 'Organization'
-                        },
-                        dataType: 'JSON'
-                    }
-
-
-                    ajaxApi(ApiObj).then(result => {
-                        console.log('Result:::::::::::', result)
-                        //   location.reload()
-
+            
                         formStepNext()
-                        
-                    }).catch(error => {
-                        console.log('error.responseJSON::::::::::::>>>',error.responseJSON)
-                        showError(error.responseJSON)
-                    })
-            formStepNext()
-                }
         })
-    
+                        
+        
 
         //Getting capus Bulding List
         $("#campus_lid").on('change', function () {
