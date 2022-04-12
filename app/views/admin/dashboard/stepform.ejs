@@ -4,14 +4,14 @@
         <div class="arrow-pointer stage pending my-1" data-step="2"> Room</div>
         <div class="arrow-pointer stage pending my-1" data-step="3"> Program</div>
         <div class="arrow-pointer stage pending my-1" data-step="4"> Course Workload</div>
+       
         <div class="arrow-pointer stage pending my-1" data-step="5"> Session Date</div>
-        <div class="arrow-pointer stage pending my-1" data-step="6"> Session types</div>
-        <div class="arrow-pointer stage pending my-1" data-step="7"> Session types date range</div>
-        <div class="arrow-pointer stage pending my-1" data-step="8"> Division</div>
-        <div class="arrow-pointer stage pending my-1" data-step="9"> Division Batches</div>
-        <div class="arrow-pointer stage pending my-1" data-step="10"> Weekly Constraint</div>
-        <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty </div>
-        <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Preference</div>
+      
+        <div class="arrow-pointer stage pending my-1" data-step="6"> Division</div>
+        <div class="arrow-pointer stage pending my-1" data-step="7"> Division Batches</div>
+        <div class="arrow-pointer stage pending my-1" data-step="8"> Weekly Constraint</div>
+        <div class="arrow-pointer stage pending my-1" data-step="9"> Faculty </div>
+        <div class="arrow-pointer stage pending my-1" data-step="10"> Faculty Preference</div>
     </div>
 
     <div class="step-form-body pt-3">
@@ -202,7 +202,7 @@
 
                                 <ul class="list-group custom-select-list selectList" >
                                     <% for (let room of RoomList){ %>
-                                    <li class="list-group-item" data-clickable="true"><%- room.room_number%></li>
+                                    <li class="list-group-item" data-clickable="true" data-room-id="<%- room.id%>"><%- room.room_number%></li>
                                     <% }%>
                                 </ul>
                             </div>
@@ -256,7 +256,7 @@
                                 </div>
 
                                 <ul class="list-group custom-select-list selectedList" id="selectedList">
-                                    <table class="table table-bordered">
+                                    <table class="table table-bordered" id="add-more-room-table">
                                         <thead>
                                             <th>room</th>
                                             <th>start Time</th>
@@ -277,7 +277,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn  createFaculty modal-inputform-btn">Import Room</button>
+                        <button type="button" class="btn import-room modal-inputform-btn">Import Room</button>
                     </div>
                 </div>
             </div>
@@ -303,22 +303,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>
-                                    <input type="number" name="programId" id="programId" class="form-control"
-                                        placeholder="Program Id" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="programName" id="programName" class="form-control"
-                                        placeholder="Program Name" required>
-                                </td>
-                                <td>
-                                    <input type="text" name="programType" id="programType" class="form-control"
-                                        required>
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-program"></i>
-                                </td>
+                                
                             </tr>
                         </tbody>
                     </table>
@@ -374,34 +359,33 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="submit" class="btn  createFaculty modal-inputform-btn">Import Room</button>
+                        <button type="submit" class="btn  createFaculty modal-inputform-btn">Import Program</button>
                     </div>
                 </div>
             </div>
         </div>
         </form>
 
-
         <!-- Course Workload-->
         <form action="/admin/courseworkload" method="post" class="step d-none" id="courseWorkload-form" data-step="4">
 
-            <div class="modal-header table-card-header d-flex justify-content-between">
-                      <div>
+            <div class="modal-header table-card-header d-flex justify-content-end">
+                      <div class="me-auto">
                         <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
                       </div>
-                      <div>
+                      <div >
                         <input type="text"  class="form-control" id="acadYear" value="<%- acadYear %>">
                       </div>
-                      <div>
-                        <select  id="programLid" name="programLid">
+                      <div class="mx-3">
+                        <select  id="programLid" name="programLid" class="form-select">
                             <option value="">Select program</option>
                             <% for(let program of programList) {%>
                             <option value="<%-program.program_id %>"><%-program.program_name %></option>
                             <%}%>
                         </select>
                       </div>
-                      <div>
-                        <select  id="acadSessionLid" name="acadSessionLid">
+                      <div class="me-3">
+                        <select  id="acadSessionLid" name="acadSessionLid" class="form-select">
                             <option value="">Select Session</option>
                             <% for(let acadsession of AcadSessionList) {%>
                             <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
@@ -437,60 +421,13 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>
-                                    <input type="number" name="module_name" id="module_name" class="form-control"
-                                        palceholder="Module Name" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="programId" id="programId" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="moduleId" id="moduleId" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="elective" id="elective" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="intake" id="intake" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="studentPerDivision" id="studentPerDivision"
-                                        class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="lecPerWeekPerDiv" id="lecPerWeekPerDiv"
-                                        class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="pracPerWeekPerDiv" id="pracPerWeekPerDiv"
-                                        class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="tutPerWeekPerDiv" id="tutPerWeekPerDiv"
-                                        class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="workshopPerWeekPerDiv" id="workshopPerWeekPerDiv"
-                                        class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="continous" id="continous" class="form-control" required>
-                                </td>
-                                <td>
-                                    <input type="number" name="sessionWeekPerSem" id="sessionWeekPerSem"
-                                        class="form-control" required>
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-courseWorkload"></i>
-                                </td>
+                               
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </form>
-
 
         <!-- Session date -->
         <form action="/admin/sessiondate" method="post" class="step d-none" id="sessionDate-form" data-step="5">
@@ -506,72 +443,56 @@
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-sessionDate-table">
                         <thead>
+                            <th>Program</th>
                             <th>Acad Session</th>
+                            <th>Start date</th>
+                            <th>End date</th>
                             <th>Action</th>
-
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <input type="number" name="acadSession" id="acadSession" class="form-control"
-                                        palceholder="Acad Session" required>
+                                    <select name="programName" class="form-select" required>
+                                        <% for (let program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                            <% }%>
+                                    </select>
                                 </td>
-
-
+                                <td>
+                                    <select name="acadSession" class="form-select" required>
+                                        <% for (let session of AcadSessionList){%>
+                                            <option value="<%- session.acadSessionId %>"><%- session.acad_session%></option>
+                                            <% }%>
+                                    </select>
+                                    
+                                </td>
+                                <td>
+                                    <select name="startDate" class="form-select" required>
+                                        <% for (let acad of acadCalender){%>
+                                            <option value="<%- acad.id %>"><%- acad.date %></option>
+                                            <% }%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="endDate" class="form-select" required>
+                                        <% for (let acad of acadCalender){%>
+                                            <option value="<%- acad.id %>"><%- acad.date %></option>
+                                            <% }%>
+                                    </select>
+                                </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-session"></i>
                                 </td>
-
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </form>
-
-        <!-- Session Type -->
-        <form action="/admin/sessiontype" method="post" class="step d-none" id="sessionType-form" data-step="6">
-
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-sessionType-modal-title">Session Type</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-sessionType"><i class="fas fa-plus"></i>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="sessionType" name="sessionType">
-
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-sessionType-table">
-                        <thead>
-                            <th>Acad Session</t>
-
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="text" name="sessionType" id="sessionType" class="form-control"
-                                        palceholder="Session Type" required>
-                                </td>
-
-
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-session-type"></i>
-                                </td>
-
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </form>
-
+ 
         <!-- Session date range -->
-        <form action="/admin/sessionrange" method="post" class="step d-none" id="sessionRange-form" data-step="7">
+        <form action="/admin/sessionrange" method="post" class="step d-none" id="sessionRange-form" data-step="6">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-sessionRange-modal-title">Session types date range</h5>
@@ -588,7 +509,7 @@
                         <thead>
                             <th>Acad Session</th>
                             <th>Session Range</th>
-                            <th>Session Range</th>
+                            <th>Session Range</th> 
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -619,7 +540,7 @@
         </form>
 
         <!-- Division -->
-        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="8">
+        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="7">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
@@ -680,7 +601,7 @@
         </form>
 
         <!-- Division Batches -->
-        <form action="/admin/divisionbatches" method="post" class="step d-none" id="divisionBatches" data-step="9">
+        <form action="/admin/divisionbatches" method="post" class="step d-none" id="divisionBatches" data-step="8">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-divisionBatches-modal-title">Add Division batches</h5>
@@ -719,7 +640,7 @@
         </form>
 
         <!-- Weekly constraint -->
-        <form action="/admin/weeklyConstraint" method="post" class="step d-none" id="weeklyConstraint" data-step="10">
+        <form action="/admin/weeklyConstraint" method="post" class="step d-none" id="weeklyConstraint" data-step="9">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-weeklyConstraint-modal-title">Weekly constraint</h5>
@@ -776,7 +697,7 @@
         </form>
 
         <!-- Faculty -->
-        <form action="/admin/faculty" method="post" class="step d-none" id="faculty" data-step="11">
+        <form action="/admin/faculty" method="post" class="step d-none" id="faculty" data-step="10">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-faculty-modal-title">Import Faculty</h5>
