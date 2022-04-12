@@ -65,9 +65,9 @@
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-holiday-modal">
                     <i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto select-delete-holidays add-btn "><i class="fas fa-trash"></i></button>
+                <!-- <button class="btn ms-auto select-delete-holidays add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
+                        width="26px" height="32px"></button> -->
             </div>
         </div>
 
@@ -81,7 +81,6 @@
                     <th>Module Name</th>
                     <th>Module Code</th>
                     <th>Program Code</th>
-                    <th>Electives</th>
                     <th>Intake</th>
                     <th>Student per division</th>
                     <th>Lecture per Week per Division</th>
@@ -102,7 +101,6 @@
                             <td><%-course.module_name%></td>
                             <td><%-course.module_id%></td>
                             <td><%-course.program_id%></td>
-                            <td><%-course.electives%></td>
                             <td><%-course.intake%></td>
                             <td><%-course.student_per_division%></td>
                             <td><%-course.lec_per_week_per_division%></td>
@@ -112,12 +110,7 @@
                             <td><%-course.session_events_per_semester%></td>
                             <td><%-course.acad_session_lid%></td>
                             <td><%-course.continuous%></td>
-                            <td><label class="switch">
-                                    <input type="checkbox" class="changeStatus" data-id="<%- course.id %>"
-                                        data-status="<%- course.status %>"
-                                        <%- course.status == 'Yes' ? 'Checked' :  ''  %>>
-                                    <span class="switch-slider round"></span>
-                                </label></td>
+                            <td>edit</td>
                         </tr>
                         <%}%>   
                 </tbody>
@@ -218,39 +211,39 @@
 
 
 
-               //Pagination Here
-               let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
-        let pageNos = Math.ceil(Number(pageCount) / 10)
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
+       // console.log("Page Count=====>>>", pageCount)
+        // let pageNos = Math.ceil(Number(pageCount) / 10)
 
-        console.log("Page Numbers", pageNos)
-        $('#pagination').bootpag({
-            total: pageNos,
-            page: 1,
-            maxVisible: 10,
-            leaps: true,
-            firstLastUse: true,
-            first: '←',
-            last: '→',
-            wrapClass: 'pagination',
-            activeClass: 'active',
-            disabledClass: 'disabled',
-            nextClass: 'next',
-            prevClass: 'prev',
-            lastClass: 'last',
-            firstClass: 'first'
-        }).on("page", function (event, num) {
-            $.ajax({
-                type: "POST",
-                url: "/admin/courseworkload/pagination",
-                data: {
-                    pageNo: num
-                },
-                success: function (data) {
-                    AjaxtTable(data.data)
-                }
-            })
-        });
+        // console.log("Page Numbers", pageNos)
+        // $('#pagination').bootpag({
+        //     total: pageNos,
+        //     page: 1,
+        //     maxVisible: 10,
+        //     leaps: true,
+        //     firstLastUse: true,
+        //     first: '←',
+        //     last: '→',
+        //     wrapClass: 'pagination',
+        //     activeClass: 'active',
+        //     disabledClass: 'disabled',
+        //     nextClass: 'next',
+        //     prevClass: 'prev',
+        //     lastClass: 'last',
+        //     firstClass: 'first'
+        // }).on("page", function (event, num) {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/admin/courseworkload/pagination",
+        //         data: {
+        //             pageNo: num
+        //         },
+        //         success: function (data) {
+        //             AjaxtTable(data.data)
+        //         }
+        //     })
+        // });
 
 
         function loadAll() {

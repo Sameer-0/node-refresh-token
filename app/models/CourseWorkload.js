@@ -30,6 +30,14 @@ module.exports = class {
         })
     }
 
+
+    static getAll(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT  id, module_name, program_id, module_id, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, module_code
+            FROM [${slug}].initial_course_workload ORDER BY id DESC`)
+        })
+    }
+
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
