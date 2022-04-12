@@ -80,7 +80,7 @@ module.exports = {
             return;
         }
 
-        RoomTransactions.pegination(req.body.pageNo, res.locals.slug).then(result => {
+        RoomTransactions.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",

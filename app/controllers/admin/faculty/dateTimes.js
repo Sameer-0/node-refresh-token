@@ -12,7 +12,6 @@ module.exports = {
     getPage: (req, res) => {
 
         Promise.all([FacultyDateTimes.fetchAll(10, res.locals.slug), FacultyDateTimes.getCount(res.locals.slug), Faculties.fetchAll(1000, res.locals.slug), AcademicCalender.fetchAll(1000), SlotIntervalTimings.fetchAll(1000)]).then(result => {
-      
             res.render('admin/faculty/facultydatetime', {
                 FacultyDateTimeList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -30,7 +29,7 @@ module.exports = {
             add_faculty_date_times: JSON.parse(req.body.inputJSON)
         }
 
-        FacultyDateTimes.save(object, res.locals.slug, res.locals.userid).then(result => {
+        FacultyDateTimes.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log(error)

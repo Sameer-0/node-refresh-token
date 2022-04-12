@@ -32,7 +32,7 @@ module.exports = class RoomTransactions {
     }
 
 
-    static pegination(pageNo, slug) {
+    static pagination(pageNo, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)

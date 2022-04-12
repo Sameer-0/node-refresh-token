@@ -1,3 +1,9 @@
+const {
+    check,
+    oneOf,
+    validationResult
+} = require('express-validator');
+
 const FacultyWorks = require('../../../models/FacultyWorks')
 const Faculties = require('../../../models/Faculties')
 const ProgramSessions = require('../../../models/ProgramSessions')
@@ -7,6 +13,7 @@ module.exports = {
 
         const slug = res.locals.slug;
         Promise.all([FacultyWorks.fetchAll(10, slug), FacultyWorks.getCount(slug), Faculties.fetchAll(1000, slug), ProgramSessions.fetchAll(100, slug), CourseWorkload.fetchAll(10000, slug)]).then(result => {
+            console.log(result[0].recordset)
             res.render('admin/faculty/facultyworks', {
                 facultyWorkList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -18,11 +25,11 @@ module.exports = {
     },
 
     create: (req, res) => {
-        console.log('inputJSON::::::::::::::::::::>>',JSON.parse(req.body.inputJSON))
+        console.log('inputJSON11::::::::::::::::::::>>',res.locals.slug, res.locals.userId)
         let object = {
             add_faculty_works: JSON.parse(req.body.inputJSON)
         }
-        FacultyWorks.save(object, res.locals.slug, res.locals.userid).then(result => {
+        FacultyWorks.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))

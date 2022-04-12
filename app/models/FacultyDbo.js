@@ -103,7 +103,7 @@ module.exports = class FacultyDbo {
     }
 
 
-    static pegination(pageNo) {
+    static pagination(pageNo) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
