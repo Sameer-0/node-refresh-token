@@ -11,7 +11,7 @@ const path = require("path");
 var soap = require("soap");
 module.exports = {
   getPage: (req, res) => {
-    Promise.all([CourseWorkload.fetchAll(10, res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000)]).then(result => {
+    Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000)]).then(result => {
       res.render('admin/courseworkload/index', {
         courseWorkloadList: result[0].recordset,
         pageCount: result[1].recordset[0].count,
