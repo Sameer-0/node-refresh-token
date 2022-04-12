@@ -168,7 +168,7 @@ module.exports = {
             return;
         }
 
-        FacultyDbo.pegination(req.body.pageNo).then(result => {
+        FacultyDbo.pagination(req.body.pageNo).then(result => {
             console.log(result)
             res.json({
                 status: "200",

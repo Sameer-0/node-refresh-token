@@ -46,7 +46,7 @@ module.exports = {
             return;
         }
 
-        ProgramDays.pegination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
+        ProgramDays.pagination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",

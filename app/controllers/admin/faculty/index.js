@@ -26,7 +26,7 @@ module.exports = {
         let object = {
             import_faculties: JSON.parse(req.body.inputJSON)
         }
-        Faculties.save(object, res.locals.slug, res.locals.userid).then(result => {
+        Faculties.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))

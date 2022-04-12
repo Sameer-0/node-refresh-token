@@ -16,9 +16,9 @@
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-facultywork-modal">
                     <i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto select-delete-facultywork add-btn "><i class="fas fa-trash"></i></button>
+                <!-- <button class="btn ms-auto select-delete-facultywork add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-facultywork add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
+                        width="26px" height="32px"></button> -->
             </div>
         </div>
 
@@ -30,6 +30,7 @@
                 <thead>
                     <th>Sr.No</th>
                     <th>Faculty</th>
+                    <th>Faculty Id</th>
                     <th>Program Session</th>
                     <th>Module</th>
                     <th>Letcure per week</th>
@@ -39,6 +40,24 @@
                     <th>Batch preference</th>
                     <th>Action</th>
                 </thead>
+                <tbody>
+                    <% let count  = 1%>
+                    <% for(let faculty of facultyWorkList) {%>
+                    <tr>
+                        <td><%- count++ %></td>
+                        <td><%- faculty.faculty_name %></td>
+                        <td><%- faculty.faculty_id %></td>
+                        <td><%- faculty.acad_session %></td>
+                        <td><%- faculty.module_name %></td>
+                        <td><%- faculty.lecture_per_week %></td>
+                        <td><%- faculty.practical_per_week %></td>
+                        <td><%- faculty.tutorial_per_week %></td>
+                        <td><%- faculty.workshop_per_week %></td>
+                        <td><%- faculty.is_batch_preference_set_status %></td>
+                        <td><a><span class="fa fa-edit"></span></a></td>
+                    </tr>
+                    <%}%>
+                </tbody>
             </table>
             <div class="d-flex justify-content-between">
                 <div>
@@ -117,7 +136,12 @@
                                 </td>
                                 <td><input type="number" name="workshop_per_week" class="form-control"></td>
                                 <td>
-                                    <input type="number" name="is_batch_preference_set" class="form-control">
+                                    <!-- <input type="number" name="is_batch_preference_set" class="form-control"> -->
+                                    <select class="form-control" name="is_batch_preference_set">
+                                        <option value="">Select preference</option>
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
+                                    </select>
                                 </td>
 
                                 <td>
@@ -234,10 +258,10 @@ $(document).ready(function () {
                 let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
                 let program_session_lid = $(elem).find(`select[name='program_session_lid']`).val();
                 let module_lid = $(elem).find(`select[name='module_lid']`).val();
-                let lecture_per_week = $(elem).find(`select[name='lecture_per_week']`).val();
-                let practical_per_week = $(elem).find(`select[name='practical_per_week']`).val();
-                let tutorial_per_week = $(elem).find(`select[name='tutorial_per_week']`).val();
-                let workshop_per_week = $(elem).find(`select[name='workshop_per_week']`).val();
+                let lecture_per_week = $(elem).find(`input[name='lecture_per_week']`).val();
+                let practical_per_week = $(elem).find(`input[name='practical_per_week']`).val();
+                let tutorial_per_week = $(elem).find(`input[name='tutorial_per_week']`).val();
+                let workshop_per_week = $(elem).find(`input[name='workshop_per_week']`).val();
                 let is_batch_preference_set = $(elem).find(`select[name='is_batch_preference_set']`).val();
 
 
@@ -280,14 +304,151 @@ $(document).ready(function () {
             }
 
             ajaxApi(ApiObj).then(result => {
+                console.log(result)
                 showSuccess(result)
-                // setTimeout(function(){
-                //     location.reload()
-                // },3000)
+
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
+
+
+        //search feature delay function is writter in script.js file which is located in public/js/script.js
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "GET",
+            url: "/admin/faculties/works/search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                console.log(data)
+                showAjaxTable(data.data) // Facilty List
+            }
+        })
+        }, 500));
+
+
+        //PAGINATION
+    let pageCount = `<%- pageCount %>`
+    let pageNos = Math.ceil(Number(pageCount) / 10)
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active', 
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
+        console.log('pagination here!!')
+        $.ajax({
+            type: "POST",
+            url: "/admin/faculties/works/pagination",
+            data: {
+                pageNo: num
+            },
+            success: function (data) {
+                console.log(data.data)
+                showAjaxTable(data.data) 
+            }
+        })
+    });
+
+
+    function showAjaxTable(facultiesList) {
+            let AjaxTable = `<table class="table custom_row table-bordered" id="facultyWorkTable">
+                <thead>
+                    <th>Sr.No</th>
+                    <th>Faculty</th>
+                    <th>Faculty Id</th>
+                    <th>Program Session</th>
+                    <th>Module</th>
+                    <th>Letcure per week</th>
+                    <th>Practical per week</th>
+                    <th>Tutorial per weeek</th>
+                    <th>Workshop per week</th>
+                    <th>Batch preference</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>`;
+
+            if (facultiesList.length > 0) {
+                let count  = 1;
+                for (faculty of facultiesList) {
+                    AjaxTable +=
+                    `<tr>
+                        <td>${count++}</td>
+                        <td>${faculty.faculty_name}</td>
+                        <td>${faculty.faculty_id}</td>
+                        <td>${faculty.acad_session}</td>
+                        <td>${faculty.module_name}</td>
+                        <td>${faculty.lecture_per_week}</td>
+                        <td>${faculty.practical_per_week}</td>
+                        <td>${faculty.tutorial_per_week}</td>
+                        <td>${faculty.workshop_per_week}</td>
+                        <td>${faculty.is_batch_preference_set_status}</td>
+                        <td><a><span class="fa fa-edit"></span></a></td>
+                    </tr>`
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                         <td colspan="11">No Data Found</td>
+                      </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+            $("#facultyWorkTable").html(AjaxTable);
+
+        }
+
+
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#add-facultywork-modal #errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#add-facultywork-modal #errorHtml").html(errorHtml)
+        }
 
 })
 

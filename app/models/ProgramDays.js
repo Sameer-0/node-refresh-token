@@ -16,7 +16,7 @@ module.exports = class {
         })
     }
 
-    static pegination(rowcount, pageNo, slug) {
+    static pagination(rowcount, pageNo, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)

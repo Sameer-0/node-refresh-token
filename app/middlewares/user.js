@@ -17,11 +17,11 @@ module.exports = {
 
         if (req.sessionID) {
             store.get(req.sessionID, async (err, result) => {
-                // console.log('isLoggedIn::::::::::::::::::>> ', err, result)
+               //  console.log('isLoggedIn::::::::::::::::::>> ', err, result)
                 if (!result) {
                     res.redirect('/user/login')
                 } else {
-                    res.locals.userid = result.userid
+                    res.locals.userId = result.userId
                     res.locals.firstName = result.firstName
                     next();
                 }

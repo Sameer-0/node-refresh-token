@@ -28,7 +28,7 @@ module.exports = {
     create: (req, res) => {
 
         let object = {
-            insert_new_holidays: JSON.parse(req.body.inputJSON)
+            add_faculty_works: JSON.parse(req.body.inputJSON)
         }
 
         console.log('object:::::::::::::', object)
