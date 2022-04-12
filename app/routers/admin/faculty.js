@@ -25,7 +25,12 @@ router.post('/faculties/date-time', dateTimes.create)
 router.get('/faculties/date-time/search', dateTimes.search)
 router.post('/faculties/date-time/pagination', dateTimes.pagination)
 
+//Batch
 router.get('/faculties/batch', batch.getPage)
+router.post('/faculties/batch', validate('JsonValidator'), batch.create)
+router.get('/faculties/batch/search', validate('search'), batch.search)
+router.post('/faculties/batch/pagination', batch.pagination)
+
 
 //faculty works
 router.get('/faculties/works', works.getPage)
@@ -35,4 +40,7 @@ router.post('/faculties/works/pagination', works.pagination)
 
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)
+router.post('/faculties/workpreferences', validate('JsonValidator'), preferences.create)
+router.get('/faculties/workpreferences/search', preferences.search)
+router.post('/faculties/workpreferences/pagination', preferences.pagination)
 module.exports = router
