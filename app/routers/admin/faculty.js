@@ -12,6 +12,7 @@ const preferences = require('../../controllers/admin/faculty/preferences')
 const batch = require('../../controllers/admin/faculty/batch')
 const validate = require('../../middlewares/validate')
 
+//Faculty
 router.get('/faculties', index.getPage)
 router.post('/faculties', validate('JsonValidator'), index.create)
 router.get('/faculties/search', validate('search'), index.search)
@@ -19,7 +20,7 @@ router.post('/faculties/pagination', index.pagination)
 
 
 
-
+//Faculty Date Time
 router.get('/faculties/date-time', dateTimes.getPage)
 router.post('/faculties/date-time', dateTimes.create)
 router.get('/faculties/date-time/search', dateTimes.search)
