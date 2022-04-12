@@ -83,7 +83,7 @@
         for (let obj of acadDate) {
             endDate += `<option value="${obj.id}">${obj.date}</option>`;
         }
-        for(let obj of programType){
+        for (let obj of programType) {
             programTypeList += `<option>${obj.name}</option>`
         }
 
@@ -174,23 +174,24 @@
             };
         })
 
-        //DATA SELECT FOR PROGRAM
+
+        //DATA SELECT FOR PROGRAM//
         $(".selectListProgram").on('click', '.list-group-item', function () {
 
             // remove current element when added to right sidebar
             // if ($(this).attr('data-clickable') == 'true') {
-                console.log('appending:::::>>')
+            console.log('appending:::::>>')
             $(".selectedListProgram table tbody").append(
                 `<tr data-clickable="true">
-            <td data-value="${$(this).text()}">${$(this).text()}</td>
-            <td>
-                <select class="select2">${programTypeList}</select>
-            </td>
-            <td>
-                <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
-            </td>
-        </tr>
-        `
+                    <td data-value="${$(this).text()}">${$(this).text()}</td>
+                    <td>
+                        <select class="select2">${programTypeList}</select>
+                    </td>
+                    <td>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                    </td>
+                </tr>
+                    `
             )
             // }
 
@@ -206,11 +207,11 @@
 
         $(".selectedListProgram").on('click', '.clicktoremove', function () {
 
-                if ($(this).parent().parent().attr('data-clickable') == 'true') {
-                  
-                    $(".selectListProgram").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
+            if ($(this).parent().parent().attr('data-clickable') == 'true') {
+
+                $(".selectListProgram").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
             </li>`)
-                }
+            }
 
             $(this).parent().attr('data-clickable', 'false')
 
@@ -220,8 +221,7 @@
         })
 
         //search 
-     selectItems = $('.selectListProgram li')
-
+        selectItems = $('.selectListProgram li')
 
         $('.searchItemProgram').on('input', function () {
 
@@ -243,7 +243,7 @@
             var text = $('.searchSelectedItemProgram').val().toLowerCase();
             console.log('text:::::::::', selectedItems)
             for (let item of selectedItems) {
-                console.log('faculty:::::::::', item) 
+                console.log('faculty:::::::::', item)
                 if (item.textContent.toLowerCase().indexOf(text) > -1) {
                     $(item).removeClass("d-none");
                 } else {
@@ -251,6 +251,7 @@
                 }
             };
         })
+
 
 
         //Step form Start
@@ -277,7 +278,7 @@
         }
 
 
-// NEXT STEP EVENT
+        // NEXT STEP EVENT
         $('#next-step').on('click', function () {
 
             //SCROLL ON NEXT
@@ -288,52 +289,52 @@
                 behavior: "smooth",
                 inline: 'start'
             })
-            
+
 
             formStepNext();
         })
 
-        $('.import-room').on('click', function() {
-        
+        $('.import-room').on('click', function () {
+
             console.log('roomJSON::::>>>CLICKED');
             let roomElems = $('#add-more-room-table tbody tr');
-                    let roomCount = roomElems.length;
-                    let roomJson = [];
-                    roomElems.each(function (index, elem) {
+            let roomCount = roomElems.length;
+            let roomJson = [];
+            roomElems.each(function (index, elem) {
 
-                        let roomId = $(elem).find(`td[data-room-id]`).attr('data-room-id');
-                        let startTimeId = $(elem).find(`select[name='startTime']`).val()
-                        let endTimeId = $(elem).find(`select[name='endTime']`).val()
-                        let startDateId = $(elem).find(`select[name='startDate']`).val()
-                        let endDateId = $(elem).find(`select[name='endDate']`).val()
-                        
+                let roomId = $(elem).find(`td[data-room-id]`).attr('data-room-id');
+                let startTimeId = $(elem).find(`select[name='startTime']`).val()
+                let endTimeId = $(elem).find(`select[name='endTime']`).val()
+                let startDateId = $(elem).find(`select[name='startDate']`).val()
+                let endDateId = $(elem).find(`select[name='endDate']`).val()
 
-                        if (index < roomCount - 1) {
-                            let obj = {
-                                roomId: roomId,
-                                startTimeId: startTimeId,
-                                endTimeId: endTimeId,
-                                startDateId: startDateId,
-                                endDateId: endDateId,
-                            }
-                            roomJson.push(obj)
-                        } else {
-                            let obj = {
-                                roomId: roomId,
-                                startTimeId: startTimeId,
-                                endTimeId: endTimeId,
-                                startDateId: startDateId,
-                                endDateId: endDateId,
-                            }
-                            roomJson.push(obj)
-                        }
 
-                    console.log('roomJson::::::::::::::::::::>>>', roomJson)
-                    })
-                
+                if (index < roomCount - 1) {
+                    let obj = {
+                        roomId: roomId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        startDateId: startDateId,
+                        endDateId: endDateId,
+                    }
+                    roomJson.push(obj)
+                } else {
+                    let obj = {
+                        roomId: roomId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        startDateId: startDateId,
+                        endDateId: endDateId,
+                    }
+                    roomJson.push(obj)
+                }
+
+                console.log('roomJson::::::::::::::::::::>>>', roomJson)
+            })
+
         })
-                        
-        
+
+
 
         //Getting campus Bulding List
         $("#campus_lid").on('change', function () {
