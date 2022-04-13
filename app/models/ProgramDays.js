@@ -46,4 +46,16 @@ module.exports = class {
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].program_days`)
         })
     }
+
+    static update(body, slug, userId) {
+        console.log('slug',slug)
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            request.input('Id', sql.Int, body.id)
+                .input('Status', sql.TinyInt, body.status)
+                .input('userId', sql.TinyInt, userId)
+            let stmt = `UPDATE [${slug}].program_days SET is_lecture = @Status, last_modified_by = @userId WHERE id =  @Id`
+            return request.query(stmt)
+        })
+    }
 }

@@ -7,17 +7,19 @@ const CourseWorkload = require('../../../models/CourseWorkload')
 const AcadYear = require('../../../models/AcademicYear')
 const Programs = require('../../../models/Programs')
 const AcadSession = require('../../../models/AcadSession')
+const ModuleType =  require('../../../models/ModuleType')
 const path = require("path");
 var soap = require("soap");
 module.exports = {
   getPage: (req, res) => {
-    Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000)]).then(result => {
+    Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
       res.render('admin/courseworkload/index', {
         courseWorkloadList: result[0].recordset,
         pageCount: result[1].recordset[0].count,
         acadYear: result[2].recordset[0].input_acad_year,
         programList: result[3].recordset,
-        AcadSessionList: result[4].recordset
+        AcadSessionList: result[4].recordset,
+        moduleList: result[5].recordset
       })
     })
   },
