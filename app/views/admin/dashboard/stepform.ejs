@@ -93,10 +93,8 @@
                         <th>End Time</th>
                         <th>Is Basement</th>
                         <th>Handled By</th>
-                        <th>UUID</th>
-                        <th>Is Processed</th>
-                        <th>Action</th>
-                        <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
+                        <!-- <th>Action</th>
+                        <th>Check All <input type="checkbox" class="selectAll-rooms"></th> -->
                     </thead>
                     <tbody>
                         <% for (let room of RoomList) { %>
@@ -110,27 +108,9 @@
                             <td><%- room.end_time %></td>
                             <td><%- room.is_basement ? 'Yes' : 'No' %></td>
                             <td><%- room.handled_by %></td>
-                            <td></td>
-                            <td>
-                                <% if(room.is_processed == "1") {%>
-                                <div class="form-check form-switch switch-checkbox">
-                                    <input class="form-check-input " type="checkbox" role="switch"
-                                        id="flexSwitchCheckChecked" disabled checked>
-                                </div>
-                                <%}else{%>
-                                <div class="form-check form-switch switch-checkbox">
-                                    <input class="form-check-input is_processed_click" type="checkbox" role="switch"
-                                        data-is-processed="<%-room.is_processed%>" data-room-id="<%- room.roomid %>">
-                                </div>
-                                <%}%>  
-                                    </td>
-                                    <td>
-                                        <i class="fas fa-edit text-dark cursor-pointer edit-room"
-                                            data-room-id="<%- room.roomid %>"></i>
-                            </td>
-                            <td>
+                            <!-- <td>
                                 <input type="checkbox" data-room-id="<%- room.roomid %>" class="delete-rooms">
-                            </td>
+                            </td> -->
                         </tr>
 
                         <% } %>
@@ -468,21 +448,21 @@
                                 </td>
                                 <td>
                                     <select name="startDate" class="form-select" required>
-                                        <% for (let acad of acadCalender){%>
+                                        <% for (let acad of acadCal){%>
                                             <option value="<%- acad.id %>"><%- acad.date %></option>
                                             <% }%>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="endDate" class="form-select" required>
-                                        <% for (let acad of acadCalender){%>
+                                        <% for (let acad of acadCal){%>
                                             <option value="<%- acad.id %>"><%- acad.date %></option>
                                             <% }%>
                                     </select>
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-session"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-sessionDate"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -491,61 +471,13 @@
             </div>
         </form>
  
-        <!-- Session date range -->
-        <form action="/admin/sessionrange" method="post" class="step d-none" id="sessionRange-form" data-step="6">
-
-            <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-sessionRange-modal-title">Session types date range</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-sessionRange"><i class="fas fa-plus"></i>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="sessionRange" name="sessionRange">
-
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-sessionRange-table">
-                        <thead>
-                            <th>Acad Session</th>
-                            <th>Session Range</th>
-                            <th>Session Range</th> 
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <input type="text" name="sessionType" id="sessionType" class="form-control"
-                                        palceholder="Session Type" required>
-                                </td>
-                                <td>
-                                    <input type="date" name="sessionRange" id="sessionRange" class="form-control"
-                                        palceholder="Session From" required>
-                                </td>
-                                <td>
-                                    <input type="date" name="sessionRange" id="sessionRange" class="form-control"
-                                        palceholder="Session To" required>
-                                </td>
-
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-program"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </form>
 
         <!-- Division -->
-        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="7">
+        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="6">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-division"><i class="fas fa-plus"></i>
-                </button>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-division"><i class="fas fa-plus"></i></button>
             </div>
 
             <div class="modal-body">
@@ -555,44 +487,43 @@
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-division-table">
                         <thead>
-                            <th>#</th>
+                          
+                            <th>Module Name</th>
                             <th>Division</th>
-                            <th>Division no</th>
+                            <th>Division Number</th>
                             <th>Division count</th>
                             <th>Count for theory batch</th>
                             <th>Count for practical batch</th>
                             <th>Count for tutorial batch</th>
                             <th>Count for workshop batch</th>
-                            <th>Module name</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
-                            <%let count = 1;%>
-                            <% for(let division of divisionList) {%>
+                           
                             <tr>
-                                <td><%- count++ %></td>
-                                <td><input type="text" class="form-control" value="<%- division.division %>"></td>
-                                <td><input type="text" class="form-control" value="<%- division.division_num %>">
+                               
+                                <td>
+                                    <select name="moduleName" id="" class="form-select">
+                                    <% for(let course of courseWorkloadList){%>
+                                        <option value="<%- course.id%>">
+                                            <%- course.module_name %>
+                                        </option>
+                                        <% }%>
+                                    </select>
                                 </td>
-                                <td><input type="text" class="form-control" value="<%- division.division_count %>">
+                                <td><input class="form-control" name="division"></td>
+                                <td><input class="form-control" name="divisionNumber"></td>
+                                <td><input class="form-control" name="divisionCount"></td>
+                                <td><input class="form-control" name="countForTheoryBatch"></td>
+                                <td><input class="form-control" name="countForPracticalBatch"></td>
+                                <td><input class="form-control" name="countForTutorialBatch"></td>
+                                <td><input class="form-control" name="countForWorkshopBatch"></td>
+                                <td>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
                                 </td>
-                                <td><input type="text" class="form-control"
-                                        value="<%- division.count_for_theory_batch %>"></td>
-                                <td><input type="text" class="form-control"
-                                        value="<%- division.count_for_practical_batch %>"></td>
-                                <td><input type="text" class="form-control"
-                                        value="<%- division.count_for_tutorial_batch %>"></td>
-                                <td><input type="text" class="form-control"
-                                        value="<%- division.count_for_workshop_batch %>"></td>
-                                <td><%- division.module_name %></td>
-                                <td><label class="switch">
-                                        <input type="checkbox" class="changeStatus" data-id="<%- division.id %>"
-                                            data-status="<%- division.status %>"
-                                            <%- division.status == 'Yes' ? 'Checked' :  ''  %>>
-                                        <span class="switch-slider round"></span>
-                                    </label></td>
+
                             </tr>
-                            <%}%>
+                           
                         </tbody>
 
                     </table>
@@ -601,7 +532,7 @@
         </form>
 
         <!-- Division Batches -->
-        <form action="/admin/divisionbatches" method="post" class="step d-none" id="divisionBatches" data-step="8">
+        <form action="/admin/divisionbatches" method="post" class="step d-none" id="divisionBatches" data-step="7">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-divisionBatches-modal-title">Add Division batches</h5>
@@ -616,8 +547,13 @@
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-divisionBatches-table">
                         <thead>
+                            <th>Division & Module Name</th>
+                            <th>Division Count</th>
                             <th>Division Batches</th>
-                            <th>Division Batches</th>
+                            <th>Event Type</th>
+                            <th>Batch Count</th>
+                            <th>Input Batch Count</th>
+                            <th>Faculty Count</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -631,6 +567,7 @@
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-divisionBatches"></i>
                                 </td>
+
                             </tr>
                         </tbody>
 
@@ -640,7 +577,7 @@
         </form>
 
         <!-- Weekly constraint -->
-        <form action="/admin/weeklyConstraint" method="post" class="step d-none" id="weeklyConstraint" data-step="9">
+        <form action="/admin/weeklyConstraint" method="post" class="step d-none" id="weeklyConstraint" data-step="8">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-weeklyConstraint-modal-title">Weekly constraint</h5>
@@ -697,7 +634,7 @@
         </form>
 
         <!-- Faculty -->
-        <form action="/admin/faculty" method="post" class="step d-none" id="faculty" data-step="10">
+        <form action="/admin/faculty" method="post" class="step d-none" id="faculty" data-step="9">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-faculty-modal-title">Import Faculty</h5>
@@ -749,7 +686,7 @@
         </form>
 
         <!-- Faculty Time Preference -->
-        <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="12">
+        <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="10">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-facultyPreference-modal-title">Add Faculty Preference</h5>
