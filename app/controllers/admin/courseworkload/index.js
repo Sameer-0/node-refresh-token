@@ -154,9 +154,12 @@ module.exports = {
       update_initial_course_workload: JSON.parse(req.body.inputJSON)
   }
 
+  console.log('userid',res.locals.userId)
   CourseWorkload.update(object, res.locals.slug, res.locals.userId).then(result => {
+    console.log('result:::::::::::>>>',result)
       res.status(200).json(JSON.parse(result.output.output_json))
   }).catch(error => {
+    console.log('error::::::::::::::::::::>>',error)
       res.status(500).json(JSON.parse(error.originalError.info.message))
   })
   }

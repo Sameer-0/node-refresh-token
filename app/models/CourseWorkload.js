@@ -89,11 +89,12 @@ module.exports = class {
         })
     }
 
-
-    static update(inputJson, userId, slug) {
+//object, res.locals.slug, res.locals.userId
+    static update(inputJson, slug, userId) {
+        console.log('JSON::::::::::::::::::>>',JSON.stringify(inputJson))
         return poolConnection.then(pool => {
             return pool.request()
-            .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
             .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_update_course_work_wsdl]`)
