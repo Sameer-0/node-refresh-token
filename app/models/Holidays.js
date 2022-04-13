@@ -14,12 +14,13 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 103) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC`)
         })
     }
 
 
     static save(inputJSON, slug) {
+        console.log('object:::::::::::::', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -33,7 +34,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 120) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
+            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 101) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
         })
     }
 
@@ -52,7 +53,7 @@ module.exports = class {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[delete_buildings]`)
+                .execute(`[${slug}].[delete_holidays]`)
         })
     }
 
