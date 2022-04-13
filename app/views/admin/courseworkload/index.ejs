@@ -226,36 +226,8 @@
         })
 
 
-        //Create 
-        $('#courseWorkloadTable').on('change', '.changeStatus', function () {
-            if ($(this).is(':checked')) {
-                //console.log('Yes')
-                chnageStatus($(this).attr('data-id'), 1)
-            } else {
-                //console.log('No')
-                chnageStatus($(this).attr('data-id'), 0)
-            }
-        })
-
-        function chnageStatus(id, status) {
-            console.log(id, status)
-            let ApiObj = {
-                url: '/admin/courseworkload/changestatus',
-                type: 'POST',
-                data: {
-                    id: id,
-                    status: status
-                },
-                dataType: 'JSON'
-            }
-            ajaxApi(ApiObj).then(result => {
-                loadAll()
-            }).catch(error => {
-            })
-        }
-
         // SEARCH PROGRAM TYPE
-                $('#searchkeyword').on('input', delay(function (e) {
+         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "GET",
@@ -264,7 +236,7 @@
                     keyword: keyword
                 },
                 success: function (data) {
-                    console.log(data)
+                    console.log('response::::::::::::>>',data)
                     AjaxtTable(data.data)
                 }
             })
@@ -272,64 +244,14 @@
 
 
 
-
-        //Pagination Here
-        let pageCount = `<%- pageCount %>`
-       // console.log("Page Count=====>>>", pageCount)
-        // let pageNos = Math.ceil(Number(pageCount) / 10)
-
-        // console.log("Page Numbers", pageNos)
-        // $('#pagination').bootpag({
-        //     total: pageNos,
-        //     page: 1,
-        //     maxVisible: 10,
-        //     leaps: true,
-        //     firstLastUse: true,
-        //     first: '←',
-        //     last: '→',
-        //     wrapClass: 'pagination',
-        //     activeClass: 'active',
-        //     disabledClass: 'disabled',
-        //     nextClass: 'next',
-        //     prevClass: 'prev',
-        //     lastClass: 'last',
-        //     firstClass: 'first'
-        // }).on("page", function (event, num) {
-        //     $.ajax({
-        //         type: "POST",
-        //         url: "/admin/courseworkload/pagination",
-        //         data: {
-        //             pageNo: num
-        //         },
-        //         success: function (data) {
-        //             AjaxtTable(data.data)
-        //         }
-        //     })
-        // });
-
-
-        function loadAll() {
-            let ApiObj = {
-                url: '/admin/courseworkload/getAll',
-                type: 'GET',
-                data: {},
-                dataType: 'JSON'
-            }
-            ajaxApi(ApiObj).then(result => {
-                AjaxTable(result.result)
-            }).catch(error => {
-
-            })
-        }
-
         function AjaxtTable(workloadList) {
             let AjaxTable = `<table class="table custom_row table-bordered" id="courseWorkloadTable">
                 <thead>
                     <th>Sr No.</th>
                     <th>Module Name</th>
-                    <th>Module Id</th>
-                    <th>Program Id</th>
-                    <th>Electives</th>
+                    <th>Module Code</th>
+                    <th>Program Code</th>
+                    <th>Acad Session</th>
                     <th>Intake</th>
                     <th>Student per division</th>
                     <th>Lecture per Week per Division</th>
@@ -337,40 +259,32 @@
                     <th>Tutorial per Week per Division</th>
                     <th>Workshop per Week per Division</th>
                     <th>Session Events per Semester</th>
-                    <th>Acad Session</th>
                     <th>Continuous</th>
-                    <th>Action</th>
-                </thead>`;
+                </thead>
+                <tbody>`;
             if (workloadList.length > 0) {
                 let count = 1;
                 for (let course of workloadList) {
                     AjaxTable +=
                         `<tr>
-                            <td>${count++}</td>
+                            <td>${count++} <input type="hidden" class="form-control rounded-0" name="workloadlid" value="${course.id}"></td>
                             <td>${course.module_name}</td>
                             <td>${course.module_id}</td>
                             <td>${course.program_id}</td>
-                            <td>${course.electives}</td>
-                            <td>${course.intake}</td>
-                            <td>${course.student_per_division}</td>
-                            <td>${course.lec_per_week_per_division}</td>
-                            <td>${course.practical_per_week_per_division}</td>
-                            <td>${course.tutorial_per_week_per_division}</td>
-                            <td>${course.workshop_per_week_per_division}</td>
-                            <td>${course.session_events_per_semester}</td>
-                            <td>${course.acad_session_lid}</td>
-                            <td>${course.continuous}</td>
-                            <td><label class="switch">
-                                    <input type="checkbox" class="changeStatus" data-id="${course.id}"
-                                        data-status="${course.status}"
-                                        ${course.status == 'Yes' ? 'Checked' :  '' }>
-                                    <span class="switch-slider round"></span>
-                                </label></td>
+                            <td>${course.acad_session}</td>
+                            <td><input type="number" class="form-control rounded-0" name="intake" value="${course.intake}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="student_per_division" value="${course.student_per_division}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division" value="${course.lec_per_week_per_division}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division" value="${course.practical_per_week_per_division}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division" value="${course.tutorial_per_week_per_division}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division" value="${course.workshop_per_week_per_division}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="${course.session_events_per_semester}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="continuous" value="${course.continuous}"></td>
                         </tr>`
                 }
             } else {
                 AjaxTable +=
-                    ` <tr><td colspan="15">No Data Found</td></tr>`;
+                    ` <tr><td colspan="13">No Data Found</td></tr>`;
             }
             AjaxTable += `<tbody></table>`
             $("#courseWorkloadTable").html(AjaxTable);
