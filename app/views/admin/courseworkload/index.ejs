@@ -44,7 +44,7 @@
                     <select class="select2" id="acadSessionLid" name="acadSessionLid">
                         <option value="">Select Session</option>
                         <% for(let acadsession of AcadSessionList) {%>
-                        <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
+                            <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
                         <%}%>
                     </select>
                 </div>
@@ -81,6 +81,7 @@
                     <th>Module Name</th>
                     <th>Module Code</th>
                     <th>Program Code</th>
+                    <th>Acad Session</th>
                     <th>Intake</th>
                     <th>Student per division</th>
                     <th>Lecture per Week per Division</th>
@@ -88,40 +89,35 @@
                     <th>Tutorial per Week per Division</th>
                     <th>Workshop per Week per Division</th>
                     <th>Session Events per Semester</th>
-                    <th>Acad Session</th>
                     <th>Continuous</th>
-                    <th>Action</th>
-
                 </thead>
                 <tbody>
                     <%let count = 1%>
                         <% for(let course of courseWorkloadList){%>
                         <tr>
-                            <td><%- count++ %></td>
+                            <td><%- count++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid" value="<%-course.id %>"></td>
                             <td><%-course.module_name%></td>
                             <td><%-course.module_id%></td>
                             <td><%-course.program_id%></td>
-                            <td><%-course.intake%></td>
-                            <td><%-course.student_per_division%></td>
-                            <td><%-course.lec_per_week_per_division%></td>
-                            <td><%-course.practical_per_week_per_division%></td>
-                            <td><%-course.tutorial_per_week_per_division%></td>
-                            <td><%-course.workshop_per_week_per_division%></td>
-                            <td><%-course.session_events_per_semester%></td>
-                            <td><%-course.acad_session_lid%></td>
-                            <td><%-course.continuous%></td>
-                            <td>edit</td>
+                            <td><%-course.acad_session%></td>
+                            <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="student_per_division" value="<%-course.student_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division" value="<%-course.lec_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division" value="<%-course.practical_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division" value="<%-course.tutorial_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division" value="<%-course.workshop_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="<%-course.session_events_per_semester%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="continuous" value="<%-course.continuous%>"></td>
                         </tr>
                         <%}%>   
                 </tbody>
             </table>
             <div class="d-flex justify-content-between">
                 <div>
-                    <p>Total entries:<%- pageCount %>
-                        </p>
+                    <p>Total entries:<%- pageCount %></p>
                 </div>
                 <div>
-                    <p id="pagination"></p>
+                    <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Update </button>
                 </div>
             </div>
         </div>
@@ -163,6 +159,71 @@
             })
         })
 
+        //SaveAll
+        $(".SaveAll").on('click',function(){
+            console.log('SaveAll::::::::::>>>')
+            let courseElems = $('#courseWorkloadTable tbody tr');
+            let courseCount = courseElems.length;
+            let courseJSON = [];
+            courseElems.each(function (index, elem) {
+                let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
+                let intake = $(elem).find(`input[name='intake']`).val()
+                let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
+                let lec_per_week_per_division = $(elem).find(`input[name='lec_per_week_per_division']`).val();
+                let practical_per_week_per_division = $(elem).find(`input[name='practical_per_week_per_division']`).val();
+                let tutorial_per_week_per_division = $(elem).find(`input[name='tutorial_per_week_per_division']`).val();
+                let workshop_per_week_per_division = $(elem).find(`input[name='workshop_per_week_per_division']`).val();
+                let session_events_per_semester = $(elem).find(`input[name='session_events_per_semester']`).val();
+                let continuous = $(elem).find(`input[name='continuous']`).val();
+
+                if (index < courseCount - 1) {
+                    let obj = {
+                        workloadlid: workloadlid,
+                        intake: intake,
+                        student_per_division: student_per_division,
+                        lec_per_week_per_division: lec_per_week_per_division,
+                        practical_per_week_per_division: practical_per_week_per_division,
+                        tutorial_per_week_per_division: tutorial_per_week_per_division,
+                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        session_events_per_semester: session_events_per_semester,
+                        continuous: continuous
+                    }
+                    courseJSON.push(obj)
+                } else {
+                    let obj = {
+                        workloadlid:workloadlid,
+                        intake: intake,
+                        student_per_division: student_per_division,
+                        lec_per_week_per_division: lec_per_week_per_division,
+                        practical_per_week_per_division: practical_per_week_per_division,
+                        tutorial_per_week_per_division: tutorial_per_week_per_division,
+                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        session_events_per_semester: session_events_per_semester,
+                        continuous: continuous
+                    }
+                    courseJSON.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',courseJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/courseworkload',
+                data: {
+                    inputJSON: JSON.stringify(courseJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
 
         //Create 
         $('#courseWorkloadTable').on('change', '.changeStatus', function () {
@@ -192,7 +253,7 @@
             })
         }
 
-                // SEARCH PROGRAM TYPE
+        // SEARCH PROGRAM TYPE
                 $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({

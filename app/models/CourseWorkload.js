@@ -33,8 +33,10 @@ module.exports = class {
 
     static getAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT  id, module_name, program_id, module_id, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, module_code
-            FROM [${slug}].initial_course_workload ORDER BY id DESC`)
+            return pool.request().query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lec_per_week_per_division, icw.practical_per_week_per_division, icw.tutorial_per_week_per_division, icw.workshop_per_week_per_division, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session
+            FROM [${slug}].initial_course_workload icw
+            INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
+            ORDER BY id DESC`)
         })
     }
 
@@ -84,6 +86,17 @@ module.exports = class {
             .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_insert_course_work_wsdl]`)
+        })
+    }
+
+
+    static update(inputJson, userId, slug) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+            .input('last_modified_by', sql.Int, userId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].[sp_update_course_work_wsdl]`)
         })
     }
 

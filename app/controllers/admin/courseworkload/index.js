@@ -30,10 +30,10 @@ module.exports = {
       acadSessionLid
     } = req.body;
 
-    if(!acadSessionLid) {
+    if (!acadSessionLid) {
       acadSessionLid = "";
     }
-    if(!programLid) {
+    if (!programLid) {
       programLid = "";
     }
 
@@ -68,8 +68,8 @@ module.exports = {
         });
     })
 
-    console.log('courseWorkloadList:::::::::',JSON.stringify(courseWorkloadList))
-    
+    console.log('courseWorkloadList:::::::::', JSON.stringify(courseWorkloadList))
+
 
     CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
 
@@ -148,4 +148,16 @@ module.exports = {
       throw error
     })
   },
+
+  update: (req, res) => {
+    let object = {
+      update_initial_course_workload: JSON.parse(req.body.inputJSON)
+  }
+
+  CourseWorkload.update(object, res.locals.slug, res.locals.userId).then(result => {
+      res.status(200).json(JSON.parse(result.output.output_json))
+  }).catch(error => {
+      res.status(500).json(JSON.parse(error.originalError.info.message))
+  })
+  }
 }
