@@ -85,7 +85,6 @@
                             <input type="checkbox" data-holiday-id="<%- holiday.id %>" class="delete-holiday-type">
                         </td>
                     </tr>
-
                     <% } %>
                 </tbody>
             </table>
@@ -502,11 +501,12 @@
                     <th>All <input type="checkbox" class="selectAll-Holiday-Types"></th>
                 </thead>
                 <tbody>`;
-                if (programTypeList.length > 0) {
-                    let count = 1;
-                    for (holiday of programTypeList) {
-                        AjaxTable +=
-                            `<tr>
+
+            if (programTypeList.length > 0) {
+                let count  = 1;
+                for (holiday of programTypeList) {
+                    AjaxTable +=
+                    `<tr>
                         <td>${count++}</td>
                         <td>${holiday.calendar_year}</td>
                         <td>${holiday.h_date}</td>
@@ -520,16 +520,18 @@
                             <input type="checkbox" data-holiday-id="${holiday.id}" class="delete-holiday-type">
                         </td>
                     </tr>`
-                    }
-                } else {
-                    AjaxTable +=
-                        ` <tr>
-                                <td colspan="7">No Data Found</td>
-                            </tr>`;
                 }
-                AjaxTable += `<tbody></table>`
-                $("#holidayTable").html(AjaxTable);
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                         <td colspan="7">No Data Found</td>
+                      </tr>`;
             }
+            AjaxTable += `<tbody></table>`
+            $("#holidayTable").html(AjaxTable);
+            }
+
+            
 
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
