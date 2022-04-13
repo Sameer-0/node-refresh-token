@@ -109,39 +109,39 @@ $('#add-more-sessionDate-table').on('click', '.remove-sessionDate', function () 
 })
 
 //Add Division
-$('#add-more-division').on('click', function () {
-    console.log("division date Added::::")
-    let lastTr = $('#add-more-division-table tbody tr:last-child')
-    let division= lastTr.find(`input[name='division']`).val();
-    let divisionNum = lastTr.find(`input[name='divisionNumber']`).val();
-    let divisionCount = lastTr.find(`input[name='divisionCount']`).val();
-    let countForTheoryBatch = lastTr.find(`input[name='countForTheoryBatch']`).val();
-    let countForPracticalBatch = lastTr.find(`input[name='countForPracticalBatch']`).val();
-    let countForTutorialBatch = lastTr.find(`input[name='countForTutorialBatch']`).val();
-    let countForWorkshopBatch = lastTr.find(`input[name='countForWorkshopBatch']`).val();
+// $('#add-more-division').on('click', function () {
+//     console.log("division date Added::::")
+//     let lastTr = $('#add-more-division-table tbody tr:last-child')
+//     let division= lastTr.find(`input[name='division']`).val();
+//     let divisionNum = lastTr.find(`input[name='divisionNumber']`).val();
+//     let divisionCount = lastTr.find(`input[name='divisionCount']`).val();
+//     let countForTheoryBatch = lastTr.find(`input[name='countForTheoryBatch']`).val();
+//     let countForPracticalBatch = lastTr.find(`input[name='countForPracticalBatch']`).val();
+//     let countForTutorialBatch = lastTr.find(`input[name='countForTutorialBatch']`).val();
+//     let countForWorkshopBatch = lastTr.find(`input[name='countForWorkshopBatch']`).val();
     
 
-    let clonedTr = lastTr.clone();
-    // clonedTr.find(`select[name='programName']`).val('')
-    // clonedTr.find(`input[name='courseName']`).val('')
-    // clonedTr.find(`input[name='noOfDivisions']`).val('')
-    // clonedTr.find(`input[name='lecturePerDivision']`).val('')
-    // clonedTr.find(`input[name='totalSessionPerSemester']`).val('')
-    // clonedTr.find(`input[name='sessionPerWeek']`).val('')
-    // clonedTr.find(`input[name='programId']`).val('')
-    // clonedTr.find(`input[name='acadSession']`).val('')
-    // clonedTr.find(`input[name='practicalPerWeekPerSession']`).val('')
+//     let clonedTr = lastTr.clone();
+//     // clonedTr.find(`select[name='programName']`).val('')
+//     // clonedTr.find(`input[name='courseName']`).val('')
+//     // clonedTr.find(`input[name='noOfDivisions']`).val('')
+//     // clonedTr.find(`input[name='lecturePerDivision']`).val('')
+//     // clonedTr.find(`input[name='totalSessionPerSemester']`).val('')
+//     // clonedTr.find(`input[name='sessionPerWeek']`).val('')
+//     // clonedTr.find(`input[name='programId']`).val('')
+//     // clonedTr.find(`input[name='acadSession']`).val('')
+//     // clonedTr.find(`input[name='practicalPerWeekPerSession']`).val('')
    
    
-    $('#add-more-division-table tbody').append(clonedTr)
-})
+//     $('#add-more-division-table tbody').append(clonedTr)
+// })
 
-$('#add-more-division-table').on('click', '.remove-division', function () {
-    console.log('divison Delete')
-    let trLength = $('#add-more-division-table tbody tr').length;
-    if (trLength > 1) {
-        $(this).closest('tr').remove();
-    } else {
-        alert('Cannot delete this room.')
-    }
-})
+// $('#add-more-division-table').on('click', '.remove-division', function () {
+//     console.log('divison Delete')
+//     let trLength = $('#add-more-division-table tbody tr').length;
+//     if (trLength > 1) {
+//         $(this).closest('tr').remove();
+//     } else {
+//         alert('Cannot delete this room.')
+//     }
+// })
