@@ -20,7 +20,7 @@ module.exports = {
                 facultyList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 faculties: result[2].recordset,
-                slotTiming:JSON.stringify(result[3].recordset),
+                slotTiming: JSON.stringify(result[3].recordset),
                 acadCalender: JSON.stringify(result[4].recordset),
                 facultyType: JSON.stringify(result[5].recordset)
                 // totalentries: result[0].recordset ? result[0].recordset.length : 0
@@ -42,14 +42,14 @@ module.exports = {
 
 
     findOne: (req, res) => {
-        programTypeModel.getProgramTypeById(req.query.id).then(result => {
-
+        Faculties.findOne(req.query.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
-                programData: result.recordset[0]
+                result: result.recordset[0]
             })
         }).catch(error => {
+            console.log('error:::::::::>>',error)
             res.status(500).json(error.originalError.info.message)
         })
     },

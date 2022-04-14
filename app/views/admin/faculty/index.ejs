@@ -176,6 +176,75 @@
     </div>
 </div>
 
+
+
+
+<!-- Edit Faculty -->
+<div class="modal fade" id="edit-faculty-modal" tabindex="-1" aria-labelledby="edit-faculty-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-lg">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h3 class="modal-title" id="open-faculty-modal-title">Import Faculty</h3>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times text-dark"></i></button>
+            </div>
+
+            <div class="modal-body py-0">
+
+                <table class="table table-bordered" id="add-more-faculty-table">
+                    <thead>
+                        <tr>
+                        <th>Select Faculty</th>
+                        <th>Faculty Name</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Faculty Type</th>
+                        <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-control onChangeFacultyName" name="faculty_lid" id="faculty_lid">
+                                <% for (let faculty of facultyList) { %>
+                                        <option value="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-faculty-name="<%- faculty.faculty_name %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
+                                    <% } %>
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control" name="faculty_name" id="faculty_name"></td>
+                            <td>
+                                <%let slotTiming1 = JSON.parse(slotTiming) %>
+                                <select class="form-control" name="start_time_id" id="start_time_id">
+                                <% for (let slotstart of slotTiming1) { %>
+                                        <option value="<%- slotstart.id %>" ><%- slotstart.start_time %></option>
+                                    <% } %>
+                                </select></td>
+                                <td>
+                                    <%let slotendt = JSON.parse(slotTiming) %>
+                                    <select class="form-control" name="end_time_id" id="end_time_id">
+                                    <% for (let slotend of slotendt) { %>
+                                            <option value="<%- slotend.id %>" ><%- slotend.end_time %></option>
+                                        <% } %>
+                                    </select></td>
+                            <td>Start Date</td>
+                            <td>End Date</td>
+                            <td>Faculty Type</td>
+                            <td>Action</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-3" id="errorHtml"></div>
+            <div class="modal-footer">
+                <button type="submit" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <%- include("../partials/notification") %>
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
@@ -239,11 +308,6 @@
                         </td>
                         <td>
                             <select class="select2" name="faculty_type_lid">${facultyType}</select>
-                           <!-- <div class="form-check form-switch ms-3 d-flex justify-content-center" data-faculty-id="${$(this).attr("data-faculty-id")}">
-                                <input class="form-check-input faculty-switch me-3" type="checkbox" id="flexSwitchCheckDefault">
-                                <label class="form-check-label label-core" style="width:40px;"  for="flexSwitchCheckDefault" data-core="">Core</label>
-                            </div>-->
-                        </td>
                         <td>
                             <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
                         </td>
@@ -259,13 +323,6 @@
 
         })
 
-        // $("#selectedList").on('click', '.faculty-switch', function () {
-        //     if ($(this).parent().find('label').text() == 'Core') {
-        //         $(this).parent().find('label').text("Visiting");
-        //     } else {
-        //         $(this).parent().find('label').text("Core");
-        //     }
-        // })
 
         //Remove Element
         $("#selectedList").on('click', '.clicktoremove', function () {
@@ -295,7 +352,6 @@
         })
 
         //search selected faculty
-
         $('#searchSelectedItem').on('input', function () {
             let selectedFaculties = $('#selectedList table tbody tr')
             var text = $('#searchSelectedItem').val().toLowerCase();
@@ -324,6 +380,7 @@
                 let endTime = $(elem).find('select[name="endTime"]').val();
                 let startDate = $(elem).find('select[name="startDate"]').val();
                 let endDate = $(elem).find('select[name="endDate"]').val();
+                let faculty_type_lid =  $(elm).find(`'select[name="faculty_type_lid"]'`)
 
                 console.log('facultyName', faculty_name)
 
@@ -335,7 +392,8 @@
                         start_time_id: startTime, 
                         end_time_id: endTime,
                         start_date_id: startDate,
-                        end_date_id: endDate
+                        end_date_id: endDate,
+                        faculty_type_lid: faculty_type_lid
                     }
                     facultyJson.push(obj)
                 } else {
@@ -346,7 +404,8 @@
                         start_time_id: startTime, 
                         end_time_id: endTime,
                         start_date_id: startDate,
-                        end_date_id: endDate
+                        end_date_id: endDate,
+                        faculty_type_lid: faculty_type_lid
                     }
                     facultyJson.push(obj)
                 }
@@ -371,13 +430,29 @@
         })
 
 
-        
-        
-        
        //Edit
        $("#facultyTable").on('click','.edit-faculty',function(){
          let id = $(this).attr("data-faculty-id")
            console.log('click::::::::::::::::>>>',id)
+           let ApiObj = {
+                type: 'GET',
+                url: '/admin/faculties/findOne',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                $("#faculty_name").val(result.result.faculty_name)
+                $("#start_time_id").val(result.result.faculty_name)
+                $("#end_time_id").val(result.result.faculty_name)
+                $(".onChangeFacultyName").val(result.result.id)
+               $("#edit-faculty-modal").modal('show')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
        }) 
         
         
@@ -433,6 +508,12 @@
             })
         }, 500));
 
+
+        //Onchnage for getting facultyName
+        $(".onChangeFacultyName").on('change',function(){
+           var faculty_name = $('option:selected', $(this)).attr('data-faculty-name');
+            $("#faculty_name").val(faculty_name)
+        })
 
 
         function showError(errors) {
