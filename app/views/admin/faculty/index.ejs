@@ -7,26 +7,26 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
     <div class="row my-3 gx-3 gy-3 row1-data">
-        
+
         <div class="col-xl-2 col-lg-4 col-md-6">
             <a href="/admin/faculties/date-time">
-            <div class="card row1-data-card text-center">
+                <div class="card row1-data-card text-center">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <img src="/icon_imgs/room-type.PNG" alt="">
                         <p class="fw-normal pt-1">FACULTY DATE TIME</p>
                     </div>
-            </div>
+                </div>
             </a>
         </div>
 
         <div class="col-xl-2 col-lg-4 col-md-6">
             <a href="/admin/faculties/works">
-            <div class="card row1-data-card text-center">
+                <div class="card row1-data-card text-center">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <img src="/icon_imgs/room-type.PNG" alt="">
                         <p class="fw-normal pt-1">FACULTY WORKS</p>
                     </div>
-            </div>
+                </div>
             </a>
         </div>
 
@@ -94,13 +94,13 @@
                 <div>
                     <p>Total entries:<%- pageCount %>
                     </p>
-                </div>
-                <div>
-                    <p id="pagination"></p>
-                </div>
-            </div>
+        </div>
+        <div>
+            <p id="pagination"></p>
         </div>
     </div>
+</div>
+</div>
 </div>
 
 
@@ -114,40 +114,54 @@
                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times text-dark"></i></button>
             </div>
-           
+
             <div class="modal-body py-0">
-                
-            <div class="row">
-                <div class="col-md-6 select-items">
-                    <h4 class="text-center py-1">Select Faculties</h4>
-                    <input type="text" name="" id="searchItem" placeholder="Search Faculty" class="form-control">
-                    <ul class="list-group custom-select-list" id="selectList">
-                       
-                        <% for (let faculty of faculties) { %>
-                    <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
-                        data-faculty-id="<%- faculty.faculty_id%>" data-clickable="true"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
-                        %></li>
-                    <% } %>
-                    </ul>
+
+                <div class="row">
+                    <div class="col-md-3 select-items">
+                        <h4 class="text-center py-1 select-room-header">Select Faculties</h4>
+                        <input type="text" name="" id="searchItem" placeholder="Search Faculty"
+                            class="form-control searchItemFaculty">
+                        <ul class="list-group custom-select-list" id="selectList" style="margin-top: 60px;">
+
+                            <% for (let faculty of faculties) { %>
+                            <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
+                                data-faculty-id="<%- faculty.faculty_id%>" data-clickable="true">
+                                <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                                %></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                    <div class="col-md-9 selected-items">
+                        <h4 class="text-center py-1 selected-room-header">Selected Faculties</h4>
+                        <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty"
+                            class="form-control searchSelectedFaculty">
+                        <ul class="list-group custom-select-list" id="selectedList" style="margin-top: 50px;">
+                            <table class="table table-bordered" id="add-more-faculty-table">
+                                <thead>
+                                    <th>Faculty Name</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </ul>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="px-3" id="errorHtml"></div>
+            <div class="modal-footer">
+                <button type="submit" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
+            </div>
         </div>
-        <div class="col-md-6 selected-items">
-            <h4 class="text-center py-1">Selected Faculties</h4>
-            <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty"
-                class="form-control">
-            <ul class="list-group custom-select-list" id="selectedList">
-
-            </ul>
-
-        </div>
-
     </div>
-</div>
-<div class="px-3" id="errorHtml"></div>
-<div class="modal-footer">
-    <button type="submit" class="btn  createFaculty modal-inputform-btn">Create Faculty</button>
-</div>
-</div>
-</div>
 </div>
 
 <%- include("../partials/notification") %>
@@ -158,35 +172,78 @@
 <script>
     $(document).ready(function () {
         //DATALIST
+        let slotTime = JSON.parse(`<%- slotTiming %>`);
+        let acadDate = JSON.parse(`<%- acadCalender%>`);
 
+        let optionStartTime;
+        let optionEndTime;
+        let startDate;
+        let endDate;
 
+        for (let obj of slotTime) {
+
+            optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
+        }
+
+        for (let obj of slotTime) {
+
+            optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
+        }
+      
+        for (let obj of acadDate) {
+
+            startDate += `<option value="${obj.id}">${obj.date}</option>`;
+        }
+
+        for (let obj of acadDate) {
+            endDate += `<option value="${obj.id}">${obj.date}</option>`;
+        }
 
         $("#selectList").on('click', '.list-group-item', function () {
 
             //remove current element when added to right sidebar
-            if($(this).attr('data-clickable') == 'true'){
-                $("#selectedList").append(`<li class="list-group-item d-flex justify-content-between align-items-center my-1 border-top"  data-faculty-name="${$(this).attr  ("data-faculty-name")}" data-faculty-id="${$(this).attr("data-faculty-id")}" data-clickable="true">${$(this).text()} <span class="badge bg-danger rounded-pill clicktoremove ms-auto me-2">Remove</span>
-                    <div class="form-check form-switch ms-3" data-faculty-id="${$(this).attr("data-faculty-id")}">
-                        <input class="form-check-input faculty-switch" type="checkbox" id="flexSwitchCheckDefault">
-                        <label class="form-check-label label-core" style="width:45px" for="flexSwitchCheckDefault" data-core="">Core</label>
-                    </div>
-                    </li> `)
+            if ($(this).attr('data-clickable') == 'true') {
+                $("#selectedList table tbody").append(`
+                    
+                    <tr data-clickable="true">
+                        <td data-faculty-id="${$(this).attr("data-faculty-id")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
+                            <div class="form-check form-switch ms-3 d-flex justify-content-center" data-faculty-id="${$(this).attr("data-faculty-id")}">
+                                <input class="form-check-input faculty-switch me-3" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label label-core" style="width:40px;"  for="flexSwitchCheckDefault" data-core="">Core</label>
+                            </div>
+                         </td>
+                        <td>
+                            <select class="select2" name="startTime">${optionStartTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="endTime">${optionEndTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="startDate">${startDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="endDate">${endDate}</select>
+                        </td>
+                        <td>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                        </td>
+                    </tr>
+                    `)
             }
-      
-            $(this).attr('data-clickable','false');
+
+            $(this).attr('data-clickable', 'false');
 
             $($(this)).fadeOut(300, function () {
                 $($(this)).remove()
             })
-        
+
         })
 
-        $("#selectedList").on('click','.faculty-switch', function() {
-            
-            if($(this).parent().find('label').text() == 'Core'){
+        $("#selectedList").on('click', '.faculty-switch', function () {
+
+            if ($(this).parent().find('label').text() == 'Core') {
                 $(this).parent().find('label').text("Visiting");
-            }
-            else{
+            } else {
                 $(this).parent().find('label').text("Core");
             }
 
@@ -196,24 +253,22 @@
 
         $("#selectedList").on('click', '.clicktoremove', function () {
 
-            if($(this).parent().attr('data-clickable') == 'true'){
-                    $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().attr("data-faculty-name")} (${$(this).parent().attr("data-faculty-id")})
+            // if ($(this).parent().attr('data-clickable') == 'true') {
+            $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")}" data-faculty-id="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")} (${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")})
 			        </li>`)
-            }
+            // }
 
-            $(this).parent().attr('data-clickable','false')
+            $(this).parent().attr('data-clickable', 'false')
 
             $($(this)).fadeOut(300, function () {
-                $($(this).parent()).remove()
+                $($(this).parent().parent()).remove()
             })
         })
-       
+
         //search 
-        let faculties = $('#selectList li')
-    
-
+     
         $('#searchItem').on('input', function () {
-
+            let faculties = $('#selectList li')
             var text = $('#searchItem').val().toLowerCase();
 
             for (let faculty of faculties) {
@@ -228,7 +283,7 @@
         //search selected faculty
 
         $('#searchSelectedItem').on('input', function () {
-            let selectedFaculties = $('#selectedList li')
+            let selectedFaculties = $('#selectedList table tbody tr')
             var text = $('#searchSelectedItem').val().toLowerCase();
             console.log('text:::::::::', selectedFaculties)
             for (let faculty of selectedFaculties) {
@@ -242,108 +297,129 @@
             };
         })
 
+//importFaculty
+
+$('.importFaculty').on('click', function() {
+
+
+
+})
+
         //Create New Faculty Entry
-        $(".createFaculty").on('click', function () {
-            let facultiesList = $('#selectedList li');
+        $(".importFaculty").on('click', function () {
+            let facultiesList = $('#selectedList table tbody tr');
             let facultyCount = facultiesList.length;
             let facultyJson = [];
             facultiesList.each(function (index, elem) {
-                let faculty_id = $(elem).attr("data-faculty-id")
-                let faculty_name = $(elem).attr("data-faculty-name")
-                
-                console.log('facultyName',faculty_name)
+                let faculty_id = $(elem).find('td[data-faculty-id]').attr("data-faculty-id")
+                let faculty_name = $(elem).find('td[data-faculty-name]').attr("data-faculty-name")
+                let startTime = $(elem).find('select[name="startTime"]').val();
+                let endTime = $(elem).find('select[name="endTime"]').val();
+                let startDate = $(elem).find('select[name="endTime"]').val();
+                let endDate = $(elem).find('select[name="endTime"]').val();
+
+                console.log('facultyName', faculty_name)
 
                 if (index < facultyCount - 1) {
                     let obj = {
                         id: faculty_id,
-                        
+                        faculty_name: faculty_name,
+                        startTime: startTime, 
+                        endTime: endTime,
+                        startDate: startDate,
+                        endDate: endDate
                     }
                     facultyJson.push(obj)
                 } else {
                     let obj = {
                         id: faculty_id,
-                      
+                        faculty_name: faculty_name,
+                        startTime: startTime, 
+                        endTime: endTime,
+                        startDate: startDate,
+                        endDate: endDate
+
                     }
                     facultyJson.push(obj)
                 }
             })
 
             console.log('facultyJson::::::::::::>>', facultyJson)
-            let ApiObj = {
-                type: 'POST',
-                url: '/admin/faculties',
+            // let ApiObj = {
+            //     type: 'POST',
+            //     url: '/admin/faculties',
+            //     data: {
+            //         inputJSON: JSON.stringify(facultyJson)
+            //     },
+            //     dataType: 'JSON'
+            // }
+
+            // ajaxApi(ApiObj).then(result => {
+            //     console.log('sucess:::::::::', result)
+            //     notify()
+            // }).catch(error => {
+            //     showError(error.responseJSON)
+            // })
+        })
+
+
+        //PAGINATION
+        let pageCount = `<%- pageCount %>`
+
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+            console.log('pagination here!!')
+            $.ajax({
+                type: "POST",
+                url: "/admin/faculties/pagination",
                 data: {
-                    inputJSON: JSON.stringify(facultyJson)
+                    pageNo: num
                 },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::',result)
-                notify()
-            }).catch(error => {
-                showError(error.responseJSON)
+                success: function (data) {
+                    showAjaxTable(data.data)
+                }
             })
-        })
-
-    
-    //PAGINATION
-    let pageCount = `<%- pageCount %>`
-    
-    let pageNos = Math.ceil(Number(pageCount) / 10)
-
-    console.log("Page Numbers", pageNos)
-    $('#pagination').bootpag({
-        total: pageNos,
-        page: 1,
-        maxVisible: 10,
-        leaps: true,
-        firstLastUse: true,
-        first: '←',
-        last: '→',
-        wrapClass: 'pagination',
-        activeClass: 'active', 
-        disabledClass: 'disabled',
-        nextClass: 'next',
-        prevClass: 'prev',
-        lastClass: 'last',
-        firstClass: 'first'
-    }).on("page", function (event, num) {
-        console.log('pagination here!!')
-        $.ajax({
-            type: "POST",
-            url: "/admin/faculties/pagination",
-            data: {
-                pageNo: num
-            },
-            success: function (data) {
-                showAjaxTable(data.data) 
-            }
-        })
-    });
+        });
 
 
 
         //search feature delay function is writter in script.js file which is located in public/js/script.js
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
-            console.log('keyword:::::::::::::::::',keyword)
+            console.log('keyword:::::::::::::::::', keyword)
             $.ajax({
                 type: "GET",
-            url: "/admin/faculties/search",
-            data: {
-                keyword: keyword
-            },
-            success: function (data) {
-                showAjaxTable(data.data) // Facilty List
-            }
-        })
+                url: "/admin/faculties/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    showAjaxTable(data.data) // Facilty List
+                }
+            })
         }, 500));
 
 
 
         function showError(errors) {
-            console.log('Error:::::::::',errors)
+            console.log('Error:::::::::', errors)
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error!</h3>
                     <p>${errors.description}</p>
@@ -358,7 +434,7 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                console.log(errorHtml)
+            console.log(errorHtml)
             $("#errorHtml").html(errorHtml)
         }
 
@@ -372,7 +448,7 @@
                 <tbody>`;
 
             if (facultiesList.length > 0) {
-                let count  = 1;
+                let count = 1;
                 for (faculty of facultiesList) {
                     AjaxTable +=
                         `<tr>

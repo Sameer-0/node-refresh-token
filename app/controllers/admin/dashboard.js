@@ -17,9 +17,9 @@ const CourseWorkload = require('../../models/CourseWorkload')
 
 module.exports = {
     getDashboard: (req, res) => {
-        Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(10, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(),AcadSession.fetchAll(1000), SessionTypes.fetchAll(10, res.locals.slug), AcademicCalender.fetchAll(100), CourseWorkload.fetchAll(10, res.locals.slug)]).then(result => {
+        Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(100, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(),AcadSession.fetchAll(1000), SessionTypes.fetchAll(10, res.locals.slug), AcademicCalender.fetchAll(100), CourseWorkload.fetchAll(10, res.locals.slug), Divisions.fetchDivisionData(100, res.locals.slug)]).then(result => {
             
-            console.log('courseList:::>>', result[15].recordset)
+            console.log('divisionData:::>>', result[16].recordset)
             res.render('admin/dashboard/index', {
                 currentFormStep: result[0].recordset[0] ? result[0].recordset[0].seq : '',
                 dayList: result[1].recordset,
@@ -37,6 +37,7 @@ module.exports = {
                 sessionList: result[13].recordset,
                 acadCal: result[14].recordset,
                 courseWorkloadList: result[15].recordset,
+                divisionData: result[16].recordset,
                 path:'/admin'
             })
         }) 
