@@ -20,6 +20,16 @@ module.exports = class Divisions {
         })
     }
 
+    static fetchDivisionData(rowcount, slug){
+        return poolConnection.then(pool => {
+            return pool.request().query(`select 
+            division, division_num, division_count, module_name 
+            from 
+            [${slug}].divisions d 
+            inner join [${slug}].initial_course_workload icw 
+            on icw.id = d.course_lid`)
+        })
+    }
 
     static getCount(slug) {
         return poolConnection.then(pool => { 
