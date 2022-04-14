@@ -9,11 +9,12 @@ const Faculties = require('../../../models/Faculties');
 const FacultyDbo = require('../../../models/FacultyDbo');
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings');
 const AcademicCalender = require("../../../models/AcademicCalender");
+const FacultyTypes = require("../../../models/FacultyTypes");
 
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(100000), SlotIntervalTimings.fetchAll(100), AcademicCalender.fetchAll(100)]).then(result => {
+        Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(100000), SlotIntervalTimings.fetchAll(100), AcademicCalender.fetchAll(100), FacultyTypes.fetchAll(100)]).then(result => {
 
             res.render('admin/faculty/index', {
                 facultyList: result[0].recordset,
@@ -21,6 +22,7 @@ module.exports = {
                 faculties: result[2].recordset,
                 slotTiming:JSON.stringify(result[3].recordset),
                 acadCalender: JSON.stringify(result[4].recordset),
+                facultyType: JSON.stringify(result[5].recordset)
                 // totalentries: result[0].recordset ? result[0].recordset.length : 0
             })
         })

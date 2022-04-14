@@ -9,6 +9,7 @@ const index =  require('../../controllers/admin/divisions/index')
 const batch = require('../../controllers/admin/divisions/batch')
 
 router.get('/divisions', index.getPage)
+router.put('/divisions', index.update)
 router.get('/divisions/search', index.search)
 router.post('/divisions/pagination', index.pagination)
 router.post('/divisions/changestatus', index.changestatus)

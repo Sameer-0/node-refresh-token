@@ -81,7 +81,7 @@
                     <th>End Time</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <!-- <th>Action</th> -->
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     <% let count = 1%>
@@ -94,9 +94,9 @@
                         <td><%- faculty.end_time %></td>
                         <td><%- faculty.start_date %></td>
                         <td><%- faculty.end_date %></td>
-                        <!-- <td><a><i class="fa fa-edit text-success"></i></a>
+                        <td><a class="edit-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-edit text-success"></i></a>
                             <a><i class="fa fa-trash text-danger"></i></a>
-                        </td> -->
+                        </td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -155,6 +155,7 @@
                                     <th>End Time</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
+                                    <th>Faculty Type</th>
                                     <th>Action</th>
                                 </thead>
                                 <tbody>
@@ -185,11 +186,13 @@
         //DATALIST
         let slotTime = JSON.parse(`<%- slotTiming %>`);
         let acadDate = JSON.parse(`<%- acadCalender%>`);
+        let facultyTypeList = JSON.parse(`<%- facultyType %>`);
 
         let optionStartTime;
         let optionEndTime;
         let startDate;
         let endDate;
+        let facultyType;
 
         for (let obj of slotTime) {
 
@@ -210,18 +213,17 @@
             endDate += `<option value="${obj.id}">${obj.date}</option>`;
         }
 
-        $("#selectList").on('click', '.list-group-item', function () {
+        for (let obj of facultyTypeList) {
+            facultyType += `<option value="${obj.id}">${obj.name}</option>`;
+        }
 
+        $("#selectList").on('click', '.list-group-item', function () {
             //remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
                 $("#selectedList table tbody").append(`
                     
                     <tr data-clickable="true">
                         <td data-faculty-id="${$(this).attr("data-faculty-id")}"  data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
-                            <div class="form-check form-switch ms-3 d-flex justify-content-center" data-faculty-id="${$(this).attr("data-faculty-id")}">
-                                <input class="form-check-input faculty-switch me-3" type="checkbox" id="flexSwitchCheckDefault">
-                                <label class="form-check-label label-core" style="width:40px;"  for="flexSwitchCheckDefault" data-core="">Core</label>
-                            </div>
                          </td>
                         <td>
                             <select class="select2" name="startTime">${optionStartTime}</select>
@@ -234,6 +236,13 @@
                         </td>
                         <td>
                             <select class="select2" name="endDate">${endDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="faculty_type_lid">${facultyType}</select>
+                           <!-- <div class="form-check form-switch ms-3 d-flex justify-content-center" data-faculty-id="${$(this).attr("data-faculty-id")}">
+                                <input class="form-check-input faculty-switch me-3" type="checkbox" id="flexSwitchCheckDefault">
+                                <label class="form-check-label label-core" style="width:40px;"  for="flexSwitchCheckDefault" data-core="">Core</label>
+                            </div>-->
                         </td>
                         <td>
                             <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
@@ -250,25 +259,20 @@
 
         })
 
-        $("#selectedList").on('click', '.faculty-switch', function () {
-
-            if ($(this).parent().find('label').text() == 'Core') {
-                $(this).parent().find('label').text("Visiting");
-            } else {
-                $(this).parent().find('label').text("Core");
-            }
-
-        })
+        // $("#selectedList").on('click', '.faculty-switch', function () {
+        //     if ($(this).parent().find('label').text() == 'Core') {
+        //         $(this).parent().find('label').text("Visiting");
+        //     } else {
+        //         $(this).parent().find('label').text("Core");
+        //     }
+        // })
 
         //Remove Element
-
         $("#selectedList").on('click', '.clicktoremove', function () {
-
             // if ($(this).parent().attr('data-clickable') == 'true') {
             $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")}" data-faculty-id="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")} (${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")})
 			        </li>`)
             // }
-
             $(this).parent().attr('data-clickable', 'false')
 
             $($(this)).fadeOut(300, function () {
@@ -276,8 +280,8 @@
             })
         })
 
-        //search 
 
+        //search 
         $('#searchItem').on('input', function () {
             let faculties = $('#selectList li')
             var text = $('#searchItem').val().toLowerCase();
@@ -308,9 +312,7 @@
             };
         })
 
-
 //importFaculty
-
         $(".importFaculty").on('click', function () {
             let facultiesList = $('#selectedList table tbody tr');
             let facultyCount = facultiesList.length;
@@ -376,11 +378,20 @@
         })
 
 
+        
+        
+        
+       //Edit
+       $("#facultyTable").on('click','.edit-faculty',function(){
+         let id = $(this).attr("data-faculty-id")
+           console.log('click::::::::::::::::>>>',id)
+       }) 
+        
+        
+        
         //PAGINATION
         let pageCount = `<%- pageCount %>`
-
         let pageNos = Math.ceil(Number(pageCount) / 10)
-
         console.log("Page Numbers", pageNos)
         $('#pagination').bootpag({
             total: pageNos,

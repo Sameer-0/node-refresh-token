@@ -68,5 +68,17 @@ module.exports = class Divisions {
     }
 
 
+    //object, res.locals.slug, res.locals.userId
+    static update(inputJson, slug, userId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+            .input('last_modified_by', sql.Int, userId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].[sp_update_divisions]`)
+        })
+    }
+
+
 
 }

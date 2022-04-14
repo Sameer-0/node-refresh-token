@@ -39,7 +39,7 @@
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-
+<div id="errorHtml"></div>
             <table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
@@ -57,17 +57,17 @@
                     <%let count = 1;%>
                     <% for(let division of divisionList) {%>
                     <tr>
-                        <td><%- count++ %></td>
+                        <td><%- count++ %><input class="form-control rounded-0" type="hidden" name="division_id" value="<%-division.id%>"></td>
                         <td>
                             <%- division.module_name%>
                         </td>
                         <td><%- division.division%></td>
                         <td><%- division.division_num%></td>
                         <td><%- division.division_count%></td>
-                        <td><input class="form-control rounded-0" name="countForTheoryBatch" value="<%-division.count_for_theory_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="countForPracticalBatch" value="<%-division.count_for_practical_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="countForTutorialBatch" value="<%-division.count_for_tutorial_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="countForWorkshopBatch" value="<%-division.count_for_workshop_batch%>"></td>
+                        <td><input class="form-control rounded-0" name="count_for_theory_batch" value="<%-division.count_for_theory_batch%>"></td>
+                        <td><input class="form-control rounded-0" name="count_for_practical_batch" value="<%-division.count_for_practical_batch%>"></td>
+                        <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="<%-division.count_for_tutorial_batch%>"></td>
+                        <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="<%-division.count_for_workshop_batch%>"></td>
                         <td>
                             <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
                         </td>
@@ -75,6 +75,14 @@
                     <%}%>
                 </tbody>
             </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %></p>
+                </div>
+                <div>
+                    <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Update </button>
+                </div>
+            </div>
 </div>
 </div>
 
@@ -86,6 +94,62 @@
 
 <script>
     $(document).ready(function () {
+
+
+
+                //SaveAll
+                $(".SaveAll").on('click',function(){
+            console.log('SaveAll::::::::::>>>')
+            let divElems = $('#divisionTable tbody tr');
+            let divCount = divElems.length;
+            let divJSON = [];
+            divElems.each(function (index, elem) {
+                let id = $(elem).find(`input[name='division_id']`).val()
+                let count_for_theory_batch = $(elem).find(`input[name='count_for_theory_batch']`).val()
+                let count_for_practical_batch = $(elem).find(`input[name='count_for_practical_batch']`).val();
+                let count_for_tutorial_batch = $(elem).find(`input[name='count_for_tutorial_batch']`).val();
+                let count_for_workshop_batch = $(elem).find(`input[name='count_for_workshop_batch']`).val();
+
+
+                if (index < divCount - 1) {
+                    let obj = {
+                        id: id,
+                        count_for_theory_batch: count_for_theory_batch,
+                        count_for_practical_batch: count_for_practical_batch,
+                        count_for_tutorial_batch: count_for_tutorial_batch,
+                        count_for_workshop_batch:count_for_workshop_batch  
+                    }
+                    divJSON.push(obj)
+                } else {
+                    let obj = {
+                        id: id,
+                        count_for_theory_batch: count_for_theory_batch,
+                        count_for_practical_batch: count_for_practical_batch,
+                        count_for_tutorial_batch: count_for_tutorial_batch,
+                        count_for_workshop_batch:count_for_workshop_batch  
+                    }
+                    divJSON.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',divJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/divisions',
+                data: {
+                    inputJSON: JSON.stringify(divJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
 
         //Create 
@@ -156,10 +220,6 @@
         }, 500));
 
 
-
-     
-
-
         function AjaxtTable(divisionList) {
             let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
@@ -204,6 +264,43 @@
             }
             AjaxTable += `<tbody></table>`
             $("#divisionTable").html(AjaxTable);
+        }
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
         }
 
 
