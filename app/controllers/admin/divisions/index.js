@@ -8,7 +8,7 @@ const Divisions = require('../../../models/Divisions')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([Divisions.fetchAll(10, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
+        Promise.all([Divisions.fetchAll(10000, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count
