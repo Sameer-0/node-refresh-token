@@ -8,7 +8,7 @@
     <!--DASHBOARD CONTENT START-->
     <div class="row my-3 gx-3 gy-3 row1-data">
 
-        <div class="col-xl-2 col-lg-4 col-md-6">
+        <!-- <div class="col-xl-2 col-lg-4 col-md-6">
             <a href="/admin/faculties/date-time">
                 <div class="card row1-data-card text-center">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
@@ -17,7 +17,7 @@
                     </div>
                 </div>
             </a>
-        </div>
+        </div> -->
 
         <div class="col-xl-2 col-lg-4 col-md-6">
             <a href="/admin/faculties/works">
@@ -58,7 +58,7 @@
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>Add Faculty</h5>
+                <h5>Import Facilties</h5>
             </div>
             <div>
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-faculty-modal"><i
@@ -77,7 +77,11 @@
                     <th>Sr.No.</th>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
-
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <!-- <th>Action</th> -->
                 </thead>
                 <tbody>
                     <% let count = 1%>
@@ -86,6 +90,13 @@
                         <td><%- count++ %></td>
                         <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
                         <td><%- faculty.faculty_name %></td>
+                        <td><%- faculty.start_time %></td>
+                        <td><%- faculty.end_time %></td>
+                        <td><%- faculty.start_date %></td>
+                        <td><%- faculty.end_date %></td>
+                        <!-- <td><a><i class="fa fa-edit text-success"></i></a>
+                            <a><i class="fa fa-trash text-danger"></i></a>
+                        </td> -->
                     </tr>
                     <%}%>
                 </tbody>
@@ -126,7 +137,7 @@
 
                             <% for (let faculty of faculties) { %>
                             <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
-                                data-faculty-id="<%- faculty.faculty_id%>" data-clickable="true">
+                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.id%>" data-clickable="true">
                                 <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
                                 %></li>
                             <% } %>
@@ -206,7 +217,7 @@
                 $("#selectedList table tbody").append(`
                     
                     <tr data-clickable="true">
-                        <td data-faculty-id="${$(this).attr("data-faculty-id")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
+                        <td data-faculty-id="${$(this).attr("data-faculty-id")}"  data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
                             <div class="form-check form-switch ms-3 d-flex justify-content-center" data-faculty-id="${$(this).attr("data-faculty-id")}">
                                 <input class="form-check-input faculty-switch me-3" type="checkbox" id="flexSwitchCheckDefault">
                                 <label class="form-check-label label-core" style="width:40px;"  for="flexSwitchCheckDefault" data-core="">Core</label>
@@ -298,40 +309,48 @@
         })
 
 
-        //Create New Faculty Entry
+//importFaculty
+
         $(".importFaculty").on('click', function () {
             let facultiesList = $('#selectedList table tbody tr');
             let facultyCount = facultiesList.length;
             let facultyJson = [];
             facultiesList.each(function (index, elem) {
                 let faculty_id = $(elem).find('td[data-faculty-id]').attr("data-faculty-id")
-                let faculty_name = $(elem).find('td[data-faculty-name]').attr(
-                    "data-faculty-name")
+
+                let faculty_lid = $(elem).find(`td[data-faculty-lid]`).attr('data-faculty-lid')
+                let faculty_name = $(elem).find('td[data-faculty-name]').attr("data-faculty-name")
+
                 let startTime = $(elem).find('select[name="startTime"]').val();
                 let endTime = $(elem).find('select[name="endTime"]').val();
-                let startDate = $(elem).find('select[name="endTime"]').val();
-                let endDate = $(elem).find('select[name="endTime"]').val();
+                let startDate = $(elem).find('select[name="startDate"]').val();
+                let endDate = $(elem).find('select[name="endDate"]').val();
 
                 console.log('facultyName', faculty_name)
 
                 if (index < facultyCount - 1) {
                     let obj = {
-                        id: faculty_id,
-                        faculty_name: faculty_name,
-                        startTime: startTime,
-                        endTime: endTime,
-                        startDate: startDate,
-                        endDate: endDate
+
+                        id: faculty_lid,
+                        faculty_id: faculty_id,
+                       // faculty_name: faculty_name,
+                        start_time_id: startTime, 
+                        end_time_id: endTime,
+                        start_date_id: startDate,
+                        end_date_id: endDate
+
                     }
                     facultyJson.push(obj)
                 } else {
                     let obj = {
-                        id: faculty_id,
-                        faculty_name: faculty_name,
-                        startTime: startTime,
-                        endTime: endTime,
-                        startDate: startDate,
-                        endDate: endDate
+
+                        id: faculty_lid,
+                        faculty_id: faculty_id,
+                        //faculty_name: faculty_name,
+                        start_time_id: startTime, 
+                        end_time_id: endTime,
+                        start_date_id: startDate,
+                        end_date_id: endDate
 
                     }
                     facultyJson.push(obj)
@@ -339,21 +358,21 @@
             })
 
             console.log('facultyJson::::::::::::>>', facultyJson)
-            // let ApiObj = {
-            //     type: 'POST',
-            //     url: '/admin/faculties',
-            //     data: {
-            //         inputJSON: JSON.stringify(facultyJson)
-            //     },
-            //     dataType: 'JSON'
-            // }
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties',
+                data: {
+                    inputJSON: JSON.stringify(facultyJson)
+                },
+                dataType: 'JSON'
+            }
 
-            // ajaxApi(ApiObj).then(result => {
-            //     console.log('sucess:::::::::', result)
-            //     notify()
-            // }).catch(error => {
-            //     showError(error.responseJSON)
-            // })
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                notify()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
         })
 
 
@@ -436,6 +455,11 @@
                     <th>Sr.No.</th>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <!-- <th>Action</th> -->
                 </thead>
                 <tbody>`;
 
@@ -447,12 +471,19 @@
                         <td>${count++}</td>
                         <td data-faculty-id="${faculty.id}">${faculty.faculty_id}</td>
                         <td>${faculty.faculty_name}</td>
+                        <td>${faculty.start_time}</td>
+                        <td>${faculty.end_time}</td>
+                        <td>${faculty.start_date}</td>
+                        <td>${faculty.end_date}</td>
+                        <!-- <td><a><i class="fa fa-edit text-success"></i></a>
+                            <a><i class="fa fa-trash text-danger"></i></a>
+                        </td> -->
                     </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="3">No Data Found</td>
+                                <td colspan="7">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`

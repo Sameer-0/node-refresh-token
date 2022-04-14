@@ -43,14 +43,14 @@
             <table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
+                    <th>Module Name</th>
                     <th>Division</th>
-                    <th>Division no</th>
+                    <th>Division Number</th>
                     <th>Division count</th>
                     <th>Count for theory batch</th>
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
-                    <th>Module name</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
@@ -58,33 +58,23 @@
                     <% for(let division of divisionList) {%>
                     <tr>
                         <td><%- count++ %></td>
-                        <td><input type="text" class="form-control" value="<%- division.division %>"></td>
-                        <td><input type="text" class="form-control" value="<%- division.division_num %>"></td>
-                        <td><input type="text" class="form-control" value="<%- division.division_count %>"></td>
-                        <td><input type="text" class="form-control" value="<%- division.count_for_theory_batch %>"></td>
-                        <td><input type="text" class="form-control" value="<%- division.count_for_practical_batch %>"></td>
-                        <td><input type="text" class="form-control" value="<%- division.count_for_tutorial_batch %>"></td>
-                        <td><input type="text" class="form-control" value="<%- division.count_for_workshop_batch %>"></td>
-                        <td><%- division.module_name %></td>
-                        <td><label class="switch">
-                                <input type="checkbox" class="changeStatus" data-id="<%- division.id %>"
-                                    data-status="<%- division.status %>"
-                                    <%- division.status == 'Yes' ? 'Checked' :  ''  %>>
-                                <span class="switch-slider round"></span>
-                            </label></td>
+                        <td>
+                            <%- division.module_name%>
+                        </td>
+                        <td><%- division.division%></td>
+                        <td><%- division.division_num%></td>
+                        <td><%- division.division_count%></td>
+                        <td><input class="form-control rounded-0" name="countForTheoryBatch" value="<%-division.count_for_theory_batch%>"></td>
+                        <td><input class="form-control rounded-0" name="countForPracticalBatch" value="<%-division.count_for_practical_batch%>"></td>
+                        <td><input class="form-control rounded-0" name="countForTutorialBatch" value="<%-division.count_for_tutorial_batch%>"></td>
+                        <td><input class="form-control rounded-0" name="countForWorkshopBatch" value="<%-division.count_for_workshop_batch%>"></td>
+                        <td>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
+                        </td>
                     </tr>
                     <%}%>
                 </tbody>
             </table>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <p>Total entries:<%- pageCount %>
-                    </p>
-        </div>
-        <div>
-            <p id="pagination"></p>
-        </div>
-    </div>
 </div>
 </div>
 
@@ -92,8 +82,7 @@
 </div>
 
 <%- include("../partials/footer") %>
-<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
-</script>
+
 
 <script>
     $(document).ready(function () {
@@ -168,39 +157,7 @@
 
 
 
-        //Pagination Here
-        let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
-        let pageNos = Math.ceil(Number(pageCount) / 10)
-
-        console.log("Page Numbers", pageNos)
-        $('#pagination').bootpag({
-            total: pageNos,
-            page: 1,
-            maxVisible: 10,
-            leaps: true,
-            firstLastUse: true,
-            first: '←',
-            last: '→',
-            wrapClass: 'pagination',
-            activeClass: 'active',
-            disabledClass: 'disabled',
-            nextClass: 'next',
-            prevClass: 'prev',
-            lastClass: 'last',
-            firstClass: 'first'
-        }).on("page", function (event, num) {
-            $.ajax({
-                type: "POST",
-                url: "/admin/divisions/pagination",
-                data: {
-                    pageNo: num
-                },
-                success: function (data) {
-                    AjaxtTable(data.data)
-                }
-            })
-        });
+     
 
 
         function AjaxtTable(divisionList) {

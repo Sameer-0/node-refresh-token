@@ -26,7 +26,15 @@ module.exports = class Faculties {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, faculty_id, faculty_name, faculty_dbo_lid, last_modified_by FROM [${slug}].faculties ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, CONVERT(NVARCHAR, ac.date, 103) AS start_date,
+            CONVERT(NVARCHAR, _ac.date, 103) AS end_date
+            FROM [${slug}].faculties f 
+            INNER JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
+            INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
+            INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
+            INNER JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
+            INNER JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
+            ORDER BY id DESC`)
         })
     }
 
@@ -41,7 +49,15 @@ module.exports = class Faculties {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  id, faculty_id, faculty_name, faculty_dbo_lid, last_modified_by FROM [${slug}].faculties ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT  f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, CONVERT(NVARCHAR, ac.date, 103) AS start_date,
+                CONVERT(NVARCHAR, _ac.date, 103) AS end_date
+                FROM [${slug}].faculties f 
+                INNER JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
+                INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
+                INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
+                INNER JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
+                INNER JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
+                ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -49,7 +65,16 @@ module.exports = class Faculties {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} id, faculty_id, faculty_name, faculty_dbo_lid, last_modified_by FROM [${slug}].faculties WHERE faculty_id LIKE @keyword OR faculty_name LIKE @keyword ORDER BY id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, CONVERT(NVARCHAR, ac.date, 103) AS start_date,
+                CONVERT(NVARCHAR, _ac.date, 103) AS end_date
+                FROM [${slug}].faculties f 
+                INNER JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
+                INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
+                INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
+                INNER JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
+                INNER JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
+                WHERE f.faculty_id LIKE @keyword OR f.faculty_name LIKE @keyword OR sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR ac.date LIKE @keyword OR _ac.date LIKE @keyword
+                ORDER BY id DESC`)
         })
     }
 
