@@ -78,4 +78,20 @@ module.exports = class Faculties {
         })
     }
 
+    static findOne(id, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+             request.input('Id', sql.Int, id)
+            return request.query(`SELECT  f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, CONVERT(NVARCHAR, ac.date, 103) AS start_date,
+            CONVERT(NVARCHAR, _ac.date, 103) AS end_date
+            FROM [${slug}].faculties f 
+            INNER JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
+            INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
+            INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
+            INNER JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
+            INNER JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
+            WHERE f.id = @Id`)
+        })
+    }
+
 }
