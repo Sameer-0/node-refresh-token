@@ -85,7 +85,6 @@
                             <input type="checkbox" data-holiday-id="<%- holiday.id %>" class="delete-holiday-type">
                         </td>
                     </tr>
-
                     <% } %>
                 </tbody>
             </table>
@@ -139,7 +138,7 @@
                                         placeholder="Holiday Date" required> -->
                                         <select class="select2 form-select"  name="holiday_date" id="holiday_date">
                                             <% for(let acadcal of academicCalender){%>
-                                            <option value="<%- acadcal.id %>"><%- acadcal.date %></option>
+                                            <option value="<%- acadcal.date %>"><%- acadcal.date %></option>
                                             <%}%>
                                         </select>
                                 </td>
@@ -249,7 +248,7 @@
             let holidayJson = [];
             holidayElems.each(function (index, elem) {
                 let calendar_year = $(elem).find(`input[name='calendar_year']`).val()
-                let holiday_date = $(elem).find(`input[name='holiday_date']`).val()
+                let holiday_date = $(elem).find(`select[name='holiday_date']`).val()
                 let holiday_type = $(elem).find(`select[name='holiday_type']`).val()
                 let reason = $(elem).find(`input[name='reason']`).val()
 
@@ -271,6 +270,8 @@
                     holidayJson.push(obj)
                 }
             })
+
+            console.log('JOSN::::::::::>>',JSON.stringify(holidayJson))
 
             let ApiObj = {
                 type: 'POST',
@@ -305,8 +306,9 @@
             }
 
             ajaxApi(ApiObj).then(result => {
+                console.log('result::::::::::::::::::::',result.data.h_date)
                 $("#calendar_year").val(result.data.calendar_year)
-                $("#holiday_date").val(result.data.h_date)
+                $("#holiday_date").val(result.data.h_date).trigger('change')
                 $("#holiday_type").val(result.data.holiday_type_lid).trigger('change')
                 $("#Id").val(result.data.id)
                 $("#reason").val(result.data.reason)
@@ -323,7 +325,7 @@
             let holidayJson = [];
             holidayElems.each(function (index, elem) {
                 let calendar_year = $(elem).find(`input[name='calendar_year']`).val()
-                let holiday_date = $(elem).find(`input[name='holiday_date']`).val()
+                let holiday_date = $(elem).find(`select[name='holiday_date']`).val()
                 let holiday_type = $(elem).find(`select[name='holiday_type']`).val()
                 let reason = $(elem).find(`input[name='reason']`).val()
                 let id = $(elem).find(`input[name='Id']`).val()
@@ -449,7 +451,7 @@
                         url: '/admin/holidays',
                         type: 'DELETE',
                         data: {
-                            Ids: JSON.stringify(deleteids)
+                            id: JSON.stringify(deleteids)
                         },
                         dataType: 'JSON'
                     }
@@ -499,11 +501,12 @@
                     <th>All <input type="checkbox" class="selectAll-Holiday-Types"></th>
                 </thead>
                 <tbody>`;
-                if (programTypeList.length > 0) {
-                    let count = 1;
-                    for (holiday of programTypeList) {
-                        AjaxTable +=
-                            `<tr>
+
+            if (programTypeList.length > 0) {
+                let count  = 1;
+                for (holiday of programTypeList) {
+                    AjaxTable +=
+                    `<tr>
                         <td>${count++}</td>
                         <td>${holiday.calendar_year}</td>
                         <td>${holiday.h_date}</td>
@@ -517,16 +520,18 @@
                             <input type="checkbox" data-holiday-id="${holiday.id}" class="delete-holiday-type">
                         </td>
                     </tr>`
-                    }
-                } else {
-                    AjaxTable +=
-                        ` <tr>
-                                <td colspan="7">No Data Found</td>
-                            </tr>`;
                 }
-                AjaxTable += `<tbody></table>`
-                $("#holidayTable").html(AjaxTable);
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                         <td colspan="7">No Data Found</td>
+                      </tr>`;
             }
+            AjaxTable += `<tbody></table>`
+            $("#holidayTable").html(AjaxTable);
+            }
+
+            
 
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">

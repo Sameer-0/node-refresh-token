@@ -129,12 +129,49 @@
                 //console.log($(this).attr('data-status'))
                 if ($(this).is(':checked')) {
                     console.log('Yes')
-                    //chnageStatus($(this).attr('data-id'), 1)
+                    chnageStatus($(this).attr('data-id'), 1)
                 } else {
                     console.log('No')
-                    //chnageStatus($(this).attr('data-id'), 0)
+                    chnageStatus($(this).attr('data-id'), 0)
                 }
             })
+
+
+
+            function chnageStatus(id, status) {
+                       let ApiObj = {
+                             url: '/admin/programs/days',
+                             type: 'PATCH',
+                            data: {
+                                    id: id,
+                                    status: status
+                                 },
+                                 dataType: 'JSON'
+                                }
+                                ajaxApi(ApiObj).then(result => {
+                                loadDays()
+                     }).catch(error => {
+
+                })
+            }
+
+
+            function loadDays(){
+                   let ApiObj = {
+                                    url: '/admin/programs/days/GetAll',
+                                    type: 'GET',
+                                    data: { },
+                                    dataType: 'JSON'
+                                }
+
+                                ajaxApi(ApiObj).then(result => {
+                                    AjaxtTable(result.result)
+                                }).catch(error => {
+
+                                })
+            }
+
+
 
             $('.createProgramType').on('click', function () {
                 $.ajax({
@@ -175,7 +212,6 @@
                         $("#add-room-modal").modal('show')
                     },
                     error: err => {
-
                         showError(err.responseJSON)
                     }
                 })

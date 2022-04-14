@@ -28,10 +28,8 @@ module.exports = {
     create: (req, res) => {
 
         let object = {
-            add_faculty_works: JSON.parse(req.body.inputJSON)
+            insert_new_holidays: JSON.parse(req.body.inputJSON)
         }
-
-        console.log('object:::::::::::::', object)
 
         Holidays.save(object, res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
@@ -66,10 +64,10 @@ module.exports = {
 
         console.log('Delete Call', req.body)
         let object = {
-            delete_buildings: JSON.parse(req.body.Ids)
+            delete_holidays: JSON.parse(req.body.id)
         }
 
-        Holidays.delete(object).then(result => {
+        Holidays.delete(object, res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))

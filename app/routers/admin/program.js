@@ -31,7 +31,8 @@ router.post('/programs/pagination', validate('pagination'), programType.paginati
 router.get('/programs/days', days.getPage)
 router.post('/programs/days/pagination', days.pagination)
 router.get('/programs/days/search', days.search)
-
+router.patch('/programs/days', days.changeStatus)
+router.get('/programs/days/GetAll', days.getAll)
 
 //PROGRAM SESSIONS
 router.get('/programs/sessions', sessions.getPage)

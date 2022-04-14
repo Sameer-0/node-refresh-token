@@ -52,7 +52,7 @@ module.exports = {
             return;
         }
 
-        ProgramSessions.pagination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
+        ProgramSessions.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
