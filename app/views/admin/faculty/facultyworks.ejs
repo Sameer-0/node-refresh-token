@@ -54,7 +54,7 @@
                         <td><%- faculty.tutorial_per_week %></td>
                         <td><%- faculty.workshop_per_week %></td>
                         <td><%- faculty.is_batch_preference_set_status %></td>
-                        <td><a><span class="fa fa-edit"></span></a></td>
+                        <td><a class="edit-facultyWorks" data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-program-session-lid="<%- faculty.program_session_lid %>" data-module-lid="<%- faculty.module_lid %>" data-lecture-per-week="<%- faculty.lecture_per_week%>" data-practical-per-week="<%-faculty.practical_per_week%>" data-tutorial-per-week="<%-faculty.tutorial_per_week%>" data-workshop-per-week="<%-faculty.workshop_per_week%>" data-is-batch-preference-set="<%-faculty.is_batch_preference_set %>"><span class="fa fa-edit"></span></a></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -84,6 +84,7 @@
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
+                <input type="hidden" id="hidden_id">
                 <div class="table-responsive ">
                     <table class="table table-bordered" id="add-more-facultywork-table">
                         <thead>
@@ -109,7 +110,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="program_session_lid">
+                                    <select class="select2" name="program_session_lid" id="program_session_lid">
                                         <option value="">--select--</option>
                                         <% for(session of programSession) {%>
                                         <option value="<%- session.id %>"><%- session.acad_session %></option>
@@ -117,7 +118,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="module_lid">
+                                    <select class="select2" name="module_lid" id="module_lid">
                                         <option value="">--select--</option>
                                         <% for(course of courseWorkload) {%>
                                         <option value="<%- course.id %>">
@@ -126,18 +127,18 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="lecture_per_week" class="form-control">
+                                    <input type="number" name="lecture_per_week" id="lecture_per_week" class="form-control">
                                 </td>
                                 <td>
-                                    <input type="number" name="practical_per_week" class="form-control">
+                                    <input type="number" name="practical_per_week" id="practical_per_week" class="form-control">
                                 </td>
                                 <td>
-                                    <input type="number" name="tutorial_per_week" class="form-control">
+                                    <input type="number" name="tutorial_per_week" id="tutorial_per_week" class="form-control">
                                 </td>
-                                <td><input type="number" name="workshop_per_week" class="form-control"></td>
+                                <td><input type="number" name="workshop_per_week" id="workshop_per_week" class="form-control"></td>
                                 <td>
                                     <!-- <input type="number" name="is_batch_preference_set" class="form-control"> -->
-                                    <select class="form-control" name="is_batch_preference_set">
+                                    <select class="form-control" name="is_batch_preference_set" id="is_batch_preference_set">
                                         <option value="">Select preference</option>
                                         <option value="1">Yes</option>
                                         <option value="0">No</option>
@@ -163,7 +164,7 @@
                 <button type="submit" class="btn  createFacultyWorkLoad modal-inputform-btn">
                    Create
                     </button>
-                <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update
+                <button type="submit" class="btn  updateFacultyWorkLoad modal-inputform-btn d-none">Update
                     </button>
             </div>
         </div>
@@ -264,7 +265,6 @@ $(document).ready(function () {
                 let workshop_per_week = $(elem).find(`input[name='workshop_per_week']`).val();
                 let is_batch_preference_set = $(elem).find(`select[name='is_batch_preference_set']`).val();
 
-
                 if (index < facultyCount - 1) {
                     let obj = {
                         faculty_lid: faculty_lid,
@@ -328,6 +328,104 @@ $(document).ready(function () {
             }
         })
         }, 500));
+
+        //edit-facultyWorks
+        $("#facultyWorkTable").on('click','.edit-facultyWorks',function(){
+            $("#add-more-facultyworkfields").addClass('d-none')
+            $(".createFacultyWorkLoad").addClass('d-none')
+            $(".updateFacultyWorkLoad").removeClass('d-none')
+            // let id = $(this).attr("data-id")
+            // let faculty_lid = $(this).attr("data-faculty-lid")
+            // let program_session_lid = $(this).attr("data-program-session-lid")
+            // let module_lid = $(this).attr("data-module-lid")
+            // let lecture_per_week = $(this).attr("data-lecture-per-week")
+            // let practical_per_week = $(this).attr("data-practical-per-week")
+            // let tutorial_per_week = $(this).attr("data-tutorial-per-week")
+            // let workshop_per_week = $(this).attr("data-workshop-per-week")
+            // let is_batch_preference_set = $(this).attr("data-is-batch-preference-set")
+            // console.log('faculty_lid::::::::::>>>',faculty_lid)
+            
+            $("#hidden_id").val($(this).attr("data-id"))
+            $("#faculty_lid").val($(this).attr("data-faculty-lid")).trigger('change')
+            $("#program_session_lid").val($(this).attr("data-program-session-lid")).trigger('change')
+            $("#module_lid").val($(this).attr("data-module-lid")).trigger('change')
+            $("#lecture_per_week").val($(this).attr("data-lecture-per-week")).trigger('change')
+            $("#practical_per_week").val($(this).attr("data-practical-per-week")).trigger('change')
+            $("#tutorial_per_week").val($(this).attr("data-tutorial-per-week")).trigger('change')
+            $("#workshop_per_week").val($(this).attr("data-workshop-per-week")).trigger('change')
+            $("#is_batch_preference_set").val($(this).attr("data-is-batch-preference-set")).trigger('change')
+            $("#add-facultywork-modal").modal('show')
+        })
+
+
+
+
+        //Update Faculty Workload
+        $(".updateFacultyWorkLoad").on('click', function(){
+            console.log('create function calling..')
+            let facultyElems = $('#add-more-facultywork-table tbody tr');
+            let facultyCount = facultyElems.length;
+            let facultyJson = [];
+            let id = $("#hidden_id").val()
+
+            facultyElems.each(function (index, elem) {
+                let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
+                let program_session_lid = $(elem).find(`select[name='program_session_lid']`).val();
+                let module_lid = $(elem).find(`select[name='module_lid']`).val();
+                let lecture_per_week = $(elem).find(`input[name='lecture_per_week']`).val();
+                let practical_per_week = $(elem).find(`input[name='practical_per_week']`).val();
+                let tutorial_per_week = $(elem).find(`input[name='tutorial_per_week']`).val();
+                let workshop_per_week = $(elem).find(`input[name='workshop_per_week']`).val();
+                let is_batch_preference_set = $(elem).find(`select[name='is_batch_preference_set']`).val();
+
+                if (index < facultyCount - 1) {
+                    let obj = {
+                        id:id,
+                        faculty_lid: faculty_lid,
+                        program_session_lid: program_session_lid,
+                        module_lid: module_lid,
+                        lecture_per_week: lecture_per_week,
+                        practical_per_week: practical_per_week,
+                        tutorial_per_week: tutorial_per_week,
+                        workshop_per_week: workshop_per_week,
+                        is_batch_preference_set: is_batch_preference_set
+                    }
+                    facultyJson.push(obj)
+                } else {
+                    let obj = {
+                        id:id,
+                        faculty_lid: faculty_lid,
+                        program_session_lid: program_session_lid,
+                        module_lid: module_lid,
+                        lecture_per_week: lecture_per_week,
+                        practical_per_week: practical_per_week,
+                        tutorial_per_week: tutorial_per_week,
+                        workshop_per_week: workshop_per_week,
+                        is_batch_preference_set: is_batch_preference_set
+                    }
+                    facultyJson.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',facultyJson)
+
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/faculties/works',
+                data: {
+                    inputJSON: JSON.stringify(facultyJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
 
         //PAGINATION
@@ -397,7 +495,7 @@ $(document).ready(function () {
                         <td>${faculty.tutorial_per_week}</td>
                         <td>${faculty.workshop_per_week}</td>
                         <td>${faculty.is_batch_preference_set_status}</td>
-                        <td><a><span class="fa fa-edit"></span></a></td>
+                        <td><a class="edit-facultyWorks" data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-program-session-lid="${faculty.program_session_lid}" data-module-lid="${faculty.module_lid}" data-lecture-per-week="${faculty.lecture_per_week}" data-practical-per-week="${faculty.practical_per_week}" data-tutorial-per-week="${faculty.tutorial_per_week}" data-workshop-per-week="${faculty.workshop_per_week}" data-is-batch-preference-set="${faculty.is_batch_preference_set}"><span class="fa fa-edit"></span></a></td>
                     </tr>`
                 }
             } else {
@@ -448,6 +546,10 @@ $(document).ready(function () {
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             $("#add-facultywork-modal #errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
         }
 
 })

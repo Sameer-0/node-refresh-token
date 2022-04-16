@@ -100,7 +100,6 @@ module.exports = {
             update_faculty_batches: JSON.parse(req.body.inputJSON)
         }
            
-        console.log('object:::::::::::::::::::>>>',object)
         FacultyBatch.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
