@@ -77,6 +77,7 @@
                     <th>Sr.No.</th>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
+                    <th>Faculty Type</th>
                     <th>Start Time</th>
                     <th>End Time</th>
                     <th>Start Date</th>
@@ -90,6 +91,7 @@
                         <td><%- count++ %></td>
                         <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
                         <td><%- faculty.faculty_name %></td>
+                        <td><%- faculty.faculty_type %></td>
                         <td><%- faculty.start_time %></td>
                         <td><%- faculty.end_time %></td>
                         <td><%- faculty.start_date %></td>
@@ -191,47 +193,67 @@
 
             <div class="modal-body py-0">
 
-                <table class="table table-bordered" id="add-more-faculty-table">
+                <table class="table table-bordered" id="update-faculty-table">
                     <thead>
                         <tr>
-                        <th>Select Faculty</th>
                         <th>Faculty Name</th>
                         <th>Start Time</th>
                         <th>End Time</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Faculty Type</th>
-                        <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-                                <select class="form-control onChangeFacultyName" name="faculty_lid" id="faculty_lid">
+                                <select class="form-control onChangeFacultyName" name="faculty_lid" id="faculty_lid" disabled>
                                 <% for (let faculty of facultyList) { %>
-                                        <option value="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-faculty-name="<%- faculty.faculty_name %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
+                                        <option value="<%- faculty.id %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
                                     <% } %>
                                 </select>
                             </td>
-                            <td><input type="text" class="form-control" name="faculty_name" id="faculty_name"></td>
+                         
                             <td>
                                 <%let slotTiming1 = JSON.parse(slotTiming) %>
                                 <select class="form-control" name="start_time_id" id="start_time_id">
                                 <% for (let slotstart of slotTiming1) { %>
                                         <option value="<%- slotstart.id %>" ><%- slotstart.start_time %></option>
                                     <% } %>
-                                </select></td>
-                                <td>
-                                    <%let slotendt = JSON.parse(slotTiming) %>
-                                    <select class="form-control" name="end_time_id" id="end_time_id">
-                                    <% for (let slotend of slotendt) { %>
-                                            <option value="<%- slotend.id %>" ><%- slotend.end_time %></option>
-                                        <% } %>
-                                    </select></td>
-                            <td>Start Date</td>
-                            <td>End Date</td>
-                            <td>Faculty Type</td>
-                            <td>Action</td>
+                            </select></td>
+
+                            <td>
+                                <%let slotTiming2 = JSON.parse(slotTiming) %>
+                                <select class="form-control" name="end_time_id" id="end_time_id">
+                                <% for (let slotend of slotTiming2) { %>
+                                        <option value="<%- slotend.id %>" ><%- slotend.end_time %></option>
+                                    <% } %>
+                            </select>
+                            </td>
+                            <td>
+                                <%let acadstartDate = JSON.parse(acadCalender) %>
+                                <select class="form-control" name="start_date_id" id="start_date_id">
+                                <% for (let stDate of acadstartDate) { %>
+                                        <option value="<%- stDate.id %>" ><%- stDate.date %></option>
+                                    <% } %>
+                            </select>
+                            </td>
+                            <td>
+                                <%let acadendDate = JSON.parse(acadCalender) %>
+                                <select class="form-control" name="end_date_id" id="end_date_id">
+                                <% for (let etDate of acadendDate) { %>
+                                        <option value="<%- etDate.id %>" ><%- etDate.date %></option>
+                                    <% } %>
+                            </select>
+                            </td>
+                            <td>
+                                <%let facultytype = JSON.parse(facultyType) %>
+                                <select class="form-control" name="faculty_type_lid" id="faculty_type_lid">
+                                <% for (let ftype of facultytype) { %>
+                                        <option value="<%- ftype.id %>" ><%- ftype.name %></option>
+                                    <% } %>
+                            </select>
+                            </td>
                         </tr>
 
                     </tbody>
@@ -239,7 +261,7 @@
             </div>
             <div class="px-3" id="errorHtml"></div>
             <div class="modal-footer">
-                <button type="submit" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
+                <button type="submit" class="btn updateFaculty modal-inputform-btn">Import Faculty</button>
             </div>
         </div>
     </div>
@@ -450,15 +472,54 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('sucess:::::::::', result)
-                $("#faculty_name").val(result.result.faculty_name)
-                $("#start_time_id").val(result.result.faculty_name)
-                $("#end_time_id").val(result.result.faculty_name)
-                $(".onChangeFacultyName").val(result.result.id)
+               // $("#faculty_name").val(result.result.faculty_name).trigger('change')
+                $("#start_time_id").val(result.result.start_time_id).trigger('change')
+                $("#end_time_id").val(result.result.end_time_id).trigger('change')
+                $("#start_date_id").val(result.result.start_date_id).trigger('change')
+                $("#end_date_id").val(result.result.end_date_id).trigger('change')
+                $("#faculty_type_lid").val(result.result.faculty_type_lid).trigger('change')
+                $(".onChangeFacultyName").val(result.result.id).trigger('change')
                $("#edit-faculty-modal").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
             })
        }) 
+
+       //updateFaculty
+       $(".updateFaculty").on('click',function(){
+           console.log('click::::::::::::::>>>')
+           let facultiesList = $('#update-faculty-table table tbody td');
+           console.log(facultiesList)
+            let facultyCount = facultiesList.length;
+            let facultyJson = [];
+            facultiesList.each(function (index, elem) {
+                let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
+                let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
+                let start_date_id = $(elem).find(`select[name="start_date_id"]`).val();
+                let end_date_id = $(elem).find(`select[name="end_date_id"]`).val();
+                let faculty_type_lid =  $(elm).find(`select[name="faculty_type_lid"]`)
+                if (index < facultyCount - 1) {
+                    let obj = {
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        faculty_type_lid: faculty_type_lid
+                    }
+                    facultyJson.push(obj)
+                } else {
+                    let obj = {
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        faculty_type_lid: faculty_type_lid
+                    }
+                    facultyJson.push(obj)
+                }
+            })
+            console.log('JSON:::::::::::>>',facultyJson)
+       })
         
         
         
@@ -510,13 +571,6 @@
                 }
             })
         }, 500));
-
-
-        //Onchnage for getting facultyName
-        $(".onChangeFacultyName").on('change',function(){
-           var faculty_name = $('option:selected', $(this)).attr('data-faculty-name');
-            $("#faculty_name").val(faculty_name)
-        })
 
 
         function showError(errors) {
