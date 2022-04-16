@@ -104,4 +104,14 @@ module.exports = class Faculties {
         })
     }
 
+    static update(inputJSON, slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_update_faculty_date_times]`)
+        })
+    }
+
 }

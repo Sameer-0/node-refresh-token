@@ -18,6 +18,7 @@ router.post('/faculties', validate('JsonValidator'), index.create)
 router.get('/faculties/search', validate('search'), index.search)
 router.post('/faculties/pagination', index.pagination)
 router.get('/faculties/findOne', validate('single'), index.findOne)
+router.put('/faculties', validate('JsonValidator'), index.update)
 
 
 //Faculty Date Time
@@ -31,7 +32,7 @@ router.get('/faculties/batch', batch.getPage)
 router.post('/faculties/batch', validate('JsonValidator'), batch.create)
 router.get('/faculties/batch/search', validate('search'), batch.search)
 router.post('/faculties/batch/pagination', batch.pagination)
-
+router.put('/faculties/batch', validate('JsonValidator'), batch.update)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
