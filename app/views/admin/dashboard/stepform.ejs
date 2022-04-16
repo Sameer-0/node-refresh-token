@@ -507,10 +507,10 @@
                                 <td><%- div.division%></td>
                                 <td><%- div.division_num%></td>
                                 <td><%- div.division_count%></td>
-                                <td><input class="form-control rounded-0" name="countForTheoryBatch" value="<%-division.count_for_theory_batch%>"></td>
-                                <td><input class="form-control rounded-0" name="countForPracticalBatch" value="<%-division.count_for_practical_batch%>"></td>
-                                <td><input class="form-control rounded-0" name="countForTutorialBatch" value="<%-division.count_for_tutorial_batch%>"></td>
-                                <td><input class="form-control rounded-0" name="countForWorkshopBatch" value="<%-division.count_for_workshop_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="countForTheoryBatch" value="<%-div.count_for_theory_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="countForPracticalBatch" value="<%-div.count_for_practical_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="countForTutorialBatch" value="<%-div.count_for_tutorial_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="countForWorkshopBatch" value="<%-div.count_for_workshop_batch%>"></td>
                                 <td>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
                                 </td>
@@ -540,26 +540,37 @@
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-divisionBatches-table">
                         <thead>
-                            <th>Division & Module Name</th>
-                            <th>Division Count</th>
-                            <th>Division Batches</th>
+                            <th>Module Name</th>
+                            <th>Division</th>
+                            <th>Batch</th>
                             <th>Event Type</th>
+                            <th>Division Count</th>
                             <th>Batch Count</th>
-                            <th>Input Batch Count</th>
-                            <th>Faculty Count</th>
+                            <th>Input Batch count</th>
+                            <th>Facult Count</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>
-                                    <input type="number" name="divisionBatches" id="divisionBatches"
-                                        class="form-control" palceholder="Acad Session" required>
-                                </td>
-
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-divisionBatches"></i>
-                                </td>
+                                <% for(let batch of divisionBatchList) {%>
+                                    <tr>
+                                       
+                                        <td>
+                                            <%- batch.module_name%>
+                                        </td>
+                                        <td><%- batch.division%></td>
+                                        <td><%- batch.batch%></td>
+                                        <td><%- batch.event_name%></td>
+                                        <td><%- batch.divison_count%></td>
+                                        <td><%- batch.batch_count%></td>
+                                        <td><%- batch.input_batch_count%></td>
+                                        <td><input class="form-control rounded-0" type="number" name="countForWorkshopBatch" value="<%-batch.faculty_count%>"></td>
+                                        <td>
+                                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
+                                        </td>
+        
+                                    </tr>
+                                   <%}%>
 
                             </tr>
                         </tbody>
@@ -574,8 +585,7 @@
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-schoolTiming-modal-title">School Timing</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-schoolTiming"><i
-                        class="fas fa-plus"></i> </button>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-schoolTiming"><i class="fas fa-plus"></i> </button>
             </div>
 
             <div class="modal-body">
@@ -585,30 +595,69 @@
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-schoolTiming-table">
                         <thead>
-                            <th>Division & Module Name</th>
-                            <th>Division Count</th>
-                            <th>Division Batches</th>
-                            <th>Event Type</th>
-                            <th>Batch Count</th>
-                            <th>Input Batch Count</th>
-                            <th>Faculty Count</th>
+                            <th>Name</th>
+                            <th>Program Name</th>
+                            <th>Day</th>
+                            <th>Acad Session</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Lecture Type</th>
                             <th>Action</th>
                         </thead>
-                        <tbody>
+                        <tbody>                           
                             <tr>
                                 <td>
-                                    <input type="number" name="divisionBatches" id="divisionBatches"
-                                        class="form-control" palceholder="Acad Session" required>
+                                    <input type="Text" name="schoolName" id="schoolName"
+                                        class="form-control" palceholder="School Name" required>
                                 </td>
-
+                                <td>
+                                    <select class="form-select">
+                                        <% for(program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                            <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                            <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select">
+                                        <% for(acadSession of AcadSessionList){%>
+                                            <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
+                                            <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                            <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                            <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="" id="" class="form-select">
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                            <%}%>
+                                    </select>
+                                </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-divisionBatches"></i>
                                 </td>
-
                             </tr>
                         </tbody>
-
                     </table>
                 </div>
             </div>
@@ -619,8 +668,7 @@
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-weeklyConstraint-modal-title">Weekly constraint</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-weeklyConstraint"><i
-                        class="fas fa-plus"></i> </button>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-weeklyConstraint"><i class="fas fa-plus"></i></button>
             </div>
 
             <div class="modal-body">
