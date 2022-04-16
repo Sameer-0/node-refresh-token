@@ -59,10 +59,20 @@ module.exports = class FacultyBatch {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch, f.faculty_name, f.faculty_id
+                .query(`SELECT  fb.id, fb.faculty_lid, fb.batch, f.faculty_name, f.faculty_id
                 FROM [${slug}].faculty_batches fb
                 INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id         
                 ORDER BY fb.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static update(inputJSON, slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_update_faculty_batches]`)
         })
     }
 

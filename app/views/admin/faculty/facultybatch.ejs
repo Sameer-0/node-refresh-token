@@ -41,7 +41,7 @@
                         <td><%- faculty.faculty_id %></td>
                         <td><%- faculty.batch %></td>
                         <td><i class="fas fa-edit text-dark cursor-pointer edit-facultybatch"
-                                data-faculty-id="<%- faculty.id %>"></i></td>
+                                data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-batch="<%- faculty.batch %>"></i></td>
                     </tr>
                     <% } %>
                 </tbody>
@@ -71,6 +71,7 @@
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
+                <input type="hidden" id="hidden_id">
                 <div class="table-responsive ">
                     <table class="table table-bordered" id="add-more-facultybatch-table">
                         <thead>
@@ -81,7 +82,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="faculty_lid">
+                                    <select class="select2" name="faculty_lid" id="faculty_lid">
                                         <option value="">--select--</option>
                                         <% for(faculty of facultyList) {%>
                                         <option value="<%- faculty.id %>">
@@ -136,7 +137,7 @@ $(document).ready(function(){
         
         $('#add-more-facultybatch-table tbody').append(clonedTr)})
 
-    $('#add-more-facultybatch-table').on('click', '.remove-facultybatchfield',
+            $('#add-more-facultybatch-table').on('click', '.remove-facultybatchfield',
             function () {
             let trLength = $('#add-more-facultybatch-table tbody tr').length;
 
@@ -144,7 +145,7 @@ $(document).ready(function(){
                      $(this).closest('tr').remove()
                 }
             else {
-            alert('Cannot delete this room.')
+            alert('Cannot delete this.')
                 }
     })
 
@@ -170,7 +171,7 @@ $(document).ready(function(){
                 facultyBatchJson.push(obj)
             }
         })
-        console.log('facultyBatchJson',facultyBatchJson)
+
         let ApiObj = {
                 type: 'POST',
                 url: '/admin/faculties/batch',
@@ -183,6 +184,7 @@ $(document).ready(function(){
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
+               // notify()
 
             }).catch(error => {
                 showError(error.responseJSON)
@@ -207,7 +209,70 @@ $(document).ready(function(){
         }, 500));
 
 
-        //PAGINATION
+        //Edit Read
+        $("#facultyBatch").on('click','.edit-facultybatch', function(){
+            $(".createfacultybatch").addClass('d-none')
+            $("#add-more-facultybatch-fields").addClass('d-none')
+            $(".updatefacultybatch").removeClass('d-none')
+            let id = $(this).attr('data-id')
+            let faculty_lid = $(this).attr('data-faculty-lid')
+            let faculty_batch = $(this).attr('data-batch')
+            $("#faculty_batch").val(faculty_batch)
+            $("#faculty_lid").val(faculty_lid).trigger('change')
+            $("#faculty_lid").attr("disabled", "disabled");
+            $("#hidden_id").val(id)
+            $("#add-facultybatch-modal").modal('show')
+        })
+
+
+        //Update
+        $(".updatefacultybatch").on('click', function () {
+        let facultyBatchElems = $('#add-more-facultybatch-table tbody tr');
+        let facultyBatchCount = facultyBatchElems.length;
+        let facultyBatchJson = [];
+        let id = $("#hidden_id").val();
+        facultyBatchElems.each(function (index, elem) {
+            let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
+            let faculty_batch = $(elem).find(`input[name="faculty_batch"]`).val();
+            
+
+            if (index < facultyBatchCount - 1) {
+                let obj = {
+                    id: id,
+                    faculty_lid: faculty_lid,
+                    batch: faculty_batch
+                }
+                facultyBatchJson.push(obj)
+            } else {
+                let obj = {
+                    id: id,
+                    faculty_lid: faculty_lid,
+                    batch: faculty_batch
+                }
+                facultyBatchJson.push(obj)
+            }
+        })
+
+        let ApiObj = {
+                type: 'PUT',
+                url: '/admin/faculties/batch',
+                data: {
+                    inputJSON: JSON.stringify(facultyBatchJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+               // notify()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
+
+
+    //PAGINATION
     let pageCount = `<%- pageCount %>`
     let pageNos = Math.ceil(Number(pageCount) / 10)
     console.log("Page Numbers", pageNos)
@@ -262,13 +327,14 @@ $(document).ready(function(){
                         <td>${faculty.faculty_name}</td>
                         <td>${faculty.faculty_id}</td>
                         <td>${faculty.batch}</td>
-                        <td><i class="fas fa-edit text-dark cursor-pointer edit-facultybatch"  data-faculty-id="${faculty.id}"></i></td>
+                        <td><i class="fas fa-edit text-dark cursor-pointer edit-facultybatch"
+                                data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-batch="${faculty.batch}"></i></td>
                     </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                         <td colspan="4">No Data Found</td>
+                         <td colspan="5">No Data Found</td>
                       </tr>`;
             }
             AjaxTable += `<tbody></table>`
@@ -312,6 +378,10 @@ $(document).ready(function(){
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             $("#add-facultybatch-modal #errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
         }
 
 

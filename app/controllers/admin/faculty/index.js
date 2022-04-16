@@ -49,30 +49,22 @@ module.exports = {
                 result: result.recordset[0]
             })
         }).catch(error => {
-            console.log('error:::::::::>>',error)
             res.status(500).json(error.originalError.info.message)
         })
     },
 
 
     update: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+
+        let object = {
+            update_faculty_date_times: JSON.parse(req.body.inputJSON)
         }
 
-        programTypeModel.update(req.body).then(result => {
-            res.json({
-                status: 200,
-                message: "Success",
-
-            })
+        Faculties.update(object, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 

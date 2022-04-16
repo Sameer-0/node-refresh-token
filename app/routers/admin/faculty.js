@@ -18,6 +18,7 @@ router.post('/faculties', validate('JsonValidator'), index.create)
 router.get('/faculties/search', validate('search'), index.search)
 router.post('/faculties/pagination', index.pagination)
 router.get('/faculties/findOne', validate('single'), index.findOne)
+router.put('/faculties', validate('JsonValidator'), index.update)
 
 
 //Faculty Date Time
@@ -31,17 +32,19 @@ router.get('/faculties/batch', batch.getPage)
 router.post('/faculties/batch', validate('JsonValidator'), batch.create)
 router.get('/faculties/batch/search', validate('search'), batch.search)
 router.post('/faculties/batch/pagination', batch.pagination)
-
+router.put('/faculties/batch', validate('JsonValidator'), batch.update)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
 router.post('/faculties/works', validate('JsonValidator'), works.create)
 router.get('/faculties/works/search', validate('search'), works.search)
 router.post('/faculties/works/pagination', works.pagination)
+router.put('/faculties/works', validate('JsonValidator'), works.update)
 
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)
 router.post('/faculties/workpreferences', validate('JsonValidator'), preferences.create)
 router.get('/faculties/workpreferences/search', preferences.search)
 router.post('/faculties/workpreferences/pagination', preferences.pagination)
+router.put('/faculties/workpreferences', validate('JsonValidator'), preferences.update)
 module.exports = router

@@ -48,7 +48,7 @@
                         <td><%- list.day_name %></td>
                         <td><%- list.start_time %></td>
                         <td><%- list.end_time %></td>
-                        <td><a><i class="fa fa-edit"></i></a></td>
+                        <td><a class="edit-preference" data-id="<%- list.id %>" data-start-time-id="<%- list.start_time_id %>" data-end-time-id="<%- list.end_time_id %>" data-program-day-lid="<%-list.p_day_lid %>" data-faculty-work-lid="<%-list.faculty_work_lid%>"><i class="fa fa-edit"></i></a></td>
                     </tr>
                    <%}%> 
                 </tbody>
@@ -77,6 +77,7 @@
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
+                <input type="hidden" id="hidden_id">
                 <div class="table-responsive ">
                     <table class="table table-bordered" id="facultyworktimepreferencesTable">
                         <thead>
@@ -135,7 +136,7 @@
                 <div id="errorMsg"></div>
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-facultyworktimepreferences"><i class="fas fa-plus"></i>Add More Fields</button>
                 <button type="submit" class="btn  createFacultyWorkTimePref modal-inputform-btn">Create</button>
-                <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update</button>
+                <button type="submit" class="btn  updateFacultyWorkTimePref modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
@@ -191,7 +192,7 @@
             let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
             let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
             let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
- 
+
             if (index < facultyWorkPrefCount - 1) {
                 let obj = {
                     faculty_work_lid: faculty_work_lid,
@@ -227,8 +228,8 @@
         })
     })
 
- //search feature delay function is writter in script.js file which is located in public/js/script.js
- $('#searchkeyword').on('input', delay(function (e) {
+        //search feature delay function is writter in script.js file which is located in public/js/script.js
+        $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "GET",
@@ -242,6 +243,77 @@
             }
         })
         }, 500));
+
+        //Edit Read
+        $("#facultyWorkTimePreference").on('click','.edit-preference', function(){
+            $("#add-more-facultyworktimepreferences").addClass('d-none')
+            $(".createFacultyWorkTimePref").addClass('d-none')
+            $(".updateFacultyWorkTimePref").removeClass('d-none')
+            $("#hidden_id").val($(this).attr('data-id'))
+            $("#faculty_work_lid").val($(this).attr('data-faculty-work-lid')).trigger('change')
+            $("#start_time_id").val($(this).attr('data-start-time-id')).trigger('change')
+            $("#end_time_id").val($(this).attr('data-end-time-id')).trigger('change')
+            $("#p_day_lid").val($(this).attr('data-program-day-lid')).trigger('change')
+            $("#p_day_lid").attr("disabled", "disabled");
+            $("#faculty_work_lid").attr("disabled", "disabled");
+            $("#add-facultypreference-modal").modal('show')
+        })
+
+
+        //Update Preferences
+        $(".updateFacultyWorkTimePref").on('click', function(){
+            console.log('Read....')
+        let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
+        let facultyWorkPrefCount = facultyWorkElems.length;
+        let facultyWorkJSON = [];
+        let id = $("#hidden_id").val()
+            facultyWorkElems.each(function (index, elem) {
+                let faculty_work_lid = $(elem).find(`select[name="faculty_work_lid"]`).val()
+                let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
+                let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
+                let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
+
+                if (index < facultyWorkPrefCount - 1) {
+                    let obj = {
+                        id: id,
+                        faculty_work_lid: faculty_work_lid,
+                        p_day_lid: p_day_lid,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id
+                    }
+                    facultyWorkJSON.push(obj)
+                } else {
+                    let obj = {
+                        id: id,
+                        faculty_work_lid: faculty_work_lid,
+                        p_day_lid: p_day_lid,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id
+                    }
+                    facultyWorkJSON.push(obj)
+                }
+            })
+            console.log(facultyWorkJSON)
+
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/faculties/workpreferences',
+                data: {
+                    inputJSON: JSON.stringify(facultyWorkJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+               // notify()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+
+        })
+
 
 
         //PAGINATION
@@ -358,6 +430,10 @@
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             $("#add-facultypreference-modal #errorHtml").html(errorHtml)
+            
+            setTimeout(function(){
+                location.reload()
+            },3000)
         }
 
 
