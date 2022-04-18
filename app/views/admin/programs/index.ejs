@@ -50,7 +50,7 @@
                 <h5>PROGRAM LIST</h5>
             </div>
         </div>
-
+     
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -62,6 +62,7 @@
                     <th>Program Name</th>
                     <th>Program Type</th>
                     <th>Abbr</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     <% let count = 1 %>
@@ -72,6 +73,7 @@
                         <td><%-program.program_name %></td>
                         <td><%-program.program_type %></td>
                         <td><%-program.abbr %></td>
+                        <td><a class="edit-program" data-id="<%-program.id %>"><i class="fa fa-edit"></i></a></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -87,9 +89,44 @@
     </div>
 </div>
 </div>
-
-
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="edit-program-modal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Update Program</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="errorHtml"></div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Program Name</label>
+                <input type="text" class="form-control" id="program_name" name="program_name">
+                <input type="hidden" class="form-control" id="hidden_id" name="hidden_id">
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Faculty Type</label>
+                <select class="form-control" name="program_type_lid" id="program_type_lid">
+                    <% for(let program of programTypeList) {%>
+                    <option value="<%-program.id %>"><%- program.name %></option>
+                    <%}%>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="abbr" class="form-label">Program Abbr</label>
+                <input type="text" class="form-control" id="abbr" name="abbr">
+              </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary updateProgram">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
@@ -98,8 +135,65 @@
 <script>
     $(document).ready(function () {
 
-        // SEARCH PROGRAM TYPE
+        //Edit 
+        $("#programTable").on('click','.edit-program',function(){
+            let id = $(this).attr("data-id")
+            $.ajax({
+                type: "GET",
+                url: '/admin/programs/findOne',
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    console.log(data.data)
+                    $("#hidden_id").val(data.data.id)
+                    $("#program_name").val(data.data.program_name)
+                    $("#program_type_lid").val(data.data.program_type_lid).trigger('change')
+                    $("#abbr").val(data.data.abbr)
+                $("#edit-program-modal").modal('show')
+                }
+            })
+        })
 
+        //Create
+        $(".updateProgram").on('click', function(){
+            console.log('update call')
+            let id = $("#hidden_id").val()
+            let program_name = $("#program_name").val()
+            let program_type_lid = $("#program_type_lid").val()
+            let abbr  = $("#abbr").val()
+            let JSONArray = []
+
+            let JSONObj = {
+                id: id,
+                program_name: program_name,
+                program_type_lid: program_type_lid,
+                abbr: abbr
+            }
+
+            JSONArray.push(JSONObj)
+
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/programs',
+                data: {
+                    inputJSON: JSON.stringify(JSONArray)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+               // notify()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+
+        // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
@@ -182,6 +276,46 @@
             }
             AjaxTable += `</tbody></table>`
             $("#programTable").html(AjaxTable);
+        }
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+            setTimeout(function(){
+                location.reload()
+            },2500)
         }
 
 
