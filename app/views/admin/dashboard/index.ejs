@@ -392,10 +392,113 @@
                 console.log('Response ::::::::::::::::::::::', result.data)
             }).catch(error => {
                 console.log('Error ::::::::::::::::::::::', error)
-                // showError(error.responseJSON)
             })
         })
 
+        //SaveAll
+        $(".SaveAllCourse").on('click',function(){
+            console.log('SaveAll::::::::::>>>')
+            let courseElems = $('#add-more-courseWorkload-table tbody tr');
+            let courseCount = courseElems.length;
+            let courseJSON = [];
+            courseElems.each(function (index, elem) {
+                let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
+                let intake = $(elem).find(`input[name='intake']`).val()
+                let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
+                let lec_per_week_per_division = $(elem).find(`input[name='lec_per_week_per_division']`).val();
+                let practical_per_week_per_division = $(elem).find(`input[name='practical_per_week_per_division']`).val();
+                let tutorial_per_week_per_division = $(elem).find(`input[name='tutorial_per_week_per_division']`).val();
+                let workshop_per_week_per_division = $(elem).find(`input[name='workshop_per_week_per_division']`).val();
+                let session_events_per_semester = $(elem).find(`input[name='session_events_per_semester']`).val();
+                let module_type_lid = $(elem).find(`select[name='module_type_lid']`).val();
+                let continuous = $(elem).find(`input[name='continuous']`).val();
+
+                if (index < courseCount - 1) {
+                    let obj = {
+                        id: workloadlid,
+                        intake: intake,
+                        student_per_division: student_per_division,
+                        lec_per_week_per_division: lec_per_week_per_division,
+                        practical_per_week_per_division: practical_per_week_per_division,
+                        tutorial_per_week_per_division: tutorial_per_week_per_division,
+                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        session_events_per_semester: session_events_per_semester,
+                        continuous: continuous,
+                        module_type_lid:module_type_lid
+                    }
+                    courseJSON.push(obj)
+                } else {
+                    let obj = {
+                        id:workloadlid,
+                        intake: intake,
+                        student_per_division: student_per_division,
+                        lec_per_week_per_division: lec_per_week_per_division,
+                        practical_per_week_per_division: practical_per_week_per_division,
+                        tutorial_per_week_per_division: tutorial_per_week_per_division,
+                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        session_events_per_semester: session_events_per_semester,
+                        continuous: continuous,
+                        module_type_lid:module_type_lid
+                    }
+                    courseJSON.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',courseJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/courseworkload',
+                data: {
+                    inputJSON: JSON.stringify(courseJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
 
     })
 </script>
