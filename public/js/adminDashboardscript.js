@@ -113,8 +113,8 @@ $('#add-more-schoolTiming').on('click', function () {
     console.log("School Timing Added::::")
     let lastTr = $('#add-more-schoolTiming-table tbody tr:last-child')
     let name= lastTr.find(`input[name='schoolName']`).val();
-    let divisionNum = lastTr.find(`input[name='divisionNumber']`).val();
-    let divisionCount = lastTr.find(`input[name='divisionCount']`).val();
+    let programName = lastTr.find(`select[name='programName']`).val();
+    let day = lastTr.find(`input[name='divisionCount']`).val();
     let countForTheoryBatch = lastTr.find(`input[name='countForTheoryBatch']`).val();
     let countForPracticalBatch = lastTr.find(`input[name='countForPracticalBatch']`).val();
     let countForTutorialBatch = lastTr.find(`input[name='countForTutorialBatch']`).val();

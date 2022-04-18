@@ -15,6 +15,7 @@
     </div>
 
     <div class="step-form-body pt-3">
+
         <!-- Holidays -->
         <form action="/admin/holidays" method="post" class="step" id="holidays-form" data-step="1">
             <div class="modal-header table-card-header">
@@ -28,7 +29,7 @@
             <div class="table-responsive">
                 <table class="table" id="add-more-holidays-table">
                     <thead>
-                        <th>Calendar Name</th>
+                        <th>Calendar Id</th>
                         <th>Calendar Year</th>
                         <th>Holiday Date</th>
                         <th>Holiday Reason</th>
@@ -38,21 +39,24 @@
                     <tbody>
                         <tr>
                             <td>
-
+                                <input type="number" name="calendarId" id="" class="form-control">
                             </td>
                             <td>
-
+                                <input type="number" name="calendarYear" id="" class="form-control">
                             </td>
                             <td>
-
+                                <input type="date" name="holidayDate" class="form-control">
                             </td>
                             <td>
-
+                                <input type="text" name="holidayReason" class="form-control">
                             </td>
                             <td>
-
+                                <select class="form-select">
+                                    <% for (types of holidayTypeList){%>
+                                    <option value="<%- types.id%>"><%- types.name%></option>
+                                    <%}%> 
+                                </select>
                             </td>
-
                             <td>
                                 <i class="far fa-edit d-none"></i>
                                 <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
@@ -611,7 +615,7 @@
                                         class="form-control" palceholder="School Name" required>
                                 </td>
                                 <td>
-                                    <select class="form-select">
+                                    <select class="form-select" name="programName">
                                         <% for(program of programList){%>
                                             <option value="<%- program.id%>"><%- program.program_name%></option>
                                             <%}%>
