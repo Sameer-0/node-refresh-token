@@ -43,5 +43,22 @@ module.exports = class {
         })
     }
 
+    static findOne(id) {
+        return poolConnection.then(pool => {
+            return pool.request().input('programId', sql.Int, id)
+                .query(`select id, program_id, program_name, program_type_lid, abbr, program_code, last_modified_by from [asmsoc-mum].programs WHERE id = @programId`)
+        })
+    }
+
+    static update(inputJSON, slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_update_programs]`)
+        })
+    }
+
 
 }

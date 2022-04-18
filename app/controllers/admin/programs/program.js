@@ -54,7 +54,7 @@ module.exports = {
         }
 
         Programs.pagination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
-            res.json({
+            res.status(200).json({
                 status: "200",
                 message: "Quotes fetched",
                 data: result.recordset,
@@ -63,5 +63,32 @@ module.exports = {
         }).catch(error => {
             throw error
         })
-    }
+    },
+
+    findOne: (req, res) => {
+        Programs.findOne(req.query.id).then(result => {
+            res.status(200).json({
+                status: 200,
+                message: "Success",
+                data: result.recordset[0]
+            })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
+        })
+    },
+
+    update: (req, res) => {
+
+        let object = {
+            update_programs: JSON.parse(req.body.inputJSON)
+        }
+
+
+        Programs.update(object, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+
+            res.status(500).json(JSON.parse(error.originalError.info.message))
+        })
+    },
 }

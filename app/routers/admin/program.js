@@ -14,7 +14,12 @@ const validate = require('../../middlewares/validate')
 //PROGRAM ROUTER
 router.get('/programs', program.getPage)
 router.post('/programs/pagination', validate('pagination'), program.pagination)
+router.put('/programs', validate('pagination'), program.update)
 router.get('/programs/search', validate('search'), program.search)
+router.get('/programs/findOne', validate('search'), program.findOne)
+
+
+
 
 // PROGRAM TYPE ROUTER
 router.get('/programs/types', programType.getProgramTypePage)
