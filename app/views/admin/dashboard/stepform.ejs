@@ -350,8 +350,8 @@
         </form>
 
         <!-- Course Workload-->
-        <form action="/admin/courseworkload" method="post" class="step d-none" id="courseWorkload-form" data-step="4">
-
+        <form class="step d-none" id="courseWorkload-form" data-step="4">
+            <div id="errorHtml"></div>
             <div class="modal-header table-card-header d-flex justify-content-end">
                       <div class="me-auto">
                         <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
@@ -376,8 +376,11 @@
                         </select>
                       </div>
                       <div>
-                        <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From
-                            SAP</button>
+                        <!-- <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From
+                            SAP</button> -->
+                      </div>
+                      <div>
+                        <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Update </button>
                       </div>
 
             </div>
@@ -386,26 +389,56 @@
                 <input type="hidden" id="programId" name="programId">
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-courseWorkload-table">
+                    <table class="table custom_row table-bordered" id="add-more-courseWorkload-table">
                         <thead>
+                            <th>Sr No.</th>
                             <th>Module Name</th>
-                            <th>Program Id</th>
-                            <th>Module Id</th>
-                            <th>Elective</th>
+                            <th>Module Code</th>
+                            <th>Program Code</th>
+                            <th>Acad Session</th>
+                            <th>Module Type</th>
                             <th>Intake</th>
                             <th>Student per division</th>
-                            <th>Lecture per week per division</th>
-                            <th>Practical per week per division</th>
-                            <th>Tutorial per week per division</th>
-                            <th>Workshop per week per division</th>
-                            <th>Continous</th>
-                            <th>Session events per semester</th>
-                            <th>Action</th>
+                            <th>Lecture per Week per Division</th>
+                            <th>Practical per Week per Division</th>
+                            <th>Tutorial per Week per Division</th>
+                            <th>Workshop per Week per Division</th>
+                            <th>Session Events per Semester</th>
+                            <th>Continuous
+                            </th>
                         </thead>
                         <tbody>
-                            <tr>
-                               
-                            </tr>
+                            <%let count1 = 1%>
+                                <% for(let course of courseWorkloadList){%>
+                                <tr>
+                                    <td><%- count1++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid" value="<%-course.id %>"></td>
+                                    <td><%-course.module_name%></td>
+                                    <td><%-course.module_id%></td>
+                                    <td><%-course.program_id%></td>
+                                    <td><%-course.acad_session%></td>
+                                    <td>
+                                    <select class="form-select rounded-0" name="module_type_lid" id="module_type_lid">
+                                        <option value="">Select Module Type</option>
+                                        <%for(let module of moduleList){%>
+                                            <%if(course.module_type_lid == module.id){%>
+                                                <option value="<%- module.id %>" selected><%- module.name %></option>
+                                                <%}else{%>
+                                                    <option value="<%- module.id %>"><%- module.name %></option>
+                                                <%}%>  
+                                        <%}%>
+                                    </select>
+                                    </td>
+                                    <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>"></td>
+                                    <td><input type="number" class="form-control rounded-0" name="student_per_division" value="<%-course.student_per_division%>"></td>
+                                    <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division" value="<%-course.lec_per_week_per_division%>"></td>
+                                    <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division" value="<%-course.practical_per_week_per_division%>"></td>
+                                    <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division" value="<%-course.tutorial_per_week_per_division%>"></td>
+                                    <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division" value="<%-course.workshop_per_week_per_division%>"></td>
+                                    <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="<%-course.session_events_per_semester%>"></td>
+                                    <td><input type="number" class="form-control rounded-0" name="continuous" value="<%-course.continuous%>"></td>
+                                    
+                                </tr>
+                                <%}%>   
                         </tbody>
                     </table>
                 </div>

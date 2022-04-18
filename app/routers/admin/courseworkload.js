@@ -13,5 +13,5 @@ router.post('/courseworkload/changestatus', courseworkload.changestatus)
 router.get('/courseworkload/getAll', courseworkload.getAll)
 router.get('/courseworkload/search', courseworkload.search)
 router.post('/courseworkload/pagination', courseworkload.pagination)
-router.put('/courseworkload',validate('JsonValidator'), courseworkload.update)
+router.put('/courseworkload', validate('JsonValidator'), courseworkload.update)
 module.exports = router

@@ -24,6 +24,7 @@ module.exports = function validate(method) {
                 let done = false
                 let keyval = [];
                 for (let data of jsonreq) {
+                    console.log('data:::::::::::>>>',data)
                     for (let key in data) {
                         if (!data[key]) {
                             let obj = {

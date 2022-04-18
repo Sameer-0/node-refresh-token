@@ -36,7 +36,7 @@ module.exports = class {
             return pool.request().query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lec_per_week_per_division, icw.practical_per_week_per_division, icw.tutorial_per_week_per_division, icw.workshop_per_week_per_division, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_name
             FROM [${slug}].initial_course_workload icw
             INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
-            INNER JOIN [${slug}].module_types mt ON mt.id = icw.module_type_lid
+            LEFT JOIN [${slug}].module_types mt ON mt.id = icw.module_type_lid
             ORDER BY id DESC`)
         })
     }
