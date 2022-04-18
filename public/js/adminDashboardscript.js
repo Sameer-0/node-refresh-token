@@ -114,11 +114,11 @@ $('#add-more-schoolTiming').on('click', function () {
     let lastTr = $('#add-more-schoolTiming-table tbody tr:last-child')
     let name= lastTr.find(`input[name='schoolName']`).val();
     let programName = lastTr.find(`select[name='programName']`).val();
-    let day = lastTr.find(`input[name='divisionCount']`).val();
-    let countForTheoryBatch = lastTr.find(`input[name='countForTheoryBatch']`).val();
-    let countForPracticalBatch = lastTr.find(`input[name='countForPracticalBatch']`).val();
-    let countForTutorialBatch = lastTr.find(`input[name='countForTutorialBatch']`).val();
-    let countForWorkshopBatch = lastTr.find(`input[name='countForWorkshopBatch']`).val();
+    let dayId = lastTr.find(`select[name='day']`).val();
+    let acadSessionId = lastTr.find(`select[name='acadSession']`).val();
+    let startTimeId = lastTr.find(`select[name='startTime']`).val();
+    let endTimeId = lastTr.find(`select[name='endTime']`).val();
+    let lectureTypeId = lastTr.find(`select[name='lecType']`).val();
     
 
     let clonedTr = lastTr.clone();
@@ -133,12 +133,12 @@ $('#add-more-schoolTiming').on('click', function () {
     // clonedTr.find(`input[name='practicalPerWeekPerSession']`).val('')
    
    
-    $('#add-more-division-table tbody').append(clonedTr)
+    $('#add-more-schoolTiming-table tbody').append(clonedTr)
 })
 
-$('#add-more-division-table').on('click', '.remove-division', function () {
+$('#add-more-schoolTiming-table').on('click', '.remove-schoolTiming', function () {
     console.log('divison Delete')
-    let trLength = $('#add-more-division-table tbody tr').length;
+    let trLength = $('#add-more-schoolTiming-table tbody tr').length;
     if (trLength > 1) {
         $(this).closest('tr').remove();
     } else {
