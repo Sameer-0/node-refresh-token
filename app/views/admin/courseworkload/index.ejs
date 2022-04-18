@@ -103,12 +103,18 @@
                             <td><%-course.module_id%></td>
                             <td><%-course.program_id%></td>
                             <td><%-course.acad_session%></td>
-                            <td><select class="form-select rounded-0" name="module_type_lid" value="">
-                                <option value="">Select Module Name</option>
+                            <td>
+                            <select class="form-select rounded-0" name="module_type_lid" >
+                                <option value="">Select Module Type</option>
                                 <%for(let module of moduleList){%>
-                                    <option value="<%- module.id %>"><%- module.name %></option>
+                                    <%if(course.module_type_lid == module.id){%>
+                                        <option value="<%- module.id %>" selected><%- module.name %></option>
+                                        <%}else{%>
+                                            <option value="<%- module.id %>"><%- module.name %></option>
+                                        <%}%>  
                                 <%}%>
-                            </select></td>
+                            </select>
+                            </td>
                             <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>"></td>
                             <td><input type="number" class="form-control rounded-0" name="student_per_division" value="<%-course.student_per_division%>"></td>
                             <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division" value="<%-course.lec_per_week_per_division%>"></td>
