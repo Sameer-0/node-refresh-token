@@ -271,7 +271,7 @@
                             <select class="select2" name="faculty_type_lid">${facultyType}</select>
                         </td>
                         <td>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremoveFaculty"></i>
                         </td>
                     </tr>
                     `)
@@ -287,9 +287,9 @@
 
 
         //Remove Element
-        $(".selectedListFaculty").on('click', '.clicktoremove', function () {
+        $(".selectedListFaculty").on('click', '.clicktoremoveFaculty', function () {
             // if ($(this).parent().attr('data-clickable') == 'true') {
-            $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")}" data-faculty-id="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")} (${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")})
+            $(".selectListFaculty").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")}" data-faculty-id="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")} (${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")})
 			        </li>`)
             // }
             $(this).parent().attr('data-clickable', 'false')
@@ -301,7 +301,7 @@
 
 
         //search 
-        $('#searchItem').on('input', function () {
+        $('.searchItemFaculty').on('input', function () {
             let faculties = $('#selectList li')
             var text = $('#searchItem').val().toLowerCase();
 
@@ -315,9 +315,9 @@
         })
 
         //search selected faculty
-        $('#searchSelectedItem').on('input', function () {
-            let selectedFaculties = $('#selectedList table tbody tr')
-            var text = $('#searchSelectedItem').val().toLowerCase();
+        $('.searchSelectedFaculty').on('input', function () {
+            let selectedFaculties = $('.selectedListFaculty table tbody tr')
+            var text = $('.searchSelectedFaculty').val().toLowerCase();
             console.log('text:::::::::', selectedFaculties)
             for (let faculty of selectedFaculties) {
                 console.log('faculty:::::::::', faculty)
