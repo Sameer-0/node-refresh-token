@@ -59,13 +59,16 @@
         let slotTime = `<%- slotTiming %>`
         let slotObj = JSON.parse(slotTime);
         let programType = JSON.parse(`<%- programTypeList%>`);
-        console.log('programType::::::>', programType)
+        let facultyTypeList = JSON.parse(`<%- facultyType %>`);
+
+
 
         let optionStartTime;
         let optionEndTime;
         let startDate;
         let endDate;
         let programTypeList;
+        let facultyType;
 
         for (let obj of slotObj) {
 
@@ -86,7 +89,9 @@
         for (let obj of programType) { 
             programTypeList += `<option>${obj.name}</option>`
         }
-
+        for (let obj of facultyTypeList) {
+            facultyType += `<option value="${obj.id}">${obj.name}</option>`;
+        }
 
         //DATA SELECT FOR ROOM
         $(".selectList").on('click', '.list-group-item', function () {
@@ -249,6 +254,7 @@
 
         $(".selectListFaculty").on('click', '.list-group-item', function () {
             //remove current element when added to right sidebar
+            console.log('faculty::s')
             if ($(this).attr('data-clickable') == 'true') {
                 $(".selectedListFaculty table tbody").append(`
                     

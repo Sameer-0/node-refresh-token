@@ -37,7 +37,7 @@
                         <th>Holiday Reason</th>
                         <th>Holiday Type</th>
                         <th>Action</th>
-                    </thead>
+                    </thead> 
                     <tbody>
                         <tr>
                             <td>
@@ -872,42 +872,62 @@
                 <input type="hidden" id="facultyPreference" name="faculty">
 
                 <div class="table-responsive">
+
                     <table class="table table-bordered" id="add-more-facultyPreference-table">
                         <thead>
-                            <th>Faculty-id</th>
-                            <th>Faculty Name</th>
-                            <th>Start time Id</th>
-                            <th>End Time Id</th>
+                            <th>Faculty Work</th>
+                            <th>Program Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <input type="number" name="facultyId" id="facultyId" class="form-control"
-                                        palceholder="Faculty Id" required>
+                                    <select class="form-select" name="faculty_work_lid" id="faculty_work_lid">
+                                        <% for(faculty of facultyWorkList) {%>
+                                        <option value="<%- faculty.id %>">
+                                            <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
+                                        <%}%>
+                                    </select>
                                 </td>
                                 <td>
-                                    <input type="text" name="facultyName" id="facultyName" class="form-control"
-                                        palceholder="Faculty Name" required>
+                                    <select class="form-select" name="p_day_lid" id="p_day_lid">
+                                        <% for(programday of programDayList) {%>
+                                        <option value="<%- programday.id %>"><%- programday.program_name %> (<%- programday.day_name %> )</option>
+                                        <%}%>
+                                    </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="facultyStartTimeId" id="facultyStartTimeId"
-                                        class="form-control" palceholder="Faculty Start Time" required>
+                                    <select class="form-select" name="start_time_id" id="start_time_id">
+                                        <option value="">Select Start Time</option>
+                                        <%for(let startlist of slotTime){%>
+                                            <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
+                                            <%}%>
+                                </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="facultyEndTimeId" id="facultyEndTimeId"
-                                        class="form-control" palceholder="Faculty End Time" required>
+                                    <select class="form-select" name="end_time_id" id="end_time_id">
+                                        <option value="">Select End Time</option>
+                                        <%for(let endlist of slotTime){%>
+                                            <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
+                                        <%}%>
+                                </select>
                                 </td>
-
+                           
 
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultypreference"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer  remove-facultypreference"></i>
                                 </td>
                             </tr>
                         </tbody>
 
                     </table>
+                </div>
+
+
+                 
                 </div>
             </div>
         </form>
