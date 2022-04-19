@@ -247,6 +247,88 @@
 
         //DATA SELECT FOR FACULTY//
 
+        $(".selectListFaculty").on('click', '.list-group-item', function () {
+            //remove current element when added to right sidebar
+            if ($(this).attr('data-clickable') == 'true') {
+                $(".selectedListFaculty table tbody").append(`
+                    
+                    <tr data-clickable="true">
+                        <td data-faculty-id="${$(this).attr("data-faculty-id")}" data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
+                        </td>
+                        <td>
+                            <select class="select2" name="startTime">${optionStartTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="endTime">${optionEndTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="startDate">${startDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="endDate">${endDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="faculty_type_lid">${facultyType}</select>
+                        </td>
+                        <td>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                        </td>
+                    </tr>
+                    `)
+            }
+
+            $(this).attr('data-clickable', 'false');
+
+            $($(this)).fadeOut(300, function () {
+                $($(this)).remove()
+            })
+
+        })
+
+
+        //Remove Element
+        $(".selectedListFaculty").on('click', '.clicktoremove', function () {
+            // if ($(this).parent().attr('data-clickable') == 'true') {
+            $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")}" data-faculty-id="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")} (${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")})
+			        </li>`)
+            // }
+            $(this).parent().attr('data-clickable', 'false')
+
+            $($(this)).fadeOut(300, function () {
+                $($(this).parent().parent()).remove()
+            })
+        })
+
+
+        //search 
+        $('#searchItem').on('input', function () {
+            let faculties = $('#selectList li')
+            var text = $('#searchItem').val().toLowerCase();
+
+            for (let faculty of faculties) {
+                if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(faculty).removeClass("d-none");
+                } else {
+                    $(faculty).addClass("d-none");
+                }
+            };
+        })
+
+        //search selected faculty
+        $('#searchSelectedItem').on('input', function () {
+            let selectedFaculties = $('#selectedList table tbody tr')
+            var text = $('#searchSelectedItem').val().toLowerCase();
+            console.log('text:::::::::', selectedFaculties)
+            for (let faculty of selectedFaculties) {
+                console.log('faculty:::::::::', faculty)
+                if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
+
+                    $(faculty).removeClass("d-none");
+                } else {
+                    $(faculty).addClass("d-none");
+                }
+            };
+        })
         //Step form Start
         let currentFormStep = 1;
 
@@ -328,7 +410,6 @@
         })
 
 
-
         //Getting campus Bulding List
         $("#campus_lid").on('change', function () {
             let campus_lid = $(this).val()
@@ -370,7 +451,6 @@
         });
 
 
-
         //Fetch course workload form SAP
         $(".fetchFromSAP").on('click', function () {
             let acadYear = $("#acadYear").val()
@@ -395,7 +475,7 @@
             })
         })
 
-        //SaveAll
+        //SaveAll course workload
         $(".SaveAllCourse").on('click',function(){
             console.log('SaveAll::::::::::>>>')
             let courseElems = $('#add-more-courseWorkload-table tbody tr');
@@ -450,6 +530,104 @@
                 url: '/admin/courseworkload',
                 data: {
                     inputJSON: JSON.stringify(courseJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //SaveAll Divisions
+        $(".SaveDivision").on('click',function(){
+            console.log('SaveDivision::::::::::>>>')
+            let divElems = $('#add-more-division-table tbody tr');
+            let divCount = divElems.length;
+            let divJSON = [];
+            divElems.each(function (index, elem) {
+                let id = $(elem).find(`input[name='divId']`).val()
+                let count_for_theory_batch = $(elem).find(`input[name='count_for_theory_batch']`).val()
+                let count_for_practical_batch = $(elem).find(`input[name='count_for_practical_batch']`).val();
+                let count_for_tutorial_batch = $(elem).find(`input[name='count_for_tutorial_batch']`).val();
+                let count_for_workshop_batch = $(elem).find(`input[name='count_for_workshop_batch']`).val();
+
+
+                if (index < divCount - 1) {
+                    let obj = {
+                        id: id,
+                        count_for_theory_batch: count_for_theory_batch,
+                        count_for_practical_batch: count_for_practical_batch,
+                        count_for_tutorial_batch: count_for_tutorial_batch,
+                        count_for_workshop_batch:count_for_workshop_batch  
+                    }
+                    divJSON.push(obj)
+                } else {
+                    let obj = {
+                        id: id,
+                        count_for_theory_batch: count_for_theory_batch,
+                        count_for_practical_batch: count_for_practical_batch,
+                        count_for_tutorial_batch: count_for_tutorial_batch,
+                        count_for_workshop_batch:count_for_workshop_batch  
+                    }
+                    divJSON.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',divJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/divisions',
+                data: {
+                    inputJSON: JSON.stringify(divJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            // ajaxApi(ApiObj).then(result => {
+            //     console.log(result)
+            //     showSuccess(result)
+
+            // }).catch(error => {
+            //     showError(error.responseJSON)
+            // })
+        })
+
+        //SaveAll DivisionBatches
+        $(".saveDivisionBatch").on('click',function(){
+            let divbatchElems = $('#add-more-divisionBatches-table tbody tr');
+            let batchCount = divbatchElems.length;
+            let batchJSON = [];
+            divbatchElems.each(function (index, elem) {
+                let id = $(elem).find(`input[name='batch_id']`).val()
+                let faculty_count = $(elem).find(`input[name='faculty_count']`).val()
+                if (index < batchCount - 1) {
+                    let obj = {
+                        id: id,
+                        faculty_count: faculty_count,
+                    }
+                    batchJSON.push(obj)
+                } else {
+                    let obj = {
+                        id:id,
+                        faculty_count: faculty_count,
+
+                    }
+                    batchJSON.push(obj)
+                }
+            }) 
+
+            //Ajax Call
+            console.log('JSON::::::::',batchJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/divisions/batches',
+                data: {
+                    inputJSON: JSON.stringify(batchJSON)
                 },
                 dataType: 'JSON'
             }

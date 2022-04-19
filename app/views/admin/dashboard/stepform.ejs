@@ -369,20 +369,19 @@
                             <%}%>
                         </select>
                       </div>
-                      <div class="me-3">
-                        <select  id="acadSessionLid" name="acadSessionLid" class="form-select">
+                      <div >
+                        <select id="acadSessionLid" name="acadSessionLid" class="form-select">
                             <option value="">Select Session</option>
                             <% for(let acadsession of AcadSessionList) {%>
                             <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
                             <%}%>
                         </select>
                       </div>
-                      <div>
-                        <!-- <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From
-                            SAP</button> -->
+                      <div class="mx-3">
+                        <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
                       </div>
                       <div>
-                        <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Update </button>
+                        <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Save </button>
                       </div>
 
             </div>
@@ -419,8 +418,8 @@
                                     <td><%-course.program_id%></td>
                                     <td><%-course.acad_session%></td>
                                     <td>
-                                    <select class="form-select rounded-0" name="module_type_lid" id="module_type_lid">
-                                        <option value="">Select Module Type</option>
+                                    <select class="form-select rounded-0" name="module_type_lid" >
+                                        <!-- <option value="">Select Module Type</option> -->
                                         <%for(let module of moduleList){%>
                                             <%if(course.module_type_lid == module.id){%>
                                                 <option value="<%- module.id %>" selected><%- module.name %></option>
@@ -443,6 +442,8 @@
                                 <%}%>   
                         </tbody>
                     </table>
+
+                    
                 </div>
             </div>
         </form>
@@ -510,11 +511,12 @@
         </form>
  
         <!-- Division -->
-        <form action="/admin/division" method="post" class="step d-none" id="division-form" data-step="6">
+        <form action="/admin/divisions" method="post" class="step d-none" id="division-form" data-step="6">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-division"><i class="fas fa-plus"></i></button>
+                <!-- <button type="button" class="btn add-btn btn-sm ms-auto" id="add-more-division"><i class="fas fa-plus"></i></button> -->
+                <button class="btn btn-success SaveDivision" type="button"><span class="fa fa-check"></span> Save </button>
             </div>
 
             <div class="modal-body">
@@ -524,7 +526,6 @@
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-division-table">
                         <thead>
-                          
                             <th>Module Name</th>
                             <th>Division</th>
                             <th>Division Number</th>
@@ -541,15 +542,15 @@
                             <tr>
                                
                                 <td>
-                                    <%- div.module_name%>
+                                    <%- div.module_name%> <input type="hidden" name="divId" value="<%- div.id%>">
                                 </td>
                                 <td><%- div.division%></td>
                                 <td><%- div.division_num%></td>
                                 <td><%- div.division_count%></td>
-                                <td><input class="form-control rounded-0" name="countForTheoryBatch" value="<%-div.count_for_theory_batch%>"></td>
-                                <td><input class="form-control rounded-0" name="countForPracticalBatch" value="<%-div.count_for_practical_batch%>"></td>
-                                <td><input class="form-control rounded-0" name="countForTutorialBatch" value="<%-div.count_for_tutorial_batch%>"></td>
-                                <td><input class="form-control rounded-0" name="countForWorkshopBatch" value="<%-div.count_for_workshop_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="count_for_theory_batch" value="<%-div.count_for_theory_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="count_for_practical_batch" value="<%-div.count_for_practical_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="<%-div.count_for_tutorial_batch%>"></td>
+                                <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="<%-div.count_for_workshop_batch%>"></td>
                                 <td>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
                                 </td>
@@ -564,12 +565,14 @@
         </form>
 
         <!-- Division Batches -->
-        <form action="/admin/divisionbatches" method="post" class="step d-none" id="divisionBatches" data-step="7">
+        <form action="/admin/divisions/batches" method="post" class="step d-none" id="divisionBatches" data-step="7">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-divisionBatches-modal-title">Add Division batches</h5>
                 <!-- <button type="button" class="btn add-btn btn-sm" id="add-more-divisionbatches"><i
                         class="fas fa-plus"></i> </button> -->
+                <button class="btn btn-success saveDivisionBatch" type="button"><span class="fa fa-check"></span> Save </button>
+                
             </div>
 
             <div class="modal-body">
@@ -598,12 +601,12 @@
                                             <%- batch.module_name%>
                                         </td>
                                         <td><%- batch.division%></td>
-                                        <td><%- batch.batch%></td>
+                                        <td><%- batch.batch%><input type="hidden" class="form-control" name="batch_id" value="<%- batch.id %>"></td>
                                         <td><%- batch.event_name%></td>
                                         <td><%- batch.divison_count%></td>
                                         <td><%- batch.batch_count%></td>
                                         <td><%- batch.input_batch_count%></td>
-                                        <td><input class="form-control rounded-0" type="number" name="countForWorkshopBatch" value="<%-batch.faculty_count%>"></td>
+                                        <td><input class="form-control" type="number" name="faculty_count" value="<%-batch.faculty_count%>"></td>
                                         <td>
                                             <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
                                         </td>
@@ -721,10 +724,11 @@
                             <th>Name</th>
                             <th>Event-type</th>
                             <th>Rule-on</th> 
+                            <th>Rule on where clause</th>
                             <th>Repeatable</th>
                             <th>Action</th>
                         </thead>
-                        <tbody>
+                        <tbody> 
                             <tr>
                                 <td>
                                     <input type="number" id="tagId" name="tagId" class="form-control">
@@ -739,15 +743,18 @@
                                     <input type="text" name="ruleOn" id="ruleOn" class="form-control">
                                 </td>
                                 <td>
-                                    <select name="repeatable" id="repeatable" class="select2">
-                                        <option value="" selected>--SELECT--</option>
+                                    <input type="text" name="ruleOnWhere" id="ruleOnWhere" class="form-control">
+                                </td>
+                                <td>
+                                    <select name="repeatable" id="repeatable" class="form-select" name="repeatable">
+                                        <option value="" >--SELECT--</option>
                                         <option value="1">YES</option>
                                         <option value="0">NO</option>
                                     </select>
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-weekly-constraint"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-weeklyConstraint"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -807,7 +814,7 @@
                                 <h4 class="text-center py-1 select-room-header">Select Faculties</h4>
                                 <input type="text" name="" id="searchItem" placeholder="Search Faculty"
                                     class="form-control searchItemFaculty">
-                                <ul class="list-group custom-select-list" id="selectList" style="margin-top: 60px;">
+                                <ul class="list-group custom-select-list selectListFaculty" id="selectList" style="margin-top: 60px;">
 
                                     <% for (let faculty of faculties) { %>
                                     <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
@@ -821,7 +828,7 @@
                                 <h4 class="text-center py-1 selected-room-header">Selected Faculties</h4>
                                 <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty"
                                     class="form-control searchSelectedFaculty">
-                                <ul class="list-group custom-select-list" id="selectedList" style="margin-top: 50px;">
+                                <ul class="list-group custom-select-list selectedListFaculty" id="selectedList" style="margin-top: 50px;">
                                     <table class="table table-bordered" id="add-more-faculty-table">
                                         <thead>
                                             <th>Faculty Name</th>

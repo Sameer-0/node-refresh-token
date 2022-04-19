@@ -26,7 +26,7 @@ module.exports = {
             });
             return;
         }
-
+console.log('weeklyconstarinsave');
         WeeklyConstraint.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,

@@ -88,7 +88,7 @@ module.exports = {
             update_divisions: JSON.parse(req.body.inputJSON)
         }
 
-        console.log('userid', res.locals.userId)
+        console.log('userid::::::::::>>>>>><><<<<', res.locals.userId)
         Divisions.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {

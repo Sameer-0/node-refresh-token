@@ -16,7 +16,7 @@ module.exports = class {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} id, tag_id, name, event_type, rule_on, IIF(repeatable = 1, 'YES', 'NO') AS repeatable
-            FROM [dbo].weekly_constraints`)
+            FROM [${slug}].weekly_constraints`)
         })
     }
 
@@ -27,7 +27,7 @@ module.exports = class {
                 .input('eventType', sql.NVarChar(5), body.eventType)
                 .input('ruleOn', sql.NVarChar(30), body.ruleOn)
                 .input('repeatable', sql.TinyInt, body.repeatable)
-                .query(`INSERT INTO [dbo].weekly_constraints (tag_id, name, event_type, rule_on, repeatable) VALUES (@tagId, @constraintName, @eventType, @ruleOn, @repeatable)`)
+                .query(`INSERT INTO [${slug}].weekly_constraints (tag_id, name, event_type, rule_on, repeatable) VALUES (@tagId, @constraintName, @eventType, @ruleOn, @repeatable)`)
         })
     }
 

@@ -1,6 +1,6 @@
 
 
-//Add more rows for holidays
+//Add and Remove more rows for holidays
 $('#add-more-holidays').on('click', function () {
     console.log("holidays Added::::")
     let lastTr = $('#add-more-holidays-table tbody tr:last-child')
@@ -33,47 +33,7 @@ $('#add-more-holidays-table').on('click', '.remove-holidays', function () {
     }
 })
 
-// Add more Course workload
-// $('#add-more-courseWorkload').on('click', function () {
-//     console.log("courseWorload Added::::")
-//     let lastTr = $('#add-more-courseWorkload-table tbody tr:last-child')
-//     let semester = lastTr.find(`input[name='semester']`).val();
-//     let courseName = lastTr.find(`input[name='courseName']`).val();
-//     let noOfDivisions = lastTr.find(`input[name='noOfDivisions']`).val();
-//     let lecturePerDivision = lastTr.find(`input[name='lecturePerDivision']`).val();
-//     let totalSessionPerSemester = lastTr.find(`input[name='totalSessionPerSemester']`).val();
-//     let sessionPerWeek = lastTr.find(`input[name='sessionPerWeek']`).val();
-
-//     let acadSession = lastTr.find(`input[name='acadSession']`).val();
-//     let practicalPerWeekPerSession = lastTr.find(`input[name='practicalPerWeekPerSession']`).val();
-   
-
-//     let clonedTr = lastTr.clone();
-//     clonedTr.find(`input[name='semester']`).val('')
-//     clonedTr.find(`input[name='courseName']`).val('')
-//     clonedTr.find(`input[name='noOfDivisions']`).val('')
-//     clonedTr.find(`input[name='lecturePerDivision']`).val('')
-//     clonedTr.find(`input[name='totalSessionPerSemester']`).val('')
-//     clonedTr.find(`input[name='sessionPerWeek']`).val('')
-//     clonedTr.find(`input[name='programId']`).val('')
-//     clonedTr.find(`input[name='acadSession']`).val('')
-//     clonedTr.find(`input[name='practicalPerWeekPerSession']`).val('')
-   
-   
-//     $('#add-more-courseWorkload-table tbody').append(clonedTr)
-// })
-
-// $('#add-more-courseWorkload-table').on('click', '.remove-courseWorkload', function () {
-//     let trLength = $('#add-more-courseWorkload-table tbody tr').length;
-//     if (trLength > 1) {
-//         $(this).closest('tr').remove()
-//     } else {
-//         alert('Cannot delete this room.')
-//     }
-// })
-
-//Add more session date
-
+//Add and Remove more session date
 $('#add-more-sessionDate').on('click', function () {
     console.log("Session date Added::::")
     let lastTr = $('#add-more-sessionDate-table tbody tr:last-child')
@@ -108,7 +68,7 @@ $('#add-more-sessionDate-table').on('click', '.remove-sessionDate', function () 
     }
 })
 
-//Add School Timing
+//Add and Remove School Timing
 $('#add-more-schoolTiming').on('click', function () {
     console.log("School Timing Added::::")
     let lastTr = $('#add-more-schoolTiming-table tbody tr:last-child')
@@ -139,6 +99,46 @@ $('#add-more-schoolTiming').on('click', function () {
 $('#add-more-schoolTiming-table').on('click', '.remove-schoolTiming', function () {
     console.log('divison Delete')
     let trLength = $('#add-more-schoolTiming-table tbody tr').length;
+    if (trLength > 1) {
+        $(this).closest('tr').remove();
+    } else {
+        alert('Cannot delete this room.')
+    }
+})
+
+
+//Add and Remove Weekly constraint
+$('#add-more-weeklyConstraint').on('click', function () {
+    console.log("weekly constraint::::")
+    let lastTr = $('#add-more-weeklyConstraint-table tbody tr:last-child')
+    let tagId= lastTr.find(`input[name='tagId']`).val();
+    let constraintName = lastTr.find(`input[name='constraintName']`).val();
+    let eventType = lastTr.find(`input[name='eventType']`).val();
+    let ruleOn = lastTr.find(`input[name='ruleOn']`).val();
+    let ruleOnWhere = lastTr.find(`input[name='ruleOnWhere']`).val();
+    let repeatable = lastTr.find(`select[name='repeatable']`).val();
+    let endTimeId = lastTr.find(`select[name='endTime']`).val();
+    let lectureTypeId = lastTr.find(`select[name='lecType']`).val();
+    
+
+    let clonedTr = lastTr.clone();
+    // clonedTr.find(`select[name='programName']`).val('')
+    // clonedTr.find(`input[name='courseName']`).val('')
+    // clonedTr.find(`input[name='noOfDivisions']`).val('')
+    // clonedTr.find(`input[name='lecturePerDivision']`).val('')
+    // clonedTr.find(`input[name='totalSessionPerSemester']`).val('')
+    // clonedTr.find(`input[name='sessionPerWeek']`).val('')
+    // clonedTr.find(`input[name='programId']`).val('')
+    // clonedTr.find(`input[name='acadSession']`).val('')
+    // clonedTr.find(`input[name='practicalPerWeekPerSession']`).val('')
+   
+   
+    $('#add-more-weeklyConstraint-table tbody').append(clonedTr)
+})
+
+$('#add-more-weeklyConstraint-table').on('click', '.remove-weeklyConstraint', function () {
+    console.log('divison Delete')
+    let trLength = $('#add-more-weeklyConstraint-table tbody tr').length;
     if (trLength > 1) {
         $(this).closest('tr').remove();
     } else {
