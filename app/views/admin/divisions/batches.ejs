@@ -23,6 +23,8 @@
             </div> -->
         </div>
 
+        <div id="errorHtml"></div>
+
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -37,26 +39,19 @@
                     <th>Batch Count</th>
                     <th>Input Batch Count</th>
                     <th>Faculty Count</th>
-                    <th>Action</th>
                 </thead>
                 <tbody>
                     <%let count = 1;%>
                     <% for(let batch of divisionBatchList) {%>
                     <tr>
-                        <td><%- count++ %></td>
+                        <td><%- count++ %><input type="hidden" class="form-control" name="batch_id" value="<%- batch.id %>"></td>
                         <td><%- batch.division %></td>
                         <td><%- batch.batch%></td>
-                        <td><%- batch.name %></td>
+                        <td><%- batch.event_name %></td>
                         <td><%- batch.divison_count %></td>
                         <td><%- batch.batch_count %></td>
                         <td><%- batch.input_batch_count %></td>
-                        <td><%- batch.faculty_count %></td>
-                        <td><label class="switch">
-                                <input type="checkbox" class="changeStatus" data-id="<%- batch.id %>"
-                                    data-status="<%- batch.status %>"
-                                    <%- batch.status == 'Yes' ? 'Checked' :  ''  %>>
-                                <span class="switch-slider round"></span>
-                            </label></td>
+                        <td><input type="number" class="form-control" name="faculty_count" value="<%- batch.faculty_count %>"></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -67,7 +62,7 @@
                     </p>
                 </div>
             <div>
-            <p id="pagination"></p>
+                <button class="btn btn-success updateDivisionBatch"><span class="fa fa-check"></span> Update </button>
         </div>
     </div>
 </div>
@@ -82,56 +77,6 @@
 
 <script>
     $(document).ready(function () {
-
-
-        //Create 
-        $('#batchesTable').on('change', '.changeStatus', function () {
-  
-            if ($(this).is(':checked')) {
-           
-                chnageStatus($(this).attr('data-id'), 1)
-            } else {
-               
-                chnageStatus($(this).attr('data-id'), 0)
-            }
-        })
-
-        function chnageStatus(id, status) {
-            console.log(id, status)
-            let ApiObj = {
-                url: '/admin/divisions/batches/changestatus',
-                type: 'POST',
-                data: {
-                    id: id,
-                    status: status
-                },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                loadAll()
-            }).catch(error => {
-
-            })
-        }
-
-
-        function loadAll() {
-            let ApiObj = {
-                url: '/admin/divisions/batches/getAll',
-                type: 'GET',
-                data: {},
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                console.log('Result::::::::::::::::::::',result.result)
-                AjaxTable(result.result)
-            }).catch(error => {
-
-            })
-        }
-
 
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
@@ -152,40 +97,49 @@
         }, 1500));
 
 
+        $(".updateDivisionBatch").on('click',function(){
+            let divbatchElems = $('#batchesTable tbody tr');
+            let batchCount = divbatchElems.length;
+            let batchJSON = [];
+            divbatchElems.each(function (index, elem) {
+                let id = $(elem).find(`input[name='batch_id']`).val()
+                let faculty_count = $(elem).find(`input[name='faculty_count']`).val()
+                if (index < batchCount - 1) {
+                    let obj = {
+                        id: id,
+                        faculty_count: faculty_count,
+                    }
+                    batchJSON.push(obj)
+                } else {
+                    let obj = {
+                        id:id,
+                        faculty_count: faculty_count,
 
-        //Pagination Here
-        let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
-        let pageNos = Math.ceil(Number(pageCount) / 10)
-
-        console.log("Page Numbers", pageNos)
-        $('#pagination').bootpag({
-            total: pageNos,
-            page: 1,
-            maxVisible: 10,
-            leaps: true,
-            firstLastUse: true,
-            first: '←',
-            last: '→',
-            wrapClass: 'pagination',
-            activeClass: 'active',
-            disabledClass: 'disabled',
-            nextClass: 'next',
-            prevClass: 'prev',
-            lastClass: 'last',
-            firstClass: 'first'
-        }).on("page", function (event, num) {
-            $.ajax({
-                type: "POST",
-                url: "/admin/divisions/batches/pagination",
-                data: {
-                    pageNo: num
-                },
-                success: function (data) {
-                    AjaxtTable(data.data)
+                    }
+                    batchJSON.push(obj)
                 }
             })
-        });
+
+            //Ajax Call
+            console.log('JSON::::::::',batchJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/divisions/batches',
+                data: {
+                    inputJSON: JSON.stringify(batchJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+        
 
 
         function AjaxtTable(divisionBatchList) {
@@ -209,7 +163,7 @@
                             <td>${count++}</td>
                             <td>${batch.division}</td>
                         <td>${batch.batch}</td>
-                        <td>${batch.name}</td>
+                        <td>${batch.event_name}</td>
                         <td>${batch.divison_count}</td>
                         <td>${batch.batch_count}</td>
                         <td>${batch.input_batch_count}</td>
@@ -230,6 +184,44 @@
             }
             AjaxTable += `<tbody></table>`
             $("#batchesTable").html(AjaxTable);
+        }
+
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
         }
 
 

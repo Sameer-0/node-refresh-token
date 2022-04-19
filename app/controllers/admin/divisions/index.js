@@ -16,7 +16,7 @@ module.exports = {
         })
     },
 
- 
+
 
     getAll: (req, res) => {
         Divisions.fetchAll(10, res.locals.slug).then(result => {
@@ -86,13 +86,13 @@ module.exports = {
     update: (req, res) => {
         let object = {
             update_divisions: JSON.parse(req.body.inputJSON)
-      }
-    
-      console.log('userid',res.locals.userId)
-      Divisions.update(object, res.locals.slug, res.locals.userId).then(result => {
-          res.status(200).json(JSON.parse(result.output.output_json))
-      }).catch(error => {
-          res.status(500).json(JSON.parse(error.originalError.info.message))
-      })
-      }
+        }
+
+        console.log('userid', res.locals.userId)
+        Divisions.update(object, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
+        })
+    }
 }

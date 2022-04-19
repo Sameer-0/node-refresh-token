@@ -21,5 +21,6 @@ router.get('/divisions/batches/search', batch.search)
 router.post('/divisions/batches/pagination', batch.pagination)
 router.post('/divisions/batches/changestatus', batch.changestatus)
 router.get('/divisions/batches/getAll', batch.getAll)
+router.put('/divisions/batches', batch.update)
 
 module.exports = router

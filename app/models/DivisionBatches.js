@@ -19,7 +19,7 @@ module.exports = class DivisionBatches {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [asmsoc-mum].division_batches db
+            return pool.request().query(`select db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [asmsoc-mum].division_batches db
             INNER JOIN [asmsoc-mum].divisions div on db.division_lid = div.id 
             INNER JOIN [asmsoc-mum].initial_course_workload icw on div.course_lid = icw.id 
             INNER JOIN [dbo].event_types et on db.event_type_lid = et.id`)
@@ -102,4 +102,15 @@ module.exports = class DivisionBatches {
                 WHERE db.division_lid LIKE @keyword OR db.batch LIKE @keyword OR db.event_type_lid LIKE @keyword OR db.divison_count LIKE @keyword OR db.batch_count LIKE @keyword OR db.input_batch_count LIKE @keyword OR db.faculty_count LIKE @keyword OR d.division LIKE @keyword OR et.name LIKE @keyword ORDER BY d.id DESC`)
         })
     }
+
+        //object, res.locals.slug, res.locals.userId
+        static update(inputJson, slug, userId) {
+            return poolConnection.then(pool => {
+                return pool.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                .input('last_modified_by', sql.Int, userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_update_division_batches]`)
+            })
+        }
 }
