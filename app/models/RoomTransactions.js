@@ -22,12 +22,14 @@ module.exports = class RoomTransactions {
         })
     }
 
-    static save(slug, inputJson) {
+    static save(slug, inputJson, userId) {
+        console.log(JSON.stringify(inputJson))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[request_for_room_bookings]`)
+                .input('last_modified_by', sql.Int, userId)
+                .execute(`[${slug}].[sp_add_new_room_transactions]`)
         })
     }
 

@@ -38,11 +38,10 @@ module.exports = {
             new_room_transactions: JSON.parse(req.body.inputJSON)
         }
         console.log('Req::::::::::::::::>', object)
-        RoomTransactions.save(res.locals.slug, object).then(result => {
+        RoomTransactions.save(res.locals.slug, object, res.locals.userId).then(result => {
             console.log('RESPONSE::::::::::::::::>', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('ERROR::::::::::::::::>', error.originalError.info.message)
             res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
