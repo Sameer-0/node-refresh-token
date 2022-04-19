@@ -19,4 +19,6 @@ router.put('/courseworkload', validate('JsonValidator'), courseworkload.update)
 
 //Course preference
 router.get('/courseworkload/preference', preference.getPage)
+router.get('/courseworkload/preference/search', preference.search)
+router.post('/courseworkload/preference/pagination', preference.pagination)
 module.exports = router
