@@ -9,4 +9,7 @@ const index =  require('../../controllers/admin/timeTableGeneration/index')
 router.get('/time-table-generation', index.getPage)
 
 
+
+router.get('/time-table-generation/getacademicalenderevnt',index.getAcadCalenderEvnt)
+
 module.exports = router
