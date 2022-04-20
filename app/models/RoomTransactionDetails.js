@@ -22,4 +22,22 @@ module.exports = class RoomTransactionDetails {
             throw error
         })
     }
+
+    static roomInfo(slug, id){
+        return poolConnection.then(pool => {
+            let response = pool.request()
+            return response.input('transactionId', sql.Int, id)
+                .query(`SELECT rtd.id, CONVERT(NVARCHAR, sit.start_time) AS start_time, CONVERT(NVARCHAR, _sit.end_time) AS end_time, CONVERT(NVARCHAR, ac.date_str, 105) AS start_date, 
+                CONVERT(NVARCHAR, _ac.date_str, 105) AS end_date, r.room_number, r.capacity
+                from [${slug}].room_transaction_details rtd
+                INNER JOIN [dbo].slot_interval_timings sit ON rtd.start_time_id =  sit.id
+                INNER JOIN [dbo].slot_interval_timings _sit ON rtd.end_time_id = _sit.id
+                INNER JOIN [dbo].academic_calendar ac ON rtd.start_date_id = ac.id
+                INNER JOIN [dbo].academic_calendar _ac ON rtd.end_date_id = _ac.id
+                INNER JOIN [dbo].rooms r ON rtd.room_lid =  r.id
+                WHERE rtd.room_transaction_lid = @transactionId`)
+        }).catch(error => {
+            throw error
+        })
+    }
 }

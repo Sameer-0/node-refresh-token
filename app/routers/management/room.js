@@ -79,4 +79,5 @@ router.get('/rooms/bookings/transactions/search', validate('search'), transactio
 router.get('/rooms/requests', RoomRequest.getPage)
 router.get('/rooms/requests/search', validate('search'), RoomRequest.search)
 router.post('/rooms/requests/pagination', validate('pagination'), RoomRequest.pagination)
+router.get('/rooms/requests/roomInfo', RoomRequest.roomInfo)
 module.exports = router;

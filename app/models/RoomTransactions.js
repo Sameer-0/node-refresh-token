@@ -29,7 +29,7 @@ module.exports = class RoomTransactions {
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .input('last_modified_by', sql.Int, userId)
-                .execute(`[${slug}].[sp_add_new_room_transactions]`)
+                .execute(`[${slug}].[request_for_room_bookings]`)
         })
     }
 
@@ -90,6 +90,15 @@ module.exports = class RoomTransactions {
                 .input('approval_flag', sql.TinyInt, body.approval_flag)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[approval_for_room_booking]`)
+        })
+    }
+
+
+    static findOne(slug, id){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('Id', sql.Int, id)
+                .query(`SELECT * FROM [${slug}].room_transactions WHERE id = @Id`)
         })
     }
 

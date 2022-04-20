@@ -33,13 +33,10 @@ module.exports = {
     },
 
     create: (req, res) => {
-        //console.log('Req::::::::::::', req.body.inputJSON)
         let object = {
             new_room_transactions: JSON.parse(req.body.inputJSON)
         }
-        console.log('Req::::::::::::::::>', object)
         RoomTransactions.save(res.locals.slug, object, res.locals.userId).then(result => {
-            console.log('RESPONSE::::::::::::::::>', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
