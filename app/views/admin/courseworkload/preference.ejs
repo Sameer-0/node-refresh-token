@@ -12,9 +12,9 @@
                 <h5>COURSE DAY ROOM PREFERENCE</h5>
             </div>
             <div>
-                <!-- <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
-                    data-bs-target="#add-holiday-modal">
-                    <i class="fas fa-plus"></i></button> -->
+                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+                    data-bs-target="#add-courseDayPreference-modal">
+                    <i class="fas fa-plus"></i></button>
                 <!-- <button class="btn ms-auto select-delete-holidays add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
@@ -30,18 +30,14 @@
                 <thead>
                     <th>Sr No.</th>
                     <th>Program Name</th>
-                    <th>Abbr</th>
-                    <th>Module Name</th>
-                    <th>Module Code</th>
-                    <th>Division</th>
-                    <th>Division Num</th>
-                    <th>Batch</th>
-                    <th>Batch Count</th>
-                    <th>Day</th>
                     <th>Acad Session</th>
-                    <th>Capacity</th>
-                    <th>Room No</th>
+                    <th>Module Name</th>
+                    <th>Division</th>
+                    <th>Batch</th>
+                    <th>Day</th>
+                    <th>Building No.</th>
                     <th>Floor No.</th>
+                    <th>Room No</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
@@ -76,9 +72,111 @@
                 </div>
             </div>
         </div>
+
+
     </div>
 </div>
 
+<!-- MODAL FOR COURSE DAY PREFERENCE -->
+<div class="modal fade" id="add-courseDayPreference-modal" tabindex="-1" role="dialog" aria-labelledby="add-holiday-modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header  modal-inputform-header">
+                <h5 class="modal-title text-dark" id="add-org-modal-title">Add Course Day Room Preference</h5>
+                <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
+
+            </div>
+            <!-- <form action="/management/campus/add" method="POST"> -->
+            <div class="modal-body">
+                <div id="errorHtml"></div>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
+                        <thead>
+                            <th>Sr No.</th>
+                            <th>Program Name</th>
+                            <th>Acad Session</th>
+                            <th>Module Name</th>
+                            <th>Division</th>
+                            <!-- <th>Batch</th> -->
+                            <th>Day</th>
+                            <th>Building No.</th>
+                            <th>Floor No.</th>
+                            <th>Room No</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                 1
+                                </td>
+                                <td>
+                                        <select class="form-select"  name="program_name" id="program_name">
+                                          <% for(let programs of programList){%>
+                                            <option value="<%- programs.id%>"><%- programs.program_name%></option>
+                                            <%}%>
+                                        </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="acad_session" id="acad_session">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="course_name" id="course_name">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="division" id="division">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i>Add More Holidays</button>
+                <button type="button" class="btn createHoliday modal-inputform-btn">Create Holidays</button>
+                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update Holiday</button>
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
 
 
 <%- include("../partials/footer") %>
@@ -105,6 +203,96 @@
             })
         }, 500));
 
+    //On change function
+        let filter={};
+       
+        $('#program_name').on('input', function() { 
+            let program_id = $(this).val();
+                filter.program_id = program_id;
+                
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/acadSessionList",
+                data: {
+                    program_id: program_id
+                },
+                dataType:"JSON"
+            }
+
+            ajaxApi(apiObj).then(result => {
+                let acadList = `<select name="acad_session" id="acad_session" class="form-select">`
+                    if(result.data.length > 0){
+                        for(let data of result.data){
+                        acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
+                        }
+                    }
+                    else{
+                        acadList += `<option> NO SESSION FOUND <option>`
+                    }
+                    acadList += `</select>`
+                   
+                    $(this).parent().next().html(acadList);
+                console.log('list:::>>>', $(this).next());
+            }).catch(error => console.log('error',error));
+        })
+
+        $('#add-more-courseDayRoomPreference-table').on('input','#acad_session', function() { 
+            let acad_session_lid = $(this).val();
+            filter.acad_session_lid = acad_session_lid;
+            console.log('acad_Sesi:::>>>>', filter)
+
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/courseList",
+                data: filter,
+                dataType:"JSON"
+            }
+
+            ajaxApi(apiObj).then(result => {
+                let courseList = `<select name="course_name" id="course_name" class="form-select">`
+                    if(result.data.length > 0){
+                        for(let data of result.data){
+                        courseList += `<option value="${data.id}"> ${data.module_name} </option>` 
+                        }
+                    }
+                    else{
+                        courseList += `<option> NO MODULE FOUND <option>`
+                    }
+                    courseList += `</select>`
+                   
+                    $(this).parent().next().html(courseList);
+                console.log('Courselist:::>>>', this);
+            }).catch(error => console.log('error',error));
+        })
+
+        $('#add-more-courseDayRoomPreference-table').on('input','#course_name', function() { 
+            let course_lid = $(this).val();
+            filter.course_lid = course_lid;
+            console.log('acad_Sesi:::>>>>', filter)
+
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/divList",
+                data: filter,
+                dataType:"JSON"
+            }
+
+            ajaxApi(apiObj).then(result => {
+                let divList = `<select name="div" id="div" class="form-select">`
+                    if(result.data.length > 0){
+                        for(let data of result.data){
+                            divList += `<option value="${data.division_lid}" data-batch_lid="${data.batch_lid}"> ${data.division} </option>` 
+                        }
+                    }
+                    else{
+                        divList += `<option> NO MODULE FOUND <option>`
+                    }
+                    divList += `</select>`
+                   
+                    $(this).parent().next().html(divList);
+                console.log('Courselist:::>>>', result.data);
+            }).catch(error => console.log('error',error));
+        })
 
         //PAGINATION
         let pageCount = `<%- pageCount %>`

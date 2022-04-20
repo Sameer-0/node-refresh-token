@@ -70,4 +70,44 @@ module.exports = class CourseDayRoomPreferences {
                 .execute(`[${slug}].[sp_update_faculty_date_times]`)
         })
     }
+
+    static getAcadSession(program_id, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('program_id', sql.Int, program_id).query(
+                `select   p.id, p.program_name, ps.acad_session_lid, acs.acad_session from [asmsoc-mum].program_sessions ps 
+                INNER JOIN [${slug}].programs p on p.id = ps.program_lid
+                INNER JOIN [dbo].acad_sessions acs on acs.id = ps.acad_session_lid
+                where p.id = @program_id;
+                `
+            )
+        })
+    }
+
+    static getCourseList(body, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('program_id', sql.Int, body.program_id).
+            input('acad_session_lid', sql.Int, body.acad_session_lid)
+            .query(
+                `select icw.id, icw.module_name, icw.program_id, p.id as program_lid from [asmsoc-mum].initial_course_workload icw
+                INNER JOIN [${slug}].programs p on p.program_id = icw.program_id
+                where p.id = @program_id AND acad_session_lid = @acad_session_lid;
+                `
+            )
+        })
+    }
+
+    static getDivList(body, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('course_lid', sql.Int, body.course_lid)
+            .query(
+                `SELECT  db.id as batch_lid, db.division_lid, d.division FROM [${slug}].division_batches db
+                INNER JOIN [${slug}].divisions d on d.id = db.division_lid 
+                where d.course_lid = @course_lid;
+                `
+            )
+        })
+    }
 }

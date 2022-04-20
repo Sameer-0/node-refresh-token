@@ -1,17 +1,25 @@
 const {
     check,
     oneOf,
-    validationResult
+    validationResult 
 } = require('express-validator');
 
-const CourseDayRoomPreferences = require('../../../models/CourseDayRoomPreferences')
+const CourseDayRoomPreferences = require('../../../models/CourseDayRoomPreferences');
+const Programs = require('../../../models/Programs');
+const Days = require('../../../models/Days');
+
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug)]).then(result => {
+      
+        console.log()
+        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug)]).then(result => {
+            console.log('dayList', result[3].recordset)
             res.render('admin/courseworkload/preference',{
                 coursepreference : result[0].recordset,
                 pageCount : result[1].recordset[0].count,
+                programList: result[2].recordset,
+                dayList: JSON.stringify(result[3].recordset),
                 totalentries : result[0].recordset ? result[0].recordset.length : 0
             })
         })
@@ -78,4 +86,37 @@ module.exports = {
             res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
+
+    acadSessionList: (req, res) => {
+        
+        CourseDayRoomPreferences.getAcadSession(req.body.program_id, res.locals.slug).then(result => {
+            res.json({
+                status:200,
+                data: result.recordset
+            })
+            
+        })
+    },
+
+    courseList: (req, res) => {
+        
+        CourseDayRoomPreferences.getCourseList(req.body, res.locals.slug).then(result => {
+            res.json({
+                status:200,
+                data: result.recordset
+            })
+        
+        })
+    },
+
+    divList: (req, res) => {
+        
+        CourseDayRoomPreferences.getDivList(req.body, res.locals.slug).then(result => {
+            res.json({
+                status:200,
+                data: result.recordset
+            })
+            console.log('divList',result.recordset);
+        })
+    }
 }
