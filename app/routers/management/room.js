@@ -80,4 +80,6 @@ router.get('/rooms/requests', RoomRequest.getPage)
 router.get('/rooms/requests/search', validate('search'), RoomRequest.search)
 router.post('/rooms/requests/pagination', validate('pagination'), RoomRequest.pagination)
 router.get('/rooms/requests/roomInfo', RoomRequest.roomInfo)
+router.patch('/rooms/requests', RoomRequest.requestApproval)
+
 module.exports = router;

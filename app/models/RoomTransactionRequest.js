@@ -58,11 +58,23 @@ module.exports = class RoomTransactionRequest {
         })
     }
 
-    static findOne(slug, id){
+    static findOne(slug, id) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
                 .query(`SELECT * FROM [${slug}].room_transactions WHERE id = @Id`)
+        })
+    }
+
+
+    // Procedure for Room Approval
+    static RequestApproval(slug, body) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_room_request_lid', sql.Int, body.input_room_request_lid)
+                .input('approval_flag', sql.TinyInt, body.approval_flag)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[approval_for_room_booking]`)
         })
     }
 }

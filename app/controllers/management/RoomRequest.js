@@ -69,13 +69,28 @@ module.exports = {
 
     roomInfo: (req, res) => {
         RoomTransactionRequest.findOne(res.locals.slug, req.query.id).then(_tresult => {
-            console.log(_tresult.recordset[0])
+            console.log('Room Transaction:::::::::::::',_tresult.recordset[0])
             Tenants.findOne(_tresult.recordset[0].tenant_id).then(_tenant => {
                 RoomTransactionDetails.roomInfo(_tenant.recordset[0].slug_name, _tresult.recordset[0].tenant_room_transaction_id).then(_rinfo => {
-                    console.log('_rinfo::::::::::::',_rinfo)
-                    res.status(200).json({data: _rinfo.recordset})
+                    //console.log('_rinfo::::::::::::',_rinfo)
+                    res.status(200).json({data: _rinfo.recordset, transactionid: _tresult.recordset[0].id})
                 })
             })
         })
-    }
+    },
+
+
+    requestApproval: (req, res) => {
+
+        console.log('Body::::::::::::::>>>',req.body)
+
+        RoomTransactionRequest.RequestApproval(res.locals.slug, req.body).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error=>{
+             res.json({status:500,data:error.originalError.info})
+        })
+    },
+
+
+
 }
