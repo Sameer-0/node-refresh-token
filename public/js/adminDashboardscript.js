@@ -145,3 +145,39 @@ $('#add-more-weeklyConstraint-table').on('click', '.remove-weeklyConstraint', fu
         alert('Cannot delete this room.')
     }
 })
+
+//Add and Remove Faculty Preference
+$('#add-more-facultyPreference').on('click', function () {
+    console.log("Faculty Preference::::")
+    let lastTr = $('#add-more-facultyPreference-table tbody tr:last-child');
+    let faculty_work_lid= lastTr.find(`select[name='faculty_work_lid']`).val();
+    let p_day_lid = lastTr.find(`select[name='p_day_lid']`).val();
+    let start_time_id = lastTr.find(`select[name='start_time_id']`).val();
+    let end_time_id = lastTr.find(`select[name='end_time_id']`).val();
+    
+    
+
+    let clonedTr = lastTr.clone();
+    // clonedTr.find(`select[name='programName']`).val('')
+    // clonedTr.find(`input[name='courseName']`).val('')
+    // clonedTr.find(`input[name='noOfDivisions']`).val('')
+    // clonedTr.find(`input[name='lecturePerDivision']`).val('')
+    // clonedTr.find(`input[name='totalSessionPerSemester']`).val('')
+    // clonedTr.find(`input[name='sessionPerWeek']`).val('')
+    // clonedTr.find(`input[name='programId']`).val('')
+    // clonedTr.find(`input[name='acadSession']`).val('')
+    // clonedTr.find(`input[name='practicalPerWeekPerSession']`).val('')
+   
+   
+    $('#add-more-facultyPreference-table tbody').append(clonedTr)
+})
+
+$('#add-more-facultyPreference-table').on('click', '.remove-facultypreference', function () {
+    console.log('divison Delete')
+    let trLength = $('#add-more-facultyPreference-table tbody tr').length;
+    if (trLength > 1) {
+        $(this).closest('tr').remove();
+    } else {
+        alert('Cannot delete this room.')
+    }
+})

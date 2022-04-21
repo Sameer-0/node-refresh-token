@@ -70,4 +70,56 @@ module.exports = class CourseDayRoomPreferences {
                 .execute(`[${slug}].[sp_update_faculty_date_times]`)
         })
     }
+
+    static getAcadSession(program_lid, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('program_lid', sql.Int, program_lid).query(
+                `SELECT   p.id, p.program_name, ps.acad_session_lid, acs.acad_session FROM [asmsoc-mum].program_sessions ps 
+                INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
+                INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+                WHERE p.id = @program_lid;
+                `
+            )
+        })
+    }
+
+    static getDayName(program_lid, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('program_lid', sql.Int, program_lid).query(
+                `SELECT d.id as day_lid, pd.program_lid, d.day_name FROM [${slug}].program_days pd 
+                INNER JOIN [${slug}].days d ON d.id = pd.day_lid 
+                WHERE pd.is_lecture = 1 AND pd.program_lid = @program_lid;
+                `
+            )
+        })
+    }
+
+    static getCourseList(body, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('program_lid', sql.Int, body.program_lid).
+            input('acad_session_lid', sql.Int, body.acad_session_lid)
+            .query(
+                `SELECT icw.id, icw.module_name, icw.program_id, p.id as program_lid FROM [asmsoc-mum].initial_course_workload icw
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+                WHERE p.id = @program_lid AND acad_session_lid = @acad_session_lid;
+                `
+            )
+        })
+    }
+
+    static getDivList(body, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('course_lid', sql.Int, body.course_lid)
+            .query(
+                `SELECT  db.id as batch_lid, db.division_lid, d.division FROM [${slug}].division_batches db
+                INNER JOIN [${slug}].divisions d ON d.id = db.division_lid 
+                WHERE d.course_lid = @course_lid;
+                `
+            )
+        })
+    }
 }

@@ -21,4 +21,7 @@ router.put('/courseworkload', validate('JsonValidator'), courseworkload.update)
 router.get('/courseworkload/preference', preference.getPage)
 router.get('/courseworkload/preference/search', preference.search)
 router.post('/courseworkload/preference/pagination', preference.pagination)
+router.post('/courseworkload/preference/acadSessionList',preference.acadSessionList)
+router.post('/courseworkload/preference/courseList',preference.courseList)
+router.post('/courseworkload/preference/divList',preference.divList)
 module.exports = router
