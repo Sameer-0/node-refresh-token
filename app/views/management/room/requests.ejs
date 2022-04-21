@@ -69,12 +69,14 @@
           <h5 class="modal-title" id="room-request-info-title">Room Request Info</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div id="errorHtml"></div>
         <div class="modal-body">
-            <div id="errorHtml"></div>
+            
             <div id="ShowRoomInfoTable"></div>
         </div>
         <div class="modal-footer">
-            <!-- <button type="button" class="btn btn-success RequestForRoom" data-status="1">Request For Room</button> -->
+            <button type="button" class="btn btn-success ApprovalAndRejection"  data-status="1"><img src="/icon_imgs/approve.png"> Approve</button>
+            <button type="button" class="btn btn-success ApprovalAndRejection" data-status="0"><img src="/icon_imgs/reject24.png"> Reject</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
@@ -100,7 +102,7 @@
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                console.log('Result:::::::::::', result.data)
+                
 
                 let htmlTable = `<table class="table table-borderd">
                     <thead>
@@ -128,35 +130,33 @@
                        htmlTable+= `</tbody></table>`;
                // console.log(htmlTable)
                 $("#ShowRoomInfoTable").html(htmlTable)
-                $("#show-transaction-details").modal('show')
-
+                $(".ApprovalAndRejection").attr("data-room-requestid", result.transactionid);
                 $("#room-request-info").modal('show')
-                //notify();
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
 
-        //Reject 
-        $(".RejectBtn").on('click',function(){
+
+        // Api for Approval and Rejection of Room Requests
+        $(".ApprovalAndRejection").on('click',function(){
             let ApiObj = {
-                type: 'POST',
-                url: '/admin/rooms/approval',
+                type: 'PATCH',
+                url: '/management/rooms/requests',
                 data: {
-                    input_room_request_lid: $(this).attr("data-transactionId"),
+                    input_room_request_lid: $(this).attr("data-room-requestid"),
                     approval_flag: $(this).attr("data-status")
                 },
                 dataType: 'JSON'
             }
 
-
             ajaxApi(ApiObj).then(result => {
               console.log('result::::::::::::::',result)
+              showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
-
 
 
         //search feature delay function is writter in script.js file which is located in public/js/script.js
@@ -240,6 +240,48 @@
             }
             AjaxTable += `<tbody></table>`
             $("#RoomRequests").html(AjaxTable);
+        }
+
+
+
+        function showError(errors) {
+        console.log('error::::::::::::::',errors.data.length)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#room-request-info #errorHtml").html(errorHtml)
+                //setTimeout(function(){location.reload()},2500)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#room-request-info #errorHtml").html(errorHtml)
+            setTimeout(function(){location.reload()},2500)
         }
 
 
