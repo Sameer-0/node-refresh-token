@@ -71,14 +71,26 @@ module.exports = class CourseDayRoomPreferences {
         })
     }
 
-    static getAcadSession(program_id, slug){
+    static getAcadSession(program_lid, slug){
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('program_id', sql.Int, program_id).query(
-                `select   p.id, p.program_name, ps.acad_session_lid, acs.acad_session from [asmsoc-mum].program_sessions ps 
-                INNER JOIN [${slug}].programs p on p.id = ps.program_lid
-                INNER JOIN [dbo].acad_sessions acs on acs.id = ps.acad_session_lid
-                where p.id = @program_id;
+            return request.input('program_lid', sql.Int, program_lid).query(
+                `SELECT   p.id, p.program_name, ps.acad_session_lid, acs.acad_session FROM [asmsoc-mum].program_sessions ps 
+                INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
+                INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+                WHERE p.id = @program_lid;
+                `
+            )
+        })
+    }
+
+    static getDayName(program_lid, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('program_lid', sql.Int, program_lid).query(
+                `SELECT d.id as day_lid, pd.program_lid, d.day_name FROM [${slug}].program_days pd 
+                INNER JOIN [${slug}].days d ON d.id = pd.day_lid 
+                WHERE pd.is_lecture = 1 AND pd.program_lid = @program_lid;
                 `
             )
         })
@@ -87,12 +99,12 @@ module.exports = class CourseDayRoomPreferences {
     static getCourseList(body, slug){
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('program_id', sql.Int, body.program_id).
+            return request.input('program_lid', sql.Int, body.program_lid).
             input('acad_session_lid', sql.Int, body.acad_session_lid)
             .query(
-                `select icw.id, icw.module_name, icw.program_id, p.id as program_lid from [asmsoc-mum].initial_course_workload icw
-                INNER JOIN [${slug}].programs p on p.program_id = icw.program_id
-                where p.id = @program_id AND acad_session_lid = @acad_session_lid;
+                `SELECT icw.id, icw.module_name, icw.program_id, p.id as program_lid FROM [asmsoc-mum].initial_course_workload icw
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+                WHERE p.id = @program_lid AND acad_session_lid = @acad_session_lid;
                 `
             )
         })
@@ -104,8 +116,8 @@ module.exports = class CourseDayRoomPreferences {
             return request.input('course_lid', sql.Int, body.course_lid)
             .query(
                 `SELECT  db.id as batch_lid, db.division_lid, d.division FROM [${slug}].division_batches db
-                INNER JOIN [${slug}].divisions d on d.id = db.division_lid 
-                where d.course_lid = @course_lid;
+                INNER JOIN [${slug}].divisions d ON d.id = db.division_lid 
+                WHERE d.course_lid = @course_lid;
                 `
             )
         })

@@ -102,8 +102,6 @@
                             <th>Division</th>
                             <!-- <th>Batch</th> -->
                             <th>Day</th>
-                            <th>Building No.</th>
-                            <th>Floor No.</th>
                             <th>Room No</th>
                             <th>Action</th>
                         </thead>
@@ -135,22 +133,12 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                    <select class="form-select" name="day_name" id="day_name">
                                      
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
-                                     
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
-                                     
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                    <select class="form-select" name="room_number" id="room_number">
                                      
                                     </select>
                                 </td>
@@ -166,7 +154,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i>Add More Holidays</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i>Add</button>
                 <button type="button" class="btn createHoliday modal-inputform-btn">Create Holidays</button>
                 <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update Holiday</button>
             </div>
@@ -207,22 +195,22 @@
         let filter={};
        
         $('#program_name').on('input', function() { 
-            let program_id = $(this).val();
-                filter.program_id = program_id;
+            let program_lid = $(this).val();
+                filter.program_lid = program_lid;
                 
             let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/acadSessionList",
                 data: {
-                    program_id: program_id
+                    program_lid: program_lid
                 },
                 dataType:"JSON"
             }
 
             ajaxApi(apiObj).then(result => {
                 let acadList = `<select name="acad_session" id="acad_session" class="form-select">`
-                    if(result.data.length > 0){
-                        for(let data of result.data){
+                    if(result.data.acadSessionList.length > 0){
+                        for(let data of result.data.acadSessionList){
                         acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
                         }
                     }
@@ -232,6 +220,21 @@
                     acadList += `</select>`
                    
                     $(this).parent().next().html(acadList);
+
+                let dayList =  `<select name="day_name" id="day_name" class="form-select">` 
+                    if(result.data.dayList.length > 0){
+                        for(let data of result.data.dayList){
+                            dayList += `<option value="${data.day_lid}"> ${data.day_name} </option>` 
+                        }
+                    }
+                    else{
+                        dayList += `<option> NO DAY FOUND <option>`
+                    }
+                    dayList += `</select>`
+                   
+                    $(this).parent().next().next().next().next().html(dayList);
+
+
                 console.log('list:::>>>', $(this).next());
             }).catch(error => console.log('error',error));
         })

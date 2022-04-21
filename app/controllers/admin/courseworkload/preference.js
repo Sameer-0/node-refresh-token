@@ -12,7 +12,6 @@ const Days = require('../../../models/Days');
 module.exports = {
     getPage: (req, res) => {
       
-        console.log()
         Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug)]).then(result => {
             console.log('dayList', result[3].recordset)
             res.render('admin/courseworkload/preference',{
@@ -89,12 +88,16 @@ module.exports = {
 
     acadSessionList: (req, res) => {
         
-        CourseDayRoomPreferences.getAcadSession(req.body.program_id, res.locals.slug).then(result => {
+        Promise.all([CourseDayRoomPreferences.getAcadSession(req.body.program_lid, res.locals.slug), CourseDayRoomPreferences.getDayName(req.body.program_lid, res.locals.slug)])
+        .then(result => {
             res.json({
                 status:200,
-                data: result.recordset
+                data:{
+                    acadSessionList: result[0].recordset,
+                    dayList: result[1].recordset
+                }
             })
-            
+            console.log('divList',result[1].recordset);
         })
     },
 
@@ -116,7 +119,7 @@ module.exports = {
                 status:200,
                 data: result.recordset
             })
-            console.log('divList',result.recordset);
+            
         })
     }
 }
