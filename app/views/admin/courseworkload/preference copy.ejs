@@ -92,104 +92,71 @@
             <div class="modal-body">
                 <div id="errorHtml"></div>
 
-             <div class="row">
-                 <div class="col-md-2 border-end border-primary">
-                <div class="mb-3">
-                    <label class="form-label">Select Program</label>
-                    <select class="form-select"  name="program_name" id="program_name">
-                    <% for(let programs of programList){%>
-                        <option value="<%- programs.id%>"><%- programs.program_name%></option>
-                        <%}%>
-                    </select>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
+                        <thead>
+                            <th>Sr No.</th>
+                            <th>Program Name</th>
+                            <th>Acad Session</th>
+                            <th>Module Name</th>
+                            <th>Division</th>
+                            <!-- <th>Batch</th> -->
+                            <th>Day</th>
+                            <th>Room No</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                 1
+                                </td>
+                                <td>
+                                        <select class="form-select"  name="program_name" id="program_name">
+                                          <% for(let programs of programList){%>
+                                            <option value="<%- programs.id%>"><%- programs.program_name%></option>
+                                            <%}%>
+                                        </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="acad_session" id="acad_session">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="course_name" id="course_name">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="division" id="division">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="day_name" id="day_name">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="room_number" id="room_number">
+                                     
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="mb-3">
-                 <label class="form-label">Select Session</label>
-                    <select class="form-select" name="acad_session" id="acad_session"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Module Name</label>
-                    <select class="form-select" name="course_name" id="course_name"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Division</label>
-                    <select class="form-select" name="division" id="division"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Day Name</label>
-                    <select class="form-select" name="day_name" id="day_name"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Room Number</label>
-                    <select class="form-select" name="room_number" id="room_number">
-                        <% for (let rslots of roomSlotsList) {%>
-                            <option value="<%-rslots.room_lid%>"><%- rslots.room_number %></option>
-                        <%}%>
-                    </select>
-                </div>
-
-                <div class="mb-3 d-grid gap-2">
-                    <button class="btn btn-info text-light">ADD ROOM PREFERENCE</button>
-                </div>
-
-                 </div>
-                 <div class="col-md-10">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
-                            <thead>
-                                <th>Sr No.</th>
-                                <th>Program Name</th>
-                                <th>Acad Session</th>
-                                <th>Module Name</th>
-                                <th>Division</th>
-                                <!-- <th>Batch</th> -->
-                                <th>Day</th>
-                                <th>Room No</th>
-                                <th>Action</th>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                     1
-                                    </td>
-                                    <td>
-                                        PRogerm Here
-                                    </td>
-                                    <td>
-                                        Session header
-
-                                    </td>
-                                    <td>
-                                        Select Course/ Module
-                                    </td>
-                                    <td>
-                                        Division
-                                    </td>
-                                    <td>
-                                        Select Day
-                                    </td>
-                                    <td>
-                                        Room Number
-                                    </td>
-                                    <td>
-                                        <i class="far fa-edit d-none"></i>
-                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                 </div>
-             </div>
 
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn createHoliday modal-inputform-btn">CREATE PREFERENCE</button>
-                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">UPDATE PREFERENCE</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i>Add</button>
+                <button type="button" class="btn createHoliday modal-inputform-btn">Create Holidays</button>
+                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update Holiday</button>
             </div>
 
         </div>
@@ -227,8 +194,9 @@
     //On change function
         let filter={};
        
-        $('#program_name').on('change', function() { 
-            let program_lid = $("#program_name").val();
+        $('#program_name').on('input', function() { 
+            let program_lid = $(this).val();
+                filter.program_lid = program_lid;
                 
             let apiObj = {
                 type:"POST",

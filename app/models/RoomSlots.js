@@ -34,4 +34,12 @@ module.exports = class RoomSlots {
                 .query(`INSERT INTO [dbo].room_slots (date, room_id, slot_id, alloted_to, b_transaction_id, is_booked, b_transaction_uuid)  VALUES (@date, @roomId, @slotId, @allotedTo, @bTransactionId, @isBooked, @bTransactionUuid)`)
         })
     }
+
+
+    // Method for fetching distinct record of rooms and its slots 
+    static SlotsForCourcePreference(){
+        return poolConnection.then(pool => {
+            return pool.request().query(`select DISTINCT rs.room_lid, r.room_number from [dbo].room_slots rs INNER JOIN [dbo].rooms r ON rs.room_lid = r.id`)
+        })
+    }
 }

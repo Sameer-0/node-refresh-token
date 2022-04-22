@@ -7,19 +7,19 @@ const {
 const CourseDayRoomPreferences = require('../../../models/CourseDayRoomPreferences');
 const Programs = require('../../../models/Programs');
 const Days = require('../../../models/Days');
-
+const RoomSlots = require('../../../models/RoomSlots')
 
 module.exports = {
     getPage: (req, res) => {
-      
-        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug)]).then(result => {
+        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomSlots.SlotsForCourcePreference()]).then(result => {
             console.log('dayList', result[3].recordset)
-            res.render('admin/courseworkload/preference',{
+            res.render('admin/courseworkload/preference', {
                 coursepreference : result[0].recordset,
                 pageCount : result[1].recordset[0].count,
                 programList: result[2].recordset,
                 dayList: JSON.stringify(result[3].recordset),
-                totalentries : result[0].recordset ? result[0].recordset.length : 0
+                totalentries : result[0].recordset ? result[0].recordset.length : 0,
+                roomSlotsList : result[4].recordset
             })
         })
     },
