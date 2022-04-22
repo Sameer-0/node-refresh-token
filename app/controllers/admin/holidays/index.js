@@ -13,6 +13,7 @@ var soap = require("soap");
 
 module.exports = {
 
+
     getPage: (req, res) => {
         Promise.all([Holidays.fetchAll(10, res.locals.slug), HolidayType.fetchAll(100), Holidays.getCount(res.locals.slug), AcadYear.fetchAll(), AcademicCalender.fetchAll(10000)]).then(result => {
             res.render('admin/holidays/index', {
@@ -30,6 +31,8 @@ module.exports = {
         let object = {
             insert_new_holidays: JSON.parse(req.body.inputJSON)
         }
+
+        console.log('object:::::::::::::', JSON.stringify(inputJSON))
 
         Holidays.save(object, res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))

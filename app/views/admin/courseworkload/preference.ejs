@@ -134,7 +134,7 @@
                 </div>
 
                 <div class="mb-3 d-grid gap-2">
-                    <button class="btn btn-info text-light">ADD ROOM PREFERENCE</button>
+                    <button class="btn btn-info text-light AddRoomPreference">ADD ROOM PREFERENCE</button>
                 </div>
 
                  </div>
@@ -153,7 +153,7 @@
                                 <th>Action</th>
                             </thead>
                             <tbody>
-                                <tr>
+                                <!-- <tr>
                                     <td>
                                      1
                                     </td>
@@ -180,25 +180,19 @@
                                         <i class="far fa-edit d-none"></i>
                                         <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
                                     </td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                     </div>
                  </div>
              </div>
-
             </div>
-
             <div class="modal-footer">
                 <button type="button" class="btn createHoliday modal-inputform-btn">CREATE PREFERENCE</button>
                 <button type="button" class="btn updateHoliday modal-inputform-btn d-none">UPDATE PREFERENCE</button>
             </div>
-
         </div>
-
     </div>
-
-
 </div>
 
 
@@ -210,6 +204,61 @@
 
         $('.select2').select2();
 
+
+        $(".AddRoomPreference").on('click',function(){
+            let program_lid = $("#program_name").val()// Get Value of Dropdown
+            let program_text =  $( "#program_name option:selected" ).text(); // Get Text of Dropdown
+            let acad_session_lid = $("#acad_session").val();
+            let acad_session_text =  $( "#acad_session option:selected" ).text();
+            let course_name_lid = $("#course_name").val();
+            let course_text =  $( "#course_name option:selected" ).text();
+            let division_lid = $("#division").val();
+            let division_text =  $( "#division option:selected" ).text();
+            let day_name_lid = $("#day_name").val();
+            let day_text =  $( "#day_name option:selected" ).text();
+            let room_number_lid = $("#room_number").val();
+            let room_number_text =  $( "#room_number option:selected" ).text();
+            console.log('Helllo',program_lid, program_name)
+
+            $("#add-more-courseDayRoomPreference-table tbody").append(`
+            <tr>
+                                    <td>
+                                    #
+                                    </td>
+                                    <td>
+                                        ${program_text}
+                                    </td>
+                                    <td>
+                                        ${acad_session_text}
+                                    </td>
+                                    <td>
+                                        ${course_text}
+                                    </td>
+                                    <td>
+                                        ${division_text}
+                                    </td>
+                                    <td>
+                                        ${day_text}
+                                    </td>
+                                    <td>
+                                        ${room_number_text}
+                                    </td>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-courseDayRoomPreference"></i>
+                                    </td>
+                                </tr>
+                    `)
+
+        })
+
+
+                //Remove Element
+        $("#add-more-courseDayRoomPreference-table").on('click', '.remove-courseDayRoomPreference', function () {
+            $($(this)).fadeOut(300, function () {
+               $($(this).parent().parent()).remove()
+            })
+        })
 
         // SEARCH PROGRAM TYPE
          $('#searchkeyword').on('input', delay(function (e) {
@@ -227,8 +276,6 @@
         }, 500));
 
     //On change function
-        let filter={};
-       
         $('#program_name').on('change', function() { 
             let program_lid = $("#program_name").val();
                 
@@ -287,18 +334,18 @@
 
             ajaxApi(apiObj).then(result => {
                 let courseList = ``
+               
                     if(result.data.length > 0){
                         for(let data of result.data){
                         courseList += `<option value="${data.id}"> ${data.module_name} </option>` 
                         }
                     }
                     else{
-                        courseList += `<option> NO MODULE FOUND <option>`
+                        courseList += `<option>NO MODULE FOUND<option>`
                     }
                 
-                   
+                    console.log('LEnght::::::::::::',courseList)
                     $("#course_name").html(courseList);
-                console.log('Courselist:::>>>', this);
             }).catch(error => console.log('error',error));
         })
 
