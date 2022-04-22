@@ -198,7 +198,7 @@ module.exports = {
                 return res.redirect('/user/select-dashboard');
             }
 
-            console.log(userDataSet[0].recordset)
+            console.log('Name::::::::::::::>>>',userDataSet[0].recordset[0].name)
 
             if (userDataSet[0].recordset[0].name.toLowerCase() == "management") {
                 res.redirect('/management/dashboard');

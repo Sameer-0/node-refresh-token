@@ -102,7 +102,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="room_lid" id="room_lid">
+                                    <select class="select2" name="room_lid" id="room_lid" data-live-search="true">
                                         <option value="">Select Room No</option>
                                         <%for(let room of roomList){%>
                                         <option value="<%-room.id%>"><%- room.room_number %></option>
@@ -207,13 +207,34 @@
   <%- include("../partials/footer") %>
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"> </script>
     <script>
+
+function selectRefresh() {
+  $('#open-transaction-modal .select2').select2({
+    dropdownParent: $('#open-transaction-modal') ,
+    //-^^^^^^^^--- update here
+    tags: true,
+    allowClear: true
+  });
+}
+
+
+
+
+
         $(document).ready(function () {
-            
-            $('.select2').select2({
-        dropdownParent: $('#open-transaction-modal')});
+
+
+         
+        //     $('.select2').select2({
+        //         dropdownParent: $('#open-transaction-modal') ,
+        //         tags: true
+        // })
+
+        
+        selectRefresh();
 
             let username = `<%- locals.userId %>`;
-    console.log('Username:::::::::::::::::::', username)
+  //console.log('Username:::::::::::::::::::', username)
     //Add more rows for building
     $('#add-more-roomtransaction').on('click', function () {
     console.log("Organization Added::::")
@@ -236,9 +257,11 @@
     clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('chnage')
     clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('chnage')
     clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('chnage')
-    $('#add-more-roomstrans-table tbody').append(
-    clonedTr)
+    $('#add-more-roomstrans-table tbody').append(clonedTr)
+  // selectRefresh();
     })
+
+
 
 
     $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
@@ -252,9 +275,6 @@
     alert('Cannot delete this room.')
     }
     })
-
-
-
 
   //Create
     $(".createRoomTransaction").on('click', function () {
@@ -323,15 +343,6 @@
             })
 
         })
-
-
-
-
-
-
-
-
-
 
 
    // SEARCH PROGRAM TYPE
@@ -533,7 +544,7 @@
 
 
 
-
     })
+
     </script>
     <%- include("../partials/footerEnd") %>
