@@ -242,7 +242,7 @@
             }
 
             ajaxApi(apiObj).then(result => {
-                let acadList = `<select name="acad_session" id="acad_session" class="form-select">`
+                let acadList = ``
                     if(result.data.acadSessionList.length > 0){
                         for(let data of result.data.acadSessionList){
                         acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
@@ -251,9 +251,7 @@
                     else{
                         acadList += `<option> NO SESSION FOUND <option>`
                     }
-                    acadList += `</select>`
-                   
-                    $(this).parent().next().html(acadList);
+                    $("#acad_session").html(acadList);
 
                 let dayList =  `<select name="day_name" id="day_name" class="form-select">` 
                     if(result.data.dayList.length > 0){
@@ -273,20 +271,22 @@
             }).catch(error => console.log('error',error));
         })
 
-        $('#add-more-courseDayRoomPreference-table').on('input','#acad_session', function() { 
-            let acad_session_lid = $(this).val();
-            filter.acad_session_lid = acad_session_lid;
-            console.log('acad_Sesi:::>>>>', filter)
+        $('#acad_session').on('input', function() { 
+            let acad_session_lid = $('#acad_session').val();
+            let program_lid = $("#program_name").val();
+            console.log('acad_Sesi:::>>>>', acad_session_lid)
+            console.log('program_lid:::>>>>', program_lid)
 
             let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/courseList",
-                data: filter,
+                data: {acad_session_lid: acad_session_lid,
+                    program_lid: program_lid},
                 dataType:"JSON"
             }
 
             ajaxApi(apiObj).then(result => {
-                let courseList = `<select name="course_name" id="course_name" class="form-select">`
+                let courseList = ``
                     if(result.data.length > 0){
                         for(let data of result.data){
                         courseList += `<option value="${data.id}"> ${data.module_name} </option>` 
@@ -295,27 +295,26 @@
                     else{
                         courseList += `<option> NO MODULE FOUND <option>`
                     }
-                    courseList += `</select>`
+                
                    
-                    $(this).parent().next().html(courseList);
+                    $("#course_name").html(courseList);
                 console.log('Courselist:::>>>', this);
             }).catch(error => console.log('error',error));
         })
 
-        $('#add-more-courseDayRoomPreference-table').on('input','#course_name', function() { 
-            let course_lid = $(this).val();
-            filter.course_lid = course_lid;
-            console.log('acad_Sesi:::>>>>', filter)
+        $('#course_name').on('change', function() { 
+            let course_lid = $('#course_name').val();
+                console.log('course_lid', course_lid)
 
             let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/divList",
-                data: filter,
+                data: {course_lid: course_lid},
                 dataType:"JSON"
             }
 
             ajaxApi(apiObj).then(result => {
-                let divList = `<select name="div" id="div" class="form-select">`
+                let divList = ``;
                     if(result.data.length > 0){
                         for(let data of result.data){
                             divList += `<option value="${data.division_lid}" data-batch_lid="${data.batch_lid}"> ${data.division} </option>` 
@@ -324,9 +323,9 @@
                     else{
                         divList += `<option> NO MODULE FOUND <option>`
                     }
-                    divList += `</select>`
+                    
                    
-                    $(this).parent().next().html(divList);
+                    $("#division").html(divList);
                 console.log('Courselist:::>>>', result.data);
             }).catch(error => console.log('error',error));
         })
