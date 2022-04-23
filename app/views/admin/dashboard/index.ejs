@@ -53,14 +53,13 @@
 <script>
     $(document).ready(function () {
 
-        let campu = `<%-campusList%>`;
+        let campu = `<%- campusList%>`;
         let date = `<%- acadCalender%>`;
         let acadDate = JSON.parse(date);
         let slotTime = `<%- slotTiming %>`
         let slotObj = JSON.parse(slotTime);
         let programType = JSON.parse(`<%- programTypeList%>`);
         let facultyTypeList = JSON.parse(`<%- facultyType %>`);
-
 
 
         let optionStartTime;
@@ -71,16 +70,13 @@
         let facultyType;
 
         for (let obj of slotObj) {
-
             optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
         }
 
         for (let obj of slotObj) {
-
             optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
         }
         for (let obj of acadDate) {
-
             startDate += `<option value="${obj.id}">${obj.date}</option>`;
         }
         for (let obj of acadDate) {
@@ -291,7 +287,6 @@
 
         })
 
-
         //Remove Element
         $(".selectedListFaculty").on('click', '.clicktoremoveFaculty', function () {
             // if ($(this).parent().attr('data-clickable') == 'true') {
@@ -304,7 +299,6 @@
                 $($(this).parent().parent()).remove()
             })
         })
-
 
         //search 
         $('.searchItemFaculty').on('input', function () {
@@ -335,6 +329,74 @@
                 }
             };
         })
+        
+
+        //Add more rows for FacultyWorks
+        $('#add-more-facultyworkfields').on('click', function () {
+        console.log("Adding faculty work fields::::")
+        let lastTr = $(
+            '#add-more-facultywork-table tbody tr:last-child'
+        )
+
+        let faculty_lid = lastTr.find(
+            `select[name='faculty_lid']`).val();
+        let program_session_lid = lastTr.find(
+            `select[name='program_session_lid']`).val();
+        let module_lid = lastTr.find(
+            `select[name='module_lid']`).val();
+        let lecture_per_week = lastTr.find(
+            `select[name='lecture_per_week']`).val();
+        let practical_per_week = lastTr.find(
+            `select[name='practical_per_week']`).val();
+        let tutorial_per_week = lastTr.find(
+            `select[name='tutorial_per_week']`).val();
+        let workshop_per_week = lastTr.find(
+            `select[name='workshop_per_week']`).val();
+        let is_batch_preference_set = lastTr.find(
+                `select[name='is_batch_preference_set']`)
+            .val();
+        let clonedTr = lastTr.clone();
+        console.log(lastTr.find(`select[name='module_lid']`)
+            .val())
+        console.log('faculty_lid::::::::::', module_lid)
+
+        clonedTr.find(`select[name='faculty_lid']`).val(
+            faculty_lid).trigger('change')
+        clonedTr.find(`select[name='program_session_lid']`)
+            .val(program_session_lid).trigger('change')
+        clonedTr.find(`select[name='module_lid']`).val(
+            module_lid).trigger('change')
+        clonedTr.find(`select[name='lecture_per_week']`)
+            .val('')
+        clonedTr.find(`select[name='practical_per_week']`)
+            .val('')
+        clonedTr.find(`select[name='tutorial_per_week']`)
+            .val('')
+        clonedTr.find(`select[name='workshop_per_week']`)
+            .val('')
+        clonedTr.find(
+                `select[name='is_batch_preference_set']`)
+            .val(is_batch_preference_set).trigger('change')
+        $('#add-more-facultywork-table tbody').append(
+            clonedTr)
+    })
+
+
+    $('#add-more-facultywork-table').on('click',
+        '.remove-facultyworkfield',
+        function () {
+            let trLength = $(
+                    '#add-more-facultywork-table tbody tr')
+                .length;
+            if (trLength > 1) {
+                $(this).closest('tr').remove()
+            } else {
+                alert('Cannot delete this room.')
+            }
+        })
+        
+
+        
         //Step form Start
         let currentFormStep = 1;
 
@@ -371,7 +433,6 @@
                 inline: 'start'
             })
 
-
             formStepNext();
         })
 
@@ -402,7 +463,7 @@
                 } else {
                     let obj = {
                         roomId: roomId,
-                        startTimeId: startTimeId,
+                        startTimeId: startTimeId, 
                         endTimeId: endTimeId,
                         startDateId: startDateId,
                         endDateId: endDateId,
