@@ -134,7 +134,7 @@
                 </div>
 
                 <div class="mb-3 d-grid gap-2">
-                    <button class="btn btn-info text-light add-courseRoomPreference">ADD ROOM PREFERENCE</button>
+                    <button class="btn btn-info text-light AddRoomPreference">ADD ROOM PREFERENCE</button>
                 </div>
 
                  </div>
@@ -188,7 +188,7 @@
              </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn createHoliday modal-inputform-btn">CREATE PREFERENCE</button>
+                <button type="button" class="btn createCoursePreference modal-inputform-btn">CREATE PREFERENCE</button>
                 <button type="button" class="btn updateHoliday modal-inputform-btn d-none">UPDATE PREFERENCE</button>
             </div>
         </div>
@@ -204,20 +204,21 @@
 
         $('.select2').select2();
 
-
+        let counter = 1;
         $(".AddRoomPreference").on('click',function(){
             let program_lid = $("#program_name").val()// Get Value of Dropdown
-            let program_text =  $( "#program_name option:selected" ).text(); // Get Text of Dropdown
+            let program_text =  $("#program_name option:selected").text(); // Get Text of Dropdown
             let acad_session_lid = $("#acad_session").val();
-            let acad_session_text =  $( "#acad_session option:selected" ).text();
+            let acad_session_text =  $("#acad_session option:selected").text();
             let course_name_lid = $("#course_name").val();
-            let course_text =  $( "#course_name option:selected" ).text();
+            let course_text =  $( "#course_name option:selected").text();
             let division_lid = $("#division").val();
-            let division_text =  $( "#division option:selected" ).text();
+            let division_text =  $( "#division option:selected").text();
             let day_name_lid = $("#day_name").val();
-            let day_text =  $( "#day_name option:selected" ).text();
+            let day_text =  $( "#day_name option:selected").text();
             let room_number_lid = $("#room_number").val();
-            let room_number_text =  $( "#room_number option:selected" ).text();
+            let room_number_text =  $("#room_number option:selected").text();
+            let batch_lid = $("division option:selected").attr("data-batch-lid");
             console.log('Helllo',program_lid, program_name)
 
             $("#add-more-courseDayRoomPreference-table tbody").append(`
@@ -225,22 +226,22 @@
                                     <td>
                                     #
                                     </td>
-                                    <td>
+                                    <td data-program-lid="${program_lid}">
                                         ${program_text}
                                     </td>
-                                    <td>
+                                    <td data-acad-session-lid="${acad_session_lid}">
                                         ${acad_session_text}
                                     </td>
-                                    <td>
+                                    <td data-course-name-lid="${course_name_lid}">
                                         ${course_text}
                                     </td>
-                                    <td>
+                                    <td data-division-lid="${division_lid}" data-batch-lid="${batch_lid}">
                                         ${division_text}
                                     </td>
-                                    <td>
+                                    <td data-day-name-lid="${day_name_lid}">
                                         ${day_text}
                                     </td>
-                                    <td>
+                                    <td data-room-number-lid="${room_number_lid}">
                                         ${room_number_text}
                                     </td>
                                     <td>
@@ -259,6 +260,52 @@
                $($(this).parent().parent()).remove()
             })
         })
+
+
+        //CREATING JSON FOR COURSE DAY ROOM PREFERENCE
+        $(".createCoursePreference").on('click',function(){
+            let courseDayList = $('#add-more-courseDayRoomPreference-table tbody tr');
+            let courseDayCount = courseDayList.length;
+            let courseDayJson = [];
+            courseDayList.each(function (index, elem) {
+                let program_lid = $(elem).find('td[data-program-lid]').attr("data-program-lid")
+                let acad_session_lid = $(elem).find('td[data-acad-session-lid]').attr("data-acad-session-lid")
+                let course_lid = $(elem).find('td[data-course-name-lid]').attr("data-course-name-lid")
+                let division_lid = $(elem).find('td[data-division-lid]').attr("data-division-lid")
+                let day_name_lid = $(elem).find('td[data-day-name-lid]').attr("data-day-name-lid")
+                let room_number_lid = $(elem).find('td[data-room-number-lid]').attr("data-room-number-lid")
+                let batch_lid = $(elem).find('td[data-batch-lid]').attr("data-batch-lid")
+
+                console.log('program_lid', program_lid)
+
+                if (index < courseDayCount - 1) {
+                    let obj = {
+                        program_lid: program_lid,
+                        acad_session_lid: acad_session_lid,
+                        course_lid: course_lid,
+                        division_lid: division_lid, 
+                        day_name_lid: day_name_lid,
+                        room_number_lid: room_number_lid,
+                        batch_lid:batch_lid
+                    }
+                    courseDayJson.push(obj)
+                } else {
+                    let obj = {
+                        program_lid: program_lid,
+                        acad_session_lid: acad_session_lid,
+                        course_lid: course_lid,
+                        division_lid: division_lid, 
+                        day_name_lid: day_name_lid,
+                        room_number_lid: room_number_lid,
+                        batch_lid:batch_lid
+                    }
+                    courseDayJson.push(obj)
+                }
+            })
+            console.log('Hell:::::::::::::::::::::>>>>',courseDayJson)
+        })
+
+     
 
         // SEARCH PROGRAM TYPE
          $('#searchkeyword').on('input', delay(function (e) {
@@ -296,22 +343,23 @@
                         }
                     }
                     else{
-                        acadList += `<option> NO SESSION FOUND <option>`
+                        acadList += `<option value=""> NO SESSION FOUND <option>`
                     }
                     $("#acad_session").html(acadList);
 
-                let dayList =  `<select name="day_name" id="day_name" class="form-select">` 
+               // let dayList =  `<select name="day_name" id="day_name" class="form-select">` 
+                dayList =  `` 
                     if(result.data.dayList.length > 0){
                         for(let data of result.data.dayList){
                             dayList += `<option value="${data.day_lid}"> ${data.day_name} </option>` 
                         }
                     }
                     else{
-                        dayList += `<option> NO DAY FOUND <option>`
+                        dayList += `<option value=""> NO DAY FOUND <option>`
                     }
-                    dayList += `</select>`
+                   // dayList += `</select>`
                    
-                    $(this).parent().next().next().next().next().html(dayList);
+                    $("#day_name").html(dayList);
 
 
                 console.log('list:::>>>', $(this).next());
@@ -364,7 +412,7 @@
                 let divList = ``;
                     if(result.data.length > 0){
                         for(let data of result.data){
-                            divList += `<option value="${data.division_lid}" data-batch_lid="${data.batch_lid}"> ${data.division} </option>` 
+                            divList += `<option value="${data.division_lid}" data-batch-lid="${data.batch_lid}"> ${data.division} </option>` 
                         }
                     }
                     else{
