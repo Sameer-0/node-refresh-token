@@ -13,6 +13,7 @@
         <div class="arrow-pointer stage pending my-1" data-step="10"> Faculty </div>
         <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty Works</div>
         <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Preference</div>
+        <div class="arrow-pointer stage pending my-1" data-step="13"> Faculty Batch</div>
     </div>
 
     <div class="step-form-body pt-3">
@@ -886,7 +887,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <select class="select2" name="faculty_lid" id="faculty_lid">
+                                <select class="form-select" name="faculty_lid" id="faculty_lid">
                                     <option value="">--select--</option>
                                     <% for(faculty of facultyList) {%>
                                     <option value="<%- faculty.id %>">
@@ -895,7 +896,7 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="select2" name="program_session_lid" id="program_session_lid">
+                                <select class="form-select" name="program_session_lid" id="program_session_lid">
                                     <option value="">--select--</option>
                                     <% for(session of programSession) {%>
                                     <option value="<%- session.id %>"><%- session.acad_session %></option>
@@ -903,7 +904,7 @@
                                 </select>
                             </td>
                             <td>
-                                <select class="select2" name="module_lid" id="module_lid">
+                                <select class="form-select" name="module_lid" id="module_lid">
                                     <option value="">--select--</option>
                                     <% for(course of courseWorkloadList) {%>
                                     <option value="<%- course.id %>">
@@ -948,20 +949,20 @@
         <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="12">
 
             <div class="modal-header table-card-header">
-                <h5 class="modal-title" id="add-facultyPreference-modal-title">Add Faculty Preference</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-facultyPreference"><i
+                <h5 class="modal-title" id="add-more-facultyworktimepreferences-title">Add Faculty Preference</h5>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-facultyworktimepreferences"><i
                         class="fas fa-plus"></i> </button>
             </div>
 
             <div class="modal-body">
                 <div id="errorHtml"></div>
                 <input type="hidden" id="facultyPreference" name="faculty">
-
+ 
                 <div class="table-responsive">
 
-                    <table class="table table-bordered" id="add-more-facultyPreference-table">
+                    <table class="table table-bordered" id="facultyworktimepreferencesTable">
                         <thead>
-                            <th>Faculty Works</th>
+                            <th>Faculty Work</th>
                             <th>Program Day</th>
                             <th>Start Time</th>
                             <th>End Time</th>
@@ -980,7 +981,7 @@
                                 <td>
                                     <select class="form-select" name="p_day_lid" id="p_day_lid">
                                         <% for(programday of programDayList) {%>
-                                        <option value="<%- programday.id %>"><%- programday.program_name %> (<%- programday.day_name %> )</option>
+                                        <option value="<%- programday.id %>"><%- programday.program_name %> ( <%- programday.day_name %> )</option>
                                         <%}%>
                                     </select>
                                 </td>
@@ -1001,10 +1002,9 @@
                                 </select>
                                 </td>
                            
-
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultypreference"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworktimepreference"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -1016,7 +1016,50 @@
         </form>
  
         <!-- Faculty Batch --> 
+        <form action="/admin/facultybatch" method="post" class="step d-none" id="facultyBatch" data-step="13">
 
+            <div class="modal-header table-card-header">
+                <h5 class="modal-title" id="aadd-more-facultybatch-fields-title">Add Faculty Batch</h5>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-facultybatch-fields"><i class="fas fa-plus"></i> </button>
+            </div>
+
+            <div class="modal-body">
+                <div id="errorHtml"></div>
+                <input type="hidden" id="facultyBatch" name="facultyBatch">
+ 
+                <div class="table-responsive">
+
+                    <table class="table table-bordered" id="add-more-facultybatch-table">
+                        <thead>
+                            <th>Faculty</th>
+                            <th>Batch</th>
+                            <th>Action</th> 
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select class="select2" name="faculty_lid" id="faculty_lid">
+                                        <option value="">--select--</option>
+                                        <% for(faculty of facultyList) {%>
+                                        <option value="<%- faculty.id %>">
+                                            <%- faculty.faculty_name %>  (<%- faculty.faculty_id %>)</option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" name="faculty_batch" id="faculty_batch" class="form-control">
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultybatchfield"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </form>
     </div>
 
     <div class="step-form-footer">
