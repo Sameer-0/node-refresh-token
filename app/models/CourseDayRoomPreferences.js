@@ -122,4 +122,13 @@ module.exports = class CourseDayRoomPreferences {
             )
         })
     }
+
+    static refresh(slug) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_refresh_course_day_room_preferences]`)
+        })
+    }
 }
