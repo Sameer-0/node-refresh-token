@@ -11,7 +11,8 @@
         <div class="arrow-pointer stage pending my-1" data-step="8"> School Timing</div>
         <div class="arrow-pointer stage pending my-1" data-step="9"> Weekly Constraint</div>
         <div class="arrow-pointer stage pending my-1" data-step="10"> Faculty </div>
-        <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty Preference</div>
+        <div class="arrow-pointer stage pending my-1" data-step="11"> Faculty Works</div>
+        <div class="arrow-pointer stage pending my-1" data-step="12"> Faculty Preference</div>
     </div>
 
     <div class="step-form-body pt-3">
@@ -856,8 +857,95 @@
         
         </form>
 
+        <!-- Faculty Works -->
+        <form action="/admin/facultyworks" method="post" class="step d-none" id="facultyWorks" data-step="11">
+
+            <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+                <div>
+                    <h5>Faculty Works</h5>
+                </div>
+                <div>
+                    <button class="btn add-btn ms-auto" type="button" id="add-more-facultyworkfields"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive">
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <table class="table table-bordered" id="add-more-facultywork-table">
+                    <thead>
+                        <th>Faculty</th>
+                        <th>Program Session</th>
+                        <th>Module</th>
+                        <th>Lecture per week</th>
+                        <th>Practical per week</th>
+                        <th>Tutorial per weeek</th>
+                        <th>Workshop per week</th>
+                        <th>Batch preference</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="select2" name="faculty_lid" id="faculty_lid">
+                                    <option value="">--select--</option>
+                                    <% for(faculty of facultyList) {%>
+                                    <option value="<%- faculty.id %>">
+                                        <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
+                                    <%}%>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="select2" name="program_session_lid" id="program_session_lid">
+                                    <option value="">--select--</option>
+                                    <% for(session of programSession) {%>
+                                    <option value="<%- session.id %>"><%- session.acad_session %></option>
+                                    <%}%>
+                                </select>
+                            </td>
+                            <td>
+                                <select class="select2" name="module_lid" id="module_lid">
+                                    <option value="">--select--</option>
+                                    <% for(course of courseWorkloadList) {%>
+                                    <option value="<%- course.id %>">
+                                        <%- course.module_name %>(<%- course.module_id %>)</option>
+                                    <%}%>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" name="lecture_per_week" id="lecture_per_week" class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" name="practical_per_week" id="practical_per_week" class="form-control">
+                            </td>
+                            <td>
+                                <input type="number" name="tutorial_per_week" id="tutorial_per_week" class="form-control">
+                            </td>
+                            <td><input type="number" name="workshop_per_week" id="workshop_per_week" class="form-control"></td>
+                            <td>
+                                <!-- <input type="number" name="is_batch_preference_set" class="form-control"> -->
+                                <select class="form-control" name="is_batch_preference_set" id="is_batch_preference_set">
+                                    <option value="">Select preference</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <i class="far fa-edit d-none"></i>
+                                <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworkfield"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            
+            </div>
+        
+        
+        </form>
+
         <!-- Faculty Time Preference -->
-        <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="11">
+        <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="12">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-facultyPreference-modal-title">Add Faculty Preference</h5>
@@ -926,6 +1014,8 @@
 
             </div>
         </form>
+ 
+        <!-- Faculty Batch --> 
 
     </div>
 
