@@ -381,8 +381,7 @@
             clonedTr)
     })
 
-
-    $('#add-more-facultywork-table').on('click',
+        $('#add-more-facultywork-table').on('click',
         '.remove-facultyworkfield',
         function () {
             let trLength = $(
@@ -395,8 +394,66 @@
             }
         })
         
+        //Add more rows for Faculty Prefernce
+        $('#add-more-facultyworktimepreferences').on('click', function () {
+            console.log('yelo:::')
+            let lastTr = $('#facultyworktimepreferencesTable tbody tr:last-child')
 
+            let faculty_work_lid = lastTr.find(`select[name="faculty_work_lid"]`).val();
+            let p_day_lid = lastTr.find(`select[name="p_day_lid"]`).val();
+            let start_time_id = lastTr.find(`select[name="start_time_id"]`).val();
+            let end_time_id = lastTr.find(`select[name="end_time_id"]`).val();
+
+            let clonedTr = lastTr.clone();
+
+            clonedTr.find(`select[name="faculty_work_lid"]`).val(faculty_work_lid).trigger('change');
+            clonedTr.find(`select[name="p_day_lid"]`).val(p_day_lid).trigger('change');
+            clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
+            clonedTr.find(`select[name="start_time_id"]`).val(start_time_id).trigger('change');
+            clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
+            $('#facultyworktimepreferencesTable tbody').append(clonedTr);
+            })         
+
+        $('#facultyworktimepreferencesTable').on('click', '.remove-facultyworktimepreference',
+                function () {
+                let trLength = $('#facultyworktimepreferencesTable tbody tr').length;
+
+                if (trLength > 1) {
+                        $(this).closest('tr').remove()
+                    }
+                else {
+                        alert('Cannot delete this room.')
+                    }
+            })
         
+
+        //Add more rows for Faculty Batch
+        $('#add-more-facultybatch-fields').on('click', function () {
+        
+        let lastTr = $('#add-more-facultybatch-table tbody tr:last-child')
+        
+        console.log('addd::::lastTr', lastTr)
+        let faculty_lid = lastTr.find(`select[name="faculty_lid"]`).val();
+        let batch_id = lastTr.find(`select[name="faculty_batch"]`).val();
+        let clonedTr = lastTr.clone();
+        clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change')
+        clonedTr.find(`select[name="faculty_batch"]`).val(batch_id).trigger('change')
+        
+        $('#add-more-facultybatch-table tbody').append(clonedTr)})
+
+            $('#add-more-facultybatch-table').on('click', '.remove-facultybatchfield',
+            function () {
+            let trLength = $('#add-more-facultybatch-table tbody tr').length;
+
+            if (trLength > 1) {
+                     $(this).closest('tr').remove()
+                }
+            else {
+            alert('Cannot delete this.')
+                }
+    })
+
+
         //Step form Start
         let currentFormStep = 1;
 
@@ -655,13 +712,13 @@
                 dataType: 'JSON'
             }
 
-            // ajaxApi(ApiObj).then(result => {
-            //     console.log(result)
-            //     showSuccess(result)
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
 
-            // }).catch(error => {
-            //     showError(error.responseJSON)
-            // })
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
         })
 
         //SaveAll DivisionBatches

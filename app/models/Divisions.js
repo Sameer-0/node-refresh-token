@@ -76,6 +76,7 @@ module.exports = class Divisions {
             .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_update_divisions]`)
+            
         })
     }
 
