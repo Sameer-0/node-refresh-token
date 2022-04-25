@@ -82,7 +82,7 @@
         for (let obj of acadDate) {
             endDate += `<option value="${obj.id}">${obj.date}</option>`;
         }
-        for (let obj of programType) { 
+        for (let obj of programType) {
             programTypeList += `<option>${obj.name}</option>`
         }
         for (let obj of facultyTypeList) {
@@ -329,71 +329,71 @@
                 }
             };
         })
-        
+
 
         //Add more rows for FacultyWorks
         $('#add-more-facultyworkfields').on('click', function () {
-        console.log("Adding faculty work fields::::")
-        let lastTr = $(
-            '#add-more-facultywork-table tbody tr:last-child'
-        )
+            console.log("Adding faculty work fields::::")
+            let lastTr = $(
+                '#add-more-facultywork-table tbody tr:last-child'
+            )
 
-        let faculty_lid = lastTr.find(
-            `select[name='faculty_lid']`).val();
-        let program_session_lid = lastTr.find(
-            `select[name='program_session_lid']`).val();
-        let module_lid = lastTr.find(
-            `select[name='module_lid']`).val();
-        let lecture_per_week = lastTr.find(
-            `select[name='lecture_per_week']`).val();
-        let practical_per_week = lastTr.find(
-            `select[name='practical_per_week']`).val();
-        let tutorial_per_week = lastTr.find(
-            `select[name='tutorial_per_week']`).val();
-        let workshop_per_week = lastTr.find(
-            `select[name='workshop_per_week']`).val();
-        let is_batch_preference_set = lastTr.find(
-                `select[name='is_batch_preference_set']`)
-            .val();
-        let clonedTr = lastTr.clone();
-        console.log(lastTr.find(`select[name='module_lid']`)
-            .val())
-        console.log('faculty_lid::::::::::', module_lid)
+            let faculty_lid = lastTr.find(
+                `select[name='faculty_lid']`).val();
+            let program_session_lid = lastTr.find(
+                `select[name='program_session_lid']`).val();
+            let module_lid = lastTr.find(
+                `select[name='module_lid']`).val();
+            let lecture_per_week = lastTr.find(
+                `select[name='lecture_per_week']`).val();
+            let practical_per_week = lastTr.find(
+                `select[name='practical_per_week']`).val();
+            let tutorial_per_week = lastTr.find(
+                `select[name='tutorial_per_week']`).val();
+            let workshop_per_week = lastTr.find(
+                `select[name='workshop_per_week']`).val();
+            let is_batch_preference_set = lastTr.find(
+                    `select[name='is_batch_preference_set']`)
+                .val();
+            let clonedTr = lastTr.clone();
+            console.log(lastTr.find(`select[name='module_lid']`)
+                .val())
+            console.log('faculty_lid::::::::::', module_lid)
 
-        clonedTr.find(`select[name='faculty_lid']`).val(
-            faculty_lid).trigger('change')
-        clonedTr.find(`select[name='program_session_lid']`)
-            .val(program_session_lid).trigger('change')
-        clonedTr.find(`select[name='module_lid']`).val(
-            module_lid).trigger('change')
-        clonedTr.find(`select[name='lecture_per_week']`)
-            .val('')
-        clonedTr.find(`select[name='practical_per_week']`)
-            .val('')
-        clonedTr.find(`select[name='tutorial_per_week']`)
-            .val('')
-        clonedTr.find(`select[name='workshop_per_week']`)
-            .val('')
-        clonedTr.find(
-                `select[name='is_batch_preference_set']`)
-            .val(is_batch_preference_set).trigger('change')
-        $('#add-more-facultywork-table tbody').append(
-            clonedTr)
-    })
+            clonedTr.find(`select[name='faculty_lid']`).val(
+                faculty_lid).trigger('change')
+            clonedTr.find(`select[name='program_session_lid']`)
+                .val(program_session_lid).trigger('change')
+            clonedTr.find(`select[name='module_lid']`).val(
+                module_lid).trigger('change')
+            clonedTr.find(`select[name='lecture_per_week']`)
+                .val('')
+            clonedTr.find(`select[name='practical_per_week']`)
+                .val('')
+            clonedTr.find(`select[name='tutorial_per_week']`)
+                .val('')
+            clonedTr.find(`select[name='workshop_per_week']`)
+                .val('')
+            clonedTr.find(
+                    `select[name='is_batch_preference_set']`)
+                .val(is_batch_preference_set).trigger('change')
+            $('#add-more-facultywork-table tbody').append(
+                clonedTr)
+        })
 
         $('#add-more-facultywork-table').on('click',
-        '.remove-facultyworkfield',
-        function () {
-            let trLength = $(
-                    '#add-more-facultywork-table tbody tr')
-                .length;
-            if (trLength > 1) {
-                $(this).closest('tr').remove()
-            } else {
-                alert('Cannot delete this room.')
-            }
-        })
-        
+            '.remove-facultyworkfield',
+            function () {
+                let trLength = $(
+                        '#add-more-facultywork-table tbody tr')
+                    .length;
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this room.')
+                }
+            })
+
         //Add more rows for Faculty Prefernce
         $('#add-more-facultyworktimepreferences').on('click', function () {
             console.log('yelo:::')
@@ -412,50 +412,83 @@
             clonedTr.find(`select[name="start_time_id"]`).val(start_time_id).trigger('change');
             clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
             $('#facultyworktimepreferencesTable tbody').append(clonedTr);
-            })         
+        })
 
         $('#facultyworktimepreferencesTable').on('click', '.remove-facultyworktimepreference',
-                function () {
+            function () {
                 let trLength = $('#facultyworktimepreferencesTable tbody tr').length;
 
                 if (trLength > 1) {
-                        $(this).closest('tr').remove()
-                    }
-                else {
-                        alert('Cannot delete this room.')
-                    }
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this room.')
+                }
             })
-        
+
 
         //Add more rows for Faculty Batch
         $('#add-more-facultybatch-fields').on('click', function () {
-        
-        let lastTr = $('#add-more-facultybatch-table tbody tr:last-child')
-        
-        console.log('addd::::lastTr', lastTr)
-        let faculty_lid = lastTr.find(`select[name="faculty_lid"]`).val();
-        let batch_id = lastTr.find(`select[name="faculty_batch"]`).val();
-        let clonedTr = lastTr.clone();
-        clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change')
-        clonedTr.find(`select[name="faculty_batch"]`).val(batch_id).trigger('change')
-        
-        $('#add-more-facultybatch-table tbody').append(clonedTr)})
 
-            $('#add-more-facultybatch-table').on('click', '.remove-facultybatchfield',
+            let lastTr = $('#add-more-facultybatch-table tbody tr:last-child')
+
+            console.log('addd::::lastTr', lastTr)
+            let faculty_lid = lastTr.find(`select[name="faculty_lid"]`).val();
+            let batch_id = lastTr.find(`select[name="faculty_batch"]`).val();
+            let clonedTr = lastTr.clone();
+            clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change')
+            clonedTr.find(`select[name="faculty_batch"]`).val(batch_id).trigger('change')
+
+            $('#add-more-facultybatch-table tbody').append(clonedTr)
+        })
+
+        $('#add-more-facultybatch-table').on('click', '.remove-facultybatchfield',
             function () {
-            let trLength = $('#add-more-facultybatch-table tbody tr').length;
+                let trLength = $('#add-more-facultybatch-table tbody tr').length;
 
-            if (trLength > 1) {
-                     $(this).closest('tr').remove()
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
                 }
-            else {
-            alert('Cannot delete this.')
-                }
-    })
+            })
+
+        //Display room import
+        // let roomElems = $('#add-more-room-table tbody tr');
+        //         let roomCount = roomElems.length;
+        //         let roomJson = [];
+        //         roomElems.each(function (index, elem) {
+
+        //             let roomLid = $(elem).attr('data-room-id')
+        //             let startTime = $(elem).find(`select[name='startTime']`).val()
+        //             let endTime = $(elem).find(`select[name='endTime']`).val()
+        //             let startDate = $(elem).find(`select[name='startDate']`).val()
+        //             let endDate = $(elem).find(`select[name='endDate']`).val()
+
+        //             if (index < roomCount - 1) {
+        //                 let obj = {
+        //                     room_lid: roomLid,
+        //                     start_time_id: startTime,
+        //                     end_time_id: endTime,
+        //                     start_date_id: startDate,
+        //                     start_date_id: endDate
+        //                 }
+        //                 roomJson.push(obj)
+        //             } else {
+        //                 let obj = {
+        //                     room_lid: roomLid,
+        //                     start_time_id: startTime,
+        //                     end_time_id: endTime,
+        //                     start_date_id: startDate,
+        //                     start_date_id: endDate
+        //                 }
+        //                 roomJson.push(obj)
+        //             }
+        //         })
 
 
         //Step form Start
-        let currentFormStep = 1;
+        let currentFormStep = `<%- currentFormStep%>`;
+        
 
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
@@ -465,22 +498,19 @@
         function formStepNext() {
             currentFormStep++;
 
-            console.log('clicked!!')
-            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass(
-                'submitted');
-            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass(
-                'active');
+            console.log('clicked!!', currentFormStep)
+            $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass('submitted');
+            $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass('active');
 
             $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
-            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
-                'active-form');
+            $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
             console.log(currentFormStep);
         }
 
 
         // NEXT STEP EVENT
         $('#next-step').on('click', function () {
-
+          
             //SCROLL ON NEXT
             let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep+1}"]`);
             console.log('stepformscroll', ele);
@@ -490,7 +520,100 @@
                 inline: 'start'
             })
 
-            formStepNext();
+            // CREATING JSON AND AJAX CALL
+            // if (currentFormStep == 1) {
+                
+            //     let holidayElems = $('#add-more-holidays-table tbody tr');
+            //     let holidayCount = holidayElems.length;
+            //     let holidayJson = [];
+            //     holidayElems.each(function (index, elem) {
+
+            //         let calendarId = $(elem).find(`input[name='calendarId']`).val()
+            //         let calendarYear = $(elem).find(`input[name='calendarYear']`).val()
+            //         let holidayDate = $(elem).find(`input[name='holidayDate']`).val()
+            //         let holidayReason = $(elem).find(`input[name='holidayReason']`).val()
+            //         let holidayType = $(elem).find(`select[name='holidayType']`).val()
+
+            //         if (index < holidayCount - 1) {
+            //             let obj = {
+            //                 calendar_id: calendarId,
+            //                 calendar_year: calendarYear,
+            //                 h_date: holidayDate,
+            //                 reason: holidayReason,
+            //                 holiday_type_lid: holidayType
+            //             }
+            //             holidayJson.push(obj)
+            //         } else {
+            //             let obj = {
+            //                 calendar_id: calendarId,
+            //                 calendar_year: calendarYear,
+            //                 h_date: holidayDate,
+            //                 reason: holidayReason,
+            //                 holiday_type_lid: holidayType
+            //             }
+            //             holidayJson.push(obj)
+            //         }
+            //     })
+
+
+            //     console.log('holidayJson::::::::::::::::::::>>>', holidayJson)
+
+            //     let ApiObj = {
+            //         type: 'POST',
+            //         url: '/admin/holidays',
+            //         data: {
+            //             inputJSON: JSON.stringify(holidayJson),
+            //             settingName: 'Holiday'
+            //         },
+            //         dataType: 'JSON'
+            //     }
+
+
+            //     ajaxApi(ApiObj).then(result => {
+            //         console.log('Result:::::::::::', result)
+            //         //   location.reload()
+
+            //         formStepNext()
+
+            //     }).catch(error => {
+            //         console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
+            //         showError(error.responseJSON)
+            //     })
+
+
+            // } else if(currentFormStep == 2) {
+            //     console.log('yehho')
+            //     formStepNext()
+
+             
+
+            //     let ApiObj = {
+            //         type: 'POST',
+            //         url: '/admin/holidays',
+            //         data: {
+            //             inputJSON: JSON.stringify(holidayJson),
+            //             settingName: 'Holiday'
+            //         },
+            //         dataType: 'JSON'
+            //     }
+
+
+            //     ajaxApi(ApiObj).then(result => {
+            //         console.log('Result:::::::::::', result)
+            //         //   location.reload()
+
+            //         formStepNext()
+
+            //     }).catch(error => {
+            //         console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
+            //         showError(error.responseJSON)
+            //     })
+
+
+            // }
+            formStepNext()
+
+
         })
 
         $('.import-room').on('click', function () {
@@ -520,7 +643,7 @@
                 } else {
                     let obj = {
                         roomId: roomId,
-                        startTimeId: startTimeId, 
+                        startTimeId: startTimeId,
                         endTimeId: endTimeId,
                         startDateId: startDateId,
                         endDateId: endDateId,
@@ -600,7 +723,7 @@
         })
 
         //SaveAll course workload
-        $(".SaveAllCourse").on('click',function(){
+        $(".SaveAllCourse").on('click', function () {
             console.log('SaveAll::::::::::>>>')
             let courseElems = $('#add-more-courseWorkload-table tbody tr');
             let courseCount = courseElems.length;
@@ -608,12 +731,18 @@
             courseElems.each(function (index, elem) {
                 let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
                 let intake = $(elem).find(`input[name='intake']`).val()
-                let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
-                let lec_per_week_per_division = $(elem).find(`input[name='lec_per_week_per_division']`).val();
-                let practical_per_week_per_division = $(elem).find(`input[name='practical_per_week_per_division']`).val();
-                let tutorial_per_week_per_division = $(elem).find(`input[name='tutorial_per_week_per_division']`).val();
-                let workshop_per_week_per_division = $(elem).find(`input[name='workshop_per_week_per_division']`).val();
-                let session_events_per_semester = $(elem).find(`input[name='session_events_per_semester']`).val();
+                let student_per_division = $(elem).find(`input[name='student_per_division']`)
+                    .val();
+                let lec_per_week_per_division = $(elem).find(
+                    `input[name='lec_per_week_per_division']`).val();
+                let practical_per_week_per_division = $(elem).find(
+                    `input[name='practical_per_week_per_division']`).val();
+                let tutorial_per_week_per_division = $(elem).find(
+                    `input[name='tutorial_per_week_per_division']`).val();
+                let workshop_per_week_per_division = $(elem).find(
+                    `input[name='workshop_per_week_per_division']`).val();
+                let session_events_per_semester = $(elem).find(
+                    `input[name='session_events_per_semester']`).val();
                 let module_type_lid = $(elem).find(`select[name='module_type_lid']`).val();
                 let continuous = $(elem).find(`input[name='continuous']`).val();
 
@@ -628,12 +757,12 @@
                         workshop_per_week_per_division: workshop_per_week_per_division,
                         session_events_per_semester: session_events_per_semester,
                         continuous: continuous,
-                        module_type_lid:module_type_lid
+                        module_type_lid: module_type_lid
                     }
                     courseJSON.push(obj)
                 } else {
                     let obj = {
-                        id:workloadlid,
+                        id: workloadlid,
                         intake: intake,
                         student_per_division: student_per_division,
                         lec_per_week_per_division: lec_per_week_per_division,
@@ -642,13 +771,13 @@
                         workshop_per_week_per_division: workshop_per_week_per_division,
                         session_events_per_semester: session_events_per_semester,
                         continuous: continuous,
-                        module_type_lid:module_type_lid
+                        module_type_lid: module_type_lid
                     }
                     courseJSON.push(obj)
                 }
             })
 
-            console.log('Json::::::::::::',courseJSON)
+            console.log('Json::::::::::::', courseJSON)
             let ApiObj = {
                 type: 'PUT',
                 url: '/admin/courseworkload',
@@ -668,17 +797,21 @@
         })
 
         //SaveAll Divisions
-        $(".SaveDivision").on('click',function(){
+        $(".SaveDivision").on('click', function () {
             console.log('SaveDivision::::::::::>>>')
             let divElems = $('#add-more-division-table tbody tr');
             let divCount = divElems.length;
             let divJSON = [];
             divElems.each(function (index, elem) {
                 let id = $(elem).find(`input[name='divId']`).val()
-                let count_for_theory_batch = $(elem).find(`input[name='count_for_theory_batch']`).val()
-                let count_for_practical_batch = $(elem).find(`input[name='count_for_practical_batch']`).val();
-                let count_for_tutorial_batch = $(elem).find(`input[name='count_for_tutorial_batch']`).val();
-                let count_for_workshop_batch = $(elem).find(`input[name='count_for_workshop_batch']`).val();
+                let count_for_theory_batch = $(elem).find(
+                    `input[name='count_for_theory_batch']`).val()
+                let count_for_practical_batch = $(elem).find(
+                    `input[name='count_for_practical_batch']`).val();
+                let count_for_tutorial_batch = $(elem).find(
+                    `input[name='count_for_tutorial_batch']`).val();
+                let count_for_workshop_batch = $(elem).find(
+                    `input[name='count_for_workshop_batch']`).val();
 
 
                 if (index < divCount - 1) {
@@ -687,7 +820,7 @@
                         count_for_theory_batch: count_for_theory_batch,
                         count_for_practical_batch: count_for_practical_batch,
                         count_for_tutorial_batch: count_for_tutorial_batch,
-                        count_for_workshop_batch:count_for_workshop_batch  
+                        count_for_workshop_batch: count_for_workshop_batch
                     }
                     divJSON.push(obj)
                 } else {
@@ -696,13 +829,13 @@
                         count_for_theory_batch: count_for_theory_batch,
                         count_for_practical_batch: count_for_practical_batch,
                         count_for_tutorial_batch: count_for_tutorial_batch,
-                        count_for_workshop_batch:count_for_workshop_batch  
+                        count_for_workshop_batch: count_for_workshop_batch
                     }
                     divJSON.push(obj)
                 }
             })
 
-            console.log('Json::::::::::::',divJSON)
+            console.log('Json::::::::::::', divJSON)
             let ApiObj = {
                 type: 'PUT',
                 url: '/admin/divisions',
@@ -722,7 +855,7 @@
         })
 
         //SaveAll DivisionBatches
-        $(".saveDivisionBatch").on('click',function(){
+        $(".saveDivisionBatch").on('click', function () {
             let divbatchElems = $('#add-more-divisionBatches-table tbody tr');
             let batchCount = divbatchElems.length;
             let batchJSON = [];
@@ -737,16 +870,16 @@
                     batchJSON.push(obj)
                 } else {
                     let obj = {
-                        id:id,
+                        id: id,
                         faculty_count: faculty_count,
 
                     }
                     batchJSON.push(obj)
                 }
-            }) 
+            })
 
             //Ajax Call
-            console.log('JSON::::::::',batchJSON)
+            console.log('JSON::::::::', batchJSON)
             let ApiObj = {
                 type: 'PUT',
                 url: '/admin/divisions/batches',
@@ -765,6 +898,8 @@
             })
         })
 
+
+        //
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
@@ -780,7 +915,7 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+            $("#errorHtml").html(errorHtml)
         }
 
 
