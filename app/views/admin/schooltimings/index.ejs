@@ -1,0 +1,305 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+
+    <div class="row my-3 gx-3 gy-3 row1-data">
+        <div class="col-xl-2 col-lg-4 col-md-6 ">
+            <a href="/admin/divisions/batches">
+                <div class="card row1-data-card text-center">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="/icon_imgs/room-type.PNG" alt="">
+                        <p class="fw-normal pt-1">BATCHES</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+
+
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>SCHOOL TIMING LIST</h5>
+            </div>
+            <!-- <div>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
+                        class="fas fa-plus"></i></button>
+                <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button>
+            </div> -->
+        </div>
+
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+<div id="errorHtml"></div>
+            <table class="table table-bordered custom_row" id="divisionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Program Name</th>
+                    <th>Program Name</th>
+                    <th>Session</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Type</th>
+                    <th>Day</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <%let count = 1;%>
+                    <% for(let schooltime of schoolTimingList) {%>
+                    <tr>
+                    <td>#</td>
+                    <td><%-schooltime.name%></td>
+                    <td><%-schooltime.program_name%></td>
+                    <td><%-schooltime.program_id%></td>
+                    <td><%-schooltime.acad_session%></td>
+                    <td><%-schooltime.start_time%></td>
+                    <td><%-schooltime.end_time%></td>
+                    <td><%-schooltime.schooltimetype%></td>
+                    <td><%-schooltime.day_name%></td>
+                    <td>Action</td>
+                    </tr>
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %></p>
+                </div>
+                <div>
+                    <p id="pagination"></p>
+                </div>
+            </div>
+</div>
+</div>
+
+
+</div>
+
+<%- include("../partials/footer") %>
+
+
+<script>
+    $(document).ready(function () {
+
+
+
+                //SaveAll
+            $(".SaveAll").on('click',function(){
+            console.log('SaveAll::::::::::>>>')
+            let divElems = $('#divisionTable tbody tr');
+            let divCount = divElems.length;
+            let divJSON = [];
+            divElems.each(function (index, elem) {
+                let id = $(elem).find(`input[name='division_id']`).val()
+                let count_for_theory_batch = $(elem).find(`input[name='count_for_theory_batch']`).val()
+                let count_for_practical_batch = $(elem).find(`input[name='count_for_practical_batch']`).val();
+                let count_for_tutorial_batch = $(elem).find(`input[name='count_for_tutorial_batch']`).val();
+                let count_for_workshop_batch = $(elem).find(`input[name='count_for_workshop_batch']`).val();
+
+
+                if (index < divCount - 1) {
+                    let obj = {
+                        id: id,
+                        count_for_theory_batch: count_for_theory_batch,
+                        count_for_practical_batch: count_for_practical_batch,
+                        count_for_tutorial_batch: count_for_tutorial_batch,
+                        count_for_workshop_batch:count_for_workshop_batch  
+                    }
+                    divJSON.push(obj)
+                } else {
+                    let obj = {
+                        id: id,
+                        count_for_theory_batch: count_for_theory_batch,
+                        count_for_practical_batch: count_for_practical_batch,
+                        count_for_tutorial_batch: count_for_tutorial_batch,
+                        count_for_workshop_batch:count_for_workshop_batch  
+                    }
+                    divJSON.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',divJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/divisions',
+                data: {
+                    inputJSON: JSON.stringify(divJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+        //Create 
+        $('#divisionTable').on('change', '.changeStatus', function () {
+            //console.log($(this).attr('data-id'))
+            //console.log($(this).attr('data-status'))
+            if ($(this).is(':checked')) {
+                //console.log('Yes')
+                chnageStatus($(this).attr('data-id'), 1)
+            } else {
+                //console.log('No')
+                chnageStatus($(this).attr('data-id'), 0)
+            }
+        })
+
+        function chnageStatus(id, status) {
+            console.log(id, status)
+            let ApiObj = {
+                url: '/admin/divisions/changestatus',
+                type: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                loadAll()
+            }).catch(error => {
+
+            })
+        }
+
+
+        function loadAll() {
+            let ApiObj = {
+                url: '/admin/divisions/getAll',
+                type: 'GET',
+                data: {},
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('Result::::::::::::::::::::', result.result)
+                AjaxTable(result.result)
+            }).catch(error => {
+
+            })
+        }
+
+
+        // SEARCH PROGRAM TYPE
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "GET",
+                url: "/admin/divisions/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    console.log(data)
+                    AjaxtTable(data.data)
+                }
+            })
+        }, 500));
+
+
+        function AjaxtTable(divisionList) {
+            let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Division</th>
+                    <th>Division no</th>
+                    <th>Division count</th>
+                    <th>Count for theory batch</th>
+                    <th>Count for practical batch</th>
+                    <th>Count for tutorial batch</th>
+                    <th>Count for workshop batch</th>
+                    <th>Module name</th>
+                    <th>Action</th>
+                </thead>`;
+            if (divisionList.length > 0) {
+                let count = 1;
+                for (let division of divisionList) {
+                    AjaxTable +=
+                        `<tr>
+                            <td>${count++}</td>
+                        <td>${division.division}</td>
+                        <td>${division.division_num}</td>
+                        <td>${division.division_count}</td>
+                        <td>${division.count_for_theory_batch}</td>
+                        <td>${division.count_for_practical_batch}</td>
+                        <td>${division.count_for_tutorial_batch}</td>
+                        <td>${division.count_for_workshop_batch}</td>
+                        <td>${division.module_name}</td>
+                        <td><label class="switch">
+                            <input type="checkbox" class="changeStatus" data-id="${division.id }"
+                                data-status="${division.status}"
+                                ${division.status == 'Yes' ? 'Checked' :  '' }>
+                            <span class="switch-slider round"></span>
+                        </label></td>
+                            </tr>`
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                                <td colspan="5">No Data Found</td>
+                            </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+            $("#divisionTable").html(AjaxTable);
+        }
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
+
+
+    })
+</script>
+<%- include("../partials/footerEnd") %>

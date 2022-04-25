@@ -32,8 +32,6 @@ module.exports = {
             insert_new_holidays: JSON.parse(req.body.inputJSON)
         }
 
-        console.log('object:::::::::::::', JSON.stringify(inputJSON))
-
         Holidays.save(object, res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
