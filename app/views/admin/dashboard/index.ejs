@@ -452,48 +452,75 @@
                 }
             })
 
-        //Display room import
-        // let roomElems = $('#add-more-room-table tbody tr');
-        //         let roomCount = roomElems.length;
-        //         let roomJson = [];
-        //         roomElems.each(function (index, elem) {
+        // Display room import
+        $('#importRoom').on('click', function() {
+       
+        let roomElems = $('#add-more-room-table tbody tr');
+                let roomCount = roomElems.length;
+                let roomJson = [];
+                roomElems.each(function (index, elem) {
 
-        //             let roomLid = $(elem).attr('data-room-id')
-        //             let startTime = $(elem).find(`select[name='startTime']`).val()
-        //             let endTime = $(elem).find(`select[name='endTime']`).val()
-        //             let startDate = $(elem).find(`select[name='startDate']`).val()
-        //             let endDate = $(elem).find(`select[name='endDate']`).val()
+                    let roomLid = $(elem).attr('data-room-id')
+                    let startTime = $(elem).find(`select[name='startTime']`).val()
+                    let endTime = $(elem).find(`select[name='endTime']`).val()
+                    let startDate = $(elem).find(`select[name='startDate']`).val()
+                    let endDate = $(elem).find(`select[name='endDate']`).val()
 
-        //             if (index < roomCount - 1) {
-        //                 let obj = {
-        //                     room_lid: roomLid,
-        //                     start_time_id: startTime,
-        //                     end_time_id: endTime,
-        //                     start_date_id: startDate,
-        //                     start_date_id: endDate
-        //                 }
-        //                 roomJson.push(obj)
-        //             } else {
-        //                 let obj = {
-        //                     room_lid: roomLid,
-        //                     start_time_id: startTime,
-        //                     end_time_id: endTime,
-        //                     start_date_id: startDate,
-        //                     start_date_id: endDate
-        //                 }
-        //                 roomJson.push(obj)
-        //             }
-        //         })
+                    if (index < roomCount - 1) {
+                        let obj = {
+                            room_lid: roomLid,
+                            start_time_id: startTime,
+                            end_time_id: endTime,
+                            start_date_id: startDate,
+                            end_date_id: endDate,
+                            room_transaction_lid: roomTransactionId,
+                            org_lid: orgId,
+                            campus_lid: campusId
+                        }
+                        roomJson.push(obj)
+                    } else {
+                        let obj = {
+                            room_lid: roomLid,
+                            start_time_id: startTime,
+                            end_time_id: endTime,
+                            start_date_id: startDate,
+                            end_date_id: endDate,
+                            room_transaction_lid: roomTransactionId,
+                            org_lid: orgId,
+                            campus_lid: campusId
+                        }
+                        roomJson.push(obj)
+                    }
+                })
+                console.log('roomjason:::',roomJson);
+                let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms',
+                data: {
+                    inputJSON: JSON.stringify(roomJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                showSuccess(result)
+                setTimeout(function(){
+                    location.reload()
+                },3000)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+
+            })
 
 
         //Step form Start
-        let currentFormStep = `<%- currentFormStep%>`;
-        
+        let currentFormStep = parseInt(`<%- currentFormStep%>`);
 
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
-        $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
-            'active-form');
+        $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
 
         function formStepNext() {
             currentFormStep++;
@@ -521,100 +548,95 @@
             })
 
             // CREATING JSON AND AJAX CALL
-            // if (currentFormStep == 1) {
+            if (currentFormStep == 1) {
                 
-            //     let holidayElems = $('#add-more-holidays-table tbody tr');
-            //     let holidayCount = holidayElems.length;
-            //     let holidayJson = [];
-            //     holidayElems.each(function (index, elem) {
+                let holidayElems = $('#add-more-holidays-table tbody tr');
+                let holidayCount = holidayElems.length;
+                let holidayJson = [];
+                holidayElems.each(function (index, elem) {
 
-            //         let calendarId = $(elem).find(`input[name='calendarId']`).val()
-            //         let calendarYear = $(elem).find(`input[name='calendarYear']`).val()
-            //         let holidayDate = $(elem).find(`input[name='holidayDate']`).val()
-            //         let holidayReason = $(elem).find(`input[name='holidayReason']`).val()
-            //         let holidayType = $(elem).find(`select[name='holidayType']`).val()
+                    let calendarId = $(elem).find(`input[name='calendarId']`).val()
+                    let calendarYear = $(elem).find(`input[name='calendarYear']`).val()
+                    let holidayDate = $(elem).find(`input[name='holidayDate']`).val()
+                    let holidayReason = $(elem).find(`input[name='holidayReason']`).val()
+                    let holidayType = $(elem).find(`select[name='holidayType']`).val()
 
-            //         if (index < holidayCount - 1) {
-            //             let obj = {
-            //                 calendar_id: calendarId,
-            //                 calendar_year: calendarYear,
-            //                 h_date: holidayDate,
-            //                 reason: holidayReason,
-            //                 holiday_type_lid: holidayType
-            //             }
-            //             holidayJson.push(obj)
-            //         } else {
-            //             let obj = {
-            //                 calendar_id: calendarId,
-            //                 calendar_year: calendarYear,
-            //                 h_date: holidayDate,
-            //                 reason: holidayReason,
-            //                 holiday_type_lid: holidayType
-            //             }
-            //             holidayJson.push(obj)
-            //         }
-            //     })
-
-
-            //     console.log('holidayJson::::::::::::::::::::>>>', holidayJson)
-
-            //     let ApiObj = {
-            //         type: 'POST',
-            //         url: '/admin/holidays',
-            //         data: {
-            //             inputJSON: JSON.stringify(holidayJson),
-            //             settingName: 'Holiday'
-            //         },
-            //         dataType: 'JSON'
-            //     }
+                    if (index < holidayCount - 1) {
+                        let obj = {
+                            calendar_id: calendarId,
+                            calendar_year: calendarYear,
+                            h_date: holidayDate,
+                            reason: holidayReason,
+                            holiday_type_lid: holidayType
+                        }
+                        holidayJson.push(obj)
+                    } else {
+                        let obj = {
+                            calendar_id: calendarId,
+                            calendar_year: calendarYear,
+                            h_date: holidayDate,
+                            reason: holidayReason,
+                            holiday_type_lid: holidayType
+                        }
+                        holidayJson.push(obj)
+                    }
+                })
 
 
-            //     ajaxApi(ApiObj).then(result => {
-            //         console.log('Result:::::::::::', result)
-            //         //   location.reload()
+                console.log('holidayJson::::::::::::::::::::>>>', holidayJson)
 
-            //         formStepNext()
-
-            //     }).catch(error => {
-            //         console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
-            //         showError(error.responseJSON)
-            //     })
-
-
-            // } else if(currentFormStep == 2) {
-            //     console.log('yehho')
-            //     formStepNext()
-
-             
-
-            //     let ApiObj = {
-            //         type: 'POST',
-            //         url: '/admin/holidays',
-            //         data: {
-            //             inputJSON: JSON.stringify(holidayJson),
-            //             settingName: 'Holiday'
-            //         },
-            //         dataType: 'JSON'
-            //     }
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/holidays',
+                    data: {
+                        inputJSON: JSON.stringify(holidayJson),
+                        settingName: 'Holiday'
+                    },
+                    dataType: 'JSON'
+                }
 
 
-            //     ajaxApi(ApiObj).then(result => {
-            //         console.log('Result:::::::::::', result)
-            //         //   location.reload()
+                ajaxApi(ApiObj).then(result => {
+                    console.log('Result:::::::::::', result)
+                    //   location.reload()
 
-            //         formStepNext()
+                    formStepNext()
 
-            //     }).catch(error => {
-            //         console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
-            //         showError(error.responseJSON)
-            //     })
-
-
-            // }
-            formStepNext()
+                }).catch(error => {
+                    console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
+                    showError(error.responseJSON)
+                })
 
 
+            } else if(currentFormStep == 2) {
+               
+
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/rooms',
+                    data: {
+                        settingName: 'Room'
+                    },
+                    dataType: 'JSON'
+                }
+
+
+                ajaxApi(ApiObj).then(result => {
+                    console.log('Result:::::::::::', result)
+                    //   location.reload()
+
+                    formStepNext()
+
+                }).catch(error => {
+                    console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
+                    showError(error.responseJSON)
+                })
+
+
+            }
+            
         })
+
 
         $('.import-room').on('click', function () {
 
@@ -683,8 +705,8 @@
                     });
                 } else {
                     buildingList += `<option value="">
-                                No Building Found!
-                            </option>`
+                                        No Building Found!
+                                    </option>`
                 }
                 buildingList += `</select>`;
                 $("#building_lid").html(buildingList)

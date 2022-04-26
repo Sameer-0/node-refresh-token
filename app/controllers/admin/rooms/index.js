@@ -13,6 +13,8 @@ const Rooms = require('../../../models/Rooms')
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings')
 const AcademicCalender = require('../../../models/AcademicCalender')
 const User = require('../../../models/User')
+const Settings = require('../../../models/Settings');
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -33,6 +35,10 @@ module.exports = {
     },
 
     create: (req, res) => {
+        if (req.body.settingName) {
+            Settings.updateByName(res.locals.slug, req.body.settingName)
+        }
+
         let object = {
             new_room_transactions: JSON.parse(req.body.inputJSON)
         }
@@ -60,7 +66,7 @@ module.exports = {
                     data: result.recordset,
                     length: result.recordset.length
                 })
-            }
+            } 
         }).catch(error => {
             res.status(500).json(error.originalError.info.message)
         })
@@ -87,6 +93,7 @@ module.exports = {
             throw error
         })
     },
+
 
 
 }
