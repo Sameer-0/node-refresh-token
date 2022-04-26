@@ -303,6 +303,22 @@
                 }
             })
             console.log('Hell:::::::::::::::::::::>>>>',courseDayJson)
+
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference",
+                data: {
+                    inputJSON: courseDayJson
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
         })
 
      

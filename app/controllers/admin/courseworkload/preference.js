@@ -24,6 +24,18 @@ module.exports = {
         })
     },
 
+    create: (req, res) => {
+        let object = {
+            import_faculties: JSON.parse(req.body.inputJSON)
+        }
+        CourseDayRoomPreferences.save(object, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            console.log('error:::::::::::::::::::>>>',error)
+            res.status(500).json(JSON.parse(error.originalError.info.message))
+        })
+    },
+
     search: (req, res) => {
         let rowcount = 10;
         CourseDayRoomPreferences.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
