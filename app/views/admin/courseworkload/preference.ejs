@@ -15,8 +15,8 @@
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-courseDayPreference-modal">
                     <i class="fas fa-plus"></i></button>
-                <!-- <button class="btn ms-auto select-delete-holidays add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
+                <button class="btn btn-danger ms-auto refresh_course_day_room_preferences"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                <!-- <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
             </div>
         </div>
@@ -303,6 +303,22 @@
                 }
             })
             console.log('Hell:::::::::::::::::::::>>>>',courseDayJson)
+
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference",
+                data: {
+                    inputJSON: courseDayJson
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
         })
 
      
@@ -516,6 +532,22 @@ $('.add-courseRoomPreference').on('click', function() {
             AjaxTable += `<tbody></table>`
             $("#courseWorkloadTable").html(AjaxTable);
         }
+
+        $(".refresh_course_day_room_preferences").on('click',function(){
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/refresh",
+                data: {},
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
+        })
 
 
 
