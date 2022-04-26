@@ -8,6 +8,8 @@ const Holidays = require('../../../models/Holidays')
 const HolidayType = require('../../../models/HolidayTypes')
 const AcadYear = require('../../../models/AcademicYear')
 const AcademicCalender =  require('../../../models/AcademicCalender')
+const Settings = require('../../../models/Settings');
+
 const path = require("path");
 var soap = require("soap");
 
@@ -27,14 +29,20 @@ module.exports = {
     },
 
     create: (req, res) => {
+        if (req.body.settingName) {
+            Settings.updateByName(res.locals.slug, req.body.settingName)
+        }
 
         let object = {
             insert_new_holidays: JSON.parse(req.body.inputJSON)
         }
 
+
         Holidays.save(object, res.locals.slug).then(result => {
+            console.log('result:::<><', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            console.log('error:::>>>', error)
             res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
