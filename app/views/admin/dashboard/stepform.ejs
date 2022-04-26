@@ -16,6 +16,7 @@
         <div class="arrow-pointer stage pending my-1" data-step="13"> Faculty Batch</div>
     </div>
 
+    <div id="errorHtml" class="error-show pt-3"></div>
     <div class="step-form-body pt-3">    
 
         <!-- Holidays -->
@@ -27,7 +28,7 @@
                 <button type="button" class="btn add-btn btn-sm ms-2" id="add-more-holidays"><i
                         class="fas fa-plus"></i></button>
             </div>
-            <div id="errorHtml" class="error-show pt-3"></div>
+         
             <div class="table-responsive">
                 <table class="table" id="add-more-holidays-table">
                     <thead>
@@ -80,11 +81,8 @@
                     <i class="fas fa-plus"></i></button>
             </div>
         </div>
-        <div id="errorHtml" class="error-show pt-3"></div>
+
         <div class="modal-body">
-            <div id="errorHtml"></div>
-
-
             <input type="hidden" id="roomId" name="roomId">
             <div class="table-responsive">
                 <table class="table " id="room-table">
@@ -95,28 +93,19 @@
                         <th>Org Name</th>
                         <th>Campus</th>
                         <th>Username</th>
-                        <th>Action</th>
-                        <!-- <th>Action</th>
-                        <th>Check All <input type="checkbox" class="selectAll-rooms"></th> -->
                     </thead>
                     <tbody>
-                        <% for (let room of RoomList) { %>
+                        <%let rcount = 1;%>
+                        <% for(let trans of transactionList) {%>
                         <tr>
-                            <td><%- room.room_number %></td>
-                            <td><%- room.building_name %></td>
-                            <td><%- room.room_type %></td>
-                            <td><%- room.floor_number %></td>
-                            <td><%- room.capacity %></td>
-                            <td><%- room.start_time %></td>
-                            <td><%- room.end_time %></td>
-                            <td><%- room.is_basement ? 'Yes' : 'No' %></td>
-                            <td><%- room.handled_by %></td>
-                            <!-- <td>
-                                <input type="checkbox" data-room-id="<%- room.roomid %>" class="delete-rooms">
-                            </td> -->
+                            <td><%- rcount++ %></td>
+                            <td><%- trans.transaction_type %></td>
+                            <td><%- trans.stage %></td>
+                            <td><%- trans.org_name %></td>
+                            <td><%- trans.campus_abbr %></td>
+                            <td><%- trans.username %></td>
                         </tr>
-
-                        <% } %>
+                        <%}%>
                     </tbody>
                 </table>
             </div>
@@ -133,9 +122,7 @@
                         <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                                 class="fas fa-times text-dark"></i></button>
                     </div>
-
                     <div class="modal-body py-0">
-
                         <div class="row">
                             <div class="col-md-3 col-xxl-3 select-items">
                                 <h4 class="text-center py-1 select-room-header">Select Rooms</h4>
@@ -246,6 +233,7 @@
                                             <th>end Time</th>
                                             <th>start Date</th>
                                             <th>end Date</th>
+                                            <th>Transaction Type</th>
                                             <th>Action</th>
                                         </thead>
                                         <tbody>
@@ -258,37 +246,47 @@
 
                         </div>
                     </div>
-
+                    <div class="px-3 error-html"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn import-room modal-inputform-btn" id="importRoom">Import Room</button>
                     </div>
+                   
                 </div>
             </div>
         </div>
         </form>
 
         <!--Program -->
-        <form action="/admin/program" method="post" class="step d-none" id="program-form" data-step="3">
+        <form  class="step d-none" id="program-form" data-step="3">
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-program-modal-title">Add New Program</h5>
                 <button type="button" class="btn add-btn btn-sm" id="add-more-program" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i class="fas fa-plus"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="programId" name="programId">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-program-table">
+                    <table class="table table-bordered" id="">
                         <thead>
-                            <th>Program Code</th>
-                            <th>Program Name</th>
-                            <th>Program Type</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                
-                            </tr>
-                        </tbody>
+                    <th>#</th>
+                    <th>Program Code</th>
+                    <th>Program Name</th>
+                    <th>Program Type</th>
+                    <th>Abbr</th>
+                 
+                </thead>
+                <tbody>
+                    <% let tcount = 1 %>
+                    <%for(let program of programList) {%>
+                    <tr>
+                        <td><%- tcount++ %></td>
+                        <td><%-program.program_code %></td>
+                        <td><%-program.program_name %></td>
+                        <td><%-program.program_type %></td>
+                        <td><%-program.abbr %></td>
+                        
+                    </tr>
+                    <%}%>
+                </tbody>
                     </table>
                 </div>
             </div>
@@ -302,9 +300,9 @@
                         <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                                 class="fas fa-times text-dark"></i></button>
                     </div>
+                    
 
                     <div class="modal-body py-0">
-
                         <div class="row">
                             <div class="col-md-3 col-xxl-3 select-items">
                                 <h4 class="text-center py-1 select-room-header">Select Program</h4>
@@ -312,8 +310,8 @@
                                     class="form-control searchItemProgram">
 
                                 <ul class="list-group custom-select-list selectList selectListProgram"  style="margin-top: 70px;">
-                                    <% for (let program of programList){ %>
-                                    <li class="list-group-item" data-clickable="true" data-program-code="<%-program.program_id %>"><%- program.program_name%></li>
+                                    <% for (let program of programDboList){ %>
+                                    <li class="list-group-item" data-clickable="true" data-program-code="<%-program.program_id %>"><%- program.programName%></li>
                                     <% }%>
                                 </ul>
                             </div>
@@ -323,7 +321,7 @@
                                     class="form-control searchSelectedItemProgram">
 
                                 <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
-                                    <table class="table table-bordered">
+                                    <table class="table table-bordered" id="add-more-program-table">
                                         <thead>
                                             <th>Program Name</th>
                                             <th>Program Type</th>
@@ -339,9 +337,9 @@
 
                         </div>
                     </div>
-
+                    <div class="error-html"></div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn  createFaculty modal-inputform-btn">Import Program</button>
+                        <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
                     </div>
                 </div>
             </div>
@@ -350,7 +348,6 @@
 
         <!-- Course Workload-->
         <form class="step d-none" id="courseWorkload-form" data-step="4">
-            <div id="errorHtml"></div>
             <div class="modal-header table-card-header d-flex justify-content-end">
                       <div class="me-auto">
                         <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
@@ -375,7 +372,7 @@
                         </select>
                       </div>
                       <div class="mx-3">
-                        <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
+                        <button  type="button" class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
                       </div>
                       <div>
                         <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Save </button>
@@ -383,9 +380,7 @@
 
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="programId" name="programId">
-
                 <div class="table-responsive">
                     <table class="table custom_row table-bordered" id="add-more-courseWorkload-table">
                         <thead>
@@ -450,32 +445,33 @@
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-sessionDate-modal-title">Add Session Date</h5>
-                <button type="button" class="btn add-btn btn-sm" id="add-more-sessionDate"><i class="fas fa-plus"></i>
-                </button>
+                <!-- <button type="button" class="btn add-btn btn-sm" id="add-more-sessionDate"><i class="fas fa-plus"></i>
+                </button> -->
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="sessionDate" name="sessionDate">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="add-more-sessionDate-table">
+                    <table class="table table-bordered" id="sessionDate-table">
                         <thead>
                             <th>Program</th>
                             <th>Acad Session</th>
+                            <th>Session Type</th>
                             <th>Start date</th>
                             <th>End date</th>
-                            <th>Action</th>
+
+                            
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
-                                    <select name="programName" class="form-select" required>
+                                    <select name="programName" class="form-select" id= "programName" required>
                                         <% for (let program of programList){%>
                                             <option value="<%- program.id%>"><%- program.program_name%></option>
                                             <% }%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="acadSession" class="form-select" required>
+                                    <select name="acadSession" class="form-select" id="acadSession" required>
                                         <% for (let session of AcadSessionList){%>
                                             <option value="<%- session.acadSessionId %>"><%- session.acad_session%></option>
                                             <% }%>
@@ -483,23 +479,28 @@
                                     
                                 </td>
                                 <td>
-                                    <select name="startDate" class="form-select" required>
+                                    <select name="acadSession" class="form-select" id="sessionType" required>
+                                        <% for (let session of sessionList){%>
+                                            <option value="<%- session.id %>"><%- session.name%></option>
+                                            <% }%>
+                                    </select>
+                                    
+                                </td>
+                                <td>
+                                    <select name="startDate" class="form-select" id="startDate" required>
                                         <% for (let acad of acadCal){%>
                                             <option value="<%- acad.id %>"><%- acad.date %></option>
                                             <% }%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="endDate" class="form-select" required>
+                                    <select name="endDate" class="form-select" id="endDate" required>
                                         <% for (let acad of acadCal){%>
                                             <option value="<%- acad.id %>"><%- acad.date %></option>
                                             <% }%>
                                     </select>
                                 </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-sessionDate"></i>
-                                </td>
+                               
                             </tr>
                         </tbody>
                     </table>
@@ -509,7 +510,6 @@
  
         <!-- Division -->
         <form action="/admin/divisions" method="post" class="step d-none" id="division-form" data-step="6">
-
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
                 <!-- <button type="button" class="btn add-btn btn-sm ms-auto" id="add-more-division"><i class="fas fa-plus"></i></button> -->
@@ -517,9 +517,7 @@
             </div>
 
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="division" name="division">
-
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-division-table">
                         <thead>
@@ -534,10 +532,8 @@
                             <th>Action</th>
                         </thead>
                         <tbody>
-                           
                             <% for(let div of divisionData) {%>
                             <tr>
-                               
                                 <td>
                                     <%- div.module_name%> <input type="hidden" name="divId" value="<%- div.id%>">
                                 </td>
@@ -573,9 +569,7 @@
             </div>
 
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="divisionBatches" name="divisionBatches">
-
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-divisionBatches-table">
                         <thead>
@@ -621,16 +615,12 @@
 
         <!-- School Timing -->
         <form action="/admin/schoolTiming" method="post" class="step d-none" id="schoolTiming" data-step="8">
-
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-schoolTiming-modal-title">School Timing</h5>
                 <button type="button" class="btn add-btn btn-sm" id="add-more-schoolTiming"><i class="fas fa-plus"></i> </button>
             </div>
-
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="schoolTiming" name="schoolTiming">
-
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-schoolTiming-table">
                         <thead>
@@ -711,9 +701,7 @@
             </div>
 
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="weeklyConstraint" name="weeklyConstraint">
-
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-weeklyConstraint-table">
                         <thead>
@@ -845,7 +833,7 @@
 
                         </div>
                     </div>
-                    <div class="px-3" id="errorHtml"></div>
+                    <div class="px-3 error-html" ></div>
                     <div class="modal-footer">
                         <button type="submit" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
                     </div>
@@ -943,7 +931,7 @@
         </form>
 
         <!-- Faculty Time Preference -->
-        <form action="/admin/facultypreference" method="post" class="step d-none" id="facultyPreference" data-step="12">
+        <form  class="step d-none" id="facultyPreference" data-step="12">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-more-facultyworktimepreferences-title">Add Faculty Preference</h5>
@@ -952,11 +940,8 @@
             </div>
 
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="facultyPreference" name="faculty">
- 
                 <div class="table-responsive">
-
                     <table class="table table-bordered" id="facultyworktimepreferencesTable">
                         <thead>
                             <th>Faculty Work</th>
@@ -1013,7 +998,7 @@
         </form>
  
         <!-- Faculty Batch --> 
-        <form action="/admin/facultybatch" method="post" class="step d-none" id="facultyBatch" data-step="13">
+        <form class="step d-none" id="facultyBatch" data-step="13">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="aadd-more-facultybatch-fields-title">Add Faculty Batch</h5>
@@ -1021,11 +1006,8 @@
             </div>
 
             <div class="modal-body">
-                <div id="errorHtml"></div>
                 <input type="hidden" id="facultyBatch" name="facultyBatch">
- 
                 <div class="table-responsive">
-
                     <table class="table table-bordered" id="add-more-facultybatch-table">
                         <thead>
                             <th>Faculty</th>
