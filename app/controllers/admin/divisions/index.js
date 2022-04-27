@@ -5,7 +5,7 @@ const {
 } = require('express-validator');
 
 const Divisions = require('../../../models/Divisions')
-
+const Settings =  require('../../../models/Settings')
 module.exports = {
     getPage: (req, res) => {
         Promise.all([Divisions.fetchAll(10000, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
@@ -90,6 +90,12 @@ module.exports = {
 
         console.log('userid::::::::::>>>>>><><<<<', res.locals.userId)
         Divisions.update(object, res.locals.slug, res.locals.userId).then(result => {
+
+            //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
+
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))

@@ -310,8 +310,10 @@
 
         //search 
         $('.searchItemFaculty').on('input', function () {
-            let faculties = $('#selectList li')
-            var text = $('#searchItem').val().toLowerCase();
+           
+            let faculties = $('.selectListFaculty li')
+            console.log('searchong', faculties)
+            var text = $('.searchItemFaculty').val().toLowerCase();
 
             for (let faculty of faculties) {
                 if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
@@ -337,7 +339,6 @@
                 }
             };
         })
-
 
         //Add more rows for FacultyWorks
         $('#add-more-facultyworkfields').on('click', function () {
@@ -432,7 +433,6 @@
                     alert('Cannot delete this room.')
                 }
             })
-
 
         //Add more rows for Faculty Batch
         $('#add-more-facultybatch-fields').on('click', function () {
@@ -534,8 +534,6 @@
 
              // Display Program import
         $('#importPrograms').on('click', function() {
-           
-       
         let programElems = $('#add-more-program-table tbody tr');
                 let programCount = programElems.length;
                 let programJson = [];
@@ -568,7 +566,7 @@
                     inputJSON: JSON.stringify(programJson),
                     settingName: 'Program'
                 },
-                dataType: 'JSON'
+                dataType: 'JSON' 
             }
 
             ajaxApi(ApiObj).then(result => {
@@ -583,6 +581,76 @@
             })
 
             })
+
+        //importFaculty
+        $(".importFaculty").on('click', function () {
+                    let facultiesList = $('#selectedList table tbody tr');
+                    let facultyCount = facultiesList.length;
+                    let facultyJson = [];
+                    facultiesList.each(function (index, elem) {
+                        let faculty_id = $(elem).find('td[data-faculty-id]').attr("data-faculty-id")
+
+                        let faculty_lid = $(elem).find(`td[data-faculty-lid]`).attr('data-faculty-lid')
+                        let faculty_name = $(elem).find('td[data-faculty-name]').attr("data-faculty-name")
+
+                        let startTime = $(elem).find('select[name="startTime"]').val();
+                        let endTime = $(elem).find('select[name="endTime"]').val();
+                        let startDate = $(elem).find('select[name="startDate"]').val();
+                        let endDate = $(elem).find('select[name="endDate"]').val();
+                        let facultyTypeLid   =  $(elem).find(`select[name="faculty_type_lid"]`).val();
+
+                        console.log('facultyName', faculty_name)
+
+                        if (index < facultyCount - 1) {
+                            let obj = {
+
+                                id: faculty_lid,
+                                faculty_id: faculty_id,
+                                //faculty_name: faculty_name,
+                                start_time_id: startTime, 
+                                end_time_id: endTime,
+                                start_date_id: startDate,
+                                end_date_id: endDate,
+                                faculty_type_lid: facultyTypeLid
+                            }
+                            facultyJson.push(obj)
+                        } else {
+                            let obj = {
+
+                                id: faculty_lid,
+                                faculty_id: faculty_id,
+                                //faculty_name: faculty_name,
+                                start_time_id: startTime, 
+                                end_time_id: endTime,
+                                start_date_id: startDate,
+                                end_date_id: endDate,
+                                faculty_type_lid: facultyTypeLid
+                            }
+                            facultyJson.push(obj)
+                        }
+                    })
+
+                    console.log('facultyJson::::::::::::>>', facultyJson)
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/admin/faculties',
+                        data: {
+                            inputJSON: JSON.stringify(facultyJson),
+                            settingName: 'Faculty'
+                        },
+                        dataType: 'JSON'
+                    }
+
+                    ajaxApi(ApiObj).then(result => {
+                        console.log('sucess:::::::::', result)
+                        setTimeout(function(){
+                          location.reload()
+                            },3000)
+                        
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+                })
 
 
         //Step form Start
@@ -607,8 +675,15 @@
 
         // NEXT STEP EVENT
         $('#next-step').on('click', function () {
-          
+          console.log('curretn', currentFormStep)
             //SCROLL ON NEXT
+            if(currentFormStep == 12){
+                let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep}"]`)
+                ele.scrollIntoView({
+                behavior: "smooth",
+                inline: 'start'
+            })
+            }else{
             let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep+1}"]`);
             console.log('stepformscroll', ele);
 
@@ -616,6 +691,7 @@
                 behavior: "smooth",
                 inline: 'start'
             })
+        }
 
             // CREATING JSON AND AJAX CALL
             if (currentFormStep == 1) {
@@ -731,46 +807,167 @@
         
 
             }
-            
-        })
+            else if(currentFormStep == 10){
+
+                let facultyElems = $('#add-more-facultywork-table tbody tr');
+                let facultyCount = facultyElems.length;
+                let facultyJson = [];
+                facultyElems.each(function (index, elem) {
+                    let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
+                    let program_session_lid = $(elem).find(`select[name='program_session_lid']`).val();
+                    let module_lid = $(elem).find(`select[name='module_lid']`).val();
+                    let lecture_per_week = $(elem).find(`input[name='lecture_per_week']`).val();
+                    let practical_per_week = $(elem).find(`input[name='practical_per_week']`).val();
+                    let tutorial_per_week = $(elem).find(`input[name='tutorial_per_week']`).val();
+                    let workshop_per_week = $(elem).find(`input[name='workshop_per_week']`).val();
+                    let is_batch_preference_set = $(elem).find(`select[name='is_batch_preference_set']`).val();
+
+                    if (index < facultyCount - 1) {
+                        let obj = {
+                            faculty_lid: faculty_lid,
+                            program_session_lid: program_session_lid,
+                            module_lid: module_lid,
+                            lecture_per_week: lecture_per_week,
+                            practical_per_week: practical_per_week,
+                            tutorial_per_week: tutorial_per_week,
+                            workshop_per_week: workshop_per_week,
+                            is_batch_preference_set: is_batch_preference_set
+                        }
+                        facultyJson.push(obj)
+                    } else {
+                        let obj = {
+                            faculty_lid: faculty_lid,
+                            program_session_lid: program_session_lid,
+                            module_lid: module_lid,
+                            lecture_per_week: lecture_per_week,
+                            practical_per_week: practical_per_week,
+                            tutorial_per_week: tutorial_per_week,
+                            workshop_per_week: workshop_per_week,
+                            is_batch_preference_set: is_batch_preference_set
+                        }
+                        facultyJson.push(obj)
+                    }
+                    
+                })
+
+                console.log('Json::::::::::::',facultyJson)
+
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/faculties/works',
+                    data: {
+                        inputJSON: JSON.stringify(facultyJson),
+                        settingName: 'Facultyworkload'
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    console.log(result)
+                    showSuccess(result)
+                    setTimeout(function() {location.reload()},3000)
 
 
-        // $('.import-room').on('click', function () {
-        //     console.log('roomJSON::::>>>CLICKED');
-        //     let roomElems = $('#add-more-room-table tbody tr');
-        //     let roomCount = roomElems.length;
-        //     let roomJson = [];
-        //     roomElems.each(function (index, elem) {
-        //         let roomId = $(elem).find(`td[data-room-id]`).attr('data-room-id');
-        //         let startTimeId = $(elem).find(`select[name='startTime']`).val()
-        //         let endTimeId = $(elem).find(`select[name='endTime']`).val()
-        //         let startDateId = $(elem).find(`select[name='startDate']`).val()
-        //         let endDateId = $(elem).find(`select[name='endDate']`).val()
-        //         if (index < roomCount - 1) {
-        //             let obj = {
-        //                 roomId: roomId,
-        //                 startTimeId: startTimeId,
-        //                 endTimeId: endTimeId,
-        //                 startDateId: startDateId,
-        //                 endDateId: endDateId,
-        //             }
-        //             roomJson.push(obj)
-        //         } else {
-        //             let obj = {
-        //                 roomId: roomId,
-        //                 startTimeId: startTimeId,
-        //                 endTimeId: endTimeId,
-        //                 startDateId: startDateId,
-        //                 endDateId: endDateId,
-        //             }
-        //             roomJson.push(obj)
-        //         }
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+            }else if(currentFormStep == 11){
+                console.log('hello::')
+                    
+                    let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
+                    let facultyWorkPrefCount = facultyWorkElems.length;
+                    let facultyWorkJSON = [];
 
-        //         console.log('roomJson::::::::::::::::::::>>>', roomJson)
-        //     })
-        // })
+                    facultyWorkElems.each(function (index, elem) {
+                        let faculty_work_lid = $(elem).find(`select[name="faculty_work_lid"]`).val()
+                        let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
+                        let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
+                        let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
+
+                        if (index < facultyWorkPrefCount - 1) {
+                            let obj = {
+                                faculty_work_lid: faculty_work_lid,
+                                p_day_lid: p_day_lid,
+                                start_time_id: start_time_id,
+                                end_time_id: end_time_id
+                            }
+                            facultyWorkJSON.push(obj)
+                        } else {
+                            let obj = {
+                                faculty_work_lid: faculty_work_lid,
+                                p_day_lid: p_day_lid,
+                                start_time_id: start_time_id,
+                                end_time_id: end_time_id
+                            }
+                            facultyWorkJSON.push(obj)
+                        }
+                    })
+                    console.log('facultyWorkJSON', facultyWorkJSON)
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/admin/faculties/workpreferences',
+                        data: {
+                            inputJSON: JSON.stringify(facultyWorkJSON),
+                            settingName: 'Facultypreference'
+                        },
+                        dataType: 'JSON'
+                    }
+
+                    ajaxApi(ApiObj).then(result => {
+                        console.log(result)
+                        showSuccess(result)
+                        setTimeout(function() {location.reload()},3000)
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+           
+            }else if(currentFormStep == 12){
+                    let facultyBatchElems = $('#add-more-facultybatch-table tbody tr');
+                    let facultyBatchCount = facultyBatchElems.length;
+                    let facultyBatchJson = [];
+                    facultyBatchElems.each(function (index, elem) {
+                        let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
+                        let faculty_batch = $(elem).find(`input[name="faculty_batch"]`).val();
+
+                        if (index < facultyBatchCount - 1) {
+                            let obj = {
+                                faculty_lid: faculty_lid,
+                                batch:faculty_batch
+                            }
+                            facultyBatchJson.push(obj)
+                        } else {
+                            let obj = {
+                                faculty_lid: faculty_lid,
+                                batch:faculty_batch
+                            }
+                            facultyBatchJson.push(obj)
+                        }
+                    })
+
+                    let ApiObj = {
+                            type: 'POST',
+                            url: '/admin/faculties/batch',
+                            data: {
+                                inputJSON: JSON.stringify(facultyBatchJson),
+                                settingName: 'Facultybatch'
+                            },
+                            dataType: 'JSON'
+                        }
+
+                        ajaxApi(ApiObj).then(result => {
+                            console.log(result)
+                            showSuccess(result)
+                            setTimeout(function() {location.reload()},3000)
+
+                        }).catch(error => {
+                            showError(error.responseJSON)
+                        })
+                            }
+                    
+            })
 
 
+    
         //Getting campus Bulding List
         $("#campus_lid").on('change', function () {
             let campus_lid = $(this).val()
@@ -955,7 +1152,8 @@
                 type: 'PUT',
                 url: '/admin/divisions',
                 data: {
-                    inputJSON: JSON.stringify(divJSON)
+                    inputJSON: JSON.stringify(divJSON),
+                    settingName:"Division"
                 },
                 dataType: 'JSON'
             }
@@ -963,7 +1161,9 @@
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-
+                setTimeout(function(){
+                    location.reload()
+                },3000)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -1033,8 +1233,9 @@
                 console.log(errorHtml)
             // $("#errorHtml").html(errorHtml)
             //open-room-modal
-            $("#open-room-modal .error-html").html(errorHtml)
-            $("#open-program-modal .error-html").html(errorHtml)
+            $(".error-html").html(errorHtml)
+            $("#open-faculty-modal .error-html").html(errorHtml)
+            // $("#open-program-modal .error-html").html(errorHtml)
         }
 
 
@@ -1059,7 +1260,7 @@
 
                 console.log('errorHtml:::::::::::',errorHtml)
             $("#errorHtml").html(errorHtml)
-            // $("#open-room-modal .error-html").html(errorHtml)
+            $("#open-faculty-modal .error-html").html(errorHtml)
             // $("#open-program-modal .error-html").html(errorHtml)
         }
 

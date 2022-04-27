@@ -10,6 +10,7 @@ const FacultyDbo = require('../../../models/FacultyDbo');
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings');
 const AcademicCalender = require("../../../models/AcademicCalender");
 const FacultyTypes = require("../../../models/FacultyTypes");
+const Settings = require("../../../models/Settings");
 
 module.exports = {
     getPage: (req, res) => {
@@ -33,6 +34,10 @@ module.exports = {
             import_faculties: JSON.parse(req.body.inputJSON)
         }
         Faculties.save(object, res.locals.slug, res.locals.userId).then(result => {
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
+
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log('error:::::::::::::::::::>>>',error)

@@ -7,6 +7,7 @@ const {
 
 const Faculties = require('../../../models/Faculties');
 const FacultyBatch = require('../../../models/FacultyBatch');
+const Settings = require("../../../models/Settings");
 
 module.exports = {
 
@@ -28,6 +29,10 @@ module.exports = {
         }
 
         FacultyBatch.save(object, res.locals.slug, res.locals.userId).then(result => {
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
+
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
