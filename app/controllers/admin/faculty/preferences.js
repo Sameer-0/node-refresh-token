@@ -7,6 +7,8 @@ const SlotIntervalTimings = require('../../../models/SlotIntervalTimings')
 const FacultyWorks = require('../../../models/FacultyWorks')
 const ProgramDays = require('../../../models/ProgramDays')
 const FacultyWorkTimePreferences = require('../../../models/FacultyWorkTimePreferences')
+const Settings = require("../../../models/Settings");
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -28,6 +30,9 @@ module.exports = {
         }
 
         FacultyWorkTimePreferences.save(object, res.locals.slug, res.locals.userId).then(result => {
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
