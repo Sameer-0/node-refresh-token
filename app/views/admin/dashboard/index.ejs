@@ -128,9 +128,7 @@
 
             $(this).attr('data-clickable', 'false');
 
-            // $($(this)).fadeOut(300, function () {
-            //     $($(this)).remove()
-            // })
+     
 
         })
 
@@ -522,9 +520,8 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
                 showSuccess(result)
-                setTimeout(function(){
-                    location.reload()
-                },3000)
+                scroll()
+                formStepNext()
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -532,7 +529,7 @@
 
             })
 
-             // Display Program import
+        //  Program import
         $('#importPrograms').on('click', function() {
         let programElems = $('#add-more-program-table tbody tr');
                 let programCount = programElems.length;
@@ -572,9 +569,8 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
                 showSuccess(result)
-                setTimeout(function(){
-                    location.reload()
-                },3000)
+                scroll()
+                formStepNext()
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -672,10 +668,7 @@
             console.log(currentFormStep);
         }
 
-
-        // NEXT STEP EVENT
-        $('#next-step').on('click', function () {
-          console.log('curretn', currentFormStep)
+        function scroll(){
             //SCROLL ON NEXT
             if(currentFormStep == 12){
                 let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep}"]`)
@@ -691,8 +684,13 @@
                 behavior: "smooth",
                 inline: 'start'
             })
+            $('#errorHtml').html('');
         }
+    }
 
+        // NEXT STEP EVENT
+        $('#next-step').on('click', function () {
+ 
             // CREATING JSON AND AJAX CALL
             if (currentFormStep == 1) {
                 
@@ -745,7 +743,7 @@
                 ajaxApi(ApiObj).then(result => {
                     console.log('Result:::::::::::', result)
                     //   location.reload()
-
+                    scroll()
                     formStepNext()
 
                 }).catch(error => {
@@ -770,7 +768,7 @@
                 ajaxApi(ApiObj).then(result => {
                     console.log('Result:::::::::::', result)
                     //   location.reload()
-
+                    scroll()
                     formStepNext()
 
                 }).catch(error => {
@@ -781,8 +779,6 @@
 
             }
             else if(currentFormStep == 5){
-
-
                 
                 console.log('session dates')
                 $.ajax({
@@ -796,7 +792,8 @@
                         endDate: $('#endDate').val()
                     },
                     success: (data) => {
-                        location.reload()
+                        scroll()
+                        formStepNext()
                     },
                     error: err => {
                         console.log('err::::::::',err)
@@ -865,7 +862,8 @@
                 ajaxApi(ApiObj).then(result => {
                     console.log(result)
                     showSuccess(result)
-                    setTimeout(function() {location.reload()},3000)
+                    scroll()
+                    formStepNext()
 
 
                 }).catch(error => {
@@ -916,7 +914,8 @@
                     ajaxApi(ApiObj).then(result => {
                         console.log(result)
                         showSuccess(result)
-                        setTimeout(function() {location.reload()},3000)
+                        scroll()
+                        formStepNext()
                     }).catch(error => {
                         showError(error.responseJSON)
                     })
@@ -957,7 +956,11 @@
                         ajaxApi(ApiObj).then(result => {
                             console.log(result)
                             showSuccess(result)
-                            setTimeout(function() {location.reload()},3000)
+                            scroll()
+                            formStepNext()
+                            setTimeout(function(){
+                                location.reload
+                            }, 3000)
 
                         }).catch(error => {
                             showError(error.responseJSON)
@@ -1233,7 +1236,7 @@
                 console.log(errorHtml)
             // $("#errorHtml").html(errorHtml)
             //open-room-modal
-            $(".error-html").html(errorHtml)
+            $("#errorHtml").html(errorHtml)
             $("#open-faculty-modal .error-html").html(errorHtml)
             // $("#open-program-modal .error-html").html(errorHtml)
         }
