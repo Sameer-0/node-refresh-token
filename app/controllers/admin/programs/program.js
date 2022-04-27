@@ -4,9 +4,11 @@ const {
     validationResult
 } = require('express-validator');
 
-
 const Programs = require('../../../models/Programs')
 const ProgramTypes = require('../../../models/programType')
+const Settings = require('../../../models/Settings');
+
+
 module.exports = {
     getPage: (req, res) => {
 
@@ -83,8 +85,27 @@ module.exports = {
             update_programs: JSON.parse(req.body.inputJSON)
         }
 
-
         Programs.update(object, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+
+            res.status(500).json(JSON.parse(error.originalError.info.message))
+        })
+    },
+
+    create: (req, res) => {
+
+        let object = {
+            import_programs: JSON.parse(req.body.inputJSON)
+        }
+
+        Programs.save(object, res.locals.slug, res.locals.userId).then(result => {
+
+            //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
+
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
 

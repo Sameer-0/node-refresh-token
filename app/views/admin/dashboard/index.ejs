@@ -41,7 +41,6 @@
 </div>
 </main>
 
-
 <%- include('../partials/footer') %>
 
 
@@ -52,7 +51,7 @@
 
 <script>
     $(document).ready(function () {
-
+        let username = `<%- locals.userId %>`;
         let campu = `<%- campusList%>`;
         let date = `<%- acadCalender%>`;
         let acadDate = JSON.parse(date);
@@ -60,6 +59,7 @@
         let slotObj = JSON.parse(slotTime);
         let programType = JSON.parse(`<%- programTypeList%>`);
         let facultyTypeList = JSON.parse(`<%- facultyType %>`);
+        let transactionTypeList =  JSON.parse(`<%- transactionTypes %>`);
 
 
         let optionStartTime;
@@ -68,6 +68,7 @@
         let endDate;
         let programTypeList;
         let facultyType;
+        let transactionTypes;
 
         for (let obj of slotObj) {
             optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
@@ -83,10 +84,14 @@
             endDate += `<option value="${obj.id}">${obj.date}</option>`;
         }
         for (let obj of programType) {
-            programTypeList += `<option>${obj.name}</option>`
+            programTypeList += `<option value="${obj.id}">${obj.name}</option>`
         }
         for (let obj of facultyTypeList) {
             facultyType += `<option value="${obj.id}">${obj.name}</option>`;
+        }
+
+        for (let obj of transactionTypeList) {
+            transactionTypes += `<option value="${obj.id}">${obj.name}</option>`;
         }
 
         //DATA SELECT FOR ROOM
@@ -109,6 +114,9 @@
                         </td>
                         <td>
                             <select class="select2" name="endDate">${endDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2" name="transaction_type_lid">${transactionTypes}</select>
                         </td>
                         <td>
                             <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
@@ -180,9 +188,9 @@
             console.log('appending:::::>>')
             $(".selectedListProgram table tbody").append(
                 `<tr data-clickable="true">
-                    <td data-value="${$(this).text()}">${$(this).text()}</td>
+                    <td data-value="${$(this).attr('data-program-code')}">${$(this).text()}</td>
                     <td>
-                        <select class="select2">${programTypeList}</select>
+                        <select class="select2" name="programType">${programTypeList}</select>
                     </td>
                     <td>
                         <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
@@ -399,7 +407,7 @@
             console.log('yelo:::')
             let lastTr = $('#facultyworktimepreferencesTable tbody tr:last-child')
 
-            let faculty_work_lid = lastTr.find(`select[name="faculty_work_lid"]`).val();
+            let faculty_work_lid = lastTr.find(`select[name="faculty_work_lid"]`).val(); 
             let p_day_lid = lastTr.find(`select[name="p_day_lid"]`).val();
             let start_time_id = lastTr.find(`select[name="start_time_id"]`).val();
             let end_time_id = lastTr.find(`select[name="end_time_id"]`).val();
@@ -454,17 +462,23 @@
 
         // Display room import
         $('#importRoom').on('click', function() {
+            let orgId = $('#open-room-modal #handled_by').val()
+            let campusId =  $('#campus_lid').val()
+           
        
         let roomElems = $('#add-more-room-table tbody tr');
                 let roomCount = roomElems.length;
                 let roomJson = [];
                 roomElems.each(function (index, elem) {
 
-                    let roomLid = $(elem).attr('data-room-id')
+                    let roomLid = $(elem).find(`td[data-room-id]`).attr('data-room-id')
                     let startTime = $(elem).find(`select[name='startTime']`).val()
                     let endTime = $(elem).find(`select[name='endTime']`).val()
                     let startDate = $(elem).find(`select[name='startDate']`).val()
                     let endDate = $(elem).find(`select[name='endDate']`).val()
+                    let transaction_type_lid = $(elem).find(`select[name='transaction_type_lid']`).val()
+                    console.log('roomLid::::::::::>>',roomLid)
+
 
                     if (index < roomCount - 1) {
                         let obj = {
@@ -473,9 +487,10 @@
                             end_time_id: endTime,
                             start_date_id: startDate,
                             end_date_id: endDate,
-                            room_transaction_lid: roomTransactionId,
                             org_lid: orgId,
-                            campus_lid: campusId
+                            campus_lid: campusId,
+                            transaction_type_lid: transaction_type_lid,
+                            user_id:username
                         }
                         roomJson.push(obj)
                     } else {
@@ -485,9 +500,10 @@
                             end_time_id: endTime,
                             start_date_id: startDate,
                             end_date_id: endDate,
-                            room_transaction_lid: roomTransactionId,
                             org_lid: orgId,
-                            campus_lid: campusId
+                            campus_lid: campusId,
+                            transaction_type_lid: transaction_type_lid,
+                            user_id:username
                         }
                         roomJson.push(obj)
                     }
@@ -497,18 +513,72 @@
                 type: 'POST',
                 url: '/admin/rooms',
                 data: {
-                    inputJSON: JSON.stringify(roomJson)
+                    inputJSON: JSON.stringify(roomJson),
+                    settingName: 'Room'
                 },
                 dataType: 'JSON'
             }
 
             ajaxApi(ApiObj).then(result => {
-
+                console.log('response::::::::::',result)
                 showSuccess(result)
                 setTimeout(function(){
                     location.reload()
                 },3000)
             }).catch(error => {
+                console.log('ERROR::::::::::',error.responseJSON)
+                showError(error.responseJSON)
+            })
+
+            })
+
+             // Display Program import
+        $('#importPrograms').on('click', function() {
+           
+       
+        let programElems = $('#add-more-program-table tbody tr');
+                let programCount = programElems.length;
+                let programJson = [];
+                programElems.each(function (index, elem) {
+
+                    let programId = $(elem).find('td[data-value]').attr('data-value');
+                   
+                    let programType = $(elem).find(`select[name='programType']`).val()
+                
+                    if (index < programCount - 1) {
+                        let obj = {
+                            program_id: programId,
+                            program_type: programType,
+                            
+                        }
+                        programJson.push(obj)
+                    } else {
+                        let obj = {
+                            program_id: programId,
+                            program_type: programType,
+                        }
+                        programJson.push(obj)
+                    }
+                })
+                console.log('roomjason:::',programJson);
+                let ApiObj = {
+                type: 'POST',
+                url: '/admin/programs',
+                data: {
+                    inputJSON: JSON.stringify(programJson),
+                    settingName: 'Program'
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('response::::::::::',result)
+                showSuccess(result)
+                setTimeout(function(){
+                    location.reload()
+                },3000)
+            }).catch(error => {
+                console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
             })
 
@@ -634,49 +704,70 @@
 
 
             }
+            else if(currentFormStep == 5){
+
+
+                
+                console.log('session dates')
+                $.ajax({
+                    url: '/admin/sessions/dates',
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        acadSession: $('#program_session_lid').val(),
+                        sessionType: $('#sessionType').val(),
+                        startDate: $('#startDate').val(),
+                        endDate: $('#endtDate').val()
+                    },
+                    success: (data) => {
+                        location.reload()
+                    },
+                    error: err => {
+                        console.log('err::::::::',err)
+                        showExpressError(err.responseJSON)
+                    }
+                })
+        
+
+            }
             
         })
 
 
-        $('.import-room').on('click', function () {
+        // $('.import-room').on('click', function () {
+        //     console.log('roomJSON::::>>>CLICKED');
+        //     let roomElems = $('#add-more-room-table tbody tr');
+        //     let roomCount = roomElems.length;
+        //     let roomJson = [];
+        //     roomElems.each(function (index, elem) {
+        //         let roomId = $(elem).find(`td[data-room-id]`).attr('data-room-id');
+        //         let startTimeId = $(elem).find(`select[name='startTime']`).val()
+        //         let endTimeId = $(elem).find(`select[name='endTime']`).val()
+        //         let startDateId = $(elem).find(`select[name='startDate']`).val()
+        //         let endDateId = $(elem).find(`select[name='endDate']`).val()
+        //         if (index < roomCount - 1) {
+        //             let obj = {
+        //                 roomId: roomId,
+        //                 startTimeId: startTimeId,
+        //                 endTimeId: endTimeId,
+        //                 startDateId: startDateId,
+        //                 endDateId: endDateId,
+        //             }
+        //             roomJson.push(obj)
+        //         } else {
+        //             let obj = {
+        //                 roomId: roomId,
+        //                 startTimeId: startTimeId,
+        //                 endTimeId: endTimeId,
+        //                 startDateId: startDateId,
+        //                 endDateId: endDateId,
+        //             }
+        //             roomJson.push(obj)
+        //         }
 
-            console.log('roomJSON::::>>>CLICKED');
-            let roomElems = $('#add-more-room-table tbody tr');
-            let roomCount = roomElems.length;
-            let roomJson = [];
-            roomElems.each(function (index, elem) {
-
-                let roomId = $(elem).find(`td[data-room-id]`).attr('data-room-id');
-                let startTimeId = $(elem).find(`select[name='startTime']`).val()
-                let endTimeId = $(elem).find(`select[name='endTime']`).val()
-                let startDateId = $(elem).find(`select[name='startDate']`).val()
-                let endDateId = $(elem).find(`select[name='endDate']`).val()
-
-
-                if (index < roomCount - 1) {
-                    let obj = {
-                        roomId: roomId,
-                        startTimeId: startTimeId,
-                        endTimeId: endTimeId,
-                        startDateId: startDateId,
-                        endDateId: endDateId,
-                    }
-                    roomJson.push(obj)
-                } else {
-                    let obj = {
-                        roomId: roomId,
-                        startTimeId: startTimeId,
-                        endTimeId: endTimeId,
-                        startDateId: startDateId,
-                        endDateId: endDateId,
-                    }
-                    roomJson.push(obj)
-                }
-
-                console.log('roomJson::::::::::::::::::::>>>', roomJson)
-            })
-
-        })
+        //         console.log('roomJson::::::::::::::::::::>>>', roomJson)
+        //     })
+        // })
 
 
         //Getting campus Bulding List
@@ -804,7 +895,8 @@
                 type: 'PUT',
                 url: '/admin/courseworkload',
                 data: {
-                    inputJSON: JSON.stringify(courseJSON)
+                    inputJSON: JSON.stringify(courseJSON),
+                    settingName:"Courseworkload",
                 },
                 dataType: 'JSON'
             }
@@ -937,11 +1029,16 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+                console.log(errorHtml)
+            // $("#errorHtml").html(errorHtml)
+            //open-room-modal
+            $("#open-room-modal .error-html").html(errorHtml)
+            $("#open-program-modal .error-html").html(errorHtml)
         }
 
 
         function showSuccess(errors) {
+        
             let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
                     <h3>Success</h3>
                     <p>${errors.description}</p>
@@ -956,7 +1053,27 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+        
+                
+
+                console.log('errorHtml:::::::::::',errorHtml)
+            // $(".error-html").html(errorHtml)
+            $("#open-room-modal .error-html").html(errorHtml)
+            $("#open-program-modal .error-html").html(errorHtml)
+        }
+
+        function showExpressError(errors){
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>`;
+                errorHtml += `<ul>`;
+                // errors.errors.map(er => {
+                //     errorHtml +=
+                //         `<li>${er.msg}</li>`
+                // })
+
+                errorHtml +=
+                    `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                    $(".error-html").html(errorHtml)
         }
 
     })

@@ -26,6 +26,7 @@ module.exports = class {
     }
 
     static save(body, slug) {
+        console.log('body:::::::::::::::',body)
         return poolConnection.then(pool => { 
             return pool.request().input('ProgramSession', sql.Int, body.acadSession)
                 .input('SessionType', sql.Int, body.sessionType)
