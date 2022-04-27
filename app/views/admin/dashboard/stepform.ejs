@@ -254,210 +254,209 @@
 </div>
 </div>
 </div>
-</form>
+        </form>
 
-<!--Program -->
-<form class="step d-none" id="program-form" data-step="3">
-    <div class="modal-header table-card-header">
-        <h5 class="modal-title" id="add-program-modal-title">Add New Program</h5>
-        <button type="button" class="btn add-btn btn-sm" id="add-more-program" data-bs-toggle="modal"
-            data-bs-target="#open-program-modal"><i class="fas fa-plus"></i></button>
-    </div>
-    <div class="modal-body">
-        <input type="hidden" id="programId" name="programId">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="">
-                <thead>
-                    <th>#</th>
-                    <th>Program Code</th>
-                    <th>Program Name</th>
-                    <th>Program Type</th>
-                    <th>Abbr</th>
-
-                </thead>
-                <tbody>
-                    <% let tcount = 1 %>
-                    <%for(let program of programList) {%>
-                    <tr>
-                        <td><%- tcount++ %></td>
-                        <td><%-program.program_code %></td>
-                        <td><%-program.program_name %></td>
-                        <td><%-program.program_type %></td>
-                        <td><%-program.abbr %></td>
-
-                    </tr>
-                    <%}%>
-                </tbody>
-                    </table>
-                </div>
-            </div>
-
-             <!-- Modal -->
-        <div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content modal-inputform">
-                    <div class="modal-header modal-inputform-header">
-                        <h3 class="modal-title" id="open-room-modal-title">Select Program</h3>
-                        <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
-                                class="fas fa-times text-dark"></i></button>
-                    </div>
-                    
-
-                    <div class="modal-body py-0">
-                        <div class="row">
-                            <div class="col-md-3 col-xxl-3 select-items">
-                                <h4 class="text-center py-1 select-room-header">Select Program</h4>
-                                <input type="text" name=""  placeholder="Search Program"
-                                    class="form-control searchItemProgram">
-
-                                <ul class="list-group custom-select-list selectList selectListProgram"  style="margin-top: 70px;">
-                                    <% for (let program of programDboList){ %>
-                    <li class="list-group-item" data-clickable="true" data-program-code="<%-program.program_id %>">
-                        <%- program.programName%></li>
-                    <% }%>
-                    </ul>
-        </div>
-        <div class="col-md-9 col-xxl-9 selected-items">
-            <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
-            <input type="text" name="" placeholder="Search Selected Faculty"
-                class="form-control searchSelectedItemProgram">
-
-            <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
-                <table class="table table-bordered" id="add-more-program-table">
-                    <thead>
-                        <th>Program Name</th>
-                        <th>Program Type</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </ul>
-
-        </div>
-
-    </div>
-    </div>
-    <div class="error-html"></div>
-    <div class="modal-footer">
-        <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
-    </div>
-    </div>
-    </div>
-    </div>
-</form>
-
-<!-- Course Workload-->
-<form class="step d-none" id="courseWorkload-form" data-step="4">
-    <div class="modal-header table-card-header d-flex justify-content-end">
-        <div class="me-auto">
-            <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
-        </div>
-        <div>
-            <input type="text" class="form-control" id="acadYear" value="<%- acadYear %>">
-        </div>
-        <div class="mx-3">
-            <select id="programLid" name="programLid" class="form-select">
-                <option value="">Select program</option>
-                <% for(let program of programList) {%>
-                <option value="<%-program.program_id %>"><%-program.program_name %></option>
-                <%}%>
-                        </select>
-                      </div>
-                      <div >
-                        <select id="acadSessionLid" name="acadSessionLid" class="form-select">
-                            <option value="">Select Session</option>
-                            <% for(let acadsession of AcadSessionList) {%>
-                <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
-                <%}%>
-                        </select>
-                      </div>
-                      <div class="mx-3">
-                        <button  type="button" class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
-                      </div>
-                      <div>
-                        <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Save </button>
-                      </div>
-
+        <!--Program -->
+        <form class="step d-none" id="program-form" data-step="3">
+            <div class="modal-header table-card-header">
+                <h5 class="modal-title" id="add-program-modal-title">Add New Program</h5>
+                <button type="button" class="btn add-btn btn-sm" id="add-more-program" data-bs-toggle="modal"
+                    data-bs-target="#open-program-modal"><i class="fas fa-plus"></i></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="programId" name="programId">
                 <div class="table-responsive">
-                    <table class="table custom_row table-bordered" id="add-more-courseWorkload-table">
+                    <table class="table table-bordered" id="">
                         <thead>
-                            <th>Sr No.</th>
-                            <th>Module Name</th>
-                            <th>Module Code</th>
+                            <th>#</th>
                             <th>Program Code</th>
-                            <th>Acad Session</th>
-                            <th>Module Type</th>
-                            <th>Intake</th>
-                            <th>Student per division</th>
-                            <th>Lecture per Week per Division</th>
-                            <th>Practical per Week per Division</th>
-                            <th>Tutorial per Week per Division</th>
-                            <th>Workshop per Week per Division</th>
-                            <th>Session Events per Semester</th>
-                            <th>Continuous
-                            </th>
+                            <th>Program Name</th>
+                            <th>Program Type</th>
+                            <th>Abbr</th>
+
                         </thead>
                         <tbody>
-                            <%let count1 = 1%>
-                <% for(let course of courseWorkloadList){%>
-                <tr>
-                    <td><%- count1++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid"
-                            value="<%-course.id %>"></td>
-                    <td><%-course.module_name%></td>
-                    <td><%-course.module_id%></td>
-                    <td><%-course.program_id%></td>
-                    <td><%-course.acad_session%></td>
-                    <td>
-                        <select class="form-select rounded-0" name="module_type_lid">
-                            <!-- <option value="">Select Module Type</option> -->
-                            <%for(let module of moduleList){%>
-                            <%if(course.module_type_lid == module.id){%>
-                            <option value="<%- module.id %>" selected><%- module.name %></option>
-                            <%}else{%>
-                            <option value="<%- module.id %>"><%- module.name %></option>
-                            <%}%>  
-                                        <%}%>
-                        </select>
-                    </td>
-                    <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>">
-                    </td>
-                    <td><input type="number" class="form-control rounded-0" name="student_per_division"
-                            value="<%-course.student_per_division%>"></td>
-                    <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division"
-                            value="<%-course.lec_per_week_per_division%>"></td>
-                    <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division"
-                            value="<%-course.practical_per_week_per_division%>"></td>
-                    <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division"
-                            value="<%-course.tutorial_per_week_per_division%>"></td>
-                    <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division"
-                            value="<%-course.workshop_per_week_per_division%>"></td>
-                    <td><input type="number" class="form-control rounded-0" name="session_events_per_semester"
-                            value="<%-course.session_events_per_semester%>"></td>
-                    <td><input type="number" class="form-control rounded-0" name="continuous"
-                            value="<%-course.continuous%>"></td>
+                            <% let tcount = 1 %>
+                            <%for(let program of programList) {%>
+                            <tr>
+                                <td><%- tcount++ %></td>
+                                <td><%-program.program_code %></td>
+                                <td><%-program.program_name %></td>
+                                <td><%-program.program_type %></td>
+                                <td><%-program.abbr %></td>
 
-                </tr>
-                <%}%>   
-                        </tbody>
-                    </table>
+                            </tr>
+                            <%}%>
+                                </tbody>
+                                    </table>
+                                </div>
+                            </div>
 
-                    
+                            <!-- Modal -->
+                        <div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal" aria-hidden="true">
+                            <div class="modal-dialog modal-fullscreen">
+                                <div class="modal-content modal-inputform">
+                                    <div class="modal-header modal-inputform-header">
+                                        <h3 class="modal-title" id="open-room-modal-title">Select Program</h3>
+                                        <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                                                class="fas fa-times text-dark"></i></button>
+                                    </div>
+                                    
+
+                                    <div class="modal-body py-0">
+                                        <div class="row">
+                                            <div class="col-md-3 col-xxl-3 select-items">
+                                                <h4 class="text-center py-1 select-room-header">Select Program</h4>
+                                                <input type="text" name=""  placeholder="Search Program"
+                                                    class="form-control searchItemProgram">
+
+                                                <ul class="list-group custom-select-list selectList selectListProgram"  style="margin-top: 70px;">
+                                                    <% for (let program of programDboList){ %>
+                            <li class="list-group-item" data-clickable="true" data-program-code="<%-program.program_id %>">
+                                <%- program.programName%></li>
+                            <% }%>
+                            </ul>
                 </div>
+                <div class="col-md-9 col-xxl-9 selected-items">
+                    <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
+                    <input type="text" name="" placeholder="Search Selected Faculty"
+                        class="form-control searchSelectedItemProgram">
+
+                    <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
+                        <table class="table table-bordered" id="add-more-program-table">
+                            <thead>
+                                <th>Program Name</th>
+                                <th>Program Type</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </ul>
+
+                </div>
+
+            </div>
+            </div>
+            <div class="error-html"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
+            </div>
+            </div>
+            </div>
             </div>
         </form>
+
+        <!-- Course Workload-->
+        <form class="step d-none" id="courseWorkload-form" data-step="4">
+            <div class="modal-header table-card-header d-flex justify-content-end">
+                <div class="me-auto">
+                    <h5 class="modal-title" id="add-courseWorkload-modal-title">Fetch Initial Course workload</h5>
+                </div>
+                <div>
+                    <input type="text" class="form-control" id="acadYear" value="<%- acadYear %>">
+                </div>
+                <div class="mx-3">
+                    <select id="programLid" name="programLid" class="form-select">
+                        <option value="">Select program</option>
+                        <% for(let program of programList) {%>
+                        <option value="<%-program.program_id %>"><%-program.program_name %></option>
+                        <%}%>
+                                        </select>
+                                    </div>
+                                    <div >
+                                        <select id="acadSessionLid" name="acadSessionLid" class="form-select">
+                                            <option value="">Select Session</option>
+                                            <% for(let acadsession of AcadSessionList) {%>
+                        <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
+                        <%}%>
+                                        </select>
+                                    </div>
+                                    <div class="mx-3">
+                                        <button  type="button" class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Save </button>
+                                    </div>
+
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="programId" name="programId">
+                                <div class="table-responsive">
+                                    <table class="table custom_row table-bordered" id="add-more-courseWorkload-table">
+                                        <thead>
+                                            <th>Sr No.</th>
+                                            <th>Module Name</th>
+                                            <th>Module Code</th>
+                                            <th>Program Code</th>
+                                            <th>Acad Session</th>
+                                            <th>Module Type</th>
+                                            <th>Intake</th>
+                                            <th>Student per division</th>
+                                            <th>Lecture per Week per Division</th>
+                                            <th>Practical per Week per Division</th>
+                                            <th>Tutorial per Week per Division</th>
+                                            <th>Workshop per Week per Division</th>
+                                            <th>Session Events per Semester</th>
+                                            <th>Continuous
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <%let count1 = 1%>
+                        <% for(let course of courseWorkloadList){%>
+                        <tr>
+                            <td><%- count1++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid"
+                                    value="<%-course.id %>"></td>
+                            <td><%-course.module_name%></td>
+                            <td><%-course.module_id%></td>
+                            <td><%-course.program_id%></td>
+                            <td><%-course.acad_session%></td>
+                            <td>
+                                <select class="form-select rounded-0" name="module_type_lid">
+                                    <!-- <option value="">Select Module Type</option> -->
+                                    <%for(let module of moduleList){%>
+                                    <%if(course.module_type_lid == module.id){%>
+                                    <option value="<%- module.id %>" selected><%- module.name %></option>
+                                    <%}else{%>
+                                    <option value="<%- module.id %>"><%- module.name %></option>
+                                    <%}%>  
+                                                        <%}%>
+                                </select>
+                            </td>
+                            <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>">
+                            </td>
+                            <td><input type="number" class="form-control rounded-0" name="student_per_division"
+                                    value="<%-course.student_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division"
+                                    value="<%-course.lec_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division"
+                                    value="<%-course.practical_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division"
+                                    value="<%-course.tutorial_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division"
+                                    value="<%-course.workshop_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester"
+                                    value="<%-course.session_events_per_semester%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="continuous"
+                                    value="<%-course.continuous%>"></td>
+
+                        </tr>
+                        <%}%>   
+                                        </tbody>
+                                    </table>
+
+                                    
+                                </div>
+                            </div>
+                </form>
 
         <!-- Session date -->
         <form action="/admin/sessiondate" method="post" class="step d-none" id="sessionDate-form" data-step="5">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-sessionDate-modal-title">Add Session Date</h5>
-                <!-- <button type="button" class="btn add-btn btn-sm" id="add-more-sessionDate"><i class="fas fa-plus"></i>
-                </button> -->
+                <button  type="button" class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="sessionDate" name="sessionDate">
@@ -469,57 +468,60 @@
                             <th>Session Type</th>
                             <th>Start date</th>
                             <th>End date</th>
-
-                            
+                            <th>Status</th>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
                                     <select class="form-select" name="program_session_lid" id="program_session_lid" required>
-                        <option  value="">--select--</option>
-                        <%for (let program of programSession){%>
-                <option value="<%- program.id %>"><%-program.program_name %>(<%-program.acad_session %>)</option>
-                <%}%>
-                    </select>
+                                        <option  value="">--select--</option>
+                                        <%for (let program of programSession){%>
+                                        <option value="<%- program.id %>"><%-program.program_name %>(<%-program.acad_session %>)</option>
+                                        <%}%>
+                                    </select>
                                 </td>
                                 <td>
                                     <select name="acadSession" class="form-select" id="acadSession" required>
                                         <% for (let session of AcadSessionList){%>
-                <option value="<%- session.acadSessionId %>"><%- session.acad_session%></option>
-                <% }%>
-            </select>
-
-            </td>
-            <td>
-                <select name="sessionType" id="sessionType" class="form-select">
-                    <option value="">--select--</option>
-                    <%for (let session of sessionList){%>
-                    <option value="<%- session.id %>"><%-session.name %></option>
-                    <%}%>
-                </select>
-
-            </td>
-            <td>
-                <select name="startDate" class="form-select" id="startDate" required>
-                    <% for (let acad of acadCal){%>
-                    <option value="<%- acad.id %>"><%- acad.date %></option>
-                    <% }%>
-                </select>
-            </td>
-            <td>
-                <select name="endDate" class="form-select" id="endDate" required>
-                    <% for (let acad of acadCal){%>
-                    <option value="<%- acad.id %>"><%- acad.date %></option>
-                    <% }%>
-                </select>
-            </td>
-
-            </tr>
-            </tbody>
-            </table>
-        </div>
-    </div>
-</form>
+                                        <option value="<%- session.acadSessionId %>"><%- session.acad_session%></option>
+                                        <% }%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="sessionType" id="sessionType" class="form-select">
+                                        <option value="">--select--</option>
+                                        <%for (let session of sessionList){%>
+                                        <option value="<%- session.id %>"><%-session.name %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="startDate" class="form-select" id="startDate" required>
+                                        <% for (let acad of acadCal){%>
+                                        <option value="<%- acad.id %>"><%- acad.date %></option>
+                                        <% }%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="endDate" class="form-select" id="endDate" required>
+                                        <% for (let acad of acadCal){%>
+                                        <option value="<%- acad.id %>"><%- acad.date %></option>
+                                        <% }%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <label class="switch d-flex align-items-center">
+                                        <input type="checkbox" class="changeStatus" data-id=""
+                                            data-status="">
+                                        <span class="switch-slider round"></span>
+                                    </label>
+                                </td> 
+                            </tr>
+                        </tbody> 
+                    </table>
+                </div>
+            </div>
+        </form>
 
 <!-- Division -->
 <form action="/admin/divisions" method="post" class="step d-none" id="division-form" data-step="6">
