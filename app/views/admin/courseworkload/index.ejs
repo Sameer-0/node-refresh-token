@@ -82,51 +82,50 @@
                     <th>Sr No.</th>
                     <th>Module Name</th>
                     <th>Module Code</th>
-                    <th>Program Code</th>
+                    <th>Program Id</th>
                     <th>Acad Session</th>
-                    <th>Module Type</th>
+                    <th>Elective</th>
                     <th>Intake</th>
                     <th>Student per division</th>
-                    <th>Lecture per Week per Division</th>
-                    <th>Practical per Week per Division</th>
-                    <th>Tutorial per Week per Division</th>
-                    <th>Workshop per Week per Division</th>
+                    <th>Lecture count per batch</th>
+                    <th>Practical count per batch</th>
+                    <th>Tutorial count_per batch</th>
+                    <th>Workshop count per batch</th>
                     <th>Session Events per Semester</th>
-                    <th>Continuous
-                    </th>
+                    <th>Continuous</th>
                 </thead>
                 <tbody>
-                    <%let count = 1%>
-                        <% for(let course of courseWorkloadList){%>
+                    <%
+                        let count = 1
+                        for(let course of courseWorkloadList) { %>
                         <tr>
                             <td><%- count++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid" value="<%-course.id %>"></td>
-                            <td><%-course.module_name%></td>
-                            <td><%-course.module_id%></td>
-                            <td><%-course.program_id%></td>
-                            <td><%-course.acad_session%></td>
+                            <td data-module-name="<%-course.module_name%>"><%-course.module_name%></td>
+                            <td data-module-id="<%-course.module_id%>"><%-course.module_id%></td>
+                            <td data-program-id="<%-course.program_id%>"><%-course.program_id%></td>
+                            <td data-acad-session-lid="<%-course.acad_session_lid%>"><%-course.acad_session%></td>
                             <td>
                             <select class="form-select rounded-0" name="module_type_lid" >
                                 <!-- <option value="">Select Module Type</option> -->
-                                <%for(let module of moduleList){%>
-                                    <%if(course.module_type_lid == module.id){%>
+                                <% for (let module of moduleList) { %>
+                                    <% if (course.module_type_lid == module.id) { %>
                                         <option value="<%- module.id %>" selected><%- module.name %></option>
-                                        <%}else{%>
+                                    <%} else { %>
                                             <option value="<%- module.id %>"><%- module.name %></option>
-                                        <%}%>  
+                                    <% } %>  
                                 <%}%>
                             </select>
                             </td>
                             <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>"></td>
                             <td><input type="number" class="form-control rounded-0" name="student_per_division" value="<%-course.student_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division" value="<%-course.lec_per_week_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division" value="<%-course.practical_per_week_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division" value="<%-course.tutorial_per_week_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division" value="<%-course.workshop_per_week_per_division%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="lecture_count_per_batch" value="<%-course.lecture_count_per_batch%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="practical_count_per_batch" value="<%-course.practical_count_per_batch%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="tutorial_count_per_batch" value="<%-course.tutorial_count_per_batch%>"></td>
+                            <td><input type="number" class="form-control rounded-0" name="workshop_count_per_batch" value="<%-course.workshop_count_per_batch%>"></td>
                             <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="<%-course.session_events_per_semester%>"></td>
                             <td><input type="number" class="form-control rounded-0" name="continuous" value="<%-course.continuous%>"></td>
-                            
                         </tr>
-                        <%}%>   
+                        <% } %>   
                 </tbody>
             </table>
             <div class="d-flex justify-content-between">
@@ -148,7 +147,7 @@
 
 <script>
     $(document).ready(function () {
-
+        let username = `<%- locals.userId %>`;
         $('.select2').select2();
 
         //Fetch form SAP
@@ -186,40 +185,54 @@
                 let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
                 let intake = $(elem).find(`input[name='intake']`).val()
                 let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
-                let lec_per_week_per_division = $(elem).find(`input[name='lec_per_week_per_division']`).val();
-                let practical_per_week_per_division = $(elem).find(`input[name='practical_per_week_per_division']`).val();
-                let tutorial_per_week_per_division = $(elem).find(`input[name='tutorial_per_week_per_division']`).val();
-                let workshop_per_week_per_division = $(elem).find(`input[name='workshop_per_week_per_division']`).val();
+                let lecture_count_per_batch = $(elem).find(`input[name='lecture_count_per_batch']`).val();
+                let practical_count_per_batch = $(elem).find(`input[name='practical_count_per_batch']`).val();
+                let tutorial_count_per_batch = $(elem).find(`input[name='tutorial_count_per_batch']`).val();
+                let workshop_count_per_batch = $(elem).find(`input[name='workshop_count_per_batch']`).val();
                 let session_events_per_semester = $(elem).find(`input[name='session_events_per_semester']`).val();
                 let module_type_lid = $(elem).find(`select[name='module_type_lid']`).val();
                 let continuous = $(elem).find(`input[name='continuous']`).val();
+                let module_name = $(elem).find(`td[data-module-name]`).attr(`data-module-name`);
+                let program_id = $(elem).find(`td[data-program-id]`).attr(`data-program-id`);
+                let module_id = $(elem).find(`td[data-module-id]`).attr(`data-module-id`);
+                let acad_session_lid =  $(elem).find(`td[data-acad-session-lid]`).attr(`data-acad-session-lid`);
 
                 if (index < courseCount - 1) {
                     let obj = {
                         id: workloadlid,
                         intake: intake,
                         student_per_division: student_per_division,
-                        lec_per_week_per_division: lec_per_week_per_division,
-                        practical_per_week_per_division: practical_per_week_per_division,
-                        tutorial_per_week_per_division: tutorial_per_week_per_division,
-                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        lecture_count_per_batch: lecture_count_per_batch,
+                        practical_count_per_batch: practical_count_per_batch,
+                        tutorial_count_per_batch: tutorial_count_per_batch,
+                        workshop_count_per_batch: workshop_count_per_batch,
                         session_events_per_semester: session_events_per_semester,
                         continuous: continuous,
-                        module_type_lid:module_type_lid
+                        module_type_lid:module_type_lid,
+                        user_id: username,
+                        module_name: module_name,
+                        program_id: program_id,
+                        module_id: module_id,
+                        acad_session_lid: acad_session_lid
                     }
                     courseJSON.push(obj)
                 } else {
                     let obj = {
-                        id:workloadlid,
+                        id: workloadlid,
                         intake: intake,
                         student_per_division: student_per_division,
-                        lec_per_week_per_division: lec_per_week_per_division,
-                        practical_per_week_per_division: practical_per_week_per_division,
-                        tutorial_per_week_per_division: tutorial_per_week_per_division,
-                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        lecture_count_per_batch: lecture_count_per_batch,
+                        practical_count_per_batch: practical_count_per_batch,
+                        tutorial_count_per_batch: tutorial_count_per_batch,
+                        workshop_count_per_batch: workshop_count_per_batch,
                         session_events_per_semester: session_events_per_semester,
                         continuous: continuous,
-                        module_type_lid:module_type_lid
+                        module_type_lid:module_type_lid,
+                        user_id: username,
+                        module_name: module_name,
+                        program_id: program_id,
+                        module_id: module_id,
+                        acad_session_lid: acad_session_lid
                     }
                     courseJSON.push(obj)
                 }
@@ -271,12 +284,13 @@
                     <th>Module Code</th>
                     <th>Program Code</th>
                     <th>Acad Session</th>
+                    <th>Elective</th>
                     <th>Intake</th>
                     <th>Student per division</th>
-                    <th>Lecture per Week per Division</th>
-                    <th>Practical per Week per Division</th>
-                    <th>Tutorial per Week per Division</th>
-                    <th>Workshop per Week per Division</th>
+                    <th>Lecture count per batch</th>
+                    <th>Practical count per batch</th>
+                    <th>Tutorial count_per batch</th>
+                    <th>Workshop count per batch</th>
                     <th>Session Events per Semester</th>
                     <th>Continuous
                     </th>
@@ -292,16 +306,14 @@
                             <td>${course.module_id}</td>
                             <td>${course.program_id}</td>
                             <td>${course.acad_session}</td>
-
                             <td><input type="number" class="form-control rounded-0" name="intake" value="${course.intake}"></td>
                             <td><input type="number" class="form-control rounded-0" name="student_per_division" value="${course.student_per_division}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division" value="${course.lec_per_week_per_division}></td>
-                            <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division" value="${course.practical_per_week_per_division}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division" value="${course.tutorial_per_week_per_division}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division" value="${course.workshop_per_week_per_division}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="${course.session_events_per_semeste}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="lecture_count_per_batch" value="${course.lecture_count_per_batch}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="practical_count_per_batch" value="${course.practical_count_per_batch}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="tutorial_count_per_batch" value="${course.tutorial_count_per_batch}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="workshop_count_per_batch" value="${course.workshop_count_per_batch}"></td>
+                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="${course.session_events_per_semester}"></td>
                             <td><input type="number" class="form-control rounded-0" name="continuous" value="${course.continuous}"></td>
-                            
                         </tr>`
                 }
             } else {
