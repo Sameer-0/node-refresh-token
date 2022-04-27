@@ -7,7 +7,10 @@ const CourseWorkload = require('../../../models/CourseWorkload')
 const AcadYear = require('../../../models/AcademicYear')
 const Programs = require('../../../models/Programs')
 const AcadSession = require('../../../models/AcadSession')
-const ModuleType =  require('../../../models/ModuleType')
+const ModuleType = require('../../../models/ModuleType')
+const Settings = require('../../../models/Settings');
+
+
 const path = require("path");
 var soap = require("soap");
 module.exports = {
@@ -154,15 +157,22 @@ module.exports = {
   update: (req, res) => {
     let object = {
       update_initial_course_workload: JSON.parse(req.body.inputJSON)
-  }
+    }
 
-  console.log('userid',res.locals.userId)
-  CourseWorkload.update(object, res.locals.slug, res.locals.userId).then(result => {
-    console.log('result:::::::::::>>>',result)
+    console.log('userid', res.locals.userId, req.body.settingName)
+    CourseWorkload.update(object, res.locals.slug, res.locals.userId).then(result => {
+     // console.log('result:::::::::::>>>', result)
+
+      //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
+      if (req.body.settingName) {
+        Settings.updateByName(res.locals.slug, req.body.settingName)
+      }
+
+
       res.status(200).json(JSON.parse(result.output.output_json))
-  }).catch(error => {
-    console.log('error::::::::::::::::::::>>',error)
+    }).catch(error => {
+      console.log('error::::::::::::::::::::>>', error)
       res.status(500).json(JSON.parse(error.originalError.info.message))
-  })
+    })
   }
 }

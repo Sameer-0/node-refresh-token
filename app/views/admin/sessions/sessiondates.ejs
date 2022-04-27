@@ -179,8 +179,8 @@
                     success: data => {
                         console.log(data)
                         let obj = data.data;
-                    
-                        $('#programName').val(obj.program_session_lid).trigger('change')
+                    console.log('obj:::::::::::::::::::',obj)
+                        $('#program_session_lid').val(obj.program_session_lid).trigger('change')
                         $('#sessionType').val(obj.session_type_lid).trigger('change')
                         $('#startDate').val(obj.start_date_id).trigger('change')
                         $('#endtDate').val(obj.end_date_id).trigger('change')
@@ -215,7 +215,7 @@
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
-                        acadSession: $('#acadSession').val(),
+                        acadSession: $('#program_session_lid').val(),
                         sessionType: $('#sessionType').val(),
                         startDate: $('#startDate').val(),
                         endDate: $('#endtDate').val(),
@@ -280,9 +280,7 @@
                     location.reload()
                 }).catch(error => {
                     showError(error.responseJSON)
-
                 })
-
             })
 
             // SEARCH PROGRAM TYPE
