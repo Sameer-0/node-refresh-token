@@ -717,16 +717,17 @@
                         acadSession: $('#program_session_lid').val(),
                         sessionType: $('#sessionType').val(),
                         startDate: $('#startDate').val(),
-                        endDate: $('#endtDate').val()
+                        endDate: $('#endDate').val()
                     },
                     success: (data) => {
                         location.reload()
                     },
                     error: err => {
                         console.log('err::::::::',err)
-                        showExpressError(err.responseJSON)
+                        showExpressError(err.responseJSON) 
                     }
                 })
+                formStepNext()
         
 
             }
@@ -945,7 +946,7 @@
                         count_for_tutorial_batch: count_for_tutorial_batch,
                         count_for_workshop_batch: count_for_workshop_batch
                     }
-                    divJSON.push(obj)
+                    divJSON.push(obj) 
                 }
             })
 
@@ -1057,9 +1058,9 @@
                 
 
                 console.log('errorHtml:::::::::::',errorHtml)
-            // $(".error-html").html(errorHtml)
-            $("#open-room-modal .error-html").html(errorHtml)
-            $("#open-program-modal .error-html").html(errorHtml)
+            $("#errorHtml").html(errorHtml)
+            // $("#open-room-modal .error-html").html(errorHtml)
+            // $("#open-program-modal .error-html").html(errorHtml)
         }
 
         function showExpressError(errors){
@@ -1074,6 +1075,7 @@
                 errorHtml +=
                     `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                     $(".error-html").html(errorHtml)
+                    $("#errorHtml").html(errorHtml)
         }
 
     })
