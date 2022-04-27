@@ -16,12 +16,13 @@
     </div>
 
     <div id="errorHtml" class="error-show pt-3"></div>
+
     <div class="step-form-body pt-3">
 
         <!-- Holidays -->
-        <form action="/admin/holidays" method="post" class="step active-form" id="holidays-form" data-step="1">
+        <form  class="step active-form" id="holidays-form" data-step="1">
             <div class="modal-header table-card-header">
-                <h5 class="modal-title text-white" id="add-holidays-modal-title">Add New Holidays</h5>
+                <h5 class=" text-white" id="add-holidays-modal-title">Add New Holidays</h5>
                 <button class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From
                     SAP</button>
                 <button type="button" class="btn add-btn btn-sm ms-2" id="add-more-holidays"><i
@@ -71,188 +72,187 @@
 
         <!-- Room -->
         <form   class="step d-none" id="room-form" data-step="2">
-        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
-            <div>
-                <h5 class="modal-title text-white" id="add-room-modal-title">Import Rooms</h5>
-            </div>
-            <div>
-                <button type="button" class="add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-room-modal">
-                    <i class="fas fa-plus"></i></button>
-            </div>
-        </div>
-
-        <div class="modal-body">
-            <input type="hidden" id="roomId" name="roomId">
-            <div class="table-responsive">
-                <table class="table " id="room-table">
-                    <thead>
-                        <th>#</th>
-                        <th>Transaction Type</th>
-                        <th>Stage</th>
-                        <th>Org Name</th>
-                        <th>Campus</th>
-                        <th>Username</th>
-                    </thead>
-                    <tbody>
-                        <%let rcount = 1;%>
-                                    <% for(let trans of transactionList) {%>
-                        <tr>
-                            <td><%- rcount++ %></td>
-                            <td><%- trans.transaction_type %></td>
-                            <td><%- trans.stage %></td>
-                            <td><%- trans.org_name %></td>
-                            <td><%- trans.campus_abbr %></td>
-                            <td><%- trans.username %></td>
-                        </tr>
-                        <%}%>
-                    </tbody>
-                </table>
+            <div class="modal-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="modal-title text-white" id="add-room-modal-title">Import Rooms</h5>
+                </div>
+                <div>
+                    <button type="button" class="add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-room-modal">
+                        <i class="fas fa-plus"></i></button>
+                </div>
             </div>
 
-        </div>
+            <div class="">
+                <input type="hidden" id="roomId" name="roomId">
+                <div class="table-responsive">
+                    <table class="table " id="room-table">
+                        <thead>
+                            <th>#</th>
+                            <th>Transaction Type</th>
+                            <th>Stage</th>
+                            <th>Org Name</th>
+                            <th>Campus</th>
+                            <th>Username</th>
+                        </thead>
+                        <tbody>
+                            <%let rcount = 1;%>
+                                        <% for(let trans of transactionList) {%>
+                            <tr>
+                                <td><%- rcount++ %></td>
+                                <td><%- trans.transaction_type %></td>
+                                <td><%- trans.stage %></td>
+                                <td><%- trans.org_name %></td>
+                                <td><%- trans.campus_abbr %></td>
+                                <td><%- trans.username %></td>
+                            </tr>
+                            <%}%>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
 
 
-        <!-- Modal -->
-        <div class="modal fade" id="open-room-modal" tabindex="-1" aria-labelledby="open-room-modal" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content modal-inputform">
-                    <div class="modal-header modal-inputform-header">
-                        <h3 class="modal-title" id="open-room-modal-title">Import Room</h3>
-                        <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
-                                class="fas fa-times text-dark"></i></button>
+            <!-- Modal -->
+            <div class="modal fade" id="open-room-modal" tabindex="-1" aria-labelledby="open-room-modal" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content modal-inputform">
+
+                        <div class="modal-header modal-inputform-header">
+                            <h3 class="modal-title" id="open-room-modal-title">Import Room</h3>
+                            <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                                    class="fas fa-times text-dark"></i></button>
+                        </div>
+
+                        <div class="modal-body py-0">
+                            <div class="row">
+                                <!-- SELECT COLUMN -->
+                                <div class="col-md-3 col-xxl-3 select-items">
+                                    <h4 class="text-center py-1 select-room-header">Select Rooms</h4>
+                                    <input type="text" name="" id="searchItem" placeholder="Search Room"
+                                        class="form-control searchItemRoom">
+                                    <div style="margin-top: 100px;">
+                                        <div class="col-md-12">
+                                            <label>Campus</label>
+                                            <select name="campus_lid" id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let campus of campusList) { %>
+                                                    <option value="<%- campus.id %>">
+                                                    <%- campus.campus_abbr %>
+                                                    </option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                       
+                                        <div class="col-md-12">
+                                                <label>Building</label>
+                                                <select name="building_lid" id="" class="select2">
+                                                    <option>--select--</option>
+                                                    <% for(let building of buildingList) { %>
+                                                    <option value="<%- building.building_id %>">
+                                                        <%- building.building_name %>
+                                                    </option>
+                                                    <% } %>
+                                                </select>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label>Organization</label>
+                                            <select name="handled_by" id="" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let org of orgList) { %>
+                                                    <option value="<%- org.id %>">
+                                                        <%- org.org_abbr %>/<%- org.org_id %>
+                                                    </option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <ul class="list-group custom-select-list selectList">
+                                        <% for (let room of RoomList){ %>
+                                        <li class="list-group-item" data-clickable="true" data-room-id="<%- room.id%>"><%- room.room_number%></li>
+                                        <% }%>
+                                    </ul>
+                                </div>
+
+                                <!-- SELECTED COLUMN -->
+                                <div class="col-md-9 col-xxl-9 selected-items">
+                                    <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">
+                                        Selected Rooms</h4>
+                                    <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Room"
+                                        class="form-control searchSelectedRoom">
+                                    <div class="row selected-room-filter">
+
+                                        <div class="col-md-4">
+                                            <label>Book for Campus</label>
+
+                                            <select name="campus_lid" id="campus_lid" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let campus of campusList) { %>
+                                                <option value="<%- campus.id %>">
+                                                    <%- campus.campus_abbr %>
+                                                </option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>Book for building</label>
+
+                                            <select name="building_lid" id="building_lid" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let building of buildingList) { %>
+                                                <option value="<%- building.building_id %>">
+                                                    <%- building.building_name %>
+                                                </option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>Book for Organization</label>
+
+                                            <select name="handled_by" id="handled_by" class="select2">
+                                                <option>--select--</option>
+                                                <% for(let org of orgList) { %>
+                                                <option value="<%- org.id %>">
+                                                    <%- org.org_abbr %>/<%- org.org_id %>
+                                                </option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+                                    <ul class="list-group custom-select-list selectedList" id="selectedList">
+                                        <table class="table table-bordered" id="add-more-room-table">
+                                            <thead>
+                                                <th>room</th>
+                                                <th>start Time</th>
+                                                <th>end Time</th>
+                                                <th>start Date</th>
+                                                <th>end Date</th>
+                                                <th>Transaction Type</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-3 error-html"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn import-room modal-inputform-btn" id="importRoom">Import Room</button>
+                        </div>
+
                     </div>
-                    <div class="modal-body py-0">
-                        <div class="row">
-                            <div class="col-md-3 col-xxl-3 select-items">
-                                <h4 class="text-center py-1 select-room-header">Select Rooms</h4>
-                                <input type="text" name="" id="searchItem" placeholder="Search Room"
-                                    class="form-control searchItemRoom">
-                                <div style="margin-top: 100px;">
-                                    <div class="col-md-12">
-                                        <label>Campus</label>
-
-                                        <select name="campus_lid" id="" class="select2">
-                                            <option>--select--</option>
-                                            <% for(let campus of campusList) { %>
-                        <option value="<%- campus.id %>">
-                            <%- campus.campus_abbr %>
-                        </option>
-                        <% } %>
-                        </select>
+                </div>
             </div>
-
-            <div class="col-md-12">
-                <label>Building</label>
-
-                <select name="building_lid" id="" class="select2">
-                    <option>--select--</option>
-                    <% for(let building of buildingList) { %>
-                    <option value="<%- building.building_id %>">
-                        <%- building.building_name %>
-                    </option>
-                    <% } %>
-                </select>
-
-            </div>
-
-            <div class="col-md-12">
-                <label>Organization</label>
-
-                <select name="handled_by" id="" class="select2">
-                    <option>--select--</option>
-                    <% for(let org of orgList) { %>
-                    <option value="<%- org.id %>">
-                        <%- org.org_abbr %>/<%- org.org_id %>
-                    </option>
-                    <% } %>
-                </select>
-            </div>
-    </div>
-
-    <ul class="list-group custom-select-list selectList">
-        <% for (let room of RoomList){ %>
-        <li class="list-group-item" data-clickable="true" data-room-id="<%- room.id%>"><%- room.room_number%></li>
-        <% }%>
-    </ul>
-</div>
-<div class="col-md-9 col-xxl-9 selected-items">
-    <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">
-        Selected Rooms</h4>
-    <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Room"
-        class="form-control searchSelectedRoom">
-    <div class="row selected-room-filter">
-
-        <div class="col-md-4">
-            <label>Book for Campus</label>
-
-            <select name="campus_lid" id="campus_lid" class="select2">
-                <option>--select--</option>
-                <% for(let campus of campusList) { %>
-                <option value="<%- campus.id %>">
-                    <%- campus.campus_abbr %>
-                </option>
-                <% } %>
-            </select>
-        </div>
-
-        <div class="col-md-4">
-            <label>Book for building</label>
-
-            <select name="building_lid" id="building_lid" class="select2">
-                <option>--select--</option>
-                <% for(let building of buildingList) { %>
-                <option value="<%- building.building_id %>">
-                    <%- building.building_name %>
-                </option>
-                <% } %>
-            </select>
-
-        </div>
-
-        <div class="col-md-4">
-            <label>Book for Organization</label>
-
-            <select name="handled_by" id="handled_by" class="select2">
-                <option>--select--</option>
-                <% for(let org of orgList) { %>
-                <option value="<%- org.id %>">
-                    <%- org.org_abbr %>/<%- org.org_id %>
-                </option>
-                <% } %>
-            </select>
-        </div>
-
-    </div>
-
-    <ul class="list-group custom-select-list selectedList" id="selectedList">
-        <table class="table table-bordered" id="add-more-room-table">
-            <thead>
-                <th>room</th>
-                <th>start Time</th>
-                <th>end Time</th>
-                <th>start Date</th>
-                <th>end Date</th>
-                <th>Transaction Type</th>
-                <th>Action</th>
-            </thead>
-            <tbody>
-
-            </tbody>
-        </table>
-    </ul>
-
-</div>
-
-</div>
-</div>
-<div class="px-3 error-html"></div>
-<div class="modal-footer">
-    <button type="button" class="btn import-room modal-inputform-btn" id="importRoom">Import Room</button>
-</div>
-
-</div>
-</div>
-</div>
         </form>
 
         <!--Program -->
@@ -262,7 +262,8 @@
                 <button type="button" class="btn add-btn btn-sm" id="add-more-program" data-bs-toggle="modal"
                     data-bs-target="#open-program-modal"><i class="fas fa-plus"></i></button>
             </div>
-            <div class="modal-body">
+
+            <div class="">
                 <input type="hidden" id="programId" name="programId">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="">
@@ -277,76 +278,73 @@
                         <tbody>
                             <% let tcount = 1 %>
                             <%for(let program of programList) {%>
-                            <tr>
-                                <td><%- tcount++ %></td>
-                                <td><%-program.program_code %></td>
-                                <td><%-program.program_name %></td>
-                                <td><%-program.program_type %></td>
-                                <td><%-program.abbr %></td>
+                                <tr>
+                                    <td><%- tcount++ %></td>
+                                    <td><%-program.program_code %></td>
+                                    <td><%-program.program_name %></td>
+                                    <td><%-program.program_type %></td>
+                                    <td><%-program.abbr %></td>
 
-                            </tr>
+                                </tr>
                             <%}%>
-                                </tbody>
-                                    </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content modal-inputform">
+                        <div class="modal-header modal-inputform-header">
+                            <h3 class="modal-title" id="open-room-modal-title">Select Program</h3>
+                             <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i  class="fas fa-times text-dark"></i></button>
+                        </div>
+                                            
+
+                        <div class="modal-body py-0">
+                            <div class="row">
+                                <div class="col-md-3 col-xxl-3 select-items">
+                                    <h4 class="text-center py-1 select-room-header">Select Program</h4>
+                                    <input type="text" name=""  placeholder="Search Program" class="form-control searchItemProgram">
+
+                                    <ul class="list-group custom-select-list selectList selectListProgram"  style="margin-top: 70px;">
+                                        <% for (let program of programDboList){ %>
+                                            <li class="list-group-item" data-clickable="true" data-program-code="<%-program.program_id %>">
+                                            <%- program.programName%></li>
+                                        <% }%>
+                                    </ul>
                                 </div>
+                                <div class="col-md-9 col-xxl-9 selected-items">
+                                    <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
+                                    <input type="text" name="" placeholder="Search Selected Faculty"
+                                        class="form-control searchSelectedItemProgram">
+
+                                    <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
+                                        <table class="table table-bordered" id="add-more-program-table">
+                                            <thead>
+                                                <th>Program Name</th>
+                                                <th>Program Type</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </ul>
+                                </div>
+
                             </div>
-
-                            <!-- Modal -->
-                        <div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal" aria-hidden="true">
-                            <div class="modal-dialog modal-fullscreen">
-                                <div class="modal-content modal-inputform">
-                                    <div class="modal-header modal-inputform-header">
-                                        <h3 class="modal-title" id="open-room-modal-title">Select Program</h3>
-                                        <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
-                                                class="fas fa-times text-dark"></i></button>
-                                    </div>
-                                    
-
-                                    <div class="modal-body py-0">
-                                        <div class="row">
-                                            <div class="col-md-3 col-xxl-3 select-items">
-                                                <h4 class="text-center py-1 select-room-header">Select Program</h4>
-                                                <input type="text" name=""  placeholder="Search Program"
-                                                    class="form-control searchItemProgram">
-
-                                                <ul class="list-group custom-select-list selectList selectListProgram"  style="margin-top: 70px;">
-                                                    <% for (let program of programDboList){ %>
-                            <li class="list-group-item" data-clickable="true" data-program-code="<%-program.program_id %>">
-                                <%- program.programName%></li>
-                            <% }%>
-                            </ul>
+                        </div>
+                        <div class="error-html"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-9 col-xxl-9 selected-items">
-                    <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
-                    <input type="text" name="" placeholder="Search Selected Faculty"
-                        class="form-control searchSelectedItemProgram">
-
-                    <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
-                        <table class="table table-bordered" id="add-more-program-table">
-                            <thead>
-                                <th>Program Name</th>
-                                <th>Program Type</th>
-                                <th>Action</th>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </ul>
-
-                </div>
-
-            </div>
-            </div>
-            <div class="error-html"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
-            </div>
-            </div>
-            </div>
             </div>
         </form>
-
+ 
         <!-- Course Workload-->
         <form class="step d-none" id="courseWorkload-form" data-step="4">
             <div class="modal-header table-card-header d-flex justify-content-end">
@@ -360,98 +358,97 @@
                     <select id="programLid" name="programLid" class="form-select">
                         <option value="">Select program</option>
                         <% for(let program of programList) {%>
-                        <option value="<%-program.program_id %>"><%-program.program_name %></option>
+                            <option value="<%-program.program_id %>"><%-program.program_name %></option>
                         <%}%>
-                                        </select>
-                                    </div>
-                                    <div >
-                                        <select id="acadSessionLid" name="acadSessionLid" class="form-select">
-                                            <option value="">Select Session</option>
-                                            <% for(let acadsession of AcadSessionList) {%>
-                        <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
+                    </select>
+                </div>
+                <div >
+                    <select id="acadSessionLid" name="acadSessionLid" class="form-select">
+                    <option value="">Select Session</option>
+                        <% for(let acadsession of AcadSessionList) {%>
+                            <option value="<%- acadsession.acadSessionId %>"><%- acadsession.acad_session %></option>
                         <%}%>
-                                        </select>
-                                    </div>
-                                    <div class="mx-3">
-                                        <button  type="button" class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
-                                    </div>
-                                    <div>
-                                        <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Save </button>
-                                    </div>
+                    </select>
+                </div>
+                <div class="mx-3">
+                    <button  type="button" class="btn btn-danger fetchFromSAP ms-auto"><i class="fa fa-download"></i> Fetch From SAP</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-success SaveAllCourse"><span class="fa fa-check"></span> Save </button>
+                </div>
+            </div>
 
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="programId" name="programId">
-                                <div class="table-responsive">
-                                    <table class="table custom_row table-bordered" id="add-more-courseWorkload-table">
-                                        <thead>
-                                            <th>Sr No.</th>
-                                            <th>Module Name</th>
-                                            <th>Module Code</th>
-                                            <th>Program Code</th>
-                                            <th>Acad Session</th>
-                                            <th>Module Type</th>
-                                            <th>Intake</th>
-                                            <th>Student per division</th>
-                                            <th>Lecture per Week per Division</th>
-                                            <th>Practical per Week per Division</th>
-                                            <th>Tutorial per Week per Division</th>
-                                            <th>Workshop per Week per Division</th>
-                                            <th>Session Events per Semester</th>
-                                            <th>Continuous
-                                            </th>
-                                        </thead>
-                                        <tbody>
-                                            <%let count1 = 1%>
-                        <% for(let course of courseWorkloadList){%>
-                        <tr>
-                            <td><%- count1++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid"
-                                    value="<%-course.id %>"></td>
-                            <td><%-course.module_name%></td>
-                            <td><%-course.module_id%></td>
-                            <td><%-course.program_id%></td>
-                            <td><%-course.acad_session%></td>
-                            <td>
-                                <select class="form-select rounded-0" name="module_type_lid">
-                                    <!-- <option value="">Select Module Type</option> -->
-                                    <%for(let module of moduleList){%>
-                                    <%if(course.module_type_lid == module.id){%>
-                                    <option value="<%- module.id %>" selected><%- module.name %></option>
-                                    <%}else{%>
-                                    <option value="<%- module.id %>"><%- module.name %></option>
-                                    <%}%>  
-                                                        <%}%>
-                                </select>
-                            </td>
-                            <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>">
-                            </td>
-                            <td><input type="number" class="form-control rounded-0" name="student_per_division"
-                                    value="<%-course.student_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division"
-                                    value="<%-course.lec_per_week_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division"
-                                    value="<%-course.practical_per_week_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division"
-                                    value="<%-course.tutorial_per_week_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division"
-                                    value="<%-course.workshop_per_week_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester"
-                                    value="<%-course.session_events_per_semester%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="continuous"
-                                    value="<%-course.continuous%>"></td>
+            <div class="modal-body">
+                <input type="hidden" id="programId" name="programId">
+                <div class="table-responsive">
+                    <table class="table custom_row table-bordered" id="add-more-courseWorkload-table">
+                         <thead>
+                            <th>Sr No.</th>
+                            <th>Module Name</th>
+                            <th>Module Code</th>
+                            <th>Program Code</th>
+                            <th>Acad Session</th>
+                            <th>Module Type</th>
+                            <th>Intake</th>
+                            <th>Student per division</th>
+                            <th>Lecture per Week per Division</th>
+                            <th>Practical per Week per Division</th>
+                            <th>Tutorial per Week per Division</th>
+                            <th>Workshop per Week per Division</th>
+                            <th>Session Events per Semester</th>
+                            <th>Continuous
+                            </th>
+                        </thead>
+                        <tbody>
+                            <%let count1 = 1%>
+                            <% for(let course of courseWorkloadList){%>
+                                <tr>
+                                <td><%- count1++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid"
+                                        value="<%-course.id %>"></td>
+                                <td><%-course.module_name%></td>
+                                <td><%-course.module_id%></td>
+                                <td><%-course.program_id%></td>
+                                <td><%-course.acad_session%></td>
+                                <td>
+                                    <select class="form-select rounded-0" name="module_type_lid">
+                                        <!-- <option value="">Select Module Type</option> -->
+                                        <%for(let module of moduleList){%>
+                                        <%if(course.module_type_lid == module.id){%>
+                                        <option value="<%- module.id %>" selected><%- module.name %></option>
+                                        <%}else{%>
+                                        <option value="<%- module.id %>"><%- module.name %></option>
+                                        <%}%>  
+                                                                    <%}%>
+                                    </select>
+                                </td>
+                                <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>">
+                                </td>
+                                <td><input type="number" class="form-control rounded-0" name="student_per_division"
+                                        value="<%-course.student_per_division%>"></td>
+                                <td><input type="number" class="form-control rounded-0" name="lec_per_week_per_division"
+                                        value="<%-course.lec_per_week_per_division%>"></td>
+                                <td><input type="number" class="form-control rounded-0" name="practical_per_week_per_division"
+                                        value="<%-course.practical_per_week_per_division%>"></td>
+                                <td><input type="number" class="form-control rounded-0" name="tutorial_per_week_per_division"
+                                        value="<%-course.tutorial_per_week_per_division%>"></td>
+                                <td><input type="number" class="form-control rounded-0" name="workshop_per_week_per_division"
+                                        value="<%-course.workshop_per_week_per_division%>"></td>
+                                <td><input type="number" class="form-control rounded-0" name="session_events_per_semester"
+                                        value="<%-course.session_events_per_semester%>"></td>
+                                <td><input type="number" class="form-control rounded-0" name="continuous"
+                                        value="<%-course.continuous%>"></td>
+                                </tr>
+                            <%}%>   
+                        </tbody>
+                    </table>
 
-                        </tr>
-                        <%}%>   
-                                        </tbody>
-                                    </table>
-
-                                    
-                                </div>
-                            </div>
-                </form>
+                                            
+                </div>
+            </div>
+        </form>
 
         <!-- Session date -->
-        <form action="/admin/sessiondate" method="post" class="step d-none" id="sessionDate-form" data-step="5">
+        <form  class="step d-none" id="sessionDate-form" data-step="5">
 
             <div class="modal-header table-card-header">
                 <h5 class="modal-title" id="add-sessionDate-modal-title">Add Session Date</h5>
@@ -475,14 +472,14 @@
                                     <select class="form-select" name="program_session_lid" id="program_session_lid" required>
                                         <option  value="">--select--</option>
                                         <%for (let program of programSession){%>
-                                        <option value="<%- program.id %>"><%-program.program_name %>(<%-program.acad_session %>)</option>
+                                            <option value="<%- program.id %>"><%-program.program_name %>(<%-program.acad_session %>)</option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="acadSession" class="form-select" id="acadSession" required>
                                         <% for (let session of AcadSessionList){%>
-                                        <option value="<%- session.acadSessionId %>"><%- session.acad_session%></option>
+                                            <option value="<%- session.acadSessionId %>"><%- session.acad_session%></option>
                                         <% }%>
                                     </select>
                                 </td>
@@ -490,86 +487,83 @@
                                     <select name="sessionType" id="sessionType" class="form-select">
                                         <option value="">--select--</option>
                                         <%for (let session of sessionList){%>
-                                        <option value="<%- session.id %>"><%-session.name %></option>
+                                            <option value="<%- session.id %>"><%-session.name %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="startDate" class="form-select" id="startDate" required>
                                         <% for (let acad of acadCal){%>
-                                        <option value="<%- acad.id %>"><%- acad.date %></option>
+                                            <option value="<%- acad.id %>"><%- acad.date %></option>
                                         <% }%>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="endDate" class="form-select" id="endDate" required>
                                         <% for (let acad of acadCal){%>
-                                        <option value="<%- acad.id %>"><%- acad.date %></option>
+                                            <option value="<%- acad.id %>"><%- acad.date %></option>
                                         <% }%>
                                     </select>
                                 </td>
                                 <td>
                                     <label class="switch d-flex align-items-center">
-                                        <input type="checkbox" class="changeStatus" data-id=""
-                                            data-status="">
+                                        <input type="checkbox" class="changeStatus" data-id="" data-status="">
                                         <span class="switch-slider round"></span>
                                     </label>
-                                </td> 
+                                </td>
                             </tr>
-                        </tbody> 
+                        </tbody>
                     </table>
                 </div>
             </div>
         </form>
 
         <!-- Division -->
-        <form action="/admin/divisions" method="post" class="step d-none" id="division-form" data-step="6">
-    <div class="modal-header table-card-header">
-        <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
-        <!-- <button type="button" class="btn add-btn btn-sm ms-auto" id="add-more-division"><i class="fas fa-plus"></i></button> -->
-        <button class="btn btn-success SaveDivision" type="button"><span class="fa fa-check"></span> Save </button>
-    </div>
+        <form  class="step d-none" id="division-form" data-step="6">
+            <div class="modal-header table-card-header">
+                <h5 class="modal-title" id="add-division-modal-title">Divisions</h5>
+                <!-- <button type="button" class="btn add-btn btn-sm ms-auto" id="add-more-division"><i class="fas fa-plus"></i></button> -->
+                <button class="btn btn-success SaveDivision" type="button"><span class="fa fa-check"></span> Save </button>
+            </div>
 
-    <div class="modal-body">
-        <input type="hidden" id="division" name="division">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="add-more-division-table">
-                <thead>
-                    <th>Module Name</th>
-                    <th>Division</th>
-                    <th>Division Number</th>
-                    <th>Division count</th>
-                    <th>Count for theory batch</th>
-                    <th>Count for practical batch</th>
-                    <th>Count for tutorial batch</th>
-                    <th>Count for workshop batch</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
-                    <% for(let div of divisionData) {%>
-                    <tr>
-                        <td>
-                            <%- div.module_name%> <input type="hidden" name="divId" value="<%- div.id%>">
-                        </td>
-                        <td><%- div.division%></td>
-                        <td><%- div.division_num%></td>
-                        <td><%- div.division_count%></td>
-                        <td><input class="form-control rounded-0" name="count_for_theory_batch"
-                                value="<%-div.count_for_theory_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="count_for_practical_batch"
-                                value="<%-div.count_for_practical_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="count_for_tutorial_batch"
-                                value="<%-div.count_for_tutorial_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="count_for_workshop_batch"
-                                value="<%-div.count_for_workshop_batch%>"></td>
-                        <td>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
-                        </td>
-
-                    </tr>
-                    <%}%>
+            <div class="modal-body">
+                <input type="hidden" id="division" name="division">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="add-more-division-table">
+                        <thead>
+                            <th>Module Name</th>
+                            <th>Division</th>
+                            <th>Division Number</th>
+                            <th>Division count</th>
+                            <th>Count for theory batch</th>
+                            <th>Count for practical batch</th>
+                            <th>Count for tutorial batch</th>
+                            <th>Count for workshop batch</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <% for(let div of divisionData) {%>
+                                <tr>
+                                    <td>
+                                        <%- div.module_name%> <input type="hidden" name="divId" value="<%- div.id%>">
+                                    </td>
+                                    <td><%- div.division%></td>
+                                    <td><%- div.division_num%></td>
+                                    <td><%- div.division_count%></td>
+                                    <td><input class="form-control rounded-0" name="count_for_theory_batch"
+                                            value="<%-div.count_for_theory_batch%>"></td>
+                                    <td><input class="form-control rounded-0" name="count_for_practical_batch"
+                                            value="<%-div.count_for_practical_batch%>"></td>
+                                    <td><input class="form-control rounded-0" name="count_for_tutorial_batch"
+                                            value="<%-div.count_for_tutorial_batch%>"></td>
+                                    <td><input class="form-control rounded-0" name="count_for_workshop_batch"
+                                            value="<%-div.count_for_workshop_batch%>"></td>
+                                    <td>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
+                                    </td>
+                                </tr>
+                            <%}%>
                         </tbody>
-
                     </table>
                 </div>
             </div>
@@ -583,7 +577,6 @@
                 <!-- <button type="button" class="btn add-btn btn-sm" id="add-more-divisionbatches"><i
                         class="fas fa-plus"></i> </button> -->
                 <button class="btn btn-success saveDivisionBatch" type="button"><span class="fa fa-check"></span> Save </button>
-                
             </div>
 
             <div class="modal-body">
@@ -604,27 +597,25 @@
                         <tbody>
                             <tr>
                                 <% for(let batch of divisionBatchList) {%>
-                    <tr>
+                                    <tr>
+                                        <td>
+                                            <%- batch.module_name%>
+                                        </td>
+                                        <td><%- batch.division%></td>
+                                        <td><%- batch.batch%><input type="hidden" class="form-control" name="batch_id"
+                                                value="<%- batch.id %>"></td>
+                                        <td><%- batch.event_name%></td>
+                                        <td><%- batch.divison_count%></td>
+                                        <td><%- batch.batch_count%></td>
+                                        <td><%- batch.input_batch_count%></td>
+                                        <td><input class="form-control" type="number" name="faculty_count"
+                                                value="<%-batch.faculty_count%>"></td>
+                                        <td>
+                                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
+                                        </td>
 
-                        <td>
-                            <%- batch.module_name%>
-                        </td>
-                        <td><%- batch.division%></td>
-                        <td><%- batch.batch%><input type="hidden" class="form-control" name="batch_id"
-                                value="<%- batch.id %>"></td>
-                        <td><%- batch.event_name%></td>
-                        <td><%- batch.divison_count%></td>
-                        <td><%- batch.batch_count%></td>
-                        <td><%- batch.input_batch_count%></td>
-                        <td><input class="form-control" type="number" name="faculty_count"
-                                value="<%-batch.faculty_count%>"></td>
-                        <td>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
-                        </td>
-
-                    </tr>
-                    <%}%>
-
+                                    </tr>
+                                <%}%>
                             </tr>
                         </tbody>
 
@@ -662,43 +653,43 @@
                                 <td>
                                     <select class="form-select" name="programName">
                                         <% for(program of programList){%>
-                    <option value="<%- program.id%>"><%- program.program_name%></option>
-                    <%}%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select class="form-select" name="day">
                                         <% for(day of dayList){%>
-                    <option value="<%- day.id%>"><%- day.day_name%></option>
-                    <%}%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select class="form-select" name="acadSession">
                                         <% for(acadSession of AcadSessionList){%>
-                    <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
-                    <%}%>
+                                            <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select class="form-select" name="startTime">
                                         <% for(time of slotTime){%>
-                    <option value="<%- time.id%>"><%- time.start_time %></option>
-                    <%}%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select class="form-select" name="endTime">
                                         <% for(time of slotTime){%>
-                    <option value="<%- time.id%>"><%- time.end_time %></option>
-                    <%}%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select name="lecType" id="" class="form-select" >
                                         <% for(type of lectureTypeList){%>
-                    <option value="<%- type.id%>"><%- type.name%></option>
-                    <%}%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
@@ -734,166 +725,161 @@
                     </thead>
                     <tbody>
                         <% let count = 1%>
-                    <%for(let faculty of facultyList){%>
-                    <tr>
-                        <td><%- count++ %></td>
-                        <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
-                        <td><%- faculty.faculty_name %></td>
-                    </tr>
-                    <%}%>
+                        <%for(let faculty of facultyList){%>
+                            <tr>
+                                <td><%- count++ %></td>
+                                <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
+                                <td><%- faculty.faculty_name %></td>
+                            </tr>
+                        <%}%>
                     </tbody>
                 </table>
-            
             </div>
         
             <!-- Modal -->
             <div class="modal fade" id="open-faculty-modal" tabindex="-1" aria-labelledby="open-faculty-modal" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen modal-lg">
-                <div class="modal-content modal-inputform">
-                    <div class="modal-header modal-inputform-header">
-                        <h3 class="modal-title" id="open-faculty-modal-title">Import Faculty</h3>
-                        <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times text-dark"></i></button>
+                <div class="modal-dialog modal-fullscreen modal-lg">
+                    <div class="modal-content modal-inputform">
+                        <div class="modal-header modal-inputform-header">
+                            <h3 class="modal-title" id="open-faculty-modal-title">Import Faculty</h3>
+                            <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times text-dark"></i></button>
+                        </div>
+
+                        <div class="modal-body py-0">
+
+                            <div class="row">
+                                <div class="col-md-3 select-items">
+                                    <h4 class="text-center py-1 select-room-header">Select Faculties</h4>
+                                    <input type="text" name="" id="searchItem" placeholder="Search Faculty"
+                                        class="form-control searchItemFaculty">
+                                    <ul class="list-group custom-select-list selectListFaculty" id="selectList" style="margin-top: 60px;">
+                                        <% for (let faculty of faculties) { %>
+                                            <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
+                                            data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.id%>"
+                                            data-clickable="true"> <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)%></li>
+                                        <% } %>
+                                    </ul>
+                                </div>
+                                <div class="col-md-9 selected-items">
+                                    <h4 class="text-center py-1 selected-room-header">Selected Faculties</h4>
+                                    <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty"
+                                        class="form-control searchSelectedFaculty">
+                                    <ul class="list-group custom-select-list selectedListFaculty" id="selectedList" style="margin-top: 50px;">
+                                        <table class="table table-bordered" id="add-more-faculty-table">
+                                            <thead>
+                                                <th>Faculty Name</th>
+                                                <th>Start Time</th>
+                                                <th>End Time</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-3 error-html"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
+                        </div>
                     </div>
-
-                    <div class="modal-body py-0">
-
-                        <div class="row">
-                            <div class="col-md-3 select-items">
-                                <h4 class="text-center py-1 select-room-header">Select Faculties</h4>
-                                <input type="text" name="" id="searchItem" placeholder="Search Faculty"
-                                    class="form-control searchItemFaculty">
-                                <ul class="list-group custom-select-list selectListFaculty" id="selectList" style="margin-top: 60px;">
-
-                                    <% for (let faculty of faculties) { %>
-                    <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
-                        data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.id%>" data-clickable="true">
-                        <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
-                        %></li>
-                    <% } %>
-                    </ul>
-        </div>
-        <div class="col-md-9 selected-items">
-            <h4 class="text-center py-1 selected-room-header">Selected Faculties</h4>
-            <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty"
-                class="form-control searchSelectedFaculty">
-            <ul class="list-group custom-select-list selectedListFaculty" id="selectedList" style="margin-top: 50px;">
-                <table class="table table-bordered" id="add-more-faculty-table">
-                    <thead>
-                        <th>Faculty Name</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-            </ul>
-
-        </div>
-
-    </div>
-    </div>
-    <div class="px-3 error-html"></div>
-    <div class="modal-footer">
-        <button type="button" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
-    </div>
-    </div>
-    </div>
-    </div>
+                </div>
+            </div>
 
         </form>
 
         <!-- Faculty Works -->
         <form action="/admin/facultyworks" method="post" class="step d-none" id="facultyWorks" data-step="10">
 
-        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
-            <div>
-                <h5>Faculty Works</h5>
-            </div>
-            <div>
-                <button class="btn add-btn ms-auto" type="button" id="add-more-facultyworkfields"><i
-                        class="fas fa-plus"></i></button>
-            </div>
-        </div>
-
-        <div class="card-body table-responsive">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-            <table class="table table-bordered" id="add-more-facultywork-table">
-                <thead>
-                    <th>Faculty</th>
-                    <th>Program Session</th>
-                    <th>Module</th>
-                    <th>Lecture per week</th>
-                    <th>Practical per week</th>
-                    <th>Tutorial per weeek</th>
-                    <th>Workshop per week</th>
-                    <th>Batch preference</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <select class="form-select" name="faculty_lid" id="faculty_lid">
-                                <option value="">--select--</option>
-                                <% for(faculty of facultyList) {%>
-                                <option value="<%- faculty.id %>">
-                                    <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
-                                <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-select" name="program_session_lid" id="program_session_lid">
-                                        <option value="">--select--</option>
-                                        <% for(session of programSession) {%>
-                                <option value="<%- session.id %>"><%- session.acad_session %></option>
-                                <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-select" name="module_lid" id="module_lid">
-                                        <option value="">--select--</option>
-                                        <% for(course of courseWorkloadList) {%>
-                                <option value="<%- course.id %>">
-                                    <%- course.module_name %>(<%- course.module_id %>)</option>
-                                <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="number" name="lecture_per_week" id="lecture_per_week" class="form-control">
-                                </td>
-                                <td>
-                                    <input type="number" name="practical_per_week" id="practical_per_week" class="form-control">
-                                </td>
-                                <td>
-                                    <input type="number" name="tutorial_per_week" id="tutorial_per_week" class="form-control">
-                                </td>
-                                <td><input type="number" name="workshop_per_week" id="workshop_per_week" class="form-control"></td>
-                                <td>
-                                    <!-- <input type="number" name="is_batch_preference_set" class="form-control"> -->
-                                    <select class="form-control" name="is_batch_preference_set" id="is_batch_preference_set">
-                                        <option value="">Select preference</option>
-                                        <option value="1">Yes</option>
-                                        <option value="0">No</option>
-                                    </select>
-                                </td>
-
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworkfield"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                
+            <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+                <div>
+                    <h5>Faculty Works</h5>
                 </div>
-            
-            
-            </form>
+                <div>
+                    <button class="btn add-btn ms-auto" type="button" id="add-more-facultyworkfields"><i
+                            class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive">
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                        type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <table class="table table-bordered" id="add-more-facultywork-table">
+                    <thead>
+                        <th>Faculty</th>
+                        <th>Program Session</th>
+                        <th>Module</th>
+                        <th>Lecture per week</th>
+                        <th>Practical per week</th>
+                        <th>Tutorial per weeek</th>
+                        <th>Workshop per week</th>
+                        <th>Batch preference</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="form-select" name="faculty_lid" id="faculty_lid">
+                                    <option value="">--select--</option>
+                                    <% for(faculty of facultyList) {%>
+                                    <option value="<%- faculty.id %>">
+                                        <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
+                                    <%}%>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-select" name="program_session_lid" id="program_session_lid">
+                                                <option value="">--select--</option>
+                                                <% for(session of programSession) {%>
+                                    <option value="<%- session.id %>"><%- session.acad_session %></option>
+                                    <%}%>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-select" name="module_lid" id="module_lid">
+                                                <option value="">--select--</option>
+                                                <% for(course of courseWorkloadList) {%>
+                                    <option value="<%- course.id %>">
+                                        <%- course.module_name %>(<%- course.module_id %>)</option>
+                                    <%}%>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="lecture_per_week" id="lecture_per_week" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="practical_per_week" id="practical_per_week" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" name="tutorial_per_week" id="tutorial_per_week" class="form-control">
+                                        </td>
+                                        <td><input type="number" name="workshop_per_week" id="workshop_per_week" class="form-control"></td>
+                                        <td>
+                                            <!-- <input type="number" name="is_batch_preference_set" class="form-control"> -->
+                                            <select class="form-control" name="is_batch_preference_set" id="is_batch_preference_set">
+                                                <option value="">Select preference</option>
+                                                <option value="1">Yes</option>
+                                                <option value="0">No</option>
+                                            </select>
+                                        </td>
+
+                                        <td>
+                                            <i class="far fa-edit d-none"></i>
+                                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworkfield"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        
+            </div>
+               
+        </form>
 
         <!-- Faculty Time Preference -->
         <form  class="step d-none" id="facultyPreference" data-step="11">
@@ -920,36 +906,35 @@
                                 <td>
                                     <select class="form-select" name="faculty_work_lid" id="faculty_work_lid">
                                         <% for(faculty of facultyWorkList) {%>
-                            <option value="<%- faculty.id %>">
-                                <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
-                            <%}%>
+                                            <option value="<%- faculty.id %>">
+                                            <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select class="form-select" name="p_day_lid" id="p_day_lid">
                                         <% for(programday of programDayList) {%>
-                            <option value="<%- programday.id %>"><%- programday.program_name %> (
-                                <%- programday.day_name %> )</option>
-                            <%}%>
+                                            <option value="<%- programday.id %>"><%- programday.program_name %> (
+                                            <%- programday.day_name %> )</option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
                                     <select class="form-select" name="start_time_id" id="start_time_id">
                                         <option value="">Select Start Time</option>
                                         <%for(let startlist of slotTime){%>
-                            <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
-                            <%}%>
+                                            <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
+                                        <%}%>
                                 </select>
                                 </td>
                                 <td>
                                     <select class="form-select" name="end_time_id" id="end_time_id">
                                         <option value="">Select End Time</option>
                                         <%for(let endlist of slotTime){%>
-                            <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
-                            <%}%>
+                                            <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
+                                        <%}%>
                                 </select>
                                 </td>
-                           
                                 <td>
                                     <i class="far fa-edit d-none"></i>
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworktimepreference"></i>
@@ -986,9 +971,9 @@
                                     <select class="form-select" name="faculty_lid" id="faculty_lid">
                                         <option value="">--select--</option>
                                         <% for(faculty of facultyList) {%>
-                            <option value="<%- faculty.id %>">
-                                <%- faculty.faculty_name %> (<%- faculty.faculty_id %>)</option>
-                            <%}%>
+                                        <option value="<%- faculty.id %>">
+                                            <%- faculty.faculty_name %> (<%- faculty.faculty_id %>)</option>
+                                        <%}%>
                                     </select>
                                 </td>
                                 <td>
