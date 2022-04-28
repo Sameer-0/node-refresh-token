@@ -79,18 +79,13 @@ module.exports = class Campuses {
     }
 
 
-    static delete(inputJSON) {
+    static delete(id, userid) {
         return poolConnection.then(pool => {
-            let request = pool.request();
-            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+            const request = pool.request();
+            return request.input('input_request_lid', sql.Int, id)
+                .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute('[dbo].delete_campuses')
-        })
-    }
-
-    static deleteAll() {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].campuses`)
+                .execute(`[dbo].[sp_delete_campuses]`)
         })
     }
 

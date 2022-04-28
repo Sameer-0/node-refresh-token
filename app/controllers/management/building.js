@@ -90,26 +90,14 @@ module.exports = {
         })
     },
 
+
     delete: (req, res) => {
-
-        console.log('Delete Call', req.body)
-        let object = {
-            delete_buildings: JSON.parse(req.body.Ids)
-        }
-
-        Buildings.delete(object).then(result => {
+        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        Buildings.delete(req.body.id, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            console.log(error)
             res.status(500).json(JSON.parse(error.originalError.info.message))
-        })
-    },
-
-    deleteAll: (req, res) => {
-        Buildings.deleteAll().then(result => {
-
-            res.status(200).json({status:200,description:"Successfully deleted"})
-        }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
         })
     },
 

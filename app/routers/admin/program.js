@@ -18,7 +18,7 @@ router.put('/programs', validate('JsonValidator'), program.update)
 router.get('/programs/search', validate('search'), program.search)
 router.get('/programs/findOne', validate('search'), program.findOne)
 router.post('/programs', validate('JsonValidator'), program.create)
-
+router.delete('/programs', validate('delete'), program.delete)
 
 // PROGRAM TYPE ROUTER
 router.get('/programs/types', programType.getProgramTypePage)

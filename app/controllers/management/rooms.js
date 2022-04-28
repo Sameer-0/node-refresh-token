@@ -74,19 +74,6 @@ module.exports = {
     },
 
 
-    delete: (req, res) => {
-        let object = {
-            delete_rooms: JSON.parse(req.body.Ids)
-        }
-
-        Rooms.delete(object).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
-        })
-    },
-
     addRoom: (req, res) => {
 
         if (req.body.settingName) {
@@ -142,15 +129,6 @@ module.exports = {
         })
     },
 
-    deleteAll: (req, res) => {
-        Rooms.deleteAll().then(result => {
-            res.status(200).json({
-                status: 200
-            })
-        }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
-        })
-    },
 
     isProcessed: (req, res) => {
         Rooms.isProcessed(object).then(result => {
@@ -190,6 +168,15 @@ module.exports = {
             })
         }).catch(error => {
             throw error
+        })
+    },
+
+    delete: (req, res) => {
+        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        Rooms.delete(req.body.id, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     }
 }

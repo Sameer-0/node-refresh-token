@@ -8,6 +8,7 @@
 <!-- MAIN-CONTENT -->
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
+    <div class="errorHtml"></div>
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -15,8 +16,6 @@
             </div>
             <div>
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-building-modal"><i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto delete-buildings add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-buildings add-btn "><img src="/icons/delete.png" alt="" width="24px" height="32px"></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -33,7 +32,6 @@
                     <th>End Time</th>
                     <th>Campus</th>
                     <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-building"></th>
                 </thead>
                 <tbody>
                     <% for (let building of buildingList) { %>
@@ -63,13 +61,9 @@
                             <%- building.campus_abbr %>
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                data-building-id="<%- building.building_id %>"></i>
-
-                        </td>
-                        <td>
-                            <input type="checkbox" data-building-id="<%- building.building_id %>"
-                                class="delete-building">
+                            <a class="edit-building" data-building-id="<%- building.building_id %>"><i class="fas fa-edit text-dark cursor-pointer"
+                                ></i></a>
+                                <a class="delete-building" data-id="<%- building.building_id %>"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                     </tr>
 
@@ -103,7 +97,7 @@
 
 
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
                 <input type="hidden" name="buildingId" id="buildingId">
                 <div class="">
                     <table class="table " id="add-more-building-table">
@@ -195,7 +189,6 @@
             </div>
 
             <div class="modal-footer">
-                <div id="errorMsg"></div>
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-building"><i class="fas fa-plus"></i>Add More Building</button>
                 <button type="submit" class="btn  createBuilding modal-inputform-btn">Create Building</button>
                 <button type="submit" class="btn  updateBuilding modal-inputform-btn d-none">Update Building</button>
@@ -379,86 +372,6 @@
     })
 
 
-    //Select All campus
-    $("#buildingTable").on('click', '.selectAll-building', function () {
-        if (this.checked) {
-            // Iterate each checkbox
-            $('.delete-building:checkbox').each(function () {
-                this.checked = true;
-            });
-        } else {
-            $('.delete-building:checkbox').each(function () {
-                this.checked = false;
-            });
-        }
-    })
-
-
-    //Delete Single and mutiple Delete
-    $('.delete-buildings').on('click', function () {
-        let deleteids = []
-        $('.delete-building:checked').each(function () {
-            let obj = {
-                id: $(this).attr('data-building-id')
-            }
-            deleteids.push(obj)
-        })
-        let ApiObj = {
-            url: '/management/buildings',
-            type: 'DELETE',
-            data: {
-                Ids: JSON.stringify(deleteids)
-            },
-            dataType: 'JSON'
-        }
-
-        if (deleteids.length > 0) {
-            ajaxApi(ApiObj).then(result => {
-                // showError(result)
-                location.reload()
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-
-        } else {
-            alert('Select building for deleting')
-        }
-    })
-
-
-    //Bulk Delete
-    $(".bulk-delete-buildings").on('click', function () {
-        
-        console.log('delete all clicked')
-
-        let ApiObj = {
-            url: '/management/buildings',
-            method: 'PATCH',
-            data: {},
-            dataType: 'JSON'
-        }
-
-        // ajaxApi(ApiObj).then(result => {
-        //         location.reload()
-        //     }).catch(error => {
-        //         showError(error.responseJSON)
-        // })
-
-        //Alert confirm
-         alertMsg()
-        
-        $('.alert-continue').on('click', () => {
-            ajaxApi(ApiObj).then(result => {
-                location.reload()
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-        })
-        $('.cancel').on('click', () => {
-            $('#alertModal').css('display', 'none');
-        })
-
-    })
 
 
     //Pagination Here
@@ -513,23 +426,68 @@
     }, 500));
 
 
-    function showError(errors) {
-        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
+            //Delete Faculty API
+            $("#buildingTable").on('click','.delete-building',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/management/buildings',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
                     <p>${errors.description}</p>
                     <ul>`
-        if (errors.data.length > 0) {
-            $(errors.data).each(function (key, value) {
-                $.each(this, function (key, value) {
-                    errorHtml +=
-                        `<li>${key} ${value}</li>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
                 });
-            });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $(".errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
         }
-        errorHtml +=
-            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-        $("#errorHtml").html(errorHtml)
-    }
+
+
+    function showError(errors) {
+            console.log('Error:::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error!</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            console.log(errorHtml)
+            $(".errorHtml").html(errorHtml)
+        }
 
 
     function showAjaxTable(buildingList) {
@@ -544,7 +502,6 @@
                         <th>End Time</th>
                         <th>Campus</th>
                         <th>Action</th>
-                        <th>All <input type="checkbox" class="selectAll-building"></th>
                     </thead>
                     <tbody>`;
 
@@ -563,11 +520,8 @@
                             <td>
                                 <i class="fas fa-edit text-dark cursor-pointer edit-building"
                                     data-building-id="${building.building_id}" ></i>
+                                    <a class="delete-building" data-id="<${building.building_id}"><i class="fa fa-trash text-danger"></i></a>
                             </td>
-                            <td>
-                            <input type="checkbox" data-building-id="${building.building_id}" 
-                                class="delete-building">
-                        </td>
                         </tr>`
             }
         } else {

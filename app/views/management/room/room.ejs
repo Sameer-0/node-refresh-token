@@ -6,6 +6,7 @@
 
 <div class="main-content">
     <!--MAIN CONTENT START-->
+    <div class="errorHtml"></div>
     <div class="row gy-3 gx-3 mb-3 row2-data">
         <div class="col-xl-6 col-md-10">
             <div class="card  row2-data-card">
@@ -54,8 +55,6 @@
             </div>
             <div>
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto delete-selected-rooms"><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-rooms"><img src="/icons/delete.png" alt="" width="26px" height="32px"></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -77,7 +76,6 @@
                     <!-- <th>Campus</th> -->
                     <th>Is Processed</th>
                     <th>Action</th>
-                    <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
                 </thead>
                 <tbody>
                     <% for (let room of roomList) { %>
@@ -107,11 +105,8 @@
                             <%}%>  
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-room"
-                                data-room-id="<%- room.roomid %>"></i>
-                        </td>
-                        <td>
-                            <input type="checkbox" data-room-id="<%- room.roomid %>" class="delete-rooms">
+                            <a class="edit-room" data-room-id="<%- room.roomid %>"><i class="fas fa-edit text-dark cursor-pointer"></i></a>
+                            <a class="delete-room" data-id="<%- room.roomid %>"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                     </tr>
 
@@ -141,7 +136,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
                 <div class="row mt-4 ">
 
                     <div class="col-md-4">
@@ -366,24 +361,6 @@
         var chart = new ApexCharts(document.querySelector("#chart1"), options);
         chart.render();
 
-        //Select All Organizations
-        $("#roomTable").on('click', '.selectAll-rooms', function () {
-            console.log('checked!!')
-            if (this.checked) {
-                // Iterate each checkbox
-                $('.delete-rooms:checkbox').each(function () {
-                    this.checked = true;
-                });
-            } else {
-                $('.delete-rooms:checkbox').each(function () {
-                    this.checked = false;
-                });
-            }
-        })
-
-
-
-
 
         $("#insertRoom").on('click', function () {
             let roomElems = $('#add-more-room-table tbody tr');
@@ -576,77 +553,6 @@
 
 
 
-        //Delete Single and mutiple Delete
-        $('.delete-selected-rooms').on('click', function () {
-            let deleteids = []
-            $('.delete-rooms:checked').each(function () {
-                let obj = {
-                    id: $(this).attr("data-room-id")
-                }
-                deleteids.push(obj)
-                console.log('deleteids::::::::::::::', deleteids)
-            })
-
-            if (deleteids.length > 0) {
-
-                console.log('deleteids::::::::::::::', deleteids)
-                let ApiObj = {
-                    url: '/management/rooms',
-                    type: 'DELETE',
-                    data: {
-                        Ids: JSON.stringify(deleteids)
-                    },
-                    dataType: 'JSON'
-                }
-                ajaxApi(ApiObj).then(result => {
-
-                    notify();
-                }).catch(error => {
-                    let errors = error.responseJSON.message
-                    console.log('Error:::::::::::', errors)
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    errors.map(er => {
-                        errorHtml +=
-                            `<li>${er}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
-                })
-
-            } else {
-                alert('Select Data')
-            }
-        })
-
-
-
-        //Bulk Delete
-        $(".bulk-delete-rooms").on('click', function () {
-
-            //Alert confirm
-            alertMsg()
-
-            let ApiObj = {
-                url: '/management/rooms',
-                type: 'PATCH',
-                data: {},
-                dataType: 'JSON'
-            }
-
-            $('.alert-continue').on('click', () => {
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-            })
-            $('.cancel').on('click', () => {
-                $('#alertModal').css('display', 'none');
-            })
-        })
 
 
         // is_processed API
@@ -668,6 +574,29 @@
                 showError(error.responseJSON)
             })
         })
+
+
+        //delete-room
+                //Delete Faculty API
+        $("#roomTable").on('click','.delete-room',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/management/rooms/room',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
 
 
         //Getting capus Bulding List
@@ -744,20 +673,48 @@
         });
 
 
-        function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
                     <p>${errors.description}</p>
                     <ul>`
-            $(errors.data).each(function (key, value) {
-                $.each(this, function (key, value) {
-                    errorHtml +=
-                        `<li>${key} ${value}</li>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
                 });
-            });
+            }
             errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
-            $("#errorHtml").html(errorHtml)
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $(".errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
+        }
+
+
+    function showError(errors) {
+            console.log('Error:::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error!</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            console.log(errorHtml)
+            $(".errorHtml").html(errorHtml)
         }
 
 
@@ -808,12 +765,9 @@
                             </div>`
                     }
                     quoteAjax += `</td>
-                               <td>
-                                    <i class="fas fa-edit text-dark cursor-pointer edit-room"
-                                        data-room-id="${room.roomid}"></i>
-                                </td>
-                                <td>
-                            <input type="checkbox" data-room-id="${room.roomid}" class="delete-rooms">
+                    <td>
+                            <a class="edit-room" data-room-id="${room.roomid}"><i class="fas fa-edit text-dark cursor-pointer"></i></a>
+                            <a class="delete-room" data-id="${room.roomid}"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                             </tr>`;
                 }
