@@ -75,7 +75,8 @@
                         <td><%-program.program_name %></td>
                         <td><%-program.program_type %></td>
                         <td><%-program.abbr %></td>
-                        <td><a class="edit-program" data-id="<%-program.id %>"><i class="fa fa-edit"></i></a></td>
+                        <td><a class="edit-program" data-id="<%-program.id %>"><i class="fa fa-edit"></i></a>
+                            <a class="delete-program" data-id="<%-program.id %>"><i class="fa-solid fa-trash"></i></a></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -84,13 +85,13 @@
                 <div>
                     <p>Total entries:<%- pageCount %>
                     </p>
-        </div>
-        <div>
-            <p id="pagination"></p>
+                </div>
+                <div>
+                    <p id="pagination"></p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-</div>
 </div>
 
 <!--Import Modal -->
@@ -295,6 +296,26 @@
 
             })
 
+        //Delete Faculty API
+        $("#programTable").on('click','.delete-program',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/admin/programs',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
@@ -427,37 +448,40 @@
             })
 
 
-        function AjaxtTable(programTypeList) {
-            console.log('programTypeList::::::::::::', programTypeList)
-            let AjaxTable = `<table class="table custom_row table-bordered" id="programTable">
+
+            function AjaxtTable(programTypeList) {
+                let AjaxTable = `<table class="table custom_row table-bordered" id="programTable">
                 <thead>
                     <th>#</th>
                     <th>Program Code</th>
                     <th>Program Name</th>
                     <th>Program Type</th>
                     <th>Abbr</th>
+                    <th>Action</th>
                 </thead>`;
-            if (programTypeList.length > 0) {
-                let count = 1;
-                for (let program of programTypeList) {
-                    AjaxTable +=
-                        `<tbody>
-                        <td>${count++}</td>
+        if (programTypeList.length > 0) {
+            for (program of programTypeList) {
+                AjaxTable +=
+                    `<tr>
+                        <td><%- count++ %></td>
                         <td>${program.program_code}</td>
                         <td>${program.program_name}</td>
                         <td>${program.program_type}</td>
-                        <td>${program.abbr}</td>`
-                }
-            } else {
-                AjaxTable +=
-                    `<tbody>
-                            <tr>
-                                <td colspan="5">No Data Found</td>
-                            </tr>`;
+                        <td>${program.abbr}</td>
+                        <td><a class="edit-program" data-id="${program.id}"><i class="fa fa-edit"></i></a>
+                            <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash"></i></a></td>
+                    </tr>`
             }
-            AjaxTable += `</tbody></table>`
-            $("#programTable").html(AjaxTable);
+        } else {
+            AjaxTable +=
+                ` <tr>
+                                <td colspan="9">No Data Found</td>
+                            </tr>`;
         }
+        AjaxTable += `<tbody></table>`
+        $("#programTable").html(AjaxTable);
+    }
+
 
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">

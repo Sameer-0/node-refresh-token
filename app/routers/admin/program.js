@@ -13,6 +13,7 @@ const validate = require('../../middlewares/validate')
 
 //PROGRAM ROUTER
 router.get('/programs', program.getPage)
+router.delete('/programs', program.delete)
 router.post('/programs/pagination', validate('pagination'), program.pagination)
 router.put('/programs', validate('JsonValidator'), program.update)
 router.get('/programs/search', validate('search'), program.search)
@@ -42,4 +43,5 @@ router.get('/programs/days/GetAll', days.getAll)
 router.get('/programs/sessions', sessions.getPage)
 router.post('/programs/sessions/pagination', validate('pagination'), sessions.pagination)
 router.get('/programs/sessions/search', validate('search'), sessions.search)
+
 module.exports = router;
