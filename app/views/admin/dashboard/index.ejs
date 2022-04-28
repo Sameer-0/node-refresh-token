@@ -61,12 +61,170 @@
         let facultyTypeList = JSON.parse(`<%- facultyType %>`);
         let transactionTypeList =  JSON.parse(`<%- transactionTypes %>`);
 
-        //Options for school timing
-        let schoolTimingOptions = function (obj){
-            
-            console.log('hello')
-            console.log($(obj).attr('id'))
+        $('.schoolTimingOptions').on('input', function myFunction(){
+            console.log($(this).attr('id'))
+
+            if($(this).attr('id') == 'DayWise'){
+                let DayWise = `<div class="table-responsive DayWise">
+                    <table class="table table-bordered" id="add-more-DayWise-table">
+                        <thead>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Lecture Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptions').html(DayWise);
             }
+            else if($(this).attr('id') == 'programAndDayWise'){
+                let programAndDayWise = `<div class="table-responsive programAndDayWise">
+                    <table class="table table-bordered" id="add-more-programAndDayWise-table">
+                        <thead>
+                            <th>Program Name</th>
+                            <th>Day</th>
+                            <th>Acad Session</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Lecture Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select" name="programName">
+                                        <% for(program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="acadSession">
+                                        <% for(acadSession of AcadSessionList){%>
+                                            <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptions').html(programAndDayWise);
+            }
+            else{
+                let dayOnly = `   <div class="table-responsive sameForAllDay">
+                    <table class="table table-bordered" id="add-more-sameForAllDay-table">
+                        <thead>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Lecture Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptions').html(dayOnly);
+            }
+        })
+        //Options for school timing
+       
         let optionStartTime;
         let optionEndTime;
         let startDate;
