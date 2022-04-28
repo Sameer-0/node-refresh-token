@@ -25,7 +25,7 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, intake, student_per_division, lec_per_week_per_division, practical_per_week_per_division, tutorial_per_week_per_division, workshop_per_week_per_division, continuous, session_events_per_semester, acad_session_lid, module_code
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} id, module_name, program_id, module_id, intake, student_per_division, lecture_count_per_batch,practical_count_per_batch,tutorial_count_per_batch,workshop_count_per_batch, continuous, session_events_per_semester, acad_session_lid, module_code, electives
             FROM [${slug}].initial_course_workload ORDER BY id DESC`)
         })
     }
@@ -33,7 +33,7 @@ module.exports = class {
 
     static getAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lec_per_week_per_division, icw.practical_per_week_per_division, icw.tutorial_per_week_per_division, icw.workshop_per_week_per_division, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_name
+            return pool.request().query(`SELECT icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_name, icw.electives
             FROM [${slug}].initial_course_workload icw
             INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
             LEFT JOIN [${slug}].module_types mt ON mt.id = icw.module_type_lid
@@ -63,7 +63,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lec_per_week_per_division, icw.practical_per_week_per_division, icw.tutorial_per_week_per_division, icw.workshop_per_week_per_division, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_name
+                .query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_name, icw.electives
                 FROM [${slug}].initial_course_workload icw
                 INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
                 INNER JOIN [${slug}].module_types mt ON mt.id = icw.module_type_lid
@@ -74,7 +74,7 @@ module.exports = class {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lec_per_week_per_division, icw.practical_per_week_per_division, icw.tutorial_per_week_per_division, icw.workshop_per_week_per_division, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_name
+                .query(`icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_name, icw.electives
                 FROM [${slug}].initial_course_workload icw
                 INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
                 INNER JOIN [${slug}].module_types mt ON mt.id = icw.module_type_lid
@@ -102,7 +102,7 @@ module.exports = class {
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
             .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${slug}].[sp_update_course_workload]`)
+            .execute(`[${slug}].[update_initial_course_workload]`)
         })
     }
 

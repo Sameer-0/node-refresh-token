@@ -16,6 +16,9 @@ var soap = require("soap");
 module.exports = {
   getPage: (req, res) => {
     Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
+
+      console.log(result[0].recordset)
+
       res.render('admin/courseworkload/index', {
         courseWorkloadList: result[0].recordset,
         pageCount: result[1].recordset[0].count,
