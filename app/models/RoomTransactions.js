@@ -102,4 +102,13 @@ module.exports = class RoomTransactions {
         })
     }
 
+    static delete(id, slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_request_lid', sql.Int, id)
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_delete_room_transaction]`)
+        })
+    }
 }
