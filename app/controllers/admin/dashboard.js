@@ -27,10 +27,6 @@ const ProgramSessions = require('../../models/ProgramSessions');
 const RoomTransactionTypes = require('../../models/RoomTransactionTypes')
 const RoomTransactions = require('../../models/RoomTransactions')
 const ProgramsDbo = require('../../models/ProgramsDbo');
-// const SessionTypes = require('../../models/SessionTypes')
-
-
-
 
 
 module.exports = {
@@ -69,7 +65,6 @@ module.exports = {
                 transactionTypes:  JSON.stringify(result[28].recordset),
                 transactionList: result[29].recordset,
                 programDboList: result[30].recordset,
-               
                 path:'/admin'
             })
         }) 
