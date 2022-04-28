@@ -17,8 +17,6 @@
             <div>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-facultypreference-modal"><i class="fas fa-plus"></i>
                 </button>
-                <button class="btn ms-auto select-delete-facultyworktimepreference add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-facultyworktimepreference add-btn "><img src="/icons/delete.png" alt="" width="26px" height="32px"></button>
             </div>
         </div>
 
@@ -50,7 +48,10 @@
                         <td><%- list.day_name %></td>
                         <td><%- list.start_time %></td>
                         <td><%- list.end_time %></td>
-                        <td><a class="edit-preference" data-id="<%- list.id %>" data-start-time-id="<%- list.start_time_id %>" data-end-time-id="<%- list.end_time_id %>" data-program-day-lid="<%-list.p_day_lid %>" data-faculty-work-lid="<%-list.faculty_work_lid%>"><i class="fa fa-edit"></i></a></td>
+                        <td>
+                            <a class="edit-preference" data-id="<%- list.id %>" data-start-time-id="<%- list.start_time_id %>" data-end-time-id="<%- list.end_time_id %>" data-program-day-lid="<%-list.p_day_lid %>" data-faculty-work-lid="<%-list.faculty_work_lid%>"><i class="fa fa-edit"></i></a>
+                            <a class="delete-faculty-preference" data-id="<%- list.id %>"><i class="fa fa-trash text-danger"></i></a>
+                        </td>
                     </tr>
                    <%}%> 
                 </tbody>
@@ -151,18 +152,13 @@
         $(document).ready(function () {
 
     $('.select2').select2({dropdownParent: $('#add-facultypreference-modal')});
-
        $('#add-more-facultyworktimepreferences').on('click', function () {
-
         let lastTr = $('#facultyworktimepreferencesTable tbody tr:last-child')
-    
         let faculty_work_lid = lastTr.find(`select[name="faculty_work_lid"]`).val();
         let p_day_lid = lastTr.find(`select[name="p_day_lid"]`).val();
         let start_time_id = lastTr.find(`select[name="start_time_id"]`).val();
-        let end_time_id = lastTr.find(`select[name="end_time_id"]`).val();
-        
+        let end_time_id = lastTr.find(`select[name="end_time_id"]`).val();  
         let clonedTr = lastTr.clone();
-       
         clonedTr.find(`select[name="faculty_work_lid"]`).val(faculty_work_lid).trigger('change');
         clonedTr.find(`select[name="p_day_lid"]`).val(p_day_lid).trigger('change');
         clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
@@ -175,7 +171,6 @@
     $('#facultyworktimepreferencesTable').on('click', '.remove-facultyworktimepreference',
             function () {
             let trLength = $('#facultyworktimepreferencesTable tbody tr').length;
-
             if (trLength > 1) {
                     $(this).closest('tr').remove()
                 }
@@ -318,6 +313,27 @@
 
 
 
+            //Delete Faculty API
+            $("#facultyWorkTimePreference").on('click','.delete-faculty-preference',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/admin/faculties/workpreferences',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+
         //PAGINATION
     let pageCount = `<%- pageCount %>`
     let pageNos = Math.ceil(Number(pageCount) / 10)
@@ -382,7 +398,9 @@
                         <td>${list.day_name}</td>
                         <td>${list.start_time}</td>
                         <td>${list.end_time}</td>
-                        <td><a><i class="fa fa-edit"></i></a></td>
+                        <td><a><i class="fa fa-edit"></i></a>
+                            <a class="delete-faculty-preference" data-id="${list.id}"><i class="fa fa-trash text-danger"></i></a>
+                            </td>
                     </tr>`
                 }
             } else {
@@ -412,7 +430,7 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#add-facultypreference-modal #errorHtml").html(errorHtml)
+                $(".errorHtml").html(errorHtml)
         }
 
 
@@ -431,7 +449,7 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#add-facultypreference-modal #errorHtml").html(errorHtml)
+            $(".errorHtml").html(errorHtml)
             
             setTimeout(function(){
                 location.reload()

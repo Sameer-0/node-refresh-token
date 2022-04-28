@@ -10,11 +10,14 @@ const room =  require('../../controllers/admin/rooms/index')
 const details =  require('../../controllers/admin/rooms/details')
 const approval =  require('../../controllers/admin/rooms/approval')
 const RoomRequest = require('../../controllers/admin/rooms/RoomRequest')
+
+
+
 router.get('/rooms', room.getPage)
 router.get('/rooms/search', room.search)
 router.post('/rooms/pagination', room.pagination)
 router.post('/rooms', validate('JsonValidator'),  room.create)
-
+router.delete('/rooms', validate('delete'), room.delete)
 
 
 

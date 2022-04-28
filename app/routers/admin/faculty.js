@@ -33,6 +33,7 @@ router.post('/faculties/batch', validate('JsonValidator'), batch.create)
 router.get('/faculties/batch/search', validate('search'), batch.search)
 router.post('/faculties/batch/pagination', batch.pagination)
 router.put('/faculties/batch', validate('JsonValidator'), batch.update)
+router.delete('/faculties/batch', validate('delete'), batch.delete)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
@@ -48,4 +49,5 @@ router.post('/faculties/workpreferences', validate('JsonValidator'), preferences
 router.get('/faculties/workpreferences/search', preferences.search)
 router.post('/faculties/workpreferences/pagination', preferences.pagination)
 router.put('/faculties/workpreferences', validate('JsonValidator'), preferences.update)
+router.delete('/faculties/workpreferences', validate('delete'), preferences.delete)
 module.exports = router
