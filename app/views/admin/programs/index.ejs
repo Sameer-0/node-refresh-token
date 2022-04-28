@@ -43,7 +43,7 @@
 
     </div>
 
-
+    <div class="errorHtml"></div>
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -93,7 +93,7 @@
 </div>
 </div>
 
-<!-- Modal -->
+<!--Import Modal -->
 <div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content modal-inputform">
@@ -139,11 +139,48 @@
             </div>
             <div class="error-html"></div>
             <div class="modal-footer">
-                <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
+                <button type="button" class="btn modal-inputform-btn" id="importProgram">Import Program</button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- EDIT PROGRAM AND UPDATE -->
+<div class="modal fade" id="edit-program-modal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Update Program</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="errorHtml"></div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Program Name</label>
+                <input type="text" class="form-control" id="program_name" name="program_name">
+                <input type="hidden" class="form-control" id="hidden_id" name="hidden_id">
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Program Type</label>
+                <select class="form-control" name="program_type_lid" id="program_type_lid">
+                    <% for(let program of programTypeListObj) {%>
+                    <option value="<%-program.id %>"><%- program.name %></option>
+                    <%}%>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="abbr" class="form-label">Program Abbr</label>
+                <input type="text" class="form-control" id="abbr" name="abbr">
+              </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary updateProgram">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
@@ -172,9 +209,9 @@
             })
         })
 
-        //Create
+        //Update
         $(".updateProgram").on('click', function(){
-            console.log('update call')
+          
             let id = $("#hidden_id").val()
             let program_name = $("#program_name").val()
             let program_type_lid = $("#program_type_lid").val()
@@ -197,18 +234,66 @@
                     inputJSON: JSON.stringify(JSONArray)
                 },
                 dataType: 'JSON'
-            }
+            } 
 
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-               // notify()
+          location.reload();
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
 
+        //Import
+        $('#importProgram').on('click', function() {
 
+            console.log('checlo')
+                let programElems = $('#add-more-program-table tbody tr');
+                let programCount = programElems.length;
+                let programJson = [];
+                programElems.each(function (index, elem) {
+
+                    let programId = $(elem).find('td[data-value]').attr('data-value');
+                   
+                    let programType = $(elem).find(`select[name='programType']`).val()
+                
+                    if (index < programCount - 1) {
+                        let obj = {
+                            program_id: programId,
+                            program_type: programType,  
+                        }
+                        programJson.push(obj)
+                    } else {
+                        let obj = {
+                            program_id: programId,
+                            program_type: programType,
+                        }
+                        programJson.push(obj)
+                    }
+                })
+                console.log('roomjason:::',programJson);
+                let ApiObj = {
+                type: 'POST',
+                url: '/admin/programs',
+                data: {
+                    inputJSON: JSON.stringify(programJson),
+                  
+                },
+                dataType: 'JSON' 
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('response::::::::::',result)
+                showSuccess(result)
+              
+              
+            }).catch(error => {
+                console.log('ERROR::::::::::',error.responseJSON)
+                showError(error.responseJSON)
+            })
+
+            })
 
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
@@ -230,7 +315,7 @@
 
         //Pagination Here
         let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
+      
         let pageNos = Math.ceil(Number(pageCount) / 10)
 
         console.log("Page Numbers", pageNos)
@@ -389,7 +474,8 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+                $(".errorHtml").html(errorHtml)
+                $(".error-html").html(errorHtml)
         }
 
 
@@ -408,7 +494,8 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            $(".errorHtml").html(errorHtml)
+            $(".error-html").html(errorHtml)
             setTimeout(function(){
                 location.reload()
             },2500)
