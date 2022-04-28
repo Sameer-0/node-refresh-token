@@ -15,7 +15,7 @@ module.exports = class Programs{
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, p.program_name, p.abbr, p.program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p LEFT JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, p.program_name, p.abbr, p.program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC`)
         })
     }
 

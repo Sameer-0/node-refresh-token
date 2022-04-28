@@ -13,10 +13,11 @@ const ProgramsDbo = require('../../../models/ProgramsDbo');
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), Programs.getCount(res.locals.slug), ProgramsDbo.fetchAll(1000)]).then(result => {
+        Promise.all([Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), Programs.getCount(res.locals.slug), ProgramsDbo.fetchAll(1000)]).then(result => { console.log('result[0].recordset', result[0].recordset)
             res.render('admin/programs/index', {
                 programList: result[0].recordset,
                 programTypeList: JSON.stringify(result[1].recordset),
+                programTypeListObj:result[1].recordset,
                 pageCount: result[2].recordset[0].count,
                 programDboList: result[3].recordset
             })
