@@ -43,7 +43,7 @@
 
     </div>
 
-
+    <div class="errorHtml"></div>
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -139,7 +139,7 @@
             </div>
             <div class="error-html"></div>
             <div class="modal-footer">
-                <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
+                <button type="button" class="btn modal-inputform-btn" id="importProgram">Import Program</button>
             </div>
         </div>
     </div>
@@ -172,9 +172,9 @@
             })
         })
 
-        //Create
+        //Update
         $(".updateProgram").on('click', function(){
-            console.log('update call')
+          
             let id = $("#hidden_id").val()
             let program_name = $("#program_name").val()
             let program_type_lid = $("#program_type_lid").val()
@@ -197,18 +197,66 @@
                     inputJSON: JSON.stringify(JSONArray)
                 },
                 dataType: 'JSON'
-            }
+            } 
 
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-               // notify()
+          location.reload();
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
 
+        //Import
+        $('#importProgram').on('click', function() {
 
+            console.log('checlo')
+                let programElems = $('#add-more-program-table tbody tr');
+                let programCount = programElems.length;
+                let programJson = [];
+                programElems.each(function (index, elem) {
+
+                    let programId = $(elem).find('td[data-value]').attr('data-value');
+                   
+                    let programType = $(elem).find(`select[name='programType']`).val()
+                
+                    if (index < programCount - 1) {
+                        let obj = {
+                            program_id: programId,
+                            program_type: programType,  
+                        }
+                        programJson.push(obj)
+                    } else {
+                        let obj = {
+                            program_id: programId,
+                            program_type: programType,
+                        }
+                        programJson.push(obj)
+                    }
+                })
+                console.log('roomjason:::',programJson);
+                let ApiObj = {
+                type: 'POST',
+                url: '/admin/programs',
+                data: {
+                    inputJSON: JSON.stringify(programJson),
+                  
+                },
+                dataType: 'JSON' 
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('response::::::::::',result)
+                showSuccess(result)
+              
+              
+            }).catch(error => {
+                console.log('ERROR::::::::::',error.responseJSON)
+                showError(error.responseJSON)
+            })
+
+            })
 
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
@@ -230,7 +278,7 @@
 
         //Pagination Here
         let pageCount = `<%- pageCount %>`
-        console.log("Page Count=====>>>", pageCount)
+      
         let pageNos = Math.ceil(Number(pageCount) / 10)
 
         console.log("Page Numbers", pageNos)
@@ -389,7 +437,8 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+                $(".errorHtml").html(errorHtml)
+                $(".error-html").html(errorHtml)
         }
 
 
@@ -408,7 +457,8 @@
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            $(".errorHtml").html(errorHtml)
+            $(".error-html").html(errorHtml)
             setTimeout(function(){
                 location.reload()
             },2500)
