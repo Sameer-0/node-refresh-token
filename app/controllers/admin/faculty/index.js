@@ -60,7 +60,6 @@ console.log(result[0].recordset)
 
 
     update: (req, res) => {
-
         let object = {
             update_faculty_date_times: JSON.parse(req.body.inputJSON)
         }
@@ -68,7 +67,6 @@ console.log(result[0].recordset)
         Faculties.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-
             res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
@@ -76,13 +74,11 @@ console.log(result[0].recordset)
 
 
     delete: (req, res) => {
-        programTypeModel.delete(req.body.Ids).then(result => {
-            res.json({
-                status: 200,
-                message: "Success"
-            })
+        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        Faculties.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 

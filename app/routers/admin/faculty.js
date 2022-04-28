@@ -19,7 +19,7 @@ router.get('/faculties/search', validate('search'), index.search)
 router.post('/faculties/pagination', index.pagination)
 router.get('/faculties/findOne', validate('single'), index.findOne)
 router.put('/faculties', validate('JsonValidator'), index.update)
-
+router.delete('/faculties', validate('delete'), index.delete)
 
 //Faculty Date Time
 router.get('/faculties/date-time', dateTimes.getPage)
