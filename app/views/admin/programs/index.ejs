@@ -93,7 +93,7 @@
 </div>
 </div>
 
-<!-- Modal -->
+<!--Import Modal -->
 <div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content modal-inputform">
@@ -144,6 +144,43 @@
         </div>
     </div>
 </div>
+
+<!-- EDIT PROGRAM AND UPDATE -->
+<div class="modal fade" id="edit-program-modal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Update Program</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="errorHtml"></div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Program Name</label>
+                <input type="text" class="form-control" id="program_name" name="program_name">
+                <input type="hidden" class="form-control" id="hidden_id" name="hidden_id">
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Faculty Type</label>
+                <select class="form-control" name="program_type_lid" id="program_type_lid">
+                    <% for(let program of programTypeList) {%>
+                    <option value="<%-program.id %>"><%- program.name %></option>
+                    <%}%>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="abbr" class="form-label">Program Abbr</label>
+                <input type="text" class="form-control" id="abbr" name="abbr">
+              </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary updateProgram">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
