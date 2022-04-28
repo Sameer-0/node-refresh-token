@@ -49,6 +49,8 @@
             <div>
                 <h5>PROGRAM LIST</h5>
             </div>
+            <button type="button" class="btn add-btn btn-sm" id="add-more-program" data-bs-toggle="modal"
+                    data-bs-target="#open-program-modal"><i class="fas fa-plus"></i></button>
         </div>
      
         <div class="card-body table-responsive">
@@ -92,41 +94,56 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="edit-program-modal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel">Update Program</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div id="errorHtml"></div>
-        <div class="modal-body">
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Program Name</label>
-                <input type="text" class="form-control" id="program_name" name="program_name">
-                <input type="hidden" class="form-control" id="hidden_id" name="hidden_id">
-              </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Faculty Type</label>
-                <select class="form-control" name="program_type_lid" id="program_type_lid">
-                    <% for(let program of programTypeList) {%>
-                    <option value="<%-program.id %>"><%- program.name %></option>
-                    <%}%>
-                </select>
-              </div>
+<div class="modal fade" id="open-program-modal" tabindex="-1" aria-labelledby="open-program-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h3 class="modal-title" id="open-room-modal-title">Select Program</h3>
+                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i  class="fas fa-times text-dark"></i></button>
+            </div>
+                                
 
-              <div class="mb-3">
-                <label for="abbr" class="form-label">Program Abbr</label>
-                <input type="text" class="form-control" id="abbr" name="abbr">
-              </div>
+            <div class="modal-body py-0">
+                <div class="row">
+                    <div class="col-md-3 col-xxl-3 select-items">
+                        <h4 class="text-center py-1 select-room-header">Select Program</h4>
+                        <input type="text" name=""  placeholder="Search Program" class="form-control searchItemProgram">
+
+                        <ul class="list-group custom-select-list selectList selectListProgram"  style="margin-top: 70px;">
+                            <% for (let program of programDboList){ %>
+                                <li class="list-group-item" data-clickable="true" data-program-code="<%-program.program_id %>">
+                                <%- program.programName%></li>
+                            <% }%>
+                        </ul>
+                    </div>
+                    <div class="col-md-9 col-xxl-9 selected-items">
+                        <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
+                        <input type="text" name="" placeholder="Search Selected Faculty"
+                            class="form-control searchSelectedItemProgram">
+
+                        <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
+                            <table class="table table-bordered" id="add-more-program-table">
+                                <thead>
+                                    <th>Program Name</th>
+                                    <th>Program Type</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+            <div class="error-html"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn modal-inputform-btn" id="importPrograms">Import Program</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary updateProgram">Update</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
@@ -244,6 +261,85 @@
                 }
             })
         });
+
+        let programType = JSON.parse(`<%- programTypeList%>`);
+        let programTypeList;
+        for (let obj of programType) {
+            programTypeList += `<option value="${obj.id}">${obj.name}</option>`
+        }
+
+        $(".selectListProgram").on('click', '.list-group-item', function () {
+
+            // remove current element when added to right sidebar
+            // if ($(this).attr('data-clickable') == 'true') {
+            console.log('appending:::::>>')
+            $(".selectedListProgram table tbody").append(
+                `<tr data-clickable="true">
+                    <td data-value="${$(this).attr('data-program-code')}">${$(this).text()}</td>
+                    <td>
+                        <select class="select2" name="programType">${programTypeList}</select>
+                    </td>
+                    <td>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                    </td>
+                </tr>
+                    `
+            )
+            // }
+
+            $(this).attr('data-clickable', 'false');
+
+            $($(this)).fadeOut(300, function () {
+                $($(this)).remove()
+            })
+
+            })
+
+            //Remove Element
+            $(".selectedListProgram").on('click', '.clicktoremove', function () {
+
+            if ($(this).parent().parent().attr('data-clickable') == 'true') {
+
+                $(".selectListProgram").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
+            </li>`)
+            }
+
+            $(this).parent().attr('data-clickable', 'false')
+
+            $($(this)).fadeOut(300, function () {
+                $($(this).parent().parent()).remove()
+            })
+            })
+
+            //search 
+            $('.searchItemProgram').on('input', function () {
+            selectItems = $('.selectListProgram li')
+
+            var text = $('.searchItemProgram').val().toLowerCase();
+
+            for (let item of selectItems) {
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+            })
+
+            //search selected faculty
+            $('.searchSelectedItemProgram').on('input', function () {
+            let selectedItems = $('.selectedListProgram table tbody tr')
+            var text = $('.searchSelectedItemProgram').val().toLowerCase();
+            console.log('text:::::::::', selectedItems)
+            for (let item of selectedItems) {
+                console.log('faculty:::::::::', item)
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+            })
 
 
         function AjaxtTable(programTypeList) {
