@@ -40,6 +40,7 @@ router.post('/faculties/works', validate('JsonValidator'), works.create)
 router.get('/faculties/works/search', validate('search'), works.search)
 router.post('/faculties/works/pagination', works.pagination)
 router.put('/faculties/works', validate('JsonValidator'), works.update)
+router.delete('/faculties/works', validate('delete'), works.delete)
 
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)

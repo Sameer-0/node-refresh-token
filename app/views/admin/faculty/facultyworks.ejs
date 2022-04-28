@@ -7,7 +7,7 @@
 <div class="main-content">
 
     <%- include("../partials/faculty-menu") %>
-
+    <div class="errorHtml"></div>
     <!--DASHBOARD CONTENT START-->
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
@@ -23,7 +23,7 @@
                         width="26px" height="32px"></button> -->
             </div>
         </div>
-
+       
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -56,7 +56,10 @@
                         <td><%- faculty.tutorial_per_week %></td>
                         <td><%- faculty.workshop_per_week %></td>
                         <td><%- faculty.is_batch_preference_set_status %></td>
-                        <td><a class="edit-facultyWorks" data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-program-session-lid="<%- faculty.program_session_lid %>" data-module-lid="<%- faculty.module_lid %>" data-lecture-per-week="<%- faculty.lecture_per_week%>" data-practical-per-week="<%-faculty.practical_per_week%>" data-tutorial-per-week="<%-faculty.tutorial_per_week%>" data-workshop-per-week="<%-faculty.workshop_per_week%>" data-is-batch-preference-set="<%-faculty.is_batch_preference_set %>"><span class="fa fa-edit"></span></a></td>
+                        <td>
+                            <a class="edit-facultyWorks" data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-program-session-lid="<%- faculty.program_session_lid %>" data-module-lid="<%- faculty.module_lid %>" data-lecture-per-week="<%- faculty.lecture_per_week%>" data-practical-per-week="<%-faculty.practical_per_week%>" data-tutorial-per-week="<%-faculty.tutorial_per_week%>" data-workshop-per-week="<%-faculty.workshop_per_week%>" data-is-batch-preference-set="<%-faculty.is_batch_preference_set %>"><span class="fa fa-edit"></span></a>
+                            <a class="delete-faculty-works" data-id="<%- faculty.id %>"><i class="fa fa-trash text-danger"></i></a>
+                        </td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -85,7 +88,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
                 <input type="hidden" id="hidden_id">
                 <div class="table-responsive ">
                     <table class="table table-bordered" id="add-more-facultywork-table">
@@ -158,7 +161,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div id="errorMsg"></div>
+                <!-- <div class="errorHtml"></div> -->
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-facultyworkfields"><i
                         class="fas fa-plus"></i>
                     Add
@@ -465,6 +468,26 @@ $(document).ready(function () {
     });
 
 
+        //Delete Faculty API
+        $("#facultyWorkTable").on('click','.delete-faculty-works',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/admin/faculties/works',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
     function showAjaxTable(facultiesList) {
             let AjaxTable = `<table class="table custom_row table-bordered" id="facultyWorkTable">
                 <thead>
@@ -497,7 +520,10 @@ $(document).ready(function () {
                         <td>${faculty.tutorial_per_week}</td>
                         <td>${faculty.workshop_per_week}</td>
                         <td>${faculty.is_batch_preference_set_status}</td>
-                        <td><a class="edit-facultyWorks" data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-program-session-lid="${faculty.program_session_lid}" data-module-lid="${faculty.module_lid}" data-lecture-per-week="${faculty.lecture_per_week}" data-practical-per-week="${faculty.practical_per_week}" data-tutorial-per-week="${faculty.tutorial_per_week}" data-workshop-per-week="${faculty.workshop_per_week}" data-is-batch-preference-set="${faculty.is_batch_preference_set}"><span class="fa fa-edit"></span></a></td>
+                        <td>
+                            <a class="edit-facultyWorks" data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-program-session-lid="${faculty.program_session_lid}" data-module-lid="${faculty.module_lid}" data-lecture-per-week="${faculty.lecture_per_week}" data-practical-per-week="${faculty.practical_per_week}" data-tutorial-per-week="${faculty.tutorial_per_week}" data-workshop-per-week="${faculty.workshop_per_week}" data-is-batch-preference-set="${faculty.is_batch_preference_set}"><span class="fa fa-edit"></span></a>
+                            <a class="delete-faculty-works" data-id="${faculty.id}"><i class="fa fa-trash text-danger"></i></a>
+                            </td>
                     </tr>`
                 }
             } else {
@@ -528,7 +554,8 @@ $(document).ready(function () {
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#add-facultywork-modal #errorHtml").html(errorHtml)
+                $(".errorHtml").html(errorHtml)
+                //$("#add-facultywork-modal .errorHtml").html(errorHtml)
         }
 
 
@@ -547,7 +574,9 @@ $(document).ready(function () {
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#add-facultywork-modal #errorHtml").html(errorHtml)
+                console.log(errorHtml)
+                $(".errorHtml").html(errorHtml)
+            //$("#add-facultywork-modal .errorHtml").html(errorHtml)
 
             setTimeout(function(){
                 location.reload()
