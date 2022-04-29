@@ -10,6 +10,8 @@ const Days = require('../../../models/Days');
 const RoomSlots = require('../../../models/RoomSlots')
 
 module.exports = {
+
+    
     getPage: (req, res) => {
         Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomSlots.SlotsForCourcePreference()]).then(result => {
             console.log('dayList', result[3].recordset)

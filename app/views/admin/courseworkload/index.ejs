@@ -17,6 +17,17 @@
             </div>
         </a>
         </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/admin/courseworkload/workload">
+            <div class="card row1-data-card text-center">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <img src="/icon_imgs/biology.PNG" alt="">
+                        <p class="fw-normal pt-1">COURSE WOAKLOAD</p>
+                    </div>
+            </div>
+        </a>
+        </div>
     </div>
 
     <div class="card table-card">
@@ -95,47 +106,12 @@
                     <th>Continuous</th>
                 </thead>
                 <tbody>
-                    <%
-                        let count = 1
-                        for(let course of courseWorkloadList) { %>
-                        <tr>
-                            <td><%- count++ %> <input type="hidden" class="form-control rounded-0" name="workloadlid" value="<%-course.id %>"></td>
-                            <td data-module-name="<%-course.module_name%>"><%-course.module_name%></td>
-                            <td data-module-id="<%-course.module_id%>"><%-course.module_id%></td>
-                            <td data-program-id="<%-course.program_id%>"><%-course.program_id%></td>
-                            <td data-acad-session-lid="<%-course.acad_session_lid%>"><%-course.acad_session%></td>
-                            <td>
-                            <select class="form-select rounded-0" name="module_type_lid" >
-                                <!-- <option value="">Select Module Type</option> -->
-                                <% for (let module of moduleList) { %>
-                                    <% if (course.module_type_lid == module.id) { %>
-                                        <option value="<%- module.id %>" selected><%- module.name %></option>
-                                    <%} else { %>
-                                            <option value="<%- module.id %>"><%- module.name %></option>
-                                    <% } %>  
-                                <%}%>
-                            </select>
-                            </td>
-                            <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="student_per_division" value="<%-course.student_per_division%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="lecture_count_per_batch" value="<%-course.lecture_count_per_batch%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="practical_count_per_batch" value="<%-course.practical_count_per_batch%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="tutorial_count_per_batch" value="<%-course.tutorial_count_per_batch%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="workshop_count_per_batch" value="<%-course.workshop_count_per_batch%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="<%-course.session_events_per_semester%>"></td>
-                            <td><input type="number" class="form-control rounded-0" name="continuous" value="<%-course.continuous%>"></td>
-                        </tr>
-                        <% } %>   
+                    <% for (let list of courseWorkloadList) { %>
+                        <%-list%>
+                    <% } %>         
                 </tbody>
             </table>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <p>Total entries:<%- pageCount %></p>
-                </div>
-                <div>
-                    <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Update </button>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>
@@ -174,196 +150,6 @@
                 // showError(error.responseJSON)
             })
         })
-
-        //SaveAll
-        $(".SaveAll").on('click',function(){
-            console.log('SaveAll::::::::::>>>')
-            let courseElems = $('#courseWorkloadTable tbody tr');
-            let courseCount = courseElems.length;
-            let courseJSON = [];
-            courseElems.each(function (index, elem) {
-                let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
-                let intake = $(elem).find(`input[name='intake']`).val()
-                let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
-                let lecture_count_per_batch = $(elem).find(`input[name='lecture_count_per_batch']`).val();
-                let practical_count_per_batch = $(elem).find(`input[name='practical_count_per_batch']`).val();
-                let tutorial_count_per_batch = $(elem).find(`input[name='tutorial_count_per_batch']`).val();
-                let workshop_count_per_batch = $(elem).find(`input[name='workshop_count_per_batch']`).val();
-                let session_events_per_semester = $(elem).find(`input[name='session_events_per_semester']`).val();
-                let module_type_lid = $(elem).find(`select[name='module_type_lid']`).val();
-                let continuous = $(elem).find(`input[name='continuous']`).val();
-                let module_name = $(elem).find(`td[data-module-name]`).attr(`data-module-name`);
-                let program_id = $(elem).find(`td[data-program-id]`).attr(`data-program-id`);
-                let module_id = $(elem).find(`td[data-module-id]`).attr(`data-module-id`);
-                let acad_session_lid =  $(elem).find(`td[data-acad-session-lid]`).attr(`data-acad-session-lid`);
-
-                console.log('module_name:::::::::::::::>>>>>',module_name, program_id, module_id, acad_session_lid)
-
-                if (index < courseCount - 1) {
-                    let obj = {
-                        id: workloadlid,
-                        intake: intake,
-                        student_per_division: student_per_division,
-                        lecture_count_per_batch: lecture_count_per_batch,
-                        practical_count_per_batch: practical_count_per_batch,
-                        tutorial_count_per_batch: tutorial_count_per_batch,
-                        workshop_count_per_batch: workshop_count_per_batch,
-                        session_events_per_semester: session_events_per_semester,
-                        continuous: continuous,
-                        module_type_lid:module_type_lid,
-                        user_id: username,
-                        module_name: module_name,
-                        program_id: program_id,
-                        module_id: module_id,
-                        acad_session_lid: acad_session_lid
-                    }
-                    courseJSON.push(obj)
-                } else {
-                    let obj = {
-                        id: workloadlid,
-                        intake: intake,
-                        student_per_division: student_per_division,
-                        lecture_count_per_batch: lecture_count_per_batch,
-                        practical_count_per_batch: practical_count_per_batch,
-                        tutorial_count_per_batch: tutorial_count_per_batch,
-                        workshop_count_per_batch: workshop_count_per_batch,
-                        session_events_per_semester: session_events_per_semester,
-                        continuous: continuous,
-                        module_type_lid:module_type_lid,
-                        user_id: username,
-                        module_name: module_name,
-                        program_id: program_id,
-                        module_id: module_id,
-                        acad_session_lid: acad_session_lid
-                    }
-                    courseJSON.push(obj)
-                }
-            })
-
-            console.log('Json::::::::::::',courseJSON)
-            let ApiObj = {
-                type: 'PUT',
-                url: '/admin/courseworkload',
-                data: {
-                    inputJSON: JSON.stringify(courseJSON)
-                },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                console.log(result)
-                showSuccess(result)
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-        })
-
-
-        // SEARCH PROGRAM TYPE
-         $('#searchkeyword').on('input', delay(function (e) {
-            let keyword = $("#searchkeyword").val()
-            $.ajax({
-                type: "GET",
-                url: "/admin/courseworkload/search",
-                data: {
-                    keyword: keyword
-                },
-                success: function (data) {
-                    console.log('response::::::::::::>>',data)
-                    AjaxtTable(data.data)
-                }
-            })
-        }, 500));
-
-
-
-        function AjaxtTable(workloadList) {
-            let AjaxTable = `<table class="table custom_row table-bordered" id="courseWorkloadTable">
-                <thead>
-                    <th>Sr No.</th>
-                    <th>Module Name</th>
-                    <th>Module Code</th>
-                    <th>Program Code</th>
-                    <th>Acad Session</th>
-                    <th>Module Type</th>
-                    <th>Intake</th>
-                    <th>Student per division</th>
-                    <th>Lecture count per batch</th>
-                    <th>Practical count per batch</th>
-                    <th>Tutorial count_per batch</th>
-                    <th>Workshop count per batch</th>
-                    <th>Session Events per Semester</th>
-                    <th>Continuous
-                    </th>
-                </thead>
-                <tbody>`;
-            if (workloadList.length > 0) {
-                let count = 1;
-                for (let course of workloadList) {
-                    AjaxTable +=
-                        `<tr>
-                            <td>${ count++}<input type="hidden" class="form-control rounded-0" name="workloadlid" value="${course.id}"></td>
-                            <td>${course.module_name}</td>
-                            <td>${course.module_id}</td>
-                            <td>${course.program_id}</td>
-                            <td>${course.acad_session}</td>
-                            <td><input type="number" class="form-control rounded-0" name="intake" value="${course.intake}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="student_per_division" value="${course.student_per_division}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="lecture_count_per_batch" value="${course.lecture_count_per_batch}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="practical_count_per_batch" value="${course.practical_count_per_batch}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="tutorial_count_per_batch" value="${course.tutorial_count_per_batch}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="workshop_count_per_batch" value="${course.workshop_count_per_batch}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="${course.session_events_per_semester}"></td>
-                            <td><input type="number" class="form-control rounded-0" name="continuous" value="${course.continuous}"></td>
-                        </tr>`
-                }
-            } else {
-                AjaxTable +=
-                    ` <tr><td colspan="13">No Data Found</td></tr>`;
-            }
-            AjaxTable += `<tbody></table>`
-            $("#courseWorkloadTable").html(AjaxTable);
-        }
-
-
-
-        function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
-        }
-
-
-        function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
-        }
-
     })
 </script>
 <%- include("../partials/footerEnd") %>
