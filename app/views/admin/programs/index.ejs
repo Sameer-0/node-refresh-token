@@ -69,15 +69,16 @@
                 <tbody>
                     <% let count = 1 %>
                     <%for(let program of programList) {%>
-                    <tr>
-                        <td><%- count++ %></td>
-                        <td><%-program.program_code %></td>
-                        <td><%-program.program_name %></td>
-                        <td><%-program.program_type %></td>
-                        <td><%-program.abbr %></td>
-                        <td><a class="edit-program" data-id="<%-program.id %>"><i class="fa fa-edit"></i></a>
-                            <a class="delete-program" data-id="<%-program.id %>"><i class="fa-solid fa-trash"></i></a></td>
-                    </tr>
+                        <tr>
+                            <td><%- count++ %></td>
+                            <td><%-program.program_code %></td>
+                            <td><%-program.program_name %></td>
+                            <td><%-program.program_type %></td>
+                            <td><%-program.abbr %></td>
+                            <td><a class="edit-program" data-id="<%-program.id %>"><i class="fa fa-edit"></i></a>
+                                <a class="delete-program" data-id="<%-program.id %>"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
                     <%}%>
                 </tbody>
             </table>
@@ -459,25 +460,25 @@
                     <th>Abbr</th>
                     <th>Action</th>
                 </thead>`;
-        if (programTypeList.length > 0) {
-            for (program of programTypeList) {
-                AjaxTable +=
-                    `<tr>
-                        <td><%- count++ %></td>
-                        <td>${program.program_code}</td>
-                        <td>${program.program_name}</td>
-                        <td>${program.program_type}</td>
-                        <td>${program.abbr}</td>
-                        <td><a class="edit-program" data-id="${program.id}"><i class="fa fa-edit"></i></a>
-                            <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash"></i></a></td>
-                    </tr>`
-            }
-        } else {
-            AjaxTable +=
-                ` <tr>
-                                <td colspan="9">No Data Found</td>
-                            </tr>`;
-        }
+                if (programTypeList.length > 0) {
+                    for (program of programTypeList) {
+                        AjaxTable +=
+                            `<tr>
+                                <td><%- count++ %></td>
+                                <td>${program.program_code}</td>
+                                <td>${program.program_name}</td>
+                                <td>${program.program_type}</td>
+                                <td>${program.abbr}</td>
+                                <td><a class="edit-program" data-id="${program.id}"><i class="fa fa-edit"></i></a>
+                                    <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash"></i></a></td>
+                            </tr>`
+                    }
+                } else {
+                    AjaxTable +=
+                        ` <tr>
+                                        <td colspan="9">No Data Found</td>
+                                    </tr>`;
+                }
         AjaxTable += `<tbody></table>`
         $("#programTable").html(AjaxTable);
     }

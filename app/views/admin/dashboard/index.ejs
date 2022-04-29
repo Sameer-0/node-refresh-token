@@ -65,13 +65,13 @@
             console.log($(this).attr('id'))
 
             if($(this).attr('id') == 'DayWise'){
-                let DayWise = `<div class="table-responsive DayWise">
+                let DayWise = `<div class="table-responsive DayWise" data-dis="true">
                     <table class="table table-bordered" id="add-more-DayWise-table">
                         <thead>
                             <th>Day</th>
                             <th>Start Time</th>
                             <th>End Time</th>
-                            <th>Lecture Type</th>
+                            <th>Slot Type</th>
                             <th>Action</th>
                         </thead>
                         <tbody>                           
@@ -106,24 +106,23 @@
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingDayWise"></i>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>`
-                $('.schoolTimingOptions').html(DayWise);
+                $('.schoolTimingOptionsContainer').html(DayWise);
             }
             else if($(this).attr('id') == 'programAndDayWise'){
-                let programAndDayWise = `<div class="table-responsive programAndDayWise">
+                let programAndDayWise = `<div class="table-responsive programAndDayWise" data-dis="true">
                     <table class="table table-bordered" id="add-more-programAndDayWise-table">
                         <thead>
                             <th>Program Name</th>
                             <th>Day</th>
-                            <th>Acad Session</th>
                             <th>Start Time</th>
                             <th>End Time</th>
-                            <th>Lecture Type</th>
+                            <th>Slot Type</th>
                             <th>Action</th>
                         </thead>
                         <tbody>                           
@@ -143,9 +142,68 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="acadSession">
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingProgramWise"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(programAndDayWise);
+            }
+            else if($(this).attr('id') == 'programDaySessionWise'){
+                let programAndDayWise = `<div class="table-responsive programDaySessionWise" data-dis="true">
+                    <table class="table table-bordered" id="add-more-programDaySessionWise-table">
+                        <thead>
+                            <th>Program Name</th>
+                            <th>Acad Session</th>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Slot Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select programNameForSession" name="programName" id="">
+                                        <% for(program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select sessionForProgram" name="acadSession" id="">
                                         <% for(acadSession of AcadSessionList){%>
                                             <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
                                         <%}%>
                                     </select>
                                 </td>
@@ -172,13 +230,13 @@
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingProgramSessionWise"></i>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>`
-                $('.schoolTimingOptions').html(programAndDayWise);
+                $('.schoolTimingOptionsContainer').html(programAndDayWise);
             }
             else{
                 let dayOnly = `   <div class="table-responsive sameForAllDay">
@@ -220,7 +278,7 @@
                         </tbody>
                     </table>
                 </div>`
-                $('.schoolTimingOptions').html(dayOnly);
+                $('.schoolTimingOptionsContainer').html(dayOnly);
             }
         })
         //Options for school timing
@@ -416,7 +474,6 @@
         })
 
         //DATA SELECT FOR FACULTY//
-
         $(".selectListFaculty").on('click', '.list-group-item', function () {
             //remove current element when added to right sidebar
             console.log('faculty::s')
@@ -564,7 +621,7 @@
                 }
             })
 
-        //Add more rows for Faculty Prefernce
+        //Add more rows for Faculty Preference
         $('#add-more-facultyworktimepreferences').on('click', function () {
             console.log('yelo:::')
             let lastTr = $('#facultyworktimepreferencesTable tbody tr:last-child')
@@ -621,6 +678,105 @@
                 }
             })
 
+        //Add more rows for School timing
+        $('#add-more-schoolTiming').on('click', function(){
+          console.log($('.sameForAllDay[data-dis]').attr('data-dis'));
+            if($('.sameForAllDay[data-dis]').attr('data-dis') == 'true'){
+                console.log('hello')
+                let lastTr = $('#add-more-sameForAllDay-table tbody tr:last-child')
+
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+
+                $('#add-more-sameForAllDay-table tbody').append(clonedTr)
+             }
+            else if($('.DayWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-DayWise-table tbody tr:last-child')
+
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+                $('#add-more-DayWise-table tbody').append(clonedTr)
+            }
+            else if($('.programAndDayWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-programAndDayWise-table tbody tr:last-child')
+
+                let programName = lastTr.find(`select[name="programName"]`).val();
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+
+                $('#add-more-programAndDayWise-table tbody').append(clonedTr)
+            }
+            else if($('.programDaySessionWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-programDaySessionWise-table tbody tr:last-child')
+
+                let programName = lastTr.find(`select[name="programName"]`).val();
+                let acadSession = lastTr.find(`select[name="acadSession"]`).val();
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+
+                $('#add-more-programDaySessionWise-table tbody').append(clonedTr)
+            }
+        })
+
+        $('#add-more-sameForAllDay-table').on('click', '.remove-schoolTiming',
+            function () {
+                let trLength = $('#add-more-sameForAllDay-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingDayWise',
+            function () {
+                let trLength = $('#add-more-DayWise-table tbody tr').length;
+                console.log(trLength)
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+    
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingProgramWise',
+            function () {
+                let trLength = $('#add-more-programAndDayWise-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingProgramSessionWise',
+            function () {
+                let trLength = $('#add-more-programDaySessionWise-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+    
         // Display room import
         $('#importRoom').on('click', function() {
             let orgId = $('#open-room-modal #handled_by').val()
@@ -811,7 +967,6 @@
                     })
                 })
 
-        
 
         //Step form Start
         let currentFormStep = parseInt(`<%- currentFormStep%>`);
@@ -849,6 +1004,36 @@
             $('#errorHtml').html('');
         }
     }
+
+    //Api for onchange program event
+    $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
+            let program_lid = $(this).val();
+                console.log('program_lid', program_lid)
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/acadSessionList",
+                data: {
+                    program_lid: program_lid
+                },
+                dataType:"JSON"
+            }
+
+            ajaxApi(apiObj).then(result => {
+                let acadList = `<select class="form-select sessionForProgram" name="acadSession" id="">`
+                    if(result.data.acadSessionList.length > 0){
+                        for(let data of result.data.acadSessionList){
+                        acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
+                        }
+                    }
+                    else{
+                        acadList += `<option value=""> NO SESSION FOUND <option>`
+                    }
+                    acadList += `</select>`
+                    $(this).parent().next().html(acadList);
+
+                console.log('list:::>>>', $(this).parent().next());
+            }).catch(error => console.log('error',error));
+        })
 
         // NEXT STEP EVENT
         $('#next-step').on('click', function () {
@@ -1474,7 +1659,7 @@
                 let id = $(elem).find(`input[name='divId']`).val()
                 let count_for_theory_batch = $(elem).find(
                     `input[name='count_for_theory_batch']`).val()
-                let count_for_practical_batch = $(elem).find(
+                let count_for_practical_batch = $(elem).find( 
                     `input[name='count_for_practical_batch']`).val();
                 let count_for_tutorial_batch = $(elem).find(
                     `input[name='count_for_tutorial_batch']`).val();
@@ -1564,8 +1749,6 @@
             })
         })
 
-
-        //
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
