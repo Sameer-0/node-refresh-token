@@ -107,4 +107,11 @@ module.exports = class {
     }
 
 
+    static fetchAllWSDL(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`select * from [${slug}].course_work_wsdl`)
+        })
+    }
+
+
 }
