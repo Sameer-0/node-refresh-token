@@ -38,7 +38,7 @@ module.exports = {
         }
 
 
-        Holidays.save(object, res.locals.slug).then(result => {
+        Holidays.save(object, res.locals.slug, res.locals.userId).then(result => {
             console.log('result:::<><', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
@@ -62,7 +62,7 @@ module.exports = {
         let object = {
             update_holidays: JSON.parse(req.body.inputJSON)
         }
-        Holidays.update(object, res.locals.slug).then(result => {
+        Holidays.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
@@ -76,7 +76,7 @@ module.exports = {
             delete_holidays: JSON.parse(req.body.id)
         }
 
-        Holidays.delete(object, res.locals.slug).then(result => {
+        Holidays.delete(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
