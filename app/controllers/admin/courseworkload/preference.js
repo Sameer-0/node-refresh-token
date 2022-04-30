@@ -13,7 +13,7 @@ module.exports = {
 
     
     getPage: (req, res) => {
-        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomSlots.SlotsForCourcePreference()]).then(result => {
+        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(1000, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomSlots.SlotsForCourcePreference()]).then(result => {
             console.log('dayList', result[3].recordset)
             res.render('admin/courseworkload/preference', {
                 coursepreference: result[0].recordset,
