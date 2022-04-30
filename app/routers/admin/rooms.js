@@ -19,6 +19,8 @@ router.post('/rooms/pagination', room.pagination)
 router.post('/rooms', validate('JsonValidator'),  room.create)
 router.delete('/rooms', validate('delete'), room.delete)
 
+//Room booking
+router.get('/rooms/booking', room.getBookingPage)
 
 
 //ROOM TRANSACTION DETAILS

@@ -47,7 +47,7 @@ module.exports = {
                 programTypeList: JSON.stringify(result[10].recordset),
                 acadYear: result[11].recordset[0].input_acad_year,
                 AcadSessionList: result[12].recordset,
-                sessionList: result[13].recordset,
+                sessionList: result[13].recordset, 
                 acadCal: result[14].recordset,
                 courseWorkloadList: result[15].recordset,
                 divisionData: result[16].recordset,
