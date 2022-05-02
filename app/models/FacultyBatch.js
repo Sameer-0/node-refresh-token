@@ -82,7 +82,7 @@ module.exports = class FacultyBatch {
             return request.input('input_request_lid', sql.Int, id)
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_delete_faculty_batch]`)
+                .execute(`[${slug}].[sp_delete_faculty_batches]`)
         })
     }
 
