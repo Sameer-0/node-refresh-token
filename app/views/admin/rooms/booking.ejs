@@ -204,7 +204,7 @@
             $('.select2').select2({
                 dropdownParent: $('#open-transaction-modal') ,
                 tags: true
-        })
+            })
 
 
 
@@ -212,6 +212,7 @@
   //console.log('Username:::::::::::::::::::', username)
     //Add more rows for building
     $('#add-more-roomtransaction').on('click', function () {
+      
     console.log("Organization Added::::")
     let lastTr = $('#add-more-roomstrans-table tbody tr:last-child')
     let room_lid = lastTr.find(`select[name='room_lid']`).val();
@@ -224,32 +225,34 @@
     let campus_lid = lastTr.find(`select[name='campus_lid']`).val();
     let clonedTr = lastTr.clone();
     console.log('room_lid::::::::::::>>',room_lid)
-    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('chnage')
-    clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('chnage')
-    clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('chnage')
-    clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('chnage')
-    clonedTr.find(`select[name='start_date_id']`).val(start_date_id).trigger('chnage')
-    clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('chnage')
-    clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('chnage')
-    clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('chnage')
+    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('change')
+    clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('change')
+    clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('change')
+    clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('change')
+    clonedTr.find(`select[name='start_date_id']`).val(start_date_id).trigger('change')
+    clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('change')
+    clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('change')
+    clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('change')
     $('#add-more-roomstrans-table tbody').append(clonedTr)
-  // selectRefresh();
+    // selectRefresh();
+            $('.select2').select2({
+                dropdownParent: $('#open-transaction-modal'),
+                tags: true
+            })
     })
-
-
 
 
     $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
-    function () {
-    let trLength = $(
-    '#add-more-roomstrans-table tbody tr')
-    .length;
-    if (trLength > 1) {
-    $(this).closest('tr').remove()
-    } else {
-    alert('Cannot delete this room.')
-    }
-    })
+        function () {
+            let trLength = $(
+            '#add-more-roomstrans-table tbody tr')
+            .length;
+            if (trLength > 1) {
+            $(this).closest('tr').remove()
+            } else {
+            alert('Cannot delete this room.')
+            }
+        })
 
   //Create
     $(".createRoomTransaction").on('click', function () {
