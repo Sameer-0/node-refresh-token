@@ -102,6 +102,8 @@ module.exports = {
             import_programs: JSON.parse(req.body.inputJSON)
         }
 
+        console.log("object:::::::::::>>",object)
+
         Programs.save(object, res.locals.slug, res.locals.userId).then(result => {
 
             //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
