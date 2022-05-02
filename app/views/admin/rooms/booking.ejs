@@ -47,7 +47,9 @@
                         <td><%- trans.username %></td>
                         <td>
                             <a title="view details" class="viewtransactioninfo" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
-                            <a class="delete-transaction" data-id="<%- trans.id %>"><i class="fa fa-trash text-danger"></i></a>
+                            <%if(trans.stage == 'applied'){%>
+                                <a class="delete-transaction" data-id="<%- trans.id %>"><i class="fa fa-trash text-danger"></i></a>
+                            <%}%>
                         </td>
                     </tr>
                     <%}%>
@@ -482,9 +484,11 @@
                         <td>${trans.campus_abbr}</td>
                         <td>${trans.username}</td>
                         <td>
-                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
-                            <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>
-                        </td>
+                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>`
+                           if(trans.stage=='applied'){
+                            AjaxTable += ` <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>`
+                            }
+                       ` </td>
                     </tr>`
                     }
                 } else {
