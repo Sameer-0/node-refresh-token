@@ -123,6 +123,7 @@ module.exports = {
 
             let userData = await User.getUserByUsername(req.body.username, res.locals.slug);
 
+            console.log('HERE:::::::::::>>')
 
             if (userData.recordset.length == 0) {
                 //return res.status(200).send('Invalid username or password..!');
