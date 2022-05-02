@@ -92,7 +92,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="room_lid" id="room_lid" data-live-search="true">
+                                    <select class="select2 room_lid" name="room_lid" id="room_lid"  data-live-search="true">
                                         <option value="">Select Room No</option>
                                         <%for(let room of roomList){%>
                                         <option value="<%-room.id%>"><%- room.room_number %></option>
@@ -224,7 +224,7 @@
     let campus_lid = lastTr.find(`select[name='campus_lid']`).val();
     let clonedTr = lastTr.clone();
     console.log('room_lid::::::::::::>>',room_lid)
-    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('chnage')
+    let roomc = clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('chnage')
     clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('chnage')
     clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('chnage')
     clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('chnage')
@@ -233,11 +233,10 @@
     clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('chnage')
     clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('chnage')
     $('#add-more-roomstrans-table tbody').append(clonedTr)
-  // selectRefresh();
+
     })
 
-
-
+ 
 
     $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
     function () {
