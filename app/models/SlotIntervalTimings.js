@@ -87,4 +87,20 @@ module.exports = class SlotIntervalTimings {
         })
     }
 
+
+    static forRoomBooking(rowcount) {
+        return poolConnection.then(pool => {
+          //  return pool.request().query(`SELECT TOP ${Number(rowcount)} id, CONVERT(NVARCHAR, start_time, 0) AS start_time, CONVERT(NVARCHAR,end_time,0) AS end_time, slot_name FROM [dbo].slot_interval_timings ORDER BY id ASC`)
+       
+          return pool.request().query(`SELECT TOP ${rowcount} st.id, CONVERT(NVARCHAR, st.start_time, 0) AS start_time,  CONVERT(NVARCHAR, st.end_time, 0) AS end_time from
+          rooms r
+          join slot_interval_timings st
+          on st.id >= r.start_time_id
+          and st.id <= r.end_time_id
+          group by st.id, st.start_time, st.end_time ORDER BY st.id ASC`)
+        }).catch(error => {
+            throw error
+        })
+    }
+
 }
