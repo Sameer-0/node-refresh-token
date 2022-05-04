@@ -47,7 +47,9 @@
                         <td><%- trans.username %></td>
                         <td>
                             <a title="view details" class="viewtransactioninfo" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
-                            <a class="delete-transaction" data-id="<%- trans.id %>"><i class="fa fa-trash text-danger"></i></a>
+                            <%if(trans.stage == 'applied'){%>
+                                <a class="delete-transaction" data-id="<%- trans.id %>"><i class="fa fa-trash text-danger"></i></a>
+                            <%}%>
                         </td>
                     </tr>
                     <%}%>
@@ -92,7 +94,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="room_lid" id="room_lid" data-live-search="true">
+                                    <select class="select2 room_lid" name="room_lid" id="room_lid"  data-live-search="true">
                                         <option value="">Select Room No</option>
                                         <%for(let room of roomList){%>
                                         <option value="<%-room.id%>"><%- room.room_number %></option>
@@ -225,6 +227,7 @@
     let campus_lid = lastTr.find(`select[name='campus_lid']`).val();
     let clonedTr = lastTr.clone();
     console.log('room_lid::::::::::::>>',room_lid)
+
     clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('change')
     clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('change')
     clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('change')
@@ -240,6 +243,7 @@
                 tags: true
             })
     })
+
 
 
     $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
@@ -486,9 +490,11 @@
                         <td>${trans.campus_abbr}</td>
                         <td>${trans.username}</td>
                         <td>
-                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
-                            <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>
-                        </td>
+                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>`
+                           if(trans.stage=='applied'){
+                            AjaxTable += ` <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>`
+                            }
+                       ` </td>
                     </tr>`
                     }
                 } else {

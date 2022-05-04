@@ -19,12 +19,13 @@ module.exports = class {
     }
 
 
-    static save(inputJSON, slug) {
+    static save(inputJSON, slug, userid) {
         console.log('object:::::::::::::', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
+                .input('last_modified_by', sql.Int, userid)
                 .execute(`[${slug}].[sp_create_new_holidays]`)
         })
     }
@@ -39,20 +40,22 @@ module.exports = class {
     }
 
 
-    static update(inputJSON, slug) {
+    static update(inputJSON, slug, userid) {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
+                .input('last_modified_by', sql.Int, userid)
                 .execute(`[${slug}].[sp_update_holidays]`)
         })
     }
 
-    static delete(inputJSON, slug) {
+    static delete(inputJSON, slug, userid) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
+                .input('last_modified_by', sql.Int, userid)
                 .execute(`[${slug}].[delete_holidays]`)
         })
     }

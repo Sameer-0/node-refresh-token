@@ -124,6 +124,7 @@ module.exports = class CourseDayRoomPreferences {
     }
 
     static refresh(slug) {
+        console.log('Refresh::::::::>>')
         return poolConnection.then(pool => {
             const request = pool.request();
             return request

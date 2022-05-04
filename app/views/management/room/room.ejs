@@ -675,6 +675,47 @@
         });
 
 
+        // Onchange get Building Time slot for rooms
+        $("#building_lid").on('change', function () {
+            let building_id = $(this).val()
+            let ApiObj = {
+                url: '/management/rooms/room/getroomtimeslots',
+                type: 'POST',
+                data: {
+                    id: building_id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                console.log('Response::::::::::::',result)
+                let startTime =``
+                    
+
+                if (result.data.length > 0) {
+                    startTime +=
+                        `<option disabled selected value="">--Select Time--</option>`;
+                    result.data.forEach(element => {
+                        startTime += `<option value="${element.id}">
+                                ${element.start_time}
+                            </option>`
+                    });
+                } else {
+                    startTime += `<option value="">
+                                No Slot Found!
+                            </option>`
+                }
+               
+                $("#start_time_id").html(startTime)
+                $("#end_time_id").html(startTime)
+                $('#building_lid').prop('disabled', 'disabled');
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
 
         function showSuccess(errors) {
             let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">

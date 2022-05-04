@@ -12,7 +12,7 @@ const Settings = require("../../../models/Settings");
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(1000), FacultyWorks.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), FacultyWorkTimePreferences.getCount(res.locals.slug)]).then(result => {
+        Promise.all([FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), SlotIntervalTimings.forFaculty(1000), FacultyWorks.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), FacultyWorkTimePreferences.getCount(res.locals.slug)]).then(result => {
             res.render('admin/faculty/preference', {
                 facultyworktimepref: result[0].recordset,
                 slotIntervalTimings: result[1].recordset,
