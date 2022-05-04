@@ -37,7 +37,7 @@ class SimpleAlert {
                     ${obj.buttons.negative ? `<button class="negative">${obj.buttons.negative.text}</button>` : ''}
                 </div>   
         `
-
+        
         let backdrop = document.createElement('div');
         backdrop.setAttribute('class', 'simple-alert-backdrop');
 

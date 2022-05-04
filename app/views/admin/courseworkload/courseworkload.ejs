@@ -1,4 +1,5 @@
 <%- include("../partials/head") %>
+<link rel="stylesheet" href="/css/simpleAlert.css">
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
@@ -117,6 +118,7 @@
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script src="/js/SimpleAlert.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -277,40 +279,86 @@
 
 
         function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            //         <h3>Error</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            //     $("#errorHtml").html(errorHtml)
+
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
         }
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+            //         <h3>Success</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            // $("#errorHtml").html(errorHtml)
+
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
         }
 
     })

@@ -136,14 +136,14 @@
                                 <td>
                                     <!-- <input name="holiday_date" id="holiday_date" type="date" class="form-control"
                                         placeholder="Holiday Date" required> -->
-                                        <select class="select2 form-select"  name="holiday_date" id="holiday_date">
+                                        <select class="select2 modalSelect2"  name="holiday_date" id="holiday_date">
                                             <% for(let acadcal of academicCalender){%>
                                             <option value="<%- acadcal.date %>"><%- acadcal.date %></option>
                                             <%}%>
                                         </select>
                                 </td>
                                 <td>
-                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                    <select class="select2 modalSelect2" name="holiday_type" id="holiday_type">
                                         <% for(let type of holidayType){%>
                                         <option value="<%- type.id %>"><%- type.name %></option>
                                         <%}%>
@@ -166,12 +166,9 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i>
-                    Add
-                    More Holidays</button>
-                <button type="button" class="btn createHoliday modal-inputform-btn">Create
-                    Holidays</button>
-                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update
-                    Holiday</button>
+                    Add More Holidays</button>
+                <button type="button" class="btn createHoliday modal-inputform-btn">Create Holidays</button>
+                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update Holiday</button>
             </div>
             <!-- </form> -->
 
@@ -214,13 +211,10 @@
 
 
 
-
-
-
         $('#add-more-holidays').on('click', function () {
                 let lastTr = $('#add-more-holidays-table tbody tr:last-child')
                 let calendar_year = lastTr.find(`select[name='calendar_year']`).val();
-                let holiday_date = lastTr.find(`select[name='holiday_date']`).val();
+                let holiday_date = lastTr.find(`select[name='holiday_date']`).val(); 
                 let holiday_type = lastTr.find(`select[name='holiday_type']`).val();
                 let reason = lastTr.find(`select[name='reason']`).val();
                 let clonedTr = lastTr.clone();
@@ -291,7 +285,6 @@
 
         //Edit Holiday
         //edit-holiday
-
         $('#holidayTable').on('click','.edit-holiday', function () {
             $("#add-more-holidays").addClass('d-none')
             $(".createHoliday").addClass('d-none')

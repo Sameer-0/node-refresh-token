@@ -1,7 +1,10 @@
             // Add more rows for orgnization
             $('#add-more-orgnization').on('click', function () {
+
+
                 console.log("Organization Added::::")
                 let lastTr = $('#add-more-org-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
                 let orgId = lastTr.find(`select[name='orgId']`).val();
                 let orgAbbr = lastTr.find(`select[name='orgAbbr']`).val();
                 let orgName = lastTr.find(`select[name='orgName']`).val();
@@ -19,6 +22,14 @@
                 clonedTr.find(`input[name='campus']`).val('');
 
                 $('#add-more-org-table tbody').append(clonedTr)
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-org-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-org-modal')
+                });
             })
 
             $('#add-more-org-table').on('click', '.remove-organization', function () {
@@ -35,8 +46,9 @@
                 console.log("Organization Added::::")
 
                 let lastTr = $('#add-more-campus-table tbody tr:last-child')
-                let campusId = lastTr.find(`select[name='campusId']`).val();
-                let campusAbbr = lastTr.find(`select[name='campusAbbr']`).val();
+               
+                let campusId = lastTr.find(`input[name='campusId']`).val();
+                let campusAbbr = lastTr.find(`input[name='campusAbbr']`).val();
                 let campusName = lastTr.find(`select[name='campusName']`).val();
                 let campusDesc = lastTr.find(`select[name='campusDesc']`).val();
 
@@ -46,6 +58,7 @@
                 clonedTr.find(`select[name='campusName']`).val('')
                 clonedTr.find(`select[name='campusDesc']`).val('')
                 $('#add-more-campus-table tbody').append(clonedTr)
+
             })
 
             $('#add-more-campus-table').on('click', '.remove-campus', function () {
@@ -61,27 +74,36 @@
             $('#add-more-building').on('click', function () {
                 console.log("Organization Added::::")
                 let lastTr = $('#add-more-building-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
                 let buildingName = lastTr.find(`input[name='building_name']`).val();
                 let buildingNumber = lastTr.find(`input[name='building_number']`).val();
                 let floors = lastTr.find(`input[name='floors']`).val();
-                let ownerId = lastTr.find(`input[name='owner_id']`).val();
-                let startTimeId = lastTr.find(`input[name='start_time_id']`).val();
-                let endTimeId = lastTr.find(`input[name='end_time_id']`).val();
-                let handledById = lastTr.find(`input[name='handled_by']`).val();
-                let campusId = lastTr.find(`input[name='campus_lid']`).val();
+                let ownerId = lastTr.find(`select[name='owner_id']`).val();
+                let startTimeId = lastTr.find(`select[name='start_time_id']`).val();
+                let endTimeId = lastTr.find(`select[name='end_time_id']`).val();
+                let handledById = lastTr.find(`select[name='handled_by']`).val();
+                let campusId = lastTr.find(`select[name='campus_lid']`).val();
 
 
                 let clonedTr = lastTr.clone();
                 clonedTr.find(`input[name='building_name']`).val('')
                 clonedTr.find(`input[name='building_number']`).val('')
                 clonedTr.find(`input[name='floors']`).val('')
-                clonedTr.find(`input[name='owner_id']`).val('')
-                clonedTr.find(`input[name='start_time_id']`).val('')
-                clonedTr.find(`input[name='end_time_id']`).val('')
-                clonedTr.find(`input[name='handled_by']`).val('')
-                clonedTr.find(`input[name='campus_lid']`).val('')
+                clonedTr.find(`select[name='owner_id']`).val('')
+                clonedTr.find(`select[name='start_time_id']`).val('')
+                clonedTr.find(`select[name='end_time_id']`).val('')
+                clonedTr.find(`select[name='handled_by']`).val('')
+                clonedTr.find(`select[name='campus_lid']`).val('')
 
                 $('#add-more-building-table tbody').append(clonedTr)
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-building-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-building-modal')
+                });
             })
 
             $('#add-more-building-table').on('click', '.remove-building', function () {
@@ -122,7 +144,6 @@
 
                 $('#add-more-room-table tbody').append(clonedTr)
 
-
                 lastTr.find('.modalSelect2').select2({
                     dropdownParent: $('#add-room-modal')
                 });
@@ -142,7 +163,6 @@
             })
 
             //Add more rows in faculty
-
             $('#add-more-faculty').on('click', function () {
                 console.log("Room Added::::")
 
@@ -180,6 +200,6 @@
                 if (trLength > 1) {
                     $(this).closest('tr').remove()
                 } else {
-                    alert('Cannot delete this room.')
+                    alert('Cannot delete this room.') 
                 }
             })

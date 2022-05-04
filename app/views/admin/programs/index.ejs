@@ -210,7 +210,7 @@
                     $("#program_name").val(data.data.program_name)
                     $("#program_type_lid").val(data.data.program_type_lid).trigger('change')
                     $("#abbr").val(data.data.abbr)
-                $("#edit-program-modal").modal('show')
+                    $("#edit-program-modal").modal('show')
                 }
             })
         })
@@ -245,7 +245,9 @@
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 2000); 
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -254,7 +256,6 @@
         //Import
         $('#importProgram').on('click', function() {
 
-            console.log('checlo')
                 let programElems = $('#add-more-program-table tbody tr');
                 let programCount = programElems.length;
                 let programJson = [];
@@ -474,7 +475,8 @@
                                 <td>${program.program_type}</td>
                                 <td>${program.abbr}</td>
                                 <td><a class="edit-program" data-id="${program.id}"><i class="fa fa-edit"></i></a>
-                                    <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash"></i></a></td>
+                                    <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash"></i></a>
+                                </td>
                             </tr>`
                     }
                 } else {
@@ -535,25 +537,47 @@
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $(".errorHtml").html(errorHtml)
-            $(".error-html").html(errorHtml)
+            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+            //         <h3>Success</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            // $(".errorHtml").html(errorHtml)
+            // $(".error-html").html(errorHtml)
             // setTimeout(function(){
             //     location.reload()
             // },2500)
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
         }
 
         
