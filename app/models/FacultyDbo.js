@@ -28,7 +28,7 @@ module.exports = class FacultyDbo {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} fs.id, fs.faculty_id, fs.faculty_name,camp.campus_abbr, org.org_abbr, CONVERT(NVARCHAR, sit.start_time, 100) as start_time, CONVERT(NVARCHAR,sit.end_time,100) as end_time, fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} fs.id, fs.faculty_id, fs.faculty_name, camp.campus_abbr, org.org_abbr, CONVERT(NVARCHAR, sit.start_time, 100) as start_time, CONVERT(NVARCHAR,sit.end_time,100) as end_time, fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs
             INNER JOIN [dbo].campuses camp ON camp.id = fs.campus_lid
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fs.start_time_id
             INNER JOIN [dbo].organizations org ON org.id =  fs.org_lid`)
