@@ -28,10 +28,9 @@ module.exports = class FacultyDbo {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} fs.id, fs.faculty_id, fs.faculty_name, camp.campus_abbr, org.org_abbr, CONVERT(NVARCHAR, sit.start_time, 100) as start_time, CONVERT(NVARCHAR,sit.end_time,100) as end_time, fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs
-            INNER JOIN [dbo].campuses camp ON camp.id = fs.campus_lid
-            INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fs.start_time_id
-            INNER JOIN [dbo].organizations org ON org.id =  fs.org_lid`)
+
+            return pool.request().query(`SELECT TOP ${Number(rowcount)}  fs.id, fs.faculty_id, fs.faculty_name ,fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs ORDER BY fs.id DESC`)
+
         })
     }
 
@@ -75,14 +74,7 @@ module.exports = class FacultyDbo {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} fs.id, fs.faculty_id, fs.faculty_name, camp.campus_abbr, org.org_abbr, 
-                CONVERT(NVARCHAR, sit.start_time, 100) as start_time, 
-                CONVERT(NVARCHAR, sit.end_time,100) as end_time, fs.is_processed, 
-                IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs
-                INNER JOIN [dbo].campuses camp ON camp.id = fs.campus_lid
-                INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fs.start_time_id
-                INNER JOIN [dbo].organizations org ON org.id =  fs.org_lid 
-                WHERE fs.faculty_id LIKE @keyword OR fs.faculty_name LIKE @keyword OR camp.campus_abbr LIKE @keyword OR org.org_abbr LIKE @keyword OR sit.start_time LIKE @keyword OR sit.end_time LIKE @keyword ORDER BY fs.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} fs.id, fs.faculty_id, fs.faculty_name ,fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs WHERE fs.faculty_id LIKE @keyword OR fs.faculty_name LIKE @keyword ORDER BY fs.id DESC`)
         })
     }
 
@@ -107,10 +99,7 @@ module.exports = class FacultyDbo {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  fs.id, fs.faculty_id, fs.faculty_name,camp.campus_abbr, org.org_abbr, CONVERT(NVARCHAR, sit.start_time, 100) as start_time, CONVERT(NVARCHAR,sit.end_time,100) as end_time, fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs
-                INNER JOIN [dbo].campuses camp ON camp.id = fs.campus_lid
-                INNER JOIN [dbo].slot_interval_timings sit ON sit.id = fs.start_time_id
-                INNER JOIN [dbo].organizations org ON org.id =  fs.org_lid ORDER BY fs.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT  fs.id, fs.faculty_id, fs.faculty_name ,fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs ORDER BY fs.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

@@ -93,7 +93,13 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="faculty_batch" id="faculty_batch" class="form-control">
+                                    <!-- <input type="number" name="faculty_batch" id="faculty_batch" class="form-control"> -->
+                                    <select class="select2" name="faculty_batch" id="faculty_batch">
+                                        <option value="">--select--</option>
+                                        <% for(batch of batchList) {%>
+                                        <option value="<%- batch.batch %>"> <%- batch.batch %></option>
+                                        <%}%>
+                                    </select>
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
@@ -157,7 +163,7 @@ $(document).ready(function(){
         let facultyBatchJson = [];
         facultyBatchElems.each(function (index, elem) {
             let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
-            let faculty_batch = $(elem).find(`input[name="faculty_batch"]`).val();
+            let faculty_batch = $(elem).find(`select[name="faculty_batch"]`).val();
 
             if (index < facultyBatchCount - 1) {
                 let obj = {
@@ -219,7 +225,7 @@ $(document).ready(function(){
             let id = $(this).attr('data-id')
             let faculty_lid = $(this).attr('data-faculty-lid')
             let faculty_batch = $(this).attr('data-batch')
-            $("#faculty_batch").val(faculty_batch)
+            $("#faculty_batch").val(faculty_batch).trigger('change')
             $("#faculty_lid").val(faculty_lid).trigger('change')
             $("#faculty_lid").attr("disabled", "disabled");
             $("#hidden_id").val(id)
@@ -235,7 +241,7 @@ $(document).ready(function(){
         let id = $("#hidden_id").val();
         facultyBatchElems.each(function (index, elem) {
             let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
-            let faculty_batch = $(elem).find(`input[name="faculty_batch"]`).val();
+            let faculty_batch = $(elem).find(`select[name="faculty_batch"]`).val();
             
 
             if (index < facultyBatchCount - 1) {

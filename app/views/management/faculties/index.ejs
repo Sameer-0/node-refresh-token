@@ -19,35 +19,15 @@
             </a>
         </div>
 
-        <!-- <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
+        <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
             <div class="card row1-data-card text-center">
                 <div class="card-body d-flex align-items-center justify-content-center"><a
-                        href="/management/faculties/slots"><img src="/icon_imgs/cog.png" alt="">
-                        <p class="fw-normal pt-1">FACULTY SLOT</p>
+                        href="/management/faculties/faculty"><img src="/icon_imgs/cog.png" alt="">
+                        <p class="fw-normal pt-1">FACULTIES</p>
                     </a></div>
             </div>
-        </div> -->
-
-    </div>
-
-    <div class="card table-card mb-3">
-        <div class="card-header table-card-header text-uppercase ">
-            <h5>Fetch faculty from sap</h5>
         </div>
-        <div class="card-body">
-            <div class="d-flex bd-highlight">
-                <div class="p-2 flex-grow-1 bd-highlight">
-                   <h3>Fetch faculty from sap</h3>
-                </div>
-                <div class="p-2 bd-highlight">
-                    <label>Select Year</label>
-                    <input type="text" class="form-control" id="acadYear" value="">
-                </div>
-                <div class="p-2 bd-highlight mt-2">
-                    <button class="btn btn-danger mt-3 fetchFromSAP"><i class="fa fa-download"></i> Fetch From SAP</button>
-                </div>
-              </div>
-        </div>
+
     </div>
 
     <div class="card table-card">
@@ -58,9 +38,7 @@
             <div>
                 <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-faculty-modal"><i
                         class="fas fa-plus"></i></button> -->
-                <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
+
             </div>
         </div>
 
@@ -71,22 +49,13 @@
                 <thead>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Campus</th>
-                    <th>Organization</th>
                     <th>Is Processed</th>
-                    <th>All <input type="checkbox" class="selectAll-faculties"></th>
                 </thead>
                 <tbody>
                     <%for(let faculty of facultyList){%>
                     <tr>
                         <td><%- faculty.faculty_id %></td>
                         <td><%- faculty.faculty_name %></td>
-                        <td><%- faculty.start_time %></td>
-                        <td><%- faculty.end_time %></td>
-                        <td><%- faculty.campus_abbr %></td>
-                        <td><%- faculty.org_abbr %></td>
                         <td>
                             <label class="switch">
                                 <input type="checkbox" class="changeStatus" data-id="<%- faculty.id %>"
@@ -95,9 +64,7 @@
                                 <span class="switch-slider round"></span>
                             </label>
                         </td>
-                        <td>
-                            <input type="checkbox" data-faculty-type-id="<%- faculty.id %>" class="delete-faculties">
-                        </td>
+                       
                     </tr>
                     <%}%>
                 </tbody>
@@ -215,31 +182,6 @@
 
 <script>
     $(document).ready(function () {
-                    //Fetch form SAP
-            $(".fetchFromSAP").on('click', function () {
-            let acadYear = $("#acadYear").val()
-            let ApiObj = {
-                url: '/management/faculties/fetchformsap',
-                type: 'POST',
-                data: {
-                    acadYear: acadYear
-                },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                console.log('Response ::::::::::::::::::::::', result.data)
-            }).catch(error => {
-                console.log('Error ::::::::::::::::::::::', error)
-                // showError(error.responseJSON)
-            })
-        })   
-
-
-
-
-
-
 
         $('.select2').select2({
         dropdownParent: $('#open-faculty-modal')});
@@ -315,7 +257,7 @@
             console.log('facultyJson::::::::::::>>', facultyJson)
             let ApiObj = {
                 type: 'POST',
-                url: '/management/faculties',
+                url: '/management/faculties/faculty',
                 data: {
                     inputJSON: JSON.stringify(facultyJson)
                 },
@@ -336,7 +278,7 @@
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "GET",
-                url: "/management/faculties/search",
+                url: "/management/faculties/faculty/search",
                 data: {
                     keyword: keyword
                 },
@@ -363,7 +305,7 @@
 
         function chnageStatus(id, status) {
             let ApiObj = {
-                url: '/management/faculties/processing',
+                url: '/management/faculties/faculty/processing',
                 type: 'POST',
                 data: {
                     id: id,
@@ -382,7 +324,7 @@
 
         function loadDays() {
             let ApiObj = {
-                url: '/management/faculties/GetAll',
+                url: '/management/faculties/faculty/GetAll',
                 type: 'GET',
                 data: {},
                 dataType: 'JSON'
@@ -419,7 +361,7 @@
         }).on("page", function (event, num) {
             $.ajax({
                 type: "POST",
-                url: "/management/faculties/pagination",
+                url: "/management/faculties/faculty/pagination",
                 data: {
                     pageNo: num
                 },
@@ -428,24 +370,6 @@
                 }
             })
         });
-
-
-
-                    //Select All campus
-            $("#facultyTable").on('click', '.selectAll-faculties', function () {
-                if (this.checked) {
-                    // Iterate each checkbox
-                    $('.delete-faculties:checkbox').each(function () {
-                        this.checked = true;
-                    });
-                } else {
-                    $('.delete-faculties:checkbox').each(function () {
-                        this.checked = false;
-                    });
-                }
-            })
-
-
 
 
 
@@ -474,12 +398,7 @@
                 <thead>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Campus</th>
-                    <th>Organization</th>
                     <th>Is Processed</th>
-                    <th>All <input type="checkbox" class="selectAll-faculties"></th>
                 </thead>
                     <tbody>`;
 
@@ -489,10 +408,6 @@
                         `<tr>
                         <td>${faculty.faculty_id}</td>
                         <td>${faculty.faculty_name}</td>
-                        <td>${faculty.start_time}</td>
-                        <td>${faculty.end_time}</td>
-                        <td>${faculty.campus_abbr}</td>
-                        <td>${faculty.org_abbr}</td>
                         <td>
                             <label class="switch">
                                 <input type="checkbox" class="changeStatus" data-id="${faculty.id}"
@@ -501,9 +416,7 @@
                                 <span class="switch-slider round"></span>
                             </label>
                         </td>
-                        <td>
-                            <input type="checkbox" data-faculty-type-id="${faculty.id}" class="delete-faculties">
-                        </td>
+                        
                     </tr>`
                 }
             } else {
