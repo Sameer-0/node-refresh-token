@@ -177,9 +177,9 @@
                         id: $(this).attr('data-session-date-id')
                     },
                     success: data => {
-                        console.log(data)
+                      
                         let obj = data.data;
-                    console.log('obj:::::::::::::::::::',obj)
+               
                         $('#program_session_lid').val(obj.program_session_lid).trigger('change')
                         $('#sessionType').val(obj.session_type_lid).trigger('change')
                         $('#startDate').val(obj.start_date_id).trigger('change')
@@ -380,21 +380,45 @@
 
             
             function showError(errors) {
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>`;
-                errorHtml += `<ul>`;
-                errors.errors.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
+            //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            //         <h3>Error</h3>`;
+            //     errorHtml += `<ul>`;
+            //     errors.errors.map(er => {
+            //         errorHtml +=
+            //             `<li>${er.msg}</li>`
+            //     })
 
-                errorHtml +=
-                    `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+            //     errorHtml +=
+            //         `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            //     $("#errorHtml").html(errorHtml)
+
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.obj,
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+
             }
 
 
-            // function showError(errors) {
+            function showError(errors) {
             //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
             //         <h3>Error</h3>
             //         <p>${errors.description}</p>
@@ -410,7 +434,32 @@
             //     errorHtml +=
             //         `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             //     $("#errorHtml").html(errorHtml)
-            // }
+
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+
+            
+            }
         })
     </script>
     <%- include("../partials/footerEnd") %>
