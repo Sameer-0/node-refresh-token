@@ -22,7 +22,7 @@ module.exports = {
         console.log('sessionID: ', req.session)
 
         OrganizationSlug.fetchAll().then(result => {
-           // console.log(result.recordset)
+            // console.log(result.recordset)
             res.render('login')
         })
         
@@ -34,7 +34,7 @@ module.exports = {
 
         if (!errors.isEmpty()) {
             return res.status(400).json({
-                success: false,
+                success: false, 
                 errors: errors.array()
             });
         }
