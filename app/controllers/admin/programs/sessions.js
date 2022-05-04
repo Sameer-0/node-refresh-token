@@ -62,5 +62,14 @@ module.exports = {
         }).catch(error => {
             throw error
         })
+    },
+
+    refresh: (req, res) => {
+        console.log('Refresh Program Session::::::::>>')
+        ProgramSessions.refresh(res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
+        })
     }
 }
