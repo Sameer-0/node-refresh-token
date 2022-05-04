@@ -92,7 +92,7 @@ module.exports = class SlotIntervalTimings {
         return poolConnection.then(pool => {
        //APPLY WHERE CONDITION WITH FACULTY ID
           return pool.request().query(`SELECT TOP ${Number(rowcount)} st.id, CONVERT(NVARCHAR, st.start_time, 0) AS start_time,  CONVERT(NVARCHAR, st.end_time, 0) AS end_time, st.slot_name from
-          faculties f
+          faculty_pools f
           join slot_interval_timings st
           on st.id >= f.start_time_id
           and st.id <= f.end_time_id
