@@ -19,7 +19,7 @@ module.exports = class DivisionBatches {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [asmsoc-mum].division_batches db
+            return pool.request().query(`select TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [${slug}].division_batches db
             INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
             INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
             INNER JOIN [dbo].event_types et on db.event_type_lid = et.id`)
