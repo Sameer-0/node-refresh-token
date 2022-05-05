@@ -205,7 +205,7 @@
                         <tr>
                             <td>
                                 
-                                <select class="form-control" name="faculty_lid" id="faculty_lid" disabled>
+                                <select class="modalSelect2 select2" name="faculty_lid" id="faculty_lid" disabled>
                                 <% for (let faculty of facultyList) { %>
                                         <option value="<%- faculty.faculty_id %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
                                     <% } %>
@@ -214,7 +214,7 @@
                          
                             <td>
                                 <%let slotTiming1 = JSON.parse(slotTiming) %>
-                                <select class="form-control" name="start_time_id" id="start_time_id">
+                                <select class="modalSelect2 select2" name="start_time_id" id="start_time_id">
                                 <% for (let slotstart of slotTiming1) { %>
                                         <option value="<%- slotstart.id %>" ><%- slotstart.start_time %></option>
                                     <% } %>
@@ -222,7 +222,7 @@
 
                             <td>
                                 <%let slotTiming2 = JSON.parse(slotTiming) %>
-                                <select class="form-control" name="end_time_id" id="end_time_id">
+                                <select class="modalSelect2 select2" name="end_time_id" id="end_time_id">
                                 <% for (let slotend of slotTiming2) { %>
                                         <option value="<%- slotend.id %>" ><%- slotend.end_time %></option>
                                     <% } %>
@@ -230,7 +230,7 @@
                             </td>
                             <td>
                                 <%let acadstartDate = JSON.parse(acadCalender) %>
-                                <select class="form-control" name="start_date_id" id="start_date_id">
+                                <select class="modalSelect2 select2" name="start_date_id" id="start_date_id">
                                 <% for (let stDate of acadstartDate) { %>
                                         <option value="<%- stDate.id %>" ><%- stDate.date %></option>
                                     <% } %>
@@ -238,7 +238,7 @@
                             </td>
                             <td>
                                 <%let acadendDate = JSON.parse(acadCalender) %>
-                                <select class="form-control" name="end_date_id" id="end_date_id">
+                                <select class="modalSelect2 select2" name="end_date_id" id="end_date_id">
                                 <% for (let etDate of acadendDate) { %>
                                         <option value="<%- etDate.id %>" ><%- etDate.date %></option>
                                     <% } %>
@@ -246,7 +246,7 @@
                             </td>
                             <td>
                                 <%let facultytype = JSON.parse(facultyType) %>
-                            <select class="form-control" name="faculty_type_lid" id="faculty_type_lid">
+                            <select class="modalSelect2 select2" name="faculty_type_lid" id="faculty_type_lid">
                                 <% for (let ftype of facultytype) { %>
                                         <option value="<%- ftype.id %>" ><%- ftype.name %></option>
                                     <% } %>
@@ -272,6 +272,10 @@
 
 <script>
     $(document).ready(function () {
+
+        $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
+
         //DATALIST
         let slotTime = JSON.parse(`<%- slotTiming %>`);
         let acadDate = JSON.parse(`<%- acadCalender%>`);
@@ -318,25 +322,27 @@
                          </td>
                         <td>
                             <!-- <select class="select2"  name="startTime">${optionStartTime}</select>-->
-                            <select class="select2 SlotStartTime${countst++}"  name="startTime"></select>
+                            <select class="select2 modalSelect2 SlotStartTime${countst++}"  name="startTime"></select>
                         </td>
                         <td>
-                            <!--<select class="select2 SlotEndTime" name="endTime">${optionEndTime}</select>-->
+                            <!--<select class="select2 modalSelect2 SlotEndTime" name="endTime">${optionEndTime}</select>-->
                             <select class="select2 SlotEndTime" name="endTime"></select>
                         </td>
                         <td>
-                            <select class="select2" name="startDate">${startDate}</select>
+                            <select class="select2 modalSelect2" name="startDate">${startDate}</select>
                         </td>
                         <td>
-                            <select class="select2" name="endDate">${endDate}</select>
+                            <select class="select2 modalSelect2" name="endDate">${endDate}</select>
                         </td>
                         <td>
-                            <select class="select2" name="faculty_type_lid">${facultyType}</select>
+                            <select class="select2 modalSelect2" name="faculty_type_lid">${facultyType}</select>
                         <td>
                             <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
                         </td>
                     </tr>
                     `)
+                    $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
             }
 
             $(this).attr('data-clickable', 'false');
@@ -394,7 +400,7 @@
             };
         })
 
-//importFaculty
+        //importFaculty
         $(".importFaculty").on('click', function () {
             let facultiesList = $('#selectedList table tbody tr');
             let facultyCount = facultiesList.length;
@@ -657,7 +663,7 @@
                 });
             }
             errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
             $(".errorHtml").html(errorHtml)
 
             setTimeout(function(){
@@ -681,7 +687,7 @@
                 });
             }
             errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
             console.log(errorHtml)
             $(".errorHtml").html(errorHtml)
         }
