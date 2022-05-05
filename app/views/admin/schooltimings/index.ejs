@@ -142,21 +142,21 @@
                             <tbody>                            
                                 <tr>
                                     <td>
-                                        <select class="form-select" name="startTime">
+                                        <select class="select2 modalSelect2" name="startTime">
                                             <% for(time of slotTime){%>
                                                 <option value="<%- time.id%>"><%- time.start_time %></option>
                                             <%}%>
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-select" name="endTime">
+                                        <select class="select2 modalSelect2" name="endTime">
                                             <% for(time of slotTime){%>
                                                 <option value="<%- time.id%>"><%- time.end_time %></option>
                                             <%}%>
                                         </select>
                                     </td>
                                     <td>
-                                        <select name="slotType" id="" class="form-select" >
+                                        <select name="slotType" id="" class="select2 modalSelect2" >
                                             <% for(type of lectureTypeList){%>
                                                 <option value="<%- type.id%>"><%- type.name%></option>
                                             <%}%>
@@ -205,28 +205,28 @@
                         <tbody>                           
                             <tr>
                                 <td>
-                                    <select class="form-select" name="day">
+                                    <select class="select2 modalSelect2" name="day">
                                         <% for(day of dayList){%>
                                             <option value="<%- day.id%>"><%- day.day_name%></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="startTime">
+                                    <select class="select2 modalSelect2" name="startTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.start_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="endTime">
+                                    <select class="select2 modalSelect2" name="endTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.end_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="lecType" id="" class="form-select" >
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
                                         <% for(type of lectureTypeList){%>
                                             <option value="<%- type.id%>"><%- type.name%></option>
                                         <%}%>
@@ -241,6 +241,8 @@
                     </table>
                 </div>`
                 $('.schoolTimingOptionsContainer').html(DayWise);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
             }
             else if($(this).attr('id') == 'programAndDayWise'){
                 let programAndDayWise = `<div class="table-responsive programAndDayWise" data-dis="true">
@@ -256,35 +258,35 @@
                         <tbody>                           
                             <tr>
                                 <td>
-                                    <select class="form-select" name="programName">
+                                    <select class="select2 modalSelect2" name="programName">
                                         <% for(program of programList){%>
                                             <option value="<%- program.id%>"><%- program.program_name%></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="day">
+                                    <select class="select2 modalSelect2" name="day">
                                         <% for(day of dayList){%>
                                             <option value="<%- day.id%>"><%- day.day_name%></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="startTime">
+                                    <select class="select2 modalSelect2" name="startTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.start_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="endTime">
+                                    <select class="select2 modalSelect2" name="endTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.end_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="lecType" id="" class="form-select" >
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
                                         <% for(type of lectureTypeList){%>
                                             <option value="<%- type.id%>"><%- type.name%></option>
                                         <%}%>
@@ -299,6 +301,9 @@
                     </table>
                 </div>`
                 $('.schoolTimingOptionsContainer').html(programAndDayWise);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
+
             }
             else if($(this).attr('id') == 'programDaySessionWise'){
                 let programAndDayWise = `<div class="table-responsive programDaySessionWise" data-dis="true">
@@ -315,42 +320,42 @@
                         <tbody>                           
                             <tr>
                                 <td>
-                                    <select class="form-select programNameForSession" name="programName" id="">
+                                    <select class="select2 modalSelect2 programNameForSession" name="programName" id="">
                                         <% for(program of programList){%>
                                             <option value="<%- program.id%>"><%- program.program_name%></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select sessionForProgram" name="acadSession" id="">
+                                    <select class="select2 modalSelect2 sessionForProgram" name="acadSession" id="">
                                         <% for(acadSession of AcadSessionList){%>
                                             <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="day">
+                                    <select class="select2 modalSelect2" name="day">
                                         <% for(day of dayList){%>
                                             <option value="<%- day.id%>"><%- day.day_name%></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="startTime">
+                                    <select class="select2 modalSelect2" name="startTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.start_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="endTime">
+                                    <select class="select2 modalSelect2" name="endTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.end_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="lecType" id="" class="form-select" >
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
                                         <% for(type of lectureTypeList){%>
                                             <option value="<%- type.id%>"><%- type.name%></option>
                                         <%}%>
@@ -365,6 +370,8 @@
                     </table>
                 </div>`
                 $('.schoolTimingOptionsContainer').html(programAndDayWise);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
             }
             else{
                 let dayOnly = `   <div class="table-responsive sameForAllDay">
@@ -378,21 +385,21 @@
                         <tbody>                           
                             <tr>
                                 <td>
-                                    <select class="form-select" name="startTime">
+                                    <select class="select2 modalSelect2" name="startTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.start_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="form-select" name="endTime">
+                                    <select class="select2 modalSelect2" name="endTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.end_time %></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="lecType" id="" class="form-select" >
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
                                         <% for(type of lectureTypeList){%>
                                             <option value="<%- type.id%>"><%- type.name%></option>
                                         <%}%>
@@ -407,8 +414,13 @@
                     </table>
                 </div>`
                 $('.schoolTimingOptionsContainer').html(dayOnly);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
             }
         })
+
+        $('.select2').select2({
+        dropdownParent: $('#add-schooltiming-modal')});
 
         //Add more rows for School timing
         $('#add-more-schoolTiming').on('click', function(){
@@ -416,29 +428,44 @@
             if($('.sameForAllDay[data-dis]').attr('data-dis') == 'true'){
                 console.log('hello')
                 let lastTr = $('#add-more-sameForAllDay-table tbody tr:last-child')
-
+                lastTr.find('.modalSelect2').select2('destroy');
                 let startTime = lastTr.find(`select[name="startTime"]`).val();
                 let endTime = lastTr.find(`select[name="endTime"]`).val();
                 let lecType = lastTr.find(`select[name="slotType"]`).val();
                 let clonedTr = lastTr.clone();
 
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
 
                 $('#add-more-sameForAllDay-table tbody').append(clonedTr)
              }
             else if($('.DayWise[data-dis]').attr('data-dis') == 'true'){
                 let lastTr = $('#add-more-DayWise-table tbody tr:last-child')
-
+                lastTr.find('.modalSelect2').select2('destroy');
                 let day = lastTr.find(`select[name="day"]`).val();
                 let startTime = lastTr.find(`select[name="startTime"]`).val();
                 let endTime = lastTr.find(`select[name="endTime"]`).val();
                 let lecType = lastTr.find(`select[name="slotType"]`).val();
                 let clonedTr = lastTr.clone();
 
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
                 $('#add-more-DayWise-table tbody').append(clonedTr)
             }
             else if($('.programAndDayWise[data-dis]').attr('data-dis') == 'true'){
                 let lastTr = $('#add-more-programAndDayWise-table tbody tr:last-child')
-
+                lastTr.find('.modalSelect2').select2('destroy');
                 let programName = lastTr.find(`select[name="programName"]`).val();
                 let day = lastTr.find(`select[name="day"]`).val();
                 let startTime = lastTr.find(`select[name="startTime"]`).val();
@@ -446,12 +473,19 @@
                 let lecType = lastTr.find(`select[name="slotType"]`).val();
                 let clonedTr = lastTr.clone();
 
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
 
                 $('#add-more-programAndDayWise-table tbody').append(clonedTr)
             }
             else if($('.programDaySessionWise[data-dis]').attr('data-dis') == 'true'){
                 let lastTr = $('#add-more-programDaySessionWise-table tbody tr:last-child')
-
+                lastTr.find('.modalSelect2').select2('destroy');
                 let programName = lastTr.find(`select[name="programName"]`).val();
                 let acadSession = lastTr.find(`select[name="acadSession"]`).val();
                 let day = lastTr.find(`select[name="day"]`).val();
@@ -460,6 +494,13 @@
                 let lecType = lastTr.find(`select[name="slotType"]`).val();
                 let clonedTr = lastTr.clone();
 
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
 
                 $('#add-more-programDaySessionWise-table tbody').append(clonedTr)
             }

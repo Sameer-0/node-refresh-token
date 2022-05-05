@@ -28,7 +28,9 @@ module.exports = class FacultyDbo {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
+
             return pool.request().query(`SELECT TOP ${Number(rowcount)}  fs.id, fs.faculty_id, fs.faculty_name ,fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs ORDER BY fs.id DESC`)
+
         })
     }
 

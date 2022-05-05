@@ -50,7 +50,7 @@ module.exports = {
                 sessionList: result[13].recordset, 
                 acadCal: result[14].recordset,
                 courseWorkloadList: result[15].recordset,
-                divisionData: result[16].recordset,
+                divisionData: result[16].recordset, 
                 facultyList: result[17].recordset,
                 faculties: result[18].recordset, 
                 slotTime: result[19].recordset,
