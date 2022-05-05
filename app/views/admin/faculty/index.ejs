@@ -305,7 +305,7 @@
         for (let obj of facultyTypeList) {
             facultyType += `<option value="${obj.id}">${obj.name}</option>`;
         }
-
+        let countst = 0;
         $("#selectList").on('click', '.list-group-item', function () {
             console.log('faculty-id::::::::::',$(this).attr("data-faculty-id"))
             console.log('faculty-lid::::::::::',$(this).attr("data-faculty-lid"))
@@ -317,10 +317,12 @@
                         <td data-faculty-id="${$(this).attr("data-faculty-id")}"  data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
                          </td>
                         <td>
-                            <select class="select2" name="startTime">${optionStartTime}</select>
+                            <!-- <select class="select2"  name="startTime">${optionStartTime}</select>-->
+                            <select class="select2 SlotStartTime${countst++}"  name="startTime"></select>
                         </td>
                         <td>
-                            <select class="select2" name="endTime">${optionEndTime}</select>
+                            <!--<select class="select2 SlotEndTime" name="endTime">${optionEndTime}</select>-->
+                            <select class="select2 SlotEndTime" name="endTime"></select>
                         </td>
                         <td>
                             <select class="select2" name="startDate">${startDate}</select>
@@ -343,7 +345,7 @@
             })
 
             //Get Faculty slots by faculty id
-            GetFacultySlots({faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid")})
+            GetFacultySlots({faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid"), count: countst})
 
         })
 
@@ -618,6 +620,7 @@
             //{faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid")}
             console.log('12121',data.faculty_id)
             console.log('12111',data.faculty_lid)
+            console.log('count', data.count)
             let ApiObj = {
                 type: 'GET',
                 url: '/admin/faculties/getslotsbyid',
@@ -629,7 +632,11 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('sucess:::::::::', result)
-             //   showSuccess(result)
+                let selectslot = ``;
+                result.result.forEach(function(item){
+                    selectslot += `<option value="${item.id}">${item.start_time}</option>`
+                })
+                $(`.SlotStartTime${data.count}`).html(selectslot)
             }).catch(error => {
                // showError(error.responseJSON)
             })
