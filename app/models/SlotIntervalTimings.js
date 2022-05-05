@@ -113,4 +113,21 @@ module.exports = class SlotIntervalTimings {
         })
     }
 
+    //Fetching time for specific faculty
+    static getFacultySlotsById(faculty_id, slug) {
+        return poolConnection.then(pool => {
+       //APPLY WHERE CONDITION WITH FACULTY ID
+       let request = pool.request();
+       return  request.input('faculty_id', sql.Int, faculty_id)
+         .query(`SELECT st.id, CONVERT(NVARCHAR, st.start_time, 0) AS start_time, CONVERT(NVARCHAR, st.end_time, 0) AS end_time
+          from [${slug}].faculties f
+          join dbo.faculty_pools fp
+          on f.faculty_id = fp.faculty_id
+          join dbo.slot_interval_timings st
+          on st.id >= fp.start_time_id
+          and st.id <= fp.end_time_id
+          where fp.id = @faculty_id GROUP BY st.id, st.start_time, st.end_time`)
+        })
+    }
+
 }

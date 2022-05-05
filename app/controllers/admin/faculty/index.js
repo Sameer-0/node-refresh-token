@@ -16,7 +16,7 @@ module.exports = {
     getPage: (req, res) => {
 
         Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(100000), SlotIntervalTimings.forFaculty(1000), AcademicCalender.fetchAll(100), FacultyTypes.fetchAll(100)]).then(result => {
-console.log(result[0].recordset)
+            console.log(result[0].recordset)
             res.render('admin/faculty/index', {
                 facultyList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -40,7 +40,7 @@ console.log(result[0].recordset)
 
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('error:::::::::::::::::::>>>',error)
+            console.log('error:::::::::::::::::::>>>', error)
             res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
@@ -74,7 +74,7 @@ console.log(result[0].recordset)
 
 
     delete: (req, res) => {
-        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        console.log('BODY::::::::::::>>>>>>', req.body.id)
         Faculties.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
@@ -138,6 +138,20 @@ console.log(result[0].recordset)
             })
         }).catch(error => {
             throw error
+        })
+    },
+
+    getSlotsById: (req, res, next) => {
+        console.log('Req:::::::::::::::',req.query.faculty_lid)
+        SlotIntervalTimings.getFacultySlotsById(req.query.faculty_lid, res.locals.slug).then(result => {
+            console.log('ReS:::::::::::::::',result.recordset)
+            res.json({
+                status: 200,
+                message: "Success",
+                result: result.recordset
+            })
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message)
         })
     }
 

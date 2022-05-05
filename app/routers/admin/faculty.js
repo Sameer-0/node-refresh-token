@@ -20,6 +20,9 @@ router.post('/faculties/pagination', index.pagination)
 router.get('/faculties/findOne', validate('single'), index.findOne)
 router.put('/faculties', validate('JsonValidator'), index.update)
 router.delete('/faculties', validate('delete'), index.delete)
+router.get('/faculties/getslotsbyid', validate('single'), index.getSlotsById)
+
+
 
 //Faculty Date Time
 router.get('/faculties/date-time', dateTimes.getPage)
