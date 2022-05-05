@@ -307,6 +307,8 @@
         }
 
         $("#selectList").on('click', '.list-group-item', function () {
+            console.log('faculty-id::::::::::',$(this).attr("data-faculty-id"))
+            console.log('faculty-lid::::::::::',$(this).attr("data-faculty-lid"))
             //remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
                 $("#selectedList table tbody").append(`
@@ -336,10 +338,12 @@
             }
 
             $(this).attr('data-clickable', 'false');
-
             $($(this)).fadeOut(300, function () {
                 $($(this)).remove()
             })
+
+            //Get Faculty slots by faculty id
+            GetFacultySlots({faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid")})
 
         })
 
@@ -607,6 +611,29 @@
                 showError(error.responseJSON)
             })
         })
+
+
+        //
+        function GetFacultySlots(data){
+            //{faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid")}
+            console.log('12121',data.faculty_id)
+            console.log('12111',data.faculty_lid)
+            let ApiObj = {
+                type: 'GET',
+                url: '/admin/faculties/getslotsbyid',
+                data: {
+                    faculty_lid: data.faculty_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+             //   showSuccess(result)
+            }).catch(error => {
+               // showError(error.responseJSON)
+            })
+        }
 
 
         function showSuccess(errors) {
