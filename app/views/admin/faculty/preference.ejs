@@ -93,7 +93,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="faculty_work_lid" id="faculty_work_lid">
+                                    <select class="select2 modalSelect2" name="faculty_work_lid" id="faculty_work_lid">
                                         <% for(faculty of facultyWorkList) {%>
                                         <option value="<%- faculty.id %>">
                                             <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
@@ -101,14 +101,14 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="p_day_lid" id="p_day_lid">
+                                    <select class="select2 modalSelect2" name="p_day_lid" id="p_day_lid">
                                         <% for(programday of programDayList) {%>
                                         <option value="<%- programday.id %>"><%- programday.program_name %> ( <%- programday.day_name %> )</option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="start_time_id" id="start_time_id">
+                                    <select class="select2 modalSelect2" name="start_time_id" id="start_time_id">
                                         <option value="">Select Start Time</option>
                                         <%for(let startlist of slotIntervalTimings){%>
                                             <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
@@ -116,7 +116,7 @@
                                 </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="end_time_id" id="end_time_id">
+                                    <select class="select2 modalSelect2" name="end_time_id" id="end_time_id">
                                         <option value="">Select End Time</option>
                                         <%for(let endlist of slotIntervalTimings){%>
                                             <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
@@ -151,9 +151,14 @@
     <script>
         $(document).ready(function () {
 
+    $('.select2').select2({
+        dropdownParent: $('#add-facultypreference-modal')
+    });
+
     $('.select2').select2({dropdownParent: $('#add-facultypreference-modal')});
        $('#add-more-facultyworktimepreferences').on('click', function () {
         let lastTr = $('#facultyworktimepreferencesTable tbody tr:last-child')
+        lastTr.find('.modalSelect2').select2('destroy');
         let faculty_work_lid = lastTr.find(`select[name="faculty_work_lid"]`).val();
         let p_day_lid = lastTr.find(`select[name="p_day_lid"]`).val();
         let start_time_id = lastTr.find(`select[name="start_time_id"]`).val();
@@ -164,6 +169,15 @@
         clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
         clonedTr.find(`select[name="start_time_id"]`).val(start_time_id).trigger('change');
         clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
+
+            lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-facultypreference-modal')
+                });
+
+            clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-facultypreference-modal')
+                });
+
         $('#facultyworktimepreferencesTable tbody').append(clonedTr);
     })         
 
