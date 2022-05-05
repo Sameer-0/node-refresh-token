@@ -92,7 +92,7 @@ module.exports = class SlotIntervalTimings {
         return poolConnection.then(pool => {
        //APPLY WHERE CONDITION WITH FACULTY ID
           return pool.request().query(`SELECT TOP ${Number(rowcount)} st.id, CONVERT(NVARCHAR, st.start_time, 0) AS start_time, CONVERT(NVARCHAR, st.end_time, 0) AS end_time
-          from [asmsoc-mum].faculties f
+          from [dbo].faculties f
           join dbo.faculty_pools fp
           on f.faculty_id = fp.faculty_id
           join dbo.slot_interval_timings st
