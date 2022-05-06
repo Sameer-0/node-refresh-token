@@ -16,7 +16,8 @@ module.exports = {
                     orgtypeList: result[1].recordset,
                     pageCount: result[2].recordset[0].count,
                     campusList: result[3].recordset,
-                    totalentries: result[0].recordset ? result[0].recordset.length : 0
+                    totalentries: result[0].recordset ? result[0].recordset.length : 0,
+                    breadcrumbs: req.breadcrumbs,
                 })
             })
         } else if (req.method == "POST") {

@@ -13,7 +13,9 @@ module.exports = {
         Promise.all([AcadSession.fetchAll(10), AcadSession.getCount()]).then(result => {
             res.render('management/academic/acadSession', {
                 acadSession: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs
+           
             })
         })
 

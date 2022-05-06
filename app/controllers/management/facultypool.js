@@ -9,7 +9,8 @@ module.exports = {
     getPage: (req, res) => {
         FacultyPool.fetchAll().then(result => {
             res.render('management/faculties/pool', {
-                facultypool: result.recordset
+                facultypool: result.recordset,
+                breadcrumbs: req.breadcrumbs
             })
         })
     },

@@ -68,6 +68,27 @@ app.use('/set-token', (req, res) => {
     res.send('Token set')
 })
 
+get_breadcrumbs = function(url) {
+    var rtn = [],
+        acc = "", // accumulative url
+        arr = url.substring(1).split("/");
+
+    for (i=0; i<arr.length; i++) {
+        acc = i != arr.length-1 ? acc+"/"+arr[i] : null;
+        if(acc == '/management') {acc = '/management/dashboard'}
+        if(acc == '/admin') {acc = '/admin/dashboard'}
+        rtn[i] = {name: arr[i].toUpperCase(), url: acc};
+        if(acc == '/management/dashboard'){acc = '/management' }
+        if(acc == '/admin/dashboard'){acc = '/admin' }
+    }
+    // console.log('rtnnnn', rtn)
+    return rtn;
+};
+
+app.use(function(req, res, next) {
+    req.breadcrumbs = get_breadcrumbs(req.originalUrl);
+    next();
+});
 
 
 

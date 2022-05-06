@@ -11,7 +11,8 @@ module.exports = {
         RoomBookingRejectionReasons.fetchAll(10).then(result => {
 
             res.render('management/cancellation/bookingrejectionreasons', {
-                RoomCancellationReasonsList: result.recordset
+                RoomCancellationReasonsList: result.recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
 

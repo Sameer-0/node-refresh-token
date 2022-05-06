@@ -16,7 +16,8 @@ module.exports = {
                 res.render('management/campus/index', {
                     status: 200,
                     campusList: result[0].recordset,
-                    pageCount: result[1].recordset[0].count
+                    pageCount: result[1].recordset[0].count,
+                    breadcrumbs: req.breadcrumbs,
                 })
             })
         } else if (req.method == "POST") {

@@ -10,7 +10,7 @@ class SimpleAlert {
     alert(obj) {
 
         console.log(">>>>>>>>>>>>> CALLING ALERT FUNC");
-        
+       
         this.removeAlert();
 
         let alertElem = document.createElement('div');
@@ -72,15 +72,14 @@ class SimpleAlert {
         });
 
         this.positiveElem.addEventListener('click', () => {
-            this.positiveCallbackFn();
+            this.removeAlert();
         })
 
         this.negativeElem.addEventListener('click', () => {
             console.log('close working')
             this.negativeCallbackFn();
         })
-        
+       
     }
 
 }
-

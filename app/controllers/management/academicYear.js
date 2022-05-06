@@ -15,7 +15,9 @@ module.exports = {
             res.render('management/academicYear/academicYear', {
                 academicDetails: result.recordset[0],
                 status: 200,
-                message: "Sucess"
+                message: "Sucess",
+                title:"Academic Year",
+                breadcrumbs: req.breadcrumbs
             })
         }).catch(err => {
             res.status(500).send({

@@ -21,7 +21,8 @@ module.exports = {
                     orgList: result[1].recordset,
                     campusList: result[2].recordset,
                     timeList: result[3].recordset,
-                    pageCount: result[4].recordset[0].count
+                    pageCount: result[4].recordset[0].count,
+                    breadcrumbs: req.breadcrumbs,
                 })
             }).catch(error => {
                 throw error
