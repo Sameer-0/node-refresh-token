@@ -14,7 +14,8 @@ module.exports = {
         Promise.all([HolidayTypes.fetchAll(10), HolidayTypes.getCount()]).then(result => {
             res.render('management/holiday/types', {
                 holidayTypeList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs
             })
         })
     },

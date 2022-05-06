@@ -13,7 +13,8 @@ module.exports = {
         Holidays.fetchAll(10).then(result => {
             console.log('List:::::::::::::::::>', result.recordset)
             res.render('management/holiday/index', {
-                holidayList: result.recordset
+                holidayList: result.recordset,
+                breadcrumbs: req.breadcrumbs
             })
         })
     },

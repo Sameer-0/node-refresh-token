@@ -14,7 +14,7 @@ const Settings = require('../../models/Settings')
 module.exports = {
 
     getPage: (req, res) => {
-        res.render('management/room/index')
+        res.render('management/room/index',{breadcrumbs: req.breadcrumbs,})
     }, 
 
     getRoomPage: (req, res) => {
@@ -27,7 +27,10 @@ module.exports = {
                 orgList: result[1].recordset,
                 roomTypeList: result[4].recordset,
                 timeList: result[3].recordset,
-                roomcount: result[6].recordset[0] ? result[6].recordset[0].count : ''
+                roomcount: result[6].recordset[0] ? result[6].recordset[0].count : '',
+                breadcrumbs: req.breadcrumbs,
+                
+                
             })
         }).catch(error => {
             throw error

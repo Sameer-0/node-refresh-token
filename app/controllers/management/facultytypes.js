@@ -11,7 +11,8 @@ module.exports = {
         Promise.all([FacultyTypes.fetchAll(10), FacultyTypes.getCount()]).then(result=>{
             res.render('management/faculties/types', {
                 typeList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs
             })
        })
     },

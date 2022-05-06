@@ -13,7 +13,8 @@ module.exports = {
         Promise.all([RoomTransactionTypes.fetchAll(10), RoomTransactionTypes.getCount()]).then(result => {
             res.render('management/booking/room_transaction_types', {
                 roomTransactionTypeList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
 

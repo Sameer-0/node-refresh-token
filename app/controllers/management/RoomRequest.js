@@ -15,7 +15,8 @@ module.exports = {
             console.log(result.recordset)
             res.render('management/room/requests', {
                 requestedList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
