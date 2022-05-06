@@ -23,7 +23,8 @@ module.exports = {
             acadYear: result[1].recordset[0].input_acad_year,
             programList: result[2].recordset,
             AcadSessionList: result[3].recordset,
-            moduleList: result[4].recordset
+            moduleList: result[4].recordset,
+            breadcrumbs: req.breadcrumbs,
           })
         })
       },

@@ -19,7 +19,8 @@ module.exports = {
                 programTypeList: JSON.stringify(result[1].recordset),
                 programTypeListObj:result[1].recordset,
                 pageCount: result[2].recordset[0].count,
-                programDboList: result[3].recordset
+                programDboList: result[3].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

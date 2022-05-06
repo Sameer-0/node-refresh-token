@@ -21,7 +21,8 @@ module.exports = {
                 programList: result[2].recordset,
                 dayList: JSON.stringify(result[3].recordset),
                 totalentries: result[0].recordset ? result[0].recordset.length : 0,
-                roomSlotsList: result[4].recordset
+                roomSlotsList: result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
