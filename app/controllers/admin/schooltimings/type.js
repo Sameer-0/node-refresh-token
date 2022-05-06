@@ -13,7 +13,9 @@ module.exports = {
             console.log(result.recordset)
             res.render("admin/schooltimings/types", {
                 typeList: result.recordset,
-                pageCount: 0
+                pageCount: 0,
+                breadcrumbs: req.breadcrumbs,
+          
             })
         })
     },

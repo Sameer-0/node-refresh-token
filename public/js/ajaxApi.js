@@ -8,6 +8,7 @@ function ajaxApi(obj) {
             console.log('Show beforeSend::::::::>')
         },
         success: data => {
+            console.log('success data::::::::::>',data)
             return data
         },
         complete: function () {
