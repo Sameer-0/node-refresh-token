@@ -15,7 +15,7 @@ module.exports = class Faculties {
     }
 
     static save(inputJSON, slug, userid) {
-console.log(JSON.stringify(inputJSON))
+        console.log(JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -89,10 +89,10 @@ console.log(JSON.stringify(inputJSON))
         })
     }
 
-    static findOne(id, slug){
+    static findOne(id, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-             request.input('Id', sql.Int, id)
+            request.input('Id', sql.Int, id)
             return request.query(`SELECT f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, 
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, 
@@ -122,9 +122,9 @@ console.log(JSON.stringify(inputJSON))
 
 
 
-    
+
     static delete(id, slug, userid) {
-        console.log('id:::::::',id)
+        console.log('id:::::::', id)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_request_lid', sql.Int, id)
