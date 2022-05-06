@@ -32,25 +32,28 @@
 <!-- MAIN-CONTENT -->
 <div class="main-content">
 
-    <% if (currentFormStep) { %>
+    <% if (currentFormStep) { %> 
     <%- include('./stepform.ejs') %>
     <% } else { %>
     <%- include('./dashboard.ejs') %>
     <% } %>
-
+  
 </div>
 </main>
 
 <%- include('../partials/footer') %>
-
+ 
 
 <!-- PAGE LEVEL JS START -->
-
 
 <script src="/js/adminDashboardscript.js"></script>
 
 <script>
     $(document).ready(function () {
+        $('.select2').select2({
+        dropdownParent: $('#add-holiday-table')
+    });
+
         let username = `<%- locals.userId %>`;
         let campu = `<%- campusList%>`;
         let date = `<%- acadCalender%>`;
@@ -60,14 +63,14 @@
         let programType = JSON.parse(`<%- programTypeList%>`);
         let facultyTypeList = JSON.parse(`<%- facultyType %>`);
         let transactionTypeList =  JSON.parse(`<%- transactionTypes %>`);
-
-
+        
+       
         let optionStartTime;
         let optionEndTime;
         let startDate;
         let endDate;
         let programTypeList;
-        let facultyType;
+        let facultyType; 
         let transactionTypes;
 
         for (let obj of slotObj) {
@@ -77,12 +80,15 @@
         for (let obj of slotObj) {
             optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
         }
+
         for (let obj of acadDate) {
             startDate += `<option value="${obj.id}">${obj.date}</option>`;
         }
+
         for (let obj of acadDate) {
             endDate += `<option value="${obj.id}">${obj.date}</option>`;
         }
+
         for (let obj of programType) {
             programTypeList += `<option value="${obj.id}">${obj.name}</option>`
         }
@@ -93,6 +99,9 @@
         for (let obj of transactionTypeList) {
             transactionTypes += `<option value="${obj.id}">${obj.name}</option>`;
         }
+
+     
+
 
         //DATA SELECT FOR ROOM
         $(".selectList").on('click', '.list-group-item', function () {
@@ -128,9 +137,7 @@
 
             $(this).attr('data-clickable', 'false');
 
-            // $($(this)).fadeOut(300, function () {
-            //     $($(this)).remove()
-            // })
+     
 
         })
 
@@ -242,7 +249,7 @@
         //search selected faculty
         $('.searchSelectedItemProgram').on('input', function () {
             let selectedItems = $('.selectedListProgram table tbody tr')
-            var text = $('.searchSelectedItemProgram').val().toLowerCase();
+            var text = $('.searchSelectedItemProgram').val().toLowerCase(); 
             console.log('text:::::::::', selectedItems)
             for (let item of selectedItems) {
                 console.log('faculty:::::::::', item)
@@ -255,7 +262,6 @@
         })
 
         //DATA SELECT FOR FACULTY//
-
         $(".selectListFaculty").on('click', '.list-group-item', function () {
             //remove current element when added to right sidebar
             console.log('faculty::s')
@@ -340,6 +346,228 @@
             };
         })
 
+        //Options for school timing
+        $('.schoolTimingOptions').on('input', function myFunction(){
+            console.log($(this).attr('id'))
+
+            if($(this).attr('id') == 'DayWise'){
+                let DayWise = `<div class="table-responsive DayWise" data-dis="true">
+                    <table class="table table-bordered" id="add-more-DayWise-table">
+                        <thead>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Slot Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingDayWise"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(DayWise);
+            }
+            else if($(this).attr('id') == 'programAndDayWise'){
+                let programAndDayWise = `<div class="table-responsive programAndDayWise" data-dis="true">
+                    <table class="table table-bordered" id="add-more-programAndDayWise-table">
+                        <thead>
+                            <th>Program Name</th>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Slot Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select" name="programName">
+                                        <% for(program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingProgramWise"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(programAndDayWise);
+            }
+            else if($(this).attr('id') == 'programDaySessionWise'){
+                let programAndDayWise = `<div class="table-responsive programDaySessionWise" data-dis="true">
+                    <table class="table table-bordered" id="add-more-programDaySessionWise-table">
+                        <thead>
+                            <th>Program Name</th>
+                            <th>Acad Session</th>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Slot Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select programNameForSession" name="programName" id="">
+                                        <% for(program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select sessionForProgram" name="acadSession" id="">
+                                        <% for(acadSession of AcadSessionList){%>
+                                            <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingProgramSessionWise"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(programAndDayWise);
+            }
+            else{
+                let dayOnly = `   <div class="table-responsive sameForAllDay">
+                    <table class="table table-bordered" id="add-more-sameForAllDay-table">
+                        <thead>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Lecture Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="form-select" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="form-select" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(dayOnly);
+            }
+        })
+
         //Add more rows for FacultyWorks
         $('#add-more-facultyworkfields').on('click', function () {
             console.log("Adding faculty work fields::::")
@@ -403,7 +631,7 @@
                 }
             })
 
-        //Add more rows for Faculty Prefernce
+        //Add more rows for Faculty Preference
         $('#add-more-facultyworktimepreferences').on('click', function () {
             console.log('yelo:::')
             let lastTr = $('#facultyworktimepreferencesTable tbody tr:last-child')
@@ -460,6 +688,105 @@
                 }
             })
 
+        //Add more rows for School timing
+        $('#add-more-schoolTiming').on('click', function(){
+          console.log($('.sameForAllDay[data-dis]').attr('data-dis'));
+            if($('.sameForAllDay[data-dis]').attr('data-dis') == 'true'){
+                console.log('hello')
+                let lastTr = $('#add-more-sameForAllDay-table tbody tr:last-child')
+
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+
+                $('#add-more-sameForAllDay-table tbody').append(clonedTr)
+             }
+            else if($('.DayWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-DayWise-table tbody tr:last-child')
+
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+                $('#add-more-DayWise-table tbody').append(clonedTr)
+            }
+            else if($('.programAndDayWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-programAndDayWise-table tbody tr:last-child')
+
+                let programName = lastTr.find(`select[name="programName"]`).val();
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+
+                $('#add-more-programAndDayWise-table tbody').append(clonedTr)
+            }
+            else if($('.programDaySessionWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-programDaySessionWise-table tbody tr:last-child')
+
+                let programName = lastTr.find(`select[name="programName"]`).val();
+                let acadSession = lastTr.find(`select[name="acadSession"]`).val();
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+
+                $('#add-more-programDaySessionWise-table tbody').append(clonedTr)
+            }
+        })
+
+        $('#add-more-sameForAllDay-table').on('click', '.remove-schoolTiming',
+            function () {
+                let trLength = $('#add-more-sameForAllDay-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingDayWise',
+            function () {
+                let trLength = $('#add-more-DayWise-table tbody tr').length;
+                console.log(trLength)
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+    
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingProgramWise',
+            function () {
+                let trLength = $('#add-more-programAndDayWise-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingProgramSessionWise',
+            function () {
+                let trLength = $('#add-more-programDaySessionWise-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+    
         // Display room import
         $('#importRoom').on('click', function() {
             let orgId = $('#open-room-modal #handled_by').val()
@@ -508,7 +835,7 @@
                         roomJson.push(obj)
                     }
                 })
-                console.log('roomjason:::',roomJson);
+                console.log('roomjson:::',roomJson);
                 let ApiObj = {
                 type: 'POST',
                 url: '/admin/rooms',
@@ -522,9 +849,8 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
                 showSuccess(result)
-                setTimeout(function(){
-                    location.reload()
-                },3000)
+                scroll()
+                formStepNext()
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -532,7 +858,7 @@
 
             })
 
-             // Display Program import
+        //  Program import
         $('#importPrograms').on('click', function() {
         let programElems = $('#add-more-program-table tbody tr');
                 let programCount = programElems.length;
@@ -546,8 +872,7 @@
                     if (index < programCount - 1) {
                         let obj = {
                             program_id: programId,
-                            program_type: programType,
-                            
+                            program_type: programType,  
                         }
                         programJson.push(obj)
                     } else {
@@ -572,9 +897,9 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
                 showSuccess(result)
-                setTimeout(function(){
-                    location.reload()
-                },3000)
+              
+                scroll()
+                formStepNext()
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -643,9 +968,7 @@
 
                     ajaxApi(ApiObj).then(result => {
                         console.log('sucess:::::::::', result)
-                        setTimeout(function(){
-                          location.reload()
-                            },3000)
+                        setTimeout(function(){location.reload()},3000)
                         
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -659,11 +982,10 @@
         $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
 
         $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
-
+            scroll();
         function formStepNext() {
             currentFormStep++;
 
-            console.log('clicked!!', currentFormStep)
             $(`.step-form .stages .stage:nth-child(-n + ${currentFormStep-1})`).removeClass('pending').addClass('submitted');
             $(`.step-form .stages .stage:nth-child(${currentFormStep})`).removeClass('pending').addClass('active');
 
@@ -672,10 +994,7 @@
             console.log(currentFormStep);
         }
 
-
-        // NEXT STEP EVENT
-        $('#next-step').on('click', function () {
-          console.log('curretn', currentFormStep)
+        function scroll(){
             //SCROLL ON NEXT
             if(currentFormStep == 12){
                 let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep}"]`)
@@ -685,14 +1004,49 @@
             })
             }else{
             let ele = document.querySelector(`.arrow-pointer[data-step="${currentFormStep+1}"]`);
-            console.log('stepformscroll', ele);
-
+           
             ele.scrollIntoView({
                 behavior: "smooth",
                 inline: 'start'
             })
+            $('#errorHtml').html('');
         }
+    }
 
+        //Api for onchange program event
+        $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
+            let program_lid = $(this).val();
+                console.log('program_lid', program_lid)
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/acadSessionList",
+                data: {
+                    program_lid: program_lid
+                },
+                dataType:"JSON"
+            }
+
+            ajaxApi(apiObj).then(result => {
+                let acadList = `<select class="form-select sessionForProgram" name="acadSession" id="">`
+                    if(result.data.acadSessionList.length > 0){
+                        for(let data of result.data.acadSessionList){
+                        acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
+                        }
+                    }
+                    else{
+                        acadList += `<option value=""> NO SESSION FOUND <option>`
+                    }
+                    acadList += `</select>`
+                    $(this).parent().next().html(acadList);
+
+                console.log('list:::>>>', $(this).parent().next());
+            }).catch(error => console.log('error',error));
+
+        })
+
+        // NEXT STEP EVENT
+        $('#next-step').on('click', function () {
+ 
             // CREATING JSON AND AJAX CALL
             if (currentFormStep == 1) {
                 
@@ -744,8 +1098,8 @@
 
                 ajaxApi(ApiObj).then(result => {
                     console.log('Result:::::::::::', result)
-                    //   location.reload()
-
+                    showSuccess(result)
+                    scroll()
                     formStepNext()
 
                 }).catch(error => {
@@ -769,8 +1123,8 @@
 
                 ajaxApi(ApiObj).then(result => {
                     console.log('Result:::::::::::', result)
-                    //   location.reload()
-
+                    showSuccess(result)
+                    scroll()
                     formStepNext()
 
                 }).catch(error => {
@@ -778,15 +1132,96 @@
                     showError(error.responseJSON)
                 })
 
+            } else if(currentFormStep == 4){
+                
+                let courseElems = $('#courseWorkloadTable tbody tr');
+                let courseCount = courseElems.length;
+                let courseJSON = [];
+                courseElems.each(function (index, elem) {
+                let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
+                let intake = $(elem).find(`input[name='intake']`).val()
+                let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
+                let lecture_count_per_batch = $(elem).find(`input[name='lecture_count_per_batch']`).val();
+                let practical_count_per_batch = $(elem).find(`input[name='practical_count_per_batch']`).val();
+                let tutorial_count_per_batch = $(elem).find(`input[name='tutorial_count_per_batch']`).val();
+                let workshop_count_per_batch = $(elem).find(`input[name='workshop_count_per_batch']`).val();
+                let session_events_per_semester = $(elem).find(`input[name='session_events_per_semester']`).val();
+                let module_type_lid = $(elem).find(`select[name='module_type_lid']`).val();
+                let continuous = $(elem).find(`input[name='continuous']`).val();
+                let module_name = $(elem).find(`td[data-module-name]`).attr(`data-module-name`);
+                let program_id = $(elem).find(`td[data-program-id]`).attr(`data-program-id`);
+                let module_id = $(elem).find(`td[data-module-id]`).attr(`data-module-id`);
+                let acad_session_lid =  $(elem).find(`td[data-acad-session-lid]`).attr(`data-acad-session-lid`);
 
+                console.log('module_name:::::::::::::::>>>>>',module_name, program_id, module_id, acad_session_lid)
+
+                if (index < courseCount - 1) {
+                    let obj = {
+                        id: workloadlid,
+                        intake: intake,
+                        student_per_division: student_per_division,
+                        lecture_count_per_batch: lecture_count_per_batch,
+                        practical_count_per_batch: practical_count_per_batch,
+                        tutorial_count_per_batch: tutorial_count_per_batch,
+                        workshop_count_per_batch: workshop_count_per_batch,
+                        session_events_per_semester: session_events_per_semester,
+                        continuous: continuous,
+                        module_type_lid:module_type_lid,
+                        user_id: username,
+                        module_name: module_name,
+                        program_id: program_id,
+                        module_id: module_id,
+                        acad_session_lid: acad_session_lid
+                    }
+                    courseJSON.push(obj)
+                } else {
+                    let obj = {
+                        id: workloadlid,
+                        intake: intake,
+                        student_per_division: student_per_division,
+                        lecture_count_per_batch: lecture_count_per_batch,
+                        practical_count_per_batch: practical_count_per_batch,
+                        tutorial_count_per_batch: tutorial_count_per_batch,
+                        workshop_count_per_batch: workshop_count_per_batch,
+                        session_events_per_semester: session_events_per_semester,
+                        continuous: continuous,
+                        module_type_lid:module_type_lid,
+                        user_id: username,
+                        module_name: module_name,
+                        program_id: program_id,
+                        module_id: module_id,
+                        acad_session_lid: acad_session_lid
+                    }
+                    courseJSON.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',courseJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/courseworkload',
+                data: {
+                    inputJSON: JSON.stringify(courseJSON),
+                    settingName: 'Courseworkload'
+                },
+                dataType: 'JSON'
             }
-            else if(currentFormStep == 5){
 
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+                scroll()
+                formStepNext()
 
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+            
+            }else if(currentFormStep == 5){
                 
                 console.log('session dates')
                 $.ajax({
-                    url: '/admin/sessions/dates',
+                    url: '/admin/sessions/dates', 
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -796,16 +1231,117 @@
                         endDate: $('#endDate').val()
                     },
                     success: (data) => {
-                        location.reload()
+                        showSuccess(result)
+                        scroll()
+                        formStepNext()
                     },
                     error: err => {
                         console.log('err::::::::',err)
                         showExpressError(err.responseJSON) 
                     }
                 })
-                formStepNext()
+                
         
 
+            }else if(currentFormStep == 6){
+                let divElems = $('#add-more-division-table tbody tr');
+                let divCount = divElems.length;
+                let divJSON = [];
+                divElems.each(function (index, elem) {
+                    let id = $(elem).find(`input[name='divId']`).val()
+                    let count_for_theory_batch = $(elem).find(
+                        `input[name='count_for_theory_batch']`).val()
+                    let count_for_practical_batch = $(elem).find(
+                        `input[name='count_for_practical_batch']`).val();
+                    let count_for_tutorial_batch = $(elem).find(
+                        `input[name='count_for_tutorial_batch']`).val();
+                    let count_for_workshop_batch = $(elem).find(
+                        `input[name='count_for_workshop_batch']`).val();
+
+
+                    if (index < divCount - 1) {
+                        let obj = {
+                            id: id,
+                            count_for_theory_batch: count_for_theory_batch,
+                            count_for_practical_batch: count_for_practical_batch,
+                            count_for_tutorial_batch: count_for_tutorial_batch,
+                            count_for_workshop_batch: count_for_workshop_batch
+                        }
+                        divJSON.push(obj)
+                    } else {
+                        let obj = {
+                            id: id,
+                            count_for_theory_batch: count_for_theory_batch,
+                            count_for_practical_batch: count_for_practical_batch,
+                            count_for_tutorial_batch: count_for_tutorial_batch,
+                            count_for_workshop_batch: count_for_workshop_batch
+                        }
+                        divJSON.push(obj) 
+                    }
+                })
+
+                console.log('Json::::::::::::', divJSON)
+                let ApiObj = {
+                    type: 'PUT',
+                    url: '/admin/divisions',
+                    data: {
+                        inputJSON: JSON.stringify(divJSON),
+                        settingName:"Division"
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    console.log(result)
+                    showSuccess(result)
+                    scroll()
+                    formStepNext()
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+            }else if(currentFormStep == 7){
+                let divbatchElems = $('#add-more-divisionBatches-table tbody tr');
+                let batchCount = divbatchElems.length;
+                let batchJSON = [];
+                divbatchElems.each(function (index, elem) {
+                    let id = $(elem).find(`input[name='batch_id']`).val()
+                    let faculty_count = $(elem).find(`input[name='faculty_count']`).val()
+                    if (index < batchCount - 1) {
+                        let obj = {
+                            id: id,
+                            faculty_count: faculty_count,
+                        }
+                        batchJSON.push(obj)
+                    } else {
+                        let obj = {
+                            id: id,
+                            faculty_count: faculty_count,
+                        }
+                        batchJSON.push(obj)
+                    }
+                })
+
+                //Ajax Call
+                console.log('JSON::::::::', batchJSON) 
+                let ApiObj = {
+                    type: 'PUT',
+                    url: '/admin/divisions/batches',
+                    data: {
+                        inputJSON: JSON.stringify(batchJSON),
+                        settingName: 'Divisionbatches'
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    console.log(result)
+                    showSuccess(result)
+                    scroll()
+                    formStepNext()
+
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
             }
             else if(currentFormStep == 10){
 
@@ -865,7 +1401,8 @@
                 ajaxApi(ApiObj).then(result => {
                     console.log(result)
                     showSuccess(result)
-                    setTimeout(function() {location.reload()},3000)
+                    scroll()
+                    formStepNext()
 
 
                 }).catch(error => {
@@ -916,7 +1453,8 @@
                     ajaxApi(ApiObj).then(result => {
                         console.log(result)
                         showSuccess(result)
-                        setTimeout(function() {location.reload()},3000)
+                        scroll()
+                        formStepNext()
                     }).catch(error => {
                         showError(error.responseJSON)
                     })
@@ -957,7 +1495,11 @@
                         ajaxApi(ApiObj).then(result => {
                             console.log(result)
                             showSuccess(result)
-                            setTimeout(function() {location.reload()}, 3000)
+                            scroll()
+                            formStepNext()
+                            setTimeout(function(){
+                                location.reload
+                            }, 3000)
 
                         }).catch(error => {
                             showError(error.responseJSON)
@@ -967,7 +1509,6 @@
             })
 
 
-    
         //Getting campus Bulding List
         $("#campus_lid").on('change', function () {
             let campus_lid = $(this).val()
@@ -1008,7 +1549,6 @@
             dropdownParent: $('#open-room-modal')
         });
 
-
         //Fetch course workload form SAP
         $(".fetchFromSAP").on('click', function () {
             let acadYear = $("#acadYear").val()
@@ -1035,40 +1575,45 @@
 
         //SaveAll course workload
         $(".SaveAllCourse").on('click', function () {
-            console.log('SaveAll::::::::::>>>')
-            let courseElems = $('#add-more-courseWorkload-table tbody tr');
+            console.log('hello')
+            let courseElems = $('#courseWorkloadTable tbody tr');
             let courseCount = courseElems.length;
             let courseJSON = [];
             courseElems.each(function (index, elem) {
                 let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
                 let intake = $(elem).find(`input[name='intake']`).val()
-                let student_per_division = $(elem).find(`input[name='student_per_division']`)
-                    .val();
-                let lec_per_week_per_division = $(elem).find(
-                    `input[name='lec_per_week_per_division']`).val();
-                let practical_per_week_per_division = $(elem).find(
-                    `input[name='practical_per_week_per_division']`).val();
-                let tutorial_per_week_per_division = $(elem).find(
-                    `input[name='tutorial_per_week_per_division']`).val();
-                let workshop_per_week_per_division = $(elem).find(
-                    `input[name='workshop_per_week_per_division']`).val();
-                let session_events_per_semester = $(elem).find(
-                    `input[name='session_events_per_semester']`).val();
+                let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
+                let lecture_count_per_batch = $(elem).find(`input[name='lecture_count_per_batch']`).val();
+                let practical_count_per_batch = $(elem).find(`input[name='practical_count_per_batch']`).val();
+                let tutorial_count_per_batch = $(elem).find(`input[name='tutorial_count_per_batch']`).val();
+                let workshop_count_per_batch = $(elem).find(`input[name='workshop_count_per_batch']`).val();
+                let session_events_per_semester = $(elem).find(`input[name='session_events_per_semester']`).val();
                 let module_type_lid = $(elem).find(`select[name='module_type_lid']`).val();
                 let continuous = $(elem).find(`input[name='continuous']`).val();
+                let module_name = $(elem).find(`td[data-module-name]`).attr(`data-module-name`);
+                let program_id = $(elem).find(`td[data-program-id]`).attr(`data-program-id`);
+                let module_id = $(elem).find(`td[data-module-id]`).attr(`data-module-id`);
+                let acad_session_lid =  $(elem).find(`td[data-acad-session-lid]`).attr(`data-acad-session-lid`);
+
+                console.log('module_name:::::::::::::::>>>>>',module_name, program_id, module_id, acad_session_lid)
 
                 if (index < courseCount - 1) {
                     let obj = {
                         id: workloadlid,
                         intake: intake,
                         student_per_division: student_per_division,
-                        lec_per_week_per_division: lec_per_week_per_division,
-                        practical_per_week_per_division: practical_per_week_per_division,
-                        tutorial_per_week_per_division: tutorial_per_week_per_division,
-                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        lecture_count_per_batch: lecture_count_per_batch,
+                        practical_count_per_batch: practical_count_per_batch,
+                        tutorial_count_per_batch: tutorial_count_per_batch,
+                        workshop_count_per_batch: workshop_count_per_batch,
                         session_events_per_semester: session_events_per_semester,
                         continuous: continuous,
-                        module_type_lid: module_type_lid
+                        module_type_lid:module_type_lid,
+                        user_id: username,
+                        module_name: module_name,
+                        program_id: program_id,
+                        module_id: module_id,
+                        acad_session_lid: acad_session_lid
                     }
                     courseJSON.push(obj)
                 } else {
@@ -1076,25 +1621,29 @@
                         id: workloadlid,
                         intake: intake,
                         student_per_division: student_per_division,
-                        lec_per_week_per_division: lec_per_week_per_division,
-                        practical_per_week_per_division: practical_per_week_per_division,
-                        tutorial_per_week_per_division: tutorial_per_week_per_division,
-                        workshop_per_week_per_division: workshop_per_week_per_division,
+                        lecture_count_per_batch: lecture_count_per_batch,
+                        practical_count_per_batch: practical_count_per_batch,
+                        tutorial_count_per_batch: tutorial_count_per_batch,
+                        workshop_count_per_batch: workshop_count_per_batch,
                         session_events_per_semester: session_events_per_semester,
                         continuous: continuous,
-                        module_type_lid: module_type_lid
+                        module_type_lid:module_type_lid,
+                        user_id: username,
+                        module_name: module_name,
+                        program_id: program_id,
+                        module_id: module_id,
+                        acad_session_lid: acad_session_lid
                     }
                     courseJSON.push(obj)
                 }
             })
 
-            console.log('Json::::::::::::', courseJSON)
+            console.log('Json::::::::::::',courseJSON)
             let ApiObj = {
                 type: 'PUT',
                 url: '/admin/courseworkload',
                 data: {
-                    inputJSON: JSON.stringify(courseJSON),
-                    settingName:"Courseworkload",
+                    inputJSON: JSON.stringify(courseJSON)
                 },
                 dataType: 'JSON'
             }
@@ -1102,15 +1651,14 @@
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
 
         //SaveAll Divisions
-        $(".SaveDivision").on('click', function () {
-            console.log('SaveDivision::::::::::>>>')
+        $(".saveDivision").on('click', function () {
+            console.log('saveDivision::::::::::>>>')
             let divElems = $('#add-more-division-table tbody tr');
             let divCount = divElems.length;
             let divJSON = [];
@@ -1118,7 +1666,7 @@
                 let id = $(elem).find(`input[name='divId']`).val()
                 let count_for_theory_batch = $(elem).find(
                     `input[name='count_for_theory_batch']`).val()
-                let count_for_practical_batch = $(elem).find(
+                let count_for_practical_batch = $(elem).find( 
                     `input[name='count_for_practical_batch']`).val();
                 let count_for_tutorial_batch = $(elem).find(
                     `input[name='count_for_tutorial_batch']`).val();
@@ -1152,8 +1700,7 @@
                 type: 'PUT',
                 url: '/admin/divisions',
                 data: {
-                    inputJSON: JSON.stringify(divJSON),
-                    settingName:"Division"
+                    inputJSON: JSON.stringify(divJSON)
                 },
                 dataType: 'JSON'
             }
@@ -1161,9 +1708,6 @@
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-                setTimeout(function(){
-                    location.reload()
-                },3000)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -1187,7 +1731,6 @@
                     let obj = {
                         id: id,
                         faculty_count: faculty_count,
-
                     }
                     batchJSON.push(obj)
                 }
@@ -1213,8 +1756,6 @@
             })
         })
 
-
-        //
         function showError(errors) {
             let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h3>Error</h3>
@@ -1233,8 +1774,8 @@
                 console.log(errorHtml)
             // $("#errorHtml").html(errorHtml)
             //open-room-modal
+            $("#errorHtml").html(errorHtml)
             $(".error-html").html(errorHtml)
-            $("#open-faculty-modal .error-html").html(errorHtml)
             // $("#open-program-modal .error-html").html(errorHtml)
         }
 
@@ -1260,7 +1801,7 @@
 
                 console.log('errorHtml:::::::::::',errorHtml)
             $("#errorHtml").html(errorHtml)
-            $("#open-faculty-modal .error-html").html(errorHtml)
+            $(".error-html").html(errorHtml)
             // $("#open-program-modal .error-html").html(errorHtml)
         }
 

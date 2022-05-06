@@ -5,6 +5,16 @@
 <!--HEADER END-->
 
 <div class="main-content">
+    <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
+ 
+    
     <!--DASHBOARD CONTENT START-->
     <!-- <div class="row my-3 gx-3 gy-3 row1-data">
         <div class="col-xl-2 col-lg-4 col-md-6 d-flex flex-column align-items-center">
@@ -136,19 +146,19 @@
                                 <td>
                                     <!-- <input name="holiday_date" id="holiday_date" type="date" class="form-control"
                                         placeholder="Holiday Date" required> -->
-                                        <select class="select2 form-select"  name="holiday_date" id="holiday_date">
+                                        <select class="select2 modalSelect2"  name="holiday_date" id="holiday_date">
                                             <% for(let acadcal of academicCalender){%>
                                             <option value="<%- acadcal.date %>"><%- acadcal.date %></option>
                                             <%}%>
                                         </select>
                                 </td>
                                 <td>
-                                    <select class="select2 form-select" name="holiday_type" id="holiday_type">
+                                    <select class="select2 modalSelect2" name="holiday_type" id="holiday_type">
                                         <% for(let type of holidayType){%>
                                         <option value="<%- type.id %>"><%- type.name %></option>
                                         <%}%>
                                     </select>
-                                </td>
+                                </td> 
                                 <td>
                                     <input name="reason" id="reason" type="text" class="form-control"
                                         placeholder="Reason">
@@ -166,12 +176,9 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i>
-                    Add
-                    More Holidays</button>
-                <button type="button" class="btn createHoliday modal-inputform-btn">Create
-                    Holidays</button>
-                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update
-                    Holiday</button>
+                    Add More Holidays</button>
+                <button type="button" class="btn createHoliday modal-inputform-btn">Create Holidays</button>
+                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update Holiday</button>
             </div>
             <!-- </form> -->
 
@@ -214,13 +221,11 @@
 
 
 
-
-
-
         $('#add-more-holidays').on('click', function () {
                 let lastTr = $('#add-more-holidays-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
                 let calendar_year = lastTr.find(`select[name='calendar_year']`).val();
-                let holiday_date = lastTr.find(`select[name='holiday_date']`).val();
+                let holiday_date = lastTr.find(`select[name='holiday_date']`).val(); 
                 let holiday_type = lastTr.find(`select[name='holiday_type']`).val();
                 let reason = lastTr.find(`select[name='reason']`).val();
                 let clonedTr = lastTr.clone();
@@ -228,6 +233,15 @@
                 clonedTr.find(`input[name='holiday_date']`).val('')
                 clonedTr.find(`select[name='holiday_type']`).val('')
                 clonedTr.find(`select[name='reason']`).val('')
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-holiday-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-holiday-modal')
+                });
+
                 $('#add-more-holidays-table tbody').append(clonedTr)
             })
 
@@ -291,7 +305,6 @@
 
         //Edit Holiday
         //edit-holiday
-
         $('#holidayTable').on('click','.edit-holiday', function () {
             $("#add-more-holidays").addClass('d-none')
             $(".createHoliday").addClass('d-none')
@@ -468,7 +481,7 @@
 
 
 
-                        //Bulk Delete
+            //Bulk Delete
                $(".bulk-delete-holiday").on('click', function () {
                 let ApiObj = {
                     url: '/admin/holidays',

@@ -17,6 +17,5 @@ router.post('/building/pagination', validate('pagination'), building.getPage)
 router.get('/buildings/findOne', validate('single'), building.findOne)
 router.get('/building/search', validate('search'), building.search)
 router.delete('/buildings',  building.delete)
-router.patch('/buildings',  building.deleteAll)
 
 module.exports = router;

@@ -4,23 +4,29 @@
 $('#add-more-holidays').on('click', function () {
     console.log("holidays Added::::")
     let lastTr = $('#add-more-holidays-table tbody tr:last-child')
+    lastTr.find('.modalSelect2').select2('destroy');
     let calendarId = lastTr.find(`input[name='calendarId']`).val();
     let calendarName = lastTr.find(`input[name='calendarName']`).val();
-    let campusId = lastTr.find(`input[name='campusId']`).val();
+    let holidayType = lastTr.find(`select[name='holidayType']`).val();
     let calendarYear = lastTr.find(`input[name='calendarYear']`).val();
     let holidayDate = lastTr.find(`input[name='holidayDate']`).val();
     let holidayReason = lastTr.find(`input[name='holidayReason']`).val();
 
-
     let clonedTr = lastTr.clone();
     clonedTr.find(`input[name='calendarId']`).val('')
     clonedTr.find(`input[name='calendarName']`).val('')
-    clonedTr.find(`input[name='campusId']`).val('')
+    clonedTr.find(`select[name='holidayType']`).val('')
     clonedTr.find(`input[name='calendarYear']`).val('')
     clonedTr.find(`input[name='holidayDate']`).val('')
     clonedTr.find(`input[name='holidayReason']`).val('')
     
-   
+    lastTr.find('.modalSelect2').select2({
+        dropdownParent: $('#add-holiday-table')
+    }); 
+
+    clonedTr.find('.modalSelect2').select2({
+        dropdownParent: $('#add-holiday-table')
+    });
     $('#add-more-holidays-table tbody').append(clonedTr)
 })
 

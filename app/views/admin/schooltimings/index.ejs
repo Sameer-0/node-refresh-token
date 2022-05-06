@@ -13,7 +13,7 @@
                 <div class="card row1-data-card text-center">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <img src="/icon_imgs/room-type.PNG" alt="">
-                        <p class="fw-normal pt-1">TYPES</p>
+                        <p class="fw-normal pt-1">SLOT TYPES</p>
                     </div>
                 </div>
             </a>
@@ -39,7 +39,7 @@
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-<div id="errorHtml"></div>
+            <div id="errorHtml"></div>
             <table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
@@ -89,95 +89,94 @@
 </div>
 
 
-<!-- MODAL FOR COURSE DAY PREFERENCE -->
-<div class="modal fade" id="add-schooltiming-modal" tabindex="-1" role="dialog" aria-labelledby="add-holiday-modal"
-    aria-hidden="true">
+<!-- MODAL FOR SCHOOL TIMING -->
+<div class="modal fade" id="add-schooltiming-modal" tabindex="-1" role="dialog" aria-labelledby="add-holiday-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content modal-inputform">
             <div class="modal-header  modal-inputform-header">
-                <h5 class="modal-title text-dark" id="add-org-modal-title">Create School Timing</h5>
-                <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i
-                        class="fas fa-times"></i></button>
-
+                <h5 class="modal-title text-dark me-2" id="add-org-modal-title">Add School Timing</h5>
+                <button type="button" class="btn add-btn fs-6 text-dark me-auto" id="add-more-schoolTiming"><i class="fa-solid fa-plus"></i>
+                </button>
+                <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i>
+                </button>
+                
             </div>
             <div class="modal-body">
                 <div id="errorHtml"></div>
-             <div class="row">
-                 <div class="col-md-2 border-end border-primary">
-                    <div class="mb-3">
-                        <label class="form-label">Enter Name</label>
-                        <input type="text" class="form-control" name="school_timings_name" id="school_timings_name">
+                <div class="d-flex justify-content-around mt-5">
+                    <div class="form-check flex-fill d-flex justify-content-center">
+                        <input class="form-check-input schoolTimingOptions me-1" type="radio" name="flexRadioDefault" id="sameForAllDay" checked>
+                        <label class="form-check-label" for="sameForAllDay">
+                        Same For All Day
+                        </label>
                     </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Program</label>
-                    <select class="form-select"  name="program_name" id="program_name">
-                    <% for(let programs of programList){%>
-                        <option value="<%- programs.id%>"><%- programs.program_name%></option>
-                        <%}%>
-                    </select>
+                    <div class="form-check flex-fill d-flex justify-content-center">
+                        <input class="form-check-input schoolTimingOptions me-1" type="radio" name="flexRadioDefault" id="DayWise">
+                        <label class="form-check-label" for="DayWise">
+                        Day Wise
+                        </label>
+                    </div>
+                    <div class="form-check flex-fill d-flex justify-content-center">
+                        <input class="form-check-input schoolTimingOptions me-1" type="radio" name="flexRadioDefault" id="programAndDayWise" >
+                        <label class="form-check-label" for="programAndDayWise">
+                        Program And Day Wise
+                        </label>
+                    </div>
+                    <div class="form-check flex-fill d-flex justify-content-center">
+                        <input class="form-check-input schoolTimingOptions me-1" type="radio" name="flexRadioDefault" id="programDaySessionWise" >
+                        <label class="form-check-label" for="programDaySessionWise">
+                        Program, Day And Session Wise
+                        </label>
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                 <label class="form-label">Select Session</label>
-                    <select class="form-select" name="acad_session" id="acad_session"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Day Name</label>
-                    <select class="form-select" name="day_name" id="day_name"></select>
-                </div>
-
-
-                <div class="mb-3">
-                    <label class="form-label">Select Start Time</label>
-                    <select class="form-select"  name="slot_start_lid" id="slot_start_lid">
-                        <% for(let start of slotInterval){%>
-                            <option value="<%- start.id%>"><%- start.start_time%></option>
-                        <%}%>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select End Time</label>
-                    <select class="form-select"  name="slot_end_lid" id="slot_end_lid">
-                        <% for(let end of slotInterval){%>
-                            <option value="<%- end.id%>"><%- end.start_time%></option>
-                        <%}%>
-                    </select>
-                </div>
-
-
-
-                <div class="mb-3 d-grid gap-2">
-                    <button class="btn btn-info text-light AddRoomPreference">ADD SCHOOL TIMING</button>
-                </div>
-
-                 </div>
-                 <div class="col-md-10">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-bordered" id="add-more-schoolTiming-table">
+                <div class="modal-body schoolTimingOptionsContainer">
+               
+                    <div class="table-responsive sameForAllDay" data-dis="true">
+                        <table class="table table-bordered" id="add-more-sameForAllDay-table">
                             <thead>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Program Name</th>
-                                <th>Session</th>
-                                <th>Day</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
+                                <th>Slot Type</th>
                                 <th>Action</th>
                             </thead>
-                            <tbody>
-
+                            <tbody>                            
+                                <tr>
+                                    <td>
+                                        <select class="select2 modalSelect2" name="startTime">
+                                            <% for(time of slotTime){%>
+                                                <option value="<%- time.id%>"><%- time.start_time %></option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="select2 modalSelect2" name="endTime">
+                                            <% for(time of slotTime){%>
+                                                <option value="<%- time.id%>"><%- time.end_time %></option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="slotType" id="" class="select2 modalSelect2" >
+                                            <% for(type of lectureTypeList){%>
+                                                <option value="<%- type.id%>"><%- type.name%></option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <i class="far fa-edit d-none"></i>
+                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                 </div>
-             </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn createSchoolTiming modal-inputform-btn">CREATE</button>
-            </div>
+    
+                   
+                </div>
+            
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn createSchoolTiming modal-inputform-btn">CREATE</button>
         </div>
     </div>
 </div>
@@ -188,6 +187,398 @@
 <script>
     $(document).ready(function () {
 
+
+          //Options for school timing
+          $('.schoolTimingOptions').on('input', function myFunction(){
+            console.log($(this).attr('id'))
+
+            if($(this).attr('id') == 'DayWise'){
+                let DayWise = `<div class="table-responsive DayWise" data-dis="true">
+                    <table class="table table-bordered" id="add-more-DayWise-table">
+                        <thead>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Slot Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="select2 modalSelect2" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingDayWise"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(DayWise);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
+            }
+            else if($(this).attr('id') == 'programAndDayWise'){
+                let programAndDayWise = `<div class="table-responsive programAndDayWise" data-dis="true">
+                    <table class="table table-bordered" id="add-more-programAndDayWise-table">
+                        <thead>
+                            <th>Program Name</th>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Slot Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="select2 modalSelect2" name="programName">
+                                        <% for(program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingProgramWise"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(programAndDayWise);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
+
+            }
+            else if($(this).attr('id') == 'programDaySessionWise'){
+                let programAndDayWise = `<div class="table-responsive programDaySessionWise" data-dis="true">
+                    <table class="table table-bordered" id="add-more-programDaySessionWise-table">
+                        <thead>
+                            <th>Program Name</th>
+                            <th>Acad Session</th>
+                            <th>Day</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Slot Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="select2 modalSelect2 programNameForSession" name="programName" id="">
+                                        <% for(program of programList){%>
+                                            <option value="<%- program.id%>"><%- program.program_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2 sessionForProgram" name="acadSession" id="">
+                                        <% for(acadSession of AcadSessionList){%>
+                                            <option value="<%- acadSession.id%>"><%- acadSession.acad_session %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="day">
+                                        <% for(day of dayList){%>
+                                            <option value="<%- day.id%>"><%- day.day_name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingProgramSessionWise"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(programAndDayWise);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
+            }
+            else{
+                let dayOnly = `   <div class="table-responsive sameForAllDay">
+                    <table class="table table-bordered" id="add-more-sameForAllDay-table">
+                        <thead>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Lecture Type</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>                           
+                            <tr>
+                                <td>
+                                    <select class="select2 modalSelect2" name="startTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.start_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="endTime">
+                                        <% for(time of slotTime){%>
+                                            <option value="<%- time.id%>"><%- time.end_time %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="lecType" id="" class="select2 modalSelect2" >
+                                        <% for(type of lectureTypeList){%>
+                                            <option value="<%- type.id%>"><%- type.name%></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTiming"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`
+                $('.schoolTimingOptionsContainer').html(dayOnly);
+                $('.select2').select2({
+                dropdownParent: $('#add-schooltiming-modal')});
+            }
+        })
+
+        $('.select2').select2({
+        dropdownParent: $('#add-schooltiming-modal')});
+
+        //Add more rows for School timing
+        $('#add-more-schoolTiming').on('click', function(){
+          console.log($('.sameForAllDay[data-dis]').attr('data-dis'));
+            if($('.sameForAllDay[data-dis]').attr('data-dis') == 'true'){
+                console.log('hello')
+                let lastTr = $('#add-more-sameForAllDay-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                $('#add-more-sameForAllDay-table tbody').append(clonedTr)
+             }
+            else if($('.DayWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-DayWise-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                $('#add-more-DayWise-table tbody').append(clonedTr)
+            }
+            else if($('.programAndDayWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-programAndDayWise-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
+                let programName = lastTr.find(`select[name="programName"]`).val();
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                $('#add-more-programAndDayWise-table tbody').append(clonedTr)
+            }
+            else if($('.programDaySessionWise[data-dis]').attr('data-dis') == 'true'){
+                let lastTr = $('#add-more-programDaySessionWise-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
+                let programName = lastTr.find(`select[name="programName"]`).val();
+                let acadSession = lastTr.find(`select[name="acadSession"]`).val();
+                let day = lastTr.find(`select[name="day"]`).val();
+                let startTime = lastTr.find(`select[name="startTime"]`).val();
+                let endTime = lastTr.find(`select[name="endTime"]`).val();
+                let lecType = lastTr.find(`select[name="slotType"]`).val();
+                let clonedTr = lastTr.clone();
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-schooltiming-modal')
+                });
+
+                $('#add-more-programDaySessionWise-table tbody').append(clonedTr)
+            }
+        })
+
+        $('#add-more-sameForAllDay-table').on('click', '.remove-schoolTiming',
+            function () {
+                let trLength = $('#add-more-sameForAllDay-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingDayWise',
+            function () {
+                let trLength = $('#add-more-DayWise-table tbody tr').length;
+                console.log(trLength)
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+    
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingProgramWise',
+            function () {
+                let trLength = $('#add-more-programAndDayWise-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTimingProgramSessionWise',
+            function () {
+                let trLength = $('#add-more-programDaySessionWise-table tbody tr').length;
+
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this.')
+                }
+            })
+    
+        //Api for onchange program event
+        $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
+            let program_lid = $(this).val();
+                console.log('program_lid', program_lid)
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/acadSessionList",
+                data: {
+                    program_lid: program_lid
+                },
+                dataType:"JSON"
+            }
+
+            ajaxApi(apiObj).then(result => {
+                let acadList = `<select class="form-select sessionForProgram" name="acadSession" id="">`
+                    if(result.data.acadSessionList.length > 0){
+                        for(let data of result.data.acadSessionList){
+                        acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
+                        }
+                    }
+                    else{
+                        acadList += `<option value=""> NO SESSION FOUND <option>`
+                    }
+                    acadList += `</select>`
+                    $(this).parent().next().html(acadList);
+
+                console.log('list:::>>>', $(this).parent().next());
+            }).catch(error => console.log('error',error));
+        })
 
         $(".AddRoomPreference").on('click',function(){
             let school_timings_name = $("#school_timings_name").val()

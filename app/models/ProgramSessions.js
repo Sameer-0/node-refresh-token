@@ -42,4 +42,14 @@ module.exports = class {
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].program_sessions`)
         })
     }
+
+    static refresh(slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_refresh_program_sessions]`)
+        })
+    }
 }

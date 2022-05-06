@@ -6,22 +6,32 @@
 
 <div class="main-content">
 
-    <%- include("../partials/program-menu") %>
+    <div class="breadcrumbs-container">
     
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
+    
+    <%- include("../partials/program-menu") %>
+    <div class="errorHtml"></div>
     <!--DASHBOARD CONTENT START-->
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
                 <h5>PROGRAM DAY LIST</h5>
             </div>
-            <!-- <div>
-                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+          <div>
+                <button class="btn btn-danger ms-auto refresh_program_day"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                <!-- <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-room-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-program-type add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-program-type add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
-            </div> -->
+                        width="26px" height="32px"></button> -->
+            </div> 
         </div>
 
         <div class="card-body table-responsive">
@@ -78,7 +88,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
                 <div class="mb-3">
                     <label for="programName" class="form-label">Enter Program Name</label>
                     <input type="text" class="form-control" id="programName" placeholder="Enter Name">
@@ -131,6 +141,20 @@
                      }).catch(error => {
 
                 })
+
+                // $.ajax({
+                //     type: "POST",
+                //     url: "/admin/programs/days",
+                //     data: {
+                //                     id: id,
+                //                      status: status
+                //                   },
+                //     success: function(response){
+                //         loadDays()
+                //     },
+                //     dataType: 'JSON'
+                //     });
+
             }
 
 
@@ -339,6 +363,23 @@
 
 
 
+            $(".refresh_program_day").on('click',function(){
+            let apiObj = {
+                type:"POST",
+                url:"/admin/programs/days/refresh",
+                data: {},
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
+        })
+
+
             function AjaxtTable(programTypeList) {
                 let AjaxTable = `<table class="table custom_row table-bordered" id="programTypeTable">
                 <thead>
@@ -392,8 +433,27 @@
                 }
                 errorHtml +=
                     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+                $(".errorHtml").html(errorHtml)
             }
+
+
+            function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $(".errorHtml").html(errorHtml)
+        }
 
         })
     </script>

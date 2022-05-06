@@ -98,13 +98,13 @@ module.exports = class Rooms {
     }
 
 
-    static delete(inputJSON) {
-        console.log('inputJSON:::::::::::::>>>', JSON.stringify(inputJSON))
+    static delete(id, userid) {
         return poolConnection.then(pool => {
-            let request = pool.request();
-            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+            const request = pool.request();
+            return request.input('input_request_lid', sql.Int, id)
+                .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute('[dbo].[sp_delete_rooms]')
+                .execute(`[dbo].[sp_delete_rooms]`)
         })
     }
 

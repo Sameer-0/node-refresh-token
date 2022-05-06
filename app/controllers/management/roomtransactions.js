@@ -1,10 +1,13 @@
 const RoomTransactions = require("../../models/RoomTransactionsDbo")
+const isJsonString = require('../../utils/util')
+
 
 module.exports = {
     getPage: (req, res) => {
         RoomTransactions.fetchAll(100).then(result => {
             res.render('management/booking/room_transactions', {
-                transactionList: result.recordset
+                transactionList: result.recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -26,7 +29,14 @@ module.exports = {
                 data: result.recordset
             })
         }).catch(error=>{
-             res.json({status:500,data:error.originalError.info})
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 

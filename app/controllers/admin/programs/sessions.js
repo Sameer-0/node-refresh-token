@@ -6,6 +6,8 @@ const {
 
 
 const ProgramSessions = require('../../../models/ProgramSessions')
+const isJsonString = require('../../../utils/util')
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -13,7 +15,8 @@ module.exports = {
             console.log(result.recordset)
             res.render('admin/programs/sessions', {
                 programSessions: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -37,7 +40,14 @@ module.exports = {
                 })
             }
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -60,7 +70,30 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
-            throw error
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
+
+    refresh: (req, res) => {
+        console.log('Refresh Program Session::::::::>>')
+        ProgramSessions.refresh(res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

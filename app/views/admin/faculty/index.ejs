@@ -5,6 +5,14 @@
 <!--HEADER END-->
 
 <div class="main-content">
+    <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
     <!--DASHBOARD CONTENT START-->
     <div class="row my-3 gx-3 gy-3 row1-data">
 
@@ -54,7 +62,7 @@
 
     </div>
 
-
+    <div class="px-3 errorHtml"></div>
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -68,7 +76,7 @@
                         width="26px" height="32px"></button> -->
             </div>
         </div>
-
+        
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -97,7 +105,7 @@
                         <td><%- faculty.start_date %></td>
                         <td><%- faculty.end_date %></td>
                         <td><a class="edit-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-edit text-success"></i></a>
-                            <a><i class="fa fa-trash text-danger"></i></a>
+                            <a class="delete-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                     </tr>
                     <%}%>
@@ -170,7 +178,7 @@
 
                 </div>
             </div>
-            <div class="px-3" id="errorHtml"></div>
+            <div class="px-3 errorHtml"></div>
             <div class="modal-footer">
                 <button type="submit" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
             </div>
@@ -205,16 +213,16 @@
                         <tr>
                             <td>
                                 
-                                <select class="form-control onChangeFacultyName" name="faculty_lid" id="faculty_lid" disabled>
+                                <select class="modalSelect2 select2" name="faculty_lid" id="faculty_lid" disabled>
                                 <% for (let faculty of facultyList) { %>
-                                        <option value="<%- faculty.id %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
+                                        <option value="<%- faculty.faculty_id %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
                                     <% } %>
                                 </select>
                             </td>
                          
                             <td>
                                 <%let slotTiming1 = JSON.parse(slotTiming) %>
-                                <select class="form-control" name="start_time_id" id="start_time_id">
+                                <select class="modalSelect2 select2" name="start_time_id" id="start_time_id">
                                 <% for (let slotstart of slotTiming1) { %>
                                         <option value="<%- slotstart.id %>" ><%- slotstart.start_time %></option>
                                     <% } %>
@@ -222,7 +230,7 @@
 
                             <td>
                                 <%let slotTiming2 = JSON.parse(slotTiming) %>
-                                <select class="form-control" name="end_time_id" id="end_time_id">
+                                <select class="modalSelect2 select2" name="end_time_id" id="end_time_id">
                                 <% for (let slotend of slotTiming2) { %>
                                         <option value="<%- slotend.id %>" ><%- slotend.end_time %></option>
                                     <% } %>
@@ -230,7 +238,7 @@
                             </td>
                             <td>
                                 <%let acadstartDate = JSON.parse(acadCalender) %>
-                                <select class="form-control" name="start_date_id" id="start_date_id">
+                                <select class="modalSelect2 select2" name="start_date_id" id="start_date_id">
                                 <% for (let stDate of acadstartDate) { %>
                                         <option value="<%- stDate.id %>" ><%- stDate.date %></option>
                                     <% } %>
@@ -238,7 +246,7 @@
                             </td>
                             <td>
                                 <%let acadendDate = JSON.parse(acadCalender) %>
-                                <select class="form-control" name="end_date_id" id="end_date_id">
+                                <select class="modalSelect2 select2" name="end_date_id" id="end_date_id">
                                 <% for (let etDate of acadendDate) { %>
                                         <option value="<%- etDate.id %>" ><%- etDate.date %></option>
                                     <% } %>
@@ -246,7 +254,7 @@
                             </td>
                             <td>
                                 <%let facultytype = JSON.parse(facultyType) %>
-                            <select class="form-control" name="faculty_type_lid" id="faculty_type_lid">
+                            <select class="modalSelect2 select2" name="faculty_type_lid" id="faculty_type_lid">
                                 <% for (let ftype of facultytype) { %>
                                         <option value="<%- ftype.id %>" ><%- ftype.name %></option>
                                     <% } %>
@@ -257,7 +265,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="px-3" id="errorHtml"></div>
+            <div class="px-3 errorHtml"></div>
             <div class="modal-footer">
                 <button type="submit" class="btn updateFaculty modal-inputform-btn">Update Faculty</button>
             </div>
@@ -272,6 +280,10 @@
 
 <script>
     $(document).ready(function () {
+
+        $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
+
         //DATALIST
         let slotTime = JSON.parse(`<%- slotTiming %>`);
         let acadDate = JSON.parse(`<%- acadCalender%>`);
@@ -305,8 +317,10 @@
         for (let obj of facultyTypeList) {
             facultyType += `<option value="${obj.id}">${obj.name}</option>`;
         }
-
+        let countst = 0;
         $("#selectList").on('click', '.list-group-item', function () {
+            console.log('faculty-id::::::::::',$(this).attr("data-faculty-id"))
+            console.log('faculty-lid::::::::::',$(this).attr("data-faculty-lid"))
             //remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
                 $("#selectedList table tbody").append(`
@@ -315,31 +329,35 @@
                         <td data-faculty-id="${$(this).attr("data-faculty-id")}"  data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
                          </td>
                         <td>
-                            <select class="select2" name="startTime">${optionStartTime}</select>
+                            <select class="select2"  name="startTime">${optionStartTime}</select>
                         </td>
                         <td>
-                            <select class="select2" name="endTime">${optionEndTime}</select>
+                            <select class="select2 SlotEndTime" name="endTime">${optionEndTime}</select>
                         </td>
                         <td>
-                            <select class="select2" name="startDate">${startDate}</select>
+                            <select class="select2 modalSelect2" name="startDate">${startDate}</select>
                         </td>
                         <td>
-                            <select class="select2" name="endDate">${endDate}</select>
+                            <select class="select2 modalSelect2" name="endDate">${endDate}</select>
                         </td>
                         <td>
-                            <select class="select2" name="faculty_type_lid">${facultyType}</select>
+                            <select class="select2 modalSelect2" name="faculty_type_lid">${facultyType}</select>
                         <td>
                             <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
                         </td>
                     </tr>
                     `)
+                    $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
             }
 
             $(this).attr('data-clickable', 'false');
-
             $($(this)).fadeOut(300, function () {
                 $($(this)).remove()
             })
+
+            //Get Faculty slots by faculty id
+            //GetFacultySlots({faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid"), count: countst})
 
         })
 
@@ -388,7 +406,7 @@
             };
         })
 
-//importFaculty
+        //importFaculty
         $(".importFaculty").on('click', function () {
             let facultiesList = $('#selectedList table tbody tr');
             let facultyCount = facultiesList.length;
@@ -403,13 +421,12 @@
                 let endTime = $(elem).find('select[name="endTime"]').val();
                 let startDate = $(elem).find('select[name="startDate"]').val();
                 let endDate = $(elem).find('select[name="endDate"]').val();
-                let faculty_type_lid =  $(elem).find(`select[name="faculty_type_lid"]`)
+                let faculty_type_lid =  $(elem).find(`select[name="faculty_type_lid"]`).val();
 
-                console.log('facultyName', faculty_name)
+                console.log('faculty_type_lid', faculty_type_lid)
 
                 if (index < facultyCount - 1) {
                     let obj = {
-
                         id: faculty_lid,
                         faculty_id: faculty_id,
                        // faculty_name: faculty_name,
@@ -469,14 +486,14 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
+                console.log('sucess:::::::::', result.result)
                 $("#hidden_id").val(result.result.id)
                 $("#start_time_id").val(result.result.start_time_id).trigger('change')
                 $("#end_time_id").val(result.result.end_time_id).trigger('change')
                 $("#start_date_id").val(result.result.start_date_id).trigger('change')
                 $("#end_date_id").val(result.result.end_date_id).trigger('change')
                 $("#faculty_type_lid").val(result.result.faculty_type_lid).trigger('change')
-                $(".onChangeFacultyName").val(result.result.id).trigger('change')
+                $("#faculty_lid").val(result.result.faculty_id).trigger('change')
                $("#edit-faculty-modal").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
@@ -589,6 +606,77 @@
             })
         }, 500));
 
+        //Delete Faculty API
+        $("#facultyTable").on('click','.delete-faculty',function(){
+            let id = $(this).attr("data-faculty-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/admin/faculties',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+        //
+        function GetFacultySlots(data){
+            //{faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid")}
+            console.log('12121',data.faculty_id)
+            console.log('12111',data.faculty_lid)
+            console.log('count', data.count)
+            let ApiObj = {
+                type: 'GET',
+                url: '/admin/faculties/getslotsbyid',
+                data: {
+                    faculty_lid: data.faculty_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                let selectslot = ``;
+                result.result.forEach(function(item){
+                    selectslot += `<option value="${item.id}">${item.start_time}</option>`
+                })
+                //$(`.SlotStartTime${data.count}`).html(selectslot)
+            }).catch(error => {
+               // showError(error.responseJSON)
+            })
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
+            $(".errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
+        }
+
 
         function showError(errors) {
             console.log('Error:::::::::', errors)
@@ -605,9 +693,9 @@
                 });
             }
             errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
             console.log(errorHtml)
-            $("#errorHtml").html(errorHtml)
+            $(".errorHtml").html(errorHtml)
         }
 
         function showAjaxTable(facultiesList) {
@@ -616,11 +704,12 @@
                     <th>Sr.No.</th>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
+                    <th>Faculty Type</th>
                     <th>Start Time</th>
                     <th>End Time</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <!-- <th>Action</th> -->
+                    <th>Action</th>
                 </thead>
                 <tbody>`;
 
@@ -630,15 +719,16 @@
                     AjaxTable +=
                         `<tr>
                         <td>${count++}</td>
-                        <td data-faculty-id="${faculty.id}">${faculty.faculty_id}</td>
+                        <td data-faculty-id="${faculty.faculty_id}">${faculty.faculty_id}</td>
                         <td>${faculty.faculty_name}</td>
+                        <td>${faculty.faculty_type}</td>
                         <td>${faculty.start_time}</td>
                         <td>${faculty.end_time}</td>
                         <td>${faculty.start_date}</td>
                         <td>${faculty.end_date}</td>
-                        <!-- <td><a><i class="fa fa-edit text-success"></i></a>
-                            <a><i class="fa fa-trash text-danger"></i></a>
-                        </td> -->
+                        <td><a class="edit-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-edit text-success"></i></a>
+                            <a class="delete-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-trash text-danger"></i></a>
+                        </td>
                     </tr>`
                 }
             } else {

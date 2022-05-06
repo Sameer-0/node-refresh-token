@@ -8,15 +8,19 @@ const {
 const Faculties = require('../../../models/Faculties');
 const FacultyBatch = require('../../../models/FacultyBatch');
 const Settings = require("../../../models/Settings");
+const DivisionBatches = require('../../../models/DivisionBatches');
+const isJsonString = require('../../../utils/util')
 
 module.exports = {
 
     getPage: (req, res) => {
-        Promise.all([FacultyBatch.fetchAll(10, res.locals.slug), FacultyBatch.getCount(res.locals.slug), Faculties.fetchAll(1000, res.locals.slug)]).then(result => {
+        Promise.all([FacultyBatch.fetchAll(10, res.locals.slug), FacultyBatch.getCount(res.locals.slug), Faculties.fetchAll(1000, res.locals.slug), DivisionBatches.fetchDistinctBatches(res.locals.slug)]).then(result => {
             res.render('admin/faculty/facultybatch', {
                 FacultyBatchList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
+                batchList : result[3].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -35,7 +39,14 @@ module.exports = {
 
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -108,8 +119,30 @@ module.exports = {
         FacultyBatch.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
 
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+    delete: (req, res) => {
+        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        FacultyBatch.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 }

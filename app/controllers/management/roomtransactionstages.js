@@ -11,7 +11,8 @@ module.exports = {
     getPage: (req, res) => {
         RoomTransactionStages.fetchAll(10000).then(result => {
             res.render('management/booking/room_transaction_stages', {
-                roomTransactionStageList: result.recordset
+                roomTransactionStageList: result.recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

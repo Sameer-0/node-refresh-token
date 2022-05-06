@@ -8,17 +8,18 @@ const FacultyWorks = require('../../../models/FacultyWorks')
 const ProgramDays = require('../../../models/ProgramDays')
 const FacultyWorkTimePreferences = require('../../../models/FacultyWorkTimePreferences')
 const Settings = require("../../../models/Settings");
-
+const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(1000), FacultyWorks.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), FacultyWorkTimePreferences.getCount(res.locals.slug)]).then(result => {
+        Promise.all([FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), SlotIntervalTimings.forFaculty(1000), FacultyWorks.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), FacultyWorkTimePreferences.getCount(res.locals.slug)]).then(result => {
             res.render('admin/faculty/preference', {
                 facultyworktimepref: result[0].recordset,
                 slotIntervalTimings: result[1].recordset,
                 facultyWorkList: result[2].recordset,
                 programDayList: result[3].recordset,
-                pageCount: result[4].recordset ? result[4].recordset[0].count : 0
+                pageCount: result[4].recordset ? result[4].recordset[0].count : 0,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -35,7 +36,14 @@ module.exports = {
             }
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -109,8 +117,30 @@ module.exports = {
         FacultyWorkTimePreferences.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
 
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+    delete: (req, res) => {
+        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        FacultyWorkTimePreferences.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 }

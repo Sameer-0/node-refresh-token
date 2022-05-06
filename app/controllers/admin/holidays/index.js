@@ -12,7 +12,7 @@ const Settings = require('../../../models/Settings');
 
 const path = require("path");
 var soap = require("soap");
-
+const isJsonString = require('../../../utils/util')
 module.exports = {
 
 
@@ -23,7 +23,8 @@ module.exports = {
                 holidayType: result[1].recordset,
                 pageCount: result[2].recordset[0].count,
                 acadYear: result[3].recordset[0].input_acad_year,
-                academicCalender : result[4].recordset
+                academicCalender : result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -38,12 +39,18 @@ module.exports = {
         }
 
 
-        Holidays.save(object, res.locals.slug).then(result => {
+        Holidays.save(object, res.locals.slug, res.locals.userId).then(result => {
             console.log('result:::<><', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('error:::>>>', error)
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -62,10 +69,17 @@ module.exports = {
         let object = {
             update_holidays: JSON.parse(req.body.inputJSON)
         }
-        Holidays.update(object, res.locals.slug).then(result => {
+        Holidays.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -76,10 +90,17 @@ module.exports = {
             delete_holidays: JSON.parse(req.body.id)
         }
 
-        Holidays.delete(object, res.locals.slug).then(result => {
+        Holidays.delete(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -91,7 +112,14 @@ module.exports = {
                 description: "Successfully deleted"
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 

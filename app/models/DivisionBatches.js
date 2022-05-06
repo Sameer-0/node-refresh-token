@@ -19,9 +19,9 @@ module.exports = class DivisionBatches {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [asmsoc-mum].division_batches db
-            INNER JOIN [asmsoc-mum].divisions div on db.division_lid = div.id 
-            INNER JOIN [asmsoc-mum].initial_course_workload icw on div.course_lid = icw.id 
+            return pool.request().query(`select TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [${slug}].division_batches db
+            INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
+            INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
             INNER JOIN [dbo].event_types et on db.event_type_lid = et.id`)
         })
     }
@@ -111,6 +111,13 @@ module.exports = class DivisionBatches {
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_update_division_batches]`)
+            })
+        }
+
+
+        static fetchDistinctBatches(slug) {
+            return poolConnection.then(pool => {
+                return pool.request().query(`select DISTINCT batch from [${slug}].division_batches`)
             })
         }
 }

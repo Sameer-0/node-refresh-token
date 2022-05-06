@@ -6,7 +6,16 @@
 
 <div class="main-content">
     <!--MAIN CONTENT START-->
-    <div class="row gy-3 gx-3 mb-3 row2-data">
+    <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
+    <div class="errorHtml"></div>
+    <!-- <div class="row gy-3 gx-3 mb-3 row2-data">
         <div class="col-xl-6 col-md-10">
             <div class="card  row2-data-card">
                 <div class="card-body">
@@ -45,7 +54,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
@@ -53,9 +62,8 @@
                 <h5>ROOM DATA</h5>
             </div>
             <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto delete-selected-rooms"><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-rooms"><img src="/icons/delete.png" alt="" width="26px" height="32px"></button>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i
+                        class="fas fa-plus"></i></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -77,7 +85,6 @@
                     <!-- <th>Campus</th> -->
                     <th>Is Processed</th>
                     <th>Action</th>
-                    <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
                 </thead>
                 <tbody>
                     <% for (let room of roomList) { %>
@@ -107,11 +114,10 @@
                             <%}%>  
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-room"
-                                data-room-id="<%- room.roomid %>"></i>
-                        </td>
-                        <td>
-                            <input type="checkbox" data-room-id="<%- room.roomid %>" class="delete-rooms">
+                            <a class="edit-room" data-room-id="<%- room.roomid %>"><i
+                                class="fas fa-edit text-dark cursor-pointer"></i></a>
+                            <a class="delete-room" data-id="<%- room.roomid %>"><i
+                                    class="fa fa-trash text-danger"></i></a>
                         </td>
                     </tr>
 
@@ -141,46 +147,46 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
                 <div class="row mt-4 ">
 
                     <div class="col-md-4">
                         <label>Campuses</label>
 
-                        <select name="campus_lid" id="campus_lid" class="select2">
+                        <select name="campus_lid" id="campus_lid" class="select2 modalSelect2">
                             <option>--select--</option>
                             <% for(let campus of campusList) { %>
-                                <option value="<%- campus.id %>">
-                                    <%- campus.campus_abbr %>
-                                </option>
-                                <% } %>
+                            <option value="<%- campus.id %>">
+                                <%- campus.campus_abbr %>
+                            </option>
+                            <% } %>
                         </select>
                     </div>
 
                     <div class="col-md-4">
                         <label>Building</label>
 
-                        <select name="building_lid"  id="building_lid" class="select2">
+                        <select name="building_lid" id="building_lid" class="select2 modalSelect2">
                             <option>--select--</option>
                             <% for(let building of buildingList) { %>
-                                <option value="<%- building.building_id %>">
-                                    <%- building.building_name %>
-                                </option>
-                                <% } %>
+                            <option value="<%- building.building_id %>">
+                                <%- building.building_name %>
+                            </option>
+                            <% } %>
                         </select>
-                        
+
                     </div>
 
                     <div class="col-md-4">
                         <label>Handled By</label>
-
-                        <select name="handled_by" id="handled_by" class="select2">
+ 
+                        <select name="handled_by" id="handled_by" class="select2 modalSelect2">
                             <option>--select--</option>
                             <% for(let org of orgList) { %>
-                                <option value="<%- org.id %>">
-                                    <%- org.org_abbr %>/<%- org.org_id %>
-                                </option>
-                                <% } %>
+                            <option value="<%- org.id %>">
+                                <%- org.org_abbr %>/<%- org.org_id %>
+                            </option>
+                            <% } %>
                         </select>
                     </div>
                 </div>
@@ -212,7 +218,7 @@
                                         palceholder="Enter Room no." required>
                                 </td>
                                 <td>
-                                    <select class="select2" name="room_type_id" id="room_type_id">
+                                    <select class="select2 modalSelect2" name="room_type_id" id="room_type_id">
                                         <option disabled selected value="">--Room Type--</option>
                                         <% for(let roomType of roomTypeList) { %>
                                         <option value="<%- roomType.roomtypeid %>">
@@ -229,7 +235,8 @@
                                     <input type="number" name="capacity" id="capacity" class="form-control" required>
                                 </td>
                                 <td>
-                                    <select class="select2" name="start_time_id" id="start_time_id" required>
+                                    <select class="select2 modalSelect2" name="start_time_id" id="start_time_id"
+                                        required>
                                         <option disabled selected value>--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -239,7 +246,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="end_time_id" id="end_time_id" required>
+                                    <select class="select2 modalSelect2" name="end_time_id" id="end_time_id" required>
                                         <option disabled selected value>--End Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
@@ -249,7 +256,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="is_basement" id="is_basement" required>
+                                    <select class="select2 modalSelect2" name="is_basement" id="is_basement" required>
                                         <option selected value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
@@ -266,25 +273,26 @@
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-room"></i>
                                 </td>
                             </tr>
+                            
                         </tbody>
                     </table>
                 </div>
-
             </div>
-
             <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-room"><i class="fas fa-plus"></i> Add More Room</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-room"><i class="fas fa-plus"></i> Add
+                    More Room</button>
                 <button type="button" class="btn  modal-inputform-btn addRoom" id="insertRoom">Create Room</button>
                 <button type="button" class="btn  modal-inputform-btn updateRoom d-none">Update Room Data</button>
             </div>
-
         </div>
     </div>
 </div>
 
+
+
 <%- include('../partials/notification') %>
 <%- include('../partials/alert') %>
-<%- include("../partials/footer") %> 
+<%- include("../partials/footer") %>
 
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
@@ -292,8 +300,10 @@
 <script>
     $(document).ready(function () {
 
-        $('.select2').select2({
-        dropdownParent: $('#add-room-modal')});
+        $('.modalSelect2').select2({
+            dropdownParent: $('#add-room-modal')
+        });
+
 
 
         $(".homeCard .border").hover(function () {
@@ -340,7 +350,6 @@
                 "transform": "scale(1)"
             })
         })
-
 
         let options = {
             dataLabels: {
@@ -365,24 +374,6 @@
         }
         var chart = new ApexCharts(document.querySelector("#chart1"), options);
         chart.render();
-
-        //Select All Organizations
-        $("#roomTable").on('click', '.selectAll-rooms', function () {
-            console.log('checked!!')
-            if (this.checked) {
-                // Iterate each checkbox
-                $('.delete-rooms:checkbox').each(function () {
-                    this.checked = true;
-                });
-            } else {
-                $('.delete-rooms:checkbox').each(function () {
-                    this.checked = false;
-                });
-            }
-        })
-
-
-
 
 
         $("#insertRoom").on('click', function () {
@@ -574,81 +565,6 @@
             })
         })
 
-
-
-        //Delete Single and mutiple Delete
-        $('.delete-selected-rooms').on('click', function () {
-            let deleteids = []
-            $('.delete-rooms:checked').each(function () {
-                let obj = {
-                    id: $(this).attr("data-room-id")
-                }
-                deleteids.push(obj)
-                console.log('deleteids::::::::::::::', deleteids)
-            })
-
-            if (deleteids.length > 0) {
-
-                console.log('deleteids::::::::::::::', deleteids)
-                let ApiObj = {
-                    url: '/management/rooms',
-                    type: 'DELETE',
-                    data: {
-                        Ids: JSON.stringify(deleteids)
-                    },
-                    dataType: 'JSON'
-                }
-                ajaxApi(ApiObj).then(result => {
-
-                    notify();
-                }).catch(error => {
-                    let errors = error.responseJSON.message
-                    console.log('Error:::::::::::', errors)
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    errors.map(er => {
-                        errorHtml +=
-                            `<li>${er}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
-                })
-
-            } else {
-                alert('Select Data')
-            }
-        })
-
-
-
-        //Bulk Delete
-        $(".bulk-delete-rooms").on('click', function () {
-
-            //Alert confirm
-            alertMsg()
-
-            let ApiObj = {
-                url: '/management/rooms',
-                type: 'PATCH',
-                data: {},
-                dataType: 'JSON'
-            }
-
-            $('.alert-continue').on('click', () => {
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-            })
-            $('.cancel').on('click', () => {
-                $('#alertModal').css('display', 'none');
-            })
-        })
-
-
         // is_processed API
         //roomTable
         $("#roomTable").on('click', '.is_processed_click', function () {
@@ -668,6 +584,29 @@
                 showError(error.responseJSON)
             })
         })
+
+
+        //delete-room
+        //Delete Faculty API
+        $("#roomTable").on('click', '.delete-room', function () {
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/management/rooms/room',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
 
 
         //Getting capus Bulding List
@@ -699,7 +638,7 @@
                                 No Building Found!
                             </option>`
                 }
-                buildingList += `</select>`; 
+                buildingList += `</select>`;
                 $("#building_lid").html(buildingList)
             }).catch(error => {
                 showError(error.responseJSON)
@@ -744,20 +683,89 @@
         });
 
 
-        function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
+        // Onchange get Building Time slot for rooms
+        $("#building_lid").on('change', function () {
+            let building_id = $(this).val()
+            let ApiObj = {
+                url: '/management/rooms/room/getroomtimeslots',
+                type: 'POST',
+                data: {
+                    id: building_id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                console.log('Response::::::::::::',result)
+                let startTime =``
+                    
+
+                if (result.data.length > 0) {
+                    startTime +=
+                        `<option disabled selected value="">--Select Time--</option>`;
+                    result.data.forEach(element => {
+                        startTime += `<option value="${element.id}">
+                                ${element.start_time}
+                            </option>`
+                    });
+                } else {
+                    startTime += `<option value="">
+                                No Slot Found!
+                            </option>`
+                }
+               
+                $("#start_time_id").html(startTime)
+                $("#end_time_id").html(startTime)
+                $('#building_lid').prop('disabled', 'disabled');
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
                     <p>${errors.description}</p>
                     <ul>`
-            $(errors.data).each(function (key, value) {
-                $.each(this, function (key, value) {
-                    errorHtml +=
-                        `<li>${key} ${value}</li>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
                 });
-            });
+            }
             errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
-            $("#errorHtml").html(errorHtml)
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $(".errorHtml").html(errorHtml)
+
+            setTimeout(function () {
+                location.reload()
+            }, 3000)
+        }
+
+
+        function showError(errors) {
+            console.log('Error:::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error!</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            console.log(errorHtml)
+            $(".errorHtml").html(errorHtml)
         }
 
 
@@ -808,12 +816,9 @@
                             </div>`
                     }
                     quoteAjax += `</td>
-                               <td>
-                                    <i class="fas fa-edit text-dark cursor-pointer edit-room"
-                                        data-room-id="${room.roomid}"></i>
-                                </td>
-                                <td>
-                            <input type="checkbox" data-room-id="${room.roomid}" class="delete-rooms">
+                    <td>
+                            <a class="edit-room" data-room-id="${room.roomid}"><i class="fas fa-edit text-dark cursor-pointer"></i></a>
+                            <a class="delete-room" data-id="${room.roomid}"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                             </tr>`;
                 }

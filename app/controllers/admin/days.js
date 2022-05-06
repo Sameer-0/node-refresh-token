@@ -2,6 +2,8 @@ const Days = require('../../models/Days')
 const {
     validationResult
 } = require('express-validator');
+const isJsonString = require('../../utils/util')
+
 
 module.exports = {
 
@@ -9,7 +11,8 @@ module.exports = {
         Days.fetchAll(10, res.locals.slug).then(result => {
             console.log(result)
             res.render('admin/days/index', {
-                dayList: result.recordset
+                dayList: result.recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -33,7 +36,14 @@ module.exports = {
             })
         }).catch(error => {
             console.log(error)
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -43,7 +53,14 @@ module.exports = {
                 result: result.recordset
             })
         }).catch(error=>{
-            res.status(500).json({status:500, message:"Error occured"})
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 

@@ -12,11 +12,10 @@ function setRouter(app) {
     app.use('/user', userRouter)
     app.use('/', homeRouter)
 
-
     //Managemnt Router 
-     Management(app) 
-     //Admin Router
-     AdminRoute(app)
+    Management(app) 
+    //Admin Router
+    AdminRoute(app)
 }
 
 

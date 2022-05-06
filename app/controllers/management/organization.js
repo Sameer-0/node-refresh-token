@@ -7,6 +7,8 @@ const Organizations = require("../../models/Organizations")
 const OrganizationTypes = require("../../models/OrganizationTypes");
 const Settings = require('../../models/Settings');
 const Campuses = require('../../models/Campuses');
+const isJsonString = require('../../utils/util')
+
 module.exports = {
     getPage: (req, res) => {
         if (req.method == "GET") {
@@ -16,7 +18,8 @@ module.exports = {
                     orgtypeList: result[1].recordset,
                     pageCount: result[2].recordset[0].count,
                     campusList: result[3].recordset,
-                    totalentries: result[0].recordset ? result[0].recordset.length : 0
+                    totalentries: result[0].recordset ? result[0].recordset.length : 0,
+                    breadcrumbs: req.breadcrumbs,
                 })
             })
         } else if (req.method == "POST") {
@@ -42,8 +45,14 @@ module.exports = {
         Organizations.save(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('error::::::::::::::::::>>',error)
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -66,40 +75,35 @@ module.exports = {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log('error',error)
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
     delete: (req, res) => {
-
-        let object = {
-            delete_organizations: JSON.parse(req.body.Ids)
-        }
-
-        Organizations.delete(object).then(result => {
+        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        Organizations.delete(req.body.id, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
-        })
-    },
-
-    deleteAll: (req, res) => {
-        Organizations.deleteAll().then(result => {
-            res.status(200).json({
-                status: 200
-            })
-        }).catch(error => {
-            console.log('error:::::::::::', error)
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
 
     search: (req, res) => {
-
-
-        console.log('Req::::::::::::::',req.body.keyword)
-
         //here 10is rowcount
         let rowcont = 10;
         Organizations.searchOrg(rowcont, req.body.keyword).then(result => {

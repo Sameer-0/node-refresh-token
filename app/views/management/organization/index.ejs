@@ -6,6 +6,17 @@
 
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
+
+    <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
+    
+    <div class="errorHtml"></div>
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -14,9 +25,6 @@
             <div>
                 <button class="btn ms-auto add-btn" data-bs-toggle="modal" data-bs-target="#add-org-modal"><i
                         class="fas fa-plus"></i></button>
-                <button class="btn ms-auto delete-organizations add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-organizations add-btn "><img src="/icons/delete.png" alt=""
-                        width="24px" height="32px"></button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -32,7 +40,6 @@
                         <th>Type</th>
                         <th>Campus</th>
                         <th>Action</th>
-                        <th>Check All <input type="checkbox" class="selectAll-org"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -58,11 +65,8 @@
                             <%- org.campus_abbr %>
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-org" data-org-id="<%- org.id %>"></i>
-                        </td>
-                        <td>
-                            <input type="checkbox" data-org-id="<%- org.id %>" data-orgid="<%- org.org_id %>"
-                                class="delete-org">
+                            <a class="edit-org" data-org-id="<%- org.id %>"><i class="fas fa-edit text-dark cursor-pointer" ></i></a>
+                            <a class="delete-organization" data-id="<%- org.id %>"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                     </tr>
                     <% } %>
@@ -97,7 +101,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
                 <input type="hidden" id="roomId" name="roomId">
                 <div class="">
                     <table class="table table-bordered organizationTable" id="add-more-org-table">
@@ -134,24 +138,24 @@
                                 </td>
 
                                 <td>
-                                    <select name="orgType" id="orgType" class="select2">
+                                    <select name="orgType" id="orgType" class="modalSelect2 select2">
                                         <option value="">--select--</option>
                                         <% for(let orgType of orgtypeList) { %>
                                             <option value="<%- orgType.id %>">
                                                 <%- orgType.name %>
                                             </option>
-                                            <% } %>
+                                        <% } %>
                                     </select>
                                 </td>
 
                                 <td>
-                                    <select name="campus" id="campus" class="select2">
-                                            <option value="">--select--</option>
-                                            <% for(let campus of campusList) { %>
-                                                <option value="<%- campus.id %>">
-                                                    <%- campus.campus_abbr %>
-                                                </option>
-                                            <% } %>
+                                    <select name="campus" id="campus" class="modalSelect2 select2">
+                                        <option value="">--select--</option>
+                                        <% for(let campus of campusList) { %>
+                                            <option value="<%- campus.id %>">
+                                                <%- campus.campus_abbr %>
+                                            </option>
+                                        <% } %>
                                     </select>
                                 </td>
 
@@ -337,19 +341,7 @@
                     inputJSON: JSON.stringify(orgJson)
                 },
                 success: data => {
-
-                    console.log('errorHtml::::::::>>', data)
-                    if (data.status == 1) {
-                        location.reload()
-                    } else {
-                        let errorHtml =
-                            `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul><li>${data.message}</li></ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                        console.log('errorHtml::::::::>>', errorHtml)
-                        $("#errorHtml").html(errorHtml)
-                    }
-
+                    showSuccess(data)
                 },
                 error: err => {
                     showError(err.responseJSON)
@@ -360,88 +352,6 @@
         }
     })
 
-     //Select All Organizations
-     $("#organizationTable").on('click', '.selectAll-org', function () {
-        console.log('checked!!')
-        if (this.checked) {
-            // Iterate each checkbox
-            $('.organizationTable .delete-org:checkbox').each(function () {
-                this.checked = true;
-            });
-        } else {
-            $('.organizationTable .delete-org:checkbox').each(function () {
-                this.checked = false;
-            });
-        }
-    })
-
-    //Delete Single and mutiple Delete
-    $('.delete-organizations').on('click', function () {
-        let deleteids = []
-        $('.delete-org:checked').each(function () {
-            let obj = {
-                id: $(this).attr("data-org-id"),
-                org_id: $(this).attr("data-orgid")
-            }
-            deleteids.push(obj)
-        })
-
-        if (deleteids.length > 0) {
-
-            console.log('deleteids::::::::::::::', deleteids)
-            let ApiObj = {
-                url: '/management/organizations',
-                type: 'DELETE',
-                data: {
-                    Ids: JSON.stringify(deleteids)
-                },
-                dataType: 'JSON'
-            }
-            ajaxApi(ApiObj).then(result => {
-                notify();
-
-
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-
-        } else {
-            return
-        }
-    })
-
-    //Bulk Delete
-    $(".bulk-delete-organizations").on('click', function () {
-
-        //Alert confirm
-        alertMsg()
-      
-        let ApiObj = {
-            url: '/management/organizations',
-            type: 'PATCH',
-            data: {
-
-            },
-            dataType: 'JSON'
-        }
-        
-
-        $('.alert-continue').on('click', () => {
-
-            ajaxApi(ApiObj).then(result => {
-
-                location.reload()
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-
-        })
-
-        $('.cancel').on('click', () => {
-            $('#alertModal').css('display', 'none');
-        })
-
-    })
 
 
     // validation demo:
@@ -478,6 +388,27 @@
             }
         })
     });
+
+    //delete-organization
+            //Delete Faculty API
+            $("#organizationTable").on('click','.delete-organization',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/management/organizations',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
 
     //search feature delay function is writter in script.js file which is located in public/js/script.js
@@ -525,7 +456,6 @@ function AjaxTable (orgList){
                         <th>Type</th>
                         <th>Campus</th>
                         <th>Action</th>
-                        <th>Check All <input type="checkbox" class="selectAll-org"></th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -540,14 +470,8 @@ function AjaxTable (orgList){
                             <td>${org.org_complete_name}</td>
                             <td>${org.org_type}</td>
                             <td>${org.campus_abbr}</td>
-                            <td>
-                                <i class="fas fa-edit text-dark cursor-pointer edit-org" data-org-id="${org.id}"
-                                    ></i>
-                            </td>
-                            <td>
-                                <input type="checkbox" data-org-id="${org.id}" data-orgid="${org.org_id}"
-                                class="delete-org">
-                                </td>
+                            <a class="edit-org" data-org-id="${org.id}"><i class="fas fa-edit text-dark cursor-pointer" ></i></a>
+                            <a class="delete-organization" data-id="${org.id}"><i class="fa fa-trash text-danger"></i></a>
                         </tr>`
                 }
             } else {
@@ -564,9 +488,9 @@ function AjaxTable (orgList){
 
 
 
-    function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
+function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
                     <p>${errors.description}</p>
                     <ul>`
             if (errors.data.length > 0) {
@@ -579,16 +503,34 @@ function AjaxTable (orgList){
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            $(".errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
         }
 
-    //Select Checkbox
 
-    // $(document).ready(function(){
-    //     $(".organizationTable").on('click',function(){
+    function showError(errors) {
+            console.log('Error:::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error!</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            console.log(errorHtml)
+            $(".errorHtml").html(errorHtml)
+        }
 
-    //     })
-    // })
 })
 
 </script>

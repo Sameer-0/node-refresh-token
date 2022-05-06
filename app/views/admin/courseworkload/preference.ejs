@@ -5,6 +5,14 @@
 <!--HEADER END-->
 
 <div class="main-content">
+    
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
 
     <div class="card table-card mt-3">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
@@ -12,9 +20,9 @@
                 <h5>COURSE DAY ROOM PREFERENCE</h5>
             </div>
             <div>
-                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+                <!-- <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-courseDayPreference-modal">
-                    <i class="fas fa-plus"></i></button>
+                    <i class="fas fa-plus"></i></button> -->
                 <button class="btn btn-danger ms-auto refresh_course_day_room_preferences"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 <!-- <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
@@ -30,14 +38,16 @@
                 <thead>
                     <th>Sr No.</th>
                     <th>Program Name</th>
-                    <th>Acad Session</th>
+                    <th>Program Abbr</th>
                     <th>Module Name</th>
+                    <th>Module Code</th>
                     <th>Division</th>
-                    <th>Batch</th>
+                    <th>Batch Count</th>
                     <th>Day</th>
-                    <th>Building No.</th>
+                    <th>Acad Session</th>
+                    <th>Capacity</th>
+                    <th>Room No.</th>
                     <th>Floor No.</th>
-                    <th>Room No</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
@@ -50,8 +60,6 @@
                         <td><%- preference.module_name %></td>
                         <td><%- preference.module_code %></td>
                         <td><%- preference.division %></td>
-                        <td><%- preference.division_num %></td>
-                        <td><%- preference.batch %></td>
                         <td><%- preference.batch_count %></td>
                         <td><%- preference.day_name %></td>
                         <td><%- preference.acad_session %></td>
@@ -202,7 +210,6 @@
 <script>
     $(document).ready(function () {
 
-        $('.select2').select2();
 
         let counter = 1;
         $(".AddRoomPreference").on('click',function(){
@@ -223,38 +230,23 @@
 
             $("#add-more-courseDayRoomPreference-table tbody").append(`
             <tr>
-                                    <td>
-                                    #
-                                    </td>
-                                    <td data-program-lid="${program_lid}">
-                                        ${program_text}
-                                    </td>
-                                    <td data-acad-session-lid="${acad_session_lid}">
-                                        ${acad_session_text}
-                                    </td>
-                                    <td data-course-name-lid="${course_name_lid}">
-                                        ${course_text}
-                                    </td>
-                                    <td data-division-lid="${division_lid}" data-batch-lid="${batch_lid}">
-                                        ${division_text}
-                                    </td>
-                                    <td data-day-name-lid="${day_name_lid}">
-                                        ${day_text}
-                                    </td>
-                                    <td data-room-number-lid="${room_number_lid}">
-                                        ${room_number_text}
-                                    </td>
-                                    <td>
-                                        <i class="far fa-edit d-none"></i>
-                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-courseDayRoomPreference"></i>
-                                    </td>
-                                </tr>
-                    `)
-
+                <td>#</td>
+                <td data-program-lid="${program_lid}">${program_text}</td>
+                <td data-acad-session-lid="${acad_session_lid}">${acad_session_text}</td>
+                <td data-course-name-lid="${course_name_lid}">${course_text}</td>
+                <td data-division-lid="${division_lid}" data-batch-lid="${batch_lid}">${division_text}</td>
+                <td data-day-name-lid="${day_name_lid}">${day_text}</td>
+                <td data-room-number-lid="${room_number_lid}">${room_number_text}</td>
+                <td>
+                    <i class="far fa-edit d-none"></i>
+                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-courseDayRoomPreference"></i>
+                </td>
+            </tr>
+                `)
         })
 
 
-                //Remove Element
+        //Remove Element
         $("#add-more-courseDayRoomPreference-table").on('click', '.remove-courseDayRoomPreference', function () {
             $($(this)).fadeOut(300, function () {
                $($(this).parent().parent()).remove()
@@ -488,17 +480,15 @@ $('.add-courseRoomPreference').on('click', function() {
                 <thead>
                     <th>Sr No.</th>
                     <th>Program Name</th>
-                    <th>Abbr</th>
+                    <th>Program Abbr</th>
                     <th>Module Name</th>
                     <th>Module Code</th>
                     <th>Division</th>
-                    <th>Division Num</th>
-                    <th>Batch</th>
                     <th>Batch Count</th>
                     <th>Day</th>
                     <th>Acad Session</th>
                     <th>Capacity</th>
-                    <th>Room No</th>
+                    <th>Room No.</th>
                     <th>Floor No.</th>
                     <th>Action</th>
                 </thead>
@@ -511,11 +501,9 @@ $('.add-courseRoomPreference').on('click', function() {
                         <td>${count++}</td>
                         <td>${preference.program_name}</td>
                         <td>${preference.program_abbr}</td>
-                        <td>${preference.module_name }</td>
+                        <td>${preference.module_name}</td>
                         <td>${preference.module_code}</td>
                         <td>${preference.division}</td>
-                        <td>${preference.division_num}</td>
-                        <td>${preference.batch}</td>
                         <td>${preference.batch_count}</td>
                         <td>${preference.day_name}</td>
                         <td>${preference.acad_session}</td>
@@ -567,25 +555,72 @@ $('.add-courseRoomPreference').on('click', function() {
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
                 $("#errorHtml").html(errorHtml)
-        }
+
+            // console.log('errorsfac', errors);
+            // let simpleAlert = new SimpleAlert();
+            // let obj = {
+            //     title : errors.description,
+            //     message: "",
+            //     type: 'alert-success',
+            //     buttons: {
+            //         positive:{
+            //             text: "Okay",
+            //             action: function(){
+            //                 document.querySelector('.simple-alert').remove();
+            //             }
+            //         },
+            //         negative: {
+            //             text: "Cancel",
+            //             action: function () {
+            //             alert('Negative')
+            //             }
+            //         }
+            //     }
+            // }
+            // simpleAlert.alert(obj);
+         
+        } 
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+            //         <h3>Success</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            // $("#errorHtml").html(errorHtml)
+
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
         }
 
     })

@@ -5,13 +5,14 @@ const {
 } = require('express-validator');
 
 const EventType = require('../../../models/EventType')
-
+const isJsonString = require('../../../utils/util')
 module.exports = {
     getPage: (req, res) => {
         Promise.all([EventType.fetchAll(10, res.locals.slug), EventType.getCount(res.locals.slug)]).then(result => {
             res.render('admin/events/types', {
                 evtTypeList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -33,7 +34,14 @@ module.exports = {
                 message: "Success"
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
 
     },
@@ -46,7 +54,14 @@ module.exports = {
                 SessionData: result.recordset[0]
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -67,7 +82,14 @@ module.exports = {
 
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -78,7 +100,14 @@ module.exports = {
                 message: "Success"
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -88,7 +117,14 @@ module.exports = {
                 status: 200
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -111,7 +147,14 @@ module.exports = {
                 })
             }
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -132,8 +175,14 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
-            console.log(error)
-            throw error
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

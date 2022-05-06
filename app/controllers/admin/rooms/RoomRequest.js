@@ -4,6 +4,7 @@ const {
     validationResult
 } = require('express-validator');
 const RoomTransactionRequest = require('../../../models/RoomTransactionRequest')
+const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
@@ -12,7 +13,8 @@ module.exports = {
             res.render('admin/rooms/requests', {
                 transactionList: result[0].recordset,
                 totalentries: result[0].recordset ? result[0].recordset.length : 0,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -38,7 +40,14 @@ module.exports = {
                 })
             }
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -61,7 +70,14 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
-         console.log(error)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 }

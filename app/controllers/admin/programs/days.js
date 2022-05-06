@@ -5,6 +5,7 @@ const {
 } = require('express-validator');
 
 const ProgramDays = require('../../../models/ProgramDays')
+const isJsonString = require('../../../utils/util')
 
 module.exports = {
 
@@ -13,7 +14,8 @@ module.exports = {
             console.log('recordset::::::::',result[0].recordset)
             res.render('admin/programs/days', {
                 programdayList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -37,7 +39,14 @@ module.exports = {
                 })
             }
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -52,7 +61,7 @@ module.exports = {
             return;
         }
 
-        ProgramDays.pagination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
+        ProgramDays.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
@@ -60,7 +69,14 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
-            throw error
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -82,8 +98,14 @@ module.exports = {
                 message: "Success"
             })
         }).catch(error => {
-            console.log(error)
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -93,7 +115,30 @@ module.exports = {
                 result: result.recordset
             })
         }).catch(error=>{
-            res.status(500).json({status:500, message:"Error occured"})
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
+
+    refresh: (req, res) => {
+        console.log('Refresh Program Days::::::::>>')
+        ProgramDays.refresh(res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

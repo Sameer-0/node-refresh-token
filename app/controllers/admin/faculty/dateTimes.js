@@ -7,7 +7,7 @@ const {
     oneOf,
     validationResult
 } = require('express-validator');
-
+const isJsonString = require('../../../utils/util')
 module.exports = {
     getPage: (req, res) => {
 
@@ -17,7 +17,8 @@ module.exports = {
                 pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
                 AcademicCalenderList: result[3].recordset,
-                SlotIntervalTimingsList: result[4].recordset
+                SlotIntervalTimingsList: result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
 
@@ -32,8 +33,14 @@ module.exports = {
         FacultyDateTimes.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log(error)
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 

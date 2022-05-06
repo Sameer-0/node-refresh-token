@@ -6,6 +6,8 @@ const {
 const res = require('express/lib/response');
 const Divisions = require('../../../models/Divisions')
 const DivisionBatches = require('../../../models/DivisionBatches')
+const isJsonString = require('../../../utils/util')
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -13,7 +15,9 @@ module.exports = {
             console.log('divisionBatchList',result[0].recordset)
             res.render('admin/divisions/batches', {
                 divisionBatchList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
+            
             })
         })
     },
@@ -90,7 +94,14 @@ module.exports = {
         DivisionBatches.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

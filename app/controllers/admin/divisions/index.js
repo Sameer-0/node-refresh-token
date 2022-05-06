@@ -6,12 +6,15 @@ const {
 
 const Divisions = require('../../../models/Divisions')
 const Settings =  require('../../../models/Settings')
+const isJsonString = require('../../../utils/util')
+
 module.exports = {
     getPage: (req, res) => {
         Promise.all([Divisions.fetchAll(10000, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -98,7 +101,14 @@ module.exports = {
 
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

@@ -6,6 +6,7 @@ const {
 
 module.exports = class FacultyWorkTimePreferences {
     static save(inputJSON, slug, userid) {
+        console.log('inputJSON:::::::',JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -92,6 +93,16 @@ module.exports = class FacultyWorkTimePreferences {
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_update_faculty_work_time_preferences]`)
+        })
+    }
+
+    static delete(id, slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_request_lid', sql.Int, id)
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_delete_faculty_work_time_preference]`)
         })
     }
 }
