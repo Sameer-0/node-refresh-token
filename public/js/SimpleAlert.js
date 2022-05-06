@@ -4,7 +4,7 @@ class SimpleAlert {
         this.closeElem = null;
         this.positiveElem = null;
         this.negativeElem = null;
-    }
+    } 
 
 
     alert(obj) {
@@ -14,34 +14,30 @@ class SimpleAlert {
         this.removeAlert();
 
         let alertElem = document.createElement('div');
-        alertElem.setAttribute('class', 'simple-alert alert alert-danger');
-        let list ;
-     
+        alertElem.setAttribute('class', `simple-alert alert ${obj.type}`);
+        let list = ``;
+      
         for (let ele of  obj.message){
             for (let key in ele){
                 list += `<li>${key}${ele[key]}</li>`
             }
-           
          }
-         console.log('list', list)
 
         alertElem.innerHTML = `
-                <div class="header d-flex justify-content-between align-item-center">
-                    <h4 class='d-flex align-item-center'><i class="fa-solid fa-circle-exclamation"></i> <p class="title">${obj.title}</p></h4>
+                <div class="header d-flex justify-content-between align-item-center" >
+                    <h4 class='d-flex align-item-center'><i class="fa-solid fa-circle-exclamation me-3"></i> <p class="title">${obj.title}</p></h4>
                    
                     <i class="fa-solid fa-xmark simple-alert-close"></i>
                 </div>
-                <div class="body">
-            
-                <ul>
+                <div class="body"><ul>
                     ${list}
-                </ul></div>
+                </ul></div> 
                 <div class="footer">
                     ${obj.buttons.positive ? `<button class="positive">${obj.buttons.positive.text}</button>` : ''}
                     ${obj.buttons.negative ? `<button class="negative">${obj.buttons.negative.text}</button>` : ''}
-                </div>
+                </div>   
         `
-
+        
         let backdrop = document.createElement('div');
         backdrop.setAttribute('class', 'simple-alert-backdrop');
 

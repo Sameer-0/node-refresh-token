@@ -52,7 +52,7 @@ module.exports = {
             return;
         }
 
-        ProgramDays.pagination(rowcount, req.body.pageNo, res.locals.slug).then(result => {
+        ProgramDays.pagination(req.body.pageNo, res.locals.slug).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
@@ -94,6 +94,15 @@ module.exports = {
             })
         }).catch(error=>{
             res.status(500).json({status:500, message:"Error occured"})
+        })
+    },
+
+    refresh: (req, res) => {
+        console.log('Refresh Program Days::::::::>>')
+        ProgramDays.refresh(res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     }
 }

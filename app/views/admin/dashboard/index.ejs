@@ -32,25 +32,28 @@
 <!-- MAIN-CONTENT -->
 <div class="main-content">
 
-    <% if (currentFormStep) { %>
+    <% if (currentFormStep) { %> 
     <%- include('./stepform.ejs') %>
     <% } else { %>
     <%- include('./dashboard.ejs') %>
     <% } %>
-
+  
 </div>
 </main>
 
 <%- include('../partials/footer') %>
-
+ 
 
 <!-- PAGE LEVEL JS START -->
-
 
 <script src="/js/adminDashboardscript.js"></script>
 
 <script>
     $(document).ready(function () {
+        $('.select2').select2({
+        dropdownParent: $('#add-holiday-table')
+    });
+
         let username = `<%- locals.userId %>`;
         let campu = `<%- campusList%>`;
         let date = `<%- acadCalender%>`;
@@ -67,7 +70,7 @@
         let startDate;
         let endDate;
         let programTypeList;
-        let facultyType;
+        let facultyType; 
         let transactionTypes;
 
         for (let obj of slotObj) {
@@ -96,6 +99,9 @@
         for (let obj of transactionTypeList) {
             transactionTypes += `<option value="${obj.id}">${obj.name}</option>`;
         }
+
+     
+
 
         //DATA SELECT FOR ROOM
         $(".selectList").on('click', '.list-group-item', function () {
@@ -1007,8 +1013,8 @@
         }
     }
 
-    //Api for onchange program event
-    $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
+        //Api for onchange program event
+        $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
             let program_lid = $(this).val();
                 console.log('program_lid', program_lid)
             let apiObj = {
@@ -1035,6 +1041,7 @@
 
                 console.log('list:::>>>', $(this).parent().next());
             }).catch(error => console.log('error',error));
+
         })
 
         // NEXT STEP EVENT
@@ -1502,7 +1509,6 @@
             })
 
 
-    
         //Getting campus Bulding List
         $("#campus_lid").on('change', function () {
             let campus_lid = $(this).val()
@@ -1542,7 +1548,6 @@
         $('.select2').select2({
             dropdownParent: $('#open-room-modal')
         });
-
 
         //Fetch course workload form SAP
         $(".fetchFromSAP").on('click', function () {

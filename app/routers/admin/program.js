@@ -38,10 +38,13 @@ router.post('/programs/days/pagination', days.pagination)
 router.get('/programs/days/search', days.search)
 router.patch('/programs/days', days.changeStatus)
 router.get('/programs/days/GetAll', days.getAll)
+router.post('/programs/days/refresh', days.refresh)
+
 
 //PROGRAM SESSIONS
 router.get('/programs/sessions', sessions.getPage)
 router.post('/programs/sessions/pagination', validate('pagination'), sessions.pagination)
 router.get('/programs/sessions/search', validate('search'), sessions.search)
+router.post('/programs/sessions/refresh', sessions.refresh)
 
 module.exports = router;

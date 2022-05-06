@@ -1,3 +1,4 @@
+
 <%- include("../partials/head") %>
 <link rel="stylesheet" href="/css/simpleAlert.css">
 <%- include("../partials/leftSidebar") %>
@@ -121,7 +122,7 @@
                     </div>
                     <div class="col-md-9 col-xxl-9 selected-items">
                         <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
-                        <input type="text" name="" placeholder="Search Selected Faculty"
+                        <input type="text" name="" placeholder="Search Selected Program"
                             class="form-control searchSelectedItemProgram">
 
                         <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
@@ -190,9 +191,10 @@
     
 </script>
 <script src="/js/SimpleAlert.js"></script>
-
 <script>
     $(document).ready(function () {
+
+
 
         //Edit 
         $("#programTable").on('click','.edit-program',function(){
@@ -209,7 +211,7 @@
                     $("#program_name").val(data.data.program_name)
                     $("#program_type_lid").val(data.data.program_type_lid).trigger('change')
                     $("#abbr").val(data.data.abbr)
-                $("#edit-program-modal").modal('show')
+                    $("#edit-program-modal").modal('show')
                 }
             })
         })
@@ -244,7 +246,9 @@
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-          location.reload();
+          setTimeout(() => {
+            location.reload();
+          }, 2000); 
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -253,7 +257,6 @@
         //Import
         $('#importProgram').on('click', function() {
 
-            console.log('checlo')
                 let programElems = $('#add-more-program-table tbody tr');
                 let programCount = programElems.length;
                 let programJson = [];
@@ -301,7 +304,8 @@
             })
 
         //Delete Faculty API
-        $("#programTable").on('click','.delete-program',function(){
+        $("#programTable").on('click','.delete-program', function(){
+            console.log('heello');
             let id = $(this).attr("data-id");
             let ApiObj = {
                 type: 'DELETE',
@@ -313,7 +317,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
+                // console.log('sucess:::::::::', result)
                 showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
@@ -474,7 +478,8 @@
                                 <td>${program.program_type}</td>
                                 <td>${program.abbr}</td>
                                 <td><a class="edit-program" data-id="${program.id}"><i class="fa fa-edit"></i></a>
-                                    <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash"></i></a></td>
+                                    <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash"></i></a>
+                                </td>
                             </tr>`
                     }
                 } else {
@@ -493,6 +498,7 @@
             //         <h3>Error</h3>
             //         <p>${errors.description}</p>
             //         <ul>`
+            //             console.log('errorData', errors.data)
             // if (errors.data.length > 0) {
             //     $(errors.data).each(function (key, value) {
             //         $.each(this, function (key, value) {
@@ -506,10 +512,13 @@
             //     $(".errorHtml").html(errorHtml)
             //     $(".error-html").html(errorHtml)
 
+            // simple alert tetsing
+            console.log('error',errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title : errors.description,
-                message: errors.data,
+                message: "errors.data",
+                type: 'alert-danger',
                 buttons: {
                     positive:{
                         text: "Okay",
@@ -521,36 +530,60 @@
                         text: "Cancel",
                         action: function () {
                         alert('Negative')
-                            }
                         }
                     }
+                }
             }
             simpleAlert.alert(obj);
+
         }
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+            //         <h3>Success</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            // $(".errorHtml").html(errorHtml)
+            // $(".error-html").html(errorHtml)
+            // setTimeout(function(){
+            //     location.reload()
+            // },2500)
+            console.log('success',errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $(".errorHtml").html(errorHtml)
-            $(".error-html").html(errorHtml)
-            setTimeout(function(){
-                location.reload()
-            },2500)
+            simpleAlert.alert(obj);
         }
 
+        
 
     })
 </script>

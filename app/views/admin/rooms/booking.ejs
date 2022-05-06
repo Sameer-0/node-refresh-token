@@ -47,7 +47,9 @@
                         <td><%- trans.username %></td>
                         <td>
                             <a title="view details" class="viewtransactioninfo" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
-                            <a class="delete-transaction" data-id="<%- trans.id %>"><i class="fa fa-trash text-danger"></i></a>
+                            <%if(trans.stage == 'applied'){%>
+                                <a class="delete-transaction" data-id="<%- trans.id %>"><i class="fa fa-trash text-danger"></i></a>
+                            <%}%>
                         </td>
                     </tr>
                     <%}%>
@@ -92,7 +94,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="room_lid" id="room_lid" data-live-search="true">
+                                    <select class="select2 room_lid modalSelect2" name="room_lid" id="room_lid"  data-live-search="true">
                                         <option value="">Select Room No</option>
                                         <%for(let room of roomList){%>
                                         <option value="<%-room.id%>"><%- room.room_number %></option>
@@ -100,7 +102,7 @@
                                 </select>
                                 </td>
                                 <td>
-                                    <select class="select2" name="transaction_type_id" id="transaction_type_id">
+                                    <select class="select2 modalSelect2" name="transaction_type_id" id="transaction_type_id">
                                         <option value="">Select Transaction Type</option>
                                         <%for(let type of transactionTypes){%>
                                         <option value="<%-type.id%>"><%- type.name %></option>
@@ -108,7 +110,7 @@
                                 </select>
                                 </td>
                             <td>
-                                <select class="select2" name="start_time_id" id="start_time_id">
+                                <select class="select2 modalSelect2" name="start_time_id" id="start_time_id">
                                     <option value="">Select Start Time</option>
                                     <%for(let startlist of slotIntervalTimings){%>
                                         <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
@@ -116,7 +118,7 @@
                             </select>
                             </td>
                             <td>
-                                <select class="select2" name="end_time_id" id="end_time_id">
+                                <select class="select2 modalSelect2" name="end_time_id" id="end_time_id">
                                     <option value="">Select End Time</option>
                                     <%for(let endlist of slotIntervalTimings){%>
                                         <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
@@ -124,7 +126,7 @@
                             </select>
                             </td>
                             <td>
-                                <select class="select2" name="start_date_id" id="start_date_id">
+                                <select class="select2 modalSelect2" name="start_date_id" id="start_date_id">
                                     <option value="">Select Start Date</option>
                                     <%for(let startdate of academicCalender){%>
                                         <option value="<%-startdate.id%>"><%- startdate.date %></option>
@@ -132,21 +134,21 @@
                             </select>
                             </td>
                             <td>
-                                <select class="select2" name="end_date_id" id="end_date_id">
+                                <select class="select2 modalSelect2" name="end_date_id" id="end_date_id">
                                     <option value="">Select End Date</option>
                                     <%for(let enddate of academicCalender){%>
                                         <option value="<%-enddate.id%>"><%- enddate.date %></option>
                                         <%}%>
                             </select>
                             </td>
-                            <td><select class="select2" name="org_lid" id="org_lid"> 
+                            <td><select class="select2 modalSelect2" name="org_lid" id="org_lid"> 
                                 <option value="">Select orgnization</option>
                                 <%for(let org of orgnizations){%>
                                         <option value="<%-org.id%>"><%- org.org_abbr %></option>
                                         <%}%>
                         </select></td>
                             <td>
-                                <select class="select2" name="campus_lid" id="campus_lid"> 
+                                <select class="select2 modalSelect2" name="campus_lid" id="campus_lid"> 
                                     <option value="">Select Campus</option>
                                     <%for(let campus of campuses){%>
                                         <option value="<%-campus.id%>"><%- campus.campus_abbr %></option>
@@ -202,9 +204,8 @@
 
          
             $('.select2').select2({
-                dropdownParent: $('#open-transaction-modal') ,
-                tags: true
-        })
+                dropdownParent: $('#open-transaction-modal')
+            })
 
 
 
@@ -212,8 +213,11 @@
   //console.log('Username:::::::::::::::::::', username)
     //Add more rows for building
     $('#add-more-roomtransaction').on('click', function () {
+      
     console.log("Organization Added::::")
+    
     let lastTr = $('#add-more-roomstrans-table tbody tr:last-child')
+    lastTr.find('.modalSelect2').select2('destroy');
     let room_lid = lastTr.find(`select[name='room_lid']`).val();
     let transaction_type_id = lastTr.find(`select[name='transaction_type_id']`).val();
     let start_time_id = lastTr.find(`select[name='start_time_id']`).val();
@@ -224,32 +228,43 @@
     let campus_lid = lastTr.find(`select[name='campus_lid']`).val();
     let clonedTr = lastTr.clone();
     console.log('room_lid::::::::::::>>',room_lid)
-    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('chnage')
-    clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('chnage')
-    clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('chnage')
-    clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('chnage')
-    clonedTr.find(`select[name='start_date_id']`).val(start_date_id).trigger('chnage')
-    clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('chnage')
-    clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('chnage')
-    clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('chnage')
-    $('#add-more-roomstrans-table tbody').append(clonedTr)
-  // selectRefresh();
-    })
 
+    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('change')
+    clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('change')
+    clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('change')
+    clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('change')
+    clonedTr.find(`select[name='start_date_id']`).val(start_date_id).trigger('change')
+    clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('change')
+    clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('change')
+    clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('change')
+
+    lastTr.find('.modalSelect2').select2({
+    dropdownParent: $('#open-transaction-modal') });
+
+    clonedTr.find('.modalSelect2').select2({
+    dropdownParent: $('#open-transaction-modal')});
+
+    $('#add-more-roomstrans-table tbody').append(clonedTr)
+    // selectRefresh();
+            $('.select2').select2({
+                dropdownParent: $('#open-transaction-modal'),
+                tags: true
+            })
+    })
 
 
 
     $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
-    function () {
-    let trLength = $(
-    '#add-more-roomstrans-table tbody tr')
-    .length;
-    if (trLength > 1) {
-    $(this).closest('tr').remove()
-    } else {
-    alert('Cannot delete this room.')
-    }
-    })
+        function () {
+            let trLength = $(
+            '#add-more-roomstrans-table tbody tr')
+            .length;
+            if (trLength > 1) {
+            $(this).closest('tr').remove()
+            } else {
+            alert('Cannot delete this room.')
+            }
+        })
 
   //Create
     $(".createRoomTransaction").on('click', function () {
@@ -483,9 +498,11 @@
                         <td>${trans.campus_abbr}</td>
                         <td>${trans.username}</td>
                         <td>
-                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
-                            <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>
-                        </td>
+                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>`
+                           if(trans.stage=='applied'){
+                            AjaxTable += ` <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>`
+                            }
+                       ` </td>
                     </tr>`
                     }
                 } else {

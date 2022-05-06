@@ -46,7 +46,7 @@ module.exports = function validate(method) {
                     console.log('Fail::::::::::::>>')
                     res.status(403).json({
                         status: 403,
-                        description: 'All fields are mandetory',
+                        description: 'All fields are mandatory',
                         data: keyval
                     })
                 }

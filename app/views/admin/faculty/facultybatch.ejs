@@ -1,7 +1,4 @@
 <%- include("../partials/head") %>
-
-
-
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
@@ -10,6 +7,7 @@
 
     <%- include("../partials/faculty-menu") %>
     <!--DASHBOARD CONTENT START-->
+    <div class="errorHtml"></div>
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -74,7 +72,7 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
                 <input type="hidden" id="hidden_id">
                 <div class="table-responsive ">
                     <table class="table table-bordered" id="add-more-facultybatch-table">
@@ -86,7 +84,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="faculty_lid" id="faculty_lid">
+                                    <select class="select2 modalSelect2" name="faculty_lid" id="faculty_lid">
                                         <option value="">--select--</option>
                                         <% for(faculty of facultyList) {%>
                                         <option value="<%- faculty.id %>">
@@ -95,7 +93,13 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="faculty_batch" id="faculty_batch" class="form-control">
+                                    <!-- <input type="number" name="faculty_batch" id="faculty_batch" class="form-control"> -->
+                                    <select class="select2 modalSelect2" name="faculty_batch" id="faculty_batch">
+                                        <option value="">--select--</option>
+                                        <% for(batch of batchList) {%>
+                                        <option value="<%- batch.batch %>"> <%- batch.batch %></option>
+                                        <%}%>
+                                    </select>
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
@@ -131,7 +135,7 @@ $(document).ready(function(){
     $('#add-more-facultybatch-fields').on('click', function () {
         
         let lastTr = $('#add-more-facultybatch-table tbody tr:last-child')
-        
+        lastTr.find('.modalSelect2').select2('destroy');
         console.log('addd::::lastTr', lastTr)
         let faculty_lid = lastTr.find(`select[name="faculty_lid"]`).val();
         let batch_id = lastTr.find(`select[name="faculty_batch"]`).val();
@@ -139,8 +143,17 @@ $(document).ready(function(){
         clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change')
         clonedTr.find(`select[name="faculty_batch"]`).val(batch_id).trigger('change')
         
+        lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-facultybatch-modal')
+                });
+
+            clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-facultybatch-modal')
+                });
+
         $('#add-more-facultybatch-table tbody').append(clonedTr)})
 
+    })
             $('#add-more-facultybatch-table').on('click', '.remove-facultybatchfield',
             function () {
             let trLength = $('#add-more-facultybatch-table tbody tr').length;
@@ -151,7 +164,7 @@ $(document).ready(function(){
             else {
             alert('Cannot delete this.')
                 }
-    })
+   
 
     $(".createfacultybatch").on('click', function () {
         let facultyBatchElems = $('#add-more-facultybatch-table tbody tr');
@@ -159,7 +172,7 @@ $(document).ready(function(){
         let facultyBatchJson = [];
         facultyBatchElems.each(function (index, elem) {
             let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
-            let faculty_batch = $(elem).find(`input[name="faculty_batch"]`).val();
+            let faculty_batch = $(elem).find(`select[name="faculty_batch"]`).val();
 
             if (index < facultyBatchCount - 1) {
                 let obj = {
@@ -221,7 +234,7 @@ $(document).ready(function(){
             let id = $(this).attr('data-id')
             let faculty_lid = $(this).attr('data-faculty-lid')
             let faculty_batch = $(this).attr('data-batch')
-            $("#faculty_batch").val(faculty_batch)
+            $("#faculty_batch").val(faculty_batch).trigger('change')
             $("#faculty_lid").val(faculty_lid).trigger('change')
             $("#faculty_lid").attr("disabled", "disabled");
             $("#hidden_id").val(id)
@@ -237,7 +250,7 @@ $(document).ready(function(){
         let id = $("#hidden_id").val();
         facultyBatchElems.each(function (index, elem) {
             let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
-            let faculty_batch = $(elem).find(`input[name="faculty_batch"]`).val();
+            let faculty_batch = $(elem).find(`select[name="faculty_batch"]`).val();
             
 
             if (index < facultyBatchCount - 1) {
@@ -383,7 +396,7 @@ $(document).ready(function(){
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#add-facultybatch-modal #errorHtml").html(errorHtml)
+                $(".errorHtml").html(errorHtml)
         }
 
 
@@ -402,7 +415,7 @@ $(document).ready(function(){
             }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#add-facultybatch-modal #errorHtml").html(errorHtml)
+            $(".errorHtml").html(errorHtml)
 
             setTimeout(function(){
                 location.reload()
