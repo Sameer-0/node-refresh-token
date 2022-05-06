@@ -8,7 +8,7 @@ const CourseDayRoomPreferences = require('../../../models/CourseDayRoomPreferenc
 const Programs = require('../../../models/Programs');
 const Days = require('../../../models/Days');
 const RoomSlots = require('../../../models/RoomSlots')
-
+const isJsonString = require('../../../utils/util')
 module.exports = {
 
     
@@ -21,7 +21,8 @@ module.exports = {
                 programList: result[2].recordset,
                 dayList: JSON.stringify(result[3].recordset),
                 totalentries: result[0].recordset ? result[0].recordset.length : 0,
-                roomSlotsList: result[4].recordset
+                roomSlotsList: result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -34,7 +35,14 @@ module.exports = {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log('error:::::::::::::::::::>>>',error)
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -97,8 +105,14 @@ module.exports = {
         CourseDayRoomPreferences.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -143,7 +157,14 @@ module.exports = {
         CourseDayRoomPreferences.refresh(res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

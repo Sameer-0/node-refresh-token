@@ -148,7 +148,7 @@
                                         <option value="<%- type.id %>"><%- type.name %></option>
                                         <%}%>
                                     </select>
-                                </td>
+                                </td> 
                                 <td>
                                     <input name="reason" id="reason" type="text" class="form-control"
                                         placeholder="Reason">
@@ -213,6 +213,7 @@
 
         $('#add-more-holidays').on('click', function () {
                 let lastTr = $('#add-more-holidays-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
                 let calendar_year = lastTr.find(`select[name='calendar_year']`).val();
                 let holiday_date = lastTr.find(`select[name='holiday_date']`).val(); 
                 let holiday_type = lastTr.find(`select[name='holiday_type']`).val();
@@ -222,6 +223,15 @@
                 clonedTr.find(`input[name='holiday_date']`).val('')
                 clonedTr.find(`select[name='holiday_type']`).val('')
                 clonedTr.find(`select[name='reason']`).val('')
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-holiday-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-holiday-modal')
+                });
+
                 $('#add-more-holidays-table tbody').append(clonedTr)
             })
 
@@ -461,7 +471,7 @@
 
 
 
-                        //Bulk Delete
+            //Bulk Delete
                $(".bulk-delete-holiday").on('click', function () {
                 let ApiObj = {
                     url: '/admin/holidays',

@@ -11,6 +11,7 @@ const ModuleType = require('../../../models/ModuleType')
 const Settings = require('../../../models/Settings');
 const path = require("path");
 var soap = require("soap");
+const isJsonString = require('../../../utils/util')
 
 
 module.exports = {
@@ -24,7 +25,8 @@ module.exports = {
         acadYear: result[2].recordset[0].input_acad_year,
         programList: result[3].recordset,
         AcadSessionList: result[4].recordset,
-        moduleList: result[5].recordset
+        moduleList: result[5].recordset,
+        breadcrumbs: req.breadcrumbs,
       })
     })
   },
@@ -113,8 +115,14 @@ module.exports = {
 
       res.status(200).json(JSON.parse(result.output.output_json))
     }).catch(error => {
-      console.log('error::::::::::::::::::::>>', error)
-      res.status(500).json(JSON.parse(error.originalError.info.message))
+      if(isJsonString.isJsonString(error.originalError.info.message)){
+        res.status(500).json(JSON.parse(error.originalError.info.message))
+    }
+    else{
+        res.status(500).json({status:500,
+        description:error.originalError.info.message,
+        data:[]})
+    }
     })
   }
 }

@@ -8,7 +8,7 @@ const Programs = require('../../../models/Programs')
 const ProgramTypes = require('../../../models/programType')
 const Settings = require('../../../models/Settings');
 const ProgramsDbo = require('../../../models/ProgramsDbo');
-
+const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
@@ -19,7 +19,8 @@ module.exports = {
                 programTypeList: JSON.stringify(result[1].recordset),
                 programTypeListObj:result[1].recordset,
                 pageCount: result[2].recordset[0].count,
-                programDboList: result[3].recordset
+                programDboList: result[3].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -43,7 +44,14 @@ module.exports = {
                 })
             }
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -66,7 +74,14 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
-            throw error
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -78,7 +93,14 @@ module.exports = {
                 data: result.recordset[0]
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -91,8 +113,14 @@ module.exports = {
         Programs.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -113,8 +141,14 @@ module.exports = {
 
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -125,7 +159,14 @@ module.exports = {
         Programs.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
 
     }

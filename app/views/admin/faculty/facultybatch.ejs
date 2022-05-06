@@ -84,7 +84,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <select class="select2" name="faculty_lid" id="faculty_lid">
+                                    <select class="select2 modalSelect2" name="faculty_lid" id="faculty_lid">
                                         <option value="">--select--</option>
                                         <% for(faculty of facultyList) {%>
                                         <option value="<%- faculty.id %>">
@@ -94,7 +94,7 @@
                                 </td>
                                 <td>
                                     <!-- <input type="number" name="faculty_batch" id="faculty_batch" class="form-control"> -->
-                                    <select class="select2" name="faculty_batch" id="faculty_batch">
+                                    <select class="select2 modalSelect2" name="faculty_batch" id="faculty_batch">
                                         <option value="">--select--</option>
                                         <% for(batch of batchList) {%>
                                         <option value="<%- batch.batch %>"> <%- batch.batch %></option>
@@ -135,7 +135,7 @@ $(document).ready(function(){
     $('#add-more-facultybatch-fields').on('click', function () {
         
         let lastTr = $('#add-more-facultybatch-table tbody tr:last-child')
-        
+        lastTr.find('.modalSelect2').select2('destroy');
         console.log('addd::::lastTr', lastTr)
         let faculty_lid = lastTr.find(`select[name="faculty_lid"]`).val();
         let batch_id = lastTr.find(`select[name="faculty_batch"]`).val();
@@ -143,8 +143,17 @@ $(document).ready(function(){
         clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change')
         clonedTr.find(`select[name="faculty_batch"]`).val(batch_id).trigger('change')
         
+        lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-facultybatch-modal')
+                });
+
+            clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-facultybatch-modal')
+                });
+
         $('#add-more-facultybatch-table tbody').append(clonedTr)})
 
+    })
             $('#add-more-facultybatch-table').on('click', '.remove-facultybatchfield',
             function () {
             let trLength = $('#add-more-facultybatch-table tbody tr').length;
@@ -155,7 +164,7 @@ $(document).ready(function(){
             else {
             alert('Cannot delete this.')
                 }
-    })
+   
 
     $(".createfacultybatch").on('click', function () {
         let facultyBatchElems = $('#add-more-facultybatch-table tbody tr');

@@ -7,7 +7,15 @@
 <!--HEADER END-->
 
 <div class="main-content">
-    <!--DASHBOARD CONTENT START-->
+    <!--DASHBOARD CONTENT START--> 
+    <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
 
     <div class="row my-3 gx-3 gy-3 row1-data">
         <div class="col-xl-2 col-lg-4 col-md-6">
@@ -122,7 +130,7 @@
                     </div>
                     <div class="col-md-9 col-xxl-9 selected-items">
                         <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
-                        <input type="text" name="" placeholder="Search Selected Faculty"
+                        <input type="text" name="" placeholder="Search Selected Program"
                             class="form-control searchSelectedItemProgram">
 
                         <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
@@ -188,6 +196,7 @@
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
+    
 </script>
 <script src="/js/SimpleAlert.js"></script>
 <script>
@@ -303,7 +312,8 @@
             })
 
         //Delete Faculty API
-        $("#programTable").on('click','.delete-program',function(){
+        $("#programTable").on('click','.delete-program', function(){
+            console.log('heello');
             let id = $(this).attr("data-id");
             let ApiObj = {
                 type: 'DELETE',
@@ -315,7 +325,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
+                // console.log('sucess:::::::::', result)
                 showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
@@ -511,11 +521,11 @@
             //     $(".error-html").html(errorHtml)
 
             // simple alert tetsing
-            console.log(errors)
+            console.log('error',errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title : errors.description,
-                message: errors.data,
+                message: "errors.data",
                 type: 'alert-danger',
                 buttons: {
                     positive:{
@@ -557,7 +567,7 @@
             // setTimeout(function(){
             //     location.reload()
             // },2500)
-            console.log(errors);
+            console.log('success',errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title : errors.description,

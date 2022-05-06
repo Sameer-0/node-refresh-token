@@ -13,7 +13,9 @@ module.exports = {
         Promise.all([AcademicCalender.fetchAll(10), AcademicCalender.getCount()]).then(result=>{
             res.render('management/academic/acadCalender', {
                 acadCalender: result[0].recordset,
-                pageCount:result[1].recordset[0].count
+                pageCount:result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs
+            
             })
         })
     },
