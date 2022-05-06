@@ -15,7 +15,7 @@ module.exports = class Faculties {
     }
 
     static save(inputJSON, slug, userid) {
-
+console.log(JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))

@@ -17,12 +17,13 @@ class SimpleAlert {
         alertElem.setAttribute('class', `simple-alert alert ${obj.type}`);
         let list = ``;
       
-        for (let ele of  obj.message){
-            for (let key in ele){
-                list += `<li>${key}${ele[key]}</li>`
+        if(obj.message.length > 0){
+            for (let ele of  obj.message){
+                for (let key in ele){
+                    list += `<li>${key}${ele[key]}</li>`
+                }
             }
-         }
-
+        }
         alertElem.innerHTML = `
                 <div class="header d-flex justify-content-between align-item-center" >
                     <h4 class='d-flex align-item-center'><i class="fa-solid fa-circle-exclamation me-3"></i> <p class="title">${obj.title}</p></h4>

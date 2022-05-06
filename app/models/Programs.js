@@ -76,7 +76,7 @@ module.exports = class Programs{
 
             const request = pool.request(); 
 
-            return request.input('input_request_lid', sql.Int, id)
+            return request.input('input_program_lid', sql.Int, id)
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_delete_programs]`)

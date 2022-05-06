@@ -1,5 +1,5 @@
 module.exports = {
     getPage:(req, res)=>{
-        res.render('admin/time-table-simulation/index')
+        res.render('admin/time-table-simulation/index', {breadcrumbs: req.breadcrumbs})
     }
 }

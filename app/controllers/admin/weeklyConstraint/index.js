@@ -14,7 +14,8 @@ module.exports = {
 
             res.render('admin/weekly-constraint/index.ejs', {
                 weeklyConstraintList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
@@ -28,7 +29,7 @@ module.exports = {
             });
             return;
         }
-console.log('weeklyconstarinsave');
+        
         WeeklyConstraint.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,

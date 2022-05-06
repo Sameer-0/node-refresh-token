@@ -27,6 +27,8 @@ module.exports = {
                 lectureTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
                 pageCount: 0, 
+                breadcrumbs: req.breadcrumbs,
+
             })
         })
     },
