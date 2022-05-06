@@ -1,80 +1,104 @@
+//Holiday for schema level
 const {
     sql,
     poolConnection,
     execPreparedStmt
 } = require('../../config/db')
-
-module.exports = class Holidays {
-    constructor(calenderId, calenderName, campusId, campusLid, ordLid, calenderYear, hDate, Reason, holidayTypeId) {
-        this.calenderId = calenderId;
-        this.calenderName = calenderName;
-        this.campusId = campusId;
-        this.campusLid = campusLid;
-        this.ordLid = ordLid;
+module.exports = class {
+    constructor(calenderYear, hDate, Reason, holidayTypeId) {
         this.calenderYear = calenderYear;
         this.hDate = hDate;
         this.Reason = Reason;
         this.holidayTypeId = holidayTypeId;
     }
 
-
-    static insert(body) {
+    static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            const request = pool.request();
-            request.input('calenderId', sql.Int, body.calenderId)
-                .input('calenderName', sql.NVarChar(20), body.calenderName)
-                .input('campusId', sql.NVarChar(15), body.campusId)
-                .input('campusLid', sql.Int, body.campusLid)
-                .input('ordLid', sql.Int, body.ordLid)
-                .input('calenderYear', sql.SmallInt, body.calenderYear)
-                .input('hDate', sql.Date, body.hDate)
-                .input('Reason', sql.NVarChar(100), body.Reason)
-                .input('holidayTypeId', sql.Int, body.holidayTypeId)
-            let stmt = `INSERT INTO  [dbo].[holidays] (calender_id, calender_name, campus_id, campus_lid, ord_lid, calender_year, h_date, reason, holiday_type_id)  VALUES (@calenderId, @calenderName, @campusId, @campusLid, @ordLid, @calenderYear, @hDate, @Reason, @holidayTypeId)`
-            return request.query(stmt)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 103) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC`)
         })
     }
 
 
-    static update(body) {
+    static save(inputJSON, slug, userid) {
+        console.log('object:::::::::::::', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('calenderId', sql.Int, body.calenderId)
-                .input('calenderName', sql.NVarChar(20), body.calenderName)
-                .input('campusId', sql.NVarChar(15), body.campusId)
-                .input('campusLid', sql.Int, body.campusLid)
-                .input('ordLid', sql.Int, body.ordLid)
-                .input('calenderYear', sql.SmallInt, body.calenderYear)
-                .input('hDate', sql.Date, body.hDate)
-                .input('Reason', sql.NVarChar(100), body.Reason)
-                .input('holidayTypeId', sql.Int, body.holidayTypeId)
-                .input('Id', sql.Int, body.Id)
-            let stmt = `INSERT INTO  [dbo].[holidays] (calender_id, calender_name, campus_id, campus_lid, ord_lid, calender_year, h_date, reason, holiday_type_id)  VALUES (@calenderId, @calenderName, @campusId, @campusLid, @ordLid, @calenderYear, @hDate, @Reason, @holidayTypeId)`
-            return request.query(stmt)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .input('last_modified_by', sql.Int, userid)
+                .execute(`[${slug}].[sp_create_new_holidays]`)
+        })
+    }
+    
+
+    static findOne(id, slug) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            request.input('id', sql.Int, id)
+            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 101) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
         })
     }
 
 
-    static delete(id) {
+    static update(inputJSON, slug, userid) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('Id', sql.NVarChar(255), id)
-            let stmt = `UPDATE [dbo].[holidays] SET active  = 0 WHERE id =  @Id`
-            return request.query(stmt)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .input('last_modified_by', sql.Int, userid)
+                .execute(`[${slug}].[sp_update_holidays]`)
         })
     }
 
-    static fetchAll() {
+    static delete(inputJSON, slug, userid) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT * FROM [dbo].[holidays] WHERE active  = 1 ORDER BY id DESC`)
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .input('last_modified_by', sql.Int, userid)
+                .execute(`[${slug}].[delete_holidays]`)
         })
     }
 
-    static fetchById(id) {
+
+    static getCount(slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [${slug}].holidays`)
+        })
+    }
+
+
+    static search(rowcount, keyword, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  AND h.calendar_year LIKE @keyword OR h_date LIKE @keyword OR h.reason LIKE @keyword OR ht.name LIKE @keyword ORDER by h.id DESC`)
+        })
+    }
+
+    static deleteAll(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`DELETE FROM [${slug}].holidays`)
+        })
+    }
+
+    static pagination(pageNo, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        }).catch(error => {
+            throw error
+        })
+    }
+
+    static fetchHolidaySap(inputJSON, slug){
         return poolConnection.then(pool => {
             const request = pool.request();
-            return request.input('Id', sql.NVarChar(255), id)
-                .request().query(`SELECT * FROM [dbo].[holidays] WHERE id = @Id`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), inputJSON)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_insert_holidays_wsdl]`)
         })
     }
 

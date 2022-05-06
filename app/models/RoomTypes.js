@@ -14,7 +14,7 @@ module.exports = class RoomTypes {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)}  rt.id as roomtypeid, rt.name, rt.description FROM [dbo].room_types rt WHERE rt.active = 1 ORDER BY rt.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)}  rt.id as roomtypeid, rt.name, rt.description FROM [dbo].room_types rt ORDER BY rt.id DESC`)
         }).catch(error => {
             throw error
         })
@@ -52,7 +52,7 @@ module.exports = class RoomTypes {
         return poolConnection.then(pool => {
             let request = pool.request();
             JSON.parse(ids).forEach(element => {
-                return request.query(`UPDATE [dbo].room_types SET active = 0  WHERE id = ${element}`)
+                return request.query(`DELETE FROM [dbo].room_types  WHERE id = ${element}`)
             });
         })
     }
@@ -72,7 +72,7 @@ module.exports = class RoomTypes {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcount)}  rt.id as roomtypeid, rt.name, rt.description FROM 
-                [dbo].room_types rt WHERE rt.active = 1 AND rt.name LIKE @keyword OR rt.description  LIKE @keyword  ORDER BY rt.id DESC`)
+                [dbo].room_types rt WHERE rt.name LIKE @keyword OR rt.description  LIKE @keyword  ORDER BY rt.id DESC`)
         }).catch(error => {
             throw error
         })
@@ -80,7 +80,7 @@ module.exports = class RoomTypes {
 
     static deleteAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [dbo].room_types SET active = 0 WHERE active = 1`)
+            return pool.request().query(`DELETE FROM [dbo].room_types`)
         })
     }
 

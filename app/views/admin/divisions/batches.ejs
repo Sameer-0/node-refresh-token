@@ -1,0 +1,230 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+
+
+
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Batches</h5>
+            </div>
+            <!-- <div>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
+                        class="fas fa-plus"></i></button>
+                <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button>
+            </div> -->
+        </div>
+
+        <div id="errorHtml"></div>
+
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+
+            <table class="table custom_row table-bordered" id="batchesTable">
+                <thead>
+                    <th>#</th>
+                    <th>Division</th>
+                    <th>Batch</th>
+                    <th>Event Name</th>
+                    <th>Division Count</th>
+                    <th>Batch Count</th>
+                    <th>Input Batch Count</th>
+                    <th>Faculty Count</th>
+                </thead>
+                <tbody>
+                    <%let count = 1;%>
+                    <% for(let batch of divisionBatchList) {%>
+                    <tr>
+                        <td><%- count++ %><input type="hidden" class="form-control" name="batch_id" value="<%- batch.id %>"></td>
+                        <td><%- batch.division %></td>
+                        <td><%- batch.batch%></td>
+                        <td><%- batch.event_name %></td>
+                        <td><%- batch.divison_count %></td>
+                        <td><%- batch.batch_count %></td>
+                        <td><%- batch.input_batch_count %></td>
+                        <td><input type="number" class="form-control" name="faculty_count" value="<%- batch.faculty_count %>"></td>
+                    </tr>
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %>
+                    </p>
+                </div>
+            <div>
+                <button class="btn btn-success updateDivisionBatch"><span class="fa fa-check"></span> Update </button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+</div>
+
+<%- include("../partials/footer") %>
+
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        // SEARCH PROGRAM TYPE
+        $('#searchkeyword').on('input', delay(function (e) {
+            
+            let keyword = $("#searchkeyword").val()
+            console.log('searching',keyword)
+            $.ajax({
+                type: "GET",
+                url: "/admin/divisions/batches/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    console.log(data)
+                    AjaxtTable(data.data)
+                }
+            })
+        }, 1500));
+
+
+        $(".updateDivisionBatch").on('click',function(){
+            let divbatchElems = $('#batchesTable tbody tr');
+            let batchCount = divbatchElems.length;
+            let batchJSON = [];
+            divbatchElems.each(function (index, elem) {
+                let id = $(elem).find(`input[name='batch_id']`).val()
+                let faculty_count = $(elem).find(`input[name='faculty_count']`).val()
+                if (index < batchCount - 1) {
+                    let obj = {
+                        id: id,
+                        faculty_count: faculty_count,
+                    }
+                    batchJSON.push(obj)
+                } else {
+                    let obj = {
+                        id:id,
+                        faculty_count: faculty_count,
+
+                    }
+                    batchJSON.push(obj)
+                }
+            })
+
+            //Ajax Call
+            console.log('JSON::::::::',batchJSON)
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/divisions/batches',
+                data: {
+                    inputJSON: JSON.stringify(batchJSON)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+        
+
+
+        function AjaxtTable(divisionBatchList) {
+            let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Division</th>
+                    <th>Batch</th>
+                    <th>Event Name</th>
+                    <th>Division Count</th>
+                    <th>Batch Count</th>
+                    <th>Input Batch Count</th>
+                    <th>Faculty Count</th>
+                    <th>Action</th>
+                </thead>`;
+            if (divisionBatchList.length > 0) {
+                let count = 1;
+                for (let batch of divisionBatchList) {
+                    AjaxTable +=
+                        `<tr>
+                            <td>${count++}</td>
+                            <td>${batch.division}</td>
+                        <td>${batch.batch}</td>
+                        <td>${batch.event_name}</td>
+                        <td>${batch.divison_count}</td>
+                        <td>${batch.batch_count}</td>
+                        <td>${batch.input_batch_count}</td>
+                        <td>${batch.faculty_count}</td>
+                        <td><label class="switch">
+                            <input type="checkbox" class="changeStatus" data-id="${batch.id }"
+                                data-status="${batch.status}"
+                                ${batch.status == 'Yes' ? 'Checked' :  '' }>
+                            <span class="switch-slider round"></span>
+                        </label></td>
+                            </tr>`
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                                <td colspan="5">No Data Found</td>
+                            </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+            $("#batchesTable").html(AjaxTable);
+        }
+
+
+        function showError(errors) {
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                $("#errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $("#errorHtml").html(errorHtml)
+        }
+
+
+    })
+</script>
+<%- include("../partials/footerEnd") %>

@@ -1,0 +1,563 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+
+    <!--DASHBOARD CONTENT START-->
+    <div class="errorHtml"></div>
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>ROOM BOOKING</h5>
+            </div>
+            <div>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-transaction-modal"><i
+                        class="fas fa-plus"></i></button>
+                <!-- <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button> -->
+            </div>
+        </div>
+
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            <table class="table custom_row table-bordered" id="roomTransactionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Transaction Type</th>
+                    <th>Stage</th>
+                    <th>Org Name</th>
+                    <th>Campus</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <%let count = 1;%>
+                    <% for(let trans of transactionList) {%>
+                    <tr>
+                        <td><%- count++ %></td>
+                        <td><%- trans.transaction_type %></td>
+                        <td><%- trans.stage %></td>
+                        <td><%- trans.org_name %></td>
+                        <td><%- trans.campus_abbr %></td>
+                        <td><%- trans.username %></td>
+                        <td>
+                            <a title="view details" class="viewtransactioninfo" data-id="<%- trans.id %>"><i class="fa fa-eye"></i></a>
+                            <%if(trans.stage == 'applied'){%>
+                                <a class="delete-transaction" data-id="<%- trans.id %>"><i class="fa fa-trash text-danger"></i></a>
+                            <%}%>
+                        </td>
+                    </tr>
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries: <%- totalentries %> </p>
+        </div>
+        <div>
+            <p id="pagination"></p>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="open-transaction-modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">ADD ROOM TRANSACTIONS</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive ">
+                    <table class="table table-bordered" id="add-more-roomstrans-table">
+                        <thead>
+                            <th>Room No</th>
+                            <th>Transaction Type</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Org Name</th>
+                            <th>Campus</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select class="select2 room_lid modalSelect2" name="room_lid" id="room_lid"  data-live-search="true">
+                                        <option value="">Select Room No</option>
+                                        <%for(let room of roomList){%>
+                                        <option value="<%-room.id%>"><%- room.room_number %></option>
+                                        <%}%>
+                                </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="transaction_type_id" id="transaction_type_id">
+                                        <option value="">Select Transaction Type</option>
+                                        <%for(let type of transactionTypes){%>
+                                        <option value="<%-type.id%>"><%- type.name %></option>
+                                        <%}%>
+                                </select>
+                                </td>
+                            <td>
+                                <select class="select2 modalSelect2" name="start_time_id" id="start_time_id">
+                                    <option value="">Select Start Time</option>
+                                    <%for(let startlist of slotIntervalTimings){%>
+                                        <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td>
+                                <select class="select2 modalSelect2" name="end_time_id" id="end_time_id">
+                                    <option value="">Select End Time</option>
+                                    <%for(let endlist of slotIntervalTimings){%>
+                                        <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td>
+                                <select class="select2 modalSelect2" name="start_date_id" id="start_date_id">
+                                    <option value="">Select Start Date</option>
+                                    <%for(let startdate of academicCalender){%>
+                                        <option value="<%-startdate.id%>"><%- startdate.date %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td>
+                                <select class="select2 modalSelect2" name="end_date_id" id="end_date_id">
+                                    <option value="">Select End Date</option>
+                                    <%for(let enddate of academicCalender){%>
+                                        <option value="<%-enddate.id%>"><%- enddate.date %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+                            <td><select class="select2 modalSelect2" name="org_lid" id="org_lid"> 
+                                <option value="">Select orgnization</option>
+                                <%for(let org of orgnizations){%>
+                                        <option value="<%-org.id%>"><%- org.org_abbr %></option>
+                                        <%}%>
+                        </select></td>
+                            <td>
+                                <select class="select2 modalSelect2" name="campus_lid" id="campus_lid"> 
+                                    <option value="">Select Campus</option>
+                                    <%for(let campus of campuses){%>
+                                        <option value="<%-campus.id%>"><%- campus.campus_abbr %></option>
+                                        <%}%>
+                            </select>
+                            </td>
+
+                            <td>
+                                <i class="far fa-edit d-none"></i>
+                                <i class="fas fa-trash-alt text-danger cursor-pointer remove-roomtransaction"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div id="errorMsg"></div>
+            <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction"><i class="fas fa-plus"></i>Add More Fields</button>
+            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn"> Create</button>
+            <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="show-transaction-details" tabindex="-1" aria-labelledby="show-transaction-details" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="show-transaction-details-title">Show Transactions</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="errorHtml"></div>
+            <div id="ShowTransactionTable"></div>
+        </div>
+        <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-success RequestForRoom" data-status="1">Request For Room</button> -->
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <%- include("../partials/footer") %>
+    <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"> </script>
+    <script>
+        $(document).ready(function () {
+
+
+         
+            $('.select2').select2({
+                dropdownParent: $('#open-transaction-modal')
+            })
+
+
+
+            let username = `<%- locals.userId %>`;
+  //console.log('Username:::::::::::::::::::', username)
+    //Add more rows for building
+    $('#add-more-roomtransaction').on('click', function () {
+      
+    console.log("Organization Added::::")
+    
+    let lastTr = $('#add-more-roomstrans-table tbody tr:last-child')
+    lastTr.find('.modalSelect2').select2('destroy');
+    let room_lid = lastTr.find(`select[name='room_lid']`).val();
+    let transaction_type_id = lastTr.find(`select[name='transaction_type_id']`).val();
+    let start_time_id = lastTr.find(`select[name='start_time_id']`).val();
+    let end_time_id = lastTr.find(`select[name='end_time_id']`).val();
+    let start_date_id = lastTr.find(`select[name='start_date_id']`).val();
+    let end_date_id = lastTr.find(`select[name='end_date_id']`).val();
+    let org_lid = lastTr.find(`select[name='org_lid']`).val();
+    let campus_lid = lastTr.find(`select[name='campus_lid']`).val();
+    let clonedTr = lastTr.clone();
+    console.log('room_lid::::::::::::>>',room_lid)
+
+    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('change')
+    clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('change')
+    clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('change')
+    clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('change')
+    clonedTr.find(`select[name='start_date_id']`).val(start_date_id).trigger('change')
+    clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('change')
+    clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('change')
+    clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('change')
+
+    lastTr.find('.modalSelect2').select2({
+    dropdownParent: $('#open-transaction-modal') });
+
+    clonedTr.find('.modalSelect2').select2({
+    dropdownParent: $('#open-transaction-modal')});
+
+    $('#add-more-roomstrans-table tbody').append(clonedTr)
+    // selectRefresh();
+            $('.select2').select2({
+                dropdownParent: $('#open-transaction-modal'),
+                tags: true
+            })
+    })
+
+
+
+    $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
+        function () {
+            let trLength = $(
+            '#add-more-roomstrans-table tbody tr')
+            .length;
+            if (trLength > 1) {
+            $(this).closest('tr').remove()
+            } else {
+            alert('Cannot delete this room.')
+            }
+        })
+
+  //Create
+    $(".createRoomTransaction").on('click', function () {
+            let roomElems = $('#add-more-roomstrans-table tbody tr');
+            let roomCount = roomElems.length;
+            let roomJson = [];
+            roomElems.each(function (index, elem) {
+                let room_lid = $(elem).find(`select[name='room_lid']`).val()
+                let transaction_type_id = $(elem).find(`select[name='transaction_type_id']`).val();
+                let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
+                let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
+                let start_date_id = $(elem).find(`select[name='start_date_id']`).val();
+                let end_date_id = $(elem).find(`select[name='end_date_id']`).val();
+                let org_lid = $(elem).find(`select[name='org_lid']`).val();
+                let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
+
+
+                if (index < roomCount - 1) {
+                    let obj = {
+                        room_lid: room_lid,
+                        transaction_type_lid: transaction_type_id,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        org_lid: org_lid,
+                        campus_lid: campus_lid,
+                        user_id:username
+                    }
+                    roomJson.push(obj)
+                } else {
+                    let obj = {
+                        room_lid: room_lid,
+                        transaction_type_lid: transaction_type_id,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        org_lid: org_lid,
+                        campus_lid: campus_lid,
+                        user_id:username
+                    }
+                    roomJson.push(obj)
+                }
+            })
+
+            console.log('roomJson::::::::::::',roomJson)
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms',
+                data: {
+                    inputJSON: JSON.stringify(roomJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+
+                showSuccess(result)
+                setTimeout(function(){
+                    location.reload()
+                },3000)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+
+        })
+
+
+   // SEARCH PROGRAM TYPE
+    $('#searchkeyword').on('input', delay(function (e) {
+    let keyword = $("#searchkeyword").val()
+    $.ajax({
+    type: "GET",
+    url: "/admin/rooms/search",
+    data: {
+    keyword: keyword
+    },
+    success: function (data) {
+    AjaxtTable(data.data)
+    }
+    })
+    }, 500));
+
+
+
+    //Pagination Here
+    let pageCount = `<%- pageCount %>`
+    console.log("Page Count=====>>>", pageCount)
+    let pageNos = Math.ceil(Number(pageCount) / 10)
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+    total: pageNos,
+    page: 1,
+    maxVisible: 10,
+    leaps: true,
+    firstLastUse: true,
+    first: '←',
+    last: '→',
+    wrapClass: 'pagination',
+    activeClass: 'active',
+    disabledClass: 'disabled',
+    nextClass: 'next',
+    prevClass: 'prev',
+    lastClass: 'last',
+    firstClass: 'first'
+    }).on("page", function (event, num) {
+    $.ajax({
+    type: "POST",
+    url: "/admin/rooms/pagination",
+    data: {
+    pageNo: num
+    },
+    success: function (data) {
+    AjaxtTable(data.data)
+    }
+    })
+    });
+    
+
+
+    $("#roomTransactionTable").on('click','.viewtransactioninfo',function() {
+        let trand_lid = $(this).attr('data-id')
+        let ApiObj = {
+                type: 'GET',
+                url: '/admin/rooms/details',
+                data: {
+                    id: trand_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                let htmlTable = `<table class="table table-borderd">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Room No</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                    </tr>    
+                    </thead>
+                    <tbody>`
+                        let count = 1
+                       result.data.forEach(function(item){
+                        htmlTable+=` <tr>
+                        <td>${count++}</td>
+                        <td>${item.room_number}</td>
+                        <td>${item.start_time}</td>
+                        <td>${item.end_time}</td>
+                        <td>${item.start_date}</td>
+                        <td>${item.end_date}</td>
+                                    </tr>`
+                       })
+                       htmlTable+= `</tbody></table>`;
+                console.log(htmlTable)
+                $("#ShowTransactionTable").html(htmlTable)
+                $("#show-transaction-details").modal('show')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
+
+
+
+        //Reject 
+        $(".RejectBtn").on('click',function(){
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/approval',
+                data: {
+                    input_room_request_lid: $(this).attr("data-transactionId"),
+                    approval_flag: $(this).attr("data-status")
+                },
+                dataType: 'JSON'
+            }
+
+
+            ajaxApi(ApiObj).then(result => {
+              console.log('result::::::::::::::',result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //Delete Faculty API
+        $("#roomTransactionTable").on('click','.delete-transaction',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/admin/rooms',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+    function AjaxtTable(transactionList){
+        let AjaxTable = `<table class="table custom_row table-bordered" id="roomTransactionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Transaction Type</th>
+                    <th>Stage</th>
+                    <th>Org Name</th>
+                    <th>Campus</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>`;
+                if (transactionList.length > 0) {
+                    let count = 1;
+                    for (trans of transactionList) {
+                        AjaxTable +=
+                            `<tr>
+                        <td>${count++}</td>
+                        <td>${trans.transaction_type}</td>
+                        <td>${trans.stage}</td>
+                        <td>${trans.org_name}</td>
+                        <td>${trans.campus_abbr}</td>
+                        <td>${trans.username}</td>
+                        <td>
+                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>`
+                           if(trans.stage=='applied'){
+                            AjaxTable += ` <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>`
+                            }
+                       ` </td>
+                    </tr>`
+                    }
+                } else {
+                    AjaxTable +=
+                        ` <tr>
+                                <td colspan="7">No Data Found</td>
+                            </tr>`;
+                }
+                AjaxTable += `<tbody></table>`
+                $("#roomTransactionTable").html(AjaxTable);
+    }
+
+
+    function showError(errors) {
+        console.log('error::::::::::::::',errors.data.length)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                console.log('error::::::::::::::',errorHtml)
+                $(".errorHtml").html(errorHtml)
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            $(".errorHtml").html(errorHtml)
+        }
+
+
+
+    })
+
+    </script>
+    <%- include("../partials/footerEnd") %>

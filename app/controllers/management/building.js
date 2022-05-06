@@ -12,8 +12,6 @@ const Settings = require('../../models/Settings');
 
 module.exports = {
 
-
-
     getPage: (req, res) => {
         let rowcount = 10
         if (req.method == "GET") {
@@ -56,39 +54,24 @@ module.exports = {
 
     create: (req, res) => {
 
-        // const errors = validationResult(req);
-        // if (!errors.isEmpty()) {
-        //     res.status(422).json({
-        //         statuscode: 422,
-        //         errors: errors.array()
-        //     });
-        //     return;
-        // }
-
-
         if (req.body.settingName) {
-
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
 
-        Buildings.saveWithProc(req.body.buildingJson)
-        res.json({
-            status: 200,
-            message: "Success"
+        let object = {
+            add_new_buildings: JSON.parse(req.body.inputJSON)
+        }
+
+        Buildings.save(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 
-    single: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
+    findOne: (req, res) => {
 
-        Buildings.fetchById(req.query.Id).then(result => {
+        Buildings.findOne(req.query.Id).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -97,40 +80,27 @@ module.exports = {
     },
 
     update: (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+        let object = {
+            update_buildings: JSON.parse(req.body.inputJSON)
         }
-
-        Buildings.update(req.body).then(result => {
-            res.json({
-                status: 200
-            })
+        Buildings.update(object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
+
 
     delete: (req, res) => {
-
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
-        }
-
-
-        Buildings.softDeleteById(req.body.id).then(result => {
-            res.json({
-                status: 200
-            })
+        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        Buildings.delete(req.body.id, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            console.log(error)
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
+
 
     search: (req, res) => {
 

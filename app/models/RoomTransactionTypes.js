@@ -14,39 +14,45 @@ module.exports = class RoomTransactionTypes {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)}  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts WHERE rts.active = 1 ORDER BY rts.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} rts.id, rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts ORDER BY rts.id DESC`)
         })
     }
 
 
-    static save(body) {
+    static save(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('rtsName', sql.NVarChar(50), body.rtsName)
-                .input('description', sql.NVarChar(100), body.description)
-                .query(`INSERT INTO [dbo].room_transaction_types (name, description) VALUES (@rtsName,  @description)`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[add_room_transaction_types]')
         })
     }
 
 
-    static update(body) {
+    static update(inputJSON) {
+        console.log('inputJSON',inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('rtsId', sql.Int, body.rtsId)
-                .input('rtsName', sql.NVarChar(100), body.rtsName)
-                .input('description', sql.NVarChar(200), body.description)
-                .query(`UPDATE [dbo].room_transaction_types SET name = @rtsName, description = @description  WHERE id = @rtsId`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[sp_update_room_transaction_types]')
         })
     }
 
 
 
-    static delete(id) {
-        console.log(id)
+    static delete(inputJSON) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('rtsId', sql.Int, id)
-                .query(`UPDATE [dbo].room_transaction_types SET active = 0  WHERE id = @rtsId`)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[dbo].[delete_room_transaction_types]')
+        })
+    }
+
+    static deleteAll() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`DELETE FROM [dbo].[room_transaction_types] `)
         })
     }
 
@@ -65,7 +71,7 @@ module.exports = class RoomTransactionTypes {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('rtsId', sql.Int, id)
-                .query(`SELECT  COUNT(*) as count FROM [dbo].room_transaction_types rts WHERE rts.active = 1`)
+                .query(`SELECT  COUNT(*) as count FROM [dbo].room_transaction_types`)
         })
     }
 
@@ -74,9 +80,25 @@ module.exports = class RoomTransactionTypes {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)}  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts  WHERE rts.active = 1 AND rts.name LIKE @keyword OR rts.description LIKE @keyword ORDER BY rts.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)}  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts  WHERE  rts.name LIKE @keyword OR rts.description LIKE @keyword ORDER BY rts.id DESC`)
         })
     }
 
+
+
+    static fetchChunkRows(rowcount, pageNo) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT  rts.id as rtsid, rts.name, rts.description FROM [dbo].room_transaction_types rts ORDER BY rts.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static getCount() {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`SELECT COUNT(*) as count FROM [dbo].[room_transaction_types]`)
+        })
+    }
 
 }

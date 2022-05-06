@@ -8,7 +8,6 @@ const Buildings = require('../../models/Buildings')
 const Organizations = require("../../models/Organizations")
 const Campuses = require("../../models/Campuses")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
-const moment = require('moment');
 
 module.exports = {
     getAcadYearPage: (req, res, next) => {
@@ -35,34 +34,5 @@ module.exports = {
                 message: "Something Went Wrong" + err
             })
         })
-    },
-
-    switchAcadYear: (req, res) => {
-        console.log('Req:::::::::::::::', req.body)
-        if (req.body.checkboxvalue == 1) {
-           
-            AcademicYear.switchonOff(Number(req.body.checkboxvalue)).then(result => {
-                res.json({
-                    staus: 200
-                })
-            }).catch(err => {
-                res.status(500).send({
-                    status: 500,
-                    message: "Something Went Wrong" + err
-                })
-            })
-        }else{
-            AcademicYear.switchonOff(Number(req.body.checkboxvalue)).then(result => {
-                res.json({
-                    staus: 200
-                })
-            }).catch(err => {
-                res.status(500).send({
-                    status: 500,
-                    message: "Something Went Wrong" + err
-                })
-            })
-        }
-
     }
 }

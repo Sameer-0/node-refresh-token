@@ -34,7 +34,7 @@ module.exports = {
             poolConnection
                 .then(pool => {
                     return pool.request()
-                        .input('slugName', sql.NVarChar(20), subDomain)
+                        .input('slugName', sql.NVarChar(50), subDomain)
                         .query(`SELECT slug_name FROM [dbo].tenants WHERE slug_name = @slugName`);
                 }).then(result => {
                     if (result.recordset.length === 0) {

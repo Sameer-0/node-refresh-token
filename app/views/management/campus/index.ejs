@@ -7,6 +7,7 @@
 
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
+    <div class="errorHtml"></div>
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -15,11 +16,6 @@
             <div>
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-campus-modal"><i
                         class="fas fa-plus"></i></button>
-                <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
-
-                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
-                    width="24px" height="32px"></button>
-
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -33,7 +29,6 @@
                     <th>Name</th>
                     <th>Description</th>
                     <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-campus"></th>
                 </thead>
                 <tbody>
                     <% for (let campus of campusList) { %>
@@ -51,16 +46,10 @@
                             <%- campus.c_desc %>
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-campus"
-                                data-campus-id="<%- campus.id %>" data-toggle="modal"
-                                data-target="#update-campus-modal"></i>
-                        </td>
-                        <td>
-                            <input type="checkbox" data-id="<%- campus.id %>" data-campus-id="<%- campus.campus_id %>"
-                                class="delete-campus">
+                            <a class="edit-campus" data-campus-id="<%- campus.id %>" data-toggle="modal" data-target="#update-campus-modal"><i class="fas fa-edit text-dark cursor-pointer" ></i></a>
+                            <a class="delete-campus" data-id="<%- campus.id %>"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                     </tr>
-
                     <% } %>
                 </tbody>
             </table>
@@ -86,15 +75,13 @@
     aria-hidden="true">
     <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content modal-inputform">
-            <div class="modal-header bg-info modal-inputform-header">
-                <h5 class="modal-title text-white" id="add-org-modal-title">Add New Campus</h5>
-                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
-                        class="fas fa-times"></i></button>
-
+            <div class="modal-header  modal-inputform-header">
+                <h5 class="modal-title text-dark" id="add-org-modal-title">Add New Campus</h5>
+                <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
             </div>
             <!-- <form action="/management/campus/add" method="POST"> -->
             <div class="modal-body">
-                <div id="errorHtml"></div>
+                <div class="errorHtml"></div>
 
                 <div class="table-responsive">
                     <table class="table table-bordered" id="add-more-campus-table">
@@ -109,7 +96,6 @@
                             <tr>
                                 <td>
                                     <input name="Id" id="Id" type="hidden" class="form-control" placeholder="Campus Id">
-                                    <input type="hidden" id="campusActive" name="campusActive">
                                     <input name="campusId" id="campusId" type="number" class="form-control"
                                         placeholder="Campus Id" required>
 
@@ -128,7 +114,7 @@
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer removecampus"></i>
+                                    <i class="fas fa-trash-alt text-danger remove-campus"></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -138,13 +124,9 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-campus"><i class="fas fa-plus"></i>
-                    Add
-                    More Campus</button>
-                <button type="button" class="btn createCampus modal-inputform-btn">Create
-                    Campus</button>
-                <button type="button" class="btn updateCampus modal-inputform-btn d-none">Update
-                    Campus</button>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-campus"><i class="fas fa-plus"></i>Add More Campus</button>
+                <button type="button" class="btn createCampus modal-inputform-btn">Create Campus</button>
+                <button type="button" class="btn updateCampus modal-inputform-btn d-none">Update Campus</button>
             </div>
             <!-- </form> -->
 
@@ -158,8 +140,7 @@
 
     <div class="modal-footer">
         <button type="button" class="btn  createCampus modal-inputform-btn">Create Campus</button>
-        <button type="button" class="btn  updateCampus modal-inputform-btn d-none">Update
-            Campus</button>
+        <button type="button" class="btn  updateCampus modal-inputform-btn d-none">Update Campus</button>
     </div>
     <!-- </form> -->
 
@@ -222,7 +203,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                location.reload()
+                notify();
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -248,7 +229,6 @@
                     $("#campusAbbr").val(camp.campus_abbr)
                     $("#campusName").val(camp.campus_name_40_char)
                     $("#campusDesc").val(camp.campus_description)
-                    $("#campusActive").val(camp.active)
                     $("#add-campus-modal").modal('show')
                 },
                 error: err => {
@@ -268,7 +248,7 @@
                 let campusAbbr = $(elem).find(`input[name='campusAbbr']`).val()
                 let campusName = $(elem).find(`input[name='campusName']`).val()
                 let campusDesc = $(elem).find(`input[name='campusDesc']`).val()
-                let campusActive = $(elem).find(`input[name='campusActive']`).val()
+
 
                 if (index < campusCount - 1) {
                     let obj = {
@@ -276,8 +256,7 @@
                         campus_id: campusId,
                         campus_abbr: campusAbbr,
                         campus_name_40_char: campusName,
-                        campus_description: campusDesc,
-                        active: campusActive
+                        campus_description: campusDesc
                     }
                     campusJson.push(obj)
                 } else {
@@ -286,8 +265,7 @@
                         campus_id: campusId,
                         campus_abbr: campusAbbr,
                         campus_name_40_char: campusName,
-                        campus_description: campusDesc,
-                        active: campusActive
+                        campus_description: campusDesc
                     }
                     campusJson.push(obj)
                 }
@@ -305,7 +283,7 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
+                    notify();
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
@@ -315,75 +293,27 @@
         })
 
 
-        //Select All campus
-        $("#campusTable").on('click', '.selectAll-campus', function () {
-            if (this.checked) {
-                // Iterate each checkbox
-                $('.delete-campus:checkbox').each(function () {
-                    this.checked = true;
-                });
-            } else {
-                $('.delete-campus:checkbox').each(function () {
-                    this.checked = false;
-                });
-            }
-        })
-
-
-        //Delete Single and mutiple Delete
-        $('.delete-campuses').on('click', function () {
-            let deleteids = []
-            $('.delete-campus:checked').each(function () {
-                let obj = {
-                    id: $(this).attr("data-id"),
-                }
-                deleteids.push(obj)
-            })
-
-            if (deleteids.length > 0) {
-                console.log('deleteids::::::::::::::', deleteids)
-                let ApiObj = {
-                    url: '/management/campuses',
-                    type: 'DELETE',
-                    data: {
-                        Ids: JSON.stringify(deleteids)
-                    },
-                    dataType: 'JSON'
-                }
-                ajaxApi(ApiObj).then(result => {
-                    notify();
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-
-            } else {
-                alert('Select Campus')
-            }
-        })
 
 
 
-        //Bulk Delete
-        $(".bulk-delete-campuses").on('click', function () {
+            //Delete Faculty API
+        $("#campusTable").on('click','.delete-campus',function(){
+            let id = $(this).attr("data-id");
             let ApiObj = {
+                type: 'DELETE',
                 url: '/management/campuses',
-                type: 'PATCH',
-                data: {},
+                data: {
+                    id: id
+                },
                 dataType: 'JSON'
             }
 
-            alertMsg()
-
-            $('.alert-continue').on('click', () => {
             ajaxApi(ApiObj).then(result => {
-                location.reload()
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
-
             })
-        })
-        $('.cancel').on('click', () => {$('#alertModal').css('display','none');})
-        
         })
 
 
@@ -438,20 +368,47 @@
         }, 500));
 
 
-        function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
                     <p>${errors.description}</p>
                     <ul>`
-            $(errors.data).each(function (key, value) {
-                $.each(this, function (key, value) {
-                    errorHtml +=
-                        `<li>${key} ${value}</li>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
                 });
-            });
+            }
             errorHtml +=
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            $(".errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
+        }
+
+
+        function showError(errors) {
+            console.log('Error:::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error!</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            console.log(errorHtml)
+            $(".errorHtml").html(errorHtml)
         }
 
 
@@ -464,7 +421,6 @@
                         <th>Name</th>
                         <th>Description</th>
                         <th>Action</th>
-                        <th>All <input type="checkbox" class="selectAll-campus"></th>
                     </thead>
                     <tbody>`;
             if (campusList.length > 0) {
@@ -476,14 +432,10 @@
                                 <td>${campus.name}</td>
                                 <td>${campus.c_desc}</td>
                                 <td>
-                                    <i class="fas fa-edit text-dark cursor-pointer edit-campus"
-                                        data-campus-id="${campus.id}" data-toggle="modal"
-                                        data-target="#update-campus-modal"></i>
+                                    <a class="edit-campus" data-campus-id="${campus.id}" data-toggle="modal" data-target="#update-campus-modal"><i class="fas fa-edit text-dark cursor-pointer" ></i></a>
+                                        <a class="delete-campus" data-id="${campus.id}"><i class="fa fa-trash text-danger"></i></a>
                                 </td>
-                                <td>
-                            <input type="checkbox" data-id="${campus.id}" data-campus-id="${campus.campus_id}"
-                                class="delete-campus">
-                        </td>
+
                             </tr>`;
                 }
             } else {

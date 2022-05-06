@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const controller = require('../controllers/user');
-const {isLoggedIn} = require("../middlewares/user")
+const {
+    isLoggedIn, 
+    redirectIfLoggedIn
+} = require("../middlewares/user");
 const {check, body, validationResult } = require('express-validator');
 
 // router.get('/user', controller.getProfile);
@@ -13,7 +16,8 @@ router.post('/authenticate',[
     check('password').isLength({min: 6}).trim()], controller.authenticate);
 
 router.get('/profile', controller.getProfile);
-router.get('/login', controller.renderLoginPage);
+router.get('/login', redirectIfLoggedIn, controller.renderLoginPage);
+router.get('/select-dashboard', isLoggedIn, controller.renderSelectDashboard);
 router.get('/logout', controller.logout)
 
 module.exports = router;

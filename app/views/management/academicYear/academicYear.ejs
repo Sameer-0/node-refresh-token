@@ -17,7 +17,6 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Action</th>
-                    <th>Enable/ Disable</th>
                 </thead>
                 <tbody>
                     <form action="/management/academic/academic-year" method="POST">
@@ -39,21 +38,7 @@
                             <td>
                                 <button type="submit" class="btn btn-dark">Update</button>
                             </td>
-                            <td>
-                                <% if(academicDetails.active =="1") {%>
-                                <div
-                                    class="form-check form-switch form-check form-switch p-0 d-flex justify-content-center">
-                                    <input class="form-check-input" type="checkbox" value="0" title="Enable"
-                                        role="switch" id="enabledisableacadYear" checked>
-                                </div>
-                                <%}else{%>
-                                <div
-                                    class="form-check form-switch form-check form-switch p-0 d-flex justify-content-center">
-                                    <input class="form-check-input" type="checkbox" value="1" title="Enable"
-                                        role="switch" id="enabledisableacadYear">
-                                </div>
-                                <%}%>
-                            </td>
+
                         </tr>
                     </form>
                 </tbody>
@@ -68,31 +53,4 @@
 <%- include("../partials/footer") %>
 
 
-                                <script>
-                                    $(document).ready(function () {
-
-
-                                        $("#enabledisableacadYear").on('change', function () {
-                                            let checkboxvalue = $(this).val()
-                                            console.log('checkboxvalue::::::::::', checkboxvalue)
-
-                                            let ApiObj = {
-                                                url: '/management/academic/academic-year',
-                                                type: 'PUT',
-                                                data: {
-                                                    checkboxvalue: checkboxvalue
-                                                },
-                                                dataType: 'JSON'
-                                            }
-                                            ajaxApi(ApiObj).then(result => {
-                                                console.log('Resulr:::::::::::::>', result)
-                                                location.reload()
-
-                                            }).catch(error => {
-
-                                            })
-                                        })
-                                    })
-                                </script>
-
-                                <%- include("../partials/footerEnd") %>
+<%- include("../partials/footerEnd") %>

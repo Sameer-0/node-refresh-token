@@ -26,7 +26,7 @@ const {
     redisClient,
     session
 } = require('./config/redis')
-
+const device = require('express-device');
 
 app.use(express.json());
 app.use(
@@ -55,16 +55,15 @@ app.use(
         name: 'token',
         cookie: {
             secure: false,
-            maxAge: 1000 * 60 * 30,
+            maxAge: 1000 * 60 * 60,
             httpOnly: false,
-            domain: 'localhost',
             sameSite: false,
+            path: '/'
         }
     })
 )
 
 app.use('/set-token', (req, res) => {
-
     req.session.name = "Kapil Sharma"
     res.send('Token set')
 })
@@ -80,15 +79,14 @@ app.use((req, res, next) => {
 })
 
 app.use(verifySubdomain);
-
-
-
-app.get('/logout', (req, res, next) => {
-    req.session.destroy(function (err) {
-        res.redirect('/login')
-    })
-})
+app.use(device.capture());
 
 setRouter(app)
+
+
+app.use(function(req, res){
+    res.status(404).render('404')
+})
+
 
 app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))

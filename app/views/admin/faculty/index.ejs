@@ -1,0 +1,739 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+    <div class="row my-3 gx-3 gy-3 row1-data">
+
+        <!-- <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/admin/faculties/date-time">
+                <div class="card row1-data-card text-center">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="/icon_imgs/room-type.PNG" alt="">
+                        <p class="fw-normal pt-1">FACULTY DATE TIME</p>
+                    </div>
+                </div>
+            </a>
+        </div> -->
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/admin/faculties/works">
+                <div class="card row1-data-card text-center">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="/icon_imgs/room-type.PNG" alt="">
+                        <p class="fw-normal pt-1">FACULTY WORKS</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+            <div class="card row1-data-card text-center">
+                <a href="/admin/faculties/workpreferences">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="/icon_imgs/room-type.PNG" alt="">
+                        <p class="fw-normal pt-1">WORK TIME PREFERENCE</p>
+                    </div>
+            </div>
+            </a>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+            <a href="/admin/faculties/batch">
+                <div class="card row1-data-card text-center">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="/icon_imgs/room-type.PNG" alt="">
+                        <p class="fw-normal pt-1">FACULTY BATCH</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="px-3 errorHtml"></div>
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Import Facilties</h5>
+            </div>
+            <div>
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-faculty-modal"><i
+                        class="fas fa-plus"></i></button>
+                <!-- <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button> -->
+            </div>
+        </div>
+        
+        <div class="card-body table-responsive">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            <table class="table custom_row" id="facultyTable">
+                <thead>
+                    <th>Sr.No.</th>
+                    <th>Faculty Id</th>
+                    <th>Faculty Name</th>
+                    <th>Faculty Type</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <% let count = 1%>
+                    <%for(let faculty of facultyList){%>
+                    <tr>
+                        <td><%- count++ %></td>
+                        <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
+                        <td><%- faculty.faculty_name %></td>
+                        <td><%- faculty.faculty_type %></td>
+                        <td><%- faculty.start_time %></td>
+                        <td><%- faculty.end_time %></td>
+                        <td><%- faculty.start_date %></td>
+                        <td><%- faculty.end_date %></td>
+                        <td><a class="edit-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-edit text-success"></i></a>
+                            <a class="delete-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-trash text-danger"></i></a>
+                        </td>
+                    </tr>
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries:<%- pageCount %>
+                    </p>
+        </div>
+        <div>
+            <p id="pagination"></p>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+<!-- IMPORT FACULTY MODAL -->
+<!-- Modal -->
+<div class="modal fade" id="open-faculty-modal" tabindex="-1" aria-labelledby="open-faculty-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-lg">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h3 class="modal-title" id="open-faculty-modal-title">Import Faculty</h3>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times text-dark"></i></button>
+            </div>
+
+            <div class="modal-body py-0">
+
+                <div class="row">
+                    <div class="col-md-3 select-items">
+                        <h4 class="text-center py-1 select-room-header">Select Faculties</h4>
+                        <input type="text" name="" id="searchItem" placeholder="Search Faculty"
+                            class="form-control searchItemFaculty">
+                        <ul class="list-group custom-select-list" id="selectList" style="margin-top: 60px;">
+
+                            <% for (let faculty of faculties) { %>
+                            <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
+                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.id%>" data-clickable="true">
+                                <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                                %></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                    <div class="col-md-9 selected-items">
+                        <h4 class="text-center py-1 selected-room-header">Selected Faculties</h4>
+                        <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Faculty"
+                            class="form-control searchSelectedFaculty">
+                        <ul class="list-group custom-select-list" id="selectedList" style="margin-top: 50px;">
+                            <table class="table table-bordered" id="add-more-faculty-table">
+                                <thead>
+                                    <th>Faculty Name</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Faculty Type</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </ul>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="px-3 errorHtml"></div>
+            <div class="modal-footer">
+                <button type="submit" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Faculty -->
+<div class="modal fade" id="edit-faculty-modal" tabindex="-1" aria-labelledby="edit-faculty-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen modal-lg">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h3 class="modal-title" id="open-faculty-modal-title">Import Faculty</h3>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times text-dark"></i></button>
+            </div>
+
+            <div class="modal-body py-0">
+                <input type="hidden" id="hidden_id" name="hidden_id">
+                <table class="table table-bordered" id="update-faculty-table">
+                    <thead>
+                        <tr>
+                        <th>Faculty Name</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Faculty Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                
+                                <select class="modalSelect2 select2" name="faculty_lid" id="faculty_lid" disabled>
+                                <% for (let faculty of facultyList) { %>
+                                        <option value="<%- faculty.faculty_id %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
+                                    <% } %>
+                                </select>
+                            </td>
+                         
+                            <td>
+                                <%let slotTiming1 = JSON.parse(slotTiming) %>
+                                <select class="modalSelect2 select2" name="start_time_id" id="start_time_id">
+                                <% for (let slotstart of slotTiming1) { %>
+                                        <option value="<%- slotstart.id %>" ><%- slotstart.start_time %></option>
+                                    <% } %>
+                            </select></td>
+
+                            <td>
+                                <%let slotTiming2 = JSON.parse(slotTiming) %>
+                                <select class="modalSelect2 select2" name="end_time_id" id="end_time_id">
+                                <% for (let slotend of slotTiming2) { %>
+                                        <option value="<%- slotend.id %>" ><%- slotend.end_time %></option>
+                                    <% } %>
+                            </select>
+                            </td>
+                            <td>
+                                <%let acadstartDate = JSON.parse(acadCalender) %>
+                                <select class="modalSelect2 select2" name="start_date_id" id="start_date_id">
+                                <% for (let stDate of acadstartDate) { %>
+                                        <option value="<%- stDate.id %>" ><%- stDate.date %></option>
+                                    <% } %>
+                            </select>
+                            </td>
+                            <td>
+                                <%let acadendDate = JSON.parse(acadCalender) %>
+                                <select class="modalSelect2 select2" name="end_date_id" id="end_date_id">
+                                <% for (let etDate of acadendDate) { %>
+                                        <option value="<%- etDate.id %>" ><%- etDate.date %></option>
+                                    <% } %>
+                            </select>
+                            </td>
+                            <td>
+                                <%let facultytype = JSON.parse(facultyType) %>
+                            <select class="modalSelect2 select2" name="faculty_type_lid" id="faculty_type_lid">
+                                <% for (let ftype of facultytype) { %>
+                                        <option value="<%- ftype.id %>" ><%- ftype.name %></option>
+                                    <% } %>
+                            </select>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-3 errorHtml"></div>
+            <div class="modal-footer">
+                <button type="submit" class="btn updateFaculty modal-inputform-btn">Update Faculty</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../partials/notification") %>
+<%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+<script src="/js/leftsidebartoggle.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
+
+        //DATALIST
+        let slotTime = JSON.parse(`<%- slotTiming %>`);
+        let acadDate = JSON.parse(`<%- acadCalender%>`);
+        let facultyTypeList = JSON.parse(`<%- facultyType %>`);
+
+        let optionStartTime;
+        let optionEndTime;
+        let startDate;
+        let endDate;
+        let facultyType;
+
+        for (let obj of slotTime) {
+
+            optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
+        }
+
+        for (let obj of slotTime) {
+
+            optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
+        }
+
+        for (let obj of acadDate) {
+
+            startDate += `<option value="${obj.id}">${obj.date}</option>`;
+        }
+
+        for (let obj of acadDate) {
+            endDate += `<option value="${obj.id}">${obj.date}</option>`;
+        }
+
+        for (let obj of facultyTypeList) {
+            facultyType += `<option value="${obj.id}">${obj.name}</option>`;
+        }
+        let countst = 0;
+        $("#selectList").on('click', '.list-group-item', function () {
+            console.log('faculty-id::::::::::',$(this).attr("data-faculty-id"))
+            console.log('faculty-lid::::::::::',$(this).attr("data-faculty-lid"))
+            //remove current element when added to right sidebar
+            if ($(this).attr('data-clickable') == 'true') {
+                $("#selectedList table tbody").append(`
+                    
+                    <tr data-clickable="true">
+                        <td data-faculty-id="${$(this).attr("data-faculty-id")}"  data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
+                         </td>
+                        <td>
+                            <select class="select2"  name="startTime">${optionStartTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2 SlotEndTime" name="endTime">${optionEndTime}</select>
+                        </td>
+                        <td>
+                            <select class="select2 modalSelect2" name="startDate">${startDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2 modalSelect2" name="endDate">${endDate}</select>
+                        </td>
+                        <td>
+                            <select class="select2 modalSelect2" name="faculty_type_lid">${facultyType}</select>
+                        <td>
+                            <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                        </td>
+                    </tr>
+                    `)
+                    $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
+            }
+
+            $(this).attr('data-clickable', 'false');
+            $($(this)).fadeOut(300, function () {
+                $($(this)).remove()
+            })
+
+            //Get Faculty slots by faculty id
+            //GetFacultySlots({faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid"), count: countst})
+
+        })
+
+
+        //Remove Element
+        $("#selectedList").on('click', '.clicktoremove', function () {
+            // if ($(this).parent().attr('data-clickable') == 'true') {
+            $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")}" data-faculty-id="${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-name")} (${$(this).parent().parent().find('td[data-faculty-id]').attr("data-faculty-id")})
+			        </li>`)
+            // }
+            $(this).parent().attr('data-clickable', 'false')
+
+            $($(this)).fadeOut(300, function () {
+                $($(this).parent().parent()).remove()
+            })
+        })
+
+
+        //search 
+        $('#searchItem').on('input', function () {
+            let faculties = $('#selectList li')
+            var text = $('#searchItem').val().toLowerCase();
+
+            for (let faculty of faculties) {
+                if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(faculty).removeClass("d-none");
+                } else {
+                    $(faculty).addClass("d-none");
+                }
+            };
+        })
+
+        //search selected faculty
+        $('#searchSelectedItem').on('input', function () {
+            let selectedFaculties = $('#selectedList table tbody tr')
+            var text = $('#searchSelectedItem').val().toLowerCase();
+            console.log('text:::::::::', selectedFaculties)
+            for (let faculty of selectedFaculties) {
+                console.log('faculty:::::::::', faculty)
+                if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
+
+                    $(faculty).removeClass("d-none");
+                } else {
+                    $(faculty).addClass("d-none");
+                }
+            };
+        })
+
+        //importFaculty
+        $(".importFaculty").on('click', function () {
+            let facultiesList = $('#selectedList table tbody tr');
+            let facultyCount = facultiesList.length;
+            let facultyJson = [];
+            facultiesList.each(function (index, elem) {
+                let faculty_id = $(elem).find('td[data-faculty-id]').attr("data-faculty-id")
+
+                let faculty_lid = $(elem).find(`td[data-faculty-lid]`).attr('data-faculty-lid')
+                let faculty_name = $(elem).find('td[data-faculty-name]').attr("data-faculty-name")
+
+                let startTime = $(elem).find('select[name="startTime"]').val();
+                let endTime = $(elem).find('select[name="endTime"]').val();
+                let startDate = $(elem).find('select[name="startDate"]').val();
+                let endDate = $(elem).find('select[name="endDate"]').val();
+                let faculty_type_lid =  $(elem).find(`select[name="faculty_type_lid"]`).val();
+
+                console.log('faculty_type_lid', faculty_type_lid)
+
+                if (index < facultyCount - 1) {
+                    let obj = {
+                        id: faculty_lid,
+                        faculty_id: faculty_id,
+                       // faculty_name: faculty_name,
+                        start_time_id: startTime, 
+                        end_time_id: endTime,
+                        start_date_id: startDate,
+                        end_date_id: endDate,
+                        faculty_type_lid: faculty_type_lid
+                    }
+                    facultyJson.push(obj)
+                } else {
+                    let obj = {
+
+                        id: faculty_lid,
+                        faculty_id: faculty_id,
+                        //faculty_name: faculty_name,
+                        start_time_id: startTime, 
+                        end_time_id: endTime,
+                        start_date_id: startDate,
+                        end_date_id: endDate,
+                        faculty_type_lid: faculty_type_lid
+                    }
+                    facultyJson.push(obj)
+                }
+            })
+
+            console.log('facultyJson::::::::::::>>', facultyJson)
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties',
+                data: {
+                    inputJSON: JSON.stringify(facultyJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                notify()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+       //Edit
+       $("#facultyTable").on('click','.edit-faculty',function(){
+         let id = $(this).attr("data-faculty-id")
+           console.log('click::::::::::::::::>>>',id)
+           let ApiObj = {
+                type: 'GET',
+                url: '/admin/faculties/findOne',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result.result)
+                $("#hidden_id").val(result.result.id)
+                $("#start_time_id").val(result.result.start_time_id).trigger('change')
+                $("#end_time_id").val(result.result.end_time_id).trigger('change')
+                $("#start_date_id").val(result.result.start_date_id).trigger('change')
+                $("#end_date_id").val(result.result.end_date_id).trigger('change')
+                $("#faculty_type_lid").val(result.result.faculty_type_lid).trigger('change')
+                $("#faculty_lid").val(result.result.faculty_id).trigger('change')
+               $("#edit-faculty-modal").modal('show')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+       }) 
+
+       //updateFaculty
+       $(".updateFaculty").on('click',function(){
+           
+           let facultiesList = $("#update-faculty-table  tbody tr");
+          
+           console.log(facultiesList)
+            let facultyCount = facultiesList.length;
+            let facultyJson = [];
+            let hidden_id = $("#hidden_id").val()
+            facultiesList.each(function (index, elem) {
+                let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
+                let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
+                let start_date_id = $(elem).find(`select[name="start_date_id"]`).val();
+                let end_date_id = $(elem).find(`select[name="end_date_id"]`).val();
+                let faculty_type_lid = $(elem).find(`select[name="faculty_type_lid"]`).val();
+                if (index < facultyCount - 1) {
+                    let obj = {
+                        id:hidden_id,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        faculty_type_lid: faculty_type_lid
+                    }
+                    facultyJson.push(obj)
+                } else {
+                    let obj = {
+                        id:hidden_id,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        faculty_type_lid: faculty_type_lid
+                    }
+                    facultyJson.push(obj)
+                }
+            })
+            console.log('JSON:::::::::::>>',facultyJson)
+
+            let ApiObj = {
+                type: 'PUT',
+                url: '/admin/faculties',
+                data: {
+                    inputJSON: JSON.stringify(facultyJson)
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                notify()
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+       })
+        
+        
+        
+        //PAGINATION
+        let pageCount = `<%- pageCount %>`
+        let pageNos = Math.ceil(Number(pageCount) / 10)
+        console.log("Page Numbers", pageNos)
+        $('#pagination').bootpag({
+            total: pageNos,
+            page: 1,
+            maxVisible: 10,
+            leaps: true,
+            firstLastUse: true,
+            first: '←',
+            last: '→',
+            wrapClass: 'pagination',
+            activeClass: 'active',
+            disabledClass: 'disabled',
+            nextClass: 'next',
+            prevClass: 'prev',
+            lastClass: 'last',
+            firstClass: 'first'
+        }).on("page", function (event, num) {
+            console.log('pagination here!!')
+            $.ajax({
+                type: "POST",
+                url: "/admin/faculties/pagination",
+                data: {
+                    pageNo: num
+                },
+                success: function (data) {
+                    showAjaxTable(data.data)
+                }
+            })
+        });
+
+        //search feature delay function is writter in script.js file which is located in public/js/script.js
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            console.log('keyword:::::::::::::::::', keyword)
+            $.ajax({
+                type: "GET",
+                url: "/admin/faculties/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    showAjaxTable(data.data) // Facilty List
+                }
+            })
+        }, 500));
+
+        //Delete Faculty API
+        $("#facultyTable").on('click','.delete-faculty',function(){
+            let id = $(this).attr("data-faculty-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/admin/faculties',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+        //
+        function GetFacultySlots(data){
+            //{faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid")}
+            console.log('12121',data.faculty_id)
+            console.log('12111',data.faculty_lid)
+            console.log('count', data.count)
+            let ApiObj = {
+                type: 'GET',
+                url: '/admin/faculties/getslotsbyid',
+                data: {
+                    faculty_lid: data.faculty_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                let selectslot = ``;
+                result.result.forEach(function(item){
+                    selectslot += `<option value="${item.id}">${item.start_time}</option>`
+                })
+                //$(`.SlotStartTime${data.count}`).html(selectslot)
+            }).catch(error => {
+               // showError(error.responseJSON)
+            })
+        }
+
+
+        function showSuccess(errors) {
+            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <h3>Success</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
+            $(".errorHtml").html(errorHtml)
+
+            setTimeout(function(){
+                location.reload()
+            },3000)
+        }
+
+
+        function showError(errors) {
+            console.log('Error:::::::::', errors)
+            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <h3>Error!</h3>
+                    <p>${errors.description}</p>
+                    <ul>`
+            if (errors.data.length > 0) {
+                $(errors.data).each(function (key, value) {
+                    $.each(this, function (key, value) {
+                        errorHtml +=
+                            `<li>${key} ${value}</li>`
+                    });
+                });
+            }
+            errorHtml +=
+                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`
+            console.log(errorHtml)
+            $(".errorHtml").html(errorHtml)
+        }
+
+        function showAjaxTable(facultiesList) {
+            let AjaxTable = `<table class="table custom_row" id="facultyTable">
+                <thead>
+                    <th>Sr.No.</th>
+                    <th>Faculty Id</th>
+                    <th>Faculty Name</th>
+                    <th>Faculty Type</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>`;
+
+            if (facultiesList.length > 0) {
+                let count = 1;
+                for (faculty of facultiesList) {
+                    AjaxTable +=
+                        `<tr>
+                        <td>${count++}</td>
+                        <td data-faculty-id="${faculty.faculty_id}">${faculty.faculty_id}</td>
+                        <td>${faculty.faculty_name}</td>
+                        <td>${faculty.faculty_type}</td>
+                        <td>${faculty.start_time}</td>
+                        <td>${faculty.end_time}</td>
+                        <td>${faculty.start_date}</td>
+                        <td>${faculty.end_date}</td>
+                        <td><a class="edit-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-edit text-success"></i></a>
+                            <a class="delete-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-trash text-danger"></i></a>
+                        </td>
+                    </tr>`
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                                <td colspan="7">No Data Found</td>
+                            </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+            $("#facultyTable").html(AjaxTable);
+
+        }
+
+    })
+</script>
+<%- include("../partials/footerEnd") %>
