@@ -10,11 +10,20 @@ class SimpleAlert {
     alert(obj) {
 
         console.log(">>>>>>>>>>>>> CALLING ALERT FUNC");
-        
+       
         this.removeAlert();
 
         let alertElem = document.createElement('div');
-        alertElem.setAttribute('class', 'simple-alert');
+        alertElem.setAttribute('class', 'simple-alert alert alert-danger');
+        let list ;
+     
+        for (let ele of  obj.message){
+            for (let key in ele){
+                list += `<li>${key}${ele[key]}</li>`
+            }
+           
+         }
+         console.log('list', list)
 
         alertElem.innerHTML = `
                 <div class="header d-flex justify-content-between align-item-center">
@@ -23,8 +32,10 @@ class SimpleAlert {
                     <i class="fa-solid fa-xmark simple-alert-close"></i>
                 </div>
                 <div class="body">
-                    <p class="message">${obj.message}</p>
-                </div>
+            
+                <ul>
+                    ${list}
+                </ul></div>
                 <div class="footer">
                     ${obj.buttons.positive ? `<button class="positive">${obj.buttons.positive.text}</button>` : ''}
                     ${obj.buttons.negative ? `<button class="negative">${obj.buttons.negative.text}</button>` : ''}
@@ -65,14 +76,14 @@ class SimpleAlert {
         });
 
         this.positiveElem.addEventListener('click', () => {
-            this.positiveCallbackFn();
+            this.removeAlert();
         })
 
         this.negativeElem.addEventListener('click', () => {
+            console.log('close working')
             this.negativeCallbackFn();
         })
-        
+       
     }
 
 }
-

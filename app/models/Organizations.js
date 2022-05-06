@@ -6,7 +6,7 @@ const {
 module.exports = class Organizations {
     constructor(orgId, orgAbbr, orgName, orgCompleteName, orgTypeId, parentId) {
         this.orgId = orgId;
-        this.orgAbbr = orgAbbr;
+        this.orgAbbr = orgAbbr; 
         this.orgName = orgName;
         this.orgCompleteName = orgCompleteName;
         this.orgTypeId = orgTypeId;
