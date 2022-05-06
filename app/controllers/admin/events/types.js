@@ -11,7 +11,8 @@ module.exports = {
         Promise.all([EventType.fetchAll(10, res.locals.slug), EventType.getCount(res.locals.slug)]).then(result => {
             res.render('admin/events/types', {
                 evtTypeList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

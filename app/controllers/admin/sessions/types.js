@@ -14,7 +14,8 @@ module.exports = {
             console.log('result:::::',result)
             res.render('admin/sessions/type.ejs', {
                 sessionList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

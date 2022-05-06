@@ -6,13 +6,23 @@
 
 <div class="main-content">
 
-    <%- include("../partials/session-menu")%>
+    <div class="breadcrumbs-container">
     
-    <!--DASHBOARD CONTENT START-->
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
+    
+    
+    <%- include("../partials/session-menu")%>
+      <!--DASHBOARD CONTENT START-->
+  
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>SESSION LIST</h5>
+                <h5>SESSION TYPE</h5>
             </div>
             <div>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
@@ -92,8 +102,7 @@
                 <div class="modal-footer d-flex justify-content-center">
                     <span class="errorMsg"></span>
                     <button type="submit" class="btn  createSessionType modal-inputform-btn">Create Session</button>
-                    <button type="submit" class="btn  updateSessionType modal-inputform-btn d-none">Update
-                        Session</button>
+                    <button type="submit" class="btn  updateSessionType modal-inputform-btn d-none">Update Session</button>
                 </div>
             </div>
         </div>

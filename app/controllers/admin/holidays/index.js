@@ -23,7 +23,8 @@ module.exports = {
                 holidayType: result[1].recordset,
                 pageCount: result[2].recordset[0].count,
                 acadYear: result[3].recordset[0].input_acad_year,
-                academicCalender : result[4].recordset
+                academicCalender : result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

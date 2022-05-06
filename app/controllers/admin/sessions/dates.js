@@ -20,7 +20,8 @@ module.exports = {
                 pageCount: result[1].recordset[0].count,
                 AcademicCalenderList: result[2].recordset,
                 sessionTypes: result[3].recordset,
-                programSessions: result[4].recordset
+                programSessions: result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         }).catch(error=>{
             if(isJsonString.isJsonString(error.originalError.info.message)){

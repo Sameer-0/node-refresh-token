@@ -25,7 +25,8 @@ module.exports = {
                 faculties: result[2].recordset,
                 slotTiming: JSON.stringify(result[3].recordset),
                 acadCalender: JSON.stringify(result[4].recordset),
-                facultyType: JSON.stringify(result[5].recordset)
+                facultyType: JSON.stringify(result[5].recordset),
+                breadcrumbs: req.breadcrumbs,
                 // totalentries: result[0].recordset ? result[0].recordset.length : 0
             })
         })

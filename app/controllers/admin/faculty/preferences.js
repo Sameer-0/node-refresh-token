@@ -18,7 +18,8 @@ module.exports = {
                 slotIntervalTimings: result[1].recordset,
                 facultyWorkList: result[2].recordset,
                 programDayList: result[3].recordset,
-                pageCount: result[4].recordset ? result[4].recordset[0].count : 0
+                pageCount: result[4].recordset ? result[4].recordset[0].count : 0,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
