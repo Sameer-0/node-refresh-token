@@ -23,7 +23,8 @@ module.exports = {
                 pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
                 programSession: result[3].recordset,
-                courseWorkload: result[4].recordset
+                courseWorkload: result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

@@ -14,7 +14,8 @@ module.exports = {
             res.status(200).json({
                 status: 200,
                 data: result.recordset,
-                message:'success'
+                message:'success',
+                breadcrumbs: req.breadcrumbs,
             })
             console.log(result.recordset)
         })

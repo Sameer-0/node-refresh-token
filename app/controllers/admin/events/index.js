@@ -7,7 +7,7 @@ module.exports = {
         //         eventTypeList: result.recordset
         //     })
         // })
-        res.render('admin/events/index')
+        res.render('admin/events/index',{breadcrumbs: req.breadcrumbs})
 
     }
 }

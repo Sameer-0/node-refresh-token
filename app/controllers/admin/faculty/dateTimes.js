@@ -17,7 +17,8 @@ module.exports = {
                 pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
                 AcademicCalenderList: result[3].recordset,
-                SlotIntervalTimingsList: result[4].recordset
+                SlotIntervalTimingsList: result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
 

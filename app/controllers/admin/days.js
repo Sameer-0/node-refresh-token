@@ -11,7 +11,8 @@ module.exports = {
         Days.fetchAll(10, res.locals.slug).then(result => {
             console.log(result)
             res.render('admin/days/index', {
-                dayList: result.recordset
+                dayList: result.recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

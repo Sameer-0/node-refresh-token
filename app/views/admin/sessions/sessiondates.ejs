@@ -5,10 +5,19 @@
 <!--HEADER END-->
 
 <div class="main-content">
+
+      <!--DASHBOARD CONTENT START-->
+      <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
  
     <%- include("../partials/session-menu")%>
-
-    <!--DASHBOARD CONTENT START-->
+  
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
@@ -19,8 +28,8 @@
                     data-bs-target="#add-sessiondate-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-sessiondate add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-sessiondate add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
+                <!-- <button class="btn ms-auto bulk-delete-sessiondate add-btn "><img src="/icons/delete.png" alt=""
+                        width="26px" height="32px"></button> -->
             </div>
         </div>
 
@@ -35,7 +44,7 @@
                     <th>Session start date</th>
                     <th>Session end date</th>
                     <th>Action</th>
-                    <th>All <input type="checkbox" class="selectAll-Session-dates"></th>
+              
                 </thead>
                 <tbody>
                     <% let count = 1 %>
@@ -50,9 +59,7 @@
                             <i class="fas fa-edit text-dark cursor-pointer edit-session-date"
                                 data-session-date-id="<%- program.id %>"></i>
                         </td>
-                        <td>
-                            <input type="checkbox" data-session-date-id="<%- program.id %>" class="delete-session-type">
-                        </td>
+                     
                     </tr>
                     <% } %>
                 </tbody>

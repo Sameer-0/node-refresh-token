@@ -13,7 +13,8 @@ module.exports = {
             res.render('admin/rooms/requests', {
                 transactionList: result[0].recordset,
                 totalentries: result[0].recordset ? result[0].recordset.length : 0,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

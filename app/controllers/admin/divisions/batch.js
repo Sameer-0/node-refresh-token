@@ -15,7 +15,9 @@ module.exports = {
             console.log('divisionBatchList',result[0].recordset)
             res.render('admin/divisions/batches', {
                 divisionBatchList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
+            
             })
         })
     },

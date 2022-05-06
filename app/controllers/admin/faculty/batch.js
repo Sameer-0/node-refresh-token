@@ -19,7 +19,8 @@ module.exports = {
                 FacultyBatchList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
-                batchList : result[3].recordset
+                batchList : result[3].recordset,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },

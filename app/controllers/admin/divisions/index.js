@@ -13,7 +13,8 @@ module.exports = {
         Promise.all([Divisions.fetchAll(10000, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
-                pageCount: result[1].recordset[0].count
+                pageCount: result[1].recordset[0].count,
+                breadcrumbs: req.breadcrumbs,
             })
         })
     },
