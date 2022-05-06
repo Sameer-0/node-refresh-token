@@ -7,7 +7,7 @@ const {
 module.exports = class CourseDayRoomPreferences {
     static fetchAll(rowcont, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcont)} cdrp.id, p.program_name, p.abbr as program_abbr, icw.module_name, icw.module_code, div.division, div.division_num, dbatch.batch, dbatch.batch_count, d.day_name, acads.acad_session, r.capacity, r.room_number, r.floor_number, r.id as room_id FROM [${slug}].course_day_room_preferences cdrp
+            return pool.request().query(`SELECT TOP ${Number(rowcont)} cdrp.id, p.program_name, p.abbr as program_abbr, icw.module_name, IIF(icw.module_code IS NULL ,'NA', icw.module_code) AS module_code, div.division, div.division_num, dbatch.batch, dbatch.batch_count, d.day_name, acads.acad_session, r.capacity, r.room_number, r.floor_number, r.id as room_id FROM [${slug}].course_day_room_preferences cdrp
             INNER JOIN [${slug}].programs p ON cdrp.program_lid = p.id
             INNER JOIN [${slug}].initial_course_workload icw ON cdrp.course_lid = icw.id
             INNER JOIN [${slug}].divisions div ON cdrp.division_lid = div.id
@@ -31,7 +31,7 @@ module.exports = class CourseDayRoomPreferences {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT cdrp.id, p.program_name, p.abbr as program_abbr, icw.module_name, icw.module_code, div.division, div.division_num, dbatch.batch, dbatch.batch_count, d.day_name, acads.acad_session, r.capacity, r.room_number, r.floor_number, r.id as room_id FROM [${slug}].course_day_room_preferences cdrp
+                .query(`SELECT cdrp.id, p.program_name, p.abbr as program_abbr, icw.module_name, IIF(icw.module_code IS NULL ,'NA', icw.module_code) AS module_code, div.division, div.division_num, dbatch.batch, dbatch.batch_count, d.day_name, acads.acad_session, r.capacity, r.room_number, r.floor_number, r.id as room_id FROM [${slug}].course_day_room_preferences cdrp
                 INNER JOIN [${slug}].programs p ON cdrp.program_lid = p.id
                 INNER JOIN [${slug}].initial_course_workload icw ON cdrp.course_lid = icw.id
                 INNER JOIN [${slug}].divisions div ON cdrp.division_lid = div.id
@@ -47,7 +47,7 @@ module.exports = class CourseDayRoomPreferences {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} cdrp.id, p.program_name, p.abbr as program_abbr, icw.module_name, icw.module_code, div.division, div.division_num, dbatch.batch, dbatch.batch_count, d.day_name, acads.acad_session, r.capacity, r.room_number, r.floor_number, r.id as room_id FROM [${slug}].course_day_room_preferences cdrp
+                .query(`SELECT TOP ${Number(rowcount)} cdrp.id, p.program_name, p.abbr as program_abbr, icw.module_name, IIF(icw.module_code IS NULL ,'NA', icw.module_code) AS module_code, div.division, div.division_num, dbatch.batch, dbatch.batch_count, d.day_name, acads.acad_session, r.capacity, r.room_number, r.floor_number, r.id as room_id FROM [${slug}].course_day_room_preferences cdrp
                 INNER JOIN [${slug}].programs p ON cdrp.program_lid = p.id
                 INNER JOIN [${slug}].initial_course_workload icw ON cdrp.course_lid = icw.id
                 INNER JOIN [${slug}].divisions div ON cdrp.division_lid = div.id
