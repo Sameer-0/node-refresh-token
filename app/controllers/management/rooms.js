@@ -10,7 +10,7 @@ const Buildings = require('../../models/Buildings');
 const Organizations = require('../../models/Organizations');
 const Campuses = require('../../models/Campuses');
 const Settings = require('../../models/Settings')
-
+const isJsonString = require('../../utils/util')
 module.exports = {
 
     getPage: (req, res) => {
@@ -48,16 +48,21 @@ module.exports = {
     },
 
     update: (req, res) => {
-
         console.log('inputJSON:::::::>>', JSON.parse(req.body.inputJSON))
         let object = {
             update_rooms: JSON.parse(req.body.inputJSON)
         }
-
         Rooms.update(object).then(result => {
-            res.json({
-                status: 200
-            })
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -74,7 +79,14 @@ module.exports = {
         Rooms.save(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -175,7 +187,14 @@ module.exports = {
         Rooms.delete(req.body.id, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

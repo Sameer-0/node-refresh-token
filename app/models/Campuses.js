@@ -74,7 +74,7 @@ module.exports = class Campuses {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[dbo].update_campuses`);
+                .execute(`[dbo].sp_update_campuses`);
         })
     }
 

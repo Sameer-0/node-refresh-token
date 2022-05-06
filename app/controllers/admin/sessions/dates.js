@@ -8,6 +8,9 @@ const SessionDates = require('../../../models/SessionDates')
 const AcademicCalender  = require('../../../models/AcademicCalender')
 const SessionTypes  = require('../../../models/SessionTypes')
 const ProgramSessions = require('../../../models/ProgramSessions')
+const isJsonString = require('../../../utils/util')
+
+
 module.exports = {
     getPage: (req, res) => {
         Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionDates.getCount(res.locals.slug), AcademicCalender.fetchAll(100), SessionTypes.fetchAll(10, res.locals.slug), ProgramSessions.fetchAll(10, res.locals.slug)]).then(result => {
@@ -20,7 +23,14 @@ module.exports = {
                 programSessions: result[4].recordset
             })
         }).catch(error=>{
-            console.log('Error::::::::::::::::>>>',error)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -42,8 +52,14 @@ module.exports = {
                 message: "Success"
             })
         }).catch(error => {
-            console.log('error:::::::::::',error)
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
 
     },
@@ -57,8 +73,14 @@ module.exports = {
                 data: result.recordset[0]
             })
         }).catch(error => {
-            console.log("error:::::::::>>", error)
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -79,8 +101,14 @@ module.exports = {
 
             })
         }).catch(error => {
-            console.log('error::::::::::>>',error)
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -93,7 +121,14 @@ module.exports = {
                 message: "Success"
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -104,7 +139,14 @@ module.exports = {
                 status: 200
             })
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -134,7 +176,14 @@ module.exports = {
            
             }
         }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     },
 
@@ -156,8 +205,14 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
-            console.log(error)
-            throw error
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 }

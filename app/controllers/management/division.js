@@ -130,7 +130,7 @@ module.exports = {
             return;
         }
 
-        
+
         divisionModel.deleteDivision(req.body.id).then(result => {
             res.json({
                 status: 200

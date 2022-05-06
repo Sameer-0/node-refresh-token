@@ -10,8 +10,5 @@ module.exports = {
                 campusList: result[1].recordset
             })
         })
-
-
-
     }
 }

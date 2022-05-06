@@ -9,7 +9,7 @@ const Organizations = require("../../models/Organizations")
 const Campuses = require("../../models/Campuses")
 const SlotIntervalTimings = require("../../models/SlotIntervalTimings")
 const Settings = require('../../models/Settings');
-
+const isJsonString = require('../../utils/util')
 module.exports = {
 
     getPage: (req, res) => {
@@ -66,7 +66,15 @@ module.exports = {
         Buildings.save(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
         })
     },
 
@@ -87,18 +95,34 @@ module.exports = {
         Buildings.update(object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
         })
     },
 
 
     delete: (req, res) => {
-        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        console.log('BODY::::::::::::>>>>>>', req.body.id)
         Buildings.delete(req.body.id, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log(error)
-            res.status(500).json(JSON.parse(error.originalError.info.message))
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
         })
     },
 
