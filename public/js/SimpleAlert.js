@@ -74,6 +74,7 @@ class SimpleAlert {
 
         this.positiveElem.addEventListener('click', () => {
             this.removeAlert();
+            // location.reload();
         })
 
         this.negativeElem.addEventListener('click', () => {
