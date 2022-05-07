@@ -29,7 +29,7 @@ router.get('/faculties/date-time', dateTimes.getPage)
 router.post('/faculties/date-time', dateTimes.create)
 router.get('/faculties/date-time/search', dateTimes.search)
 router.post('/faculties/date-time/pagination', dateTimes.pagination)
-
+router.delete('/faculties/date-time', validate('delete'), dateTimes.delete)
 //Batch
 router.get('/faculties/batch', batch.getPage)
 router.post('/faculties/batch', validate('JsonValidator'), batch.create)
