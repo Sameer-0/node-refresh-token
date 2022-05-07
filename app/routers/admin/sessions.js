@@ -31,7 +31,7 @@ router.post('/sessions/types/pagination', types.pagination)
 
 //Session Dates
 router.get('/sessions/dates', dates.getPage)
-router.post('/sessions/dates', validate('JsonValidator'), dates.create)
+router.post('/sessions/dates', dates.create)
 router.put('/sessions/dates', validate('JsonValidator'), dates.update)
 router.delete('/sessions/dates', dates.delete)
 router.patch('/sessions/dates', dates.deleteAll)

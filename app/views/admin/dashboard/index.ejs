@@ -57,6 +57,9 @@
         $('.select2').select2({
         dropdownParent: $('#open-program-modal')});
 
+        $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
+
 
         let username = `<%- locals.userId %>`;
         let campu = `<%- campusList%>`;
@@ -304,6 +307,8 @@ console.log('this', $(this).attr('data-clickable'))
                         </td>
                     </tr>
                     `)
+                    $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
             }
 
             $(this).attr('data-clickable', 'false');
@@ -981,7 +986,8 @@ console.log('this', $(this).attr('data-clickable'))
 
                     ajaxApi(ApiObj).then(result => {
                         console.log('sucess:::::::::', result)
-                        setTimeout(function(){location.reload()},3000)
+                        showSuccess(result);
+                        // setTimeout(function(){location.reload()},3000)
                         
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -1356,6 +1362,33 @@ console.log('this', $(this).attr('data-clickable'))
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
+            }else if(currentFormStep == 8){
+                
+                console.log('school timing')
+                $.ajax({
+                    url: '/admin/schooltime', 
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        // acadSession: $('#program_session_lid').val(),
+                        // sessionType: $('#sessionType').val(),
+                        // startDate: $('#startDate').val(),
+                        // endDate: $('#endDate').val()
+                        settingName:"schooltiming"
+                    },
+                    success: (data) => {
+                        showSuccess(result)
+                        scroll()
+                        formStepNext()
+                    },
+                    error: err => {
+                        console.log('err::::::::',err)
+                        showError(err.responseJSON)  
+                    }
+                })
+                
+        
+
             }
             else if(currentFormStep == 10){
 
@@ -1509,11 +1542,9 @@ console.log('this', $(this).attr('data-clickable'))
                         ajaxApi(ApiObj).then(result => {
                             console.log(result)
                             showSuccess(result)
-                            scroll()
-                            formStepNext()
-                            setTimeout(function(){
-                                location.reload
-                            }, 3000)
+                           location.reload();
+                         
+                         
 
                         }).catch(error => {
                             showError(error.responseJSON)
