@@ -81,4 +81,15 @@ module.exports = class FacultyDateTimes {
         })
     }
 
+    static delete(id, slug, userid) {
+        console.log('id:::::::', id)
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_faculty_date_times_lid', sql.Int, id)
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_delete_faculty_date_times]`)
+        })
+    }
+
 }
