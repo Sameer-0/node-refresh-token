@@ -31,11 +31,13 @@
 
 <!-- MAIN-CONTENT -->
 <div class="main-content">
-    <!-- <% if (currentFormStep) { %> -->
-    <!-- <%- include('./stepform.ejs') %> -->
-    <!-- <% } else { %> -->
+  <% if (currentFormStep) { %> 
+
+    <%- include('./stepform.ejs') %> 
+     <% } else { %> 
     <%- include('./dashboard.ejs') %>
-    <!-- <% } %> -->
+    <% } %>
+
 
 
 </div>
@@ -50,6 +52,7 @@
 
 <script src="/js/dashboardscript.js"></script>
 <script src="/js/script.js"></script>
+
 
 <script>
     $(document).ready(function () {
@@ -66,11 +69,7 @@
         console.log('userSession::::::::::::',userSession)
         localStorage.setItem('devicecheck',userSession)
 
-        let currentFormStep = 1;
-        console.log('currentFormStep',currentFormStep)
-        $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
-        $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass(
-            'active-form');
+  
 
         $(".homeCard .border").hover(function () {
             $this = $(this)
@@ -142,7 +141,11 @@
         // var chart = new ApexCharts(document.querySelector("#chart1"), options);
         // chart.render();
 
+        let currentFormStep = parseInt(`<%- currentFormStep%>`);
 
+        $('.step-form .step-form-body .active-form').removeClass('active-form').addClass('d-none');
+
+        $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
       
         function formStepNext() {
             currentFormStep++;
@@ -156,6 +159,7 @@
         }
         console.log(currentFormStep);
         //Calling Apies
+       
  
         $("#next-step").on('click', function () {
                 console.log('Click::::>>', currentFormStep)
@@ -218,6 +222,7 @@
                         //   location.reload()
 
                         formStepNext()
+                        showSuccess(result)
                         
                     }).catch(error => {
                         console.log('error.responseJSON::::::::::::>>>',error.responseJSON)
@@ -272,6 +277,7 @@
                     ajaxApi(ApiObj).then(result => {
                         // location.reload()
                         formStepNext()
+                        showSuccess(result);
                        
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -333,6 +339,7 @@
 
                     ajaxApi(ApiObj).then(result => {
                         formStepNext()
+                        showSuccess(result)
                         
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -418,6 +425,7 @@
 
                     ajaxApi(ApiObj).then(result => {
                         formStepNext()
+                        showSuccess(result)
                         
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -471,6 +479,8 @@
 
                     ajaxApi(ApiObj).then(result => {
                         formStepNext()
+                        showSuccess(result)
+                        location.reload();
                         
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -517,23 +527,69 @@
         })
     })
     
+    function showSuccess(errors) {
+        console.log(errors);
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors.description,
+            message: "",
+            type: 'alert-success',
+            buttons: {
+                positive:{
+                    text: "Okay",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancel",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+    }
 
     function showError(errors) {
-        console.log('errorrrr',errors)
-        let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error!</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-        $(errors.data).each(function (key, value) {
-            $.each(this, function (key, value) {
-                errorHtml +=
-                    `<li>${key} ${value}</li>`
-            });
-        });
-        errorHtml +=
-            `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-        $(".errorHtml").html(errorHtml)
-    }
+        // console.log('errorrrr',errors)
+        // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        //             <h3>Error!</h3>
+        //             <p>${errors.description}</p>
+        //             <ul>`
+        // $(errors.data).each(function (key, value) {
+        //     $.each(this, function (key, value) {
+        //         errorHtml +=
+        //             `<li>${key} ${value}</li>`
+        //     });
+        // });
+        // errorHtml +=
+        //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        // $(".errorHtml").html(errorHtml)
+        console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+    } 
 
     })
 </script>
