@@ -6,6 +6,7 @@ module.exports = {
         AcademicYear.fetchAll().then(result => {
             res.render('admin/time-table-generation/index', {
                 acadmicYear: result.recordset[0],
+                breadcrumbs: req.breadcrumbs
             })
         })
     },
