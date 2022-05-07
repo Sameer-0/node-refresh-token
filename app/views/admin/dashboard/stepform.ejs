@@ -36,7 +36,7 @@
                         <th>Calendar Year</th>
                         <th>Holiday Date</th>
                         <th>Holiday Reason</th>
-                        <th>Holiday Type</th>
+                        <th>Holiday Type</th> 
                         <th>Action</th>
                     </thead>
                     <tbody>
@@ -54,7 +54,7 @@
                                 <input type="text" name="holidayReason" class="form-control">
                             </td>
                             <td>
-                                <select class="modalSelect2 select2" name="holidayType">
+                                <select class="form-select" name="holidayType">
                                     <% for (types of holidayTypeList){%>
                                     <option value="<%- types.id%>"><%- types.name%></option>
                                     <%}%> 
@@ -317,7 +317,7 @@
                                 </div>
                                 <div class="col-md-9 col-xxl-9 selected-items">
                                     <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">Selected Program</h4>
-                                    <input type="text" name="" placeholder="Search Selected Faculty"
+                                    <input type="text" name="" placeholder="Search Selected Program"
                                         class="form-control searchSelectedItemProgram">
 
                                     <ul class="list-group custom-select-list selectedListProgram" id="selectedList" style="margin-top: 50px;">
@@ -449,18 +449,28 @@
                 <input type="hidden" id="sessionDate" name="sessionDate">
                 <div class="table-responsive">
                     <table class="table table-bordered" id="sessionDate-table">
+                        
                         <thead>
-                            <th>Program</th>
-                            <th>Acad Session</th>
-                            <th>Session Type</th>
-                            <th>Start date</th>
-                            <th>End date</th>
-                            <th>Status</th>
+                        
+                            <th>Acad session</th>
+                            <th>Session type</th>
+                            <th>Session start date</th>
+                            <th>Session end date</th>
+                            
+                      
                         </thead>
                         <tbody>
+                      
+                            <% for (let program of sessionDateList) { %> 
                             <tr>
-                               
+                                
+                                <td><%- program.acad_session %></td>
+                                <td><%- program.session_type %></td>
+                                <td><%- program.startDate %></td>
+                                <td><%- program.endDate %></td>
+                             
                             </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>
