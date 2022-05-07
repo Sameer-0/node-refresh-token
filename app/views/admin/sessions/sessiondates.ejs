@@ -24,10 +24,10 @@
                 <h5>Session dates</h5>
             </div>
             <div>
-                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+                <!-- <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-sessiondate-modal">
                     <i class="fas fa-plus"></i></button>
-                <button class="btn ms-auto select-delete-sessiondate add-btn "><i class="fas fa-trash"></i></button>
+                <button class="btn ms-auto select-delete-sessiondate add-btn "><i class="fas fa-trash"></i></button> -->
                 <!-- <button class="btn ms-auto bulk-delete-sessiondate add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
             </div>
@@ -43,8 +43,7 @@
                     <th>Session type</th>
                     <th>Session start date</th>
                     <th>Session end date</th>
-                    <th>Action</th>
-              
+                    <!-- <th>Action</th> -->
                 </thead>
                 <tbody>
                     <% let count = 1 %>
@@ -55,10 +54,10 @@
                         <td><%- program.session_type %></td>
                         <td><%- program.startDate %></td>
                         <td><%- program.endDate %></td>
-                        <td>
+                        <!-- <td>
                             <i class="fas fa-edit text-dark cursor-pointer edit-session-date"
                                 data-session-date-id="<%- program.id %>"></i>
-                        </td>
+                        </td> -->
                      
                     </tr>
                     <% } %>
@@ -80,95 +79,176 @@
 
 <!--ADD Modal -->
 <div class="modal fade" id="add-sessiondate-modal" tabindex="-1" aria-labelledby="add-sessiondate-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="add-sessiondate-modal-title">ADD SESSION DATE</h5>
+                <h5 class="modal-title" id="add-session-date-modal-title">ADD SESSION DATE</h5>
                 <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div id="errorHtml"></div>
-                <input type="hidden" id="Id">
-                <div class="mb-3">
-                    <label for="acadSession" class="form-label">Enter Acad session</label>
-                    <select class="select2" name="program_session_lid" id="program_session_lid" required>
-                        <option  value="">--select--</option>
-                        <%for (let program of programSessions){%>
-                      <option value="<%- program.id %>"><%-program.program_name %>(<%-program.acad_session %>)</option>
-                        <%}%>
-                    </select>
-                </div>
+                <div class="errorHtml"></div>
+                <input type="hidden" id="hidden_id">
+                <div class="table-responsive ">
+                    <table class="table table-bordered" id="sessionDateTableModal">
+                        <thead>
+                            <th>Program Acad session</th>
+                            <th>Enter Session type</th>
+                            <th>Enter Start Date</th>
+                            <th>Enter End Date</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select class="modalSelect2 select2" name="program_session_lid" id="program_session_lid" required>
+                                        <option  value="">--select--</option>
+                                        <%for (let program of programSessions){%>
+                                      <option value="<%- program.id %>"><%-program.program_name %>(<%-program.acad_session %>)</option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="sessionType" id="sessionType" class="modalSelect2 select2" >
+                                        <option value="" >--select--</option>
+                                        <%for (let session of sessionTypes){%>
+                                      <option value="<%- session.id %>"><%-session.name %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="startDate" id="startDate" class="modalSelect2 select2" >
+                                        <option value="" >--select--</option>
+                                        <%for (let slot of AcademicCalenderList){%>
+                                      <option value="<%- slot.id %>"><%-slot.date %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="endtDate" id="endtDate" class="modalSelect2 select2" >
+                                        <option value="" >--select--</option>
+                                        <%for (let slot of AcademicCalenderList){%>
+                                      <option value="<%- slot.id %>"><%-slot.date %></option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-session-date"></i>
+                                </td>
+                            </tr>
+                        </tbody>
 
-                <div class="mb-3">
-                    <label for="sessionType" class="form-label">Enter Session type</label>
-                    <select name="sessionType" id="sessionType" class="select2" >
-                        <option value="" >--select--</option>
-                        <%for (let session of sessionTypes){%>
-                      <option value="<%- session.id %>"><%-session.name %></option>
-                        <%}%>
-                    </select>
-                    
+                    </table>
                 </div>
-                <div class="mb-3">
-                    <label for="startDate" class="form-label">Enter Start Date</label>
-                    <select name="startDate" id="startDate" class="select2" >
-                        <option value="" >--select--</option>
-                        <%for (let slot of AcademicCalenderList){%>
-                      <option value="<%- slot.id %>"><%-slot.date %></option>
-                        <%}%>
-                    </select>
-              
-                </div>
-                <div class="mb-3">
-                    <label for="endDate" class="form-label">Enter End Date</label>
-                    <select name="endtDate" id="endtDate" class="select2" >
-                        <option value="" >--select--</option>
-                        <%for (let slot of AcademicCalenderList){%>
-                      <option value="<%- slot.id %>"><%-slot.date %></option>
-                        <%}%>
-                    </select>
-                </div>
-                <div class="modal-footer d-flex justify-content-center">
-                    <span class="errorMsg"></span>
-                    <button type="submit" class="btn createSessionDate modal-inputform-btn">Create Session Date</button>
-                    <button type="submit" class="btn updateSessionDate modal-inputform-btn d-none">Update Session Date</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="errorMsg"></div>
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-sessiondates"><i class="fas fa-plus"></i>Add More Fields</button>
+                <button type="submit" class="btn  createSessionDate modal-inputform-btn">Create</button>
+                <button type="submit" class="btn  updateSessionDate modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
-</div>
+    </div>
+
 
     <%- include("../partials/footer") %>
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
     <script>
         $(document).ready(function () {
 
-            $('.select2').select2({
-        dropdownParent: $('#add-sessiondate-modal')});
+            $('.modalSelect2').select2({ dropdownParent: $('#add-sessiondate-modal')});
 
 
-            $('.createSessionDate').on('click', function () {
-                console.log('clcik')
-                $.ajax({
-                    url: '/admin/sessions/dates',
-                    method: 'POST',
-                    type: 'JSON',
-                    data: {
-                        acadSession: $('#program_session_lid').val(),
-                        sessionType: $('#sessionType').val(),
-                        startDate: $('#startDate').val(),
-                        endDate: $('#endtDate').val(),
-                    },
-                    success: (data) => {
-                        location.reload()
-                    },
-                    error: err => {
-                        console.log('err::::::::',err)
-                        showError(err.responseJSON)
-                    }
-                })
-            })
+       $('#add-more-sessiondates').on('click', function () {
+        let lastTr = $('#sessionDateTableModal tbody tr:last-child')
+        lastTr.find('.modalSelect2').select2('destroy');
+        let program_session_lid = lastTr.find(`select[name="program_session_lid"]`).val();
+        let sessionType = lastTr.find(`select[name="sessionType"]`).val();
+        let startDate = lastTr.find(`select[name="startDate"]`).val();
+        let endtDate = lastTr.find(`select[name="endtDate"]`).val();  
+        let clonedTr = lastTr.clone();
+        clonedTr.find(`select[name="program_session_lid"]`).val(program_session_lid).trigger('change');
+        clonedTr.find(`select[name="sessionType"]`).val(sessionType).trigger('change');
+        clonedTr.find(`select[name="startDate"]`).val(startDate).trigger('change');
+        clonedTr.find(`select[name="endtDate"]`).val(endtDate).trigger('change');
+
+            lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-sessiondate-modal')
+                });
+
+            clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-sessiondate-modal')
+                });
+
+        $('#sessionDateTableModal tbody').append(clonedTr);
+    })
+
+
+
+    $('#sessionDateTableModal').on('click', '.remove-session-date',
+            function () {
+            let trLength = $('#sessionDateTableModal tbody tr').length;
+            if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                }
+            else {
+                    alert('Cannot delete this room.')
+                }
+    })
+
+
+
+
+    $(".createSessionDate").on('click', function () {
+        let sessionElems = $('#sessionDateTableModal tbody tr');
+        let sessionCount = sessionElems.length;
+        let sessionJSON = [];
+        sessionElems.each(function (index, elem) {
+            let program_session_lid = $(elem).find(`select[name="program_session_lid"]`).val()
+            let sessionType = $(elem).find(`select[name="sessionType"]`).val();
+            let startDate = $(elem).find(`select[name="startDate"]`).val();
+            let endtDate = $(elem).find(`select[name="endtDate"]`).val();
+
+            if (index < sessionCount - 1) {
+                let obj = {
+                    program_session_lid: program_session_lid,
+                    session_type_lid: sessionType,
+                    start_date_id: startDate,
+                    end_date_id: endtDate
+                }
+                sessionJSON.push(obj)
+            } else {
+                let obj = {
+                    program_session_lid: program_session_lid,
+                    session_type_lid: sessionType,
+                    start_date_id: startDate,
+                    end_date_id: endtDate
+                }
+                sessionJSON.push(obj)
+            }
+        })
+
+        console.log('sessionJSON:::::::::::::::::',sessionJSON)
+
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/sessions/dates',
+            data: {
+                inputJSON: JSON.stringify(sessionJSON)
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            showSuccess(result)
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+    })
+
+
 
             //EDIT SESSION DATE TYPE
             $("#sessionDateTable").on('click', '.edit-session-date', function () {
@@ -386,7 +466,7 @@
 
 
             
-            function showError(errors) {
+            function showSuccess(errors) {
             //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
             //         <h3>Error</h3>`;
             //     errorHtml += `<ul>`;

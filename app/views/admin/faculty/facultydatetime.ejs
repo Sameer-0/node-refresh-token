@@ -23,11 +23,11 @@
                 <h5>Faculty Date Time</h5>
             </div>
             <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-facultydatetime-modal"><i
+                <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-facultydatetime-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-buildings add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-buildings add-btn "><img src="/icons/delete.png" alt=""
-                        width="24px" height="32px"></button>
+                        width="24px" height="32px"></button> -->
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -70,8 +70,7 @@
                             <%- faculty.end_time %>
                         </td>
                         <td>
-                            <i class="fas fa-edit text-dark cursor-pointer edit-building"
-                                data-faculty-id="<%- faculty.faculty_id %>"></i>
+                            <a class="delete-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-trash text-danger"></i></a>
                         </td>
                         <!-- <td>
                             <input type="checkbox" data-faculty-id=""
@@ -321,6 +320,27 @@ $(document).ready(function(){
             }
         })
     });
+
+
+            //Delete Faculty API
+            $("#facultyDateTimeTable").on('click','.delete-faculty',function(){
+            let id = $(this).attr("data-faculty-id");
+            let ApiObj = {
+                type: 'DELETE',
+                url: '/admin/faculties',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
 
         function showAjaxTable(facultiesList) {
