@@ -35,23 +35,14 @@ module.exports = {
         })
     },
 
+
     create: (req, res) => {
-        const errors = validationResult(req); 
-        if (!errors.isEmpty()) {
-            res.status(422).json({
-                statuscode: 422,
-                errors: errors.array()
-            });
-            return;
+
+        let object = {
+            new_session_dates: JSON.parse(req.body.inputJSON)
         }
-
-        console.log('req.body:::::::::',req.body)
-
-        SessionDates.save(req.body, res.locals.slug).then(result => {
-            res.status(200).json({
-                status: 200,
-                message: "Success"
-            })
+        SessionDates.save(res.locals.slug, object, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message))
@@ -62,7 +53,6 @@ module.exports = {
                 data:[]})
             }
         })
-
     },
 
     findOne: (req, res) => {

@@ -25,14 +25,15 @@ module.exports = class {
         })
     }
 
-    static save(body, slug) {
-        console.log('body:::::::::::::::',body)
-        return poolConnection.then(pool => { 
-            return pool.request().input('ProgramSession', sql.Int, body.acadSession)
-                .input('SessionType', sql.Int, body.sessionType)
-                .input('StartDate', sql.Int, body.startDate)
-                .input('EndDate', sql.Int, body.endDate)
-                .query(`INSERT INTO [${slug}].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id) VALUES (@ProgramSession, @SessionType, @StartDate, @EndDate)`)
+
+    static save(slug, inputJSON, userId) {
+        console.log('JSON:::::::::',JSON.stringify(inputJSON))
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_add_session_dates]`)
         })
     }
 
@@ -46,10 +47,10 @@ module.exports = class {
     static update(body, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('Id', sql.Int, body.id)
-                .input('AcadSessionLid', sql.Int, body.acadSession)
-                .input('SessionTypeLid', sql.Int, body.sessionType)
-                .input('StartDateId', sql.Int, body.startDate)
-                .input('EndDateId', sql.Int, body.endDate)
+                .input('AcadSessionLid', sql.Int, body.program_session_lid)
+                .input('SessionTypeLid', sql.Int, body.session_type_lid)
+                .input('StartDateId', sql.Int, body.start_date_id)
+                .input('EndDateId', sql.Int, body.end_date_id)
                 .query(`UPDATE [${slug}].session_dates SET program_session_lid = @AcadSessionLid, session_type_lid = @SessionTypeLid, start_date_id = @StartDateId, end_date_id = @EndDateId  WHERE id = @Id`)
         })
     }
