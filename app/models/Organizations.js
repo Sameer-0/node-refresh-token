@@ -50,7 +50,7 @@ module.exports = class Organizations {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
-                .input('last_modified_by', sql.Int, userid)
+              //  .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_add_new_organizations]')
         })

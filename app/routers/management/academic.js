@@ -21,10 +21,10 @@ router.get('/academic', academiccontroller.getPage)
 
 //ACADEMIC SESSION
 router.get('/academic/session', acadsessioncontroller.getPage)
-router.post('/academic/session', validate('createSession'), acadsessioncontroller.create)
-router.put('/academic/session', validate('updateSession'), acadsessioncontroller.update)
+router.post('/academic/session/create', validate('createSession'), acadsessioncontroller.create)
+router.post('/academic/session/update', validate('updateSession'), acadsessioncontroller.update)
 router.get('/academic/session/search', validate('search'), acadsessioncontroller.search)
-router.get('/academic/session/single', validate('single'), acadsessioncontroller.single)
+router.get('/academic/session/findone', validate('single'), acadsessioncontroller.single)
 router.post('/academic/session/pagination', validate('pagination'), acadsessioncontroller.pagination)
 
 //ACADEMIC CALENDER

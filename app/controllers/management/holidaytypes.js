@@ -81,15 +81,6 @@ module.exports = {
         })
     },
 
-    deleteAll: (req, res) => {
-        HolidayTypes.deleteAll().then(result => {
-            res.status(200).json({
-                status: 200
-            })
-        }).catch(error => {
-            res.status(500).json(error.originalError.info.message)
-        })
-    },
 
     search: (req, res) => {
 

@@ -59,11 +59,7 @@ module.exports = class RoomTransactionStages {
         })
     }
 
-    static deleteAll() {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE [dbo].[room_transaction_stages]`)
-        })
-    }
+ 
 
 
     static getRTSCount() {
