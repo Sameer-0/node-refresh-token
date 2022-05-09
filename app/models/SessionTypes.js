@@ -51,11 +51,6 @@ module.exports = class {
         })
     }
 
-    static deleteAll(slug) {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].session_types `)
-        })
-    }
 
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {

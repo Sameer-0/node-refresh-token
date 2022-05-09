@@ -8,6 +8,6 @@ const {
 const days =  require('../../controllers/admin/days')
 
 router.get('/days', days.getPage)
-router.post('/days', days.changeStatus)
+router.post('/days/change', days.changeStatus)
 router.get('/days/GetAll', days.GetAll)
 module.exports = router;

@@ -29,8 +29,6 @@
                     data-bs-target="#add-session-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-session-type add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-session-type add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
             </div>
         </div>
 
@@ -117,7 +115,7 @@
 
             $('.createSessionType').on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
+                    url: '/admin/sessions/types/create',
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -141,7 +139,7 @@
                 $("#add-session-modal-title").html('UPDATE SESSION TYPE')
 
                 $.ajax({
-                    url: '/admin/sessions/types/findOne',
+                    url: '/admin/sessions/types/findone',
                     method: 'GET',
                     type: 'JSON',
                     data: {
@@ -180,8 +178,8 @@
             // UPDATE PROGRAM TYPE
             $(".updateSessionType").on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
-                    method: 'PUT',
+                    url: '/admin/sessions/types/update',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
@@ -215,8 +213,8 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/sessions/types',
-                        type: 'DELETE',
+                        url: '/admin/sessions/types/delete',
+                        type: 'POST',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
@@ -231,24 +229,6 @@
                 } else {
                     alert('Select Fields')
                 }
-            })
-
-            //Bulk Delete
-            $(".bulk-delete-session-type").on('click', function () {
-                let ApiObj = {
-                    url: '/admin/sessions/types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
-                })
-
             })
 
 

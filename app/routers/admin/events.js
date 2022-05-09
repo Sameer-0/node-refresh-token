@@ -15,11 +15,10 @@ router.get('/events', events.getPage)
 
 //EVENT TPES
 router.get('/events/types', types.getPage)
-router.post('/events/types', validate('EventType') , types.create)
-router.put('/events/types', validate('EventType'), types.update)
-router.delete('/events/types', types.delete)
-router.patch('/events/types', types.deleteAll)
-router.get('/events/types/findOne', types.findOne)
+router.post('/events/types/create', validate('EventType') , types.create)
+router.post('/events/types/update', validate('EventType'), types.update)
+router.post('/events/types/delete', types.delete)
+router.get('/events/types/findone', types.findOne)
 router.get('/events/types/search', types.search)
 router.post('/events/types/pagination', types.pagination)
 module.exports = router
