@@ -193,7 +193,7 @@
     <div class="modal-dialog modal-fullscreen modal-lg">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
-                <h3 class="modal-title" id="open-faculty-modal-title">Import Faculty</h3>
+                <h3 class="modal-title" id="open-faculty-modal-title">Edit Faculty</h3>
                 <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times text-dark"></i></button>
             </div>
@@ -285,6 +285,8 @@
 
         $('.select2').select2({
         dropdownParent: $('#open-faculty-modal')});
+        $('.select2').select2({
+        dropdownParent: $('#edit-faculty-modal')});
 
         //DATALIST
         let slotTime = JSON.parse(`<%- slotTiming %>`);
@@ -551,7 +553,8 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                notify()
+                // notify()
+                showSuccess(result);
             }).catch(error => {
                 showError(error.responseJSON)
             })
