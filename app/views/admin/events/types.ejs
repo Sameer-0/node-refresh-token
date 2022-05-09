@@ -128,7 +128,7 @@
                         location.reload()
                     },
                     error: err => {
-                        showError(err.responseJSON)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -158,7 +158,7 @@
                     },
                     error: err => {
 
-                        showError(err.responseJSON)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -191,13 +191,14 @@
                     },
                     success: (data) => {
                         if (data.status == 200) {
-                            location.reload()
+                            // location.reload()
+                            showExpressSuccess(data)
                         } else {
                             $(".errorMsg").html(data.message)
                         }
                     },
                     error: err => {
-                        showError(err.responseJSON)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -343,20 +344,59 @@
                 AjaxTable += `<tbody></table>`
                 $("#eventTypeTable").html(AjaxTable);
             }
+            function showExpressSuccess(errors) {
 
-            function showError(errors) {
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>`;
-                errorHtml += `<ul>`;
-                errors.errors.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
-
-                errorHtml +=
-                    `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+            console.log('success',errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.message,
+                message:"",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
+            simpleAlert.alert(obj);
+            }
+
+            function showExpressError(errors) {
+                
+                console.log('success<><><',errors);
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title : "Error",
+                    message: errors.errors,
+                    express:'true',
+                    type: 'alert-danger',
+                    buttons: {
+                        positive:{
+                            text: "Okay",
+                            action: function(){
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                            alert('Negative')
+                            }
+                        }
+                    }
+                }
+                simpleAlert.alert(obj);
+            }
+
 
         })
     </script>

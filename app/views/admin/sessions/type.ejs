@@ -35,7 +35,7 @@
         </div>
 
         <div class="card-body table-responsive">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button>                        
+            <div class="table-searchbar-container d-flex"><button type="button"><i class="fas fa-search"></i> </button>                        
                 <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
             <table class="table custom_row table-bordered" id="sessionTypeTable">
@@ -125,11 +125,13 @@
                         description: $('#description').val(),
                     },
                     success: (data) => {
-                        location.reload()
+                        console.log('ejsdata', data)
+                        
+                        showExpressSuccess(data)
                     },
                     error: err => {
-                        console.log('err::::::::>>',err)
-                        showError(err.responseJSON)
+                        console.log('err::::::::>><<<',err)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -155,9 +157,10 @@
                         $('#description').val(Sessionobj.description)
                         $('#Id').val(Sessionobj.id)
                         $("#add-session-modal").modal('show')
+                        
                     },
                     error: err => {
-                        showError(err.responseJSON)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -190,13 +193,14 @@
                     },
                     success: (data) => {
                         if (data.status == 200) {
-                            location.reload()
+                            // location.reload()
+                            showExpressSuccess(data);
                         } else {
                             $(".errorMsg").html(data.message)
                         }
                     },
                     error: err => {
-                        showError(err.responseJSON)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -223,10 +227,10 @@
                         dataType: 'JSON'
                     }
                     ajaxApi(ApiObj).then(result => {
-                        location.reload()
-                        notify();
+             
+                        showExpressSuccess(result)
                     }).catch(error => {
-                        showError(error.responseJSON)
+                        showExpressError(error.responseJSON)
                     })
                 } else {
                     alert('Select Fields')
@@ -243,9 +247,10 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
+                    // location.reload()
+                    showExpressSuccess(result)
                 }).catch(error => {
-                    showError(error.responseJSON)
+                    showExpressError(error.responseJSON)
 
                 })
 
@@ -343,18 +348,133 @@
                 $("#sessionTypeTable").html(AjaxTable);
             }
 
-            function showError(errors) {
-                console.log('errors',errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>` 
-                        errors.errors.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+        //     function showError(errors) {
+        //         // console.log('errors',errors)
+        //         // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        //         //     <h3>Error</h3>
+        //         //     <ul>` 
+        //         //         errors.errors.map(er => {
+        //         //     errorHtml +=
+        //         //         `<li>${er.msg}</li>`
+        //         // })
+        //         // errorHtml +=
+        //         //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        //         // $("#errorHtml").html(errorHtml)
+        //         console.log('success',errors);
+        //         let simpleAlert = new SimpleAlert();
+        //         let obj = {
+        //             title : errors.description,
+        //             message: errors.errors,
+        //             type: 'alert-danger',
+        //             buttons: {
+        //                 positive:{
+        //                     text: "Okay",
+        //                     action: function(){
+        //                         document.querySelector('.simple-alert').remove();
+        //                     }
+        //                 },
+        //                 negative: {
+        //                     text: "Cancel",
+        //                     action: function () {
+        //                     alert('Negative')
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         simpleAlert.alert(obj);
+        //     }
+
+        //     function showSuccess(errors) {
+        //     // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+        //     //         <h3>Success</h3>
+        //     //         <p>${errors.description}</p>
+        //     //         <ul>`
+        //     // if (errors.data.length > 0) {
+        //     //     $(errors.data).each(function (key, value) {
+        //     //         $.each(this, function (key, value) {
+        //     //             errorHtml +=
+        //     //                 `<li>${key} ${value}</li>`
+        //     //         });
+        //     //     });
+        //     // }
+        //     // errorHtml +=
+        //     //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        //     // $(".errorHtml").html(errorHtml)
+
+        //     console.log('success',errors);
+        //     let simpleAlert = new SimpleAlert();
+        //     let obj = {
+        //         title : errors.description,
+        //         message:"",
+        //         type: 'alert-success',
+        //         buttons: {
+        //             positive:{
+        //                 text: "Okay",
+        //                 action: function(){
+        //                     document.querySelector('.simple-alert').remove();
+        //                 }
+        //             },
+        //             negative: {
+        //                 text: "Cancel",
+        //                 action: function () {
+        //                 alert('Negative')
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     simpleAlert.alert(obj);
+        // }
+
+        function showExpressSuccess(errors) {
+
+            console.log('success',errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.message,
+                message:"",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+        function showExpressError(errors) {
+                
+                console.log('success<><><',errors);
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title : "Error",
+                    message: errors.errors,
+                    express:'true',
+                    type: 'alert-danger',
+                    buttons: {
+                        positive:{
+                            text: "Okay",
+                            action: function(){
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                            alert('Negative')
+                            }
+                        }
+                    }
+                }
+                simpleAlert.alert(obj);
             }
 
         })
