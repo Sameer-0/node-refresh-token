@@ -111,7 +111,7 @@
 
             $('.createProgramType').on('click', function () {
                 $.ajax({
-                    url: '/admin/programs/types',
+                    url: '/admin/programs/types/create',
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -132,7 +132,7 @@
                 $(".updateProgramType").removeClass('d-none')
 
                 $.ajax({
-                    url: '/admin/programs/types/findOne',
+                    url: '/admin/programs/types/findone',
                     method: 'GET',
                     type: 'JSON',
                     data: {
@@ -172,8 +172,8 @@
             // UPDATE PROGRAM TYPE
             $(".updateProgramType").on('click', function () {
                 $.ajax({
-                    url: '/admin/programs/types',
-                    method: 'PUT',
+                    url: '/admin/programs/types/update',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $("#programId").val(),
@@ -225,23 +225,6 @@
                 }
             })
 
-            //Bulk Delete
-            $(".bulk-delete-program-type").on('click', function () {
-                let ApiObj = {
-                    url: '/admin/programs/types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
-                })
-
-            })
 
 
             // SEARCH PROGRAM TYPE

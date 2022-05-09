@@ -5,6 +5,7 @@ const {
 } = require('../../config/db')
 
 module.exports = class {
+    
     constructor(name, abbr) {
         this.name = name;
         this.abbr = abbr;
@@ -47,12 +48,6 @@ module.exports = class {
             JSON.parse(ids).forEach(element => {
                 return request.query(`DELETE FROM [dbo].event_types WHERE id = ${element.id}`)
             });
-        })
-    }
-
-    static deleteAll(slug) {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].event_types`)
         })
     }
 

@@ -29,8 +29,6 @@
                     data-bs-target="#add-session-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-session-type add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-session-type add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
             </div>
         </div>
 
@@ -117,7 +115,7 @@
 
             $('.createSessionType').on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
+                    url: '/admin/sessions/types/create',
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -143,7 +141,7 @@
                 $("#add-session-modal-title").html('UPDATE SESSION TYPE')
 
                 $.ajax({
-                    url: '/admin/sessions/types/findOne',
+                    url: '/admin/sessions/types/findone',
                     method: 'GET',
                     type: 'JSON',
                     data: {
@@ -183,8 +181,8 @@
             // UPDATE PROGRAM TYPE
             $(".updateSessionType").on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
-                    method: 'PUT',
+                    url: '/admin/sessions/types/update',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
@@ -219,8 +217,8 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/sessions/types',
-                        type: 'DELETE',
+                        url: '/admin/sessions/types/delete',
+                        type: 'POST',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
@@ -237,28 +235,8 @@
                 }
             })
 
-            //Bulk Delete
-            $(".bulk-delete-session-type").on('click', function () {
-                let ApiObj = {
-                    url: '/admin/sessions/types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    // location.reload()
-                    showExpressSuccess(result)
-                }).catch(error => {
-                    showExpressError(error.responseJSON)
-
-                })
-
-            })
-
 
             // SEARCH PROGRAM TYPE
-
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
@@ -348,82 +326,6 @@
                 $("#sessionTypeTable").html(AjaxTable);
             }
 
-        //     function showError(errors) {
-        //         // console.log('errors',errors)
-        //         // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        //         //     <h3>Error</h3>
-        //         //     <ul>` 
-        //         //         errors.errors.map(er => {
-        //         //     errorHtml +=
-        //         //         `<li>${er.msg}</li>`
-        //         // })
-        //         // errorHtml +=
-        //         //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-        //         // $("#errorHtml").html(errorHtml)
-        //         console.log('success',errors);
-        //         let simpleAlert = new SimpleAlert();
-        //         let obj = {
-        //             title : errors.description,
-        //             message: errors.errors,
-        //             type: 'alert-danger',
-        //             buttons: {
-        //                 positive:{
-        //                     text: "Okay",
-        //                     action: function(){
-        //                         document.querySelector('.simple-alert').remove();
-        //                     }
-        //                 },
-        //                 negative: {
-        //                     text: "Cancel",
-        //                     action: function () {
-        //                     alert('Negative')
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         simpleAlert.alert(obj);
-        //     }
-
-        //     function showSuccess(errors) {
-        //     // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-        //     //         <h3>Success</h3>
-        //     //         <p>${errors.description}</p>
-        //     //         <ul>`
-        //     // if (errors.data.length > 0) {
-        //     //     $(errors.data).each(function (key, value) {
-        //     //         $.each(this, function (key, value) {
-        //     //             errorHtml +=
-        //     //                 `<li>${key} ${value}</li>`
-        //     //         });
-        //     //     });
-        //     // }
-        //     // errorHtml +=
-        //     //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-        //     // $(".errorHtml").html(errorHtml)
-
-        //     console.log('success',errors);
-        //     let simpleAlert = new SimpleAlert();
-        //     let obj = {
-        //         title : errors.description,
-        //         message:"",
-        //         type: 'alert-success',
-        //         buttons: {
-        //             positive:{
-        //                 text: "Okay",
-        //                 action: function(){
-        //                     document.querySelector('.simple-alert').remove();
-        //                 }
-        //             },
-        //             negative: {
-        //                 text: "Cancel",
-        //                 action: function () {
-        //                 alert('Negative')
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     simpleAlert.alert(obj);
-        // }
 
         function showExpressSuccess(errors) {
 

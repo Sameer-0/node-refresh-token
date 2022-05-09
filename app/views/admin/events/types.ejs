@@ -117,7 +117,7 @@
 
             $('.createEventType').on('click', function () {
                 $.ajax({
-                    url: '/admin/events/types',
+                    url: '/admin/events/types/create',
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -141,7 +141,7 @@
                 console.log('CLicl')
 
                 $.ajax({
-                    url: '/admin/events/types/findOne',
+                    url: '/admin/events/types/findone',
                     method: 'GET',
                     type: 'JSON',
                     data: {
@@ -181,8 +181,8 @@
             // UPDATE PROGRAM TYPE
             $(".updateEventType").on('click', function () {
                 $.ajax({
-                    url: '/admin/events/types',
-                    method: 'PUT',
+                    url: '/admin/events/types/update',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
@@ -217,8 +217,8 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/events/types',
-                        type: 'DELETE',
+                        url: '/admin/events/types/delete',
+                        type: 'POST',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
@@ -235,23 +235,7 @@
                 }
             })
 
-            //Bulk Delete
-            $(".bulk-delete-event-type").on('click', function () {
-                let ApiObj = {
-                    url: '/admin/events/types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
 
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
-                })
-
-            })
 
 
             // SEARCH PROGRAM TYPE
