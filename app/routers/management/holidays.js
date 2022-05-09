@@ -16,11 +16,10 @@ router.get('/holidays/search', holiday.search)
 
 // HOLIDAY TYPES ROUTER
 router.get('/holidays/types', holidaytype.getPage)
-router.post('/holidays/types', validate('Holiday'), holidaytype.create)
+router.post('/holidays/types/create', validate('Holiday'), holidaytype.create)
 router.get('/holidays/types/findOne', validate('Holiday'), holidaytype.findOne)
 router.get('/holidays/types/search', validate('search'), holidaytype.search)
-router.put('/holidays/types', validate('Holiday'), holidaytype.update)
-router.delete('/holidays/types', holidaytype.delete)
-router.patch('/holidays/types', holidaytype.deleteAll)
+router.post('/holidays/types/update', validate('Holiday'), holidaytype.update)
+router.post('/holidays/types/delete', holidaytype.delete)
 router.post('/holidays/types/pagination', validate('pagination'), holidaytype.pagination)
 module.exports = router;

@@ -11,11 +11,11 @@ const validate = require('../../middlewares/validate')
 
 // CAMPUS ROUTER
 router.get('/campuses', campus.getCampusPage)
-router.put('/campuses', validate('JsonValidator'), campus.update)
-router.post('/campuses', validate('JsonValidator'),  campus.create)
-router.post('/campus', validate('pagination'), campus.getCampusPage)
-router.get('/campus/search', validate('search'), campus.search)
-router.get('/campus/findOne', validate('single'), campus.findOne)
-router.delete('/campuses',  validate('delete'), campus.delete)
+router.post('/campuses/update', validate('JsonValidator'), campus.update)
+router.post('/campuses/create', validate('JsonValidator'),  campus.create)
+router.post('/campuses/pagination', validate('pagination'), campus.getCampusPage)
+router.get('/campuses/search', validate('search'), campus.search)
+router.get('/campuses/findone', validate('single'), campus.findOne)
+router.post('/campuses/delete',  validate('delete'), campus.delete)
 
 module.exports = router;  

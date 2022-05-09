@@ -237,7 +237,7 @@
 
         let ApiObj = {
             type: 'POST',
-            url: '/management/organizations',
+            url: '/management/organizations/create',
             data: {
                 inputJSON: JSON.stringify(orgJson)
             },
@@ -263,7 +263,7 @@
 
         let ApiObj = {
             type: 'POST',
-            url: '/management/organizations/single',
+            url: '/management/organizations/findone',
             data: {
                 Id: $(this).attr('data-org-id')
             },
@@ -335,8 +335,8 @@
 
         if (orgJson.length > 0) {
             $.ajax({
-                url: '/management/organizations',
-                method: 'PUT',
+                url: '/management/organizations/update',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     inputJSON: JSON.stringify(orgJson)
@@ -395,8 +395,8 @@
             $("#organizationTable").on('click','.delete-organization',function(){
             let id = $(this).attr("data-id");
             let ApiObj = {
-                type: 'DELETE',
-                url: '/management/organizations',
+                type: 'POST',
+                url: '/management/organizations/delete',
                 data: {
                     id: id
                 },
@@ -464,22 +464,36 @@ function AjaxTable (orgList){
             if (orgList.length > 0) {
                 for (org of orgList) {
                     AjaxTable +=
-                        `     <tr>
-                            <td>${org.org_id}</td>
-                            <td>${org.org_abbr}</td>
-                            <td>${org.org_name}</td>
-                            <td>${org.org_complete_name}</td>
-                            <td>${org.org_type}</td>
-                            <td>${org.campus_abbr}</td>
+                        `tr>
+                        <td>
+                         ${count++}
+                        </td>
+                        <td>
+                            ${org.org_abbr}
+                        </td>
+                        <td>
+                            ${org.org_name}
+                        </td>
+                        <td>
+                            ${org.org_complete_name}
+                        </td>
+                        <td>
+                            ${org.org_type}
+                        </td>
+                        <td>
+                           ${org.campus_abbr}
+                        </td>
+                        <td>
                             <a class="edit-org" data-org-id="${org.id}"><i class="fas fa-edit text-dark cursor-pointer" ></i></a>
                             <a class="delete-organization" data-id="${org.id}"><i class="fa fa-trash text-danger"></i></a>
-                        </tr>`
+                        </td>
+                    </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="8" class="text-center">No Data Found</td>
-                            </tr>`;
+                        <td colspan="7" class="text-center">No Data Found</td>
+                     </tr>`;
             }
             AjaxTable += `<tbody></table>`
             $("#organizationTable").html(AjaxTable);
@@ -490,25 +504,6 @@ function AjaxTable (orgList){
 
 
 function showSuccess(errors) {
-            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-            //         <h3>Success</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            // $(".errorHtml").html(errorHtml)
-
-            // setTimeout(function(){
-            //     location.reload()
-            // },3000)
             console.log(errors);
         let simpleAlert = new SimpleAlert();
         let obj = {
@@ -535,24 +530,6 @@ function showSuccess(errors) {
 
 
     function showError(errors) {
-            // console.log('Error:::::::::', errors)
-            // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            //         <h3>Error!</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            // console.log(errorHtml)
-            // $(".errorHtml").html(errorHtml)
-
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {

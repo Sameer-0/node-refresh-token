@@ -204,7 +204,7 @@
 
             let ApiObj = {
                 type: 'POST',
-                url: '/management/campuses',
+                url: '/management/campuses/create',
                 data: {
                     inputJSON: JSON.stringify(campusJson)
                 },
@@ -224,7 +224,7 @@
             $(".createCampus").addClass('d-none')
             $("#add-more-campus").addClass('d-none')
             $.ajax({
-                url: '/management/campus/findOne',
+                url: '/management/campuses/findone',
                 method: 'GET',
                 type: 'JSON',
                 data: {
@@ -283,8 +283,8 @@
 
             if (campusJson.length > 0) {
                 let ApiObj = {
-                    type: 'PUT',
-                    url: '/management/campuses',
+                    type: 'POST',
+                    url: '/management/campuses/update',
                     data: {
                         inputJSON: JSON.stringify(campusJson)
                     },
@@ -310,8 +310,8 @@
         $("#campusTable").on('click','.delete-campus',function(){
             let id = $(this).attr("data-id");
             let ApiObj = {
-                type: 'DELETE',
-                url: '/management/campuses',
+                type: 'POST',
+                url: '/management/campuses/delete',
                 data: {
                     id: id
                 },
@@ -351,7 +351,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/management/campus",
+                url: "/management/campuses/pagination",
                 data: {
                     pageNo: num
                 },
@@ -367,7 +367,7 @@
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "GET",
-                url: "/management/campus/search",
+                url: "/management/campuses/search",
                 data: {
                     keyword: keyword
                 },
@@ -379,26 +379,7 @@
 
 
         function showSuccess(errors) {
-            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-            //         <h3>Success</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            // $(".errorHtml").html(errorHtml)
-
-            // setTimeout(function(){
-            //     location.reload()
-            // },3000)
-            console.log(errors);
+             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title : errors.description,
@@ -425,24 +406,6 @@
 
 
         function showError(errors) {
-            // console.log('Error:::::::::', errors)
-            // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            //         <h3>Error!</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            // console.log(errorHtml)
-            // $(".errorHtml").html(errorHtml)
-
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
