@@ -129,47 +129,47 @@ app.use(function (req, res) {
 })
 
 
-app.use((err, req, res, next) => {
-    console.log('=========================>>>>ERROR MIDDLEWARE<<<<==============================')
-    let logDir = process.env.LOG_DIR_PATH
-    let logFile = process.env.LOG_FILE_PATH
-    let fsErr = '';
-    let errMsg = err.stack;
-    let msg = `Opps! Something went wrong.`
+// app.use((err, req, res, next) => {
+//     console.log('=========================>>>>ERROR MIDDLEWARE<<<<==============================')
+//     let logDir = process.env.LOG_DIR_PATH
+//     let logFile = process.env.LOG_FILE_PATH
+//     let fsErr = '';
+//     let errMsg = err.stack;
+//     let msg = `Opps! Something went wrong.`
   
-    console.log('Error midleware: ', errMsg)
+//     console.log('Error midleware: ', errMsg)
   
-    try {
+//     try {
   
-      if (!existsSync(logDir) && !accessSync(logDir, constants.R_OK | constants.W_OK)) {
-        mkdirSync(logDir);
-      }
-      let currentDate = new Date();
-      let errStr = `${currentDate}: \n Request URL - ${req.hostname + req.url} \n ${errMsg} \n -------------- \n`
+//       if (!existsSync(logDir) && !accessSync(logDir, constants.R_OK | constants.W_OK)) {
+//         mkdirSync(logDir);
+//       }
+//       let currentDate = new Date();
+//       let errStr = `${currentDate}: \n Request URL - ${req.hostname + req.url} \n ${errMsg} \n -------------- \n`
   
-      appendFile(logFile, errStr, err => {
-        if (err) throw err;
-      })
+//       appendFile(logFile, errStr, err => {
+//         if (err) throw err;
+//       })
   
-    } catch (e) {
-      fsErr += e;
-      console.log("catched error====>>> ", e)
-    }
+//     } catch (e) {
+//       fsErr += e;
+//       console.log("catched error====>>> ", e)
+//     }
   
-    console.log('File err===>>> ', fsErr)
-    console.log("Request type ===============================>>>>>", req.xhr)
+//     console.log('File err===>>> ', fsErr)
+//     console.log("Request type ===============================>>>>>", req.xhr)
   
-    if (req.xhr) {
+//     if (req.xhr) {
   
-      res.status(500).json({
-        msg: msg + fsErr
-      })
-    } else {
-      res.status(500).render('message/error', {
-        msg: msg + fsErr
-      })
-    }
-  })
+//       res.status(500).json({
+//         msg: msg + fsErr
+//       })
+//     } else {
+//       res.status(500).render('message/error', {
+//         msg: msg + fsErr
+//       })
+//     }
+//   })
 
 
 //const server = https.createServer(options, app,console.log('Server Started At: ', process.env.APP_PORT).listen(process.env.APP_PORT);// Enable with ssl 
