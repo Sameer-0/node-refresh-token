@@ -11,7 +11,7 @@ const validate = require('../../middlewares/validate')
 
 
 router.get('/holidays', holidays.getPage)
-router.post('/holidays/crate', validate('JsonValidator'), holidays.create)
+router.post('/holidays/create', validate('JsonValidator'), holidays.create)
 router.post('/holidays/update', validate('JsonValidator'), holidays.update)
 router.post('/holidays/delete', holidays.delete)
 router.get('/holidays/findone', holidays.findOne)

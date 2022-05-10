@@ -11,7 +11,7 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([DivisionBatches.fetchAll(10, res.locals.slug), DivisionBatches.getCount(res.locals.slug)]).then(result => {
+        Promise.all([DivisionBatches.fetchAll(1000, res.locals.slug), DivisionBatches.getCount(res.locals.slug)]).then(result => {
             console.log('divisionBatchList',result[0].recordset)
             res.render('admin/divisions/batches', {
                 divisionBatchList: result[0].recordset,

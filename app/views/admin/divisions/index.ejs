@@ -59,7 +59,6 @@
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
-                  
                 </thead>
                 <tbody>
                     <%let count = 1;%>
@@ -230,37 +229,39 @@
             let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
+                    <th>Module Name</th>
                     <th>Division</th>
-                    <th>Division no</th>
+                    <th>Division Number</th>
                     <th>Division count</th>
                     <th>Count for theory batch</th>
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
-                    <th>Module name</th>
-                 
                 </thead>`;
             if (divisionList.length > 0) {
                 let count = 1;
                 for (let division of divisionList) {
                     AjaxTable +=
                         `<tr>
-                            <td>${count++}</td>
+                        <td>
+                            ${count++}<input class="form-control rounded-0" type="hidden" name="division_id" value="${division.id}"></td>
+                        <td>
+                            ${division.module_name}
+                        </td>
                         <td>${division.division}</td>
                         <td>${division.division_num}</td>
                         <td>${division.division_count}</td>
-                        <td>${division.count_for_theory_batch}</td>
-                        <td>${division.count_for_practical_batch}</td>
-                        <td>${division.count_for_tutorial_batch}</td>
-                        <td>${division.count_for_workshop_batch}</td>
-                        <td>${division.module_name}</td>
-                        
-                            </tr>`
+                        <td><input class="form-control rounded-0" name="count_for_theory_batch" value="${division.count_for_theory_batch}"></td>
+                        <td><input class="form-control rounded-0" name="count_for_practical_batch" value="${division.count_for_practical_batch}"></td>
+                        <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="${division.count_for_tutorial_batch}"></td>
+                        <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="${division.count_for_workshop_batch}"></td>
+                       
+                    </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="5">No Data Found</td>
+                                <td colspan="9">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
@@ -268,22 +269,6 @@
         }
 
         function showError(errors) {
-            // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            //         <h3>Error</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            //     $("#errorHtml").html(errorHtml)
-
             console.log('error::::::::::',errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
@@ -310,22 +295,6 @@
 
 
         function showSuccess(errors) {
-            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-            //         <h3>Success</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            // $("#errorHtml").html(errorHtml)
-
             console.log('error::::::::::',errors)
             let simpleAlert = new SimpleAlert();
             let obj = {

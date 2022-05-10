@@ -9,7 +9,7 @@ module.exports = class ModuleType{
     
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select TOP ${Number(rowcount)} id, name from [${slug}].module_types`)
+            return pool.request().query(`select TOP ${Number(rowcount)} id, name from [dbo].module_types`)
         })
     }
 

@@ -94,8 +94,9 @@ class SimpleAlert {
         })
 
         this.negativeElem.addEventListener('click', () => {
-            console.log('close working')
-            this.negativeCallbackFn();
+            // console.log('close working')
+            // this.negativeCallbackFn();
+            this.removeAlert();
         })
        
     }
