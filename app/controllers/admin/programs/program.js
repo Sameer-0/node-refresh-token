@@ -11,6 +11,8 @@ const ProgramsDbo = require('../../../models/ProgramsDbo');
 const isJsonString = require('../../../utils/util')
 
 module.exports = {
+
+    
     getPage: (req, res) => {
 
         Promise.all([Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), Programs.getCount(res.locals.slug), ProgramsDbo.fetchAll(1000)]).then(result => { console.log('result[0].recordset', result[0].recordset)

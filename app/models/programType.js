@@ -49,19 +49,6 @@ module.exports = class ProgramTypes {
         })
     }
 
-    static deleteAll() {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].[program_types] `)
-        })
-    }
-
-    static searchProgramType(rowcount, keyword) {
-        return poolConnection.then(pool => {
-            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(` SELECT TOP ${Number(rowcount)}  pt.id as id, pt.name FROM 
-                        [dbo].program_types pt WHERE pt.name LIKE @keyword ORDER BY pt.id DESC`)
-        })
-    }
 
 
     static fetchChunkRows(rowcount, pageNo) {

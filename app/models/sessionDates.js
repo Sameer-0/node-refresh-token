@@ -65,11 +65,6 @@ module.exports = class {
         })
     }
 
-    static deleteAll(slug) {
-        return poolConnection.then(pool => {
-            return pool.request().query(`UPDATE [${slug}].session_dates SET active = 0 WHERE active = 1`)
-        })
-    }
 
     static search(rowcount, keyword, slug) {
         console.log(rowcount, keyword, slug)

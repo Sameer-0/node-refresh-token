@@ -114,7 +114,7 @@
         //Create 
         $(".createHolidayTypes").on('click', function () {
             $.ajax({
-                url: '/management/holidays/types',
+                url: '/management/holidays/types/create',
                 method: 'POST',
                 type: 'JSON',
                 data: {
@@ -140,7 +140,7 @@
             $(".updateHolidayTypes").removeClass('d-none')
             $("#add-holiday-type-title").html(`UPDATE HOLIDAY TYPES`)
             let ApiObj = {
-                url: '/management/holidays/types/findOne',
+                url: '/management/holidays/types/findone',
                 method: 'GET',
                 data: {
                     Id: $(this).attr("data-holiday-type-id")
@@ -164,8 +164,8 @@
         //Update 
         $(".updateHolidayTypes").on('click', function () {
             $.ajax({
-                url: '/management/holidays/types',
-                method: 'PUT',
+                url: '/management/holidays/types/update',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     id: $("#Id").val(),
@@ -216,8 +216,8 @@
 
             if (deleteids.length > 0) {
                 let ApiObj = {
-                    url: '/management/holidays/types',
-                    type: 'DELETE',
+                    url: '/management/holidays/types/delete',
+                    type: 'POST',
                     data: {
                         Ids: JSON.stringify(deleteids)
                     },
@@ -237,31 +237,7 @@
 
 
 
-        //Bulk Delete
-        $(".bulk-delete-holiday-type").on('click', function () {
-
-            //Alert confirm
-            alertMsg()
-
-            let ApiObj = {
-                url: '/management/holidays/types',
-                type: 'PATCH',
-                data: {},
-                dataType: 'JSON'
-            }
-
-           $('.alert-continue').on('click', () => {
-                    ajaxApi(ApiObj).then(result => {
-                        location.reload()
-                    }).catch(error => {
-                        showError(error.responseJSON)
-                    })
-                })
-                
-                $('.cancel').on('click', () => {
-                    $('#alertModal').css('display', 'none');
-                })
-        })
+      
 
 
         //search feature delay function is writter in script.js file which is located in public/js/script.js

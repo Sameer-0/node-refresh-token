@@ -9,10 +9,10 @@ const index =  require('../../controllers/admin/divisions/index')
 const batch = require('../../controllers/admin/divisions/batch')
 
 router.get('/divisions', index.getPage)
-router.put('/divisions', index.update)
+router.post('/divisions/update', index.update)
 router.get('/divisions/search', index.search)
 router.post('/divisions/pagination', index.pagination)
-router.post('/divisions/changestatus', index.changestatus)
+router.post('/divisions/change', index.changestatus)
 router.get('/divisions/getAll', index.getAll)
 
 //BATCHES
@@ -21,6 +21,6 @@ router.get('/divisions/batches/search', batch.search)
 router.post('/divisions/batches/pagination', batch.pagination)
 router.post('/divisions/batches/changestatus', batch.changestatus)
 router.get('/divisions/batches/getAll', batch.getAll)
-router.put('/divisions/batches', batch.update)
+router.post('/divisions/batches/update', batch.update)
 
 module.exports = router

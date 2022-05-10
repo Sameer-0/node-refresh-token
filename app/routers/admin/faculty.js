@@ -14,43 +14,45 @@ const validate = require('../../middlewares/validate')
 
 //Faculty
 router.get('/faculties', index.getPage)
-router.post('/faculties', validate('JsonValidator'), index.create)
+router.post('/faculties/create', validate('JsonValidator'), index.create)
 router.get('/faculties/search', validate('search'), index.search)
 router.post('/faculties/pagination', index.pagination)
-router.get('/faculties/findOne', validate('single'), index.findOne)
-router.put('/faculties', validate('JsonValidator'), index.update)
-router.delete('/faculties', validate('delete'), index.delete)
+router.get('/faculties/findone', validate('single'), index.findOne)
+router.post('/faculties/update', validate('JsonValidator'), index.update)
+router.post('/faculties/delete', validate('delete'), index.delete)
 router.get('/faculties/getslotsbyid', validate('single'), index.getSlotsById)
 
 
 
 //Faculty Date Time
 router.get('/faculties/date-time', dateTimes.getPage)
-router.post('/faculties/date-time', dateTimes.create)
+router.post('/faculties/date-time/create', dateTimes.create)
 router.get('/faculties/date-time/search', dateTimes.search)
 router.post('/faculties/date-time/pagination', dateTimes.pagination)
-router.delete('/faculties/date-time', validate('delete'), dateTimes.delete)
+router.post('/faculties/date-time/delete', validate('delete'), dateTimes.delete)
+
+
 //Batch
 router.get('/faculties/batch', batch.getPage)
-router.post('/faculties/batch', validate('JsonValidator'), batch.create)
+router.post('/faculties/batch/create', validate('JsonValidator'), batch.create)
 router.get('/faculties/batch/search', validate('search'), batch.search)
 router.post('/faculties/batch/pagination', batch.pagination)
-router.put('/faculties/batch', validate('JsonValidator'), batch.update)
-router.delete('/faculties/batch', validate('delete'), batch.delete)
+router.post('/faculties/batch/update', validate('JsonValidator'), batch.update)
+router.post('/faculties/batch/delete', validate('delete'), batch.delete)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
-router.post('/faculties/works', validate('JsonValidator'), works.create)
+router.post('/faculties/works/create', validate('JsonValidator'), works.create)
 router.get('/faculties/works/search', validate('search'), works.search)
 router.post('/faculties/works/pagination', works.pagination)
-router.put('/faculties/works', validate('JsonValidator'), works.update)
-router.delete('/faculties/works', validate('delete'), works.delete)
+router.post('/faculties/works/update', validate('JsonValidator'), works.update)
+router.post('/faculties/works/delete', validate('delete'), works.delete)
 
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)
-router.post('/faculties/workpreferences', validate('JsonValidator'), preferences.create)
+router.post('/faculties/workpreferences/create', validate('JsonValidator'), preferences.create)
 router.get('/faculties/workpreferences/search', preferences.search)
 router.post('/faculties/workpreferences/pagination', preferences.pagination)
-router.put('/faculties/workpreferences', validate('JsonValidator'), preferences.update)
-router.delete('/faculties/workpreferences', validate('delete'), preferences.delete)
+router.post('/faculties/workpreferences/update', validate('JsonValidator'), preferences.update)
+router.post('/faculties/workpreferences/delete', validate('delete'), preferences.delete)
 module.exports = router
