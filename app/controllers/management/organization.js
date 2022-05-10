@@ -42,7 +42,7 @@ module.exports = {
         let object = {
             generate_organization: JSON.parse(req.body.inputJSON)
         }
-        Organizations.save(object).then(result => {
+        Organizations.save(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){

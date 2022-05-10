@@ -23,10 +23,10 @@ const {
 
 
 const options = {
-    pfx: readFileSync('D:/INFRAPROJECT/infra_v2/cert/server.pfx'),
+    pfx: readFileSync(__dirname+`/cert/server.pfx`),
     passphrase: 'time#2021'
- };
- 
+};
+//console.log(__dirname+'/cert/server.pfx')
 
 //redis
 const {
@@ -76,24 +76,35 @@ app.use('/set-token', (req, res) => {
     res.send('Token set')
 })
 
-get_breadcrumbs = function(url) {
+get_breadcrumbs = function (url) {
     var rtn = [],
         acc = "", // accumulative url
         arr = url.substring(1).split("/");
 
-    for (i=0; i<arr.length; i++) {
-        acc = i != arr.length-1 ? acc+"/"+arr[i] : null;
-        if(acc == '/management') {acc = '/management/dashboard'}
-        if(acc == '/admin') {acc = '/admin/dashboard'}
-        rtn[i] = {name: arr[i].toUpperCase(), url: acc};
-        if(acc == '/management/dashboard'){acc = '/management' }
-        if(acc == '/admin/dashboard'){acc = '/admin' }
+    for (i = 0; i < arr.length; i++) {
+        acc = i != arr.length - 1 ? acc + "/" + arr[i] : null;
+        if (acc == '/management') {
+            acc = '/management/dashboard'
+        }
+        if (acc == '/admin') {
+            acc = '/admin/dashboard'
+        }
+        rtn[i] = {
+            name: arr[i].toUpperCase(),
+            url: acc
+        };
+        if (acc == '/management/dashboard') {
+            acc = '/management'
+        }
+        if (acc == '/admin/dashboard') {
+            acc = '/admin'
+        }
     }
     // console.log('rtnnnn', rtn)
     return rtn;
 };
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     req.breadcrumbs = get_breadcrumbs(req.originalUrl);
     next();
 });
@@ -113,11 +124,55 @@ app.use(device.capture());
 setRouter(app)
 
 
-app.use(function(req, res){
+app.use(function (req, res) {
     res.status(404).render('404')
 })
 
 
-//const server = https.createServer(options, app).listen(process.env.APP_PORT);// Enable with ssl 
+app.use((err, req, res, next) => {
+    console.log('=========================>>>>ERROR MIDDLEWARE<<<<==============================')
+    let logDir = process.env.LOG_DIR_PATH
+    let logFile = process.env.LOG_FILE_PATH
+    let fsErr = '';
+    let errMsg = err.stack;
+    let msg = `Opps! Something went wrong.`
+  
+    console.log('Error midleware: ', errMsg)
+  
+    try {
+  
+      if (!existsSync(logDir) && !accessSync(logDir, constants.R_OK | constants.W_OK)) {
+        mkdirSync(logDir);
+      }
+      let currentDate = new Date();
+      let errStr = `${currentDate}: \n Request URL - ${req.hostname + req.url} \n ${errMsg} \n -------------- \n`
+  
+      appendFile(logFile, errStr, err => {
+        if (err) throw err;
+      })
+  
+    } catch (e) {
+      fsErr += e;
+      console.log("catched error====>>> ", e)
+    }
+  
+    console.log('File err===>>> ', fsErr)
+    console.log("Request type ===============================>>>>>", req.xhr)
+  
+    if (req.xhr) {
+  
+      res.status(500).json({
+        msg: msg + fsErr
+      })
+    } else {
+      res.status(500).render('message/error', {
+        msg: msg + fsErr
+      })
+    }
+  })
+
+
+//const server = https.createServer(options, app,console.log('Server Started At: ', process.env.APP_PORT).listen(process.env.APP_PORT);// Enable with ssl 
 //app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
-const server = http.createServer(app).listen(process.env.APP_PORT); //Enable without ssl
+const server = http.createServer(app, console.log('Server Started At Port: ', process.env.APP_PORT));
+app.listen(process.env.APP_PORT); 

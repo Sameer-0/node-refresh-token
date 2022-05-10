@@ -101,7 +101,7 @@ module.exports = class Rooms {
     static delete(id, userid) {
         return poolConnection.then(pool => {
             const request = pool.request();
-            return request.input('input_request_lid', sql.Int, id)
+            return request.input('input_room_lid', sql.Int, id)
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[dbo].[sp_delete_rooms]`)
