@@ -26,7 +26,7 @@ module.exports = class AcademicYear {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT ac.id, ac.name, CONVERT(NVARCHAR, ac.start_date, 23) as start_date, CONVERT(NVARCHAR, ac.end_date, 23) as end_date, TRIM(ac.input_acad_year) as input_acad_year FROM [dbo].academic_year ac`)
+            return pool.request().query(`SELECT ac.id, ac.name, CONVERT(NVARCHAR, ac.start_date, 23) as start_date, CONVERT(NVARCHAR, ac.end_date, 23) as end_date, RTRIM(LTRIM(ac.input_acad_year)) as input_acad_year FROM [dbo].academic_year ac`)
         })
     }
 

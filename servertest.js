@@ -23,7 +23,7 @@ const {
 
 
 const options = {
-    pfx: readFileSync('D:/Suraj Projects/INFRA/infra_v2/cert/server.pfx'),
+    pfx: readFileSync('D:/INFRAPROJECT/infra_v2/cert/server.pfx'),
     passphrase: 'time#2021'
  };
  
