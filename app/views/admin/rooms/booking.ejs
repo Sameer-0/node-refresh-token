@@ -210,7 +210,7 @@
             </div>
             <div class="px-3 error-html"></div>
             <div class="modal-footer">
-                <button type="button" class="btn import-room modal-inputform-btn" id="importRoom">Import Room</button>
+                <button type="button" class="btn import-room modal-inputform-btn" id="createRoomTransaction">Create Room Transaction</button>
             </div>
 
         </div>
@@ -230,18 +230,19 @@
             })
             
             let slotObj = JSON.parse(`<%- slotIntervalTimings %>`);
-           
             let acadDate = JSON.parse(`<%- academicCalender %>`);
+            let transactionType = JSON.parse(`<%- transactionTypes %>`);
 
             let optionStartTime;
             let optionEndTime;
             let startDate;
             let endDate;
+            let transactionTypeList;
 
             for (let obj of slotObj) {
                 optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
             }
-
+ 
             for (let obj of slotObj) {
                 optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
             }
@@ -254,68 +255,18 @@
                 endDate += `<option value="${obj.id}">${obj.date}</option>`;
             }
 
-            let username = `<%- locals.userId %>`;
-    //console.log('Username:::::::::::::::::::', username)
-    //Add more rows for building
-    $('#add-more-roomtransaction').on('click', function () {
-      
-    console.log("Organization Added::::")
-    
-    let lastTr = $('#add-more-roomstrans-table tbody tr:last-child') 
-    lastTr.find('.modalSelect2').select2('destroy');
-    let room_lid = lastTr.find(`select[name='room_lid']`).val();
-    let transaction_type_id = lastTr.find(`select[name='transaction_type_id']`).val();
-    let start_time_id = lastTr.find(`select[name='start_time_id']`).val();
-    let end_time_id = lastTr.find(`select[name='end_time_id']`).val();
-    let start_date_id = lastTr.find(`select[name='start_date_id']`).val();
-    let end_date_id = lastTr.find(`select[name='end_date_id']`).val();
-    let org_lid = lastTr.find(`select[name='org_lid']`).val();
-    let campus_lid = lastTr.find(`select[name='campus_lid']`).val();
-    let clonedTr = lastTr.clone();
-    console.log('room_lid::::::::::::>>',room_lid)
-
-    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('change')
-    clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('change')
-    clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('change')
-    clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('change')
-    clonedTr.find(`select[name='start_date_id']`).val(start_date_id).trigger('change')
-    clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('change')
-    clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('change')
-    clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('change')
-
-    lastTr.find('.modalSelect2').select2({
-    dropdownParent: $('#open-transaction-modal') });
-
-    clonedTr.find('.modalSelect2').select2({
-    dropdownParent: $('#open-transaction-modal')});
-
-    $('#add-more-roomstrans-table tbody').append(clonedTr)
-    // selectRefresh();
-            $('.select2').select2({
-                dropdownParent: $('#open-transaction-modal'),
-                tags: true
-            })
-    })
-
-
-
-    $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
-        function () {
-            let trLength = $(
-            '#add-more-roomstrans-table tbody tr')
-            .length;
-            if (trLength > 1) {
-            $(this).closest('tr').remove()
-            } else {
-            alert('Cannot delete this room.')
+            for (let obj of transactionType) {
+                transactionTypeList += `<option value="${obj.id}">${obj.name}</option>`;
             }
-        })
 
+            let username = `<%- locals.userId %>`;
+
+    //Add more rows for building
     
      //DATA SELECT FOR ROOM
      $(".selectList").on('click', '.list-group-item', function () {
 
-        console.log('yello')
+        console.log('this::>>>', this)
         //remove current element when added to right sidebar
         // if ($(this).attr('data-clickable') == 'true') {
         $(".selectedList table tbody").append(
@@ -334,7 +285,7 @@
                         <select class="select2 modalSelect2" name="endDate">${endDate}</select>
                     </td>
                     <td>
-                        <select class="select2 modalSelect2" name="transaction_type_lid">${transactionTypes}</select>
+                        <select class="select2 modalSelect2" name="transaction_type_lid">${transactionTypeList}</select>
                     </td>
                     <td>
                         <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
@@ -344,7 +295,7 @@
         )
         // }
         $('.select2').select2({
-        dropdownParent: $('#open-room-modal')});
+        dropdownParent: $('#open-transaction-modal')});
 
 
 
@@ -401,19 +352,20 @@
 
 
   //Create
-    $(".createRoomTransaction").on('click', function () {
-            let roomElems = $('#add-more-roomstrans-table tbody tr');
+    $("#createRoomTransaction").on('click', function () {
+        console.log('yello hello')
+            let roomElems = $('#add-more-room-table tbody tr');
             let roomCount = roomElems.length;
             let roomJson = [];
             roomElems.each(function (index, elem) {
-                let room_lid = $(elem).find(`select[name='room_lid']`).val()
-                let transaction_type_id = $(elem).find(`select[name='transaction_type_id']`).val();
-                let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
-                let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
-                let start_date_id = $(elem).find(`select[name='start_date_id']`).val();
-                let end_date_id = $(elem).find(`select[name='end_date_id']`).val();
-                let org_lid = $(elem).find(`select[name='org_lid']`).val();
-                let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
+                let room_lid = $(elem).find(`td[data-room-id]`).attr('data-room-id');
+                let transaction_type_id = $(elem).find(`select[name='transaction_type_lid']`).val();
+                let start_time_id = $(elem).find(`select[name='startTime']`).val();
+                let end_time_id = $(elem).find(`select[name='endTime']`).val();
+                let start_date_id = $(elem).find(`select[name='startDate']`).val();
+                let end_date_id = $(elem).find(`select[name='endDate']`).val();
+                let org_lid = $(`#handled_by`).val();
+                let campus_lid = $(`#campus_lid`).val();
 
 
                 if (index < roomCount - 1) {
@@ -459,9 +411,7 @@
             ajaxApi(ApiObj).then(result => {
 
                 showSuccess(result)
-                setTimeout(function(){
-                    location.reload()
-                },3000)
+                
             }).catch(error => {
                 showError(error.responseJSON)
             })
