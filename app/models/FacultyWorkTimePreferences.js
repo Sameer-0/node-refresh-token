@@ -61,7 +61,7 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
                 INNER JOIN [${slug}].programs p ON p.id =  pd.day_lid
                 INNER JOIN [${slug}].days d ON d.id = pd.day_lid
-                WHERE sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR TRIM(p.program_name) LIKE @keyword OR p.program_id LIKE @keyword OR p.program_code LIKE @keyword OR d.day_name LIKE @keyword
+                WHERE sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR RTRIM(p.program_name) LIKE @keyword OR p.program_id LIKE @keyword OR p.program_code LIKE @keyword OR d.day_name LIKE @keyword
                 ORDER BY fwtp.id DESC`)
         })
     }
