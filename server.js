@@ -23,7 +23,11 @@ const {
 
 
 const options = {
+<<<<<<< HEAD
+    pfx: readFileSync('D:/INFRA-2022/infra_v2/cert/server.pfx'),
+=======
     pfx: readFileSync(__dirname+`/cert/server.pfx`),
+>>>>>>> refs/remotes/origin/surajvsk
     passphrase: 'time#2021'
 };
 //console.log(__dirname+'/cert/server.pfx')
