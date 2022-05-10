@@ -32,7 +32,7 @@ router.post('/rooms/room/getroomtimeslots', roomcontroller.getRoomTimeSlots)
 //ROOM TYPE ROUTER
 router.get('/rooms/roomtypes', roomtype.getPage)
 router.post('/rooms/roomtypes/update', validate('updateRoomType'), roomtype.update)
-router.post('/rooms/roomtypes', validate('createRoomType'), roomtype.create)
+router.post('/rooms/roomtypes/create', validate('createRoomType'), roomtype.create)
 router.get('/rooms/roomtypes/findone', validate('single'), roomtype.single)
 router.get('/rooms/roomtypes/search', validate('search'), roomtype.search)
 router.post('/rooms/roomtypes/delete', roomtype.delete)

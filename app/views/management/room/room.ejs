@@ -390,7 +390,7 @@
                 let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
                 let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
                 let is_basement = $(elem).find(`select[name='is_basement']`).val();
-                let is_processed = $(elem).find(`select[name='is_processed']`).val();
+               // let is_processed = $(elem).find(`select[name='is_processed']`).val();
 
                 if (index < roomCount - 1) {
                     let obj = {
@@ -403,7 +403,7 @@
                         start_time_id: start_time_id,
                         end_time_id: end_time_id,
                         is_basement: is_basement,
-                        is_processed: is_processed
+                       // is_processed: is_processed
                     }
                     console.log('OBJ1::::::::::>>', obj)
                     roomJson.push(obj)
@@ -418,7 +418,7 @@
                         start_time_id: start_time_id,
                         end_time_id: end_time_id,
                         is_basement: is_basement,
-                        is_processed: is_processed
+                       // is_processed: is_processed
                     }
                     console.log('OBJ2::::::::::>>', obj)
                     roomJson.push(obj)
@@ -462,41 +462,7 @@
         }, 500));
 
 
-        // Fetch Single Room
-        $('#roomTable').on('click', '.edit-room', function () {
-            $("#add-room-modal-title").html('Update Room')
-            $("#insertRoom").addClass('d-none')
-            $("#add-room").addClass('d-none')
-            $(".updateRoom").removeClass('d-none')
-            $("#add-more-room").addClass('d-none')
-            $.ajax({
-                url: '/management/rooms/findone',
-                method: 'GET',
-                type: 'JSON',
-                data: {
-                    id: $(this).attr('data-room-id')
-                },
-                success: data => {
-                    let roomData = data.roomData;
-                    console.log('success: ', roomData)
-                    $("#roomId").val(roomData.roomid)
-                    $("#room_number").val(roomData.room_number)
-                    $("#building_lid").val(roomData.building_lid).trigger('change'),
-                    $("#room_type_id").val(roomData.room_type_id).trigger('change')
-                    $("#floor_number").val(roomData.floor_number)
-                    $("#capacity").val(roomData.capacity)
-                    $("#start_time_id").val(roomData.start_time_id)
-                    $("#end_time_id").val(roomData.end_time_id)
-                    $("#handled_by").val(roomData.handled_by)
-                    $("#is_basement").val(roomData.is_basement)
-                    $("#is_processed").val(roomData.is_processed)
-                    $("#add-room-modal").modal('show')
-                },
-                error: err => {
-                    console.log('Error: ', err)
-                }
-            })
-        })
+
 
         // Update Room
         $(".updateRoom").on('click', function () {
@@ -601,7 +567,6 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
                 showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
@@ -686,6 +651,7 @@
 
         // Onchange get Building Time slot for rooms
         $("#building_lid").on('change', function () {
+            console.log('Building API::::::::::::::>')
             let building_id = $(this).val()
             let ApiObj = {
                 url: '/management/rooms/room/getroomtimeslots',
@@ -697,11 +663,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-
-                console.log('Response::::::::::::',result)
                 let startTime =``
-                    
-
                 if (result.data.length > 0) {
                     startTime +=
                         `<option disabled selected value="">--Select Time--</option>`;
@@ -716,14 +678,51 @@
                             </option>`
                 }
                
-                $("#start_time_id").html(startTime)
-                $("#end_time_id").html(startTime)
+                $("#add-room-modal  #start_time_id").html(startTime)
+                $("#add-room-modal  #end_time_id").html(startTime)
                 $('#building_lid').prop('disabled', 'disabled');
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
 
+
+                // Fetch Single Room
+            $('#roomTable').on('click', '.edit-room', function () {
+            $("#add-room-modal-title").html('Update Room')
+            $("#insertRoom").addClass('d-none')
+            $("#add-room").addClass('d-none')
+            $(".updateRoom").removeClass('d-none')
+            $("#add-more-room").addClass('d-none')
+            $.ajax({
+                url: '/management/rooms/findone',
+                method: 'GET',
+                type: 'JSON',
+                data: {
+                    id: $(this).attr('data-room-id')
+                },
+                success: data => {
+                    let roomData = data.roomData;
+                    console.log('success::::::::::::::::::::>> ', roomData)
+                    $("#roomId").val(roomData.roomid)
+                    $("#room_number").val(roomData.room_number)
+                    $("#building_lid").val(roomData.building_lid).trigger('change'),
+                    $("#room_type_id").val(roomData.room_type_id).trigger('change')
+                    $("#floor_number").val(roomData.floor_number)
+                    $("#capacity").val(roomData.capacity)
+                    $("#add-room-modal #start_time_id").val(roomData.start_time_id).trigger('change')
+                    $("#add-room-modal #end_time_id").val(roomData.end_time_id).trigger('change')
+                    $("#add-room-modal #handled_by").val(roomData.handled_by).trigger('change')
+                    
+                    $("#is_basement").val(roomData.is_basement)
+                    $("#is_processed").val(roomData.is_processed)
+                    $("#add-room-modal").modal('show')
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
 
 
         function showSuccess(errors) {
@@ -793,7 +792,7 @@
                                 <th>Campus</th>
                                 <th>Is Processed</th>
                                 <th>Action</th>
-                                <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
+                             
                     </thead>
                     <tbody>`;
 

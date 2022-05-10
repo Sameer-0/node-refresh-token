@@ -41,7 +41,7 @@ module.exports = {
             add_new_campus: JSON.parse(req.body.inputJSON)
         }
 
-        Campuses.saveWithProc(object).then(result => {
+        Campuses.saveWithProc(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
@@ -69,7 +69,7 @@ module.exports = {
         let object = {
             update_campuses: JSON.parse(req.body.inputJSON)
         }
-        Campuses.update(object).then(result => {
+        Campuses.update(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){

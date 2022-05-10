@@ -49,10 +49,11 @@ module.exports = class Campuses {
     }
 
 
-    static saveWithProc(inputJSON) {
+    static saveWithProc(inputJSON, userId) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[dbo].sp_add_new_campuses`);
         })
@@ -69,10 +70,11 @@ module.exports = class Campuses {
     }
 
 
-    static update(inputJSON) {
+    static update(inputJSON, userId) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[dbo].sp_update_campuses`);
         })
