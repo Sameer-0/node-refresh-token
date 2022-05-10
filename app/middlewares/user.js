@@ -40,16 +40,16 @@ module.exports = {
         }
 
         store.get(req.sessionID, async (err, result) => {
-            //   console.log('result::::::::::::::::::>> ', result);
+           console.log('redirectIfLoggedIn result::::::::::::::::::>> ', result);
 
             if (!result) {
 
                 return next();
             }
 
-            if (result.modules.length > 1) {
-                return res.redirect('/user/select-dashboard');
-            }
+            // if (result.modules.length > 1) {
+            //     return res.redirect('/user/select-dashboard');
+            // }
 
             res.redirect(`/${result.modules[0].name}/dashboard`);
 
@@ -68,14 +68,11 @@ module.exports = {
                 // console.log('Resulr::::::::::', result.permissions)
                 // console.log('originalUrl::::::::::', req.Url)
                 // console.log('originalUrl::::::::::', req._parsedOriginalUrl.pathname)
-                for (let permission of result.permissions) {
-                    //console.log('req.originalUrl', req.originalUrl)
-
-                    //permission.url_path === req.originalUrl && permission.name === req.method
-                    if (permission.url_path === req._parsedOriginalUrl.pathname && permission.name === req.method) {
-                        return next();
-                    }
-                }
+                // for (let permission of result.permissions) {
+                //     if (permission.url_path === req._parsedOriginalUrl.pathname && permission.name === req.method) {
+                //         return next();
+                //     }
+                // }
                 return next();//comment this line 
                 //res.send('YOU DO NOT HAVE PERMISSION')
             }
