@@ -78,131 +78,144 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="open-transaction-modal" tabindex="-1" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="open-transaction-modal" tabindex="-1" aria-labelledby="open-transaction-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">ADD ROOM TRANSACTIONS</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive ">
-                    <table class="table table-bordered" id="add-more-roomstrans-table">
-                        <thead>
-                            <th>Room No</th>
-                            <th>Transaction Type</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Org Name</th>
-                            <th>Campus</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select class="select2 room_lid modalSelect2" name="room_lid" id="room_lid"  data-live-search="true">
-                                        <option value="">Select Room No</option>
-                                        <%for(let room of roomList){%>
-                                        <option value="<%-room.id%>"><%- room.room_number %></option>
-                                        <%}%>
-                                </select>
-                                </td>
-                                <td>
-                                    <select class="select2 modalSelect2" name="transaction_type_id" id="transaction_type_id">
-                                        <option value="">Select Transaction Type</option>
-                                        <%for(let type of transactionTypes){%>
-                                        <option value="<%-type.id%>"><%- type.name %></option>
-                                        <%}%>
-                                </select>
-                                </td>
-                            <td>
-                                <select class="select2 modalSelect2" name="start_time_id" id="start_time_id">
-                                    <option value="">Select Start Time</option>
-                                    <%for(let startlist of slotIntervalTimings){%>
-                                        <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
-                                        <%}%>
-                            </select>
-                            </td>
-                            <td>
-                                <select class="select2 modalSelect2" name="end_time_id" id="end_time_id">
-                                    <option value="">Select End Time</option>
-                                    <%for(let endlist of slotIntervalTimings){%>
-                                        <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
-                                        <%}%>
-                            </select>
-                            </td>
-                            <td>
-                                <select class="select2 modalSelect2" name="start_date_id" id="start_date_id">
-                                    <option value="">Select Start Date</option>
-                                    <%for(let startdate of academicCalender){%>
-                                        <option value="<%-startdate.id%>"><%- startdate.date %></option>
-                                        <%}%>
-                            </select>
-                            </td>
-                            <td>
-                                <select class="select2 modalSelect2" name="end_date_id" id="end_date_id">
-                                    <option value="">Select End Date</option>
-                                    <%for(let enddate of academicCalender){%>
-                                        <option value="<%-enddate.id%>"><%- enddate.date %></option>
-                                        <%}%>
-                            </select>
-                            </td>
-                            <td><select class="select2 modalSelect2" name="org_lid" id="org_lid"> 
-                                <option value="">Select orgnization</option>
-                                <%for(let org of orgnizations){%>
-                                        <option value="<%-org.id%>"><%- org.org_abbr %></option>
-                                        <%}%>
-                        </select></td>
-                            <td>
-                                <select class="select2 modalSelect2" name="campus_lid" id="campus_lid"> 
-                                    <option value="">Select Campus</option>
-                                    <%for(let campus of campuses){%>
-                                        <option value="<%-campus.id%>"><%- campus.campus_abbr %></option>
-                                        <%}%>
-                            </select>
-                            </td>
+        <div class="modal-content modal-inputform">
 
-                            <td>
-                                <i class="far fa-edit d-none"></i>
-                                <i class="fas fa-trash-alt text-danger cursor-pointer remove-roomtransaction"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                    
-                </table>
+            <div class="modal-header modal-inputform-header">
+                <h3 class="modal-title" id="open-transaction-modal-title">Import Room</h3>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times text-dark"></i></button>
             </div>
+
+            <div class="modal-body py-0">
+                <div class="row">
+                    <!-- SELECT COLUMN -->
+                    <div class="col-md-3 col-xxl-3 select-items">
+                        <h4 class="text-center py-1 select-room-header">Select Rooms</h4>
+                        <input type="text" name="" id="searchItem" placeholder="Search Room"
+                            class="form-control searchItemRoom">
+                        <div style="margin-top: 100px;">
+                            <div class="col-md-12">
+                                <label>Campus</label>
+                                <select name="campus_lid" id="" class="select2 modalSelect2">
+                                    <option>--select--</option>
+                                    <% for(let campus of campusList) { %>
+                                        <option value="<%- campus.id %>">
+                                        <%- campus.campus_abbr %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </div>
+                           
+                            <div class="col-md-12">
+                                    <label>Building</label>
+                                    <select name="building_lid" id="" class="select2 modalSelect2">
+                                        <option>--select--</option>
+                                        <% for(let building of buildingList) { %>
+                                        <option value="<%- building.building_id %>">
+                                            <%- building.building_name %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label>Organization</label>
+                                <select name="handled_by" id="" class="select2 modalSelect2">
+                                    <option>--select--</option>
+                                    <% for(let org of orgList) { %>
+                                        <option value="<%- org.id %>">
+                                            <%- org.org_abbr %>/<%- org.org_id %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </div>
+                        </div>
+
+                        <ul class="list-group custom-select-list selectList">
+                            <% for (let room of roomList){ %>
+                            <li class="list-group-item" data-clickable="true" data-room-id="<%- room.id%>"><%- room.room_number%></li>
+                            <% }%>
+                        </ul>
+                    </div>
+
+                    <!-- SELECTED COLUMN -->
+                    <div class="col-md-9 col-xxl-9 selected-items">
+                        <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">
+                            Selected Rooms</h4>
+                        <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Room"
+                            class="form-control searchSelectedRoom">
+                        <div class="row selected-room-filter">
+
+                            <div class="col-md-4">
+                                <label>Book for Campus</label>
+
+                                <select name="campus_lid" id="campus_lid" class="select2 modalSelect2">
+                                    <option>--select--</option>
+                                    <% for(let campus of campusList) { %>
+                                    <option value="<%- campus.id %>">
+                                        <%- campus.campus_abbr %>
+                                    </option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Book for building</label>
+
+                                <select name="building_lid" id="building_lid" class="select2 modalSelect2">
+                                    <option>--select--</option>
+                                    <% for(let building of buildingList) { %>
+                                    <option value="<%- building.building_id %>">
+                                        <%- building.building_name %>
+                                    </option>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Book for Organization</label>
+
+                                <select name="handled_by" id="handled_by" class="select2 modalSelect2">
+                                    <option>--select--</option>
+                                    <% for(let org of orgList) { %>
+                                    <option value="<%- org.id %>">
+                                        <%- org.org_abbr %>/<%- org.org_id %>
+                                    </option>
+                                    <% } %>
+                                </select>
+                            </div>
+ 
+                        </div>
+
+                        <ul class="list-group custom-select-list selectedList" id="selectedList">
+                            <table class="table table-bordered" id="add-more-room-table">
+                                <thead>
+                                    <th>room</th>
+                                    <th>start Time</th>
+                                    <th>end Time</th>
+                                    <th>start Date</th>
+                                    <th>end Date</th>
+                                    <th>Transaction Type</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <div class="px-3 error-html"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn import-room modal-inputform-btn" id="importRoom">Import Room</button>
+            </div>
+
         </div>
-        <div class="modal-footer">
-            <div id="errorMsg"></div>
-            <button type="button" class="btn btn-success  btn-sm" id="add-more-roomtransaction"><i class="fas fa-plus"></i>Add More Fields</button>
-            <button type="submit" class="btn  createRoomTransaction modal-inputform-btn"> Create</button>
-            <button type="submit" class="btn  updateRoomTransaction modal-inputform-btn d-none">Update</button>
-        </div>
-      </div>
     </div>
 </div>
-
-<div class="modal fade" id="show-transaction-details" tabindex="-1" aria-labelledby="show-transaction-details" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="show-transaction-details-title">Show Transactions</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div id="errorHtml"></div>
-            <div id="ShowTransactionTable"></div>
-        </div>
-        <div class="modal-footer">
-            <!-- <button type="button" class="btn btn-success RequestForRoom" data-status="1">Request For Room</button> -->
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
   <%- include("../partials/footer") %>
@@ -215,17 +228,40 @@
             $('.select2').select2({
                 dropdownParent: $('#open-transaction-modal')
             })
+            
+            let slotObj = JSON.parse(`<%- slotIntervalTimings %>`);
+           
+            let acadDate = JSON.parse(`<%- academicCalender% >`);
 
+            let optionStartTime;
+            let optionEndTime;
+            let startDate;
+            let endDate;
 
+            for (let obj of slotObj) {
+                optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
+            }
+
+            for (let obj of slotObj) {
+                optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
+            }
+
+            for (let obj of acadDate) {
+                startDate += `<option value="${obj.id}">${obj.date}</option>`;
+            }
+
+            for (let obj of acadDate) {
+                endDate += `<option value="${obj.id}">${obj.date}</option>`;
+            }
 
             let username = `<%- locals.userId %>`;
-  //console.log('Username:::::::::::::::::::', username)
+    //console.log('Username:::::::::::::::::::', username)
     //Add more rows for building
     $('#add-more-roomtransaction').on('click', function () {
       
     console.log("Organization Added::::")
     
-    let lastTr = $('#add-more-roomstrans-table tbody tr:last-child')
+    let lastTr = $('#add-more-roomstrans-table tbody tr:last-child') 
     lastTr.find('.modalSelect2').select2('destroy');
     let room_lid = lastTr.find(`select[name='room_lid']`).val();
     let transaction_type_id = lastTr.find(`select[name='transaction_type_id']`).val();
@@ -274,6 +310,95 @@
             alert('Cannot delete this room.')
             }
         })
+
+    
+     //DATA SELECT FOR ROOM
+     $(".selectList").on('click', '.list-group-item', function () {
+
+        console.log('yello')
+        //remove current element when added to right sidebar
+        // if ($(this).attr('data-clickable') == 'true') {
+        $(".selectedList table tbody").append(
+            `<tr data-clickable="true">
+                    <td data-room-id="${$(this).attr('data-room-id')}">${$(this).text()}</td>
+                    <td>
+                        <select class="select2 modalSelect2" name="startTime">${optionStartTime}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="endTime">${optionEndTime}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="startDate">${startDate}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="endDate">${endDate}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="transaction_type_lid">${transactionTypes}</select>
+                    </td>
+                    <td>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                    </td>
+                </tr>
+                `
+        )
+        // }
+        $('.select2').select2({
+        dropdownParent: $('#open-room-modal')});
+
+
+
+        $(this).attr('data-clickable', 'false');
+
+
+
+        })
+
+        //Remove Element
+        $(".selectedList").on('click', '.clicktoremove', function () {
+
+        //     if ($(this).parent().parent().attr('data-clickable') == 'true') {
+        //         $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
+        // </li>`)
+        //     }
+
+        $(this).parent().attr('data-clickable', 'false')
+
+        $($(this)).fadeOut(300, function () {
+            $($(this).parent().parent()).remove()
+        })
+        })
+
+        //search 
+        $('#searchItem').on('input', function () {
+        let selectItems = $('.selectList li')
+
+        var text = $('#searchItem').val().toLowerCase();
+
+        for (let item of selectItems) {
+            if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                $(item).removeClass("d-none");
+            } else {
+                $(item).addClass("d-none");
+            }
+        };
+        })
+
+        //search selected room
+        $('#searchSelectedItem').on('input', function () {
+        let selectedItems = $('.selectedList table tbody tr')
+        var text = $('#searchSelectedItem').val().toLowerCase();
+        console.log('text:::::::::', selectedItems)
+        for (let item of selectedItems) {
+            console.log('faculty:::::::::', item)
+            if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                $(item).removeClass("d-none");
+            } else {
+                $(item).addClass("d-none");
+            }
+        };
+        })
+
 
   //Create
     $(".createRoomTransaction").on('click', function () {

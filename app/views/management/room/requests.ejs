@@ -84,8 +84,8 @@
             <div id="ShowRoomInfoTable"></div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success ApprovalAndRejection"  data-status="1"><img src="/icon_imgs/approve.png"> Approve</button>
-            <button type="button" class="btn btn-success ApprovalAndRejection" data-status="0"><img src="/icon_imgs/reject24.png"> Reject</button>
+            <button type="button" class="btn btn-success approvalAndRejection"  data-status="1"><img src="/icon_imgs/approve.png"> Approve</button>
+            <button type="button" class="btn btn-success approvalAndRejection rejectbtn" data-status="0"><img src="/icon_imgs/reject24.png"> Reject</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
@@ -101,7 +101,8 @@
 
         $('#RoomRequests').on('click','.view-room-request',function(){
             let id = $(this).attr("data-id")
-            console.log('id:::::::::',id)
+            let tr = $(this).parent().parent()
+            console.log('id:::::::::',);
             let ApiObj = {
                 url: '/management/rooms/requests/roomInfo',
                 type: 'GET',
@@ -142,6 +143,13 @@
                 $("#ShowRoomInfoTable").html(htmlTable)
                 $(".ApprovalAndRejection").attr("data-room-requestid", result.transactionid);
                 $("#room-request-info").modal('show')
+                $('.approvalAndRejection').removeClass('d-none');
+                if($(this).parent().parent().find('td:nth-child(3)').text() == 'rejected'){
+                    $('.rejectbtn').addClass('d-none');
+                } 
+                else if($(this).parent().parent().find('td:nth-child(3)').text() == 'accepted'){
+                    $('.approvalAndRejection').addClass('d-none');
+                }
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -257,43 +265,55 @@
 
 
         function showError(errors) {
-        console.log('error::::::::::::::',errors.data.length)
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#room-request-info #errorHtml").html(errorHtml)
-                //setTimeout(function(){location.reload()},2500)
+                console.log('error::::::::::',errors)
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title : errors.description,
+                    message: errors.data,
+                    type: 'alert-danger',
+                    buttons: {
+                        positive:{
+                            text: "Okay",
+                            action: function(){
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                            alert('Negative')
+                            }
+                        }
+                    }
+                }
+                simpleAlert.alert(obj);
         }
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            console.log('error::::::::::',errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.data,
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#room-request-info #errorHtml").html(errorHtml)
-            setTimeout(function(){location.reload()},2500)
+            simpleAlert.alert(obj);
+            
         }
 
 
