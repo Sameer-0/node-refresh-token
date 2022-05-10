@@ -78,7 +78,7 @@ $('#add-more-schoolTiming').on('click', function () {
     let acadSessionId = lastTr.find(`select[name='acadSession']`).val();
     let startTimeId = lastTr.find(`select[name='startTime']`).val();
     let endTimeId = lastTr.find(`select[name='endTime']`).val();
-    let lectureTypeId = lastTr.find(`select[name='lecType']`).val();
+    let SchoolTimingTypeId = lastTr.find(`select[name='schoolTimingType']`).val();
     
 
     let clonedTr = lastTr.clone();
@@ -118,7 +118,7 @@ $('#add-more-weeklyConstraint').on('click', function () {
     let ruleOnWhere = lastTr.find(`input[name='ruleOnWhere']`).val();
     let repeatable = lastTr.find(`select[name='repeatable']`).val();
     let endTimeId = lastTr.find(`select[name='endTime']`).val();
-    let lectureTypeId = lastTr.find(`select[name='lecType']`).val();
+    let schoolTimingTypeId = lastTr.find(`select[name='schoolTimingType']`).val();
     
 
     let clonedTr = lastTr.clone();

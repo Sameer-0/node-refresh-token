@@ -17,7 +17,7 @@ const CourseWorkload = require('../../models/CourseWorkload');
 const Faculties = require('../../models/Faculties');
 const FacultyDbo = require('../../models/FacultyDbo');
 const DivisionBatches = require('../../models/DivisionBatches');
-const LectureType = require('../../models/LectureType');
+const SchoolTimingType = require('../../models/SchoolTimingType');
 const HolidayTypes = require('../../models/HolidayTypes');
 const ModuleType =  require('../../models/ModuleType');
 const FacultyTypes = require("../../models/FacultyTypes");
@@ -32,7 +32,7 @@ const SessionDates = require('../../models/SessionDates')
 
 module.exports = {
     getDashboard: (req, res) => {
-        Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(100, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(), AcadSession.fetchAll(1000), SessionTypes.fetchAll(10, res.locals.slug), AcademicCalender.fetchAll(100), CourseWorkload.getAll(res.locals.slug), Divisions.fetchAll(100, res.locals.slug), Faculties.fetchAll(10, res.locals.slug), FacultyDbo.fetchAll(1000), SlotIntervalTimings.fetchAll(100), DivisionBatches.fetchAll(100, res.locals.slug), LectureType.fetchAll(10), HolidayTypes.fetchAll(100), ModuleType.fetchAll(1000, res.locals.slug), FacultyTypes.fetchAll(100), FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), ProgramSessions.fetchAll(100, res.locals.slug), RoomTransactionTypes.fetchAll(100), RoomTransactions.fetchAll(100, res.locals.slug), ProgramsDbo.fetchAll(1000), SessionDates.fetchAll(10, res.locals.slug)]).then(result => {
+        Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(100, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(), AcadSession.fetchAll(1000), SessionTypes.fetchAll(10, res.locals.slug), AcademicCalender.fetchAll(100), CourseWorkload.getAll(res.locals.slug), Divisions.fetchAll(100, res.locals.slug), Faculties.fetchAll(10, res.locals.slug), FacultyDbo.fetchAll(1000), SlotIntervalTimings.fetchAll(100), DivisionBatches.fetchAll(100, res.locals.slug), SchoolTimingType.fetchAll(10), HolidayTypes.fetchAll(100), ModuleType.fetchAll(1000, res.locals.slug), FacultyTypes.fetchAll(100), FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), ProgramSessions.fetchAll(100, res.locals.slug), RoomTransactionTypes.fetchAll(100), RoomTransactions.fetchAll(100, res.locals.slug), ProgramsDbo.fetchAll(1000), SessionDates.fetchAll(10, res.locals.slug)]).then(result => {
          console.log('Result::::::::::::::::::::>>',result[16].recordset)
             res.render('admin/dashboard/index', {
                 currentFormStep: result[0].recordset[0] ? result[0].recordset[0].seq : '',
@@ -56,7 +56,7 @@ module.exports = {
                 faculties: result[18].recordset, 
                 slotTime: result[19].recordset,
                 divisionBatchList: result[20].recordset,
-                lectureTypeList: result[21].recordset,
+                schoolTimingTypeList: result[21].recordset,
                 holidayTypeList: result[22].recordset,              
                 moduleList: result[23].recordset,
                 facultyType: JSON.stringify(result[24].recordset),
