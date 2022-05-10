@@ -17,7 +17,6 @@ router.post('/authenticate',[
 
 router.get('/profile', controller.getProfile);
 router.get('/login', redirectIfLoggedIn, controller.renderLoginPage);
-router.get('/select-dashboard', isLoggedIn, controller.renderSelectDashboard);
 router.get('/logout', controller.logout)
 
 module.exports = router;

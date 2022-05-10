@@ -71,7 +71,7 @@ module.exports = {
             update_organizations: JSON.parse(req.body.inputJSON)
         }
 
-        Organizations.update(object).then(result => {
+        Organizations.update(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log('error',error)

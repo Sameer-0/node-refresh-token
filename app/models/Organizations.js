@@ -56,11 +56,12 @@ module.exports = class Organizations {
         })
     }
 
-    static update(inputJSON) {
+    static update(inputJSON, userId) {
         console.log('INPUT JSON:::::::::::::>>', inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+            .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_update_organizations]')
         })
@@ -88,17 +89,18 @@ module.exports = class Organizations {
         })
     }
 
-    static searchOrg(rowcont, keyword) {
+    static searchOrg(rowcount, keyword) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcont)} org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , 
-                org.org_name AS org_type, camp.campus_abbr
+                .query(`SELECT TOP ${Number(rowcount)} org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type,
+                camp.campus_abbr
                 FROM [dbo].organizations org 
                 INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
                 INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
-                WHERE org.id like @keyword or org.org_abbr like @keyword 
-                or org.org_complete_name like @keyword or ot.name like @keyword OR camp.campus_abbr LIKE @keyword ORDER BY org.id DESC`)
+                WHERE org.org_id LIKE @keyword OR org.org_abbr LIKE @keyword OR org.org_name LIKE @keyword OR org.org_complete_name LIKE @keyword
+                OR  ot.name LIKE @keyword OR camp.campus_abbr LIKE @keyword
+                ORDER BY org.id DESC`)
         })
     }
 

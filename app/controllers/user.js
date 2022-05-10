@@ -45,9 +45,6 @@ module.exports = {
         res.render('login.ejs');
     },
 
-    renderSelectDashboard: (req, res, next) => {
-        res.render('selectDashboard');
-    },
 
     renderRegisterPage: (req, res, next) => {
         res.render('register.ejs')
@@ -194,12 +191,8 @@ module.exports = {
                 SigninWithNewDevice(userData.recordset[0].email, headers)
             }
 
+            console.log('userDataSet[0].recordset:::::::::::::',userDataSet[0].recordset)
 
-            if (userDataSet[0].recordset.length > 1) {
-                return res.redirect('/user/select-dashboard');
-            }
-
-            console.log('Name::::::::::::::>>>',userDataSet[0].recordset[0].name)
 
             if (userDataSet[0].recordset[0].name.toLowerCase() == "management") {
                 res.redirect('/management/dashboard');
