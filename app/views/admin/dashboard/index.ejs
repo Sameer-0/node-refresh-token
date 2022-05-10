@@ -50,9 +50,16 @@
 
 <script>
     $(document).ready(function () {
+
         $('.select2').select2({
-        dropdownParent: $('#add-holiday-table')
-    });
+        dropdownParent: $('#open-room-modal')});
+
+        $('.select2').select2({
+        dropdownParent: $('#open-program-modal')});
+
+        $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
+
 
         let username = `<%- locals.userId %>`;
         let campu = `<%- campusList%>`;
@@ -113,19 +120,19 @@
                 `<tr data-clickable="true">
                         <td data-room-id="${$(this).attr('data-room-id')}">${$(this).text()}</td>
                         <td>
-                            <select class="select2" name="startTime">${optionStartTime}</select>
+                            <select class="select2 modalSelect2" name="startTime">${optionStartTime}</select>
                         </td>
                         <td>
-                            <select class="select2" name="endTime">${optionEndTime}</select>
+                            <select class="select2 modalSelect2" name="endTime">${optionEndTime}</select>
                         </td>
                         <td>
-                            <select class="select2" name="startDate">${startDate}</select>
+                            <select class="select2 modalSelect2" name="startDate">${startDate}</select>
                         </td>
                         <td>
-                            <select class="select2" name="endDate">${endDate}</select>
+                            <select class="select2 modalSelect2" name="endDate">${endDate}</select>
                         </td>
                         <td>
-                            <select class="select2" name="transaction_type_lid">${transactionTypes}</select>
+                            <select class="select2 modalSelect2" name="transaction_type_lid">${transactionTypes}</select>
                         </td>
                         <td>
                             <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
@@ -134,6 +141,10 @@
                     `
             )
             // }
+            $('.select2').select2({
+        dropdownParent: $('#open-room-modal')});
+            
+
 
             $(this).attr('data-clickable', 'false');
 
@@ -197,7 +208,7 @@
                 `<tr data-clickable="true">
                     <td data-value="${$(this).attr('data-program-code')}">${$(this).text()}</td>
                     <td>
-                        <select class="select2" name="programType">${programTypeList}</select>
+                        <select class="select2 modalSelect2" name="programType">${programTypeList}</select>
                     </td>
                     <td>
                         <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
@@ -205,11 +216,16 @@
                 </tr>
                     `
             )
-            // }
+
+            $('.select2').select2({
+        dropdownParent: $('#open-program-modal')});
 
             $(this).attr('data-clickable', 'false');
+            // }
 
-            $($(this)).fadeOut(300, function () {
+            
+
+            $($(this)).fadeOut(0, function () {
                 $($(this)).remove()
             })
 
@@ -291,6 +307,8 @@
                         </td>
                     </tr>
                     `)
+                    $('.select2').select2({
+        dropdownParent: $('#open-faculty-modal')});
             }
 
             $(this).attr('data-clickable', 'false');
@@ -900,6 +918,7 @@
               
                 scroll()
                 formStepNext()
+                location.reload();
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -968,7 +987,8 @@
 
                     ajaxApi(ApiObj).then(result => {
                         console.log('sucess:::::::::', result)
-                        setTimeout(function(){location.reload()},3000)
+                        showSuccess(result);
+                        // setTimeout(function(){location.reload()},3000)
                         
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -1036,7 +1056,7 @@
                     else{
                         acadList += `<option value=""> NO SESSION FOUND <option>`
                     }
-                    acadList += `</select>`
+                    acadList += `</select>` 
                     $(this).parent().next().html(acadList);
 
                 console.log('list:::>>>', $(this).parent().next());
@@ -1078,7 +1098,7 @@
                             reason: holidayReason,
                             holiday_type_lid: holidayType
                         }
-                        holidayJson.push(obj)
+                        holidayJson.push(obj)  
                     }
                 })
 
@@ -1199,7 +1219,7 @@
             console.log('Json::::::::::::',courseJSON)
             let ApiObj = {
                 type: 'PUT',
-                url: '/admin/courseworkload',
+                url: '/admin/courseworkload/workload',
                 data: {
                     inputJSON: JSON.stringify(courseJSON),
                     settingName: 'Courseworkload'
@@ -1225,10 +1245,11 @@
                     method: 'POST',
                     type: 'JSON',
                     data: {
-                        acadSession: $('#program_session_lid').val(),
-                        sessionType: $('#sessionType').val(),
-                        startDate: $('#startDate').val(),
-                        endDate: $('#endDate').val()
+                        // acadSession: $('#program_session_lid').val(),
+                        // sessionType: $('#sessionType').val(),
+                        // startDate: $('#startDate').val(),
+                        // endDate: $('#endDate').val()
+                        settingName:"Sessiondates"
                     },
                     success: (data) => {
                         showSuccess(result)
@@ -1342,6 +1363,34 @@
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
+            }else if(currentFormStep == 8){
+                
+                console.log('school timing')
+                $.ajax({
+                    url: '/admin/schooltime', 
+                    method: 'POST',
+                    type: 'JSON',
+                    data: {
+                        // acadSession: $('#program_session_lid').val(),
+                        // sessionType: $('#sessionType').val(),
+                        // startDate: $('#startDate').val(),
+                        // endDate: $('#endDate').val()
+                        settingName:"schooltiming"
+                    },
+                    success: (data) => {
+                        showSuccess(data)
+                        scroll()
+                        formStepNext()
+                        location.reload();
+                    },
+                    error: err => {
+                        console.log('err::::::::',err)
+                        showError(err.responseJSON)  
+                    }
+                })
+                
+        
+
             }
             else if(currentFormStep == 10){
 
@@ -1495,11 +1544,9 @@
                         ajaxApi(ApiObj).then(result => {
                             console.log(result)
                             showSuccess(result)
-                            scroll()
-                            formStepNext()
-                            setTimeout(function(){
-                                location.reload
-                            }, 3000)
+                           location.reload();
+                         
+                         
 
                         }).catch(error => {
                             showError(error.responseJSON)
@@ -1641,7 +1688,7 @@
             console.log('Json::::::::::::',courseJSON)
             let ApiObj = {
                 type: 'PUT',
-                url: '/admin/courseworkload',
+                url: '/admin/courseworkload/workload',
                 data: {
                     inputJSON: JSON.stringify(courseJSON)
                 },
@@ -1650,7 +1697,7 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
-                showSuccess(result)
+                showSuccess(result) 
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -1757,52 +1804,96 @@
         })
 
         function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                console.log(errorHtml)
+            // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            //         <h3>Error</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            //     console.log(errorHtml)
+            // // $("#errorHtml").html(errorHtml)
+            // //open-room-modal
             // $("#errorHtml").html(errorHtml)
-            //open-room-modal
-            $("#errorHtml").html(errorHtml)
-            $(".error-html").html(errorHtml)
+            // $(".error-html").html(errorHtml)
             // $("#open-program-modal .error-html").html(errorHtml)
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
         }
 
 
         function showSuccess(errors) {
         
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+            //         <h3>Success</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
         
                 
 
-                console.log('errorHtml:::::::::::',errorHtml)
-            $("#errorHtml").html(errorHtml)
-            $(".error-html").html(errorHtml)
-            // $("#open-program-modal .error-html").html(errorHtml)
+            //     console.log('errorHtml:::::::::::',errorHtml)
+            // $("#errorHtml").html(errorHtml)
+            // $(".error-html").html(errorHtml)
+            // // $("#open-program-modal .error-html").html(errorHtml)
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
         }
 
         function showExpressError(errors){

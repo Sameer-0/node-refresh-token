@@ -77,11 +77,7 @@ module.exports = class {
         })
     }
 
-    static deleteAll(slug) {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [${slug}].holidays`)
-        })
-    }
+
 
     static pagination(pageNo, slug) {
         return poolConnection.then(pool => {

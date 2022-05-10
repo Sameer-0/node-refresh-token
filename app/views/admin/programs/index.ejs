@@ -1,6 +1,5 @@
 
 <%- include("../partials/head") %>
-<link rel="stylesheet" href="/css/simpleAlert.css">
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
@@ -198,7 +197,6 @@
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
     
 </script>
-<script src="/js/SimpleAlert.js"></script>
 <script>
     $(document).ready(function () {
 
@@ -209,7 +207,7 @@
             let id = $(this).attr("data-id")
             $.ajax({
                 type: "GET",
-                url: '/admin/programs/findOne',
+                url: '/admin/programs/findone',
                 data: {
                     id: id
                 },
@@ -243,8 +241,8 @@
             JSONArray.push(JSONObj)
 
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/programs',
+                type: 'POST',
+                url: '/admin/programs/update',
                 data: {
                     inputJSON: JSON.stringify(JSONArray)
                 },
@@ -277,13 +275,13 @@
                     if (index < programCount - 1) {
                         let obj = {
                             program_id: programId,
-                            program_type: programType,  
+                            program_type_lid: programType,  
                         }
                         programJson.push(obj)
                     } else {
                         let obj = {
                             program_id: programId,
-                            program_type: programType,
+                            program_type_lid: programType,
                         }
                         programJson.push(obj)
                     }
@@ -291,7 +289,7 @@
                 console.log('roomjason:::',programJson);
                 let ApiObj = {
                 type: 'POST',
-                url: '/admin/programs',
+                url: '/admin/programs/create',
                 data: {
                     inputJSON: JSON.stringify(programJson),
                   
@@ -301,9 +299,7 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
-                showSuccess(result)
-              
-              
+                showSuccess(result)              
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -316,8 +312,8 @@
             console.log('heello');
             let id = $(this).attr("data-id");
             let ApiObj = {
-                type: 'DELETE',
-                url: '/admin/programs',
+                type: 'POST',
+                url: '/admin/programs/delete',
                 data: {
                     id: id
                 },
@@ -502,25 +498,6 @@
 
 
         function showError(errors) {
-            // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            //         <h3>Error</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            //             console.log('errorData', errors.data)
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            //     $(".errorHtml").html(errorHtml)
-            //     $(".error-html").html(errorHtml)
-
-            // simple alert tetsing
             console.log('error::::::::::',errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
@@ -548,25 +525,6 @@
 
 
         function showSuccess(errors) {
-            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-            //         <h3>Success</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            // $(".errorHtml").html(errorHtml)
-            // $(".error-html").html(errorHtml)
-            // setTimeout(function(){
-            //     location.reload()
-            // },2500)
             console.log('success',errors);
             let simpleAlert = new SimpleAlert();
             let obj = {

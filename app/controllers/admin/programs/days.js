@@ -90,7 +90,6 @@ module.exports = {
             return;
         }
 
-        console.log('REQL:L:L:L:L:L:L:L:L:L:L:', req.body)
 
         ProgramDays.update(req.body, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json({

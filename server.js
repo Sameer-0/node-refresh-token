@@ -2,15 +2,16 @@ const express = require('express');
 const app = express();
 require('dotenv').config()
 const http = require('http');
+const https = require("https");
 const path = require('path');
 const setRouter = require("./router")
 const {
     verifySubdomain
-} = require('././app/middlewares/domain')
+} = require('./app/middlewares/domain')
 const {
     v4: uuidv4
 } = require('uuid');
-//const https = require("https");
+
 const {
     existsSync,
     mkdirSync,
@@ -19,6 +20,13 @@ const {
     constants,
     appendFile
 } = require('fs');
+
+
+const options = {
+    pfx: readFileSync('D:/Suraj Projects/INFRA/infra_v2/cert/server.pfx'),
+    passphrase: 'time#2021'
+ };
+ 
 
 //redis
 const {
@@ -110,4 +118,6 @@ app.use(function(req, res){
 })
 
 
-app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
+//const server = https.createServer(options, app).listen(process.env.APP_PORT);// Enable with ssl 
+//app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
+const server = http.createServer(app).listen(process.env.APP_PORT); //Enable without ssl

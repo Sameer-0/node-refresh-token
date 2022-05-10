@@ -235,7 +235,7 @@
 
         let ApiObj = {
             type: 'POST',
-            url: '/admin/faculties/workpreferences',
+            url: '/admin/faculties/workpreferences/create',
             data: {
                 inputJSON: JSON.stringify(facultyWorkJSON)
             },
@@ -318,8 +318,8 @@
             console.log(facultyWorkJSON)
 
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/faculties/workpreferences',
+                type: 'POST',
+                url: '/admin/faculties/workpreferences/update',
                 data: {
                     inputJSON: JSON.stringify(facultyWorkJSON)
                 },
@@ -342,8 +342,8 @@
             $("#facultyWorkTimePreference").on('click','.delete-faculty-preference',function(){
             let id = $(this).attr("data-id");
             let ApiObj = {
-                type: 'DELETE',
-                url: '/admin/faculties/workpreferences',
+                type: 'POST',
+                url: '/admin/faculties/workpreferences/delete',
                 data: {
                     id: id
                 },
@@ -441,44 +441,54 @@
 
 
     function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $(".errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
         }
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $(".errorHtml").html(errorHtml)
-            
-            setTimeout(function(){
-                location.reload()
-            },3000)
+            simpleAlert.alert(obj);
         }
 
 

@@ -317,7 +317,7 @@ $(document).ready(function () {
 
             let ApiObj = {
                 type: 'POST',
-                url: '/admin/faculties/works',
+                url: '/admin/faculties/works/create',
                 data: {
                     inputJSON: JSON.stringify(facultyJson)
                 },
@@ -355,17 +355,7 @@ $(document).ready(function () {
             $("#add-more-facultyworkfields").addClass('d-none')
             $(".createFacultyWorkLoad").addClass('d-none')
             $(".updateFacultyWorkLoad").removeClass('d-none')
-            // let id = $(this).attr("data-id")
-            // let faculty_lid = $(this).attr("data-faculty-lid")
-            // let program_session_lid = $(this).attr("data-program-session-lid")
-            // let module_lid = $(this).attr("data-module-lid")
-            // let lecture_per_week = $(this).attr("data-lecture-per-week")
-            // let practical_per_week = $(this).attr("data-practical-per-week")
-            // let tutorial_per_week = $(this).attr("data-tutorial-per-week")
-            // let workshop_per_week = $(this).attr("data-workshop-per-week")
-            // let is_batch_preference_set = $(this).attr("data-is-batch-preference-set")
-            // console.log('faculty_lid::::::::::>>>',faculty_lid)
-            
+          
             $("#hidden_id").val($(this).attr("data-id"))
             $("#faculty_lid").val($(this).attr("data-faculty-lid")).trigger('change')
             $("#program_session_lid").val($(this).attr("data-program-session-lid")).trigger('change')
@@ -431,8 +421,8 @@ $(document).ready(function () {
             console.log('Json::::::::::::',facultyJson)
 
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/faculties/works',
+                type: 'POST',
+                url: '/admin/faculties/works/update',
                 data: {
                     inputJSON: JSON.stringify(facultyJson)
                 },
@@ -488,8 +478,8 @@ $(document).ready(function () {
         $("#facultyWorkTable").on('click','.delete-faculty-works',function(){
             let id = $(this).attr("data-id");
             let ApiObj = {
-                type: 'DELETE',
-                url: '/admin/faculties/works',
+                type: 'POST',
+                url: '/admin/faculties/works/delete',
                 data: {
                     id: id
                 },
@@ -556,48 +546,54 @@ $(document).ready(function () {
 
 
         function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+             console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $(".errorHtml").html(errorHtml)
-                //$("#add-facultywork-modal .errorHtml").html(errorHtml)
-                console.log(errors);
+            simpleAlert.alert(obj);
         }
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
-            }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                console.log(errorHtml)
-                $(".errorHtml").html(errorHtml)
-            //$("#add-facultywork-modal .errorHtml").html(errorHtml)
             console.log(errors);
-            // setTimeout(function(){
-            //     location.reload()
-            // },3000)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
         }
 
 })

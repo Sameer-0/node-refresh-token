@@ -12,6 +12,7 @@ const Days = require('../../../models/Days');
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings');
 const LectureType = require('../../../models/LectureType');
 const AcadSession = require('../../../models/AcadSession');
+const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
 
 module.exports = {
@@ -34,21 +35,26 @@ module.exports = {
     },
 
     create: (req, res) => {
-        let object = {
-            import_faculties: JSON.parse(req.body.inputJSON)
+
+        if (req.body.settingName) {
+            Settings.updateByName(res.locals.slug, req.body.settingName)
         }
-        schoolTiming.save(object, res.locals.slug, res.locals.userId).then(result => {
-            res.status(200).json(JSON.parse(result.output.output_json))
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
+        res.status(200).json({status:200, description:"success", data:[]})
+        // let object = {
+        //     import_faculties: JSON.parse(req.body.inputJSON)
+        // }
+        // schoolTiming.save(object, res.locals.slug, res.locals.userId).then(result => {
+        //     res.status(200).json(JSON.parse(result.output.output_json))
+        // }).catch(error => {
+        //     if(isJsonString.isJsonString(error.originalError.info.message)){
+        //         res.status(500).json(JSON.parse(error.originalError.info.message))
+        //     }
+        //     else{
+        //         res.status(500).json({status:500,
+        //         description:error.originalError.info.message,
+        //         data:[]})
+        //     }
+        // })
     },
 
     search: (req, res) => {

@@ -25,7 +25,7 @@ router.post('/courseworkload/workload/changestatus', courseworkload.changestatus
 router.get('/courseworkload/workload/getAll', courseworkload.getAll)
 router.get('/courseworkload/workload/search', courseworkload.search)
 router.post('/courseworkload/workload/pagination', courseworkload.pagination)
-router.put('/courseworkload/workload', validate('JsonValidator'), courseworkload.update)
+router.post('/courseworkload/workload/update', validate('JsonValidator'), courseworkload.update)
 
 //Course preference
 router.get('/courseworkload/preference', preference.getPage)

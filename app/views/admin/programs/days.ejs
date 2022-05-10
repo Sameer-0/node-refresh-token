@@ -128,8 +128,8 @@
 
             function chnageStatus(id, status) {
                        let ApiObj = {
-                             url: '/admin/programs/days',
-                             type: 'PATCH',
+                             url: '/admin/programs/days/change',
+                             type: 'POST',
                             data: {
                                     id: id,
                                     status: status
@@ -177,13 +177,14 @@
 
             $('.createProgramType').on('click', function () {
                 $.ajax({
-                    url: '/admin/programs/types',
+                    url: '/admin/programs/types/create',
                     method: 'POST',
                     type: 'JSON',
                     data: {
                         programName: $('#programName').val(),
                     },
                     success: (data) => {
+
                         location.reload()
                     },
                     error: err => {
@@ -198,7 +199,7 @@
                 $(".updateProgramType").removeClass('d-none')
 
                 $.ajax({
-                    url: '/admin/programs/types/findOne',
+                    url: '/admin/programs/types/findone',
                     method: 'GET',
                     type: 'JSON',
                     data: {
@@ -233,84 +234,7 @@
                 }
             })
 
-
-            // UPDATE PROGRAM TYPE
-            $(".updateProgramType").on('click', function () {
-                $.ajax({
-                    url: '/admin/programs/types',
-                    method: 'PUT',
-                    type: 'JSON',
-                    data: {
-                        id: $("#programId").val(),
-                        programName: $('#programName').val(),
-                    },
-                    success: (data) => {
-                        if (data.status == 200) {
-                            location.reload()
-                        } else {
-                            $(".errorMsg").html(data.message)
-                        }
-                    },
-                    error: err => {
-                        showError(err.responseJSON)
-                    }
-                })
-            })
-
-
-            //Delete Single and mutiple Delete
-            $('.select-delete-program-type').on('click', function () {
-                let deleteids = []
-                $('.delete-faculty-type:checked').each(function () {
-                    let obj = {
-                        id: $(this).attr("data-program-type-id"),
-                    }
-                    deleteids.push(obj)
-                })
-
-                if (deleteids.length > 0) {
-                    console.log('deleteids::::::::::::::', deleteids)
-                    let ApiObj = {
-                        url: '/admin/programs/types',
-                        type: 'DELETE',
-                        data: {
-                            Ids: JSON.stringify(deleteids)
-                        },
-                        dataType: 'JSON'
-                    }
-                    ajaxApi(ApiObj).then(result => {
-                        location.reload()
-                        notify();
-                    }).catch(error => {
-                        showError(error.responseJSON)
-                    })
-
-                } else {
-                    alert('Select Fields')
-                }
-            })
-
-            //Bulk Delete
-            $(".bulk-delete-program-type").on('click', function () {
-                let ApiObj = {
-                    url: '/admin/programs/types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
-                })
-
-            })
-
-
             // SEARCH PROGRAM TYPE
-
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
@@ -419,40 +343,85 @@
 
 
             function showError(errors) {
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-                if (errors.data.length > 0) {
-                    $(errors.data).each(function (key, value) {
-                        $.each(this, function (key, value) {
-                            errorHtml +=
-                                `<li>${key} ${value}</li>`
-                        });
-                    });
+                // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                //     <h3>Error</h3>
+                //     <p>${errors.description}</p>
+                //     <ul>`
+                // if (errors.data.length > 0) {
+                //     $(errors.data).each(function (key, value) {
+                //         $.each(this, function (key, value) {
+                //             errorHtml +=
+                //                 `<li>${key} ${value}</li>`
+                //         });
+                //     });
+                // }
+                // errorHtml +=
+                //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+                // $(".errorHtml").html(errorHtml)
+                console.log('success',errors);
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title : errors.description,
+                    message: errors.data,
+                    type: 'alert-dannger',
+                    buttons: {
+                        positive:{
+                            text: "Okay",
+                            action: function(){
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                            alert('Negative')
+                            }
+                        }
+                    }
                 }
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $(".errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
             }
 
 
             function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+            //         <h3>Success</h3>
+            //         <p>${errors.description}</p>
+            //         <ul>`
+            // if (errors.data.length > 0) {
+            //     $(errors.data).each(function (key, value) {
+            //         $.each(this, function (key, value) {
+            //             errorHtml +=
+            //                 `<li>${key} ${value}</li>`
+            //         });
+            //     });
+            // }
+            // errorHtml +=
+            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+            // $(".errorHtml").html(errorHtml)
+
+            console.log('success',errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message:"",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $(".errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
         }
 
         })

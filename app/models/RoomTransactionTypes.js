@@ -50,13 +50,7 @@ module.exports = class RoomTransactionTypes {
         })
     }
 
-    static deleteAll() {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].[room_transaction_types] `)
-        })
-    }
-
-
+  
     static getRTSId(id) {
         return poolConnection.then(pool => {
             let request = pool.request()

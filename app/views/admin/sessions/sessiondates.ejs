@@ -30,6 +30,7 @@
                 <button class="btn ms-auto select-delete-sessiondate add-btn "><i class="fas fa-trash"></i></button> -->
                 <!-- <button class="btn ms-auto bulk-delete-sessiondate add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
+                <button class="btn btn-danger  fetchFromSAP"><i class="fa fa-download"></i> Fetch From SAP</button>
             </div>
         </div>
 
@@ -234,7 +235,7 @@
 
         let ApiObj = {
             type: 'POST',
-            url: '/admin/sessions/dates',
+            url: '/admin/sessions/dates/create',
             data: {
                 inputJSON: JSON.stringify(sessionJSON)
             },
@@ -297,8 +298,8 @@
             // UPDATE SESSION DATE 
             $(".updateSessionDate").on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/dates',
-                    method: 'PUT',
+                    url: '/admin/sessions/dates/update',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
@@ -335,8 +336,8 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/sessions/dates',
-                        type: 'DELETE',
+                        url: '/admin/sessions/dates/delete',
+                        type: 'POST',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
@@ -353,22 +354,7 @@
                 }
             })
 
-            //Bulk Delete
-            $(".bulk-delete-sessiondate").on('click', function () {
-                console.log('delete all')
-                let ApiObj = {
-                    url: '/admin/sessions/dates',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
 
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-            })
 
             // SEARCH PROGRAM TYPE
             $('#searchkeyword').on('input', delay(function (e) {
@@ -467,17 +453,6 @@
 
             
             function showSuccess(errors) {
-            //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            //         <h3>Error</h3>`;
-            //     errorHtml += `<ul>`;
-            //     errors.errors.map(er => {
-            //         errorHtml +=
-            //             `<li>${er.msg}</li>`
-            //     })
-
-            //     errorHtml +=
-            //         `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            //     $("#errorHtml").html(errorHtml)
 
             console.log(errors);
             let simpleAlert = new SimpleAlert();
@@ -506,22 +481,6 @@
 
 
             function showError(errors) {
-            //     let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            //         <h3>Error</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            //     if (errors.data.length > 0) {
-            //         $(errors.data).each(function (key, value) {
-            //             $.each(this, function (key, value) {
-            //                 errorHtml +=
-            //                     `<li>${key} ${value}</li>`
-            //             });
-            //         });
-            //     }
-            //     errorHtml +=
-            //         `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            //     $("#errorHtml").html(errorHtml)
-
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {

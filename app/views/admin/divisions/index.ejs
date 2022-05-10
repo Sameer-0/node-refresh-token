@@ -59,7 +59,7 @@
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
-                    <th>Action</th>
+                  
                 </thead>
                 <tbody>
                     <%let count = 1;%>
@@ -76,9 +76,7 @@
                         <td><input class="form-control rounded-0" name="count_for_practical_batch" value="<%-division.count_for_practical_batch%>"></td>
                         <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="<%-division.count_for_tutorial_batch%>"></td>
                         <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="<%-division.count_for_workshop_batch%>"></td>
-                        <td>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
-                        </td>
+                       
                     </tr>
                     <%}%>
                 </tbody>
@@ -142,8 +140,8 @@
 
             console.log('Json::::::::::::',divJSON)
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/divisions',
+                type: 'POST',
+                url: '/admin/divisions/update',
                 data: {
                     inputJSON: JSON.stringify(divJSON)
                 },
@@ -176,7 +174,7 @@
         function chnageStatus(id, status) {
             console.log(id, status)
             let ApiObj = {
-                url: '/admin/divisions/changestatus',
+                url: '/admin/divisions/change',
                 type: 'POST',
                 data: {
                     id: id,
@@ -240,7 +238,7 @@
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
                     <th>Module name</th>
-                    <th>Action</th>
+                 
                 </thead>`;
             if (divisionList.length > 0) {
                 let count = 1;
@@ -256,12 +254,7 @@
                         <td>${division.count_for_tutorial_batch}</td>
                         <td>${division.count_for_workshop_batch}</td>
                         <td>${division.module_name}</td>
-                        <td><label class="switch">
-                            <input type="checkbox" class="changeStatus" data-id="${division.id }"
-                                data-status="${division.status}"
-                                ${division.status == 'Yes' ? 'Checked' :  '' }>
-                            <span class="switch-slider round"></span>
-                        </label></td>
+                        
                             </tr>`
                 }
             } else {

@@ -21,7 +21,7 @@ module.exports = {
                 })
             })
         } else if (req.method == "POST") {
-            Campuses.fetchChunkRows(req.body.pageNo).then(result => {
+            Campuses.pagination(req.body.pageNo).then(result => {
                 res.json({
                     status: "200",
                     message: "fetched",

@@ -177,7 +177,7 @@
 
                 let ApiObj = {
                     type: 'POST',
-                    url: '/management/rooms/bookings/transaction-types',
+                    url: '/management/rooms/bookings/transaction-types/create',
                     data: {
                         inputJSON: JSON.stringify(transJson)
                     },
@@ -198,7 +198,7 @@
                 $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
 
                 let ApiObj = {
-                    url: '/management/rooms/bookings/transaction-types/findOne',
+                    url: '/management/rooms/bookings/transaction-types/findone',
                     method: 'GET',
                     data: {
                         Id: $(this).attr("data-roomtransaction-stages-id")
@@ -249,8 +249,8 @@
                 console.log('JSON', JSON.stringify(transJson))
 
                 let ApiObj = {
-                    type: 'PUT',
-                    url: '/management/rooms/bookings/transaction-types',
+                    type: 'POST',
+                    url: '/management/rooms/bookings/transaction-types/update',
                     data: {
                         inputJSON: JSON.stringify(transJson)
                     },
@@ -295,8 +295,8 @@
 
                 if (deleteids.length > 0) {
                     let ApiObj = {
-                        url: '/management/rooms/bookings/transaction-types',
-                        type: 'DELETE',
+                        url: '/management/rooms/bookings/transaction-types/delete',
+                        type: 'POST',
                         data: {
                             inputJSON: JSON.stringify(deleteids)
                         },
@@ -315,33 +315,6 @@
 
 
 
-            //Bulk Delete
-            $(".bulk-delete-roomtransaction-type").on('click', function () {
-
-                console.log('bulk delete working')
-                //Alert confirm
-                alertMsg()
-
-                let ApiObj = {
-                    url: '/management/rooms/bookings/transaction-types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                $('.alert-continue').on('click', () => {
-                    ajaxApi(ApiObj).then(result => {
-                        location.reload()
-                    }).catch(error => {
-                        showError(error.responseJSON)
-                    })
-                })
-                
-                $('.cancel').on('click', () => {
-                    $('#alertModal').css('display', 'none');
-                })
-
-            })
 
 
             //search feature delay function is writter in script.js file which is located in public/js/script.js

@@ -39,11 +39,6 @@ module.exports = class HolidayTypes {
         })
     }
 
-    static deleteAll() {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].[holiday_types] `)
-        })
-    }
 
     static fetchAll(rowcont) {
         return poolConnection.then(pool => {

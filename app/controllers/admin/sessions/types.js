@@ -95,6 +95,7 @@ module.exports = {
     },
 
     delete: (req, res) => {
+        console.log(' DELETE RES::::::::::', req.body.Ids)
         SessionTypes.delete(req.body.Ids, res.locals.slug).then(result => {
             res.json({
                 status: 200,
@@ -112,22 +113,6 @@ module.exports = {
         })
     },
 
-    deleteAll: (req, res) => {
-        SessionTypes.deleteAll(res.locals.slug).then(result => {
-            res.status(200).json({
-                status: 200
-            })
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    },
 
     search: (req, res) => {
         let rowcount = 10;

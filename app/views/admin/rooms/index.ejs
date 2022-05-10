@@ -47,8 +47,8 @@
                 <h5 class="modal-title text-white" id="add-room-modal-title">Import Rooms</h5>
             </div>
             <div>
-                <button type="button" class="add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-room-modal">
-                    <i class="fas fa-plus"></i></button>
+                <!-- <button type="button" class="add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-room-modal">
+                    <i class="fas fa-plus"></i></button> -->
             </div>
         </div>
 
@@ -240,6 +240,11 @@
                 dropdownParent: $('#open-transaction-modal') ,
                 tags: true
         })
+         
+            $('.select2').select2({
+                dropdownParent: $('#open-room-modal') ,
+                tags: true
+        })
 
 
 
@@ -406,94 +411,6 @@
     });
     
 
-
-    $("#roomTransactionTable").on('click','.viewtransactioninfo',function() {
-        let trand_lid = $(this).attr('data-id')
-        let ApiObj = {
-                type: 'GET',
-                url: '/admin/rooms/details',
-                data: {
-                    id: trand_lid
-                },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                let htmlTable = `<table class="table table-borderd">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Room No</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                    </tr>    
-                    </thead>
-                    <tbody>`
-                        let count = 1
-                       result.data.forEach(function(item){
-                        htmlTable+=` <tr>
-                        <td>${count++}</td>
-                        <td>${item.room_number}</td>
-                        <td>${item.start_time}</td>
-                        <td>${item.end_time}</td>
-                        <td>${item.start_date}</td>
-                        <td>${item.end_date}</td>
-                                    </tr>`
-                       })
-                       htmlTable+= `</tbody></table>`;
-                console.log(htmlTable)
-                $("#ShowTransactionTable").html(htmlTable)
-                $("#show-transaction-details").modal('show')
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-    })
-
-
-
-        //Reject 
-        $(".RejectBtn").on('click',function(){
-            let ApiObj = {
-                type: 'POST',
-                url: '/admin/rooms/approval',
-                data: {
-                    input_room_request_lid: $(this).attr("data-transactionId"),
-                    approval_flag: $(this).attr("data-status")
-                },
-                dataType: 'JSON'
-            }
-
-
-            ajaxApi(ApiObj).then(result => {
-              console.log('result::::::::::::::',result)
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-        })
-
-        //Delete Faculty API
-        $("#roomTransactionTable").on('click','.delete-transaction',function(){
-            let id = $(this).attr("data-id");
-            let ApiObj = {
-                type: 'DELETE',
-                url: '/admin/rooms',
-                data: {
-                    id: id
-                },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
-                showSuccess(result)
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-        })
-
-
     function AjaxtTable(transactionList){
         let AjaxTable = `<table class="table custom_row table-bordered" id="roomTransactionTable">
                 <thead>
@@ -572,9 +489,6 @@
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             $(".errorHtml").html(errorHtml)
         }
-
-
-
     })
 
     </script>

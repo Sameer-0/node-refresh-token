@@ -29,13 +29,11 @@
                     data-bs-target="#add-session-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-session-type add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-session-type add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
             </div>
         </div>
 
         <div class="card-body table-responsive">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button>                        
+            <div class="table-searchbar-container d-flex"><button type="button"><i class="fas fa-search"></i> </button>                        
                 <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
             <table class="table custom_row table-bordered" id="sessionTypeTable">
@@ -117,7 +115,7 @@
 
             $('.createSessionType').on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
+                    url: '/admin/sessions/types/create',
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -125,11 +123,13 @@
                         description: $('#description').val(),
                     },
                     success: (data) => {
-                        location.reload()
+                        console.log('ejsdata', data)
+                        
+                        showExpressSuccess(data)
                     },
                     error: err => {
-                        console.log('err::::::::>>',err)
-                        showError(err.responseJSON)
+                        console.log('err::::::::>><<<',err)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -141,7 +141,7 @@
                 $("#add-session-modal-title").html('UPDATE SESSION TYPE')
 
                 $.ajax({
-                    url: '/admin/sessions/types/findOne',
+                    url: '/admin/sessions/types/findone',
                     method: 'GET',
                     type: 'JSON',
                     data: {
@@ -155,9 +155,10 @@
                         $('#description').val(Sessionobj.description)
                         $('#Id').val(Sessionobj.id)
                         $("#add-session-modal").modal('show')
+                        
                     },
                     error: err => {
-                        showError(err.responseJSON)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -180,8 +181,8 @@
             // UPDATE PROGRAM TYPE
             $(".updateSessionType").on('click', function () {
                 $.ajax({
-                    url: '/admin/sessions/types',
-                    method: 'PUT',
+                    url: '/admin/sessions/types/update',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
@@ -190,13 +191,14 @@
                     },
                     success: (data) => {
                         if (data.status == 200) {
-                            location.reload()
+                            // location.reload()
+                            showExpressSuccess(data);
                         } else {
                             $(".errorMsg").html(data.message)
                         }
                     },
                     error: err => {
-                        showError(err.responseJSON)
+                        showExpressError(err.responseJSON)
                     }
                 })
             })
@@ -215,45 +217,26 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/sessions/types',
-                        type: 'DELETE',
+                        url: '/admin/sessions/types/delete',
+                        type: 'POST',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
                         dataType: 'JSON'
                     }
                     ajaxApi(ApiObj).then(result => {
-                        location.reload()
-                        notify();
+             
+                        showExpressSuccess(result)
                     }).catch(error => {
-                        showError(error.responseJSON)
+                        showExpressError(error.responseJSON)
                     })
                 } else {
                     alert('Select Fields')
                 }
             })
 
-            //Bulk Delete
-            $(".bulk-delete-session-type").on('click', function () {
-                let ApiObj = {
-                    url: '/admin/sessions/types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
-                })
-
-            })
-
 
             // SEARCH PROGRAM TYPE
-
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
@@ -343,18 +326,57 @@
                 $("#sessionTypeTable").html(AjaxTable);
             }
 
-            function showError(errors) {
-                console.log('errors',errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>` 
-                        errors.errors.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
-                errorHtml +=
-                    `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+
+        function showExpressSuccess(errors) {
+
+            console.log('success',errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.message,
+                message:"",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+        function showExpressError(errors) {
+                
+                console.log('success<><><',errors);
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title : "Error",
+                    message: errors.errors,
+                    express:'true',
+                    type: 'alert-danger',
+                    buttons: {
+                        positive:{
+                            text: "Okay",
+                            action: function(){
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                            alert('Negative')
+                            }
+                        }
+                    }
+                }
+                simpleAlert.alert(obj);
             }
 
         })

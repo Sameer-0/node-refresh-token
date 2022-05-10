@@ -15,8 +15,6 @@ module.exports = class RoomTypes {
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)}  rt.id as roomtypeid, rt.name, rt.description FROM [dbo].room_types rt ORDER BY rt.id DESC`)
-        }).catch(error => {
-            throw error
         })
     }
 
@@ -78,11 +76,6 @@ module.exports = class RoomTypes {
         })
     }
 
-    static deleteAll() {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].room_types`)
-        })
-    }
 
 
 }

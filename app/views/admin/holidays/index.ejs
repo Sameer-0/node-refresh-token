@@ -59,8 +59,6 @@
                     data-bs-target="#add-holiday-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto select-delete-holidays add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
             </div>
         </div>
 
@@ -289,7 +287,7 @@
 
             let ApiObj = {
                 type: 'POST',
-                url: '/admin/holidays',
+                url: '/admin/holidays/create',
                 data: {
                     inputJSON: JSON.stringify(holidayJson)
                 },
@@ -297,7 +295,8 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                location.reload()
+                showSuccess(result)
+                // location.reload()
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -311,7 +310,7 @@
             $(".updateHoliday").removeClass('d-none')
             let ApiObj = {
                 type: 'GET',
-                url: '/admin/holidays/findOne',
+                url: '/admin/holidays/findone',
                 data: {
                     Id: $(this).attr('data-holiday-id')
                 },
@@ -363,8 +362,8 @@
                 }
             })
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/holidays',
+                type: 'POST',
+                url: '/admin/holidays/update',
                 data: {
                     inputJSON: JSON.stringify(holidayJson)
                 },
@@ -372,7 +371,8 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                location.reload()
+                // location.reload()
+                showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -461,16 +461,17 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/holidays',
-                        type: 'DELETE',
+                        url: '/admin/holidays/delete',
+                        type: 'POST',
                         data: {
                             id: JSON.stringify(deleteids)
                         },
                         dataType: 'JSON'
                     }
                     ajaxApi(ApiObj).then(result => {
-                        location.reload()
-                        notify();
+                        // location.reload()
+                        // notify();
+                        showSuccess(result)
                     }).catch(error => {
                         showError(error.responseJSON)
                     })
@@ -481,23 +482,6 @@
 
 
 
-            //Bulk Delete
-               $(".bulk-delete-holiday").on('click', function () {
-                let ApiObj = {
-                    url: '/admin/holidays',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
-                })
-
-            })
 
 
 
@@ -547,20 +531,55 @@
             
 
         function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            $(errors.data).each(function (key, value) {
-                $.each(this, function (key, value) {
-                    errorHtml +=
-                        `<li>${key} ${value}</li>`
-                });
-            });
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                }
+            }
         }
+        simpleAlert.alert(obj);
+        }
+
+        function showSuccess(errors) {
+        console.log(errors);
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors.description,
+            message: "",
+            type: 'alert-success',
+            buttons: {
+                positive:{
+                    text: "Okay",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancel",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+    }
+
 
     })
 </script>

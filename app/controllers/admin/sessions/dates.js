@@ -9,6 +9,7 @@ const AcademicCalender  = require('../../../models/AcademicCalender')
 const SessionTypes  = require('../../../models/SessionTypes')
 const ProgramSessions = require('../../../models/ProgramSessions')
 const isJsonString = require('../../../utils/util')
+const Settings = require('../../../models/Settings')
 
 
 module.exports = {
@@ -38,22 +39,28 @@ module.exports = {
 
     create: (req, res) => {
 
-        let object = {
-            new_session_dates: JSON.parse(req.body.inputJSON)
+        // let object = {
+        //     new_session_dates: JSON.parse(req.body.inputJSON)
+        // }
+        if (req.body.settingName) {
+            Settings.updateByName(res.locals.slug, req.body.settingName)
         }
-        SessionDates.save(res.locals.slug, object, res.locals.userId).then(result => {
-            res.status(200).json(JSON.parse(result.output.output_json))
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    },
+        res.status(200).json({status:200, description:"success", data:[]})
+
+        // SessionDates.save(res.locals.slug, object, res.locals.userId).then(result => {
+        //     res.status(200).json(JSON.parse(result.output.output_json))
+            
+        // }).catch(error => {
+        //     if(isJsonString.isJsonString(error.originalError.info.message)){
+        //         res.status(500).json(JSON.parse(error.originalError.info.message))
+        //     }
+        //     else{
+        //         res.status(500).json({status:500,
+        //         description:error.originalError.info.message,
+        //         data:[]})
+        //     }
+        // })
+    }, 
 
     findOne: (req, res) => {
        
@@ -123,23 +130,6 @@ module.exports = {
         })
     },
 
-    deleteAll: (req, res) => {
-        console.log('all delete!!!!!!!')
-        SessionDates.deleteAll(res.locals.slug).then(result => {
-            res.status(200).json({
-                status: 200
-            })
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    },
 
     search: (req, res) => {
         let rowcount = 10;
