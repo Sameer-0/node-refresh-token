@@ -10,7 +10,7 @@ const CourseDayRoomPreferences = require('../../../models/CourseDayRoomPreferenc
 const Programs = require('../../../models/Programs');
 const Days = require('../../../models/Days');
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings');
-const LectureType = require('../../../models/LectureType');
+const SchoolTimingType = require('../../../models/SchoolTimingType');
 const AcadSession = require('../../../models/AcadSession');
 const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
@@ -18,14 +18,14 @@ const isJsonString = require('../../../utils/util')
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), LectureType.fetchAll(10), AcadSession.fetchAll(1000)]).then(result => {
+        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000)]).then(result => {
             console.log(result[0].recordset)
             res.render("admin/schooltimings/index",{
                 schoolTimingList: result[0].recordset,
                 programList: result[1].recordset,
                 dayList: JSON.stringify(result[2].recordset),
                 slotTime:result[3].recordset,
-                lectureTypeList: result[4].recordset,
+                schoolTimingTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
                 pageCount: 0, 
                 breadcrumbs: req.breadcrumbs,
