@@ -48,7 +48,7 @@ module.exports = {
                 campusList: result[4].recordset,
                 roomList: result[5].recordset,
                 slotIntervalTimings: JSON.stringify(result[6].recordset),
-                academicCalender: result[7].recordset,
+                academicCalender: JSON.stringify(result[7].recordset),
                 buildingList: result[8].recordset,
                 totalentries: result[0].recordset.length ? result[0].recordset.length : 0,
                 breadcrumbs: req.breadcrumbs,
