@@ -1,3 +1,4 @@
+
 // $(document).ready(function () {
 //     // SIDE-BAR OPENING EVENT
 //     const mobileHamburger = document.querySelector('.hamburger-smalldevices');
@@ -7,6 +8,7 @@
 //         leftBar.classList.toggle('left-sidebar-open');
 //     })
 // })
+
 
 
 function delay(callback, ms) {
