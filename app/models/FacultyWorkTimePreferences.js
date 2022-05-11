@@ -28,7 +28,7 @@ module.exports = class FacultyWorkTimePreferences {
             INNER JOIN [dbo].slot_interval_timings sit ON fwtp.start_time_id = sit.id
             INNER JOIN [dbo].slot_interval_timings _sit ON fwtp.end_time_id = _sit.id
             INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
-            INNER JOIN [${slug}].programs p ON p.id =  pd.day_lid
+            INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
             INNER JOIN [${slug}].days d ON d.id = pd.day_lid
             ORDER BY fwtp.id DESC`)
         })
@@ -59,7 +59,7 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [dbo].slot_interval_timings sit ON fwtp.start_time_id = sit.id
                 INNER JOIN [dbo].slot_interval_timings _sit ON fwtp.end_time_id = _sit.id
                 INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
-                INNER JOIN [${slug}].programs p ON p.id =  pd.day_lid
+                INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
                 INNER JOIN [${slug}].days d ON d.id = pd.day_lid
                 WHERE sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR RTRIM(p.program_name) LIKE @keyword OR p.program_id LIKE @keyword OR p.program_code LIKE @keyword OR d.day_name LIKE @keyword
                 ORDER BY fwtp.id DESC`)
@@ -80,7 +80,7 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [dbo].slot_interval_timings sit ON fwtp.start_time_id = sit.id
                 INNER JOIN [dbo].slot_interval_timings _sit ON fwtp.end_time_id = _sit.id
                 INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
-                INNER JOIN [${slug}].programs p ON p.id =  pd.day_lid
+                INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
                 INNER JOIN [${slug}].days d ON d.id = pd.day_lid
                 ORDER BY fwtp.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
