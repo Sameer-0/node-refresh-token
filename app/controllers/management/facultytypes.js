@@ -23,7 +23,7 @@ module.exports = {
             add_faculty_types: JSON.parse(req.body.inputJSON)
         }
 
-        FacultyTypes.save(object).then(result => {
+        FacultyTypes.save(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
@@ -51,7 +51,7 @@ module.exports = {
             update_faculty_types: JSON.parse(req.body.inputJSON)
         }
 
-        FacultyTypes.update(object).then(result => {
+        FacultyTypes.update(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){

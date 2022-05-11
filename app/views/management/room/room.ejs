@@ -7,11 +7,11 @@
 <div class="main-content">
     <!--MAIN CONTENT START-->
     <div class="breadcrumbs-container">
-    
+
         <ul class="breadcrumb">
             <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-                <%} }%>
+            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+            <%} }%>
         </ul>
     </div>
     <div class="errorHtml"></div>
@@ -179,7 +179,7 @@
 
                     <div class="col-md-4">
                         <label>Handled By</label>
- 
+
                         <select name="handled_by" id="handled_by" class="select2 modalSelect2">
                             <option>--select--</option>
                             <% for(let org of orgList) { %>
@@ -273,7 +273,7 @@
                                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-room"></i>
                                 </td>
                             </tr>
-                            
+
                         </tbody>
                     </table>
                 </div>
@@ -390,7 +390,7 @@
                 let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
                 let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
                 let is_basement = $(elem).find(`select[name='is_basement']`).val();
-                let is_processed = $(elem).find(`select[name='is_processed']`).val();
+               // let is_processed = $(elem).find(`select[name='is_processed']`).val();
 
                 if (index < roomCount - 1) {
                     let obj = {
@@ -403,7 +403,7 @@
                         start_time_id: start_time_id,
                         end_time_id: end_time_id,
                         is_basement: is_basement,
-                        is_processed: is_processed
+                       // is_processed: is_processed
                     }
                     console.log('OBJ1::::::::::>>', obj)
                     roomJson.push(obj)
@@ -418,7 +418,7 @@
                         start_time_id: start_time_id,
                         end_time_id: end_time_id,
                         is_basement: is_basement,
-                        is_processed: is_processed
+                       // is_processed: is_processed
                     }
                     console.log('OBJ2::::::::::>>', obj)
                     roomJson.push(obj)
@@ -482,7 +482,7 @@
                     $("#roomId").val(roomData.roomid)
                     $("#room_number").val(roomData.room_number)
                     $("#building_lid").val(roomData.building_lid).trigger('change'),
-                    $("#room_type_id").val(roomData.room_type_id).trigger('change')
+                        $("#room_type_id").val(roomData.room_type_id).trigger('change')
                     $("#floor_number").val(roomData.floor_number)
                     $("#capacity").val(roomData.capacity)
                     $("#start_time_id").val(roomData.start_time_id)
@@ -560,7 +560,7 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
                 showSuccess(result);
-                
+
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -601,7 +601,6 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
                 showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
@@ -684,8 +683,8 @@
         });
 
 
-        // Onchange get Building Time slot for rooms
         $("#building_lid").on('change', function () {
+            console.log('Building API::::::::::::::>')
             let building_id = $(this).val()
             let ApiObj = {
                 url: '/management/rooms/room/getroomtimeslots',
@@ -698,52 +697,91 @@
 
             ajaxApi(ApiObj).then(result => {
 
-                console.log('Response::::::::::::',result)
-                let startTime =``
-                    
+
+                let startTime = ``;
+                let endTime = ``;
 
                 if (result.data.length > 0) {
-                    startTime +=
-                        `<option disabled selected value="">--Select Time--</option>`;
+                    startTime += `<option disabled selected value="">--Select Time--</option>`;
+                    endTime += `<option disabled selected value="">--Select Time--</option>`;
+
                     result.data.forEach(element => {
-                        startTime += `<option value="${element.id}">
-                                ${element.start_time}
-                            </option>`
+                        startTime +=
+                            `<option value="${element.id}">${element.start_time}</option>`;
+                        endTime +=
+                            `<option value="${element.id}">${element.end_time}</option>`;
                     });
                 } else {
-                    startTime += `<option value="">
-                                No Slot Found!
-                            </option>`
+                    startTime += `<option value="">No Slot Found!</option>`;
+                    endTime += `<option value="">No Slot Found!</option>`;
+
                 }
-               
-                $("#start_time_id").html(startTime)
-                $("#end_time_id").html(startTime)
+                $("#add-room-modal  #start_time_id").html(startTime);
+                $("#add-room-modal  #end_time_id").html(endTime);
+                
                 $('#building_lid').prop('disabled', 'disabled');
             }).catch(error => {
-                showError(error.responseJSON)
+                showError(error.responseJSON);
             })
         })
 
+
+                // Fetch Single Room
+            $('#roomTable').on('click', '.edit-room', function () {
+            $("#add-room-modal-title").html('Update Room')
+            $("#insertRoom").addClass('d-none')
+            $("#add-room").addClass('d-none')
+            $(".updateRoom").removeClass('d-none')
+            $("#add-more-room").addClass('d-none')
+            $.ajax({
+                url: '/management/rooms/findone',
+                method: 'GET',
+                type: 'JSON',
+                data: {
+                    id: $(this).attr('data-room-id')
+                },
+                success: data => {
+                    let roomData = data.roomData;
+                    console.log('success::::::::::::::::::::>> ', roomData)
+                    $("#roomId").val(roomData.roomid)
+                    $("#room_number").val(roomData.room_number)
+                    $("#building_lid").val(roomData.building_lid).trigger('change'),
+                    $("#room_type_id").val(roomData.room_type_id).trigger('change')
+                    $("#floor_number").val(roomData.floor_number)
+                    $("#capacity").val(roomData.capacity)
+                    $("#add-room-modal #start_time_id").val(roomData.start_time_id).trigger('change')
+                    $("#add-room-modal #end_time_id").val(roomData.end_time_id).trigger('change')
+                    $("#add-room-modal #handled_by").val(roomData.handled_by).trigger('change')
+                    
+                    $("#is_basement").val(roomData.is_basement)
+                    $("#is_processed").val(roomData.is_processed)
+                    $("#add-room-modal").modal('show')
+                },
+                error: err => {
+                    console.log('Error: ', err)
+                }
+            })
+        })
 
 
         function showSuccess(errors) {
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
-                title : errors.description,
+                title: errors.description,
                 message: errors.data,
                 type: 'alert-success',
                 buttons: {
-                    positive:{
+                    positive: {
                         text: "Okay",
-                        action: function(){
+                        action: function () {
                             document.querySelector('.simple-alert').remove();
                         }
                     },
                     negative: {
                         text: "Cancel",
                         action: function () {
-                        alert('Negative')
+                            alert('Negative')
                         }
                     }
                 }
@@ -756,25 +794,25 @@
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
-                title : errors.description,
+                title: errors.description,
                 message: "",
                 type: 'alert-danger',
                 buttons: {
-                    positive:{
+                    positive: {
                         text: "Okay",
-                        action: function(){
+                        action: function () {
                             document.querySelector('.simple-alert').remove();
                         }
                     },
                     negative: {
                         text: "Cancel",
                         action: function () {
-                        alert('Negative')
+                            alert('Negative')
                         }
                     }
                 }
-        }
-        simpleAlert.alert(obj);
+            }
+            simpleAlert.alert(obj);
         }
 
 
@@ -793,7 +831,7 @@
                                 <th>Campus</th>
                                 <th>Is Processed</th>
                                 <th>Action</th>
-                                <th>Check All <input type="checkbox" class="selectAll-rooms"></th>
+                             
                     </thead>
                     <tbody>`;
 

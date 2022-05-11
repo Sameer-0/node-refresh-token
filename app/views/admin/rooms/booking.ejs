@@ -225,6 +225,31 @@
 
 <!-- Modal -->
 
+<div class="modal fade" id="room-details-modal" tabindex="-1" aria-labelledby="room-details-modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h3 class="modal-title" id="room-details-modal-title">Booking Details</h3>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times text-dark"></i></button>
+            </div>
+            <div class="modal-body py-0">
+           
+            </div>
+            <div class="px-3 error-html"></div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn import-room modal-inputform-btn" id="importRoom">Import Room</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+  <%- include("../partials/footer") %>
+    <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"> </script>
+    <script>
+        $(document).ready(function () {
+
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"> </script>
@@ -518,8 +543,8 @@
                 })
                 htmlTable += `</tbody></table>`;
                 console.log(htmlTable)
-                $("#ShowTransactionTable").html(htmlTable)
-                $("#show-transaction-details").modal('show')
+                $("#room-details-modal .modal-body").html(htmlTable)
+                $("#room-details-modal").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -666,5 +691,8 @@
 
 
     })
-</script>
-<%- include("../partials/footerEnd") %>
+
+
+    </script>
+    <%- include("../partials/footerEnd") %>
+
