@@ -21,12 +21,17 @@ const {
     appendFile
 } = require('fs');
 
+let sslOptions;
 
-const options = {
-    pfx: readFileSync(__dirname+`/cert/server.pfx`),
-    passphrase: 'time#2021'
-};
-//console.log(__dirname+'/cert/server.pfx')
+if (!process.env.APP_ENV === 'LOCAL') {
+
+    sslOptions = {
+        pfx: readFileSync(__dirname + `/cert/server.pfx`),
+        passphrase: 'time#2021'
+    };
+
+}
+
 
 //redis
 const {
@@ -136,31 +141,31 @@ app.use(function (req, res) {
 //     let fsErr = '';
 //     let errMsg = err.stack;
 //     let msg = `Opps! Something went wrong.`
-  
+
 //     console.log('Error midleware: ', errMsg)
-  
+
 //     try {
-  
+
 //       if (!existsSync(logDir) && !accessSync(logDir, constants.R_OK | constants.W_OK)) {
 //         mkdirSync(logDir);
 //       }
 //       let currentDate = new Date();
 //       let errStr = `${currentDate}: \n Request URL - ${req.hostname + req.url} \n ${errMsg} \n -------------- \n`
-  
+
 //       appendFile(logFile, errStr, err => {
 //         if (err) throw err;
 //       })
-  
+
 //     } catch (e) {
 //       fsErr += e;
 //       console.log("catched error====>>> ", e)
 //     }
-  
+
 //     console.log('File err===>>> ', fsErr)
 //     console.log("Request type ===============================>>>>>", req.xhr)
-  
+
 //     if (req.xhr) {
-  
+
 //       res.status(500).json({
 //         msg: msg + fsErr
 //       })
@@ -171,8 +176,10 @@ app.use(function (req, res) {
 //     }
 //   })
 
-
-const server = https.createServer(options, app).listen(process.env.APP_PORT);// Enable with ssl 
-//app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
-//const server = http.createServer(app, console.log('Server Started At Port: ', process.env.APP_PORT));
-//app.listen(process.env.APP_PORT); 
+if (!process.env.APP_ENV === 'LOCAL') {
+    const server = https.createServer(sslOptions, app);
+    server.listen(process.env.APP_PORT);
+} else {
+    const server = http.createServer(app);
+    server.listen(process.env.APP_PORT);
+}

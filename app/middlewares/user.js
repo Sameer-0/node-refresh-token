@@ -17,7 +17,7 @@ module.exports = {
 
         if (req.sessionID) {
             store.get(req.sessionID, async (err, result) => {
-               //  console.log('isLoggedIn::::::::::::::::::>> ', err, result)
+                //  console.log('isLoggedIn::::::::::::::::::>> ', err, result)
                 if (!result) {
                     res.redirect('/user/login')
                 } else {
@@ -40,7 +40,7 @@ module.exports = {
         }
 
         store.get(req.sessionID, async (err, result) => {
-           console.log('redirectIfLoggedIn result::::::::::::::::::>> ', result);
+            console.log('redirectIfLoggedIn result::::::::::::::::::>> ', result);
 
             if (!result) {
 
@@ -51,7 +51,11 @@ module.exports = {
             //     return res.redirect('/user/select-dashboard');
             // }
 
-            res.redirect(`/${result.modules[0].name}/dashboard`);
+            if (result.modules.length > 0) {
+                res.redirect(`/${result.modules[0].name}/dashboard`);
+            } else {
+                res.send('You have no permissions.')
+            }
 
         })
 
@@ -73,7 +77,7 @@ module.exports = {
                 //         return next();
                 //     }
                 // }
-                return next();//comment this line 
+                return next(); //comment this line 
                 //res.send('YOU DO NOT HAVE PERMISSION')
             }
         })
