@@ -24,7 +24,7 @@ module.exports = class Rooms {
     static fetchAll(rowCount) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowCount)} r.id, r.id as roomid,  r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
-            CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, st.end_time, 100) AS end_time,
+            CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
             o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
             INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
             INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
@@ -47,10 +47,11 @@ module.exports = class Rooms {
         })
     }
 
-    static update(inputJSON) {
+    static update(inputJSON, userId) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_update_rooms]')
         })
@@ -61,7 +62,7 @@ module.exports = class Rooms {
         return poolConnection.then(pool => {
             return pool.request().input('pageNo', sql.Int, pageNo)
                 .query(`SELECT  r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
-                CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, st.end_time, 100) AS end_time,
+                CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
                 o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
                 INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
                 INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
@@ -85,7 +86,7 @@ module.exports = class Rooms {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowCount)} r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
-                CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, st.end_time, 100) AS end_time,
+                CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
                 o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
                 INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
                 INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
@@ -109,10 +110,11 @@ module.exports = class Rooms {
     }
 
 
-    static save(inputJSON) {
+    static save(inputJSON, userId) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_add_new_rooms]')
         })
@@ -142,8 +144,8 @@ module.exports = class Rooms {
         })
     }
 
-    static RoomRequest(slug, body){
-        console.log('Body:::::::::::::::::>>>',slug, body)
+    static RoomRequest(slug, body) {
+        console.log('Body:::::::::::::::::>>>', slug, body)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('room_transaction_lid', sql.Int, body.input_room_request_lid)

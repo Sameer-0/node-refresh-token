@@ -52,7 +52,7 @@ module.exports = {
         let object = {
             update_rooms: JSON.parse(req.body.inputJSON)
         }
-        Rooms.update(object).then(result => {
+        Rooms.update(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
@@ -76,7 +76,7 @@ module.exports = {
         let object = {
             add_new_rooms: JSON.parse(req.body.inputJSON)
         }
-        Rooms.save(object).then(result => {
+        Rooms.save(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
