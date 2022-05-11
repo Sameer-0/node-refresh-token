@@ -26,7 +26,7 @@ module.exports = {
             add_room_transaction_types: JSON.parse(req.body.inputJSON)
         }
 
-        RoomTransactionTypes.save(object).then(result => {
+        RoomTransactionTypes.save(object, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
@@ -58,7 +58,7 @@ module.exports = {
             update_room_transaction_types: JSON.parse(req.body.inputJSON)
         }
 
-        RoomTransactionTypes.update(object).then(result => {
+        RoomTransactionTypes.update(object,  res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log('error', error)

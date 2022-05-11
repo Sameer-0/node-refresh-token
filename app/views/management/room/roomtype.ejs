@@ -26,8 +26,7 @@
                     data-bs-target="#add-room-modal">
                     <i class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-selected-rooms-types add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-rooms-types add-btn" title="Bulk Delete"><img src="/icons/delete.png" alt="" width="26px"
-                        height="32px"></button>
+              
             </div>
         </div>
 
@@ -115,24 +114,17 @@
                 },
                 success: data => {
                     if (data.status == 200) {
-                        location.reload()
+                        console.log('yelohllo');
+                        // location.reload()
+                        showExpressSuccess(data);
                     } else {
                         $(".errorMsg").html(data.message)
                     }
 
                 },
                 error: err => {
-                    let error = err.responseJSON.errors
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    error.map(er => {
-                        errorHtml +=
-                            `<li>${er.msg}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+                    console.log(err)
+                    showExpressError(err.responseJSON)
                 }
             })
         })
@@ -175,23 +167,14 @@
                 },
                 success: data => {
                     if (data.status == 200) {
-                        notify();
+                        // notify();
+                        showExpressSuccess(data);
                     } else {
                         $(".errorMsg").html(data.message)
                     }
                 },
                 error: err => {
-                    let error = err.responseJSON.errors
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    error.map(er => {
-                        errorHtml +=
-                            `<li>${er.msg}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+                    showExpressError(err.responseJSON);
                 }
             })
         })
@@ -233,20 +216,11 @@
                 }
                 ajaxApi(ApiObj).then(result => {
                     
-                    notify();
+                    // notify();
+                    showExpressSuccess(result);
                 }).catch(error => {
-                    let errors = error.responseJSON.message
-                    console.log('Error:::::::::::', errors)
-                    let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-                    errors.map(er => {
-                        errorHtml +=
-                            `<li>${er}</li>`
-                    })
-                    errorHtml +=
-                        `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                    $("#errorHtml").html(errorHtml)
+
+                    showExpressError(error);
                 })
 
             } else {
@@ -306,12 +280,13 @@
             })
         }, 500));
 
-        function showError(errors) {
-            console.log(errors);
+        function showExpressSuccess(errors) {
+
+            console.log('success',errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
-                title : errors.description,
-                message: "",
+                title : errors.message,
+                message:"",
                 type: 'alert-success',
                 buttons: {
                     positive:{
@@ -327,9 +302,35 @@
                         }
                     }
                 }
-        }
-        simpleAlert.alert(obj);
-     }
+            }
+            simpleAlert.alert(obj);
+            }
+
+            function showExpressError(errors) {
+
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title : "Error",
+                    message: errors.errors,
+                    express:'true',
+                    type: 'alert-danger',
+                    buttons: {
+                        positive:{
+                            text: "Okay",
+                            action: function(){
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                            alert('Negative')
+                            }
+                        }
+                    }
+                }
+                simpleAlert.alert(obj);
+                }
 
 
     })

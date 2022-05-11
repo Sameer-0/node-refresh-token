@@ -11,19 +11,21 @@ module.exports = class FacultyTypes {
     }
 
 
-    static save(inputJSON) {
+    static save(inputJSON, userId) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+            .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[add_faculty_types]')
         })
     }
 
-    static update(inputJSON) {
+    static update(inputJSON, userId) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_update_faculty_types]')
         })

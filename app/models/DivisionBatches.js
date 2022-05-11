@@ -95,11 +95,10 @@ module.exports = class DivisionBatches {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} db.id, db.division_lid, db.batch, db.event_type_lid, db.divison_count, db.batch_count, 
-                db.input_batch_count, db.faculty_count, d.division, et.name FROM [${slug}].[division_batches] db
-                INNER JOIN [${slug}].[divisions] d on d.id = db.division_lid
-                INNER JOIN [dbo].[event_types] et on et.id = db.event_type_lid
-                WHERE db.division_lid LIKE @keyword OR db.batch LIKE @keyword OR db.event_type_lid LIKE @keyword OR db.divison_count LIKE @keyword OR db.batch_count LIKE @keyword OR db.input_batch_count LIKE @keyword OR db.faculty_count LIKE @keyword OR d.division LIKE @keyword OR et.name LIKE @keyword ORDER BY d.id DESC`)
+                .query(`select TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [${slug}].division_batches db
+                INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
+                INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
+                INNER JOIN [dbo].event_types et on db.event_type_lid = et.id WHERE et.name LIKE @keyword OR icw.module_name LIKE @keyword ORDER BY db.id DESC`)
         })
     }
 

@@ -19,21 +19,23 @@ module.exports = class RoomTransactionTypes {
     }
 
 
-    static save(inputJSON) {
+    static save(inputJSON, userId) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[add_room_transaction_types]')
         })
     }
 
 
-    static update(inputJSON) {
-        console.log('inputJSON',inputJSON)
+    static update(inputJSON, userId) {
+        console.log('inputJSON', inputJSON)
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_update_room_transaction_types]')
         })
@@ -50,7 +52,7 @@ module.exports = class RoomTransactionTypes {
         })
     }
 
-  
+
     static getRTSId(id) {
         return poolConnection.then(pool => {
             let request = pool.request()

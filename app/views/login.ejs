@@ -1,5 +1,5 @@
 <%- include('./management/partials/head') %>
-<link rel="stylesheet" href="/css/simpleAlert.css">
+
 <style>
   :root {
     --login-bg-color: radial-gradient(circle, rgb(143 0 0) 0%, rgb(0 0 0) 100%);
@@ -215,7 +215,7 @@
   <%- include('./management/partials/footer') %>
 
   <script src="/js/particlejs.min.js"></script>
-  <script src="/js/SimpleAlert.js"></script>
+
 
   <!-- Page Level JavaScript Libaries End -->
   <script>
@@ -245,14 +245,16 @@
 
     let loginErrorMessage = `<%- typeof(message) == 'string' ? message : null %>`;
 
-
+    console.log('loginErrorMessage', loginErrorMessage)
 
     if (loginErrorMessage) {
       let simpleAlert = new SimpleAlert();
+       
 
       simpleAlert.alert({
         title: "Login failed!",
-        message: loginErrorMessage, 
+        message: [{"":'User name or Password Invalid'}], 
+        type:"alert-danger",
         buttons: {
           positive: {
             text: "Okay",

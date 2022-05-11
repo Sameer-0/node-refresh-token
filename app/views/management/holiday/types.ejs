@@ -123,13 +123,13 @@
                 },
                 success: data => {
                     if (data.status == 200) {
-                        location.reload()
+                        showExpressSuccess(data);
                     } else {
                         $(".errorMsg").html(data.message)
                     }
                 },
                 error: error => {
-                    showError(error.responseJSON)
+                    showExpressError(error.responseJSON)
                 }
             })
         })
@@ -155,7 +155,7 @@
                     $('#description').val(room.description),
                     $("#add-holiday-type-modal").modal('show')
             }).catch(error => {
-                showError(error.responseJSON)
+                showExpressError(error.responseJSON)
             })
 
         })
@@ -174,14 +174,15 @@
                 },
                 success: data => {
                     if (data.status == 200) {
-                        location.reload()
+                        // location.reload()
+                        showExpressSuccess(data)
                     } else {
                         $(".errorMsg").html(data.message)
                     }
 
                 },
                 error: error => {
-                    showError(error.responseJSON)
+                    showExpressError(error.responseJSON)
                 }
             })
         })
@@ -224,10 +225,11 @@
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                    notify();
+                    // location.reload()
+                    // notify();
+                    showExpressSuccess(result)
                 }).catch(error => {
-                    showError(error.responseJSON)
+                    showExpressError(error.responseJSON)
                 })
 
             } else {
@@ -291,19 +293,73 @@
             })
         }, 500));
 
-        function showError(errors) {
-            console.log('errors.errors::::::::::::',errors)
-                let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>`;
-                errorHtml += `<ul>`;
-                errors.errors.map(er => {
-                    errorHtml +=
-                        `<li>${er.msg}</li>`
-                })
-                errorHtml +=
-                    `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+        // function showError(errors) {
+        //     console.log('errors.errors::::::::::::',errors)
+        //         let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        //             <h3>Error</h3>`;
+        //         errorHtml += `<ul>`;
+        //         errors.errors.map(er => {
+        //             errorHtml +=
+        //                 `<li>${er.msg}</li>` 
+        //         })
+        //         errorHtml +=
+        //             `</ul><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
+        //         $("#errorHtml").html(errorHtml)
+        //     }
+
+        function showExpressSuccess(errors) {
+
+        console.log('success',errors);
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors.message,
+            message:"",
+            type: 'alert-success',
+            buttons: {
+                positive:{
+                    text: "Okay",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancel",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
             }
+        }
+        simpleAlert.alert(obj);
+        }
+
+        function showExpressError(errors) {
+            
+            console.log('success<><><',errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : "Error",
+                message: errors.errors,
+                express:'true',
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+
     })
 </script>
 <%- include("../partials/footerEnd") %>

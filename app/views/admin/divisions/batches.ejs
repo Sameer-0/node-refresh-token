@@ -41,6 +41,7 @@
                     <th>#</th>
                     <th>Division</th>
                     <th>Batch</th>
+                    <th>Module Name</th>
                     <th>Event Name</th>
                     <th>Division Count</th>
                     <th>Batch Count</th>
@@ -54,6 +55,7 @@
                         <td><%- count++ %><input type="hidden" class="form-control" name="batch_id" value="<%- batch.id %>"></td>
                         <td><%- batch.division %></td>
                         <td><%- batch.batch%></td>
+                        <td><%- batch.module_name %></td>
                         <td><%- batch.event_name %></td>
                         <td><%- batch.divison_count %></td>
                         <td><%- batch.batch_count %></td>
@@ -150,43 +152,38 @@
 
 
         function AjaxtTable(divisionBatchList) {
-            let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
+            let AjaxTable = `<table class="table table-bordered custom_row" id="batchesTable">
                 <thead>
                     <th>#</th>
                     <th>Division</th>
                     <th>Batch</th>
+                    <th>Module Name</th>
                     <th>Event Name</th>
                     <th>Division Count</th>
                     <th>Batch Count</th>
                     <th>Input Batch Count</th>
                     <th>Faculty Count</th>
-                    <th>Action</th>
                 </thead>`;
             if (divisionBatchList.length > 0) {
                 let count = 1;
                 for (let batch of divisionBatchList) {
                     AjaxTable +=
                         `<tr>
-                            <td>${count++}</td>
-                            <td>${batch.division}</td>
+                        <td>${count++}<input type="hidden" class="form-control" name="batch_id" value="${batch.id}"></td>
+                        <td>${batch.division}</td>
                         <td>${batch.batch}</td>
+                        <td>${batch.module_name}</td>
                         <td>${batch.event_name}</td>
                         <td>${batch.divison_count}</td>
                         <td>${batch.batch_count}</td>
                         <td>${batch.input_batch_count}</td>
-                        <td>${batch.faculty_count}</td>
-                        <td><label class="switch">
-                            <input type="checkbox" class="changeStatus" data-id="${batch.id }"
-                                data-status="${batch.status}"
-                                ${batch.status == 'Yes' ? 'Checked' :  '' }>
-                            <span class="switch-slider round"></span>
-                        </label></td>
-                            </tr>`
+                        <td><input type="number" class="form-control" name="faculty_count" value="${batch.faculty_count}"></td>
+                    </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="5">No Data Found</td>
+                                <td colspan="8">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
