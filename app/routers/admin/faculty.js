@@ -20,17 +20,16 @@ router.post('/faculties/pagination', index.pagination)
 router.post('/faculties/findone', validate('single'), index.findOne)
 router.post('/faculties/update', validate('JsonValidator'), index.update)
 router.post('/faculties/delete', validate('delete'), index.delete)
-router.get('/faculties/getslotsbyid', validate('single'), index.getSlotsById)
 
 
 
 //Faculty Date Time
 router.get('/faculties/date-time', dateTimes.getPage)
-router.post('/faculties/date-time/create', dateTimes.create)
+router.post('/faculties/date-time/create',validate('JsonValidator'), dateTimes.create)
 router.get('/faculties/date-time/search', dateTimes.search)
 router.post('/faculties/date-time/pagination', dateTimes.pagination)
 router.post('/faculties/date-time/delete', validate('delete'), dateTimes.delete)
-
+router.post('/faculties/date-time/getslottime', dateTimes.getSlotsById)
 
 //Batch
 router.get('/faculties/batch', batch.getPage)

@@ -1,7 +1,7 @@
 const Faculties = require('../../../models/Faculties');
 const FacultyDateTimes = require('../../../models/FacultyDateTimes');
-const AcademicCalender  = require('../../../models/AcademicCalender');
-const SlotIntervalTimings  = require('../../../models/SlotIntervalTimings');
+const AcademicCalender = require('../../../models/AcademicCalender');
+const SlotIntervalTimings = require('../../../models/SlotIntervalTimings');
 const {
     check,
     oneOf,
@@ -12,6 +12,7 @@ module.exports = {
     getPage: (req, res) => {
 
         Promise.all([FacultyDateTimes.fetchAll(10, res.locals.slug), FacultyDateTimes.getCount(res.locals.slug), Faculties.fetchAll(1000, res.locals.slug), AcademicCalender.fetchAll(1000), SlotIntervalTimings.fetchAll(1000)]).then(result => {
+            console.log('result::::::::>>',result[3].recordset)
             res.render('admin/faculty/facultydatetime', {
                 FacultyDateTimeList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -25,7 +26,7 @@ module.exports = {
     },
 
     create: (req, res) => {
-       
+
         let object = {
             add_faculty_date_times: JSON.parse(req.body.inputJSON)
         }
@@ -33,19 +34,20 @@ module.exports = {
         FacultyDateTimes.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
 
     search: (req, res) => {
-    
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -104,11 +106,30 @@ module.exports = {
         })
     },
 
-    
+
     delete: (req, res) => {
-        console.log('BODY::::::::::::>>>>>>', req.body.id)
         FacultyDateTimes.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    getSlotsById: (req, res, next) => {
+        SlotIntervalTimings.getFacultySlotsById(req.body.facultyid, res.locals.slug).then(result => {
+            res.json({
+                status: 200,
+                message: "Success",
+                result: result.recordset
+            })
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message))
@@ -119,5 +140,5 @@ module.exports = {
                 data:[]})
             }
         })
-    },
+    }
 }

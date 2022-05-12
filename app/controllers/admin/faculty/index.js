@@ -68,7 +68,7 @@ module.exports = {
 
     update: (req, res) => {
         let object = {
-            update_faculty_date_times: JSON.parse(req.body.inputJSON)
+            sp_update_faculties: JSON.parse(req.body.inputJSON)
         }
 
         Faculties.update(object, res.locals.slug, res.locals.userId).then(result => {
@@ -162,25 +162,6 @@ module.exports = {
         })
     },
 
-    getSlotsById: (req, res, next) => {
-        console.log('Req:::::::::::::::',req.query.faculty_lid)
-        SlotIntervalTimings.getFacultySlotsById(req.query.faculty_lid, res.locals.slug).then(result => {
-            console.log('ReS:::::::::::::::',result.recordset)
-            res.json({
-                status: 200,
-                message: "Success",
-                result: result.recordset
-            })
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    }
+
 
 }
