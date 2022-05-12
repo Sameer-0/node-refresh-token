@@ -17,15 +17,13 @@ const isJsonString = require('../../../utils/util')
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(100000), SlotIntervalTimings.forFaculty(1000), AcademicCalender.fetchAll(100), FacultyTypes.fetchAll(100)]).then(result => {
+        Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(100000), FacultyTypes.fetchAll(100)]).then(result => {
             console.log(result[0].recordset)
             res.render('admin/faculty/index', {
                 facultyList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 faculties: result[2].recordset,
-                slotTiming: JSON.stringify(result[3].recordset),
-                acadCalender: JSON.stringify(result[4].recordset),
-                facultyType: JSON.stringify(result[5].recordset),
+                facultyType: JSON.stringify(result[3].recordset),
                 breadcrumbs: req.breadcrumbs,
                 // totalentries: result[0].recordset ? result[0].recordset.length : 0
             })
