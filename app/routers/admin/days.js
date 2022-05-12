@@ -9,5 +9,5 @@ const days =  require('../../controllers/admin/days')
 
 router.get('/days', days.getPage)
 router.post('/days/change', days.changeStatus)
-router.get('/days/GetAll', days.GetAll)
+router.post('/days/GetAll', days.GetAll)
 module.exports = router;

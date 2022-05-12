@@ -5,13 +5,13 @@ const validate = require('../../middlewares/validate')
 //INDEX
 router.get('/schooltime', index.getPage)
 router.post('/schooltime',  index.create)
-router.get('/schooltime/search', index.search)
+router.post('/schooltime/search', index.search)
 router.post('/schooltime/pagination', index.pagination)
 
 
 //TYPES
 router.get('/schooltime/types', type.getPage)
-router.get('/schooltime/types/findOne', type.findOne)
+router.post('/schooltime/types/findone', type.findOne)
 router.post('/schooltime/types', type.create)
-router.put('/schooltime/types', type.update)
+router.post('/schooltime/types/update', type.update)
 module.exports = router;

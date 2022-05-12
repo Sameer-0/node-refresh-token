@@ -47,7 +47,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        EventType.findById(req.query.id, res.locals.slug).then(result => {
+        EventType.findById(req.body.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -114,7 +114,7 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        EventType.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        EventType.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

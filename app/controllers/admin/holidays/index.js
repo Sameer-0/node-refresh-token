@@ -55,7 +55,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        Holidays.findOne(req.query.Id, res.locals.slug).then(result => {
+        Holidays.findOne(req.body.Id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset[0]

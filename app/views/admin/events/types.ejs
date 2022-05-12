@@ -141,8 +141,8 @@
                 console.log('CLicl')
 
                 $.ajax({
+                    method: 'POST',
                     url: '/admin/events/types/findone',
-                    method: 'GET',
                     type: 'JSON',
                     data: {
                         id: $(this).attr('data-event-type-id')
@@ -181,8 +181,8 @@
             // UPDATE PROGRAM TYPE
             $(".updateEventType").on('click', function () {
                 $.ajax({
-                    url: '/admin/events/types/update',
                     method: 'POST',
+                    url: '/admin/events/types/update',
                     type: 'JSON',
                     data: {
                         id: $("#Id").val(),
@@ -217,8 +217,8 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/events/types/delete',
                         type: 'POST',
+                        url: '/admin/events/types/delete',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
@@ -243,7 +243,7 @@
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: "/admin/events/types/search",
                     data: {
                         keyword: keyword
