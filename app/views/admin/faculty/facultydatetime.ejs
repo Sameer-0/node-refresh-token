@@ -95,89 +95,102 @@
     </div>
 </div>
 
-<!--ADD Modal -->
-<div class="modal fade" id="add-facultydatetime-modal" tabindex="-1" aria-labelledby="add-facultydatetime-modal"
+<!-- IMPORT FACULTY MODAL -->
+<div class="modal fade" id="add-facultydatetime-modal" tabindex="-1" role="dialog" aria-labelledby="add-holiday-modal"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+    <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content modal-inputform">
-            <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="add-facultydatetime-modal-title">ADD FACULTY DATE TIME</h5>
-                <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
+            <div class="modal-header  modal-inputform-header">
+                <h5 class="modal-title text-dark" id="add-org-modal-title">ADD FACULTY DATE TIME</h5>
+                <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i
                         class="fas fa-times"></i></button>
+
             </div>
+            <!-- <form action="/management/campus/add" method="POST"> -->
             <div class="modal-body">
                 <div id="errorHtml"></div>
-                <div class="table-responsive ">
-                    <table class="table table-bordered" id="add-more-facultydatetime-table">
-                        <thead>
-                            <th>Faculty</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select class="select2" name="faculty_lid">
-                                        <option value="">--select--</option>
-                                        <% for(faculty of facultyList) {%>
-                                        <option value="<%- faculty.id %>">
-                                            <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2" name="start_date_id">
-                                        <option value="">--select--</option>
-                                        <% for(calender of AcademicCalenderList) {%>
-                                        <option value="<%- calender.id %>"><%- calender.date %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2" name="end_date_id">
-                                        <option value="">--select--</option>
-                                        <% for(calender of AcademicCalenderList) {%>
-                                            <option value="<%- calender.id %>"><%- calender.date %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2" name="start_time_id">
-                                        <option value="">--select--</option>
-                                        <% for(time of SlotIntervalTimingsList) {%>
-                                            <option value="<%- time.id %>"><%- time.start_time %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2" name="end_time_id">
-                                        <option value="">--select--</option>
-                                        <% for(time of SlotIntervalTimingsList) {%>
-                                            <option value="<%- time.id %>"><%- time.end_time %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultydatetimefield"></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+
+             <div class="row">
+                 <div class="col-md-2 border-end border-primary">
+                <div class="mb-3">
+                    <label class="form-label">Select Faculty</label>
+                    <select class="form-select select2 faculty-drop-down" id="faculty-drop-down">
+                        <option value="">Select faculty</option>
+                        <% for (let faculty of facultyList) { %>
+                            <option  data-faculty-name="<%- faculty.faculty_name %>"
+                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.id %>"  value="<%- faculty.faculty_dbo_lid %>">
+                                <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                                %></option>
+                            <% } %>
+                    </select>
+
                 </div>
+                <div class="mb-3">
+                 <label class="form-label">Select Start Time</label>
+                    <select class="form-select" name="start_time_id" id="start_time_id"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select End Time</label>
+                    <select class="form-select" name="end_time_id" id="end_time_id"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Start Date</label>
+                    <select class="form-select select2" name="start_date_id" id="start_date_id">
+                        <% for(let start_date of AcademicCalenderList) {%>
+                        <option value="<%-start_date.id%>"><%-start_date.date_str%></option>
+                        <%}%>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select End Date</label>
+                    <select class="form-select select2" name="end_date_id" id="end_date_id">
+                        <% for(let end_date of AcademicCalenderList) {%>
+                        <option value="<%-end_date.id%>"><%-end_date.date_str%></option>
+                        <%}%>
+                    </select>
+                </div>
+       
+
+                <div class="mb-3 d-grid gap-2">
+                    <button class="btn btn-info text-light add-faculty-date-time" disabled>ADD FACULTY DATE TIME</button>
+                </div>
+
+                <div class="alert alert-success rounded-0" role="alert">
+                    Note: Add button not work if faculty time is not preset.
+                  </div>
+
+                 </div>
+                 <div class="col-md-10">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-bordered" id="add-more-faculty-date-time-table">
+                            <thead>
+                                <th>Sr No.</th>
+                                <th>Faculty Name</th>
+                                <th>Faculty Id</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                 </div>
+             </div>
             </div>
             <div class="modal-footer">
-                <div id="errorMsg"></div>
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-facultydatetime-fields"><i class="fas fa-plus"></i>Add More Fields</button>
-                <button type="submit" class="btn  createfacultydatetime modal-inputform-btn">Create</button>
-                <button type="submit" class="btn  updatefacultydatetime modal-inputform-btn d-none">Update</button>
+                <button type="button" class="btn createfacultydatetime modal-inputform-btn">CREATE</button>
+                <button type="button" class="btn updatefacultydatetime modal-inputform-btn d-none">UPDATE</button>
             </div>
         </div>
     </div>
-</div> 
+</div>
 
 
 <%- include("../partials/footer") %>
@@ -187,53 +200,92 @@
 <script>
 $(document).ready(function(){
 
-    $('#add-more-facultydatetime-fields').on('click', function () {
+    $('.select2').select2({dropdownParent: $('#add-facultydatetime-modal')});
 
-        console.log("Adding facultydatetime fields::::")
-        let lastTr = $('#add-more-facultydatetime-table tbody tr:last-child')
-    
-        let faculty_lid = lastTr.find(`select[name="faculty_lid"]`).val();
-        let start_date_id = lastTr.find(`select[name="start_date_id"]`).val();
-        let end_date_id = lastTr.find(`select[name="end_date_id"]`).val();
-        let start_time_id = lastTr.find(`select[name="start_time_id"]`).val();
-        let end_time_id = lastTr.find(`select[name="end_time_id"]`).val();
-        
-        let clonedTr = lastTr.clone();
-       
-        clonedTr.find(`select[name="faculty_lid"]`).val(faculty_lid).trigger('change');
-        clonedTr.find(`select[name="start_date_id"]`).val(start_date_id).trigger('change');
-        clonedTr.find(`select[name="end_date_id"]`).val(end_date_id).trigger('change');
-        clonedTr.find(`select[name="start_time_id"]`).val(start_time_id).trigger('change');
-        clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
-        $('#add-more-facultydatetime-table tbody').append(clonedTr);
+        $(".faculty-drop-down").on('change',function(){
+            let facultyid = $(this).val()
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/date-time/getslottime',
+            data: {
+                facultyid: facultyid
+            },
+            dataType: 'JSON'
+        }
 
-    })
+        ajaxApi(ApiObj).then(result => {
+            let startTime = ``;
+                let endTime = ``;
+                if (result.result.length > 0) {
+                    //startTime += `<option disabled selected value="">--Select Time--</option>`;
+                    //endTime += `<option disabled selected value="">--Select Time--</option>`;
 
-    $('.select2').select2({
-        dropdownParent: $('#add-facultydatetime-modal')});
-
-    $('#add-more-facultydatetime-table').on('click', '.remove-facultydatetimefield',
-            function () {
-            let trLength = $('#add-more-facultydatetime-table tbody tr').length;
-
-            if (trLength > 1) {
-            $(this).closest('tr').remove()
+                    result.result.forEach(element => {
+                        startTime +=
+                            `<option value="${element.id}">${element.start_time}</option>`;
+                        endTime +=
+                            `<option value="${element.id}">${element.end_time}</option>`;
+                    });
+                    $('.add-faculty-date-time').removeAttr('disabled')
+                } else {
+                    startTime += `<option value="">No Slot Found!</option>`;
+                    endTime += `<option value="">No Slot Found!</option>`;
+                    $('.add-faculty-date-time').attr('disabled','disabled')
                 }
-            else {
-            alert('Cannot delete this room.')
-                }
-    })
+                $("#add-facultydatetime-modal  #start_time_id").html(startTime);
+                $("#add-facultydatetime-modal  #end_time_id").html(endTime);
+          
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+        })
+
+
+        //APPEND FACULTY DATETIME 
+        $('.add-faculty-date-time').on('click', function(){
+             let faculty_lid = $("#faculty-drop-down option:selected").attr("data-faculty-lid");//$(this).find(`data-faculty-lid`).attr(`data-faculty-lid`)
+            let faculty_name = $("#faculty-drop-down option:selected").attr(`data-faculty-name`)
+            let faculty_id = $("#faculty-drop-down option:selected").attr(`data-faculty-id`)
+            let start_time_id = $("#start_time_id").val();
+            let start_time_text = $("#start_time_id option:selected").text();
+            let end_time_id = $("#end_time_id").val();
+            let end_time_text = $("#end_time_id option:selected").text();
+            let start_date_id = $("#start_date_id").val();
+            let end_date_id = $("#end_date_id").val();
+            let start_date_text = $("#start_date_id  option:selected").text();
+            let end_date_text = $("#end_date_id  option:selected").text();
+            $('#add-more-faculty-date-time-table tbody').append(`<tr>
+                <td>#</td>
+                <td>${faculty_name}</td>
+                <td data-faculty-lid="${faculty_lid}">${faculty_id}</td>
+                <td data-start-time-id="${start_time_id}">${start_time_text}</td>
+                <td data-end-time-id="${end_time_id}">${end_time_text}</td>
+                <td data-start-date-id="${start_date_id}">${start_date_text}</td>
+                <td data-end-date-id="${end_date_id}">${end_date_text}</td>
+                <td>
+                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-date-time-column"></i></td>
+                </tr>`)
+        })
+
+
+
+        //Remove Element
+        $("#add-more-faculty-date-time-table").on('click', '.remove-date-time-column', function () {
+            $($(this)).fadeOut(300, function () {
+               $($(this).parent().parent()).remove()
+            })
+        })
 
     $(".createfacultydatetime").on('click', function () {
-        let facultyDateTimeElems = $('#add-more-facultydatetime-table tbody tr');
+        let facultyDateTimeElems = $('#add-more-faculty-date-time-table tbody tr');
         let facultyDateTimeCount = facultyDateTimeElems.length;
         let facultyDateTimeJson = [];
         facultyDateTimeElems.each(function (index, elem) {
-            let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
-            let start_date_id = $(elem).find(`select[name="start_date_id"]`).val();
-            let end_date_id = $(elem).find(`select[name="end_date_id"]`).val();
-            let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
-            let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
+            let faculty_lid = $(elem).find(`td[data-faculty-lid]`).attr(`data-faculty-lid`)
+            let start_date_id = $(elem).find(`td[data-start-date-id]`).attr(`data-start-date-id`);
+            let end_date_id = $(elem).find(`td[data-end-date-id]`).attr(`data-end-date-id`);
+            let start_time_id = $(elem).find(`td[data-start-time-id]`).attr(`data-start-time-id`);
+            let end_time_id = $(elem).find(`td[data-end-time-id]`).attr(`data-end-time-id`);
             if (index < facultyDateTimeCount - 1) {
                 let obj = {
                     faculty_lid: faculty_lid,
@@ -265,7 +317,7 @@ $(document).ready(function(){
         }
 
         ajaxApi(ApiObj).then(result => {
-            location.reload()
+            showSuccess(result)
         }).catch(error => {
             showError(error.responseJSON)
         })
@@ -276,7 +328,7 @@ $(document).ready(function(){
             $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "GET",
+                type: "POST",
             url: "/admin/faculties/date-time/search",
             data: {
                 keyword: keyword
@@ -341,6 +393,23 @@ $(document).ready(function(){
             }).catch(error => {
                 showError(error.responseJSON)
             })
+        })
+
+
+                //search selected faculty
+        $('#searchSelectedItem').on('input', function () {
+            let selectedFaculties = $('#selectedList table tbody tr')
+            var text = $('#searchSelectedItem').val().toLowerCase();
+            console.log('text:::::::::', selectedFaculties)
+            for (let faculty of selectedFaculties) {
+                console.log('faculty:::::::::', faculty)
+                if (faculty.textContent.toLowerCase().indexOf(text) > -1) {
+
+                    $(faculty).removeClass("d-none");
+                } else {
+                    $(faculty).addClass("d-none");
+                }
+            };
         })
 
 

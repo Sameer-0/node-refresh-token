@@ -29,7 +29,7 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10; 
-        Programs.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        Programs.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -88,7 +88,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        Programs.findOne(req.query.id).then(result => {
+        Programs.findOne(req.body.id).then(result => {
             res.status(200).json({
                 status: 200,
                 message: "Success",

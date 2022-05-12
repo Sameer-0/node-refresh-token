@@ -22,7 +22,7 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        ProgramDays.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        ProgramDays.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

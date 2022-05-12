@@ -10,14 +10,14 @@ const batch = require('../../controllers/admin/divisions/batch')
 
 router.get('/divisions', index.getPage)
 router.post('/divisions/update', index.update)
-router.get('/divisions/search', index.search)
+router.post('/divisions/search', index.search)
 router.post('/divisions/pagination', index.pagination)
 router.post('/divisions/change', index.changestatus)
 router.get('/divisions/getAll', index.getAll)
 
 //BATCHES
 router.get('/divisions/batches', batch.getPage)
-router.get('/divisions/batches/search', batch.search)
+router.post('/divisions/batches/search', batch.search)
 router.post('/divisions/batches/pagination', batch.pagination)
 router.post('/divisions/batches/changestatus', batch.changestatus)
 router.get('/divisions/batches/getAll', batch.getAll)
