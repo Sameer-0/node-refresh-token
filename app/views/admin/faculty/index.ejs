@@ -178,7 +178,7 @@
 
 <!-- Edit Faculty -->
 <div class="modal fade" id="edit-faculty-modal" tabindex="-1" aria-labelledby="edit-faculty-modal" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h3 class="modal-title" id="open-faculty-modal-title">Edit Faculty</h3>
@@ -198,13 +198,8 @@
                     <tbody>
                         <tr>
                             <td>
-                                <select class="modalSelect2 select2" name="faculty_lid" id="faculty_lid" disabled>
-                                <% for (let faculty of facultyList) { %>
-                                        <option value="<%- faculty.faculty_id %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
-                                    <% } %>
-                                </select>
-                            </td>
-                         
+                                <input type="text" class="form-control" id="faculty_name" readonly>
+                            </td>                      
                             <td>
                                 <%let facultytype = JSON.parse(facultyType) %>
                             <select class="modalSelect2 select2" name="faculty_type_lid" id="faculty_type_lid">
@@ -214,7 +209,6 @@
                             </select>
                             </td>
                         </tr>
-
                     </tbody>
                 </table>
             </div>
@@ -241,16 +235,11 @@
         let facultyTypeList = JSON.parse(`<%- facultyType %>`);
 
         let facultyType;
-
-      
-
         for (let obj of facultyTypeList) {
             facultyType += `<option value="${obj.id}">${obj.name}</option>`;
         }
         let countst = 0;
         $("#selectList").on('click', '.list-group-item', function () {
-            console.log('faculty-id::::::::::',$(this).attr("data-faculty-id"))
-            console.log('faculty-lid::::::::::',$(this).attr("data-faculty-lid"))
             //remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
                 $("#selectedList table tbody").append(`
@@ -378,7 +367,7 @@
          let id = $(this).attr("data-faculty-id")
            console.log('click::::::::::::::::>>>',id)
            let ApiObj = {
-                type: 'GET',
+                type: 'POST',
                 url: '/admin/faculties/findone',
                 data: {
                     id: id
@@ -389,13 +378,11 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('sucess:::::::::', result.result)
                 $("#hidden_id").val(result.result.id)
-                $("#start_time_id").val(result.result.start_time_id).trigger('change')
-                $("#end_time_id").val(result.result.end_time_id).trigger('change')
-                $("#start_date_id").val(result.result.start_date_id).trigger('change')
-                $("#end_date_id").val(result.result.end_date_id).trigger('change')
                 $("#faculty_type_lid").val(result.result.faculty_type_lid).trigger('change')
                 $("#faculty_lid").val(result.result.faculty_id).trigger('change')
+                $("#faculty_name").val(result.result.faculty_name)
                $("#edit-faculty-modal").modal('show')
+
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -485,7 +472,7 @@
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "/admin/faculties/search",
                 data: {
                     keyword: keyword
@@ -626,7 +613,7 @@
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="7">No Data Found</td>
+                                <td colspan="5">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
