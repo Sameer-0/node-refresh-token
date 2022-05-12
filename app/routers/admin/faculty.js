@@ -51,7 +51,7 @@ router.post('/faculties/works/delete', validate('delete'), works.delete)
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)
 router.post('/faculties/workpreferences/create', validate('JsonValidator'), preferences.create)
-router.get('/faculties/workpreferences/search', preferences.search)
+router.post('/faculties/workpreferences/search', preferences.search)
 router.post('/faculties/workpreferences/pagination', preferences.pagination)
 router.post('/faculties/workpreferences/update', validate('JsonValidator'), preferences.update)
 router.post('/faculties/workpreferences/delete', validate('delete'), preferences.delete)

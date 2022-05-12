@@ -186,4 +186,3 @@ if (!process.env.APP_ENV === 'LOCAL') {
     const server = http.createServer(app);
     server.listen(process.env.APP_PORT);
 }
-
