@@ -15,7 +15,7 @@ router.post('/holidays/create', validate('JsonValidator'), holidays.create)
 router.post('/holidays/update', validate('JsonValidator'), holidays.update)
 router.post('/holidays/delete', holidays.delete)
 router.get('/holidays/findone', holidays.findOne)
-router.get('/holidays/search', validate('search'), holidays.search)
+router.post('/holidays/search', validate('search'), holidays.search)
 router.post('/holidays/pagination', holidays.pagination)
 router.post('/holidays/fetchformsap', holidays.fetchFromSAP)
 

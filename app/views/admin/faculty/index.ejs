@@ -88,10 +88,6 @@
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
                     <th>Faculty Type</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
@@ -102,10 +98,6 @@
                         <td data-faculty-id="<%- faculty.id %>"><%- faculty.faculty_id %></td>
                         <td><%- faculty.faculty_name %></td>
                         <td><%- faculty.faculty_type %></td>
-                        <td><%- faculty.start_time %></td>
-                        <td><%- faculty.end_time %></td>
-                        <td><%- faculty.start_date %></td>
-                        <td><%- faculty.end_date %></td>
                         <td><a class="edit-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-edit text-success"></i></a>
                             <a class="delete-faculty" data-faculty-id="<%- faculty.id %>"><i class="fa fa-trash text-danger"></i></a>
                         </td>
@@ -163,10 +155,6 @@
                             <table class="table table-bordered" id="add-more-faculty-table">
                                 <thead>
                                     <th>Faculty Name</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
                                     <th>Faculty Type</th>
                                     <th>Action</th>
                                 </thead>
@@ -190,7 +178,7 @@
 
 <!-- Edit Faculty -->
 <div class="modal fade" id="edit-faculty-modal" tabindex="-1" aria-labelledby="edit-faculty-modal" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content modal-inputform">
             <div class="modal-header modal-inputform-header">
                 <h3 class="modal-title" id="open-faculty-modal-title">Edit Faculty</h3>
@@ -204,56 +192,14 @@
                     <thead>
                         <tr>
                         <th>Faculty Name</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
                         <th>Faculty Type</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-                                
-                                <select class="modalSelect2 select2" name="faculty_lid" id="faculty_lid" disabled>
-                                <% for (let faculty of facultyList) { %>
-                                        <option value="<%- faculty.faculty_id %>"><%- faculty.faculty_name %> (<%- faculty.faculty_id%>)</option>
-                                    <% } %>
-                                </select>
-                            </td>
-                         
-                            <td>
-                                <%let slotTiming1 = JSON.parse(slotTiming) %>
-                                <select class="modalSelect2 select2" name="start_time_id" id="start_time_id">
-                                <% for (let slotstart of slotTiming1) { %>
-                                        <option value="<%- slotstart.id %>" ><%- slotstart.start_time %></option>
-                                    <% } %>
-                            </select></td>
-
-                            <td>
-                                <%let slotTiming2 = JSON.parse(slotTiming) %>
-                                <select class="modalSelect2 select2" name="end_time_id" id="end_time_id">
-                                <% for (let slotend of slotTiming2) { %>
-                                        <option value="<%- slotend.id %>" ><%- slotend.end_time %></option>
-                                    <% } %>
-                            </select>
-                            </td>
-                            <td>
-                                <%let acadstartDate = JSON.parse(acadCalender) %>
-                                <select class="modalSelect2 select2" name="start_date_id" id="start_date_id">
-                                <% for (let stDate of acadstartDate) { %>
-                                        <option value="<%- stDate.id %>" ><%- stDate.date %></option>
-                                    <% } %>
-                            </select>
-                            </td>
-                            <td>
-                                <%let acadendDate = JSON.parse(acadCalender) %>
-                                <select class="modalSelect2 select2" name="end_date_id" id="end_date_id">
-                                <% for (let etDate of acadendDate) { %>
-                                        <option value="<%- etDate.id %>" ><%- etDate.date %></option>
-                                    <% } %>
-                            </select>
-                            </td>
+                                <input type="text" class="form-control" id="faculty_name" readonly>
+                            </td>                      
                             <td>
                                 <%let facultytype = JSON.parse(facultyType) %>
                             <select class="modalSelect2 select2" name="faculty_type_lid" id="faculty_type_lid">
@@ -263,7 +209,6 @@
                             </select>
                             </td>
                         </tr>
-
                     </tbody>
                 </table>
             </div>
@@ -287,44 +232,14 @@
         dropdownParent: $('#open-faculty-modal')});
         $('.select2').select2({
         dropdownParent: $('#edit-faculty-modal')});
-
-        //DATALIST
-        let slotTime = JSON.parse(`<%- slotTiming %>`);
-        let acadDate = JSON.parse(`<%- acadCalender%>`);
         let facultyTypeList = JSON.parse(`<%- facultyType %>`);
 
-        let optionStartTime;
-        let optionEndTime;
-        let startDate;
-        let endDate;
         let facultyType;
-
-        for (let obj of slotTime) {
-
-            optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
-        }
-
-        for (let obj of slotTime) {
-
-            optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
-        }
-
-        for (let obj of acadDate) {
-
-            startDate += `<option value="${obj.id}">${obj.date}</option>`;
-        }
-
-        for (let obj of acadDate) {
-            endDate += `<option value="${obj.id}">${obj.date}</option>`;
-        }
-
         for (let obj of facultyTypeList) {
             facultyType += `<option value="${obj.id}">${obj.name}</option>`;
         }
         let countst = 0;
         $("#selectList").on('click', '.list-group-item', function () {
-            console.log('faculty-id::::::::::',$(this).attr("data-faculty-id"))
-            console.log('faculty-lid::::::::::',$(this).attr("data-faculty-lid"))
             //remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
                 $("#selectedList table tbody").append(`
@@ -332,18 +247,6 @@
                     <tr data-clickable="true">
                         <td data-faculty-id="${$(this).attr("data-faculty-id")}"  data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
                          </td>
-                        <td>
-                            <select class="select2"  name="startTime">${optionStartTime}</select>
-                        </td>
-                        <td>
-                            <select class="select2 SlotEndTime" name="endTime">${optionEndTime}</select>
-                        </td>
-                        <td>
-                            <select class="select2 modalSelect2" name="startDate">${startDate}</select>
-                        </td>
-                        <td>
-                            <select class="select2 modalSelect2" name="endDate">${endDate}</select>
-                        </td>
                         <td>
                             <select class="select2 modalSelect2" name="faculty_type_lid">${facultyType}</select>
                         <td>
@@ -417,14 +320,8 @@
             let facultyJson = [];
             facultiesList.each(function (index, elem) {
                 let faculty_id = $(elem).find('td[data-faculty-id]').attr("data-faculty-id")
-
                 let faculty_lid = $(elem).find(`td[data-faculty-lid]`).attr('data-faculty-lid')
                 let faculty_name = $(elem).find('td[data-faculty-name]').attr("data-faculty-name")
-
-                let startTime = $(elem).find('select[name="startTime"]').val();
-                let endTime = $(elem).find('select[name="endTime"]').val();
-                let startDate = $(elem).find('select[name="startDate"]').val();
-                let endDate = $(elem).find('select[name="endDate"]').val();
                 let faculty_type_lid =  $(elem).find(`select[name="faculty_type_lid"]`).val();
 
                 console.log('faculty_type_lid', faculty_type_lid)
@@ -433,24 +330,13 @@
                     let obj = {
                         id: faculty_lid,
                         faculty_id: faculty_id,
-                       // faculty_name: faculty_name,
-                        start_time_id: startTime, 
-                        end_time_id: endTime,
-                        start_date_id: startDate,
-                        end_date_id: endDate,
                         faculty_type_lid: faculty_type_lid
                     }
                     facultyJson.push(obj)
                 } else {
                     let obj = {
-
                         id: faculty_lid,
                         faculty_id: faculty_id,
-                        //faculty_name: faculty_name,
-                        start_time_id: startTime, 
-                        end_time_id: endTime,
-                        start_date_id: startDate,
-                        end_date_id: endDate,
                         faculty_type_lid: faculty_type_lid
                     }
                     facultyJson.push(obj)
@@ -481,7 +367,7 @@
          let id = $(this).attr("data-faculty-id")
            console.log('click::::::::::::::::>>>',id)
            let ApiObj = {
-                type: 'GET',
+                type: 'POST',
                 url: '/admin/faculties/findone',
                 data: {
                     id: id
@@ -492,13 +378,11 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('sucess:::::::::', result.result)
                 $("#hidden_id").val(result.result.id)
-                $("#start_time_id").val(result.result.start_time_id).trigger('change')
-                $("#end_time_id").val(result.result.end_time_id).trigger('change')
-                $("#start_date_id").val(result.result.start_date_id).trigger('change')
-                $("#end_date_id").val(result.result.end_date_id).trigger('change')
                 $("#faculty_type_lid").val(result.result.faculty_type_lid).trigger('change')
                 $("#faculty_lid").val(result.result.faculty_id).trigger('change')
+                $("#faculty_name").val(result.result.faculty_name)
                $("#edit-faculty-modal").modal('show')
+
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -514,28 +398,17 @@
             let facultyJson = [];
             let hidden_id = $("#hidden_id").val()
             facultiesList.each(function (index, elem) {
-                let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
-                let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
-                let start_date_id = $(elem).find(`select[name="start_date_id"]`).val();
-                let end_date_id = $(elem).find(`select[name="end_date_id"]`).val();
+
                 let faculty_type_lid = $(elem).find(`select[name="faculty_type_lid"]`).val();
                 if (index < facultyCount - 1) {
                     let obj = {
                         id:hidden_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        start_date_id: start_date_id,
-                        end_date_id: end_date_id,
                         faculty_type_lid: faculty_type_lid
                     }
                     facultyJson.push(obj)
                 } else {
                     let obj = {
                         id:hidden_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        start_date_id: start_date_id,
-                        end_date_id: end_date_id,
                         faculty_type_lid: faculty_type_lid
                     }
                     facultyJson.push(obj)
@@ -598,14 +471,14 @@
         //search feature delay function is writter in script.js file which is located in public/js/script.js
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
-            console.log('keyword:::::::::::::::::', keyword)
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "/admin/faculties/search",
                 data: {
                     keyword: keyword
                 },
                 success: function (data) {
+                    console.log(data.data)
                     showAjaxTable(data.data) // Facilty List
                 }
             })
@@ -719,10 +592,6 @@
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>
                     <th>Faculty Type</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
                     <th>Action</th>
                 </thead>
                 <tbody>`;
@@ -736,10 +605,6 @@
                         <td data-faculty-id="${faculty.faculty_id}">${faculty.faculty_id}</td>
                         <td>${faculty.faculty_name}</td>
                         <td>${faculty.faculty_type}</td>
-                        <td>${faculty.start_time}</td>
-                        <td>${faculty.end_time}</td>
-                        <td>${faculty.start_date}</td>
-                        <td>${faculty.end_date}</td>
                         <td><a class="edit-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-edit text-success"></i></a>
                             <a class="delete-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-trash text-danger"></i></a>
                         </td>
@@ -748,7 +613,7 @@
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="7">No Data Found</td>
+                                <td colspan="5">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
