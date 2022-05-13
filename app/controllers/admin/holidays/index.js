@@ -55,7 +55,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        Holidays.findOne(req.query.Id, res.locals.slug).then(result => {
+        Holidays.findOne(req.body.Id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset[0]
@@ -119,7 +119,7 @@ module.exports = {
 
         //here 10is rowcount
         let rowcount = 10;
-        Holidays.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        Holidays.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

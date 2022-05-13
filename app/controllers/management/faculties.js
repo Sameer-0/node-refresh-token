@@ -51,7 +51,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        Faculties.findOne(req.query.Id).then(result => {
+        Faculties.findOne(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -132,7 +132,7 @@ module.exports = {
         //here 10is rowcount
         let rowcount = 10;
 
-        FacultyDbo.search(rowcount, req.query.keyword).then(result => {
+        FacultyDbo.search(rowcount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

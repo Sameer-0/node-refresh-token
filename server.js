@@ -176,6 +176,9 @@ app.use(function (req, res) {
 //     }
 //   })
 
+//const server = https.createServer(options, app).listen(process.env.APP_PORT);// Enable with ssl 
+//app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
+
 if (!process.env.APP_ENV === 'LOCAL') {
     const server = https.createServer(sslOptions, app);
     server.listen(process.env.APP_PORT);

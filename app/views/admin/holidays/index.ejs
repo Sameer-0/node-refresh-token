@@ -309,7 +309,7 @@
             $(".createHoliday").addClass('d-none')
             $(".updateHoliday").removeClass('d-none')
             let ApiObj = {
-                type: 'GET',
+                type: 'POST',
                 url: '/admin/holidays/findone',
                 data: {
                     Id: $(this).attr('data-holiday-id')
@@ -384,7 +384,7 @@
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: "/admin/holidays/search",
                     data: {
                         keyword: keyword
@@ -481,13 +481,8 @@
             })
 
 
-
-
-
-
-
-            function AjaxtTable(programTypeList) {
-                let AjaxTable = `<table class="table custom_row table-bordered" id="holidayTable">
+            function AjaxtTable(holidaylist) {
+            let AjaxTable = `<table class="table custom_row table-bordered" id="holidayTable">
                 <thead>
                     <th>Sr No.</th>
                     <th>Calender Year</th>
@@ -499,11 +494,11 @@
                 </thead>
                 <tbody>`;
 
-            if (programTypeList.length > 0) {
-                let count  = 1;
-                for (holiday of programTypeList) {
+            if (holidaylist.length > 0) {
+                let count = 1;
+                for (holiday of holidaylist) {
                     AjaxTable +=
-                    `<tr>
+                        `<tr>
                         <td>${count++}</td>
                         <td>${holiday.calendar_year}</td>
                         <td>${holiday.h_date}</td>
@@ -521,12 +516,13 @@
             } else {
                 AjaxTable +=
                     ` <tr>
-                         <td colspan="7">No Data Found</td>
-                      </tr>`;
+                                <td colspan="7">No Data Found</td>
+                            </tr>`;
             }
             AjaxTable += `<tbody></table>`
             $("#holidayTable").html(AjaxTable);
-            }
+
+        }
 
             
 
