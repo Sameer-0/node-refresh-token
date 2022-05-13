@@ -904,7 +904,7 @@
                 console.log('roomjason:::',programJson);
                 let ApiObj = {
                 type: 'POST',
-                url: '/admin/programs',
+                url: '/admin/programs/create',
                 data: {
                     inputJSON: JSON.stringify(programJson),
                     settingName: 'Program'
@@ -915,10 +915,8 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
                 showSuccess(result)
-              
                 scroll()
-                formStepNext()
-                location.reload();
+                
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -1107,7 +1105,7 @@
 
                 let ApiObj = {
                     type: 'POST',
-                    url: '/admin/holidays',
+                    url: '/admin/holidays/create', 
                     data: {
                         inputJSON: JSON.stringify(holidayJson),
                         settingName: 'Holiday'
@@ -1120,7 +1118,7 @@
                     console.log('Result:::::::::::', result)
                     showSuccess(result)
                     scroll()
-                    formStepNext()
+                  
 
                 }).catch(error => {
                     console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
@@ -1133,13 +1131,12 @@
 
                 let ApiObj = {
                     type: 'POST',
-                    url: '/admin/rooms',
+                    url: '/admin/rooms/create',
                     data: {
-                        settingName: 'Room'
+                        settingName: 'Room' 
                     },
                     dataType: 'JSON'
                 }
-
 
                 ajaxApi(ApiObj).then(result => {
                     console.log('Result:::::::::::', result)
@@ -1218,8 +1215,8 @@
 
             console.log('Json::::::::::::',courseJSON)
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/courseworkload/workload',
+                type: 'POST',
+                url: '/admin/courseworkload/workload/update',
                 data: {
                     inputJSON: JSON.stringify(courseJSON),
                     settingName: 'Courseworkload'
