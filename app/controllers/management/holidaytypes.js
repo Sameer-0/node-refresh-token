@@ -43,7 +43,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        HolidayTypes.findOne(req.query.Id).then(result => {
+        HolidayTypes.findOne(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset[0]

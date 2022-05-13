@@ -11,10 +11,10 @@ const validate = require('../../middlewares/validate')
 
 //SLUG ROUTER
 router.get('/slug', slug.getPage)
-router.post('/slug', validate('createSlug'), slug.create)
-router.put('/slug', validate('updateSlug'), slug.update)
-router.delete('/slug', validate('delete'), slug.delete)
-router.get('/slug/single', validate('single'), slug.single)
-router.get('/slug/search', validate('search'), slug.search)
+router.post('/slug/create', validate('createSlug'), slug.create)
+router.post('/slug/update', validate('updateSlug'), slug.update)
+router.post('/slug/delete', validate('delete'), slug.delete)
+router.post('/slug/single', validate('single'), slug.single)
+router.post('/slug/search', validate('search'), slug.search)
 
 module.exports = router;

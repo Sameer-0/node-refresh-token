@@ -50,7 +50,7 @@ module.exports = {
 
     findOne: (req, res) => {
 
-        WeeklyConstraint.findById(req.query.id, res.locals.slug).then(result => {
+        WeeklyConstraint.findById(req.body.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -146,7 +146,7 @@ module.exports = {
         //     data: [1,2,3,4,5,6]
         // })
 
-        WeeklyConstraint.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        WeeklyConstraint.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             console.log('Search result.recordset', result.recordset)
             if (result.recordset.length > 0) {
 

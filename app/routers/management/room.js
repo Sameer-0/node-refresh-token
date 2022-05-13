@@ -19,11 +19,11 @@ const RoomRequest = require('../../controllers/management/RoomRequest')
 //ROOM ROUTER
 router.get('/rooms', roomcontroller.getPage)
 router.get('/rooms/room', roomcontroller.getRoomPage)
-router.get('/rooms/findone', roomcontroller.findOne)
+router.post('/rooms/findone', roomcontroller.findOne)
 router.post('/rooms/update', validate('JsonValidator'), roomcontroller.update)
 router.post('/rooms/room/delete', validate('delete'), roomcontroller.delete)
 router.post('/rooms/create', validate('JsonValidator'), roomcontroller.addRoom)
-router.get('/rooms/search', validate('search'), roomcontroller.searchRoom)
+router.post('/rooms/search', validate('search'), roomcontroller.searchRoom)
 router.post('/rooms/rooms_isprocessed', roomcontroller.isProcessed)
 router.post('/rooms/buildinglist', roomcontroller.buildingList)
 router.post('/rooms/pagination', validate('pagination'), roomcontroller.pagination)
@@ -33,8 +33,8 @@ router.post('/rooms/room/getroomtimeslots', roomcontroller.getRoomTimeSlots)
 router.get('/rooms/roomtypes', roomtype.getPage)
 router.post('/rooms/roomtypes/update', validate('updateRoomType'), roomtype.update)
 router.post('/rooms/roomtypes/create', validate('createRoomType'), roomtype.create)
-router.get('/rooms/roomtypes/findone', validate('single'), roomtype.single)
-router.get('/rooms/roomtypes/search', validate('search'), roomtype.search)
+router.post('/rooms/roomtypes/findone', validate('single'), roomtype.single)
+router.post('/rooms/roomtypes/search', validate('search'), roomtype.search)
 router.post('/rooms/roomtypes/delete', roomtype.delete)
 
 
@@ -60,8 +60,8 @@ router.post('/rooms/bookings/transaction-types/pagination', validate('pagination
 router.get('/rooms/bookings/transaction-stages', transactionStage.getPage)
 router.post('/rooms/bookings/transaction-stages/update', validate('updateRtstage'), transactionStage.update)
 router.post('/rooms/bookings/transaction-stages/create', validate('createRtstage'), transactionStage.create)
-router.get('/rooms/bookings/transaction-stages/findone', validate('single'), transactionStage.findOne)
-router.get('/rooms/bookings/transaction-stages/search', validate('search'), transactionStage.search)
+router.post('/rooms/bookings/transaction-stages/findone', validate('single'), transactionStage.findOne)
+router.post('/rooms/bookings/transaction-stages/search', validate('search'), transactionStage.search)
 router.post('/rooms/bookings/transaction-stages/delete', transactionStage.delete)
 
 
@@ -70,14 +70,14 @@ router.post('/rooms/bookings/transaction-stages/delete', transactionStage.delete
 router.get('/rooms/bookings/transactions', transaction.getPage)
 router.post('/rooms/bookings/transactions/findOne', transaction.findOne)
 router.post('/rooms/bookings/transactions/approve-trans', transaction.approveTrans)
-router.get('/rooms/bookings/transactions/search', validate('search'), transaction.search)
+router.post('/rooms/bookings/transactions/search', validate('search'), transaction.search)
 
 
 //ROOM REQUESTS
 router.get('/rooms/requests', RoomRequest.getPage)
-router.get('/rooms/requests/search', validate('search'), RoomRequest.search)
+router.post('/rooms/requests/search', validate('search'), RoomRequest.search)
 router.post('/rooms/requests/pagination', validate('pagination'), RoomRequest.pagination)
-router.get('/rooms/requests/roomInfo', RoomRequest.roomInfo)
+router.post('/rooms/requests/roomInfo', RoomRequest.roomInfo)
 router.post('/rooms/requests/approval', RoomRequest.requestApproval)
 
 module.exports = router;

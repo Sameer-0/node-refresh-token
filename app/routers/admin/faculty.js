@@ -30,6 +30,8 @@ router.post('/faculties/date-time/search', dateTimes.search)
 router.post('/faculties/date-time/pagination', dateTimes.pagination)
 router.post('/faculties/date-time/delete', validate('delete'), dateTimes.delete)
 router.post('/faculties/date-time/getslottime', dateTimes.getSlotsById)
+router.post('/faculties/date-time/findone', dateTimes.findOne)
+router.post('/faculties/date-time/update',validate('JsonValidator'), dateTimes.update)
 
 //Batch
 router.get('/faculties/batch', batch.getPage)

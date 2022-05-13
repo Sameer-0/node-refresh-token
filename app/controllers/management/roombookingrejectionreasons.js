@@ -49,7 +49,7 @@ module.exports = {
             return;
         }
 
-        RoomBookingRejectionReasons.getById(req.query.id).then(result => {
+        RoomBookingRejectionReasons.getById(req.body.id).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -111,7 +111,7 @@ module.exports = {
         //here 10is rowcount
         let rowcont = 10;
 
-        RoomBookingRejectionReasons.search(rowcont, req.query.keyword).then(result => {
+        RoomBookingRejectionReasons.search(rowcont, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

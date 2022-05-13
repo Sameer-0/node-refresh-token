@@ -121,7 +121,7 @@
     //management/campus/add
     $('.createSlotSetting').on('click', function () {
         $.ajax({
-            url: '/management/slotinterval/setting',
+            url: '/management/slotinterval/setting/create',
             method: 'POST',
             type: 'JSON',
             data: {
@@ -158,8 +158,8 @@
 
         console.log($(this).attr('data-slot-setting-id'))
         $.ajax({
-            url: '/management/slotinterval/setting/single',
-            method: 'GET',
+            url: '/management/slotinterval/setting/findone',
+            method: 'POST',
             type: 'JSON',
             data: {
                 Id: $(this).attr('data-slot-setting-id')
@@ -183,8 +183,8 @@
 
     $('.updateSlotSetting').on('click', function () {
         $.ajax({
-            url: '/management/slotinterval/setting',
-            method: 'PUT',
+            url: '/management/slotinterval/setting/update',
+            method: 'POST',
             type: 'JSON',
             data: {
                 id: $("#settingId").val(),
@@ -216,8 +216,8 @@
 
     $('#slotSettingTable').on('click', '.delete-slot-setting', function () {
         $.ajax({
-            url: '/management/slotinterval/setting',
-            method: 'DELETE',
+            url: '/management/slotinterval/setting/delete',
+            method: 'POST',
             type: 'JSON',
             data: {
                 Id: $(this).attr('data-slot-setting-id')
@@ -237,7 +237,7 @@
     $('#searchkeyword').on('input', delay(function (e) {
         let keyword = $("#searchkeyword").val()
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: '/management/slotinterval/setting/search',
             data: {
                 keyword: keyword
