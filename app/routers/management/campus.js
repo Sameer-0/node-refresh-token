@@ -14,8 +14,8 @@ router.get('/campuses', campus.getCampusPage)
 router.post('/campuses/update', validate('JsonValidator'), campus.update)
 router.post('/campuses/create', validate('JsonValidator'),  campus.create)
 router.post('/campuses/pagination', validate('pagination'), campus.getCampusPage)
-router.get('/campuses/search', validate('search'), campus.search)
-router.get('/campuses/findone', validate('single'), campus.findOne)
+router.post('/campuses/search', validate('search'), campus.search)
+router.post('/campuses/findone', validate('single'), campus.findOne)
 router.post('/campuses/delete',  validate('delete'), campus.delete)
 
 module.exports = router;  

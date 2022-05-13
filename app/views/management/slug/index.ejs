@@ -111,7 +111,7 @@
                         <script>
                             $(".addSlug").on('click', function () {
                                 $.ajax({
-                                    url: '/management/slug',
+                                    url: '/management/slug/create',
                                     method: 'POST',
                                     type: 'JSON',
                                     data: {
@@ -145,8 +145,8 @@
                                 $(".addSlug").addClass('d-none')
                                 $(".updateSlug").removeClass('d-none')
                                 $.ajax({
-                                    url: '/management/slug/single',
-                                    method: 'GET',
+                                    url: '/management/slug/findone',
+                                    method: 'POST',
                                     type: 'JSON',
                                     data: {
                                         Id: $(this).attr('data-slug-id')
@@ -168,7 +168,7 @@
 
                             $(".updateSlug").on('click', function () {
                                 $.ajax({
-                                    url: '/management/slug',
+                                    url: '/management/slug/update',
                                     method: 'POST',
                                     type: 'JSON',
                                     data: {
@@ -198,8 +198,8 @@
 
                             $('#slugTable').on('click', '.delete-slug', function () {
                                 $.ajax({
-                                    url: '/management/slug',
-                                    method: 'DELETE',
+                                    url: '/management/slug/delete',
+                                    method: 'POST',
                                     type: 'JSON',
                                     data: {
                                         Id: $(this).attr('data-slug-id')
@@ -290,7 +290,7 @@
                             $('#searchkeyword').on('input', delay(function (e) {
                                 let keyword = $("#searchkeyword").val()
                                 $.ajax({
-                                    type: "GET",
+                                    type: "POST",
                                     url: "/management/slug/search",
                                     data: {
                                         keyword: keyword

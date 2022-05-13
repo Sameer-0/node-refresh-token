@@ -180,7 +180,7 @@
         $(document).ready(function () {
             $(".addDivision").on('click', function () {
                 $.ajax({
-                    url: '/management/divisions',
+                    url: '/management/divisions/create',
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -219,8 +219,8 @@
                 $(".addDivision").addClass('d-none')
                 $(".updateDivision").removeClass('d-none')
                 $.ajax({
-                    url: '/management/divisions/single',
-                    method: 'GET',
+                    url: '/management/divisions/findone',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $(this).attr('data-division-id')
@@ -268,9 +268,9 @@
 
             $('.updateDivision').on('click', function () {
                 $.ajax({
-                    url: '/management/divisions/single',
+                    url: '/management/divisions/update',
                     type: 'JSON',
-                    method: 'PUT',
+                    method: 'POST',
                     data: {
                         id: $('#id').val(),
                         courseId: $('#courseId').val(),
@@ -308,7 +308,7 @@
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: "/management/divisions/search",
                     data: {
                         keyword: keyword
@@ -367,8 +367,8 @@
 
             $("#divisionTable").on('click', '.delete-division', function () {
                 $.ajax({
-                    url: '/management/divisions/single',
-                    method: 'DELETE',
+                    url: '/management/divisions/delete',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $(this).attr("data-division-id")

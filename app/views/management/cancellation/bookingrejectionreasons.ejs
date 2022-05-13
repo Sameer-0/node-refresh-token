@@ -92,7 +92,7 @@
     //management/campus/add
     $('.createCancellationReason').on('click', function () {
         $.ajax({
-            url: '/management/room/bookingrejectionreasons',
+            url: '/management/room/bookingrejectionreasons/create',
             method: 'POST',
             type: 'JSON',
             data: {
@@ -126,8 +126,8 @@
 
         console.log($(this).attr('data-cancellation-id'))
         $.ajax({
-            url: '/management/room/bookingrejectionreasons/single',
-            method: 'GET',
+            url: '/management/room/bookingrejectionreasons/findone',
+            method: 'POST',
             type: 'JSON',
             data: {
                 id: $(this).attr('data-cancellation-id')
@@ -148,8 +148,8 @@
 
     $('.updateCancellationReason').on('click', function () {
         $.ajax({
-            url: '/management/room/bookingrejectionreasons',
-            method: 'PUT',
+            url: '/management/room/bookingrejectionreasons/update',
+            method: 'POST',
             type: 'JSON',
             data: {
                 Id: $("#cancellationId").val(),
@@ -178,8 +178,8 @@
 
     $('#cancellationTable').on('click', '.delete-Cancellation', function () {
         $.ajax({
-            url: '/management/room/bookingrejectionreasons',
-            method: 'DELETE',
+            url: '/management/room/bookingrejectionreasons/delete',
+            method: 'POST',
             type: 'JSON',
             data: {
                 id: $(this).attr('data-cancellation-id')
@@ -199,7 +199,7 @@
     $('#searchkeyword').on('input', delay(function (e) {
         let keyword = $("#searchkeyword").val()
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/management/room/bookingrejectionreasons/search",
             data: {
                 keyword: keyword

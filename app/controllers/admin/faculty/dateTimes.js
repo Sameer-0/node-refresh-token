@@ -34,6 +34,7 @@ module.exports = {
         FacultyDateTimes.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            console.log(error)
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
             } else {
@@ -140,5 +141,36 @@ module.exports = {
                 data:[]})
             }
         })
-    }
+    },
+
+    findOne: (req, res) => {
+        FacultyDateTimes.findOne(req.body.id, res.locals.slug).then(result => {
+            res.json({
+                status: 200,
+                data: result.recordset[0]
+            })
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
+        })
+    },
+
+    update: (req, res) => {
+
+        let object = {
+            update_faculty_date_times: JSON.parse(req.body.inputJSON)
+        }
+           
+        FacultyDateTimes.update(object, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
 }

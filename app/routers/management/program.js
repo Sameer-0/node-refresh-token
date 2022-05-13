@@ -17,8 +17,8 @@ router.get('/programs/types', programType.getProgramTypePage)
 router.post('/programs/types/create', validate('createProgramType'), programType.create)
 router.post('/programs/types/update', validate('updateProgramType'), programType.update)
 router.post('/programs/types/delete',  programType.delete)
-router.get('/programs/types/findone', programType.findOne)
-router.get('/programs/types/search', validate('search'), programType.search)
+router.post('/programs/types/findone', programType.findOne)
+router.post('/programs/types/search', validate('search'), programType.search)
 router.post('/programs/pagination', validate('pagination'), programType.pagination)
 
 module.exports = router;

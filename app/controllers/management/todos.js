@@ -61,7 +61,7 @@ module.exports = {
     },
 
     getTodosById: (req, res) => {
-        Todos.getTodos(req.query.id).then(result => {
+        Todos.getTodos(req.body.id).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -110,7 +110,7 @@ module.exports = {
     search: (req, res) => {
         let rowcount = 10;
 
-        Todos.searchTodos(rowcount, req.query.keyword).then(result => {
+        Todos.searchTodos(rowcount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

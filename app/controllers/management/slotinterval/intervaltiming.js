@@ -27,7 +27,7 @@ module.exports = {
         }
 
         let rowcount = 10;
-        SlotIntervalTimings.search(rowcount, req.query.keyword).then(result => {
+        SlotIntervalTimings.search(rowcount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -83,7 +83,7 @@ module.exports = {
             });
             return;
         }
-        SlotIntervalTimings.single(req.query.id).then(result => {
+        SlotIntervalTimings.single(req.body.id).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset[0]

@@ -98,25 +98,6 @@ module.exports = {
         })
     },
 
-    deleteAll: (req, res) => {
-        Faculties.deleteAll().then(result => {
-
-            res.status(200).json({
-                status: 200,
-                description: "Successfully deleted"
-            })
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    },
-
 
     search: (req, res) => {
 
