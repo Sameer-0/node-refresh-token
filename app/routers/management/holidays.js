@@ -17,7 +17,7 @@ router.post('/holidays/search', holiday.search)
 // HOLIDAY TYPES ROUTER
 router.get('/holidays/types', holidaytype.getPage)
 router.post('/holidays/types/create', validate('Holiday'), holidaytype.create)
-router.get('/holidays/types/findOne', validate('Holiday'), holidaytype.findOne)
+router.get('/holidays/types/findone', validate('Holiday'), holidaytype.findOne)
 router.post('/holidays/types/search', validate('search'), holidaytype.search)
 router.post('/holidays/types/update', validate('Holiday'), holidaytype.update)
 router.post('/holidays/types/delete', holidaytype.delete)

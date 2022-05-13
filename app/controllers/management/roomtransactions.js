@@ -44,7 +44,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
-        RoomTransactions.search(rowcont, req.query.keyword).then(result => {
+        RoomTransactions.search(rowcont, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
