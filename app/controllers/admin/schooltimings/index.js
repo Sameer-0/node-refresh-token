@@ -14,12 +14,13 @@ const SchoolTimingType = require('../../../models/SchoolTimingType');
 const AcadSession = require('../../../models/AcadSession');
 const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
+const SchoolTimingSettings = require('../../../models/SchoolTimingSettings')
 
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000)]).then(result => {
-            console.log(result[0].recordset)
+        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug)]).then(result => {
+            console.log(result[6].recordset)
             res.render("admin/schooltimings/index",{
                 schoolTimingList: result[0].recordset,
                 programList: result[1].recordset,
@@ -27,9 +28,10 @@ module.exports = {
                 slotTime:result[3].recordset,
                 schoolTimingTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
-                pageCount: 0, 
+                schoolTimingSettingsList: result[6].recordset,
+                stsStatus: result[7].recordset.length > 0 ? result[7].recordset[0].status : 0,
+                pageCount: result[0].recordset.length, 
                 breadcrumbs: req.breadcrumbs,
-
             })
         })
     },
@@ -115,4 +117,6 @@ module.exports = {
             }
         })
     },
+
+
 }
