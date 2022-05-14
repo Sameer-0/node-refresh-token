@@ -29,6 +29,7 @@ module.exports = {
                 schoolTimingTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
                 schoolTimingSettingsList: result[6].recordset,
+                schoolTimingSettingsListJson: JSON.stringify(result[6].recordset),
                 stsStatus: result[7].recordset.length > 0 ? result[7].recordset[0].status : 0,
                 pageCount: result[0].recordset.length, 
                 breadcrumbs: req.breadcrumbs,

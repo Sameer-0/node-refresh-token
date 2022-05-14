@@ -42,6 +42,7 @@ module.exports = {
         // let object = {
         //     new_session_dates: JSON.parse(req.body.inputJSON)
         // }
+        console.log('yellonello')
         if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }

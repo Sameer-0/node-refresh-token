@@ -198,13 +198,29 @@
 <script>
     $(document).ready(function () {
 
+        let checkSetting = `<%- stsStatus %>`
+        if(checkSetting > 0){
+            $('#add-schooltiming-modal').on('show.bs.modal', function() {
+            
+                $('.schoolTimingOptions').trigger('click');
 
-          //Options for school timing
-          $('.schoolTimingOptions').on('click', function() {
-            let settingName = $(this).attr('data-name');
+            })
+        }
+      
+        $('.schoolTimingOptions').on('click', function() {    
+            let settingName;
 
-            console.log("Setting name>> ", settingName);
-
+            if(checkSetting > 0){
+                let list = JSON.parse(`<%- schoolTimingSettingsListJson %>`);
+        
+                for(let l of list){
+                    if(l.status == 1){
+                        settingName = l.name;
+                    }
+                }
+            } else{
+                settingName = $(this).attr('data-name');
+            }
 
             if(settingName == 'Day Wise'){
                 let DayWise = `<div class="table-responsive DayWise" data-dis="true">
@@ -260,6 +276,7 @@
             }
            
             else if(settingName == 'Day and Program Wise'){
+                console.log('heoolu')
                 let programAndDayWise = `<div class="table-responsive programAndDayWise" data-dis="true">
                     <table class="table table-bordered" id="add-more-programAndDayWise-table">
                         <thead>

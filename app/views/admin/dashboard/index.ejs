@@ -60,6 +60,9 @@
         $('.select2').select2({
         dropdownParent: $('#open-faculty-modal')});
 
+        $('.select2').select2({
+        dropdownParent: $('#facultyPreference')});
+
 
         let username = `<%- locals.userId %>`;
         let campu = `<%- campusList%>`;
@@ -106,8 +109,6 @@
         for (let obj of transactionTypeList) {
             transactionTypes += `<option value="${obj.id}">${obj.name}</option>`;
         }
-
-     
 
 
         //DATA SELECT FOR ROOM
@@ -287,18 +288,7 @@
                     <tr data-clickable="true">
                         <td data-faculty-id="${$(this).attr("data-faculty-id")}" data-faculty-lid="${$(this).attr("data-faculty-lid")}" data-faculty-name="${$(this).attr("data-faculty-name")}">${$(this).text()} 
                         </td>
-                        <td>
-                            <select class="select2" name="startTime">${optionStartTime}</select>
-                        </td>
-                        <td>
-                            <select class="select2" name="endTime">${optionEndTime}</select>
-                        </td>
-                        <td>
-                            <select class="select2" name="startDate">${startDate}</select>
-                        </td>
-                        <td>
-                            <select class="select2" name="endDate">${endDate}</select>
-                        </td>
+                        
                         <td>
                             <select class="select2" name="faculty_type_lid">${facultyType}</select>
                         </td>
@@ -543,7 +533,7 @@
                 $('.schoolTimingOptionsContainer').html(programAndDayWise);
             }
             else{
-                let dayOnly = `   <div class="table-responsive sameForAllDay">
+                let dayOnly = `   <div class="table-responsive sameForAllDay" data-dis="true">
                     <table class="table table-bordered" id="add-more-sameForAllDay-table">
                         <thead>
                             <th>Start Time</th>
@@ -634,6 +624,10 @@
                 .val(is_batch_preference_set).trigger('change')
             $('#add-more-facultywork-table tbody').append(
                 clonedTr)
+                
+                $('#add-more-facultywork-table tbody tr:last-child .select2').select2()
+
+                
         })
 
         $('#add-more-facultywork-table').on('click',
@@ -761,7 +755,7 @@
             }
         })
 
-        $('#add-more-sameForAllDay-table').on('click', '.remove-schoolTiming',
+        $('.schoolTimingOptionsContainer').on('click', '.remove-schoolTiming',
             function () {
                 let trLength = $('#add-more-sameForAllDay-table tbody tr').length;
 
@@ -904,7 +898,7 @@
                 console.log('roomjason:::',programJson);
                 let ApiObj = {
                 type: 'POST',
-                url: '/admin/programs',
+                url: '/admin/programs/create',
                 data: {
                     inputJSON: JSON.stringify(programJson),
                     settingName: 'Program'
@@ -915,10 +909,8 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
                 showSuccess(result)
-              
                 scroll()
-                formStepNext()
-                location.reload();
+                
             }).catch(error => {
                 console.log('ERROR::::::::::',error.responseJSON)
                 showError(error.responseJSON)
@@ -928,72 +920,54 @@
 
         //importFaculty
         $(".importFaculty").on('click', function () {
-                    let facultiesList = $('#selectedList table tbody tr');
-                    let facultyCount = facultiesList.length;
-                    let facultyJson = [];
-                    facultiesList.each(function (index, elem) {
-                        let faculty_id = $(elem).find('td[data-faculty-id]').attr("data-faculty-id")
+            console.log('chelk')
+            let facultiesList = $('#selectedList table tbody tr');
+            let facultyCount = facultiesList.length;
+            let facultyJson = [];
+            facultiesList.each(function (index, elem) {
+                let faculty_id = $(elem).find('td[data-faculty-id]').attr("data-faculty-id")
+                let faculty_lid = $(elem).find(`td[data-faculty-lid]`).attr('data-faculty-lid')
+                let faculty_name = $(elem).find('td[data-faculty-name]').attr("data-faculty-name")
+                let faculty_type_lid =  $(elem).find(`select[name="faculty_type_lid"]`).val();
 
-                        let faculty_lid = $(elem).find(`td[data-faculty-lid]`).attr('data-faculty-lid')
-                        let faculty_name = $(elem).find('td[data-faculty-name]').attr("data-faculty-name")
+                console.log('faculty_type_lid', faculty_type_lid)
 
-                        let startTime = $(elem).find('select[name="startTime"]').val();
-                        let endTime = $(elem).find('select[name="endTime"]').val();
-                        let startDate = $(elem).find('select[name="startDate"]').val();
-                        let endDate = $(elem).find('select[name="endDate"]').val();
-                        let facultyTypeLid   =  $(elem).find(`select[name="faculty_type_lid"]`).val();
-
-                        console.log('facultyName', faculty_name)
-
-                        if (index < facultyCount - 1) {
-                            let obj = {
-
-                                id: faculty_lid,
-                                faculty_id: faculty_id,
-                                //faculty_name: faculty_name,
-                                start_time_id: startTime, 
-                                end_time_id: endTime,
-                                start_date_id: startDate,
-                                end_date_id: endDate,
-                                faculty_type_lid: facultyTypeLid
-                            }
-                            facultyJson.push(obj)
-                        } else {
-                            let obj = {
-
-                                id: faculty_lid,
-                                faculty_id: faculty_id,
-                                //faculty_name: faculty_name,
-                                start_time_id: startTime, 
-                                end_time_id: endTime,
-                                start_date_id: startDate,
-                                end_date_id: endDate,
-                                faculty_type_lid: facultyTypeLid
-                            }
-                            facultyJson.push(obj)
-                        }
-                    })
-
-                    console.log('facultyJson::::::::::::>>', facultyJson)
-                    let ApiObj = {
-                        type: 'POST',
-                        url: '/admin/faculties',
-                        data: {
-                            inputJSON: JSON.stringify(facultyJson),
-                            settingName: 'Faculty'
-                        },
-                        dataType: 'JSON'
+                if (index < facultyCount - 1) {
+                    let obj = {
+                        id: faculty_lid,
+                        faculty_id: faculty_id,
+                        faculty_type_lid: faculty_type_lid
                     }
+                    facultyJson.push(obj)
+                } else {
+                    let obj = {
+                        id: faculty_lid,
+                        faculty_id: faculty_id,
+                        faculty_type_lid: faculty_type_lid
+                    }
+                    facultyJson.push(obj)
+                }
+            })
 
-                    ajaxApi(ApiObj).then(result => {
-                        console.log('sucess:::::::::', result)
-                        showSuccess(result);
-                        // setTimeout(function(){location.reload()},3000)
-                        
-                    }).catch(error => {
-                        showError(error.responseJSON)
-                    })
-                })
+            console.log('facultyJson::::::::::::>>', facultyJson)
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/create',
+                data: {
+                    inputJSON: JSON.stringify(facultyJson),
+                    settingName: "Faculty"
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+                
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
 
         //Step form Start
@@ -1107,7 +1081,7 @@
 
                 let ApiObj = {
                     type: 'POST',
-                    url: '/admin/holidays',
+                    url: '/admin/holidays/create', 
                     data: {
                         inputJSON: JSON.stringify(holidayJson),
                         settingName: 'Holiday'
@@ -1120,7 +1094,7 @@
                     console.log('Result:::::::::::', result)
                     showSuccess(result)
                     scroll()
-                    formStepNext()
+                  
 
                 }).catch(error => {
                     console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
@@ -1133,13 +1107,12 @@
 
                 let ApiObj = {
                     type: 'POST',
-                    url: '/admin/rooms',
+                    url: '/admin/rooms/create',
                     data: {
-                        settingName: 'Room'
+                        settingName: 'Room' 
                     },
                     dataType: 'JSON'
                 }
-
 
                 ajaxApi(ApiObj).then(result => {
                     console.log('Result:::::::::::', result)
@@ -1218,8 +1191,8 @@
 
             console.log('Json::::::::::::',courseJSON)
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/courseworkload/workload',
+                type: 'POST',
+                url: '/admin/courseworkload/workload/update',
                 data: {
                     inputJSON: JSON.stringify(courseJSON),
                     settingName: 'Courseworkload'
@@ -1241,7 +1214,7 @@
                 
                 console.log('session dates')
                 $.ajax({
-                    url: '/admin/sessions/dates', 
+                    url: 'sessions/dates/create', 
                     method: 'POST',
                     type: 'JSON',
                     data: {
@@ -1252,9 +1225,10 @@
                         settingName:"Sessiondates"
                     },
                     success: (data) => {
-                        showSuccess(result)
                         scroll()
-                        formStepNext()
+                        showSuccess(data) 
+                      
+                        // formStepNext()
                     },
                     error: err => {
                         console.log('err::::::::',err)
@@ -1303,12 +1277,12 @@
 
                 console.log('Json::::::::::::', divJSON)
                 let ApiObj = {
-                    type: 'PUT',
-                    url: '/admin/divisions',
+                    type: 'POST',
+                    url: '/admin/divisions/update',
                     data: {
                         inputJSON: JSON.stringify(divJSON),
                         settingName:"Division"
-                    },
+                    }, 
                     dataType: 'JSON'
                 }
 
@@ -1345,8 +1319,8 @@
                 //Ajax Call
                 console.log('JSON::::::::', batchJSON) 
                 let ApiObj = {
-                    type: 'PUT',
-                    url: '/admin/divisions/batches',
+                    type: 'POST',
+                    url: '/admin/divisions/batches/update',
                     data: {
                         inputJSON: JSON.stringify(batchJSON),
                         settingName: 'Divisionbatches'
@@ -1358,7 +1332,7 @@
                     console.log(result)
                     showSuccess(result)
                     scroll()
-                    formStepNext()
+                    // formStepNext()
 
                 }).catch(error => {
                     showError(error.responseJSON)
@@ -1439,7 +1413,7 @@
 
                 let ApiObj = {
                     type: 'POST',
-                    url: '/admin/faculties/works',
+                    url: '/admin/faculties/works/create',
                     data: {
                         inputJSON: JSON.stringify(facultyJson),
                         settingName: 'Facultyworkload'
@@ -1451,7 +1425,7 @@
                     console.log(result)
                     showSuccess(result)
                     scroll()
-                    formStepNext()
+                  
 
 
                 }).catch(error => {
@@ -1491,7 +1465,7 @@
                     console.log('facultyWorkJSON', facultyWorkJSON)
                     let ApiObj = {
                         type: 'POST',
-                        url: '/admin/faculties/workpreferences',
+                        url: '/admin/faculties/workpreferences/create',
                         data: {
                             inputJSON: JSON.stringify(facultyWorkJSON),
                             settingName: 'Facultypreference'
@@ -1687,7 +1661,7 @@
 
             console.log('Json::::::::::::',courseJSON)
             let ApiObj = {
-                type: 'PUT',
+                type: 'POST',
                 url: '/admin/courseworkload/workload',
                 data: {
                     inputJSON: JSON.stringify(courseJSON)
@@ -1744,8 +1718,8 @@
 
             console.log('Json::::::::::::', divJSON)
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/divisions',
+                type: 'POST',
+                url: '/admin/divisions/update',
                 data: {
                     inputJSON: JSON.stringify(divJSON)
                 },
@@ -1786,8 +1760,8 @@
             //Ajax Call
             console.log('JSON::::::::', batchJSON)
             let ApiObj = {
-                type: 'PUT',
-                url: '/admin/divisions/batches',
+                type: 'POST',
+                url: '/admin/divisions/batches/update',
                 data: {
                     inputJSON: JSON.stringify(batchJSON)
                 },
@@ -1804,26 +1778,7 @@
         })
 
         function showError(errors) {
-            // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-            //         <h3>Error</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            //     console.log(errorHtml)
-            // // $("#errorHtml").html(errorHtml)
-            // //open-room-modal
-            // $("#errorHtml").html(errorHtml)
-            // $(".error-html").html(errorHtml)
-            // $("#open-program-modal .error-html").html(errorHtml)
+            
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
@@ -1848,30 +1803,8 @@
             simpleAlert.alert(obj);
         }
 
-
         function showSuccess(errors) {
         
-            // let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-            //         <h3>Success</h3>
-            //         <p>${errors.description}</p>
-            //         <ul>`
-            // if (errors.data.length > 0) {
-            //     $(errors.data).each(function (key, value) {
-            //         $.each(this, function (key, value) {
-            //             errorHtml +=
-            //                 `<li>${key} ${value}</li>`
-            //         });
-            //     });
-            // }
-            // errorHtml +=
-            //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-        
-                
-
-            //     console.log('errorHtml:::::::::::',errorHtml)
-            // $("#errorHtml").html(errorHtml)
-            // $(".error-html").html(errorHtml)
-            // // $("#open-program-modal .error-html").html(errorHtml)
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
