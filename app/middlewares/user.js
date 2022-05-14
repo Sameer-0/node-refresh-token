@@ -43,8 +43,8 @@ module.exports = {
             console.log('redirectIfLoggedIn result::::::::::::::::::>> ', result);
 
             if (!result) {
-
-                return next();
+               // res.send('Session time out please login again')
+               return next();
             }
 
             // if (result.modules.length > 1) {

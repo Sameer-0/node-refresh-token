@@ -15,7 +15,7 @@ module.exports = class Organizations {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type,
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type, org.campus_lid,
             camp.campus_abbr
             FROM [dbo].organizations org 
             INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id

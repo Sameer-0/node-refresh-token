@@ -39,7 +39,7 @@ module.exports = {
 
 
     findOne: (req, res) => {
-        Rooms.findOne(req.query.id).then(result => {
+        Rooms.findOne(req.body.id).then(result => {
             res.json({
                 status: 200,
                 roomData: result.recordset[0]

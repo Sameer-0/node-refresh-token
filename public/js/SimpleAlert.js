@@ -31,7 +31,7 @@ class SimpleAlert {
             console.log('noooooo')
             for (let ele of  obj.message){
                 for (let key in ele){
-                    list += `<li>${key}${ele[key]}</li>`
+                    list += `<li>${key} : ${ele[key]}</li>`
                 }
             }
         }

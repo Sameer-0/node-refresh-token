@@ -198,14 +198,19 @@
                 $(".updateRoomTransactionTypes").removeClass('d-none')
                 $("#add-roomtransaction-stages-title").html(`UPDATE ROOM TRANSACTION TYPES`)
 
+                console.log('id::::::::::::::::',$(this).attr("data-roomtransaction-stages-id"))
+
                 let ApiObj = {
+                    type: 'POST',
                     url: '/management/rooms/bookings/transaction-types/findone',
-                    method: 'POST',
+                    dataType: 'JSON',
                     data: {
                         Id: $(this).attr("data-roomtransaction-stages-id")
                     },
-                    dataType: 'JSON'
+                   
                 }
+
+
                 ajaxApi(ApiObj).then(result => {
                     let room = result.data
                     $('#Id').val(room.rtsid),

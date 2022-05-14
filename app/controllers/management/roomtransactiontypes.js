@@ -43,6 +43,8 @@ module.exports = {
             return;
         }
 
+        console.log('IDIDID',req.body.Id)
+
         RoomTransactionTypes.getRTSId(req.body.Id).then(result => {
             res.json({
                 status: 200,
