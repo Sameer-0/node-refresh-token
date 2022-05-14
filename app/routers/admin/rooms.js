@@ -9,8 +9,8 @@ const validate = require('../../middlewares/validate')
 const room =  require('../../controllers/admin/rooms/index')
 const details =  require('../../controllers/admin/rooms/details')
 const approval =  require('../../controllers/admin/rooms/approval')
-const RoomRequest = require('../../controllers/admin/rooms/RoomRequest')
-
+const roomRequest = require('../../controllers/admin/rooms/RoomRequest')
+const buildings =  require('../../controllers/management/building')
 
 
 router.get('/rooms', room.getPage)
@@ -21,6 +21,8 @@ router.post('/rooms/delete', validate('delete'), room.delete)
 
 //Room booking
 router.get('/rooms/booking', room.getBookingPage)
+router.post('/rooms/booking/getbuildingbycampusid', buildings.getBuildingByCampusId)
+router.post('/rooms/booking/getroomsbybuildingid', room.getroomsbybuildingid)
 
 
 //ROOM TRANSACTION DETAILS
@@ -34,7 +36,7 @@ router.post('/rooms/approval', approval.ApproveRequest)
 
 
 ///rooms/requests
-router.get('/rooms/requests', RoomRequest.getPage)
-router.post('/rooms/requests/search', validate('search'), RoomRequest.search)
-router.post('/rooms/requests/pagination', validate('pagination'), RoomRequest.pagination)
+router.get('/rooms/requests', roomRequest.getPage)
+router.post('/rooms/requests/search', validate('search'), roomRequest.search)
+router.post('/rooms/requests/pagination', validate('pagination'), roomRequest.pagination)
 module.exports = router
