@@ -50,10 +50,10 @@ router.get('/rooms/bookings', bookings.getPage)
 //ROOM TRANSACTION
 router.get('/rooms/bookings/transaction-types', transactionTypes.getPage)
 router.post('/rooms/bookings/transaction-types/delete', transactionTypes.delete)
-router.get('/rooms/bookings/transaction-types/findone', validate('single'), transactionTypes.findOne)
+router.post('/rooms/bookings/transaction-types/findone', validate('single'), transactionTypes.findOne)
 router.post('/rooms/bookings/transaction-types/create', validate('JsonValidator'), transactionTypes.create)
 router.post('/rooms/bookings/transaction-types/update', validate('JsonValidator'), transactionTypes.update)
-router.get('/rooms/bookings/transaction-types/search', validate('search'), transactionTypes.search)
+router.post('/rooms/bookings/transaction-types/search', validate('search'), transactionTypes.search)
 router.post('/rooms/bookings/transaction-types/pagination', validate('pagination'), transactionTypes.pagination)
 
 //ROOM TRANSACTION STAGE:

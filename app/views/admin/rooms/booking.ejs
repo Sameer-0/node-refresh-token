@@ -137,10 +137,10 @@
                                 <select name="handled_by" id="handled_by" class="form-select select2 modalSelect2 ">
                                     <option value="">--select--</option>
                                     <% for(let org of orgList) { %>
-                                    <option value="<%- org.id %>">
+                                    <option value="<%- org.id %>" data-campus-lid="<%- org.campus_lid %>">
                                         <%- org.org_abbr %>/<%- org.org_id %>
                                     </option>
-                                    <% } %>
+                                    <% } %> 
                                 </select>
                             </div>
                         </div>
@@ -326,7 +326,7 @@
                 let start_date_id = $(elem).find(`select[name='startDate']`).val();
                 let end_date_id = $(elem).find(`select[name='endDate']`).val();
                 let org_lid = $(`#handled_by`).val();
-                let campus_lid = $(elem).attr(`data-campus-lid`);
+                let campus_lid = $("#handled_by option:selected").attr('data-campus-lid');
                 let building_lid = $(elem).attr(`data-building-lid`);
                 if (index < roomCount - 1) {
                     let obj = {
