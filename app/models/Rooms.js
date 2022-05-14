@@ -154,4 +154,11 @@ module.exports = class Rooms {
                 .execute(`[${slug}].[request_for_room_bookings]`)
         })
     }
+
+    static roomsbybuildingid(building_lid) {
+        return poolConnection.then(pool => {
+            return pool.request().input('building_lid', sql.Int, building_lid)
+                .query(`SELECT * FROM [dbo].rooms WHERE building_lid = @building_lid`)
+        })
+    }
 }

@@ -80,7 +80,7 @@ module.exports = {
 
     findOne: (req, res) => {
 
-        Buildings.findOne(req.query.Id).then(result => {
+        Buildings.findOne(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -162,6 +162,16 @@ module.exports = {
             res.json({
                 status: "500",
                 message: "Something went wrong",
+            })
+        })
+    },
+
+    getBuildingByCampusId: (req, res, next) => {
+        Buildings.buildingByCampusId(req.body.campus_lid).then(result => {
+            console.log('result:::::::::::::',result.recordset)
+            res.json({
+                status: 200,
+                buildingData: result.recordset
             })
         })
     }

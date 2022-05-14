@@ -159,4 +159,14 @@ console.log('yello hh')
         })
     },
 
+    getroomsbybuildingid: (req, res, next) => {
+        Rooms.roomsbybuildingid(req.body.building_lid).then(result => {
+            console.log('result:::::::::::::',result.recordset)
+            res.json({
+                status: 200,
+                roomList: result.recordset
+            })
+        })
+    }
+
 }
