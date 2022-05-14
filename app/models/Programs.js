@@ -15,7 +15,7 @@ module.exports = class Programs{
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, RTRIM(LTRIM(p.program_name)) as program_name, p.abbr, p.program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, RTRIM(LTRIM(p.program_name)) as program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC`)
         })
     }
 
@@ -32,14 +32,14 @@ module.exports = class Programs{
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  p.id, p.program_id, p.program_name, p.abbr, p.program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT  p.id, p.program_id, p.program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, p.program_name, p.abbr, p.program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id WHERE p.program_name LIKE @keyword OR p.abbr LIKE @keyword OR pt.name LIKE @keyword ORDER BY p.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, p.program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id WHERE p.program_name LIKE @keyword OR p.abbr LIKE @keyword OR pt.name LIKE @keyword ORDER BY p.id DESC`)
         })
     }
 
@@ -73,9 +73,7 @@ module.exports = class Programs{
 
     static delete(id, slug, userid) {
         return poolConnection.then(pool => {
-
             const request = pool.request(); 
-
             return request.input('input_program_lid', sql.Int, id)
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
