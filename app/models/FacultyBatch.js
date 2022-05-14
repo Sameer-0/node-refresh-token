@@ -30,7 +30,7 @@ module.exports = class FacultyBatch {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch, f.faculty_name, f.faculty_id
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id
             FROM [${slug}].faculty_batches fb
             INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id         
             ORDER BY fb.id DESC`)
@@ -48,10 +48,10 @@ module.exports = class FacultyBatch {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch, f.faculty_name, f.faculty_id
+                .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id
                 FROM [${slug}].faculty_batches fb
                 INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id 
-                WHERE  f.faculty_name LIKE @keyword OR  f.faculty_id LIKE @keyword OR fb.batch LIKE @keyword
+                WHERE  f.faculty_name LIKE @keyword OR  f.faculty_id LIKE @keyword OR fb.batch_lid LIKE @keyword
                 ORDER BY fb.id DESC`)
         })
     }
@@ -60,7 +60,7 @@ module.exports = class FacultyBatch {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  fb.id, fb.faculty_lid, fb.batch, f.faculty_name, f.faculty_id
+                .query(`SELECT  fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id
                 FROM [${slug}].faculty_batches fb
                 INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id         
                 ORDER BY fb.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
