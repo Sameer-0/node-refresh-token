@@ -398,7 +398,7 @@
                             <th>Session Events per Semester</th>
                             <th>Continuous</th>
                         </thead>
-                        <tbody>
+                        <tbody> 
                             <%
                                 let r1count = 1
                                 for(let course of courseWorkloadList) { %>
@@ -498,7 +498,7 @@
                             <th>Count for practical batch</th>
                             <th>Count for tutorial batch</th>
                             <th>Count for workshop batch</th>
-                            <th>Action</th>
+                            
                         </thead>
                         <tbody>
                             <% for(let div of divisionData) {%>
@@ -517,9 +517,7 @@
                                             value="<%-div.count_for_tutorial_batch%>"></td>
                                     <td><input class="form-control rounded-0" name="count_for_workshop_batch"
                                             value="<%-div.count_for_workshop_batch%>"></td>
-                                    <td>
-                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
-                                    </td>
+                                   
                                 </tr>
                             <%}%>
                         </tbody>
@@ -551,7 +549,7 @@
                             <th>Batch Count</th>
                             <th>Input Batch count</th>
                             <th>Facult Count</th>
-                            <th>Action</th>
+                         
                         </thead>
                         <tbody>
                             <tr>
@@ -569,9 +567,6 @@
                                         <td><%- batch.input_batch_count%></td>
                                         <td><input class="form-control" type="number" name="faculty_count"
                                                 value="<%-batch.faculty_count%>"></td>
-                                        <td>
-                                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-division"></i>
-                                        </td>
 
                                     </tr>
                                 <%}%>
@@ -695,13 +690,16 @@
                 </table>
             </div>
         
+
+            <!-- IMPORT FACULTY MODAL -->
             <!-- Modal -->
             <div class="modal fade" id="open-faculty-modal" tabindex="-1" aria-labelledby="open-faculty-modal" aria-hidden="true">
                 <div class="modal-dialog modal-fullscreen modal-lg">
                     <div class="modal-content modal-inputform">
                         <div class="modal-header modal-inputform-header">
                             <h3 class="modal-title" id="open-faculty-modal-title">Import Faculty</h3>
-                            <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times text-dark"></i></button>
+                            <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                                    class="fas fa-times text-dark"></i></button>
                         </div>
 
                         <div class="modal-body py-0">
@@ -712,10 +710,12 @@
                                     <input type="text" name="" id="searchItem" placeholder="Search Faculty"
                                         class="form-control searchItemFaculty">
                                     <ul class="list-group custom-select-list selectListFaculty" id="selectList" style="margin-top: 60px;">
+
                                         <% for (let faculty of faculties) { %>
-                                            <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
-                                            data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.id%>"
-                                            data-clickable="true"> <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)%></li>
+                                        <li class="list-group-item my-1 border-top" data-faculty-name="<%- faculty.faculty_name %>"
+                                            data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.id%>" data-clickable="true">
+                                            <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                                            %></li>
                                         <% } %>
                                     </ul>
                                 </div>
@@ -727,10 +727,7 @@
                                         <table class="table table-bordered" id="add-more-faculty-table">
                                             <thead>
                                                 <th>Faculty Name</th>
-                                                <th>Start Time</th>
-                                                <th>End Time</th>
-                                                <th>Start Date</th>
-                                                <th>End Date</th>
+                                                <th>Faculty Type</th>
                                                 <th>Action</th>
                                             </thead>
                                             <tbody>
@@ -740,9 +737,10 @@
                                     </ul>
 
                                 </div>
+
                             </div>
                         </div>
-                        <div class="px-3 error-html"></div>
+                        <div class="px-3 errorHtml"></div>
                         <div class="modal-footer">
                             <button type="button" class="btn importFaculty modal-inputform-btn">Import Faculty</button>
                         </div>
@@ -783,7 +781,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <select class="form-select" name="faculty_lid" id="faculty_lid">
+                                <select class="select2 select2Modal" name="faculty_lid" id="faculty_lid">
                                     <option value="">--select--</option>
                                     <% for(faculty of facultyList) {%>
                                     <option value="<%- faculty.id %>">
@@ -792,15 +790,15 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select class="form-select" name="program_session_lid" id="program_session_lid">
+                                            <select class="select2 select2Modal" name="program_session_lid" id="program_session_lid">
                                                 <option value="">--select--</option>
                                                 <% for(session of programSession) {%>
                                     <option value="<%- session.id %>"><%- session.acad_session %></option>
                                     <%}%>
-                                            </select>
+                                            </select> 
                                         </td>
                                         <td>
-                                            <select class="form-select" name="module_lid" id="module_lid">
+                                            <select class="select2 select2Modal" name="module_lid" id="module_lid">
                                                 <option value="">--select--</option>
                                                 <% for(course of courseWorkloadList) {%>
                                     <option value="<%- course.id %>">

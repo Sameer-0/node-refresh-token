@@ -21,6 +21,7 @@ module.exports = {
     },
 
     create: (req, res) => {
+        console.log('yllo', req.body);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
