@@ -137,7 +137,7 @@
                                 </td>
                                 <td>
                                     <select name="owner_id" id="owner_id" class="select2 modalSelect2">
-                                        <option>--select--</option>
+                                        <option value="">--select--</option>
                                         <% for(let owner of orgList) { %>
                                             <option value="<%- owner.id %>">
                                                 <%- owner.org_abbr %> 
@@ -147,7 +147,7 @@
                                 </td>
                                 <td>
                                     <select name="start_time_id" id="start_time_id" class="select2 modalSelect2">
-                                        <option>--select--</option>
+                                        <option value="">--select--</option>
                                         <% for(let time of timeList) { %>
                                             <option value="<%- time.id %>">
                                                 <%- time.start_time %>
@@ -157,8 +157,8 @@
                                 </td>
                                 <td>
                                     <select name="end_time_id" id="end_time_id" class="select2 modalSelect2">
-                                        <option>--select--</option>
-                                        <% for(let time of timeList) { %>
+                                        <option value="">--select--</option>
+                                        <% for(let time of timeList) { %> 
                                             <option value="<%- time.id %>">
                                                 <%- time.end_time %>
                                             </option>
@@ -167,7 +167,7 @@
                                 </td>
                                 <td>
                                     <select name="handled_by" id="handled_by" class="select2 modalSelect2">
-                                        <option>--select--</option>
+                                        <option value="">--select--</option>
                                         <% for(let handler of orgList) { %>
                                             <option value="<%- handler.id %>">
                                                 <%- handler.org_abbr %>
@@ -177,7 +177,7 @@
                                 </td>
                                 <td>
                                         <select name="campus_lid" id="campus_lid" class="select2 modalSelect2">
-                                            <option>--select--</option>
+                                            <option value="">--select--</option>
                                             <% for(let campus of campusList) { %>
                                                 <option value="<%- campus.id %>">
                                                     <%- campus.campus_abbr %>
@@ -210,13 +210,59 @@
 <%- include("../partials/footer") %>
 
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-<script src="/js/dashboardscript.js"></script>
 <script src="/js/leftsidebartoggle.js"></script>
 <script>
-//    $('#add-building-modal .select2').select2();
+
    $('.select2').select2({
         dropdownParent: $('#add-building-modal')
     });
+
+    //ADD MORE BUILDING ROW
+    $('#add-more-building').on('click', function () {
+                console.log("Organization Added::::")
+                let lastTr = $('#add-more-building-table tbody tr:last-child')
+                lastTr.find('.modalSelect2').select2('destroy');
+                let buildingName = lastTr.find(`input[name='building_name']`).val();
+                let buildingNumber = lastTr.find(`input[name='building_number']`).val();
+                let floors = lastTr.find(`input[name='floors']`).val();
+                let ownerId = lastTr.find(`select[name='owner_id']`).val();
+                let startTimeId = lastTr.find(`select[name='start_time_id']`).val();
+                let endTimeId = lastTr.find(`select[name='end_time_id']`).val();
+                let handledById = lastTr.find(`select[name='handled_by']`).val();
+                let campusId = lastTr.find(`select[name='campus_lid']`).val();
+
+
+                let clonedTr = lastTr.clone();
+                clonedTr.find(`input[name='building_name']`).val('')
+                clonedTr.find(`input[name='building_number']`).val('')
+                clonedTr.find(`input[name='floors']`).val('')
+                clonedTr.find(`select[name='owner_id']`).val('')
+                clonedTr.find(`select[name='start_time_id']`).val('')
+                clonedTr.find(`select[name='end_time_id']`).val('')
+                clonedTr.find(`select[name='handled_by']`).val('')
+                clonedTr.find(`select[name='campus_lid']`).val('')
+
+                $('#add-more-building-table tbody').append(clonedTr)
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-building-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-building-modal')
+                });
+            })
+
+            $('#add-more-building-table').on('click', '.remove-building', function () {
+                let trLength = $('#add-more-building-table tbody tr').length;
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this room.')
+                }
+            })
+
+
 
     $(".createBuilding").on('click', function () {
         let buildingElems = $('#add-more-building-table tbody tr');

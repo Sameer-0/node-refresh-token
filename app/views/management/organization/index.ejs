@@ -138,7 +138,7 @@
                                 </td>
 
                                 <td>
-                                    <select name="orgType" id="orgType" class="modalSelect2 select2">
+                                    <select name="orgType" id="orgType" class="select2 modalSelect2">
                                         <option value="">--select--</option>
                                         <% for(let orgType of orgtypeList) { %>
                                             <option value="<%- orgType.id %>">
@@ -149,7 +149,7 @@
                                 </td>
 
                                 <td>
-                                    <select name="campus" id="campus" class="modalSelect2 select2">
+                                    <select name="campus" id="campus" class="select2 modalSelect2">
                                         <option value="">--select--</option>
                                         <% for(let campus of campusList) { %>
                                             <option value="<%- campus.id %>">
@@ -183,7 +183,6 @@
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-<script src="/js/dashboardscript.js"></script>
 
 <script>
    
@@ -192,6 +191,51 @@
     $('.select2').select2({
         dropdownParent: $('#add-org-modal')
     });
+
+    //ADD MORE ORGANIZATION
+    $('#add-more-orgnization').on('click', function () {
+
+            console.log("Organization Added::::")
+            let lastTr = $('#add-more-org-table tbody tr:last-child')
+            console.log('last trrr ', lastTr)
+            lastTr.find('.modalSelect2').select2('destroy');
+            let orgId = lastTr.find(`input[name='orgId']`).val();
+            let orgAbbr = lastTr.find(`input[name='orgAbbr']`).val();
+            let orgName = lastTr.find(`input[name='orgName']`).val();
+            let orgCompleteName = lastTr.find(`input[name='orgCompleteName']`).val();
+            let orgType = lastTr.find(`select[name="orgType"]`).val();
+            let campus = lastTr.find(`select[name="campus"]`).val();
+            console.log('yelo', orgType)
+
+            let clonedTr = lastTr.clone();
+            clonedTr.find(`input[name='orgId']`).val('') 
+            clonedTr.find(`input[name='orgAbbr']`).val('') 
+            clonedTr.find(`input[name='orgName']`).val('')
+            clonedTr.find(`input[name='orgCompleteName']`).val('')
+            clonedTr.find(`select[name='orgType']`).val('');
+            clonedTr.find(`select[name='campus']`).val('');
+
+            $('#add-more-org-table tbody').append(clonedTr) 
+        
+            lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-org-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-org-modal')
+                });
+            })
+
+            $('#add-more-org-table').on('click', '.remove-organization', function () {
+            let trLength = $('#add-more-org-table tbody tr').length;
+            if (trLength > 1) {
+                $(this).closest('tr').remove()
+            } else {
+                alert('Cannot delete this room.')
+            }
+            })
+
+
     //Create 
     $(".createOrg").on('click', function () {
         let orgElems = $('#add-more-org-table tbody tr');

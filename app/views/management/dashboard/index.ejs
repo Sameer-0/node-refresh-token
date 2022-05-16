@@ -50,7 +50,7 @@
 <!-- PAGE LEVEL JS START -->
  
 
-<script src="/js/dashboardscript.js"></script>
+
 <script src="/js/script.js"></script>
 
 
@@ -69,6 +69,7 @@
         console.log('userSession::::::::::::',userSession)
         localStorage.setItem('devicecheck',userSession)
 
+        $('.select2').select2();
   
 
         // $(".homeCard .border").hover(function () {
@@ -116,6 +117,44 @@
         //     })
         // })
 
+            // Add more rows for orgnization
+            $('#add-more-orgnization').on('click', function () {
+
+                console.log("Organization Added::::")
+                let lastTr = $('#add-more-org-table tbody tr:last-child')
+                console.log('last trrr ', lastTr)
+                lastTr.find('.modalSelect2').select2('destroy');
+                let orgId = lastTr.find(`input[name='orgId']`).val();
+                let orgAbbr = lastTr.find(`input[name='orgAbbr']`).val();
+                let orgName = lastTr.find(`input[name='orgName']`).val();
+                let orgCompleteName = lastTr.find(`input[name='orgCompleteName']`).val();
+                let orgType = lastTr.find(`select[name="orgType"]`).val();
+                let campus = lastTr.find(`select[name="campus"]`).val();
+                console.log('yello', orgType)
+
+                let clonedTr = lastTr.clone();
+                clonedTr.find(`input[name='orgId']`).val('')
+                clonedTr.find(`input[name='orgAbbr']`).val('') 
+                clonedTr.find(`input[name='orgName']`).val('')
+                clonedTr.find(`input[name='orgCompleteName']`).val('')
+                clonedTr.find(`select[name='orgType']`).val('');
+                clonedTr.find(`select[name='campus']`).val(''); 
+
+                $('#add-more-org-table tbody').append(clonedTr) 
+                // $('#add-more-org-table tbody tr:last-child .modalSelect2').select2();
+                lastTr.find('#add-more-org-table .modalSelect2').select2();
+                clonedTr.find('##add-more-org-table .modalSelect2').select2();
+            })
+
+            $('#add-more-org-table').on('click', '.remove-organization', function () {
+                let trLength = $('#add-more-org-table tbody tr').length;
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this room.')
+                }
+            })
+
 
 
         let currentFormStep = parseInt(`<%- currentFormStep%>`);
@@ -152,8 +191,8 @@
                         let orgAbbr = $(elem).find(`input[name='orgAbbr']`).val()
                         let orgName = $(elem).find(`input[name='orgName']`).val()
                         let orgCompleteName = $(elem).find(`input[name='orgCompleteName']`).val()
-                        let orgType = $(elem).find(`datalist[name='orgType']`).val()
-                        let campus_lid = $(elem).find(`datalist[name='orgCampus_lid']`).val()
+                        let orgType = $(elem).find(`select[name='orgType']`).val()
+                        let campus_lid = $(elem).find(`select[name='campus']`).val()
 
                         if (index < orgCount - 1) {
                             let obj = {
@@ -165,11 +204,11 @@
                                 org_type_id: orgType,
                                 campus_lid: campus_lid
                             }
-                            orgJson.push(obj)
+                            orgJson.push(obj) 
                         } else {
                             let obj = {
                                 org_id: orgId,
-                                org_id_str: orgId,
+                                org_id_str: orgId, 
                                 org_abbr: orgAbbr,
                                 org_name: orgName,
                                 org_complete_name: orgCompleteName,
@@ -185,7 +224,7 @@
 
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/organizations',
+                        url: '/management/organizations/create',
                         data: {
                             inputJSON: JSON.stringify(orgJson), 
                             settingName: 'Organization'
@@ -196,7 +235,7 @@
 
                     ajaxApi(ApiObj).then(result => {
                         console.log('Result:::::::::::', result)
-                        //   location.reload()
+                  
 
                         formStepNext()
                         showSuccess(result)
@@ -242,7 +281,7 @@
 
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/campuses',
+                        url: '/management/campuses/create',
                         data: {
                             inputJSON: JSON.stringify(campusJson),
                             settingName: 'Campus'
@@ -252,8 +291,8 @@
                    
 
                     ajaxApi(ApiObj).then(result => {
-                        // location.reload()
-                        formStepNext()
+                        
+                        
                         showSuccess(result);
                        
                     }).catch(error => {
@@ -305,7 +344,7 @@
 
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/buildings',
+                        url: '/management/buildings/create',
                         data: {
                             inputJSON: JSON.stringify(buildingJson),
                             settingName: 'Building'
@@ -315,7 +354,7 @@
                     
 
                     ajaxApi(ApiObj).then(result => {
-                        formStepNext()
+                        // formStepNext()
                         showSuccess(result)
                         
                     }).catch(error => {
@@ -391,7 +430,7 @@
 
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/rooms',
+                        url: '/management/rooms/create',
                         data: {
                             inputJSON: JSON.stringify(roomJson),
                             settingName: 'Room'
@@ -401,7 +440,7 @@
                     }
 
                     ajaxApi(ApiObj).then(result => {
-                        formStepNext()
+                      
                         showSuccess(result)
                         
                     }).catch(error => {
@@ -445,7 +484,7 @@
                     console.log('facultyJson::::::::::::>>', facultyJson)
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/faculties',
+                        url: '/management/faculties/faculty/create',
                         data: {
                             inputJSON: JSON.stringify(facultyJson),
                             settingName:'Faculty'
@@ -455,9 +494,9 @@
 
 
                     ajaxApi(ApiObj).then(result => {
-                        formStepNext()
+                        // formStepNext()
                         showSuccess(result)
-                        location.reload();
+                        
                         
                     }).catch(error => {
                         showError(error.responseJSON)
@@ -530,27 +569,14 @@
     }
 
     function showError(errors) {
-        // console.log('errorrrr',errors)
-        // let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        //             <h3>Error!</h3>
-        //             <p>${errors.description}</p>
-        //             <ul>`
-        // $(errors.data).each(function (key, value) {
-        //     $.each(this, function (key, value) {
-        //         errorHtml +=
-        //             `<li>${key} ${value}</li>`
-        //     });
-        // });
-        // errorHtml +=
-        //     `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-        // $(".errorHtml").html(errorHtml)
+        
         console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title : errors.description,
                 message: errors.data,
                 type: 'alert-danger',
-                buttons: {
+                buttons: { 
                     positive:{
                         text: "Okay",
                         action: function(){
