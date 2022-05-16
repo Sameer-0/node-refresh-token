@@ -21,8 +21,8 @@ module.exports = {
                 pageCount: result[4].recordset ? result[4].recordset[0].count : 0,
                 breadcrumbs: req.breadcrumbs,
             })
-        })
-    },
+        }) 
+    }, 
 
     create: (req, res) => {
 
