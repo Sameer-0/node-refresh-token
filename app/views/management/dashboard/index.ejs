@@ -21,7 +21,7 @@
 
     .stage:nth-child(<%- currentFormStep %>)::before {
         border-left: 25px solid #ffc800;
-    }
+    } 
 </style>
 <% } %>
 <!-- PAGE LEVEL CSSS END -->
@@ -70,6 +70,9 @@
         localStorage.setItem('devicecheck',userSession)
 
   
+        $('.select2').select2({
+                    dropdownParent: $('#add-more-org-table tbody tr')
+                });
 
         // $(".homeCard .border").hover(function () {
         //     $this = $(this)
@@ -103,7 +106,7 @@
         //     })
 
         //     setTimeout(function () {
-        //         $this.find("img").css({
+        //         $this.find("img").css({ 
         //             "transition": "0.2s",
         //             "transform": "scale(1)"
         //         })
@@ -116,6 +119,7 @@
         //     })
         // })
 
+        
 
 
         let currentFormStep = parseInt(`<%- currentFormStep%>`);
@@ -185,7 +189,7 @@
 
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/organizations',
+                        url: '/management/organizations/create',
                         data: {
                             inputJSON: JSON.stringify(orgJson), 
                             settingName: 'Organization'
@@ -194,7 +198,7 @@
                     }
 
 
-                    ajaxApi(ApiObj).then(result => {
+                    ajaxApi(ApiObj).then(result => { 
                         console.log('Result:::::::::::', result)
                         //   location.reload()
 
@@ -242,7 +246,7 @@
 
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/campuses',
+                        url: '/management/campuses/create',
                         data: {
                             inputJSON: JSON.stringify(campusJson),
                             settingName: 'Campus'
@@ -305,7 +309,7 @@
 
                     let ApiObj = {
                         type: 'POST',
-                        url: '/management/buildings',
+                        url: '/management/buildings/create',
                         data: {
                             inputJSON: JSON.stringify(buildingJson),
                             settingName: 'Building'

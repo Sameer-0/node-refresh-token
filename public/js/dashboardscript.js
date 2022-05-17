@@ -4,32 +4,31 @@
 
                 console.log("Organization Added::::")
                 let lastTr = $('#add-more-org-table tbody tr:last-child')
-                lastTr.find('.modalSelect2').select2('destroy');
-                let orgId = lastTr.find(`select[name='orgId']`).val();
-                let orgAbbr = lastTr.find(`select[name='orgAbbr']`).val();
-                let orgName = lastTr.find(`select[name='orgName']`).val();
-                let orgCompleteName = lastTr.find(`select[name='orgCompleteName']`).val();
-                let orgType = lastTr.find(`input[name="orgType"]`).val();
-                let campus = lastTr.find(`input[name="campus"]`).val();
+                // lastTr.find('.select2').select2('destroy')
+                let orgId = lastTr.find(`input[name='orgId']`).val();
+                let orgAbbr = lastTr.find(`input[name='orgAbbr']`).val();
+                let orgName = lastTr.find(`input[name='orgName']`).val();
+                let orgCompleteName = lastTr.find(`input[name='orgCompleteName']`).val();
+                let orgType = lastTr.find(`select[name="orgType"]`).val();
+                let campus = lastTr.find(`select[name="campus"]`).val();
                 console.log('yelo', orgType)
 
                 let clonedTr = lastTr.clone();
                 clonedTr.find(`input[name='orgId']`).val('')
                 clonedTr.find(`input[name='orgAbbr']`).val('')
-                clonedTr.find(`select[name='orgName']`).val('')
-                clonedTr.find(`select[name='orgCompleteName']`).val('')
-                clonedTr.find(`input[name='orgType']`).val('');
-                clonedTr.find(`input[name='campus']`).val('');
+                clonedTr.find(`input[name='orgName']`).val('')
+                clonedTr.find(`input[name='orgCompleteName']`).val('')
+                clonedTr.find(`select[name='orgType']`).val('');
+                clonedTr.find(`select[name='campus']`).val('');
 
                 $('#add-more-org-table tbody').append(clonedTr)
 
-                lastTr.find('.modalSelect2').select2({
-                    dropdownParent: $('#add-org-modal')
-                });
+                $('#add-more-org-table tbody tr:last-child .select2').select2();
+                
 
-                clonedTr.find('.modalSelect2').select2({
-                    dropdownParent: $('#add-org-modal')
-                });
+                // clonedTr.find('.modalSelect2').select2({
+                //     dropdownParent: $('#add-org-modal')
+                // });
             })
 
             $('#add-more-org-table').on('click', '.remove-organization', function () {
