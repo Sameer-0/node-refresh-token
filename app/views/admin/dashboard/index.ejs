@@ -1,10 +1,20 @@
+<% if (currentFormStep) { %> 
+    <style>
+        .main, .top-navbar{
+            left: 0 !important;
+        }
+        
+        </style>
+<% } %>
 <%- include ('../partials/head') %>
 
 <!-- PAGE LEVEL CSSS START -->
 
 <!-- PAGE LEVEL CSSS END -->
+<% if (!currentFormStep) { %> 
+    <%- include ('../partials/leftSidebar') %>
+<% } %>
 
-<%- include ('../partials/leftSidebar') %>
 <%- include ('../partials/header') %>
 
 <style>
@@ -63,7 +73,7 @@
         $('.select2').select2({
         dropdownParent: $('#facultyPreference')});
 
-
+ 
         let username = `<%- locals.userId %>`;
         let campu = `<%- campusList%>`;
         let date = `<%- acadCalender%>`;
@@ -72,7 +82,7 @@
         let slotObj = JSON.parse(slotTime);
         let programType = JSON.parse(`<%- programTypeList%>`);
         let facultyTypeList = JSON.parse(`<%- facultyType %>`);
-        let transactionTypeList =  JSON.parse(`<%- transactionTypes %>`);
+        let transactionType = JSON.parse(`<%- transactionTypes %>`);
         
        
         let optionStartTime;
@@ -81,7 +91,7 @@
         let endDate;
         let programTypeList;
         let facultyType; 
-        let transactionTypes;
+        let transactionTypeList;
 
         for (let obj of slotObj) {
             optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
@@ -106,63 +116,54 @@
             facultyType += `<option value="${obj.id}">${obj.name}</option>`;
         }
 
-        for (let obj of transactionTypeList) {
-            transactionTypes += `<option value="${obj.id}">${obj.name}</option>`;
+        for (let obj of transactionType) {
+            transactionTypeList += `<option value="${obj.id}">${obj.name}</option>`;
         }
 
 
         //DATA SELECT FOR ROOM
-        $(".selectList").on('click', '.list-group-item', function () {
-
-            console.log('yello')
+        $(".selectRoomList").on('click', '.list-group-item', function () {
+            let building_lid =  $("#building_lid").val()
+            let campus_lid =  $("#campus_lid").val()
+            console.log('campus_lid::>>>', campus_lid)
             //remove current element when added to right sidebar
             // if ($(this).attr('data-clickable') == 'true') {
             $(".selectedList table tbody").append(
-                `<tr data-clickable="true">
-                        <td data-room-id="${$(this).attr('data-room-id')}">${$(this).text()}</td>
-                        <td>
-                            <select class="select2 modalSelect2" name="startTime">${optionStartTime}</select>
-                        </td>
-                        <td>
-                            <select class="select2 modalSelect2" name="endTime">${optionEndTime}</select>
-                        </td>
-                        <td>
-                            <select class="select2 modalSelect2" name="startDate">${startDate}</select>
-                        </td>
-                        <td>
-                            <select class="select2 modalSelect2" name="endDate">${endDate}</select>
-                        </td>
-                        <td>
-                            <select class="select2 modalSelect2" name="transaction_type_lid">${transactionTypes}</select>
-                        </td>
-                        <td>
-                            <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
-                        </td>
-                    </tr>
-                    `
+                `<tr data-clickable="true" data-building-lid="${building_lid}" data-campus-lid="${campus_lid}">
+                    <td data-room-id="${$(this).attr('data-room-id')}">${$(this).text()}</td>
+                    <td>
+                        <select class="select2 modalSelect2" name="startTime">${optionStartTime}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="endTime">${optionEndTime}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="startDate">${startDate}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="endDate">${endDate}</select>
+                    </td>
+                    <td>
+                        <select class="select2 modalSelect2" name="transaction_type_lid">${transactionTypeList}</select>
+                    </td>
+                    <td>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
+                    </td>
+                </tr>
+                ` 
+                    
+                
             )
             // }
-            $('.select2').select2({
-        dropdownParent: $('#open-room-modal')});
-            
-
-
+            $('#add-more-room-table tbody tr:last-child .select2').select2({
+                dropdownParent: $('#open-transaction-modal')
+            });
             $(this).attr('data-clickable', 'false');
-
-     
-
         })
 
         //Remove Element
         $(".selectedList").on('click', '.clicktoremove', function () {
-
-            //     if ($(this).parent().parent().attr('data-clickable') == 'true') {
-            //         $("#selectList").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
-            // </li>`)
-            //     }
-
             $(this).parent().attr('data-clickable', 'false')
-
             $($(this)).fadeOut(300, function () {
                 $($(this).parent().parent()).remove()
             })
@@ -170,10 +171,8 @@
 
         //search 
         $('#searchItem').on('input', function () {
-            let selectItems = $('.selectList li')
-
+            let selectItems = $('.selectRoomList li')
             var text = $('#searchItem').val().toLowerCase();
-
             for (let item of selectItems) {
                 if (item.textContent.toLowerCase().indexOf(text) > -1) {
                     $(item).removeClass("d-none");
@@ -967,6 +966,181 @@
             })
         })
 
+          //IMPORT ROOM
+          $("#createRoomTransaction").on('click', function () {
+            console.log('yello hello')
+            let roomElems = $('#add-more-room-table tbody tr');
+            let roomCount = roomElems.length;
+            let roomJson = [];
+            roomElems.each(function (index, elem) {
+                let room_lid = $(elem).find(`td[data-room-id]`).attr('data-room-id');
+                let transaction_type_id = $(elem).find(`select[name='transaction_type_lid']`).val();
+                let start_time_id = $(elem).find(`select[name='startTime']`).val();
+                let end_time_id = $(elem).find(`select[name='endTime']`).val();
+                let start_date_id = $(elem).find(`select[name='startDate']`).val();
+                let end_date_id = $(elem).find(`select[name='endDate']`).val();
+                let org_lid = $(`#handled_by`).val();
+                let campus_lid = $("#handled_by option:selected").attr('data-campus-lid');
+                let building_lid = $(elem).attr(`data-building-lid`);
+                if (index < roomCount - 1) {
+                    let obj = {
+                        room_lid: room_lid,
+                        transaction_type_lid: transaction_type_id,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        org_lid: org_lid,
+                        campus_lid: campus_lid,
+                        user_id: username
+                    }
+                    roomJson.push(obj)
+                } else {
+                    let obj = {
+                        room_lid: room_lid,
+                        transaction_type_lid: transaction_type_id,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                        start_date_id: start_date_id,
+                        end_date_id: end_date_id,
+                        org_lid: org_lid,
+                        campus_lid: campus_lid,
+                        user_id: username
+                    }
+                    roomJson.push(obj)
+                }
+            })
+
+            console.log('roomJson::::::::::::', roomJson)
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/create',
+                data: {
+                    inputJSON: JSON.stringify(roomJson),
+                    settingName: 'Room'
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+      
+        //Create facultyworkload
+        $(".createFacultyWorkLoad").on('click', function(){
+            console.log('create function calling..')
+            let facultyElems = $('#add-more-facultywork-table tbody tr');
+            let facultyCount = facultyElems.length;
+            let facultyJson = [];
+            facultyElems.each(function (index, elem) {
+                let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
+                let program_session_lid = $(elem).find(`select[name='program_session_lid']`).val();
+                let module_lid = $(elem).find(`select[name='module_lid']`).val();
+                let lecture_per_week = $(elem).find(`input[name='lecture_per_week']`).val();
+                let practical_per_week = $(elem).find(`input[name='practical_per_week']`).val();
+                let tutorial_per_week = $(elem).find(`input[name='tutorial_per_week']`).val();
+                let workshop_per_week = $(elem).find(`input[name='workshop_per_week']`).val();
+                let is_batch_preference_set = $(elem).find(`select[name='is_batch_preference_set']`).val();
+
+                if (index < facultyCount - 1) {
+                    let obj = {
+                        faculty_lid: faculty_lid,
+                        program_session_lid: program_session_lid,
+                        module_lid: module_lid,
+                        lecture_per_week: lecture_per_week,
+                        practical_per_week: practical_per_week,
+                        tutorial_per_week: tutorial_per_week,
+                        workshop_per_week: workshop_per_week,
+                        is_batch_preference_set: is_batch_preference_set
+                    }
+                    facultyJson.push(obj)
+                } else {
+                    let obj = {
+                        faculty_lid: faculty_lid,
+                        program_session_lid: program_session_lid,
+                        module_lid: module_lid,
+                        lecture_per_week: lecture_per_week,
+                        practical_per_week: practical_per_week,
+                        tutorial_per_week: tutorial_per_week,
+                        workshop_per_week: workshop_per_week,
+                        is_batch_preference_set: is_batch_preference_set
+                    }
+                    facultyJson.push(obj)
+                }
+            })
+
+            console.log('Json::::::::::::',facultyJson)
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/works/create',
+                data: {
+                    inputJSON: JSON.stringify(facultyJson),
+                    settingName: 'Facultyworkload'
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //craete faculty preference
+        $(".createFacultyWorkTimePref").on('click', function () {
+        let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
+        let facultyWorkPrefCount = facultyWorkElems.length;
+        let facultyWorkJSON = [];
+        facultyWorkElems.each(function (index, elem) {
+            let faculty_work_lid = $(elem).find(`select[name="faculty_work_lid"]`).val()
+            let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
+            let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
+            let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
+
+            if (index < facultyWorkPrefCount - 1) {
+                let obj = {
+                    faculty_work_lid: faculty_work_lid,
+                    p_day_lid: p_day_lid,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id
+                }
+                facultyWorkJSON.push(obj)
+            } else {
+                let obj = {
+                    faculty_work_lid: faculty_work_lid,
+                    p_day_lid: p_day_lid,
+                    start_time_id: start_time_id,
+                    end_time_id: end_time_id
+                }
+                facultyWorkJSON.push(obj)
+            }
+        })
+
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/create',
+            data: {
+                inputJSON: JSON.stringify(facultyWorkJSON),
+                settingName: 'Facultypreference'
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            showSuccess(result)
+            // location.reload()
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+    })
+
 
         //Step form Start
         let currentFormStep = parseInt(`<%- currentFormStep%>`);
@@ -1099,29 +1273,6 @@
                     showError(error.responseJSON)
                 })
 
-
-            } else if(currentFormStep == 2) {
-               
-
-                let ApiObj = {
-                    type: 'POST',
-                    url: '/admin/rooms/create',
-                    data: {
-                        settingName: 'Room' 
-                    },
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    console.log('Result:::::::::::', result)
-                    showSuccess(result)
-                    scroll()
-                 
-
-                }).catch(error => {
-                    console.log('error.responseJSON::::::::::::>>>', error.responseJSON)
-                    showError(error.responseJSON)
-                })
 
             } else if(currentFormStep == 4){
                 
@@ -1505,7 +1656,7 @@
 
                     let ApiObj = {
                             type: 'POST',
-                            url: '/admin/faculties/batch',
+                            url: '/admin/faculties/batch/create',
                             data: {
                                 inputJSON: JSON.stringify(facultyBatchJson),
                                 settingName: 'Facultybatch'
@@ -1546,7 +1697,7 @@
 
                 if (result.data.length > 0) {
                     buildingList +=
-                        `<option disabled selected value="">--Select Campus--</option>`;
+                        `<option disabled selected value="">--Select Building--</option>`;
                     result.data.forEach(element => {
                         buildingList += `<option value="${element.id}">
                                 ${element.building_name}
@@ -1559,6 +1710,37 @@
                 }
                 buildingList += `</select>`;
                 $("#building_lid").html(buildingList)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //GET ROOM BY BUILDING ID
+        $("#building_lid").on('change', function(){
+          let   building_lid  = $(this).val()
+          let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/booking/getroomsbybuildingid',// building router
+                data: {
+                    building_lid: building_lid
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                let roomList = ``;
+                let labelhtml = ``;
+                if (result.roomList.length > 0) {
+                    result.roomList.forEach(element => {
+                        roomList +=`<li class="list-group-item my-1 border-top" data-clickable="true" data-room-id="${element.id}">${element.room_number}</li>`;
+                    });
+
+                    $("#open-transaction-modal  .room-list-container").html(`Available Rooms`);
+                } else {
+                    roomList += `<li>No Rooms Found!</li>`;
+                }
+               
+                $("#open-transaction-modal  .selectRoomList").html(roomList);
+               
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -1598,7 +1780,7 @@
             let courseElems = $('#courseWorkloadTable tbody tr');
             let courseCount = courseElems.length;
             let courseJSON = [];
-            courseElems.each(function (index, elem) {
+            courseElems.each(function (index, elem) { 
                 let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
                 let intake = $(elem).find(`input[name='intake']`).val()
                 let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
@@ -1660,7 +1842,7 @@
             console.log('Json::::::::::::',courseJSON)
             let ApiObj = {
                 type: 'POST',
-                url: '/admin/courseworkload/workload',
+                url: '/admin/courseworkload/workload/update',
                 data: {
                     inputJSON: JSON.stringify(courseJSON)
                 },

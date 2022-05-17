@@ -20,7 +20,7 @@ function AdminRoute(app) {
     const schooltimings = require('../../routers/admin/schooltimings');
 
     app.use('/admin/', isLoggedIn, adminDashboard);
-    app.use('/admin/', isLoggedIn, days);
+    app.use('/admin/', isLoggedIn, days); 
     app.use('/admin/', isLoggedIn, program);
     app.use('/admin/', isLoggedIn, sessions);
     app.use('/admin/', isLoggedIn, events);

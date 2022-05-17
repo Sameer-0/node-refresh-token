@@ -24,7 +24,7 @@ module.exports = {
             res.render('admin/rooms/index', {
                 transactionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
-                transactionTypes: result[2].recordset,
+                transactionTypes: result[2].recordset, 
                 orgList: result[3].recordset,
                 campusList: result[4].recordset,
                 roomList: result[5].recordset,
@@ -57,18 +57,15 @@ module.exports = {
     },
 
     create: (req, res) => {
-console.log('yello hh')
+
         let object = {
             new_room_transactions: JSON.parse(req.body.inputJSON)
         }
-        if (req.body.settingName) {
-            console.log('im inn')
-            Settings.updateByName(res.locals.slug, req.body.settingName)
-        }
+     
         RoomTransactions.save(res.locals.slug, object, res.locals.userId).then(result => {
             //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
             if (req.body.settingName) {
-                console.log('im inn')
+         
                 Settings.updateByName(res.locals.slug, req.body.settingName)
             }
             res.status(200).json(JSON.parse(result.output.output_json))
