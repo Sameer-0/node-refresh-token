@@ -30,6 +30,7 @@ module.exports = {
     },
 
     create: (req, res) => {
+        console.log('holidays controller', req.body )
         if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }

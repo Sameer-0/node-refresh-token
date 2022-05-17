@@ -1,22 +1,8 @@
-<% if (currentFormStep) { %> 
-    <style>
-        .main, .top-navbar{
-            left: 0 !important;
-        }
-        
-        </style>
-<% } %>
 <%- include ('../partials/head') %>
 
+
 <!-- PAGE LEVEL CSSS START -->
-
-<!-- PAGE LEVEL CSSS END -->
-<% if (!currentFormStep) { %> 
-    <%- include ('../partials/leftSidebar') %>
-<% } %>
-
-<%- include ('../partials/header') %>
-
+<% if (currentFormStep) { %>
 <style>
     .stage:nth-child(-n + <%- currentFormStep-1 %>) {
         background: #3cc58c;
@@ -37,7 +23,37 @@
     .stage:nth-child(<%- currentFormStep %>)::before {
         border-left: 25px solid #ffc800;
     }
+ 
+    .main, .top-navbar{
+            left: 0 !important;
+        }
+
+    .navbar-logo{
+        display: block !important;
+    }
+
+    .navbar-logo a img {
+        width: 180px;
+    
+    }
+
+    .left-sidebar-toggle{
+        display: none;
+    }
+
+    .top-navbar {
+        padding: 1vh;
+    }
 </style>
+<% } %>
+<!-- PAGE LEVEL CSSS END -->
+<% if (!currentFormStep) { %> 
+    <%- include ('../partials/leftSidebar') %>
+<% } %>
+
+<%- include ('../partials/header') %>
+
+
 
 <!-- MAIN-CONTENT -->
 <div class="main-content">
@@ -56,13 +72,13 @@
 
 <!-- PAGE LEVEL JS START -->
 
-<script src="/js/adminDashboardscript.js"></script>
+<!-- <script src="/js/adminDashboardscript.js"></script> -->
 
 <script>
     $(document).ready(function () {
 
-        $('.select2').select2({
-        dropdownParent: $('#open-room-modal')});
+        // $('.select2').select2({
+        // dropdownParent: $('#open-transaction-modal')});
 
         $('.select2').select2({
         dropdownParent: $('#open-program-modal')});
@@ -72,6 +88,8 @@
 
         $('.select2').select2({
         dropdownParent: $('#facultyPreference')});
+
+        $('.modalSelect2').select2();
 
  
         let username = `<%- locals.userId %>`;
@@ -196,7 +214,6 @@
                 }
             };
         })
-
 
         //DATA SELECT FOR PROGRAM//
         $(".selectListProgram").on('click', '.list-group-item', function () {
@@ -573,6 +590,39 @@
             }
         })
 
+        //Add more rows for Holidays
+        $('#add-more-holidays').on('click', function () {
+            console.log("holidays Added::::")
+            let lastTr = $('#add-more-holidays-table tbody tr:last-child')
+            lastTr.find('.modalSelect2').select2('destroy');
+            let calendarId = lastTr.find(`input[name='calendarId']`).val();
+            // let calendarName = lastTr.find(`input[name='calendarName']`).val();
+            let holidayType = lastTr.find(`select[name='holidayType']`).val();
+            let calendarYear = lastTr.find(`input[name='calendarYear']`).val();
+            let holidayDate = lastTr.find(`input[name='holidayDate']`).val();
+            let holidayReason = lastTr.find(`input[name='holidayReason']`).val();
+
+            let clonedTr = lastTr.clone(); 
+            clonedTr.find(`input[name='calendarId']`).val('')
+            // clonedTr.find(`input[name='calendarName']`).val('')
+            clonedTr.find(`select[name='holidayType']`).val('')
+            clonedTr.find(`input[name='calendarYear']`).val('')
+            clonedTr.find(`input[name='holidayDate']`).val('')
+            clonedTr.find(`input[name='holidayReason']`).val('')
+            
+            
+            $('#add-more-holidays-table tbody').append(clonedTr)
+            $('#add-more-holidays-table tbody tr .modalSelect2').select2();
+        })
+
+        $('#add-more-holidays-table').on('click', '.remove-holidays', function () {
+            let trLength = $('#add-more-holidays-table tbody tr').length;
+            if (trLength > 1) {
+                $(this).closest('tr').remove()
+            } else {
+                alert('Cannot delete this room.')
+            }
+        })
         //Add more rows for FacultyWorks
         $('#add-more-facultyworkfields').on('click', function () {
             console.log("Adding faculty work fields::::")
@@ -1085,7 +1135,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log(result)
+                
                 showSuccess(result)
 
             }).catch(error => {
@@ -1093,7 +1143,7 @@
             })
         })
 
-        //craete faculty preference
+        //create faculty preference
         $(".createFacultyWorkTimePref").on('click', function () {
         let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
         let facultyWorkPrefCount = facultyWorkElems.length;
@@ -1123,10 +1173,12 @@
             }
         })
 
+        console.log(facultyWorkJSON)
+
         let ApiObj = {
             type: 'POST',
             url: '/admin/faculties/workpreferences/create',
-            data: {
+            data: { 
                 inputJSON: JSON.stringify(facultyWorkJSON),
                 settingName: 'Facultypreference'
             },
@@ -1135,6 +1187,7 @@
 
         ajaxApi(ApiObj).then(result => {
             showSuccess(result)
+            console.log('eroor:::::::::', result)
             // location.reload()
         }).catch(error => {
             showError(error.responseJSON)
@@ -1149,6 +1202,7 @@
 
         $(`.step-form .step-form-body .step[data-step=${currentFormStep}]`).removeClass('d-none').addClass('active-form');
           
+        scroll();
         function formStepNext() {
             currentFormStep++;
 
@@ -1175,7 +1229,7 @@
                 behavior: "smooth",
                 inline: 'start'
             })
-            $('#errorHtml').html('');
+            // $('#errorHtml').html('');
         }
     }
 
@@ -1247,7 +1301,7 @@
                         holidayJson.push(obj)  
                     }
                 })
-
+ 
 
                 console.log('holidayJson::::::::::::::::::::>>>', holidayJson)
 
@@ -1265,7 +1319,7 @@
                 ajaxApi(ApiObj).then(result => {
                     console.log('Result:::::::::::', result)
                     showSuccess(result)
-                    scroll()
+                    // scroll()
                   
 
                 }).catch(error => {
@@ -1352,7 +1406,7 @@
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-                scroll()
+                // scroll()
                 formStepNext()
 
             }).catch(error => {
@@ -1374,9 +1428,8 @@
                         settingName:"Sessiondates"
                     },
                     success: (data) => {
-                        scroll()
+                        // scroll()
                         showSuccess(data) 
-                      
                         // formStepNext()
                     },
                     error: err => {
@@ -1504,7 +1557,7 @@
                         showSuccess(data)
                         scroll()
                         formStepNext()
-                        location.reload();
+                        // location.reload();
                     },
                     error: err => {
                         console.log('err::::::::',err)
@@ -1514,123 +1567,6 @@
                 
         
 
-            }
-            else if(currentFormStep == 10){
-
-                let facultyElems = $('#add-more-facultywork-table tbody tr');
-                let facultyCount = facultyElems.length;
-                let facultyJson = [];
-                facultyElems.each(function (index, elem) {
-                    let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
-                    let program_session_lid = $(elem).find(`select[name='program_session_lid']`).val();
-                    let module_lid = $(elem).find(`select[name='module_lid']`).val();
-                    let lecture_per_week = $(elem).find(`input[name='lecture_per_week']`).val();
-                    let practical_per_week = $(elem).find(`input[name='practical_per_week']`).val();
-                    let tutorial_per_week = $(elem).find(`input[name='tutorial_per_week']`).val();
-                    let workshop_per_week = $(elem).find(`input[name='workshop_per_week']`).val();
-                    let is_batch_preference_set = $(elem).find(`select[name='is_batch_preference_set']`).val();
-
-                    if (index < facultyCount - 1) {
-                        let obj = {
-                            faculty_lid: faculty_lid,
-                            program_session_lid: program_session_lid,
-                            module_lid: module_lid,
-                            lecture_per_week: lecture_per_week,
-                            practical_per_week: practical_per_week,
-                            tutorial_per_week: tutorial_per_week,
-                            workshop_per_week: workshop_per_week,
-                            is_batch_preference_set: is_batch_preference_set
-                        }
-                        facultyJson.push(obj)
-                    } else {
-                        let obj = {
-                            faculty_lid: faculty_lid,
-                            program_session_lid: program_session_lid,
-                            module_lid: module_lid,
-                            lecture_per_week: lecture_per_week,
-                            practical_per_week: practical_per_week,
-                            tutorial_per_week: tutorial_per_week,
-                            workshop_per_week: workshop_per_week,
-                            is_batch_preference_set: is_batch_preference_set
-                        }
-                        facultyJson.push(obj)
-                    }
-                    
-                })
-
-                console.log('Json::::::::::::',facultyJson)
-
-                let ApiObj = {
-                    type: 'POST',
-                    url: '/admin/faculties/works/create',
-                    data: {
-                        inputJSON: JSON.stringify(facultyJson),
-                        settingName: 'Facultyworkload'
-                    },
-                    dataType: 'JSON'
-                }
-
-                ajaxApi(ApiObj).then(result => {
-                    console.log(result)
-                    showSuccess(result)
-                    scroll()
-                  
-
-
-                }).catch(error => {
-                    showError(error.responseJSON)
-                })
-            }else if(currentFormStep == 11){
-                console.log('hello::')
-                    
-                    let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
-                    let facultyWorkPrefCount = facultyWorkElems.length;
-                    let facultyWorkJSON = [];
-
-                    facultyWorkElems.each(function (index, elem) {
-                        let faculty_work_lid = $(elem).find(`select[name="faculty_work_lid"]`).val()
-                        let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
-                        let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
-                        let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
-
-                        if (index < facultyWorkPrefCount - 1) {
-                            let obj = {
-                                faculty_work_lid: faculty_work_lid,
-                                p_day_lid: p_day_lid,
-                                start_time_id: start_time_id,
-                                end_time_id: end_time_id
-                            }
-                            facultyWorkJSON.push(obj)
-                        } else {
-                            let obj = {
-                                faculty_work_lid: faculty_work_lid,
-                                p_day_lid: p_day_lid,
-                                start_time_id: start_time_id,
-                                end_time_id: end_time_id
-                            }
-                            facultyWorkJSON.push(obj)
-                        }
-                    })
-                    console.log('facultyWorkJSON', facultyWorkJSON)
-                    let ApiObj = {
-                        type: 'POST',
-                        url: '/admin/faculties/workpreferences/create',
-                        data: {
-                            inputJSON: JSON.stringify(facultyWorkJSON),
-                            settingName: 'Facultypreference'
-                        },
-                        dataType: 'JSON'
-                    }
-
-                    ajaxApi(ApiObj).then(result => {
-                        console.log(result)
-                        showSuccess(result)
-                        scroll()
-                        formStepNext()
-                    }).catch(error => {
-                        showError(error.responseJSON)
-                    })
-           
             }else if(currentFormStep == 12){
                     let facultyBatchElems = $('#add-more-facultybatch-table tbody tr');
                     let facultyBatchCount = facultyBatchElems.length;
@@ -1658,7 +1594,7 @@
                             type: 'POST',
                             url: '/admin/faculties/batch/create',
                             data: {
-                                inputJSON: JSON.stringify(facultyBatchJson),
+                                inputJSON: JSON.stringify(facultyBatchJson), 
                                 settingName: 'Facultybatch'
                             },
                             dataType: 'JSON'
@@ -1667,7 +1603,7 @@
                         ajaxApi(ApiObj).then(result => {
                             console.log(result)
                             showSuccess(result)
-                           location.reload();
+                        //    location.reload();
                          
                          
 
@@ -1675,6 +1611,7 @@
                             showError(error.responseJSON)
                         })
                             }
+            
                     
             })
 

@@ -13,7 +13,7 @@ const facultypool = require('../../controllers/management/facultypool');
 
 // FACULTY ROUTER
 router.get('/faculties/faculty', faculties.getPage)
-router.post('/faculties/faculty/create', validate('JsonValidator'), faculties.create)
+router.post('/faculties/faculty/create', faculties.create)
 router.post('/faculties/faculty/update', validate('JsonValidator'), faculties.update)
 router.post('/faculties/faculty/pagination', validate('pagination'), faculties.pagination)
 router.post('/faculties/faculty/findone', validate('single'), faculties.findOne)
