@@ -1,6 +1,6 @@
 document.onreadystatechange = function () {
   if (document.readyState == 'interactive') {
-    if (window.location.pathname.toString().trim() !== "/login") {
+    if (window.location.pathname.toString().trim() !== "/user/login") {
       let timeout = 20 /* default session-timeout duration in milliseconds */
       let flag = false
       $(window).on(`mousemove mouseup mousedown scroll keyup click wheel mousewheel touchend`, () => {
@@ -28,7 +28,7 @@ document.onreadystatechange = function () {
           if (timeout == 0) {
             timeout = 20
             flag = true
-            window.location = "/login"
+            window.location = "/user/login"
           }
         }, 60000);
       }

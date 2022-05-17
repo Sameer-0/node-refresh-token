@@ -4,8 +4,7 @@
 
                 console.log("Organization Added::::")
                 let lastTr = $('#add-more-org-table tbody tr:last-child')
-                console.log('last trrr ', lastTr)
-                // lastTr.find('.select2').select2('destroy');
+
                 let orgId = lastTr.find(`input[name='orgId']`).val();
                 let orgAbbr = lastTr.find(`input[name='orgAbbr']`).val();
                 let orgName = lastTr.find(`input[name='orgName']`).val();
@@ -16,6 +15,7 @@
 
                 let clonedTr = lastTr.clone();
                 clonedTr.find(`input[name='orgId']`).val('')
+
                 clonedTr.find(`input[name='orgAbbr']`).val('') 
                 clonedTr.find(`input[name='orgName']`).val('')
                 clonedTr.find(`input[name='orgCompleteName']`).val('')
@@ -28,9 +28,9 @@
                     dropdownParent: $('#add-org-modal')
                 });
 
-                clonedTr.find('.modalSelect2').select2({
-                    dropdownParent: $('#add-org-modal')
-                });
+                // clonedTr.find('.modalSelect2').select2({
+                //     dropdownParent: $('#add-org-modal')
+                // });
             })
 
             $('#add-more-org-table').on('click', '.remove-organization', function () {
