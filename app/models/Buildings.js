@@ -83,6 +83,7 @@ module.exports = class Buildings {
 
 
     static search(rowcount, keyword) {
+        console.log('building ey word', keyword)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')

@@ -105,6 +105,7 @@ module.exports = {
         //here 10is rowcount
         let rowcont = 10;
         Campuses.searchCampus(rowcont, req.body.keyword).then(result => {
+            console.log('campyus searchh', result.recordset)
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
