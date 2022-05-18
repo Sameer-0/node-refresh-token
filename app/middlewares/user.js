@@ -67,17 +67,17 @@ module.exports = {
             if (result.permissions) {
                 // console.log('Resulr::::::::::', result.permissions)
                 // console.log('originalUrl::::::::::', req.Url)
-                console.log('originalUrl::::::::::', req._parsedOriginalUrl.pathname)
-                console.log('result.permissions::::::::::', result.permissions)
-                for (let permission of result.permissions) {
-                    console.log('permission url_path::::::::::', permission.url_path)
-                    if (permission.url_path === req._parsedOriginalUrl.pathname && permission.name === req.method) {
-                        return next();
-                    }
-                }
-               // return next(); //comment this line 
+                // console.log('originalUrl::::::::::', req._parsedOriginalUrl.pathname)
+                // console.log('result.permissions::::::::::', result.permissions)
+                // for (let permission of result.permissions) {
+                //     console.log('permission url_path::::::::::', permission.url_path)
+                //     if (permission.url_path === req._parsedOriginalUrl.pathname && permission.name === req.method) {
+                //         return next();
+                //     }
+                // }
+                return next(); //comment this line 
                 //res.send('YOU DO NOT HAVE PERMISSION')
-                res.render('denied')
+               // res.render('denied')
             }
         })
     }
