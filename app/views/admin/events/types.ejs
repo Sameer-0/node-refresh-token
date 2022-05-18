@@ -23,6 +23,7 @@
                 <h5>EVENT TYPE LIST</h5>
             </div>
             <div>
+                <button class="btn btn-danger ms-auto refresh_event_type"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 <!-- <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-event-modal">
                     <i class="fas fa-plus"></i></button> -->
@@ -203,6 +204,23 @@
                 })
             })
 
+            //REFRESH
+            $(".refresh_event_type").on('click',function(){
+            let apiObj = {
+                type:"POST",
+                url:"/admin/events/types/refresh",
+                data: {},
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
+        })
+
 
             //Delete Single and mutiple Delete
             $('.select-delete-event-type').on('click', function () {
@@ -320,16 +338,13 @@
                     </tr>`
                     }
                 } else {
-                    AjaxTable +=
-                        ` <tr>
-                                <td colspan="5">No Data Found</td>
-                            </tr>`;
+                    AjaxTable +=`<tr><td colspan="5">No Data Found</td></tr>`;
                 }
                 AjaxTable += `<tbody></table>`
                 $("#eventTypeTable").html(AjaxTable);
             }
-            function showExpressSuccess(errors) {
 
+            function showExpressSuccess(errors) {
             console.log('success',errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
@@ -355,7 +370,6 @@
             }
 
             function showExpressError(errors) {
-                
                 console.log('success<><><',errors);
                 let simpleAlert = new SimpleAlert();
                 let obj = {
@@ -379,6 +393,56 @@
                     }
                 }
                 simpleAlert.alert(obj);
+            }
+
+
+            function showSuccess(errors) {
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message:"",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+
+
+        function showError(errors) {
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title : errors.description,
+                    message: errors.data,
+                    type: 'alert-dannger',
+                    buttons: {
+                        positive:{
+                            text: "Okay",
+                            action: function(){
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                            alert('Negative')
+                            }
+                        }
+                    }
+                }
+            simpleAlert.alert(obj);
             }
 
 
