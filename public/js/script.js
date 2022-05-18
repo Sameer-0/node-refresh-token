@@ -1,12 +1,15 @@
 
 // $(document).ready(function () {
-//     // SIDE-BAR OPENING EVENT
-//     const mobileHamburger = document.querySelector('.hamburger-smalldevices');
-//     const leftBar = document.querySelector('.left-sidebar');
+    // SIDE-BAR OPENING EVENT
+    // const mobileHamburger = document.querySelector('.hamburger-smalldevices');
+    // const leftBar = document.querySelector('.left-sidebar');
 
-//     mobileHamburger.addEventListener('click', () => {
-//         leftBar.classList.toggle('left-sidebar-open');
-//     })
+    $('.hamburger-smalldevices').on('click', function() {
+        $('.left-sidebar').toggleClass('left-sidebar-open')
+    })
+    // mobileHamburger.addEventListener('click', () => {
+    //     leftBar.classList.toggle('left-sidebar-open');
+    // })
 // })
 
 
