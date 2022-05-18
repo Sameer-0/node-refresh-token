@@ -30,7 +30,7 @@ module.exports = {
         }
 
         let rowcount = 10;
-        SlotIntervalSetting.search(rowcount, req.query.keyword).then(result => {
+        SlotIntervalSetting.search(rowcount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -90,7 +90,7 @@ module.exports = {
             return;
         }
 
-        SlotIntervalSetting.single(req.query.Id).then(result => {
+        SlotIntervalSetting.single(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset[0]

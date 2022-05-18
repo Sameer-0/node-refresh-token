@@ -218,7 +218,7 @@
                                         palceholder="Enter Room no." required>
                                 </td>
                                 <td>
-                                    <select class="select2 modalSelect2" name="room_type_id" id="room_type_id">
+                                    <select class="select2 modalSelect2 form-select" name="room_type_id" id="room_type_id">
                                         <option disabled selected value="">--Room Type--</option>
                                         <% for(let roomType of roomTypeList) { %>
                                         <option value="<%- roomType.roomtypeid %>">
@@ -235,9 +235,9 @@
                                     <input type="number" name="capacity" id="capacity" class="form-control" required>
                                 </td>
                                 <td>
-                                    <select class="select2 modalSelect2" name="start_time_id" id="start_time_id"
+                                    <select class="select2 modalSelect2 form-select" name="start_time_id" id="start_time_id"
                                         required>
-                                        <option disabled selected value>--Start Time--</option>
+                                        <option disabled selected value="">--Start Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
                                             <%- time.start_time %>
@@ -246,18 +246,19 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2 modalSelect2" name="end_time_id" id="end_time_id" required>
-                                        <option disabled selected value>--End Time--</option>
+                                    <select class="select2 modalSelect2 form-select" name="end_time_id" id="end_time_id" required>
+                                        <option disabled selected value="">--End Time--</option>
                                         <% for(let time of timeList) { %>
                                         <option value="<%- time.id %>">
                                             <%- time.end_time %>
                                         </option>
                                         <% } %>
-                                    </select>
+                                    </select> 
                                 </td>
                                 <td>
-                                    <select class="select2 modalSelect2" name="is_basement" id="is_basement" required>
-                                        <option selected value="0">No</option>
+                                    <select class="select2 modalSelect2 form-select" name="is_basement" id="is_basement" required>
+                                        <option value="" selected>--Select--</option>
+                                        <option value="0">No</option>
                                         <option value="1">Yes</option>
                                     </select>
                                 </td>
@@ -295,7 +296,7 @@
 <%- include("../partials/footer") %>
 
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
-<script src="/js/dashboardscript.js"></script>
+
 
 <script>
     $(document).ready(function () {
@@ -304,76 +305,54 @@
             dropdownParent: $('#add-room-modal')
         });
 
+          //Add more rows in room
+          $('#add-more-room').on('click', function () {
+                console.log("Room Added::::1")
 
+                let lastTr = $('#add-more-room-table tbody tr:last-child');
+                lastTr.find('.modalSelect2').select2('destroy');
 
-        $(".homeCard .border").hover(function () {
-            $this = $(this)
+                let roomNumber = lastTr.find(`input[name='room_number']`).val();
+                let roomTypeId = lastTr.find(`select[name='room_type_id']`).val();
+                let floorNumber = lastTr.find(`input[name='floor_number']`).val();
+                let capacity = lastTr.find(`input[name='capacity']`).val();
+                let startTimeId = lastTr.find(`select[name='start_time_id']`).val();
+                let endTimeId = lastTr.find(`select[name='end_time_id']`).val();
+                let isBasement = lastTr.find(`select[name='is_basement']`).val();
+                // let isProcessed = lastTr.find(`input[name='is_processed']`).val();
 
-            $this.find("img").css({
-                "transition": "0.3s",
-                "transform": "scale(0.7)"
+                let clonedTr = lastTr.clone();
+                clonedTr.find(`input[name='room_number']`).val('')
+                clonedTr.find(`select[name='room_type_id']`).val('')
+                clonedTr.find(`input[name='floor_number']`).val('')
+                clonedTr.find(`input[name='capacity']`).val('')
+                clonedTr.find(`select[name='start_time_id']`).val('')
+                clonedTr.find(`select[name='end_time_id']`).val('')
+                clonedTr.find(`select[name='is_basement']`).val('')
+                // clonedTr.find(`select[name='is_processed']`).val('')
+
+                $('#add-more-room-table tbody').append(clonedTr)
+                // $('#add-more-room-table tbody tr .modalSelect2').select2({dropdownParent:$('#add-room-modal')})
+
+                lastTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-room-modal')
+                });
+
+                clonedTr.find('.modalSelect2').select2({
+                    dropdownParent: $('#add-room-modal')
+                });
             })
 
-            setTimeout(function () {
-                $this.find("img").css({
-                    "transition": "0.2s",
-                    "transform": "scale(1)"
-                })
-            }, 200)
-
-        }, function () {
-            $this.find("img").css({
-                "transition": "0.2s",
-                "transform": "scale(1)"
-            })
-        })
-
-        $(".homeCard .border").hover(function () {
-            $this = $(this)
-
-
-            $this.find("img").css({
-                "transition": "0.3s",
-                "transform": "scale(0.7)"
-            })
-
-            setTimeout(function () {
-                $this.find("img").css({
-                    "transition": "0.2s",
-                    "transform": "scale(1)"
-                })
-            }, 200)
-
-        }, function () {
-            $this.find("img").css({
-                "transition": "0.2s",
-                "transform": "scale(1)"
-            })
-        })
-
-        let options = {
-            dataLabels: {
-                enabled: true
-            },
-            legend: {
-                show: true
-            },
-            chart: {
-                type: 'donut',
-                height: 200
-            },
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: '40%'
-                    }
+            $('#add-more-room-table').on('click', '.remove-room', function () {
+                let trLength = $('#add-more-room-table tbody tr').length;
+                if (trLength > 1) {
+                    $(this).closest('tr').remove()
+                } else {
+                    alert('Cannot delete this room.')
                 }
-            },
-            series: [44, 55, 11],
-            labels: ['Room booked', 'Total room', 'Room available for booking']
-        }
-        var chart = new ApexCharts(document.querySelector("#chart1"), options);
-        chart.render();
+            })
+
+
 
 
         $("#insertRoom").on('click', function () {
@@ -437,7 +416,6 @@
             ajaxApi(ApiObj).then(result => {
                 console.log('Result:::::::::::', result)
 
-                // notify();
                 showSuccess(result);
             }).catch(error => {
                 showError(error.responseJSON)
@@ -449,7 +427,7 @@
             let keyword = $("#searchkeyword").val()
             console.log('keyword::::::::::', keyword)
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "/management/rooms/search",
                 data: {
                     keyword: keyword
@@ -471,7 +449,7 @@
             $("#add-more-room").addClass('d-none')
             $.ajax({
                 url: '/management/rooms/findone',
-                method: 'GET',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     id: $(this).attr('data-room-id')
@@ -735,7 +713,7 @@
             $("#add-more-room").addClass('d-none')
             $.ajax({
                 url: '/management/rooms/findone',
-                method: 'GET',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     id: $(this).attr('data-room-id')
@@ -749,13 +727,17 @@
                     $("#room_type_id").val(roomData.room_type_id).trigger('change')
                     $("#floor_number").val(roomData.floor_number)
                     $("#capacity").val(roomData.capacity)
-                    $("#add-room-modal #start_time_id").val(roomData.start_time_id).trigger('change')
-                    $("#add-room-modal #end_time_id").val(roomData.end_time_id).trigger('change')
+                  
                     $("#add-room-modal #handled_by").val(roomData.handled_by).trigger('change')
                     
                     $("#is_basement").val(roomData.is_basement)
                     $("#is_processed").val(roomData.is_processed)
                     $("#add-room-modal").modal('show')
+
+                    setTimeout(function(){
+                        $("#add-room-modal #start_time_id").val(roomData.start_time_id).trigger('change')
+                    $("#add-room-modal #end_time_id").val(roomData.end_time_id).trigger('change')
+                    },1000)
                 },
                 error: err => {
                     console.log('Error: ', err)

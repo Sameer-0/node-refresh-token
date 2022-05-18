@@ -50,7 +50,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        schoolTimingType.findById(req.query.id, res.locals.slug).then(result => {
+        schoolTimingType.findById(req.body.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",

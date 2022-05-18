@@ -13,25 +13,23 @@ const facultypool = require('../../controllers/management/facultypool');
 
 // FACULTY ROUTER
 router.get('/faculties/faculty', faculties.getPage)
-router.post('/faculties/faculty', validate('JsonValidator'), faculties.create)
-router.put('/faculties/faculty', validate('JsonValidator'), faculties.update)
+router.post('/faculties/faculty/create', validate('JsonValidator'), faculties.create)
+router.post('/faculties/faculty/update', validate('JsonValidator'), faculties.update)
 router.post('/faculties/faculty/pagination', validate('pagination'), faculties.pagination)
-router.get('/faculties/facultyfindOne', validate('single'), faculties.findOne)
-router.get('/faculties/faculty/search', validate('search'), faculties.search)
-router.delete('/faculties/faculty', faculties.delete)
-router.patch('/faculties/faculty', faculties.deleteAll)
+router.post('/faculties/faculty/findone', validate('single'), faculties.findOne)
+router.post('/faculties/faculty/search', validate('search'), faculties.search)
+router.post('/faculties/faculty/delete', faculties.delete)
 router.post('/faculties/faculty/processing', faculties.processing)
-router.get('/faculties/faculty/GetAll', faculties.GetAll)
+router.post('/faculties/faculty/GetAll', faculties.GetAll)
 router.post('/faculties/faculty/fetchformsap', faculties.fetchFromSAP)
 
 // FACULTY TYPES ROUTER
 router.get('/faculties/types', types.getPage)
-router.post('/faculties/types', validate('JsonValidator'), types.create)
-router.get('/faculties/types/findOne', validate('single'), types.findOne)
-router.get('/faculties/types/search', validate('search'), types.search)
-router.put('/faculties/types', validate('JsonValidator'), types.update)
-router.delete('/faculties/types', types.delete)
-router.patch('/faculties/types', types.deleteAll)
+router.post('/faculties/types/create', validate('JsonValidator'), types.create)
+router.post('/faculties/types/findone', validate('single'), types.findOne)
+router.post('/faculties/types/search', validate('search'), types.search)
+router.post('/faculties/types/update', validate('JsonValidator'), types.update)
+router.post('/faculties/types/delete', types.delete)
 router.post('/faculties/pagination', validate('pagination'), types.pagination)
 
 // FACULTY SLOATS ROUTER

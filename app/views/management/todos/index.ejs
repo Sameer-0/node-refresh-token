@@ -157,7 +157,7 @@
         $("#todosTable").on('click', '.view-details', function () {
             $.ajax({
                 url: '/management/todos/viewsingle',
-                method: 'GET',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     id: $(this).attr("data-todos-id")
@@ -199,8 +199,8 @@
             $('.createTodos').addClass('d-none');
             $('.updateTodos').removeClass('d-none');
             $.ajax({
-                url: '/management/todos/single',
-                method: 'GET',
+                url: '/management/todos/findone',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     id: $(this).attr('data-todos-id')
@@ -227,8 +227,8 @@
         // UPDATE TODOS
         $(".updateTodos").one('click', function () {
             $.ajax({
-                url: '/management/todos/single',
-                method: 'PUT',
+                url: '/management/todos/update',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     id: $("#id").val(),
@@ -263,8 +263,8 @@
         // DELETE TODOS
         $("#todosTable").on('click', '.delete-todos', function () {
             $.ajax({
-                url: '/management/todos/single',
-                method: 'DELETE',
+                url: '/management/todos/delete',
+                method: 'POST',
                 type: 'JSON',
                 data: {
                     id: $(this).attr("data-todos-id")
@@ -294,7 +294,7 @@
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "/management/todos/search",
                 data: {
                     keyword: keyword

@@ -9,11 +9,10 @@ const index =  require('../../controllers/admin/weeklyConstraint/index')
 
 router.get('/weekly-constraint', index.getPage)
 router.post('/weekly-constraint', index.create)
-router.get('/weekly-constraint/findOne', index.findOne)
-router.put('/weekly-constraint', index.update)
-router.delete('/weekly-constraint', index.delete)
-router.patch('/weekly-constraint', index.deleteAll)
-router.get('/weekly-constraint/search', index.search)
+router.post('/weekly-constraint/findone', index.findOne)
+router.post('/weekly-constraint/update', index.update)
+router.post('/weekly-constraint/delete', index.delete)
+router.post('/weekly-constraint/search', index.search)
 
 
 module.exports = router

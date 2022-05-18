@@ -176,7 +176,7 @@
                 })
                 let ApiObj = {
                     type: 'POST',
-                    url: '/management/faculties/types',
+                    url: '/management/faculties/types/create',
                     data: {
                         inputJSON: JSON.stringify(facultyJson)
                     },
@@ -199,8 +199,8 @@
                 $("#add-faculty-type-title").html(`UPDATE FACULTY TYPES`)
 
                 let ApiObj = {
-                    url: '/management/faculties/types/findOne',
-                    method: 'GET',
+                    url: '/management/faculties/types/findone',
+                    method: 'POST',
                     data: {
                         Id: $(this).attr("data-faculty-type-id")
                     },
@@ -221,6 +221,7 @@
 
             //Update 
             $(".updateFacultyTypes").on('click', function () {
+                console.log('Update type:::::::>>')
                 let facultyElems = $('#add-more-faculty-types-table tbody tr');
                 let facultyCount = facultyElems.length;
                 let facultyJson = [];
@@ -247,8 +248,8 @@
                 })
 
                 let ApiObj = {
-                    type: 'PUT',
-                    url: '/management/faculties/types',
+                    type: 'POST',
+                    url: '/management/faculties/types/update',
                     data: {
                         inputJSON: JSON.stringify(facultyJson)
                     },
@@ -293,8 +294,8 @@
 
                 if (deleteids.length > 0) {
                     let ApiObj = {
-                        url: '/management/faculties/types',
-                        type: 'DELETE',
+                        url: '/management/faculties/types/delete',
+                        type: 'POST',
                         data: {
                             inputJSON: JSON.stringify(deleteids)
                         },
@@ -313,33 +314,6 @@
                 }
             })
 
-
-
-            //Bulk Delete
-            $(".bulk-delete-faculty-type").on('click', function () {
-                  //Alert confirm
-                  alertMsg()
-
-                let ApiObj = {
-                    url: '/management/faculties/types',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
-
-                $('.alert-continue').on('click', () => {
-                    ajaxApi(ApiObj).then(result => {
-                        // location.reload()
-                        showSuccess(result);
-                    }).catch(error => {
-                        showError(error.responseJSON)
-                    })
-                })
-                
-                $('.cancel').on('click', () => {
-                    $('#alertModal').css('display', 'none');
-                })
-            })
 
 
             //Pagination Here
@@ -380,7 +354,7 @@
             $('#searchkeyword').on('input', delay(function (e) {
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: '/management/faculties/types/search',
                     data: {
                         keyword: keyword

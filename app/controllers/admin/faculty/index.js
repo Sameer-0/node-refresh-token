@@ -17,15 +17,13 @@ const isJsonString = require('../../../utils/util')
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(100000), SlotIntervalTimings.forFaculty(1000), AcademicCalender.fetchAll(100), FacultyTypes.fetchAll(100)]).then(result => {
+        Promise.all([Faculties.fetchAll(10, res.locals.slug), Faculties.getCount(res.locals.slug), FacultyDbo.fetchAll(100000), FacultyTypes.fetchAll(100)]).then(result => {
             console.log(result[0].recordset)
             res.render('admin/faculty/index', {
                 facultyList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 faculties: result[2].recordset,
-                slotTiming: JSON.stringify(result[3].recordset),
-                acadCalender: JSON.stringify(result[4].recordset),
-                facultyType: JSON.stringify(result[5].recordset),
+                facultyType: JSON.stringify(result[3].recordset),
                 breadcrumbs: req.breadcrumbs,
                 // totalentries: result[0].recordset ? result[0].recordset.length : 0
             })
@@ -56,7 +54,7 @@ module.exports = {
 
 
     findOne: (req, res) => {
-        Faculties.findOne(req.query.id, res.locals.slug).then(result => {
+        Faculties.findOne(req.body.id, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 message: "Success",
@@ -70,7 +68,7 @@ module.exports = {
 
     update: (req, res) => {
         let object = {
-            update_faculty_date_times: JSON.parse(req.body.inputJSON)
+            sp_update_faculties: JSON.parse(req.body.inputJSON)
         }
 
         Faculties.update(object, res.locals.slug, res.locals.userId).then(result => {
@@ -119,7 +117,7 @@ module.exports = {
     search: (req, res) => {
 
         let rowcount = 10;
-        Faculties.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        Faculties.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -164,25 +162,6 @@ module.exports = {
         })
     },
 
-    getSlotsById: (req, res, next) => {
-        console.log('Req:::::::::::::::',req.query.faculty_lid)
-        SlotIntervalTimings.getFacultySlotsById(req.query.faculty_lid, res.locals.slug).then(result => {
-            console.log('ReS:::::::::::::::',result.recordset)
-            res.json({
-                status: 200,
-                message: "Success",
-                result: result.recordset
-            })
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    }
+
 
 }

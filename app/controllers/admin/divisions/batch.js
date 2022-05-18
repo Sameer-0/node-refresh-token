@@ -6,6 +6,7 @@ const {
 const res = require('express/lib/response');
 const Divisions = require('../../../models/Divisions')
 const DivisionBatches = require('../../../models/DivisionBatches')
+const Settings =  require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
 
 
@@ -33,7 +34,7 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        DivisionBatches.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        DivisionBatches.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -88,10 +89,13 @@ module.exports = {
     },
 
     update: (req, res) => {
-        let object = {
+        let object = { 
             update_division_batches: JSON.parse(req.body.inputJSON)
         }
         DivisionBatches.update(object, res.locals.slug, res.locals.userId).then(result => {
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){

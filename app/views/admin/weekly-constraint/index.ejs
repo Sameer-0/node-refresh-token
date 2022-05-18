@@ -163,8 +163,8 @@
                 $("#add-weeklyconstraint-modal-title").html('UPDATE WEEKLY CONSTRAINT')
 
                 $.ajax({
-                    url: '/admin/weekly-constraint/findOne',
-                    method: 'GET',
+                    url: '/admin/weekly-constraint/findone',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         id: $(this).attr('data-weekly-constraint-id')
@@ -205,8 +205,8 @@
             $(".updateWeeklyConstraint").on('click', function () {
                 console.log($('#repeatable').val())
                 $.ajax({
-                    url: '/admin/weekly-constraint',
-                    method: 'PUT',
+                    url: '/admin/weekly-constraint/update',
+                    method: 'POST',
                     type: 'JSON',
                     data: {
                         tagId: $("#tagId").val(),
@@ -244,8 +244,8 @@
                 if (deleteids.length > 0) {
 
                     let ApiObj = {
-                        url: '/admin/weekly-constraint',
-                        method:'DELETE',
+                        url: '/admin/weekly-constraint/delete',
+                        method:'POST',
                         data: {
                             Ids: JSON.stringify(deleteids)
                         },
@@ -262,31 +262,14 @@
                 }
             })
 
-            //Bulk Delete
-            $(".bulk-delete-weeklyconstraint").on('click', function () {
-                console.log('delete all')
-                let ApiObj = {
-                    url: '/admin/weekly-constraint',
-                    type: 'PATCH',
-                    data: {},
-                    dataType: 'JSON'
-                }
 
-                ajaxApi(ApiObj).then(result => {
-                    location.reload()
-                }).catch(error => {
-                    showError(error.responseJSON)
-
-                })
-
-            })
 
             // SEARCH PROGRAM TYPE
             $('#searchkeyword').on('input', delay(function (e) {
                
                 let keyword = $("#searchkeyword").val()
                 $.ajax({
-                    method: "GET",
+                    method: "POST",
                     url: "/admin/weekly-constraint/search",
                     data: {
                         keyword: keyword

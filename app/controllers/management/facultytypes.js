@@ -38,7 +38,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        FacultyTypes.findOne(req.query.Id).then(result => {
+        FacultyTypes.findOne(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 result: result.recordset[0]
@@ -86,22 +86,7 @@ module.exports = {
         })
     },
 
-    deleteAll: (req, res) => {
-        FacultyTypes.deleteAll().then(result => {
-            res.status(200).json({
-                status: 200
-            })
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    },
+
 
     search: (req, res) => {
 
@@ -116,7 +101,7 @@ module.exports = {
 
         //here 10is rowcount
         let rowcont = 10;
-        FacultyTypes.search(rowcont, req.query.keyword).then(result => {
+        FacultyTypes.search(rowcont, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

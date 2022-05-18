@@ -1,3 +1,4 @@
+const res = require('express/lib/response');
 const {
     sql,
     poolConnection,
@@ -21,7 +22,7 @@ module.exports = class Buildings {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(buildingJson))
-            .input('last_modified_by', sql.Int, userId)
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[dbo].[sp_add_new_buildings]`)
         })
@@ -46,7 +47,7 @@ module.exports = class Buildings {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
-            .input('last_modified_by', sql.Int, userId)
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[dbo].[sp_update_buildings]`)
         })
@@ -96,6 +97,14 @@ module.exports = class Buildings {
                 or b.total_floors like @keyword or org_o.org_abbr like @keyword or org_h.org_abbr like @keyword or  st.start_time like @keyword or
                 et.end_time like @keyword or c.campus_abbr like @keyword
                 ORDER BY b.id DESC`)
+        })
+    }
+
+    static buildingByCampusId(campus_lid) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            request.input('campus_Lid', sql.Int, campus_lid)
+            return request.query(`select * from [dbo].buildings where campus_lid = @campus_Lid`)
         })
     }
 

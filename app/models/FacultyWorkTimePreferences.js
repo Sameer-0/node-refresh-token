@@ -6,7 +6,7 @@ const {
 
 module.exports = class FacultyWorkTimePreferences {
     static save(inputJSON, slug, userid) {
-        console.log('inputJSON:::::::',JSON.stringify(inputJSON))
+        console.log('inputJSON:::::::', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -43,8 +43,6 @@ module.exports = class FacultyWorkTimePreferences {
     }
 
 
-
-
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
@@ -61,7 +59,7 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
                 INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
                 INNER JOIN [${slug}].days d ON d.id = pd.day_lid
-                WHERE sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR RTRIM(p.program_name) LIKE @keyword OR p.program_id LIKE @keyword OR p.program_code LIKE @keyword OR d.day_name LIKE @keyword
+                WHERE sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR RTRIM(p.program_name) LIKE @keyword OR p.program_id LIKE @keyword OR p.program_code LIKE @keyword OR d.day_name LIKE @keyword  OR f.faculty_name LIKE @keyword OR f.faculty_id LIKE @keyword OR CONVERT(NVARCHAR, sit.start_time, 0) LIKE @keyword OR CONVERT(NVARCHAR, _sit.end_time, 0) LIKE @keyword
                 ORDER BY fwtp.id DESC`)
         })
     }

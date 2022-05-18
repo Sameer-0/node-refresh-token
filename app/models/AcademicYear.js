@@ -26,7 +26,7 @@ module.exports = class AcademicYear {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT ac.id, ac.name, CONVERT(NVARCHAR, ac.start_date, 23) as start_date, CONVERT(NVARCHAR, ac.end_date, 23) as end_date, RTRIM(LTRIM(ac.input_acad_year)) as input_acad_year FROM [dbo].academic_year ac`)
+            return pool.request().query(`SELECT ac.id, ac.name, CONVERT(NVARCHAR, ac.start_date, 23) as start_date, CONVERT(NVARCHAR, ac.end_date, 23) as end_date, RTRIM(LTRIM(ac.input_acad_year)) as input_acad_year, is_locked FROM [dbo].academic_year ac`)
         })
     }
 
@@ -36,8 +36,9 @@ module.exports = class AcademicYear {
             return request.input('startDate', sql.Date, body.startDate)
                 .input('endDate', sql.Date, body.endDate)
                 .input('acadYear', sql.Char(4), body.acadYear)
+                .input('is_locked', sql.Int, 1)
                 .input('id', sql.Int, body.id)
-                .query(`UPDATE [dbo].academic_year SET start_date = @startDate , end_date = @endDate, input_acad_year = @acadYear  WHERE id = @id`)
+                .query(`UPDATE [dbo].academic_year SET start_date = @startDate , end_date = @endDate, input_acad_year = @acadYear, is_locked = @is_locked  WHERE id = @id`)
         }).catch(error => {
             throw error
         })

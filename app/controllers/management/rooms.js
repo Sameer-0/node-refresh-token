@@ -20,16 +20,16 @@ module.exports = {
     getRoomPage: (req, res) => {
         let rowCount = 10
         Promise.all([Rooms.fetchAll(rowCount), Organizations.fetchAll(200), Campuses.fetchAll(50), SlotIntervalTimings.forAddingRoom(1000), RoomTypes.fetchAll(10), Buildings.fetchAll(50), Rooms.getCount()]).then(result => {
+            console.log('timelist', result[3].recordset)
             res.render('management/room/room', {
                 roomList: result[0].recordset,
-                campusList: result[2].recordset,
-                buildingList: result[5].recordset,
                 orgList: result[1].recordset,
-                roomTypeList: result[4].recordset,
+                campusList: result[2].recordset,
                 timeList: result[3].recordset,
+                roomTypeList: result[4].recordset,
+                buildingList: result[5].recordset,
                 roomcount: result[6].recordset[0] ? result[6].recordset[0].count : '',
                 breadcrumbs: req.breadcrumbs,
-                
                 
             })
         }).catch(error => {
@@ -39,7 +39,7 @@ module.exports = {
 
 
     findOne: (req, res) => {
-        Rooms.findOne(req.query.id).then(result => {
+        Rooms.findOne(req.body.id).then(result => {
             res.json({
                 status: 200,
                 roomData: result.recordset[0]
@@ -105,7 +105,7 @@ module.exports = {
 
 
         let rowCount = 10;
-        Rooms.searchRoom(rowCount, req.query.keyword).then(result => {
+        Rooms.searchRoom(rowCount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

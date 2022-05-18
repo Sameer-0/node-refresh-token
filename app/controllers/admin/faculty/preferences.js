@@ -21,8 +21,8 @@ module.exports = {
                 pageCount: result[4].recordset ? result[4].recordset[0].count : 0,
                 breadcrumbs: req.breadcrumbs,
             })
-        })
-    },
+        }) 
+    }, 
 
     create: (req, res) => {
 
@@ -59,7 +59,7 @@ module.exports = {
 
         //here 10is rowcount
         let rowcount = 10;
-        FacultyWorkTimePreferences.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        FacultyWorkTimePreferences.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

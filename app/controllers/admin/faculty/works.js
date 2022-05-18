@@ -23,7 +23,7 @@ module.exports = {
                 pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
                 programSession: result[3].recordset,
-                courseWorkload: result[4].recordset,
+                courseWorkload: result[4].recordset, 
                 breadcrumbs: req.breadcrumbs,
             })
         })
@@ -63,7 +63,7 @@ module.exports = {
 
         //here 10is rowcount
         let rowcount = 10;
-        FacultyWorks.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        FacultyWorks.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

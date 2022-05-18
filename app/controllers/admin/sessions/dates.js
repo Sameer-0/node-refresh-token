@@ -42,6 +42,7 @@ module.exports = {
         // let object = {
         //     new_session_dates: JSON.parse(req.body.inputJSON)
         // }
+        console.log('yellonello')
         if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
@@ -64,7 +65,7 @@ module.exports = {
 
     findOne: (req, res) => {
        
-        SessionDates.findById(req.query.id, res.locals.slug).then(result => {
+        SessionDates.findById(req.body.id, res.locals.slug).then(result => {
             res.json({ 
                 status: 200,
                 message: "Success",
@@ -134,7 +135,7 @@ module.exports = {
     search: (req, res) => {
         let rowcount = 10;
  
-        SessionDates.search(rowcount, req.query.keyword, res.locals.slug).then(result => {
+        SessionDates.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             console.log('Search result.recordset',result.recordset)
             if (result.recordset.length > 0) {
                 

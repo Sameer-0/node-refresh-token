@@ -7,6 +7,8 @@ const Campuses = require('../../models/Campuses')
 const FacultyDbo = require('../../models/FacultyDbo')
 const Settings = require('../../models/Settings')
 const isJsonString = require('../../utils/util')
+const path = require('path');
+const soap = require('soap');
 
 
 
@@ -51,7 +53,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        Faculties.findOne(req.query.Id).then(result => {
+        Faculties.findOne(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 buildingData: result.recordset[0]
@@ -98,25 +100,6 @@ module.exports = {
         })
     },
 
-    deleteAll: (req, res) => {
-        Faculties.deleteAll().then(result => {
-
-            res.status(200).json({
-                status: 200,
-                description: "Successfully deleted"
-            })
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
-    },
-
 
     search: (req, res) => {
 
@@ -132,7 +115,7 @@ module.exports = {
         //here 10is rowcount
         let rowcount = 10;
 
-        FacultyDbo.search(rowcount, req.query.keyword).then(result => {
+        FacultyDbo.search(rowcount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

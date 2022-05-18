@@ -27,20 +27,10 @@ module.exports = class Faculties {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, 
-            CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
-            CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, 
-            CONVERT(NVARCHAR, ac.date, 103) AS start_date,
-            CONVERT(NVARCHAR, _ac.date, 103) AS end_date, fdt.start_time_id, fdt.end_time_id, 
-            fdt.start_date_id, fdt.end_date_id, ft.name AS faculty_type, f.faculty_type_lid
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, ft.name AS faculty_type, f.faculty_type_lid
             FROM [${slug}].faculties f 
-            LEFT JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
-            LEFT JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
-            LEFT JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
-            LEFT JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
-            LEFT JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
             INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
-            ORDER BY id DESC`)
+            ORDER BY f.id DESC`)
         })
     }
 
@@ -55,20 +45,10 @@ module.exports = class Faculties {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, 
-                CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
-                CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, 
-                CONVERT(NVARCHAR, ac.date, 103) AS start_date,
-                CONVERT(NVARCHAR, _ac.date, 103) AS end_date, fdt.start_time_id, fdt.end_time_id, 
-                fdt.start_date_id, fdt.end_date_id, ft.name AS faculty_type, f.faculty_type_lid
+                .query(`SELECT  f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, ft.name AS faculty_type, f.faculty_type_lid
                 FROM [${slug}].faculties f 
-                LEFT JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
-                LEFT JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
-                LEFT JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
-                LEFT JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
-                LEFT JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
                 INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
-                ORDER BY id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                ORDER BY f.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -76,16 +56,11 @@ module.exports = class Faculties {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, CONVERT(NVARCHAR, ac.date, 103) AS start_date,
-                CONVERT(NVARCHAR, _ac.date, 103) AS end_date
+                .query(`SELECT TOP ${Number(rowcount)} f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, ft.name AS faculty_type, f.faculty_type_lid
                 FROM [${slug}].faculties f 
-                LEFT JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
-                LEFT JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
-                LEFT JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
-                LEFT JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
-                INNER JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
-                WHERE f.faculty_id LIKE @keyword OR f.faculty_name LIKE @keyword OR sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR ac.date LIKE @keyword OR _ac.date LIKE @keyword
-                ORDER BY id DESC`)
+                INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+                WHERE f.faculty_id LIKE @keyword OR f.faculty_name LIKE @keyword OR ft.name LIKE @keyword
+                ORDER BY f.id DESC`)
         })
     }
 
@@ -93,30 +68,21 @@ module.exports = class Faculties {
         return poolConnection.then(pool => {
             let request = pool.request()
             request.input('Id', sql.Int, id)
-            return request.query(`SELECT f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, 
-            CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
-            CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, 
-            CONVERT(NVARCHAR, ac.date, 103) AS start_date,
-            CONVERT(NVARCHAR, _ac.date, 103) AS end_date, fdt.start_time_id, fdt.end_time_id, 
-            fdt.start_date_id, fdt.end_date_id, ft.name AS faculty_type, f.faculty_type_lid
+            return request.query(`SELECT f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, ft.name AS faculty_type, f.faculty_type_lid
             FROM [${slug}].faculties f 
-            LEFT JOIN [${slug}].faculty_date_times fdt ON  f.id = fdt.faculty_lid
-            LEFT JOIN [dbo].slot_interval_timings sit ON sit.id = fdt.start_time_id -- starttime
-            LEFT JOIN [dbo].slot_interval_timings _sit ON _sit.id = fdt.end_time_id -- endttime
-            LEFT JOIN [dbo].[academic_calendar] ac ON ac.id =  fdt.start_date_id  -- startdate
-            LEFT JOIN [dbo].academic_calendar _ac ON _ac.id = fdt.end_date_id -- endtdate
             INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
             WHERE f.id = @Id`)
         })
     }
 
     static update(inputJSON, slug, userid) {
+        console.log('Update faculty json', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_update_faculty_date_times]`)
+                .execute(`[${slug}].[sp_update_faculties]`)
         })
     }
 

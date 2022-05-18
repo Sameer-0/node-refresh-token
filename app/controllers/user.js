@@ -194,12 +194,12 @@ module.exports = {
             console.log('userDataSet[0].recordset:::::::::::::',userDataSet[0].recordset)
 
 
-            if (userDataSet[0].recordset[0].name.toLowerCase() == "management") {
+            if (userDataSet[0].recordset.length !== 0 && userDataSet[0].recordset[0].name.toLowerCase() == "management") {
                 res.redirect('/management/dashboard');
-            } else if (userDataSet[0].recordset[0].name.toLowerCase() == "admin") {
+            } else if (userDataSet[0].recordset.length !== 0 && userDataSet[0].recordset[0].name.toLowerCase() == "admin") {
                 res.redirect('/admin/dashboard');
             } else {
-                res.redirect('404');
+                res.send('This user has no permissions.');
             }
         } catch (err) {
             console.log("Error catched: ", err);

@@ -36,7 +36,7 @@ module.exports = {
         }
 
         let rowcount = 10;
-        AcadSession.search(rowcount, req.query.keyword).then(result => {
+        AcadSession.search(rowcount, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -98,7 +98,7 @@ module.exports = {
         }
 
 
-        AcadSession.getById(req.query.Id).then(result => {
+        AcadSession.getById(req.body.Id).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset[0]

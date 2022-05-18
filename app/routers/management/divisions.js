@@ -12,17 +12,17 @@ const validate = require('../../middlewares/validate')
 
 //DIVISION ROUTER
 router.get('/divisions', division.getPage)
-router.post('/divisions', validate('JsonValidator'), division.addDivision)
-router.get('/divisions/single', division.getDivisionById)
-router.put('/divisions/single', validate('JsonValidator'), division.updateDivisionById)
-router.delete('/divisions/single', validate('delete'), division.deleteDivisionById)
-router.get('/divisions/search', validate('search'), division.search)
+router.post('/divisionscreate/create', validate('JsonValidator'), division.addDivision)
+router.post('/divisions/findone', division.getDivisionById)
+router.post('/divisions/update', validate('JsonValidator'), division.updateDivisionById)
+router.post('/divisions/delete', validate('delete'), division.deleteDivisionById)
+router.post('/divisions/search', validate('search'), division.search)
 
 
 // DIVISION BATCHES
 router.get('/divisions/batches', divisionBatch.getPage)
-router.post('/divisions/batches/add', validate('JsonValidator'), divisionBatch.createBatch)
-router.get('/division/batches/single', divisionBatch.getBatchById)
-router.put('/division/batches', validate('JsonValidator'), divisionBatch.updateBatchById)
+router.post('/divisions/batches/create', validate('JsonValidator'), divisionBatch.createBatch)
+router.post('/division/batches/findone', divisionBatch.getBatchById)
+router.post('/division/batches/update', validate('JsonValidator'), divisionBatch.updateBatchById)
 
 module.exports = router;

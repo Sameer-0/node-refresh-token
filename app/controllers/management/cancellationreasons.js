@@ -35,7 +35,7 @@ module.exports = {
     },
 
     single: (req, res) => {
-        CancellationReasons.getById(req.query.id).then(result => {
+        CancellationReasons.getById(req.body.id).then(result => {
             res.json({
                 status: 500,
                 messsage: "Success",
@@ -84,7 +84,7 @@ module.exports = {
     search: (req, res) => {
         //here 10is rowcount
         let rowcont = 10;
-        CancellationReasons.search(rowcont, req.query.keyword).then(result => {
+        CancellationReasons.search(rowcont, req.body.keyword).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

@@ -40,11 +40,6 @@ module.exports = class FacultyTypes {
         })
     }
 
-    static deleteAll() {
-        return poolConnection.then(pool => {
-            return pool.request().query(`DELETE FROM [dbo].[faculty_types]`)
-        })
-    }
 
     static fetchAll(rowcont) {
         return poolConnection.then(pool => {
