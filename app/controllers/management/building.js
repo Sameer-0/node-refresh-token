@@ -141,7 +141,8 @@ module.exports = {
         //here 10is rowcount
         let rowcount = 10;
 
-        Buildings.search(rowcount, req.query.keyword).then(result => {
+        Buildings.search(rowcount, req.body.keyword).then(result => {
+            console.log('building search list', result.recordset)
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -153,7 +154,7 @@ module.exports = {
                 res.json({
                     status: "400",
                     message: "No data found",
-                    data: result.recordset,
+                    data: result.recordset, 
                     length: result.recordset.length
                 })
             }

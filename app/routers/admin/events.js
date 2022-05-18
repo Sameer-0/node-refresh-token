@@ -21,4 +21,5 @@ router.post('/events/types/delete', types.delete)
 router.post('/events/types/findone', types.findOne)
 router.post('/events/types/search', types.search)
 router.post('/events/types/pagination', types.pagination)
+router.post('/events/types/refresh', types.refresh)
 module.exports = router

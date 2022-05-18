@@ -30,26 +30,29 @@ module.exports = {
     },
 
     create: (req, res) => {
+        console.log('yelloollew', req.body.settingName )
         if (req.body.settingName) {
-            Settings.updateByName(res.locals.slug, req.body.settingName)
+            Settings.updateByName(res.locals.slug, req.body.settingName).then(result=> {
+                res.status(200).json({"description":"success"})
+            })
         }
 
-        let object = {
-            add_new_buildings: JSON.parse(req.body.inputJSON)
-        }
+        // let object = {
+        //     add_new_buildings: JSON.parse(req.body.inputJSON)
+        // }
 
-        FacultyDbo.save(object).then(result => {
-            res.status(200).json(JSON.parse(result.output.output_json))
-        }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
-            }
-        })
+        // FacultyDbo.save(object).then(result => {
+        //     res.status(200).json(JSON.parse(result.output.output_json))
+        // }).catch(error => {
+        //     if(isJsonString.isJsonString(error.originalError.info.message)){
+        //         res.status(500).json(JSON.parse(error.originalError.info.message))
+        //     }
+        //     else{
+        //         res.status(500).json({status:500,
+        //         description:error.originalError.info.message,
+        //         data:[]})
+        //     }
+        // })
     },
 
     findOne: (req, res) => {

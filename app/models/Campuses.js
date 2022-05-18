@@ -92,6 +92,7 @@ module.exports = class Campuses {
     }
 
     static searchCampus(rowcont, keyword) {
+        console.log('search keyword', keyword)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
