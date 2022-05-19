@@ -17,7 +17,7 @@
     </div>
 
     <div id="errorHtml" class="error-show pt-3"></div>
- 
+  
     <div class="step-form-body pt-3">
 
         <!-- Holidays -->
@@ -153,9 +153,9 @@
                                             </select>
                                         </div>
                                     </div>
-
-                                    <div class=""> 
-                                        <label class="form-label mt-2 fw-bold room-list-container"></label>
+                                    <label class="form-label mt-2 fw-bold room-list-container"></label>
+                                    <div class="selected-room-list"> 
+                                        
                                         <ul class="list-group selectRoomList">
 
                                         </ul>
@@ -173,12 +173,12 @@
                                             <label class="form-label">Book for Organization</label>
                                             <select name="handled_by" id="handled_by" class="room-select2">
                                                 <option value="">--select--</option>
-                                                <% for(let org of orgList) { %>
+                                                <% for(let org of orgParentList) { %>
                                                 <option value="<%- org.id %>" data-campus-lid="<%- org.campus_lid %>">
                                                     <%- org.org_abbr %>/<%- org.org_id %>
                                                 </option>
                                                 <% } %> 
-                                            </select>
+                                            </select> 
                                         </div>
                                     </div>
 
@@ -905,10 +905,10 @@
                             <th>Workshop per week</th>
                             <th>Batch preference</th>
                            
-                        </thead>
+                        </thead> 
                         <tbody>
                             
-                            <% for(let faculty of facultyWorkList) {%>
+                            <% for(let faculty of facultyWorkList) {%> 
                             <tr>
                                 
                                 <td><%- faculty.faculty_name %></td>
@@ -956,7 +956,7 @@
                                     <th>Module</th>
                                     <th>Lecture per week</th>
                                     <th>Practical per week</th>
-                                    <th>Tutorial per weeek</th>
+                                    <th>Tutorial per weeek</th> 
                                     <th>Workshop per week</th>
                                     <th>Batch preference</th>
                                     <th>Action</th>
@@ -1193,7 +1193,13 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="faculty_batch" id="faculty_batch" class="form-control">
+                                    <!-- <input type="number" name="faculty_batch" id="faculty_batch" class="form-control"> -->
+                                    <select class="faculty-batch-select2" name="faculty_batch" id="faculty_batch">
+                                        <option value="">--select--</option>
+                                        <% for(batch of batchList) {%>
+                                        <option value="<%- batch.batch %>"> <%- batch.batch %></option>
+                                        <%}%>
+                                    </select>
                                 </td>
                                 <td>
                                     <i class="far fa-edit d-none"></i>

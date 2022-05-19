@@ -27,8 +27,8 @@ module.exports = {
                 totalentries: result[0].recordset.length ? result[0].recordset.length : 0,
                 breadcrumbs: req.breadcrumbs,
             })
-        })
-    },
+        }) 
+    }, 
 
     getBookingPage: (req, res) => {
         Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), Organizations.getChildByParentId(res.locals.organizationId), Campuses.fetchAll(100), Rooms.fetchAll(1000), SlotIntervalTimings.forRoomBooking(1000), AcademicCalender.fetchAll(1000),Buildings.fetchAll(50)]).then(result => {
@@ -37,7 +37,7 @@ module.exports = {
                 transactionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 transactionTypes: JSON.stringify(result[2].recordset),
-                orgList: result[3].recordset,
+                orgList: result[3].recordset, 
                 campusList: result[4].recordset,
                 roomList: result[5].recordset,
                 slotIntervalTimings: JSON.stringify(result[6].recordset),
