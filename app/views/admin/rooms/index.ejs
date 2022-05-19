@@ -93,11 +93,13 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          ...
+            <label class="form-label">Reason for cancellation</label>
+            <input class="form-control" id="room-id" type="hidden">
+            <textarea class="form-control" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Confirm</button>
+          <button type="button" class="btn btn-primary confirm-btn">Confirm</button>
         </div>
       </div>
     </div>
@@ -113,8 +115,23 @@
 
             $("#room-booked-table").on('click','.room-cancel-request',function(){
                 let id =  $(this).attr('data-id')
+                $("#room-id").val(id)
                 console.log('id::::::::::::',id)
                 $("#booking-cancel-modal").modal('show')
+            })
+
+            $(".confirm-btn").on('click',function(){
+               let id =  $("#room-id").val()
+               let reason =  $("#cancel-reason").val()
+               if(reason.length > 5){
+                console.log('CALL APIHere')
+                  
+               }else{
+                $("#booking-cancel-modal #cancel-reason").css('border','2px solid #ff0000')
+               }
+
+              
+
             })
        
 
