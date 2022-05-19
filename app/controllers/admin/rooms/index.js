@@ -38,7 +38,7 @@ module.exports = {
     },
 
     getBookingPage: (req, res) => {
-        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), Organizations.fetchAll(100), Campuses.fetchAll(100), Rooms.fetchAll(1000), SlotIntervalTimings.forRoomBooking(1000), AcademicCalender.fetchAll(1000),Buildings.fetchAll(50)]).then(result => {
+        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), Organizations.getChildByParentId(res.locals.organizationId), Campuses.fetchAll(100), Rooms.fetchAll(1000), SlotIntervalTimings.forRoomBooking(1000), AcademicCalender.fetchAll(1000),Buildings.fetchAll(50)]).then(result => {
             console.log('Rooms:::::::::::::::::', result[2].recordset)
             res.render('admin/rooms/booking', {
                 transactionList: result[0].recordset,
@@ -65,7 +65,6 @@ module.exports = {
         RoomTransactions.save(res.locals.slug, object, res.locals.userId).then(result => {
             //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
             if (req.body.settingName) {
-         
                 Settings.updateByName(res.locals.slug, req.body.settingName)
             }
             res.status(200).json(JSON.parse(result.output.output_json))
