@@ -24,6 +24,7 @@ module.exports = class Organizations {
         })
     }
 
+
     static fetchChunkRows(pageNo) {
         return poolConnection.then(pool => {
             let request = pool.request()
@@ -104,6 +105,17 @@ module.exports = class Organizations {
         })
     }
 
-
+    static  getChildByParentId (parentid) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return  request.input('parentId', sql.Int ,parentid)
+            .query(`SELECT  org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type, org.campus_lid,
+            camp.campus_abbr
+            FROM [dbo].organizations org 
+            INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
+            INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid WHERE org.parent_id = @parentId
+            ORDER BY org.id DESC`)
+        })
+    }
 
 }

@@ -44,7 +44,7 @@
     <div class="card table-card">
         <div class="modal-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5 class="modal-title text-white" id="add-room-modal-title">Room lists</h5>
+                <h5 class="modal-title text-white" id="add-room-modal-title">BOOKED ROOMS</h5>
             </div>
             <div>
 
@@ -54,178 +54,56 @@
         <div class="card-body table-responsive">
             <input type="hidden" id="roomId" name="roomId">
             <div class="table-responsive">
-                <table class="table " id="room-table">
+                <table class="table " id="room-booked-table">
                     <thead>
                         <th>#</th>
-                        <th>Transaction Type</th>
-                        <th>Stage</th>
-                        <th>Org Name</th>
-                        <th>Campus</th>
-                        <th>Username</th>
+                        <th>Room Number</th>
+                        <th>Floor</th>
+                        <th>Capacity</th>
+                        <th>Building Name</th>
+                        <th>Action</th>
                     </thead>
                     <tbody>
                         <%let rcount = 1;%>
-                        <% for(let trans of transactionList) {%>
+                        <% for(let list of bookedRoomList) {%>
                             <tr>
                                 <td><%- rcount++ %></td>
-                                <td><%- trans.transaction_type %></td>
-                                <td><%- trans.stage %></td>
-                                <td><%- trans.org_name %></td>
-                                <td><%- trans.campus_abbr %></td>
-                                <td><%- trans.username %></td>
+                                <td><%- list.room_number %></td>
+                                <td><%- list.floor_number %></td>
+                                <td><%- list.capacity %></td>
+                                <td><%- list.building_name %></td>
+                                <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td>
                             </tr>
                         <%}%>
                     </tbody>
                 </table>
             </div>
-
         </div>
-        
     </div>
     </div>
 </div>
 </div>
-
 
 <!-- Modal -->
-<div class="modal fade" id="open-room-modal" tabindex="-1" aria-labelledby="open-room-modal" aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen">
-        <div class="modal-content modal-inputform">
-
-            <div class="modal-header modal-inputform-header">
-                <h3 class="modal-title" id="open-room-modal-title">Import Room</h3>
-                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times text-dark"></i></button>
-            </div>
-
-            <div class="modal-body py-0">
-                <div class="row">
-                    <!-- SELECT COLUMN -->
-                    <div class="col-md-3 col-xxl-3 select-items">
-                        <h4 class="text-center py-1 select-room-header">Select Rooms</h4>
-                        <input type="text" name="" id="searchItem" placeholder="Search Room"
-                            class="form-control searchItemRoom">
-                        <div style="margin-top: 100px;">
-                            <div class="col-md-12">
-                                <label>Campus</label>
-                                <select name="campus_lid" id="" class="form-select">
-                                    <option>--select--</option>
-                                    <% for(let campus of campusList) { %>
-                                        <option value="<%- campus.id %>">
-                                        <%- campus.campus_abbr %>
-                                        </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                           
-                            <div class="col-md-12">
-                                    <label>Building</label>
-                                    <select name="building_lid" id="" class="form-select">
-                                        <option>--select--</option>
-                                        <% for(let building of buildingList) { %>
-                                        <option value="<%- building.building_id %>">
-                                            <%- building.building_name %>
-                                        </option>
-                                        <% } %>
-                                    </select>
-                            </div>
-
-                            <div class="col-md-12">
-                                <label>Organization</label>
-                                <select name="handled_by" id="" class="form-select">
-                                    <option>--select--</option>
-                                    <% for(let org of orgList) { %>
-                                        <option value="<%- org.id %>">
-                                            <%- org.org_abbr %>/<%- org.org_id %>
-                                        </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-
-                        <ul class="list-group custom-select-list selectList">
-                            <% for (let room of roomList){ %>
-                            <li class="list-group-item" data-clickable="true" data-room-id="<%- room.id%>"><%- room.room_number%></li>
-                            <% }%>
-                        </ul>
-                    </div>
-
-                    <!-- SELECTED COLUMN -->
-                    <div class="col-md-9 col-xxl-9 selected-items">
-                        <h4 class="text-center py-1 selected-room-header" style="max-width: 73% !important;">
-                            Selected Rooms</h4>
-                        <input type="text" name="" id="searchSelectedItem" placeholder="Search Selected Room"
-                            class="form-control searchSelectedRoom">
-                        <div class="row selected-room-filter">
-
-                            <div class="col-md-4">
-                                <label>Book for Campus</label>
-
-                                <select name="campus_lid" id="campus_lid" class="form-select">
-                                    <option>--select--</option>
-                                    <% for(let campus of campusList) { %>
-                                    <option value="<%- campus.id %>">
-                                        <%- campus.campus_abbr %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label>Book for building</label>
-
-                                <select name="building_lid" id="building_lid" class="form-select">
-                                    <option>--select--</option>
-                                    <% for(let building of buildingList) { %>
-                                    <option value="<%- building.building_id %>">
-                                        <%- building.building_name %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label>Book for Organization</label>
-
-                                <select name="handled_by" id="handled_by" class="form-select">
-                                    <option>--select--</option>
-                                    <% for(let org of orgList) { %>
-                                    <option value="<%- org.id %>">
-                                        <%- org.org_abbr %>/<%- org.org_id %>
-                                    </option>
-                                    <% } %>
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <ul class="list-group custom-select-list selectedList" id="selectedList">
-                            <table class="table table-bordered" id="add-more-room-table">
-                                <thead>
-                                    <th>room</th>
-                                    <th>start Time</th>
-                                    <th>end Time</th>
-                                    <th>start Date</th>
-                                    <th>end Date</th>
-                                    <th>Transaction Type</th>
-                                    <th>Action</th>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </ul>
-
-                    </div>
-                </div>
-            </div>
-            <div class="px-3 error-html"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn import-room modal-inputform-btn" id="importRoom">Import Room</button>
-            </div>
-
+<div class="modal fade" id="booking-cancel-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Booking Cancellation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+            <label class="form-label">Reason for cancellation</label>
+            <input class="form-control" id="room-id" type="hidden">
+            <textarea class="form-control" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary confirm-btn">Confirm</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
 
   <%- include("../partials/footer") %>
@@ -233,127 +111,32 @@
     <script>
         $(document).ready(function () {
 
+            $('[data-bs-toggle="tooltip"]').tooltip()
 
-         
-            $('.select2').select2({
-                dropdownParent: $('#open-transaction-modal') ,
-                tags: true
-        })
-         
-            $('.select2').select2({
-                dropdownParent: $('#open-room-modal') ,
-                tags: true
-        })
-
-
-
-            let username = `<%- locals.userId %>`;
-    $('#add-more-roomtransaction').on('click', function () {
-    console.log("Organization Added::::")
-    let lastTr = $('#add-more-roomstrans-table tbody tr:last-child')
-    let room_lid = lastTr.find(`select[name='room_lid']`).val();
-    let transaction_type_id = lastTr.find(`select[name='transaction_type_id']`).val();
-    let start_time_id = lastTr.find(`select[name='start_time_id']`).val();
-    let end_time_id = lastTr.find(`select[name='end_time_id']`).val();
-    let start_date_id = lastTr.find(`select[name='start_date_id']`).val();
-    let end_date_id = lastTr.find(`select[name='end_date_id']`).val();
-    let org_lid = lastTr.find(`select[name='org_lid']`).val();
-    let campus_lid = lastTr.find(`select[name='campus_lid']`).val();
-    let clonedTr = lastTr.clone();
-    console.log('room_lid::::::::::::>>', room_lid)
-    clonedTr.find(`select[name='room_lid']`).val(room_lid).trigger('chnage')
-    clonedTr.find(`select[name='transaction_type_id']`).val(transaction_type_id).trigger('chnage')
-    clonedTr.find(`select[name='start_time_id']`).val(start_time_id).trigger('chnage')
-    clonedTr.find(`select[name='end_time_id']`).val(end_time_id).trigger('chnage')
-    clonedTr.find(`select[name='start_date_id']`).val(start_date_id).trigger('chnage')
-    clonedTr.find(`select[name='end_date_id']`).val(end_date_id).trigger('chnage')
-    clonedTr.find(`select[name='org_lid']`).val(org_lid).trigger('chnage')
-    clonedTr.find(`select[name='campus_lid']`).val(campus_lid).trigger('chnage')
-    $('#add-more-roomstrans-table tbody').append(clonedTr)
-    })
-
-
-
-
-    $('#add-more-roomstrans-table').on('click', '.remove-roomtransaction',
-    function () {
-    let trLength = $(
-    '#add-more-roomstrans-table tbody tr')
-    .length;
-    if (trLength > 1) {
-    $(this).closest('tr').remove()
-    } else {
-    alert('Cannot delete this room.')
-    }
-    })
-
-  //Create
-    $(".createRoomTransaction").on('click', function () {
-            let roomElems = $('#add-more-roomstrans-table tbody tr');
-            let roomCount = roomElems.length;
-            let roomJson = [];
-            roomElems.each(function (index, elem) {
-                let room_lid = $(elem).find(`select[name='room_lid']`).val()
-                let transaction_type_id = $(elem).find(`select[name='transaction_type_id']`).val();
-                let start_time_id = $(elem).find(`select[name='start_time_id']`).val();
-                let end_time_id = $(elem).find(`select[name='end_time_id']`).val();
-                let start_date_id = $(elem).find(`select[name='start_date_id']`).val();
-                let end_date_id = $(elem).find(`select[name='end_date_id']`).val();
-                let org_lid = $(elem).find(`select[name='org_lid']`).val();
-                let campus_lid = $(elem).find(`select[name='campus_lid']`).val();
-
-
-                if (index < roomCount - 1) {
-                    let obj = {
-                        room_lid: room_lid,
-                        transaction_type_lid: transaction_type_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        start_date_id: start_date_id,
-                        end_date_id: end_date_id,
-                        org_lid: org_lid,
-                        campus_lid: campus_lid,
-                        user_id:username
-                    }
-                    roomJson.push(obj)
-                } else {
-                    let obj = {
-                        room_lid: room_lid,
-                        transaction_type_lid: transaction_type_id,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id,
-                        start_date_id: start_date_id,
-                        end_date_id: end_date_id,
-                        org_lid: org_lid,
-                        campus_lid: campus_lid,
-                        user_id:username
-                    }
-                    roomJson.push(obj)
-                }
+            $("#room-booked-table").on('click','.room-cancel-request',function(){
+                let id =  $(this).attr('data-id')
+                $("#room-id").val(id)
+                console.log('id::::::::::::',id)
+                $("#booking-cancel-modal").modal('show')
             })
 
-            console.log('roomJson::::::::::::',roomJson)
+            $(".confirm-btn").on('click',function(){
+               let id =  $("#room-id").val()
+               let reason =  $("#cancel-reason").val()
+               if(reason.length > 5){
+                console.log('CALL APIHere')
+                  
+               }else{
+                $("#booking-cancel-modal #cancel-reason").css('border','2px solid #ff0000')
+               }
 
-            let ApiObj = {
-                type: 'POST',
-                url: '/admin/rooms',
-                data: {
-                    inputJSON: JSON.stringify(roomJson)
-                },
-                dataType: 'JSON'
-            }
+              
 
-            ajaxApi(ApiObj).then(result => {
-
-                showSuccess(result)
-                setTimeout(function(){
-                    location.reload()
-                },3000)
-            }).catch(error => {
-                showError(error.responseJSON)
             })
+       
 
-        })
+
+
 
 
    // SEARCH PROGRAM TYPE
@@ -485,6 +268,8 @@
                 `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
             $(".errorHtml").html(errorHtml)
         }
+
+        
     })
 
     </script>
