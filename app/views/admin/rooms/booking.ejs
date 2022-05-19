@@ -430,10 +430,23 @@
             })
         });
 
-        //Delete Room Transaction
-        $("#room-transactions-table").on('click','.delete-room-transaction',function(){
+        //Delete Room Transaction Details "#room-details-modal #room-transactions-table"
+        $(document).on('click','.delete-room-transaction',function(){
             let id = $(this).attr('data-id')
-            console.log('ID:::::::::::::::',id)
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/delete-room-detail',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
         })
 
 
@@ -485,7 +498,7 @@
         })
 
 
-        //Delete Faculty API
+        //Delete Room Transaction
         $("#roomTransactionTable").on('click', '.delete-transaction', function () {
             let id = $(this).attr("data-id");
             let ApiObj = {
