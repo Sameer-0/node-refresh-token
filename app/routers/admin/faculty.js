@@ -43,6 +43,8 @@ router.post('/faculties/batch/delete', validate('delete'), batch.delete)
 router.post('/faculties/batch/program-by-facultyid', batch.programByFacultyId)
 router.post('/faculties/batch/session-by-facultyid-and-programid', batch.sessionByFacultyProgramId)
 router.post('/faculties/batch/module-by-facultyid-programid-sessionid', batch.moduleByFaculty)
+router.post('/faculties/batch/division-by-moduleid', batch.divisionByModuleId)
+router.post('/faculties/batch/batch-by-divisionid', batch.batchByDivisionId)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
