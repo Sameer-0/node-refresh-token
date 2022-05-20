@@ -118,8 +118,8 @@
                             </div>
                         </div>
 
-                        <div class=""> 
-                            <label class="form-label mt-2 fw-bold room-list-container"></label>
+                        <label class="form-label mt-2 fw-bold room-list-container"></label>
+                        <div class="selected-room-list"> 
                             <ul class="list-group  selectRoomList">
                             </ul>
                         </div>
@@ -165,8 +165,7 @@
             </div>
             <div class="px-3 error-html"></div>
             <div class="modal-footer">
-                <button type="button" class="btn import-room modal-inputform-btn" id="createRoomTransaction">Create Room
-                    Transaction</button>
+                <button type="button" class="btn import-room modal-inputform-btn" id="createRoomTransaction">Book Room</button>
             </div>
         </div>
     </div>
@@ -317,6 +316,13 @@
             let roomElems = $('#add-more-room-table tbody tr');
             let roomCount = roomElems.length;
             let roomJson = [];
+            let campus_lid = $("#campus_lid").val();
+            let building_lid = $("#building_lid option:selected").attr(`data-building-lid`);
+            let org_lid = $(`#handled_by`).val();
+            if(!org_lid){
+                org_lid = `<%- locals.organizationId %>`
+            }
+
             roomElems.each(function (index, elem) {
                 let room_lid = $(elem).find(`td[data-room-id]`).attr('data-room-id');
                 let transaction_type_id = $(elem).find(`select[name='transaction_type_lid']`).val();
@@ -324,9 +330,8 @@
                 let end_time_id = $(elem).find(`select[name='endTime']`).val();
                 let start_date_id = $(elem).find(`select[name='startDate']`).val();
                 let end_date_id = $(elem).find(`select[name='endDate']`).val();
-                let org_lid = $(`#handled_by`).val();
-                let campus_lid = $("#handled_by option:selected").attr('data-campus-lid');
-                let building_lid = $(elem).attr(`data-building-lid`);
+              
+
                 if (index < roomCount - 1) {
                     let obj = {
                         room_lid: room_lid,
@@ -425,6 +430,25 @@
             })
         });
 
+        //Delete Room Transaction Details "#room-details-modal #room-transactions-table"
+        $(document).on('click','.delete-room-transaction',function(){
+            let id = $(this).attr('data-id')
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/delete-room-detail',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
 
 
         $("#roomTransactionTable").on('click', '.viewtransactioninfo', function () {
@@ -439,7 +463,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                let htmlTable = `<table class="table table-borderd">
+                let htmlTable = `<table class="table table-borderd" id="room-transactions-table">
                     <thead>
                     <tr>
                         <th>#</th>
@@ -448,8 +472,9 @@
                         <th>End Time</th>
                         <th>Start Date</th>
                         <th>End Date</th>
+                        <!--<th>Action</th>-->
                     </tr>    
-                    </thead>
+                    </thead> 
                     <tbody>`
                 let count = 1;
                 result.data.forEach(function (item) {
@@ -460,7 +485,8 @@
                         <td>${item.end_time}</td>
                         <td>${item.start_date}</td>
                         <td>${item.end_date}</td>
-                                    </tr>`
+                        <!--<td><a class="delete-room-transaction" data-id="${item.id}"><span class="fa fa-trash"></span></a></td>
+                                    </tr>-->`
                 })
                 htmlTable += `</tbody></table>`;
               
@@ -472,7 +498,7 @@
         })
 
 
-        //Delete Faculty API
+        //Delete Room Transaction
         $("#roomTransactionTable").on('click', '.delete-transaction', function () {
             let id = $(this).attr("data-id");
             let ApiObj = {
@@ -504,15 +530,15 @@
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                let buildingList = ``;
+                let buildingList = `<option value="">Select Building</option>`;
                 if (result.buildingData.length > 0) {
                     result.buildingData.forEach(element => {
                         buildingList +=`<option value="${element.id}">${element.building_name}</option>`;
                     });
                 } else {
-                    buildingList += `<option value="">No Slot Found!</option>`;
+                    buildingList += `<option value="">No Buildings Found!</option>`;
                 }
-                $("#open-transaction-modal  #building_lid").html(buildingList);
+                $("#open-transaction-modal  #building_lid").html(buildingList).trigger('change');
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -530,6 +556,7 @@
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
+                $("#open-transaction-modal  .room-list-container").html(`Available Rooms`);
                 let roomList = ``;
                 let labelhtml = ``;
                 if (result.roomList.length > 0) {
@@ -537,7 +564,7 @@
                         roomList +=`<li class="list-group-item my-1 border-top" data-clickable="true" data-room-id="${element.id}">${element.room_number}</li>`;
                     });
 
-                    $("#open-transaction-modal  .room-list-container").html(`Available Rooms`);
+                    
                 } else {
                     roomList += `<li>No Rooms Found!</li>`;
                 }

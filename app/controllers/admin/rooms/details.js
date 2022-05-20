@@ -19,6 +19,22 @@ module.exports = {
             })
             console.log(result.recordset)
         })
-    }
+    },
+
+
+    delete: (req, res) => {
+        RoomTransactionDetails.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
 
 }

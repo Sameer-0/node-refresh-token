@@ -33,16 +33,17 @@ const SchoolTimingSettings = require('../../models/SchoolTimingSettings');
 const FacultyDateTimes = require('../../models/FacultyDateTimes');
 
 
+
 module.exports = {
     getDashboard: (req, res) => {
-        Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(100, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(), AcadSession.fetchAll(1000), SessionTypes.fetchAll(10, res.locals.slug), AcademicCalender.fetchAll(100), CourseWorkload.getAll(res.locals.slug), Divisions.fetchAll(100, res.locals.slug), Faculties.fetchAll(100, res.locals.slug), FacultyDbo.fetchAll(1000), SlotIntervalTimings.fetchAll(100), DivisionBatches.fetchAll(100, res.locals.slug), SchoolTimingType.fetchAll(10), HolidayTypes.fetchAll(100), ModuleType.fetchAll(1000, res.locals.slug), FacultyTypes.fetchAll(100), FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), ProgramSessions.fetchAll(100, res.locals.slug), RoomTransactionTypes.fetchAll(100), RoomTransactions.fetchAll(100, res.locals.slug), ProgramsDbo.fetchAll(1000), SessionDates.fetchAll(10, res.locals.slug), FacultyWorks.fetchAll(10, res.locals.slug), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), FacultyDateTimes.fetchAll(10, res.locals.slug)]).then(result => {
-         console.log('school setting type list::::::::::::::::::::>>',result[31].recordset)
+        Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(100, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(), AcadSession.fetchAll(1000), SessionTypes.fetchAll(10, res.locals.slug), AcademicCalender.fetchAll(100), CourseWorkload.getAll(res.locals.slug), Divisions.fetchAll(100, res.locals.slug), Faculties.fetchAll(100, res.locals.slug), FacultyDbo.fetchAll(1000), SlotIntervalTimings.fetchAll(100), DivisionBatches.fetchAll(100, res.locals.slug), SchoolTimingType.fetchAll(10), HolidayTypes.fetchAll(100), ModuleType.fetchAll(1000, res.locals.slug), FacultyTypes.fetchAll(100), FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), ProgramSessions.fetchAll(100, res.locals.slug), RoomTransactionTypes.fetchAll(100), RoomTransactions.bookedRooms(res.locals.slug), ProgramsDbo.fetchAll(1000), SessionDates.fetchAll(10, res.locals.slug), FacultyWorks.fetchAll(10, res.locals.slug), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), FacultyDateTimes.fetchAll(10, res.locals.slug), Organizations.getChildByParentId(res.locals.organizationId), DivisionBatches.fetchDistinctBatches(res.locals.slug)]).then(result => {
+         console.log('faculty works list::::::::::::::::::::>>',result[32].recordset)
             res.render('admin/dashboard/index', {
                 currentFormStep: result[0].recordset[0] ? result[0].recordset[0].seq : '',
                 dayList: result[1].recordset,
                 RoomList: result[2].recordset,
                 divisionList: result[3].recordset, 
-                orgList: result[4].recordset,
+                orgList: result[4].recordset,  
                 buildingList: result[5].recordset,
                 slotTiming:JSON.stringify(result[6].recordset),
                 campusList: result[7].recordset,
@@ -64,7 +65,7 @@ module.exports = {
                 moduleList: result[23].recordset,
                 facultyType: JSON.stringify(result[24].recordset),
                 facultyPreferenceList: result[25].recordset,
-                facultyWorkList: result[25].recordset,
+                facultyWorkList: result[32].recordset,
                 programDayList: result[26].recordset,
                 programSession: result[27].recordset,
                 transactionTypes:  JSON.stringify(result[28].recordset),
@@ -75,6 +76,8 @@ module.exports = {
                 schoolTimingSettingsListJson: JSON.stringify(result[33].recordset), 
                 stsStatus: result[32].recordset.length > 0 ? result[34].recordset[0].status : 0,
                 FacultyDateTimeList: result[35].recordset,
+                orgParentList: result[36].recordset,
+                batchList: result[37].recordset,
                 path:'/admin'
             })
         }) 

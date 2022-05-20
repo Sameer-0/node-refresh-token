@@ -18,8 +18,6 @@ module.exports = class RoomTransactionDetails {
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
             WHERE  rtd.room_transaction_lid = @RoomLid
             ORDER BY rtd.id DESC`)
-        }).catch(error => {
-            throw error
         })
     }
 
@@ -36,8 +34,16 @@ module.exports = class RoomTransactionDetails {
                 INNER JOIN [dbo].academic_calendar _ac ON rtd.end_date_id = _ac.id
                 INNER JOIN [dbo].rooms r ON rtd.room_lid =  r.id
                 WHERE rtd.room_transaction_lid = @transactionId`)
-        }).catch(error => {
-            throw error
+        })
+    }
+
+    static delete(id, slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('room_transaction_lid', sql.Int, id)
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_delete_room_transaction]`)
         })
     }
 }
