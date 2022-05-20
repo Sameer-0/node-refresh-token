@@ -18,7 +18,7 @@ module.exports = class FacultyBatch {
     }
 
     static save(inputJSON, slug, userid) {
-        console.log('JOSN:::::::::::::::',JSON.stringify(inputJSON))
+        console.log('JOSN:::::::::::::::', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -84,6 +84,54 @@ module.exports = class FacultyBatch {
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_delete_faculty_batches]`)
+        })
+    }
+
+    static programByFacultyId(faculty_lid, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('facultyLid', sql.Int, faculty_lid)
+                .query(`select DISTINCT p.id as program_lid, p.program_name from [asmsoc-mum].faculty_works fw
+                INNER JOIN [asmsoc-mum].program_sessions ps ON ps.id = fw.program_session_lid
+                INNER JOIN [asmsoc-mum].programs p ON p.id = ps.program_lid
+                WHERE fw.faculty_lid = @facultyLid `)
+        })
+    }
+
+
+    static sessionByFacultyProgramId(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('program_lid', sql.Int, body.program_lid)
+                .input('faculty_lid', sql.Int, body.faculty_lid)
+                .query(`SELECT DISTINCT acds.id AS session_lid, acds.acad_session FROM [${slug}].faculty_works fw
+                INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
+                INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
+                INNER JOIN [dbo].acad_sessions acds ON acds.id = ps.acad_session_lid
+                WHERE fw.faculty_lid = @faculty_lid AND p.id = @program_lid`)
+        })
+    }
+
+    //Getting module name by faculty id, program id and session id
+    static moduleNameByFaculty(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('program_lid', sql.Int, body.program_lid)
+                .input('faculty_lid', sql.Int, body.faculty_lid)
+                .input('session_lid', sql.Int, body.session_lid)
+                .query(`select icw.id, icw.module_name from [${slug}].faculty_works fw INNER JOIN
+                [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
+                where program_session_lid = (select id as program_session_lid from [${slug}].program_sessions where program_lid = @program_lid AND acad_session_lid = @session_lid) AND fw.faculty_lid = @faculty_lid`)
+        })
+    }
+
+    static divisionByModule(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('program_lid', sql.Int, body.program_lid)
+                .input('faculty_lid', sql.Int, body.faculty_lid)
+                .input('session_lid', sql.Int, body.session_lid)
+                .query(`select * from [asmsoc-mum].divisions`)
         })
     }
 

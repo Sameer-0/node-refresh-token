@@ -69,63 +69,93 @@
     </div>
 </div>
 
-<!--ADD Modal -->
-<div class="modal fade" id="add-facultybatch-modal" tabindex="-1" aria-labelledby="add-facultybatch-modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
-        <div class="modal-content modal-inputform">
-            <div class="modal-header modal-inputform-header">
-                <h5 class="modal-title" id="add-facultybatch-modal-title">ADD FACULTY BATCH</h5>
-                <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
-                        class="fas fa-times"></i></button>
+<div class="modal fade" id="add-facultybatch-modal" tabindex="-1" role="dialog" aria-labelledby="add-facultybatch-modal"
+aria-hidden="true">
+<div class="modal-dialog modal-fullscreen" role="document">
+    <div class="modal-content modal-inputform">
+        <div class="modal-header  modal-inputform-header">
+            <h5 class="modal-title text-dark" id="add-org-modal-title">ADD FACULTY DATE TIME</h5>
+            <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i
+                    class="fas fa-times"></i></button>
+
+        </div>
+        <!-- <form action="/management/campus/add" method="POST"> -->
+        <div class="modal-body">
+            <div id="errorHtml"></div>
+         <div class="row">
+             <div class="col-md-3 select-items">
+            <div class="mb-3">
+                <label class="form-label">Select Faculty</label>
+                <select class="select2 modalSelect2" name="faculty_lid" id="faculty_lid">
+                    <option value="">--select--</option>
+                    <% for(faculty of facultyList) {%>
+                    <option value="<%- faculty.id %>">
+                        <%- faculty.faculty_name %>  (<%- faculty.faculty_id %>)</option>
+                    <%}%>
+                </select>
+
             </div>
-            <div class="modal-body">
-                <div class="errorHtml"></div>
-                <input type="hidden" id="hidden_id">
-                <div class="table-responsive ">
-                    <table class="table table-bordered" id="add-more-facultybatch-table">
+            <div class="mb-3">
+             <label class="form-label">Select Program</label>
+                <select class="form-select" name="programName" id="programName"></select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Select Acad Session</label>
+                <select class="form-select" name="sessionName" id="sessionName"></select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Select Module Name</label>
+                <select class="form-select" name="moduleName" id="moduleName"></select>
+            </div>
+   
+            <div class="mb-3">
+                <label class="form-label">Select Division</label>
+                <select class="form-select" name="end_time_id" id="end_time_id"></select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Select Batch</label>
+                <select class="form-select" name="end_time_id" id="end_time_id"></select>
+            </div>
+
+            <div class="mb-3 d-grid gap-2">
+                <button class="btn btn-info text-light add-faculty-date-time" disabled>ADD FACULTY DATE TIME</button>
+            </div>
+
+            <div class="alert alert-success rounded-0" role="alert">
+                Note: Select Faculty First.
+              </div>
+
+             </div>
+             <div class="col-md-9 selected-items">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-bordered" id="add-more-faculty-date-time-table">
                         <thead>
-                            <th>Faculty</th>
-                            <th>Batch</th>
-                            <th>Action</th> 
+                            <th>Sr No.</th>
+                            <th>Faculty Name</th>
+                            <th>Faculty Id</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Action</th>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <select class="select2 modalSelect2" name="faculty_lid" id="faculty_lid">
-                                        <option value="">--select--</option>
-                                        <% for(faculty of facultyList) {%>
-                                        <option value="<%- faculty.id %>">
-                                            <%- faculty.faculty_name %>  (<%- faculty.faculty_id %>)</option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <!-- <input type="number" name="faculty_batch" id="faculty_batch" class="form-control"> -->
-                                    <select class="select2 modalSelect2" name="faculty_batch" id="faculty_batch">
-                                        <option value="">--select--</option>
-                                        <% for(batch of batchList) {%>
-                                        <option value="<%- batch.batch %>"> <%- batch.batch %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultybatchfield"></i>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <div id="errorMsg"></div>
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-facultybatch-fields"><i class="fas fa-plus"></i>Add More Fields</button>
-                <button type="button" class="btn  createfacultybatch modal-inputform-btn">Create</button>
-                <button type="button" class="btn  updatefacultybatch modal-inputform-btn d-none">Update</button>
-            </div>
+             </div>
+         </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn createfacultydatetime modal-inputform-btn">CREATE</button>
+            <button type="button" class="btn updatefacultydatetime modal-inputform-btn d-none">UPDATE</button>
         </div>
     </div>
-</div> 
+</div>
+</div>
 
 
 <%- include("../partials/footer") %>
@@ -351,6 +381,91 @@ $(document).ready(function(){
             }
         })
     });
+
+
+    // FILTER APIES
+    $("#faculty_lid").on('change',function(){
+        let faculty_lid =  $(this).val();
+        let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/batch/program-by-facultyid',
+                data: {
+                    faculty_lid: faculty_lid
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                let programName = `<option value="">Select Program Name</option>`;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        programName +=`<option value="${element.program_lid}">${element.program_name}</option>`;
+                    });
+                    $('.add-faculty-date-time').removeAttr('disabled')
+                } else {
+                    programName += `<option value="">No Program Found!</option>`;
+                }
+                $("#add-facultybatch-modal  #programName").html(programName).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
+
+
+    $("#programName").on('change',function(){
+        let program_lid =  $(this).val();
+        let faculty_lid =  $("#faculty_lid").val();
+        let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/batch/session-by-facultyid-and-programid',
+                data: {
+                    program_lid: program_lid,
+                    faculty_lid: faculty_lid
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                let sessionName = `<option value="">Select Academic Session</option>`;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        sessionName +=`<option value="${element.session_lid}">${element.acad_session}</option>`;
+                    });
+                } else {
+                    sessionName += `<option value="">No Program Found!</option>`;
+                }
+                $("#add-facultybatch-modal  #sessionName").html(sessionName).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
+
+    $("#sessionName").on('change',function(){
+        let session_lid =  $(this).val();
+        let faculty_lid =  $("#faculty_lid").val();
+        let program_lid =  $("#programName").val();
+        let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/batch/module-by-facultyid-programid-sessionid',
+                data: {
+                    program_lid: program_lid,
+                    faculty_lid: faculty_lid,
+                    session_lid: session_lid
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                let moduleName = `<option value="">Select Module Name</option>`;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        moduleName +=`<option value="${element.id}">${element.module_name}</option>`;
+                    });
+                } else {
+                    moduleName += `<option value="">No Module Found!</option>`;
+                }
+                $("#add-facultybatch-modal  #moduleName").html(moduleName).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
 
 
     function showAjaxTable(facultiesList) {
