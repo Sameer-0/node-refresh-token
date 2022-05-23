@@ -77,6 +77,7 @@ module.exports = {
         let rowcount = 10;
         RoomTransactions.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
+                console.log('searched items::', result.recordset)
                 res.json({
                     status: "200",
                     message: "Room Type fetched",
@@ -155,6 +156,37 @@ module.exports = {
                 status: 200,
                 roomList: result.recordset
             })
+        })
+    },
+
+    searchForBookedRooms: (req, res) => {
+        let rowcount = 10;
+        RoomTransactions.searchForBookedRooms(rowcount, req.body.keyword, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                console.log('searched items::', result.recordset)
+                res.json({
+                    status: "200",
+                    message: "Booked Room Fetched fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } 
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 

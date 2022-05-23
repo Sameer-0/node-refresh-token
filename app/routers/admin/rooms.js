@@ -14,7 +14,7 @@ const buildings =  require('../../controllers/management/building')
 
 
 router.get('/rooms', room.getPage)
-router.post('/rooms/search', room.search)
+router.post('/rooms/search', room.searchForBookedRooms)
 router.post('/rooms/pagination', room.pagination)
 router.post('/rooms/book', validate('JsonValidator'),  room.create)
 router.post('/rooms/delete', validate('delete'), room.delete)
@@ -24,6 +24,7 @@ router.post('/rooms/delete-room-detail', validate('delete'), details.delete)
 router.get('/rooms/booking', room.getBookingPage)
 router.post('/rooms/booking/getbuildingbycampusid', buildings.getBuildingByCampusId)
 router.post('/rooms/booking/getroomsbybuildingid', room.getroomsbybuildingid)
+
 
 
 //ROOM TRANSACTION DETAILS

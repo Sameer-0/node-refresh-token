@@ -50,7 +50,14 @@
                     <tr>
                         <td><%- count++ %></td>
                         <td><%- trans.transaction_type %></td>
-                        <td><%- trans.stage %></td>
+                        <td><%if(trans.stage=="applied"){%>
+                        <span class="badge rounded-pill bg-warning text-dark"><%- trans.stage %></span>
+                            <%}else if(trans.stage=="accepted"){%>
+                        <span class="badge rounded-pill bg-success text-white"><%- trans.stage %></span>
+                        <%}else{%>
+                            <span class="badge rounded-pill bg-danger text-white"><%- trans.stage %></span>
+                        <%}%>
+                        </td>
                         <td><%- trans.org_name %></td>
                         <td><%- trans.campus_abbr %></td>
                         <td><%- trans.username %></td>
@@ -596,8 +603,16 @@
                         `<tr>
                         <td>${count++}</td>
                         <td>${trans.transaction_type}</td>
-                        <td>${trans.stage}</td>
-                        <td>${trans.org_name}</td>
+                        <td>`
+                            if(trans.stage=="applied"){
+                                AjaxTable +=   `<span class="badge rounded-pill bg-warning text-dark">${trans.stage}</span>`
+                            }else if(trans.stage=="accepted"){
+                                AjaxTable +=  `<span class="badge rounded-pill bg-success text-white">${trans.stage}</span>`
+                        }else{
+                                 AjaxTable += `<span class="badge rounded-pill bg-danger text-white">${trans.stage}</span>`
+                        }
+                        `</td>`
+                        AjaxTable += `<td>${trans.org_name}</td>
                         <td>${trans.campus_abbr}</td>
                         <td>${trans.username}</td>
                         <td>
