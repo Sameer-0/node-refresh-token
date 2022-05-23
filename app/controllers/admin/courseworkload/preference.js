@@ -9,20 +9,22 @@ const Programs = require('../../../models/Programs');
 const Days = require('../../../models/Days');
 const RoomSlots = require('../../../models/RoomSlots')
 const isJsonString = require('../../../utils/util')
+const RoomTypes = require('../../../models/RoomTypes')
+const RoomTransactions = require('../../../models/RoomTransactions')
+
 module.exports = {
 
     
     getPage: (req, res) => {
-        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(1000, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomSlots.SlotsForCourcePreference()]).then(result => {
-            console.log('dayList', result[3].recordset)
+        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(1000, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomTypes.fetchAll(50)]).then(result => {
             res.render('admin/courseworkload/preference', {
                 coursepreference: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 programList: result[2].recordset,
                 dayList: JSON.stringify(result[3].recordset),
                 totalentries: result[0].recordset ? result[0].recordset.length : 0,
-                roomSlotsList: result[4].recordset,
                 breadcrumbs: req.breadcrumbs,
+                roomtypes: result[4].recordset,
             })
         })
     },
@@ -143,13 +145,11 @@ module.exports = {
     },
 
     divList: (req, res) => {
-
         CourseDayRoomPreferences.getDivList(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset
             })
-
         })
     },
 
@@ -164,6 +164,47 @@ module.exports = {
                 res.status(500).json({status:500,
                 description:error.originalError.info.message,
                 data:[]})
+            }
+        })
+    },
+
+
+    getRoomByType: (req, res) => {
+        RoomTransactions.roomsForCoursePreferences(req.body.id, res.locals.slug).then(result => {
+            console.log('result::::::::',result.recordset)
+            res.json({
+                status: 200,
+                result: result.recordset
+            })
+        })
+    },
+
+    batchByDivisionId: (req, res) => {
+        CourseDayRoomPreferences.batchByDivisionId(req.body.division_lid, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Division Name",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     }
