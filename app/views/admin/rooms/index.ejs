@@ -54,6 +54,8 @@
         <div class="card-body table-responsive">
             <input type="hidden" id="roomId" name="roomId">
             <div class="table-responsive">
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
                 <table class="table " id="room-booked-table">
                     <thead>
                         <th>#</th>
@@ -61,7 +63,7 @@
                         <th>Floor</th>
                         <th>Capacity</th>
                         <th>Building Name</th>
-                        <th>Action</th>
+                        <!-- <th>Action</th> -->
                     </thead>
                     <tbody>
                         <%let rcount = 1;%>
@@ -72,11 +74,19 @@
                                 <td><%- list.floor_number %></td>
                                 <td><%- list.capacity %></td>
                                 <td><%- list.building_name %></td>
-                                <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td>
+                                <!-- <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> -->
                             </tr>
                         <%}%>
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p>Total entries: <%- totalentries %> </p>
+                    </div>
+                    <div>
+                        <p id="pagination"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -93,9 +103,31 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <label class="form-label">Reason for cancellation</label>
-            <input class="form-control" id="room-id" type="hidden">
-            <textarea class="form-control" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
+            <div class="mb-3">
+                <label class="form-label">Start Date</label>
+                <input class="form-control" id="room-id" type="date">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <input class="form-control" id="room-id" type="date">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Start Time</label>
+                <input class="form-control" id="room-id" type="datetime-local">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">End Time</label>
+                <input class="form-control" id="room-id" type="datetime-local">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Reason for cancellation</label>
+                <input class="form-control" id="room-id" type="hidden">
+                <textarea class="form-control" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
+            </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -142,13 +174,14 @@
    // SEARCH PROGRAM TYPE
     $('#searchkeyword').on('input', delay(function (e) {
     let keyword = $("#searchkeyword").val()
-    $.ajax({
+    $.ajax({ 
     type: "POST",
     url: "/admin/rooms/search",
     data: {
     keyword: keyword
     },
     success: function (data) {
+        console.log('earch data', data.data)
     AjaxtTable(data.data)
     }
     })
@@ -190,43 +223,37 @@
     });
     
 
-    function AjaxtTable(transactionList){
+    function AjaxtTable(bookedRoomList){
         let AjaxTable = `<table class="table custom_row table-bordered" id="roomTransactionTable">
                 <thead>
                     <th>#</th>
-                    <th>Transaction Type</th>
-                    <th>Stage</th>
-                    <th>Org Name</th>
-                    <th>Campus</th>
-                    <th>Username</th>
-                    <th>Action</th>
+                    <th>Room Number</th>
+                    <th>Floor</th>
+                    <th>Capacity</th>
+                    <th>Building Name</th>
                 </thead>
                 <tbody>`;
-                if (transactionList.length > 0) {
+                if (bookedRoomList.length > 0) {
                     let count = 1;
-                    for (trans of transactionList) {
+                    for (room of bookedRoomList) {
                         AjaxTable +=
                             `<tr>
                         <td>${count++}</td>
-                        <td>${trans.transaction_type}</td>
-                        <td>${trans.stage}</td>
-                        <td>${trans.org_name}</td>
-                        <td>${trans.campus_abbr}</td>
-                        <td>${trans.username}</td>
-                        <td>
-                            <a title="view details" class="viewtransactioninfo" data-id="${trans.id}"><i class="fa fa-eye"></i></a>
-                            <a class="delete-transaction" data-id="${trans.id}"><i class="fa fa-trash text-danger"></i></a>
-                        </td>
+                        <td>${room.room_number}</td>
+                        <td>${room.floor_number}</td>
+                        <td>${room.capacity}</td>
+                        <td>${room.building_name}</td>
+                      
                     </tr>`
                     }
                 } else {
                     AjaxTable +=
                         ` <tr>
-                                <td colspan="7">No Data Found</td>
+                                <td colspan="5">No Data Found</td>
                             </tr>`;
                 }
                 AjaxTable += `<tbody></table>`
-                $("#roomTransactionTable").html(AjaxTable);
+                $("#room-booked-table").html(AjaxTable);
     }
 
 

@@ -37,10 +37,10 @@
                 <h5>SCHOOL TIMING TYPE LIST</h5>
             </div>
             <div>
-                <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-school-time-type-modal"><i
-                        class="fas fa-plus"></i></button> -->
-                <!-- <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
-                <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
+                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-school-time-type-modal"><i
+                        class="fas fa-plus"></i></button>
+              <button class="btn ms-auto delete-school-timingtype add-btn "><i class="fas fa-trash"></i></button>
+                 <!--  <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
             </div>
         </div>
@@ -54,19 +54,18 @@
                     <th>#</th>
                     <th>Name</th>
                     <th>Description</th>
-                    <!-- <th>Action</th> -->
+                    <th>Action</th>
                 </thead>
                 <tbody>
-                    <%let count = 1;%>
+                    <%let count = 1;%> 
                     <% for(let type of typeList) {%>
                     <tr>
                     <td><%-count++%></td>
                     <td><%-type.name%></td>
                     <td><%-type.description%></td>
-                    <!-- <td>
-                        <i class="fas fa-edit text-dark cursor-pointer edit-school-time-type"
-                            data-time-type-id="<%- type.id %>"></i>
-                    </td> -->
+                    <td>
+                        <input type="checkbox" data-schooltiming-type-id="<%- type.id %>" class="delete-school-type">
+                    </td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -221,6 +220,39 @@
             })
         }, 500));
 
+        //Delete program type
+        $('.delete-school-timingtype').on('click', function () {
+                let deleteids = []
+                $('.delete-school-type:checked').each(function () {
+                    let obj = {
+                        id: $(this).attr("data-schooltiming-type-id"),
+                    }
+                    deleteids.push(obj) 
+                })
+
+           
+
+                if (deleteids.length > 0) {
+
+                    let ApiObj = {
+                        url: '/admin/schooltime/types/delete', 
+                        type: 'POST',
+                        data: {
+                            Ids: JSON.stringify(deleteids)
+                        },
+                        dataType: 'JSON'
+                    }
+                    ajaxApi(ApiObj).then(result => {
+             console,log('result:::', result)
+                        showSuccess(result)
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+                } else {
+                    alert('Select Fields')
+                }
+            }) 
+
 
         function AjaxtTable(divisionList) {
             let AjaxTable = `<table class="table table-bordered custom_row" id="schoolTimeTypeTable">
@@ -269,40 +301,54 @@
         }
 
         function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            console.log('error::::::::::', errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
         }
 
 
         function showSuccess(errors) {
-            let errorHtml = `<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <h3>Success</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            console.log('error::::::::::', errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: errors.data,
+                type: 'alert-success',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+            simpleAlert.alert(obj);
         }
 
 
