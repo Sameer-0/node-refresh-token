@@ -35,4 +35,6 @@ router.post('/courseworkload/preference/acadSessionList', preference.acadSession
 router.post('/courseworkload/preference/courseList', preference.courseList)
 router.post('/courseworkload/preference/divList', preference.divList)
 router.post('/courseworkload/preference/refresh', preference.refresh)
+router.post('/courseworkload/preference/find-rooms-by-type', preference.getRoomByType)
+router.post('/courseworkload/preference/batch-by-divisionid', preference.batchByDivisionId)
 module.exports = router

@@ -143,4 +143,14 @@ module.exports = class CourseDayRoomPreferences {
                 .execute(`[${slug}].[sp_import_faculties]`)
         })
     }
+
+    static batchByDivisionId(division_lid, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('division_lid', sql.Int, division_lid)
+                .query(`select db.id, db.batch, et.name AS event_type from [${slug}].division_batches db
+                INNER JOIN [dbo].event_types et ON et.id = db.event_type_lid
+                where db.division_lid = @division_lid`)
+        })
+    }
 }

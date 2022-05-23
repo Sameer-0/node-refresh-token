@@ -20,9 +20,9 @@
                 <h5>COURSE DAY ROOM PREFERENCE</h5>
             </div>
             <div>
-                <!-- <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-courseDayPreference-modal">
-                    <i class="fas fa-plus"></i></button> -->
+                    <i class="fas fa-plus"></i></button>
                 <button class="btn btn-danger ms-auto refresh_course_day_room_preferences"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 <!-- <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
@@ -110,12 +110,14 @@
                         <option value="<%- programs.id%>"><%- programs.program_name%></option>
                         <%}%>
                     </select>
-
                 </div>
+
                 <div class="mb-3">
                  <label class="form-label">Select Session</label>
                     <select class="form-select" name="acad_session" id="acad_session"></select>
                 </div>
+
+
 
                 <div class="mb-3">
                     <label class="form-label">Select Module Name</label>
@@ -128,17 +130,28 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Select Batch</label>
+                       <select class="form-select" name="division_batch" id="division_batch"></select>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Select Day Name</label>
                     <select class="form-select" name="day_name" id="day_name"></select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Select Room Number</label>
-                    <select class="form-select" name="room_number" id="room_number">
-                        <% for (let rslots of roomSlotsList) {%>
-                            <option value="<%-rslots.room_lid%>"><%- rslots.room_number %></option>
+                    <label class="form-label">Select Room Type</label>
+                    <select class="form-select" name="room_type" id="room_type">
+                        <option value="">Select Room Type</option>
+                        <% for (let rtypes of roomtypes) {%>
+                            <option value="<%-rtypes.roomtypeid%>"><%- rtypes.name %></option>
                         <%}%>
                     </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Room Number</label>
+                    <select class="form-select" name="room_number" id="room_number" multiple></select>
                 </div>
 
                 <div class="mb-3 d-grid gap-2">
@@ -161,34 +174,7 @@
                                 <th>Action</th>
                             </thead>
                             <tbody>
-                                <!-- <tr>
-                                    <td>
-                                     1
-                                    </td>
-                                    <td>
-                                        PRogerm Here
-                                    </td>
-                                    <td>
-                                        Session header
-
-                                    </td>
-                                    <td>
-                                        Select Course/ Module
-                                    </td>
-                                    <td>
-                                        Division
-                                    </td>
-                                    <td>
-                                        Select Day
-                                    </td>
-                                    <td>
-                                        Room Number
-                                    </td>
-                                    <td>
-                                        <i class="far fa-edit d-none"></i>
-                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
-                                    </td>
-                                </tr> -->
+                               
                             </tbody>
                         </table>
                     </div>
@@ -407,18 +393,16 @@
 
         $('#course_name').on('change', function() { 
             let course_lid = $('#course_name').val();
-                console.log('course_lid', course_lid)
-
             let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/divList",
                 data: {course_lid: course_lid},
                 dataType:"JSON"
             }
-
             ajaxApi(apiObj).then(result => {
                 let divList = ``;
                     if(result.data.length > 0){
+                        divList += `<option value="">Select Division</option>` 
                         for(let data of result.data){
                             divList += `<option value="${data.division_lid}" data-batch-lid="${data.batch_lid}"> ${data.division} </option>` 
                         }
@@ -426,18 +410,72 @@
                     else{
                         divList += `<option> NO MODULE FOUND <option>`
                     }
-                    
-                   
-                    $("#division").html(divList);
-                console.log('Courselist:::>>>', result.data);
+                    $("#division").html(divList).trigger('change');
             }).catch(error => console.log('error',error));
         })
 
         //Add course day preference 
-
 $('.add-courseRoomPreference').on('click', function() {
     let acad_session = $('#acad_session').val();
     console.log(acad_session)
+})
+
+
+$("#division").on('change',function(){
+    let id =  $(this).val()
+    if(id != null){
+        let ApiObj = {
+                type: 'POST',
+                url: '/admin/courseworkload/preference/batch-by-divisionid',
+                data: {
+                    division_lid: id,
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('Batch result::::::::::::::',result)
+                let divisionName = `<option value="">Select Batch Name</option>`;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        divisionName +=`<option value="${element.id}">${element.batch} (${element.event_type})</option>`;
+                    });
+                   
+                } else {
+                    divisionName += `<option value="">No Batch Found!</option>`;
+                }
+                $("#division_batch").html(divisionName).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    }else{
+        console.log('Not Call Api if contain null value')
+    }
+})
+
+
+// Filter Rooms by roomtype
+$("#room_type").on('change',function(){
+    let id = $(this).val()
+    let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/find-rooms-by-type",
+                data: {id:id},
+                dataType:"JSON"
+            }
+
+            ajaxApi(apiObj).then(result => {
+                let  courseList = ``
+                    if(result.result.length > 0){
+                        courseList += `<option value="">Select Rooms</option>` 
+                        for(let data of result.result){
+                        courseList += `<option value="${data.id}"> ${data.room_number} </option>` 
+                        }
+                    }
+                    else{
+                        courseList += `<option value="">Room not found<option>`
+                    }
+                    $("#room_number").html(courseList);
+            }).catch(error => console.log('error',error));
 })
 
         //PAGINATION
