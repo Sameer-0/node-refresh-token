@@ -91,7 +91,7 @@ module.exports = class FacultyBatch {
     }
 
     static programByFacultyId(faculty_lid, slug) {
-        return poolConnection.then(pool => {
+        return poolConnection.then(pool => { 
             let request = pool.request()
             return request.input('facultyLid', sql.Int, faculty_lid)
                 .query(`SELECT DISTINCT p.id AS program_lid, p.program_name from [asmsoc-mum].faculty_works fw

@@ -53,7 +53,8 @@ router.post('/faculties/works/search', validate('search'), works.search)
 router.post('/faculties/works/pagination', works.pagination)
 router.post('/faculties/works/update', validate('JsonValidator'), works.update)
 router.post('/faculties/works/delete', validate('delete'), works.delete)
-
+router.post('/faculties/works/session-by-program', works.sessionByProgramId)
+router.post('/faculties/works/module-by-program-session', works.moduleByprogramSession)
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)
 router.post('/faculties/workpreferences/create', validate('JsonValidator'), preferences.create)

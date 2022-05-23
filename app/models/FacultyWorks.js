@@ -68,7 +68,7 @@ module.exports = class {
         console.log('JSON:::::::::::::::::',JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
-            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON)) 
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_update_faculty_works]`)
@@ -83,6 +83,27 @@ module.exports = class {
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_delete_faculty_works]`)
+        })
+    }
+
+    static sessionListByProgram(program_lid, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            console.log('program lidddd', program_lid)
+            return request.input('programLid', sql.Int, program_lid)
+                .query(`select ps.id, ps.program_lid, ads.id as acad_session_lid, ads.acad_session from [${slug}].program_sessions ps 
+                inner join  [dbo].acad_sessions ads on ads.id = ps.acad_session_lid
+                where ps.program_lid = @programLid`)
+        })
+    }
+
+    static moduleByProgramSession(body, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            console.log('program lidddd', body.program_id)
+            return request.input('programId', sql.Int, body.program_id)
+                .input('SessionLid', sql.Int, body.session_lid)
+                .query(`select * from [${slug}].initial_course_workload where acad_session_lid = @SessionLid AND program_id = @programId`)
         })
     }
 }

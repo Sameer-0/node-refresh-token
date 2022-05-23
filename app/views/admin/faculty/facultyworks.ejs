@@ -102,7 +102,8 @@
                     <table class="table table-bordered" id="add-more-facultywork-table">
                         <thead>
                             <th>Faculty</th>
-                            <th>Program Session</th>
+                            <th>Program</th>
+                            <th>Session</th>
                             <th>Module</th>
                             <th>Lecture per week</th>
                             <th>Practical per week</th>
@@ -123,11 +124,16 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2 modalSelect2" name="program_session_lid" id="program_session_lid">
-                                        <option value="">--select--</option>
-                                        <% for(session of programSession) {%>
-                                        <option value="<%- session.id %>"><%- session.acad_session %></option>
+                                    <select class="select2 modalSelect2" name="program_lid" id="program_lid">
+                                        <option value="">--select--</option> 
+                                        <% for(program of programList) {%>
+                                        <option value="<%- program.id %>" data-program-id="<%- program.program_id%>"><%- program.program_name%></option>
                                         <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="session_lid" id="session_lid">
+                                        
                                     </select>
                                 </td>
                                 <td>
@@ -436,6 +442,70 @@ $(document).ready(function () {
             }).catch(error => {
                 showError(error.responseJSON)
             })
+        })
+
+        //Session by Program API 
+        $("#program_lid").on('change',function(){
+
+        let program_lid =  $(this).val();
+        let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/works/session-by-program',
+                data: {
+                    program_lid: program_lid,
+                  
+                },
+                dataType: 'JSON'
+            }
+
+    
+            ajaxApi(ApiObj).then(result => {
+                console.log('api returnssss:', result)
+                let sessionList = `<option value="">Select Session Name</option>`;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        sessionList +=`<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
+                    });
+                } else {
+                    sessionList += `<option value="">No Session Found!</option>`;
+                }
+                $("#add-facultywork-modal  #session_lid").html(sessionList)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //Session by Program API 
+        $("#session_lid").on('change',function(){
+
+            let session_lid =  $(this).val();
+            let program_id = $('#program_lid option:selected').attr('data-program-id');
+            console.log('yello mellow', session_lid)
+            let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/faculties/works/module-by-program-session',
+                    data: {
+                        session_lid: session_lid,
+                        program_id: program_id,
+                    
+                    },
+                    dataType: 'JSON'
+                }
+
+
+                ajaxApi(ApiObj).then(result => {
+                    let moduleName = `<option value="">Select Module Name</option>`;
+                    if (result.result.length > 0) {
+                        result.result.forEach(element => {
+                            moduleName +=`<option value="${element.id}">${element.module_name}</option>`;
+                        });
+                    } else {
+                        moduleName += `<option value="">No Module Found!</option>`;
+                    }
+                    $("#add-facultywork-modal  #module_lid").html(moduleName)
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
         })
 
 
