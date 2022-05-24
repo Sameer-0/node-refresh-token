@@ -31,7 +31,7 @@ router.post('/courseworkload/workload/update', validate('JsonValidator'), course
 router.get('/courseworkload/preference', preference.getPage)
 router.post('/courseworkload/preference/search', preference.search)
 router.post('/courseworkload/preference/pagination', preference.pagination)
-router.post('/courseworkload/preference/acadSessionList', preference.acadSessionList)
+router.post('/courseworkload/preference/acadSessionList', validate('isArrayNumber'), preference.acadSessionList)
 router.post('/courseworkload/preference/courseList', preference.courseList)
 router.post('/courseworkload/preference/divList', preference.divList)
 router.post('/courseworkload/preference/refresh', preference.refresh)

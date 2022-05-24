@@ -113,5 +113,12 @@ module.exports = class {
         })
     }
 
-
+    static icwForPreference(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`select icw.id, icw.module_name,p.program_name, ads.acad_session, p.program_id,
+            (select id, RTRIM(LTRIM(division)) as division from [${slug}].divisions where  divisions.course_lid = icw.id FOR JSON PATH) AS divisions from [${slug}].initial_course_workload icw
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id =icw.acad_session_lid`)
+        })
+    }
 }
