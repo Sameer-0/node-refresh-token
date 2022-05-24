@@ -30,9 +30,10 @@ module.exports = {
                 buildingList: result[5].recordset,
                 roomcount: result[6].recordset[0] ? result[6].recordset[0].count : '',
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
                 
             })
-        }).catch(error => {
+        }).catch(error => { 
             throw error
         })
     },
