@@ -21,6 +21,7 @@ module.exports = {
                 facultyList: result[2].recordset,
                 batchList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },

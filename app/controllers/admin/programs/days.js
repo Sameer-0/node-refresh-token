@@ -11,11 +11,12 @@ module.exports = {
 
     getPage: (req, res) => {
         Promise.all([ProgramDays.fetchAll(10, res.locals.slug), ProgramDays.getCount(res.locals.slug)]).then(result => {
-            console.log('recordset::::::::',result[0].recordset)
+            console.log('programdayList::::::::',result[0].recordset)
             res.render('admin/programs/days', {
                 programdayList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },

@@ -12,16 +12,18 @@ module.exports = {
     getProgramTypePage: (req, res) => {
 
         Promise.all([programTypeModel.fetchAll(), programTypeModel.getCount()]).then(result => {
+            console.log('breadddd', req.originalUrl )
             res.render('admin/programs/programType', {
                 programList: result[0].recordset,
                 pageCount:result[1].recordset[0].count,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
 
     create: (req, res) => {
-        const errors = validationResult(req);
+        const errors = validationResult(req); 
         if (!errors.isEmpty()) {
             res.status(422).json({
                 statuscode: 422,
