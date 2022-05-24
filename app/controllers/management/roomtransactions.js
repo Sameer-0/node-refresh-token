@@ -8,6 +8,7 @@ module.exports = {
             res.render('management/booking/room_transactions', {
                 transactionList: result.recordset,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },

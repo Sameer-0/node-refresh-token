@@ -11,7 +11,8 @@ module.exports = {
         RoomTypes.fetchAll(10).then(result => {
             res.render('management/room/roomtype', {
                 roomTypes: result.recordset,
-                breadcrumbs: req.breadcrumbs
+                breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
