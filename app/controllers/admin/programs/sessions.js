@@ -17,6 +17,7 @@ module.exports = {
                 programSessions: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
