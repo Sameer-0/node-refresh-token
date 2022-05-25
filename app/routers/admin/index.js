@@ -16,7 +16,7 @@ function AdminRoute(app) {
     const roomtransacton = require('./rooms');
     const faculty = require('../../routers/admin/faculty');
     const weeklyConstraint = require('../../routers/admin/weeklyConstraint');
-    const timeTableGeneration = require('../../routers/admin/timeTableGeneration');
+    
     const timeTableSimulation = require('../../routers/admin/timeTableSimulation');
     const rescheduling = require('../../routers/admin/rescheduling');
     const schooltimings = require('../../routers/admin/schooltimings');
@@ -32,7 +32,7 @@ function AdminRoute(app) {
     app.use('/admin/', isLoggedIn, checkPermission, roomtransacton);
     app.use('/admin/', isLoggedIn, checkPermission, faculty);
     app.use('/admin/', isLoggedIn, checkPermission, weeklyConstraint);
-    app.use('/admin/', isLoggedIn, checkPermission, timeTableGeneration);
+ 
     app.use('/admin/', isLoggedIn, checkPermission, timeTableSimulation);
     app.use('/admin/', isLoggedIn, checkPermission, rescheduling);
     app.use('/admin/', isLoggedIn, checkPermission, schooltimings);

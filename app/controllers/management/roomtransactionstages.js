@@ -13,6 +13,7 @@ module.exports = {
             res.render('management/booking/room_transaction_stages', {
                 roomTransactionStageList: result.recordset,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },

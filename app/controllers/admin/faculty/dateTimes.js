@@ -20,6 +20,7 @@ module.exports = {
                 AcademicCalenderList: result[3].recordset,
                 SlotIntervalTimingsList: result[4].recordset,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
 

@@ -34,7 +34,7 @@ module.exports = {
         schoolTimingType.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
-                message: "Success"
+                description: "Success"
             })
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){

@@ -1,0 +1,145 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+    <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
+
+    <%- include("../partials/timetablesimulation-menu") %>
+    <div class="card table-card mb-3">
+        <div class="card-body">
+            <div class="row">
+            <div class="input-groups col-xl-6 col-md-12">
+                <label for="program-name">Select Program:</label>
+                <select name="program-name" id="program-name" class="form-select">
+                    <% for(program of programList){%>
+                    <option value="<%- program.id%>"><%-program.program_name%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="input-groups col-xl-6 col-md-12">
+                <label for="program-name">Select Session:</label>
+                <select name="session-name" id="session-name" class="form-select">
+                 
+                </select>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Time Table Generated</h5>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
+            </div>
+            <div class="table-responsive">
+                <table id="" class="table table-bordered time-table-simulation" style="width: 100%">
+                    <!-- <thead> -->
+                        <tr>
+                            <th scope="col" style="width: 4%;">Room No</th>
+                            
+                            <% for (let slot of uniqueSlotList) { %>
+                                <th style="width: 11%;"><%- slot.school_timing_lid %></th>
+                            <% } %>
+                        </tr>
+                    <!-- </thead> -->
+                    <tbody>
+                        <% for(let room of uniqueRoomList) {%>
+                            <tr data-room-lid="<%- room.room_lid%>">
+                                <td data-room-id="<%- room.room_lid %>"><%- room.room_lid %></td>
+                                <% for (let slot of uniqueSlotList) { %>
+                                    <td data-slot-id="<%- slot.school_timing_lid %>" data-room-id="<%- room.room_lid %>"></td>
+                                <% } %>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<%- include("../partials/footer") %>
+
+</script>
+
+<script>
+    $(document).ready(function () {
+
+    //Getting campus Bulding List
+    $("#program-name").on('change', function () {
+            let program_lid = $(this).val()
+            let ApiObj = {
+                url: '/admin/time-table-simulation/time-table-generation',
+                type: 'POST',
+                data: {
+                    program_lid: program_lid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                let sessionList = ``;
+                 
+                if (result.length > 0) {
+                    sessionList +=
+                        `<option disabled selected value="">--Select Session--</option>`;
+                    result.forEach(element => {
+                        sessionList += `<option value="${element.id}">
+                                ${element.acad_session}
+                            </option>`
+                    });
+                } else {
+                    sessionList += `<option value="">
+                                        No Session Found!
+                                    </option>`
+                }
+                sessionList += `</select>`;
+                $("#session-name").html(sessionList).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+        let allocationList = JSON.parse(`<%- allocationList%>`);
+        let rowlist = JSON.parse('<%- RoomList%>');
+        console.log(':::::::::',rowlist)
+        
+
+        for(let row of rowlist){
+            console.log('rowlevel', row)
+            for(let allocation of allocationList){
+                console.log('column level',allocation)
+                console.log('listtttt', $(`.time-table-simulation tbody tr[data-room-lid="${row.room_lid}"] td`).length)
+                $(`.time-table-simulation tbody tr[data-room-lid="${row.room_lid}"] td`).each(function(ele) {
+                    console.log('attr',$(this).attr('data-slot-id'))
+                    if($(this).attr('data-slot-id') == allocation.school_timing_lid && $(this).attr('data-room-id') == allocation.room_lid){
+            
+                    $(this).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
+                }
+                })
+                
+            }
+        }
+    })
+</script>
+<%- include("../partials/footerEnd") %>

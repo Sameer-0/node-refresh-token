@@ -17,7 +17,8 @@ module.exports = {
                 status: 200,
                 message: "Sucess",
                 title:"Academic Year",
-                breadcrumbs: req.breadcrumbs
+                breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         }).catch(err => {
             res.status(500).send({

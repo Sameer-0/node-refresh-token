@@ -27,6 +27,7 @@ module.exports = {
                 programList: result[3].recordset,
                 courseWorkload: result[4].recordset,  
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
