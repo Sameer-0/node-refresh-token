@@ -43,11 +43,19 @@
                 <h5>Time Table Generated</h5>
             </div>
         </div>
-
+        <div class="d-flex justify-content-evenly align-itmes-center mt-2 day-container">
+            <button class="btn btn-primary col-1" data-day-lid="1">Monday</button>
+            <button class="btn btn-primary col-1" data-day-lid="2">Tuesday</button>
+            <button class="btn btn-primary col-1" data-day-lid="3">Wednesday</button>
+            <button class="btn btn-primary col-1" data-day-lid="4">Thursday</button>
+            <button class="btn btn-primary col-1" data-day-lid="5">Friday</button>
+            <button class="btn btn-primary col-1" data-day-lid="6">Saturday</button>
+            <button class="btn btn-primary col-1" data-day-lid="7">Sunday</button>
+        </div>
         <div class="card-body">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+            <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
-            </div>
+            </div> -->
             <div class="table-responsive">
                 <table id="" class="table table-bordered time-table-simulation" style="width: 100%">
                     <!-- <thead> -->
@@ -64,7 +72,7 @@
                             <tr data-room-lid="<%- room.room_lid%>">
                                 <td data-room-id="<%- room.room_lid %>"><%- room.room_lid %></td>
                                 <% for (let slot of uniqueSlotList) { %>
-                                    <td data-slot-id="<%- slot.school_timing_lid %>" data-room-id="<%- room.room_lid %>"></td>
+                                    <td data-slot-id="<%- slot.school_timing_lid %>" data-room-id="<%- room.room_lid %>">Not Alloted</td>
                                 <% } %>
                             </tr>
                         <% } %>
@@ -120,26 +128,43 @@
         })
 
 
-        let allocationList = JSON.parse(`<%- allocationList%>`);
-        let rowlist = JSON.parse('<%- RoomList%>');
-        console.log(':::::::::',rowlist)
-        
+    let allocationList = JSON.parse(`<%- allocationList%>`);
+    let rowlist = JSON.parse('<%- RoomList%>');
 
-        for(let row of rowlist){
-            console.log('rowlevel', row)
-            for(let allocation of allocationList){
-                console.log('column level',allocation)
-                console.log('listtttt', $(`.time-table-simulation tbody tr[data-room-lid="${row.room_lid}"] td`).length)
-                $(`.time-table-simulation tbody tr[data-room-lid="${row.room_lid}"] td`).each(function(ele) {
-                    console.log('attr',$(this).attr('data-slot-id'))
-                    if($(this).attr('data-slot-id') == allocation.school_timing_lid && $(this).attr('data-room-id') == allocation.room_lid){
-            
-                    $(this).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
-                }
-                })
-                
+    for ( let allocation of allocationList ){
+        $(`.time-table-simulation tbody tr[data-room-lid="${allocation.room_lid}"] td[data-slot-id = "${allocation.school_timing_lid}"]`).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
+    }
+
+    $('.day-container button').on('click', function() { 
+        let day_lid =  $(this).attr('data-day-lid');
+        console.log(day_lid);
+
+        let apiObj = {
+                type:"POST",  
+                url:"/admin/time-table-simulation/time-table-generation/get-allocationlist-by-dayid",
+                data: {
+                    day_lid: day_lid
+                },
+                dataType:"JSON"
             }
-        }
+
+        ajaxApi(apiObj).then(result => {
+           
+            console.log('allocationList', result)
+            for ( let allocation of result ){
+                console.log('yee', $(`.time-table-simulation tbody tr[data-room-lid="${allocation.room_lid}"] td[data-slot-id = "${allocation.school_timing_lid}"]`))
+                $(`.time-table-simulation tbody tr[data-room-lid="${allocation.room_lid}"] td[data-slot-id = "${allocation.school_timing_lid}"]`).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
+            }
+            
+            }).catch(err => {
+            console.log('error', err)
+        })
+        
+       
+    })
+
+
+    
     })
 </script>
 <%- include("../partials/footerEnd") %>
