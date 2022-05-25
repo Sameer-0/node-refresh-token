@@ -36,5 +36,13 @@ module.exports = {
             console.log(result.recordset)  
             res.status(200).send(result.recordset)
         })
+    },
+
+    getAllocationListBydayid: (req, res, next) => {
+
+        TimeTableGeneration.getAllocationListBydayid(res.locals.slug, req.body.day_lid).then(result => {
+            console.log(result.recordset)  
+            res.status(200).send(result.recordset)
+        })
     }
 }

@@ -8,7 +8,7 @@ module.exports = class TimeTableGeneration{
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select program_lid, acad_session_lid, course_lid, division, batch, day_lid, room_lid, school_timing_lid from [${slug}].event_bookings where day_lid = 2`)
+            return pool.request().query(`select program_lid, acad_session_lid, course_lid, division, batch, day_lid, room_lid, school_timing_lid from [${slug}].event_bookings where day_lid = 1`)
         })
     }
 
@@ -26,7 +26,7 @@ module.exports = class TimeTableGeneration{
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.
-            query(`select distinct room_lid from [${slug}].event_bookings where day_lid = 2`)
+            query(`select distinct room_lid from [${slug}].event_bookings where day_lid = 1`)
         })
     }
 
@@ -34,9 +34,18 @@ module.exports = class TimeTableGeneration{
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.
-            query(`select distinct school_timing_lid from [${slug}].event_bookings where day_lid = 2`)
+            query(`select distinct school_timing_lid from [${slug}].event_bookings where day_lid = 1`)
         })
     }
+
+    static getAllocationListBydayid(slug, day_lid){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('dayLid', sql.Int, day_lid).
+            query(`select program_lid, acad_session_lid, course_lid, division, batch, day_lid, room_lid, school_timing_lid from [${slug}].event_bookings where day_lid = @dayLid`)
+        })
+    }
+
 
     
 
