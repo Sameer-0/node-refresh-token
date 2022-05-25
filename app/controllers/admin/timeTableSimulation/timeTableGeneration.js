@@ -4,9 +4,10 @@ module.exports = {
 
     getPage: (req, res) => {
         AcademicYear.fetchAll().then(result => {
-            res.render('admin/time-table-generation/index', {
+            res.render('admin/time-table-simulation/timetablegeneration', {
                 acadmicYear: result.recordset[0],
-                breadcrumbs: req.breadcrumbs
+                breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
