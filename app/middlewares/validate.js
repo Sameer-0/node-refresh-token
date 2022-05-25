@@ -53,6 +53,39 @@ module.exports = function validate(method) {
             };
         }
 
+        case 'isArrayNumber':{
+            return (req, res, next) => {
+                let jsonreq = JSON.parse(req.body.array);
+                let done = false
+                let keyval = [];
+                for (let data of jsonreq) {
+                    console.log('data:::::::::::>>>',parseInt(data))
+                    if (isNaN(data)) {
+                        let obj = {
+                            "": data + ` Must be Number`
+                        }
+                        done = false
+                        keyval.push(obj)
+                        break;
+                    } else {
+                         
+                        done = true
+                        console.log('NExt', data)
+                    }
+                }
+                if (done) {
+                    console.log('Success:::::::::>>')
+                    next()
+                } else {
+                    console.log('Fail::::::::::::>>')
+                    res.status(403).json({
+                        status: 403,
+                        description: 'All fields are mandatory',
+                        data: keyval
+                    })
+                }
+            }
+        }
      
 
         case 'createSlug': {
@@ -423,6 +456,8 @@ module.exports = function validate(method) {
 
             ]
         }
+
+      
 
         default: {
             return "No Validation Found"

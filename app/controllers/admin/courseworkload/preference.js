@@ -11,12 +11,15 @@ const RoomSlots = require('../../../models/RoomSlots')
 const isJsonString = require('../../../utils/util')
 const RoomTypes = require('../../../models/RoomTypes')
 const RoomTransactions = require('../../../models/RoomTransactions')
+const CourseWorkload = require('../../../models/CourseWorkload')
+
 
 module.exports = {
 
     
     getPage: (req, res) => {
-        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(1000, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomTypes.fetchAll(50)]).then(result => {
+        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(1000, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomTypes.fetchAll(50), CourseWorkload.icwForPreference(res.locals.slug)]).then(result => {
+            console.log(result[5].recordset)
             res.render('admin/courseworkload/preference', {
                 coursepreference: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -25,6 +28,7 @@ module.exports = {
                 totalentries: result[0].recordset ? result[0].recordset.length : 0,
                 breadcrumbs: req.breadcrumbs,
                 roomtypes: result[4].recordset,
+                icwList: result[5].recordset,
             })
         })
     },
@@ -119,8 +123,8 @@ module.exports = {
     },
 
     acadSessionList: (req, res) => {
-
-        Promise.all([CourseDayRoomPreferences.getAcadSession(req.body.program_lid, res.locals.slug), CourseDayRoomPreferences.getDayName(req.body.program_lid, res.locals.slug)])
+        console.log('PROGRAMS::::::::::::',req.body.array)
+        Promise.all([CourseDayRoomPreferences.getAcadSessionList(JSON.parse(req.body.array), res.locals.slug), CourseDayRoomPreferences.getDayName(req.body.program_lid, res.locals.slug)])
             .then(result => {
                 res.json({
                     status: 200,
@@ -129,12 +133,12 @@ module.exports = {
                         dayList: result[1].recordset
                     }
                 })
-                console.log('divList', result[1].recordset);
+
             })
     },
 
     courseList: (req, res) => {
-
+console.log('req.body::::::::::::::::::::',req.body)
         CourseDayRoomPreferences.getCourseList(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,

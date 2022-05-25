@@ -19,7 +19,7 @@ module.exports = class CourseDayRoomPreferences {
         })
     }
 
-    static getCount(slug){
+    static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].course_day_room_preferences`)
@@ -71,20 +71,17 @@ module.exports = class CourseDayRoomPreferences {
         })
     }
 
-    static getAcadSession(program_lid, slug){
+    static getAcadSession(program_lid, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('program_lid', sql.Int, program_lid).query(
-                `SELECT   p.id, p.program_name, ps.acad_session_lid, acs.acad_session FROM [asmsoc-mum].program_sessions ps 
+            return request.input('program_lid', sql.Int, program_lid).query(`SELECT  p.id, p.program_name, ps.acad_session_lid, acs.acad_session FROM [asmsoc-mum].program_sessions ps 
                 INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
-                WHERE p.id = @program_lid;
-                `
-            )
+                WHERE p.id = @program_lid`)
         })
     }
 
-    static getDayName(program_lid, slug){
+    static getDayName(program_lid, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('program_lid', sql.Int, program_lid).query(
@@ -96,30 +93,27 @@ module.exports = class CourseDayRoomPreferences {
         })
     }
 
-    static getCourseList(body, slug){
+    static getCourseList(body, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('program_lid', sql.Int, body.program_lid).
-            input('acad_session_lid', sql.Int, body.acad_session_lid)
-            .query(
-                `SELECT icw.id, icw.module_name, icw.program_id, p.id as program_lid FROM [asmsoc-mum].initial_course_workload icw
-                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
-                WHERE p.id = @program_lid AND acad_session_lid = @acad_session_lid;
-                `
-            )
+            let stmt = `SELECT icw.id, icw.module_name, icw.program_id, p.id as program_lid FROM [asmsoc-mum].initial_course_workload icw
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            WHERE p.id IN(${JSON.parse(body.program_lid)}) AND acad_session_lid IN(${JSON.parse(body.acad_session_lid)})`;
+            console.log('stmt::::::::::::::',stmt)
+            return request.query(stmt)
         })
     }
 
-    static getDivList(body, slug){
+    static getDivList(body, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('course_lid', sql.Int, body.course_lid)
-            .query(
-                `SELECT  db.id as batch_lid, db.division_lid, d.division FROM [${slug}].division_batches db
+                .query(
+                    `SELECT  db.id as batch_lid, db.division_lid, d.division FROM [${slug}].division_batches db
                 INNER JOIN [${slug}].divisions d ON d.id = db.division_lid 
                 WHERE d.course_lid = @course_lid;
                 `
-            )
+                )
         })
     }
 
@@ -151,6 +145,17 @@ module.exports = class CourseDayRoomPreferences {
                 .query(`select db.id, db.batch, et.name AS event_type from [${slug}].division_batches db
                 INNER JOIN [dbo].event_types et ON et.id = db.event_type_lid
                 where db.division_lid = @division_lid`)
+        })
+    }
+
+    static getAcadSessionList(program_lids, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            let stmt = `SELECT  DISTINCT ps.acad_session_lid, acs.acad_session FROM [asmsoc-mum].program_sessions ps 
+            INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
+            INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+            WHERE p.id IN(${program_lids})`
+            return request.query(stmt)
         })
     }
 }
