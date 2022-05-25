@@ -21,6 +21,7 @@ const pool = new sql.ConnectionPool(sqlConfig);
 const poolConnection = pool.connect();
 
 
+
 let execPreparedStmt = async (stmt, params, values) => {
 
   !params ? params = [] : '';

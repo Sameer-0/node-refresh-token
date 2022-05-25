@@ -99,7 +99,7 @@ module.exports = class CourseDayRoomPreferences {
             let stmt = `SELECT icw.id, icw.module_name, icw.program_id, p.id as program_lid FROM [asmsoc-mum].initial_course_workload icw
             INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
             WHERE p.id IN(${JSON.parse(body.program_lid)}) AND acad_session_lid IN(${JSON.parse(body.acad_session_lid)})`;
-            console.log('stmt::::::::::::::',stmt)
+            console.log('stmt::::::::::::::', stmt)
             return request.query(stmt)
         })
     }
@@ -157,6 +157,25 @@ module.exports = class CourseDayRoomPreferences {
             INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
             WHERE p.id IN(${program_lids})`;
             return request.query(stmt)
+        })
+    }
+
+    static findSemesterByProgramId(programid, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('programId', sql.Int, programid).query(`select ads.id as session_id, ads.acad_session , p.program_id from [${slug}].program_sessions ps
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
+            INNER JOIN [asmsoc-mum].programs p ON p.id = ps.program_lid
+            WHERE ps.program_lid = @programId`)
+        })
+    }
+
+    static findModuleByProgramIdSemId(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('programId', sql.Int, body.programid)
+            .input('sessionId', sql.Int, body.session_id)
+            .query(`select * from [${slug}].initial_course_workload where program_id = @programId and acad_session_lid = @sessionId`)
         })
     }
 }

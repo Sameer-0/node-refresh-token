@@ -36,4 +36,6 @@ router.post('/courseworkload/preference/courseList', preference.courseList)
 router.post('/courseworkload/preference/divList', preference.divList)
 router.post('/courseworkload/preference/refresh', preference.refresh)
 router.post('/courseworkload/preference/batch-by-divisionid', validate('isArrayNumber'), preference.batchByDivisionId)
+router.post('/courseworkload/preference/find-semester-by-programid',  preference.findSemesterByProgramId)
+router.post('/courseworkload/preference/find-module-by-programid-semesterid',  preference.findModuleByProgramIdSemId)
 module.exports = router

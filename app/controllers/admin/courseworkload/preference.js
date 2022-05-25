@@ -19,12 +19,12 @@ module.exports = {
     
     getPage: (req, res) => {
         Promise.all([Days.fetchAll(10, res.locals.slug),  CourseWorkload.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
-           console.log('result[3].recordsets::::::::::::',result[3].recordsets)
+           console.log('Program List',result[3].recordsets)
             res.render('admin/courseworkload/preference', {
                 dayList: result[0].recordset,
                 icwList: result[1].recordset,
                 roomLists :result[2].recordset,
-                programList: result[3].recordsets,
+                programList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
                 
             })
@@ -180,6 +180,68 @@ console.log('req.body::::::::::::::::::::',req.body)
                 res.json({
                     status: "200",
                     message: "Division Name",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    findSemesterByProgramId: (req, res) => {
+        console.log('program_id::::::::::::',req.body.program_id)
+        CourseDayRoomPreferences.findSemesterByProgramId(req.body.program_id, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Semester Found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    findModuleByProgramIdSemId: (req, res) => {
+        console.log('program_id::::::::::::',req.body.program_id)
+        CourseDayRoomPreferences.findModuleByProgramIdSemId(req.body, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Semester Found",
                     result: result.recordset,
                     length: result.recordset.length
                 })
