@@ -8,7 +8,7 @@ module.exports = class TimeTableGeneration{
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, RTRIM(LTRIM(p.program_name)) as program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC`)
+            return pool.request().query(`select program_lid, acad_session_lid, course_lid, division, batch, day_lid, room_lid, school_timing_lid from [${slug}].event_bookings where day_lid = 1`)
         })
     }
 
@@ -21,5 +21,7 @@ module.exports = class TimeTableGeneration{
             WHERE ps.program_lid = @programLid`)
         })
     }
+
+    
 
 }
