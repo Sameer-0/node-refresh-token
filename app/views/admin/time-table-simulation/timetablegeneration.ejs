@@ -54,47 +54,20 @@
                         <tr>
                             <th scope="col" style="width: 4%;">Room No</th>
                             
-                            <th style="width: 11%;">07:30 AM to 08:30 AM</th>
-                            
-                            <th style="width: 11%;">08:30 AM to 09:30 AM</th>
-                            
-                            <th style="width: 11%;">10:00 AM to 11:00 AM</th>
-                            
-                            <th style="width: 11%;">11:00 AM to 12:00 PM</th>
-                            
-                            <th style="width: 11%;">12:30 PM to 01:30 PM</th>
-                            
-                            <th style="width: 11%;">01:30 PM to 02:30 PM</th>
-                            
-                            <th style="width: 11%;">03:00 PM to 04:00 PM</th>
-                            
-                            <th style="width: 11%;">04:00 PM to 05:00 PM</th>
-                            
-                            <th style="width: 11%;">05:00 PM to 06:00 PM</th>
-                            
-                            <th>06:00 PM to 07:00 PM</th>
-                            
-                            <th>07:00 PM to 08:00 PM</th>
-                            
-                            <th>08:00 PM to 09:00 PM</th>
+                            <% for (let slot of uniqueSlotList) { %>
+                                <th style="width: 11%;"><%- slot.school_timing_lid %></th>
+                            <% } %>
                         </tr>
                     <!-- </thead> -->
                     <tbody>
-                        <tr>
-                            <td>201</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        <% for(let room of uniqueRoomList) {%>
+                            <tr data-room-lid="<%- room.room_lid%>">
+                                <td data-room-id="<%- room.room_lid %>"><%- room.room_lid %></td>
+                                <% for (let slot of uniqueSlotList) { %>
+                                    <td data-slot-id="<%- slot.school_timing_lid %>" data-room-id="<%- room.room_lid %>"></td>
+                                <% } %>
+                            </tr>
+                        <% } %>
                     </tbody>
                 </table>
             </div>
@@ -126,7 +99,6 @@
             ajaxApi(ApiObj).then(result => {
                 let sessionList = ``;
                  
-console.log('result:::', result)
                 if (result.length > 0) {
                     sessionList +=
                         `<option disabled selected value="">--Select Session--</option>`;
@@ -147,6 +119,27 @@ console.log('result:::', result)
             })
         })
 
+
+        let allocationList = JSON.parse(`<%- allocationList%>`);
+        let rowlist = JSON.parse('<%- RoomList%>');
+        console.log(':::::::::',rowlist)
+        
+
+        for(let row of rowlist){
+            console.log('rowlevel', row)
+            for(let allocation of allocationList){
+                console.log('column level',allocation)
+                console.log('listtttt', $(`.time-table-simulation tbody tr[data-room-lid="${row.room_lid}"] td`).length)
+                $(`.time-table-simulation tbody tr[data-room-lid="${row.room_lid}"] td`).each(function(ele) {
+                    console.log('attr',$(this).attr('data-slot-id'))
+                    if($(this).attr('data-slot-id') == allocation.school_timing_lid && $(this).attr('data-room-id') == allocation.room_lid){
+            
+                    $(this).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
+                }
+                })
+                
+            }
+        }
     })
 </script>
 <%- include("../partials/footerEnd") %>
