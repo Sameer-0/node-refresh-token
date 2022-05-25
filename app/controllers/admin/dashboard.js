@@ -37,7 +37,6 @@ const FacultyDateTimes = require('../../models/FacultyDateTimes');
 module.exports = {
     getDashboard: (req, res) => {
         Promise.all([Settings.fetchStepForm(res.locals.slug), DboDays.fetchAll(10), Rooms.fetchAll(100), Divisions.fetchAll(100, res.locals.slug), Organizations.fetchAll(200), Buildings.fetchAll(50), SlotIntervalTimings.fetchAll(100), Campuses.fetchAll(500), AcademicCalender.fetchAll(100), Programs.fetchAll(10, res.locals.slug), ProgramTypes.fetchAll(100, res.locals.slug), AcadYear.fetchAll(), AcadSession.fetchAll(1000), SessionTypes.fetchAll(10, res.locals.slug), AcademicCalender.fetchAll(100), CourseWorkload.getAll(res.locals.slug), Divisions.fetchAll(100, res.locals.slug), Faculties.fetchAll(100, res.locals.slug), FacultyDbo.fetchAll(1000), SlotIntervalTimings.fetchAll(100), DivisionBatches.fetchAll(100, res.locals.slug), SchoolTimingType.fetchAll(10), HolidayTypes.fetchAll(100), ModuleType.fetchAll(1000, res.locals.slug), FacultyTypes.fetchAll(100), FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), ProgramDays.fetchAll(1000, res.locals.slug), ProgramSessions.fetchAll(100, res.locals.slug), RoomTransactionTypes.fetchAll(100), RoomTransactions.bookedRooms(res.locals.slug), ProgramsDbo.fetchAll(1000), SessionDates.fetchAll(10, res.locals.slug), FacultyWorks.fetchAll(10, res.locals.slug), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), FacultyDateTimes.fetchAll(10, res.locals.slug), Organizations.getChildByParentId(res.locals.organizationId), DivisionBatches.fetchDistinctBatches(res.locals.slug)]).then(result => {
-         console.log('faculty works list::::::::::::::::::::>>',result[32].recordset)
             res.render('admin/dashboard/index', {
                 currentFormStep: result[0].recordset[0] ? result[0].recordset[0].seq : '',
                 dayList: result[1].recordset,
@@ -80,6 +79,8 @@ module.exports = {
                 batchList: result[37].recordset,
                 path:'/admin'
             })
+        }).catch(error => { 
+            console.log('Dash Error+++++++++++',error)
         }) 
     },
  

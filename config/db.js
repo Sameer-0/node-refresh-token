@@ -45,11 +45,6 @@ let execPreparedStmt = async (stmt, params, values) => {
 
 
 
-
-poolConnection.then(result=>{
-  console.log('result::::::::::',result)
-})
-
 module.exports = {
   sql,
   poolConnection,
