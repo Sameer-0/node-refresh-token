@@ -16,6 +16,26 @@
     </div>
 
     <%- include("../partials/timetablesimulation-menu") %>
+    <div class="card table-card mb-3">
+        <div class="card-body">
+            <div class="row">
+            <div class="input-groups col-xl-6 col-md-12">
+                <label for="program-name">Select Program:</label>
+                <select name="program-name" id="program-name" class="form-select">
+                    <% for(program of programList){%>
+                    <option value="<%- program.id%>"><%-program.program_name%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="input-groups col-xl-6 col-md-12">
+                <label for="program-name">Select Session:</label>
+                <select name="session-name" id="session-name" class="form-select">
+                 
+                </select>
+            </div>
+        </div>
+        </div>
+    </div>
 
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
@@ -91,7 +111,41 @@
 <script>
     $(document).ready(function () {
 
+    //Getting campus Bulding List
+    $("#program-name").on('change', function () {
+            let program_lid = $(this).val()
+            let ApiObj = {
+                url: '/admin/time-table-simulation/time-table-generation',
+                type: 'POST',
+                data: {
+                    program_lid: program_lid
+                },
+                dataType: 'JSON'
+            }
 
+            ajaxApi(ApiObj).then(result => {
+                let sessionList = ``;
+                 
+console.log('result:::', result)
+                if (result.length > 0) {
+                    sessionList +=
+                        `<option disabled selected value="">--Select Session--</option>`;
+                    result.forEach(element => {
+                        sessionList += `<option value="${element.id}">
+                                ${element.acad_session}
+                            </option>`
+                    });
+                } else {
+                    sessionList += `<option value="">
+                                        No Session Found!
+                                    </option>`
+                }
+                sessionList += `</select>`;
+                $("#session-name").html(sessionList).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
     })
 </script>
