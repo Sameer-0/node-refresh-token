@@ -134,15 +134,14 @@ module.exports = class RoomTransactions {
     }
 
 
-    static roomsForCoursePreferences(typeid, slug) {
+    static roomsForCoursePreferences(slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('typeId', sql.Int, typeid).query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, _rt.name as room_type FROM [${slug}].room_transactions rt INNER JOIN
+            return pool.request().query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, _rt.name as room_type FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
            [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
            INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
            INNER JOIN [dbo].room_types _rt ON _rt.id = r.room_type_id
-           INNER JOIN [dbo].buildings b ON b.id = r.building_lid
-           WHERE r.room_type_id = @typeId`)
+           INNER JOIN [dbo].buildings b ON b.id = r.building_lid`)
         })
     }
 }
