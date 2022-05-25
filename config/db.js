@@ -21,6 +21,7 @@ const pool = new sql.ConnectionPool(sqlConfig);
 const poolConnection = pool.connect();
 
 
+
 let execPreparedStmt = async (stmt, params, values) => {
 
   !params ? params = [] : '';
@@ -43,6 +44,11 @@ let execPreparedStmt = async (stmt, params, values) => {
 }
 
 
+
+
+poolConnection.then(result=>{
+  console.log('result::::::::::',result)
+})
 
 module.exports = {
   sql,
