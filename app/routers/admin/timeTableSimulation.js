@@ -15,6 +15,7 @@ router.get('/time-table-simulation/time-table-allocation', timeTableAllocation.g
 
 
 router.get('/time-table-simulation/time-table-generation', timeTableGeneration.getPage)
+router.post('/time-table-simulation/time-table-generation', timeTableGeneration.getSessionByProgram)
 
 
 module.exports = router

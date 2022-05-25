@@ -24,7 +24,7 @@ module.exports = class Programs{
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].programs`)
-        })
+        }) 
     }
 
 
