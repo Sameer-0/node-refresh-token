@@ -18,17 +18,15 @@ module.exports = {
 
     
     getPage: (req, res) => {
-        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(1000, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomTypes.fetchAll(50), CourseWorkload.icwForPreference(res.locals.slug)]).then(result => {
-            console.log(result[5].recordset)
+        Promise.all([Days.fetchAll(10, res.locals.slug),  CourseWorkload.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
+           console.log('result[3].recordsets::::::::::::',result[3].recordsets)
             res.render('admin/courseworkload/preference', {
-                coursepreference: result[0].recordset,
-                pageCount: result[1].recordset[0].count,
-                programList: result[2].recordset,
-                dayList: JSON.stringify(result[3].recordset),
-                totalentries: result[0].recordset ? result[0].recordset.length : 0,
+                dayList: result[0].recordset,
+                icwList: result[1].recordset,
+                roomLists :result[2].recordset,
+                programList: result[3].recordsets,
                 breadcrumbs: req.breadcrumbs,
-                roomtypes: result[4].recordset,
-                icwList: result[5].recordset,
+                
             })
         })
     },
@@ -173,18 +171,11 @@ console.log('req.body::::::::::::::::::::',req.body)
     },
 
 
-    getRoomByType: (req, res) => {
-        RoomTransactions.roomsForCoursePreferences(req.body.id, res.locals.slug).then(result => {
-            console.log('result::::::::',result.recordset)
-            res.json({
-                status: 200,
-                result: result.recordset
-            })
-        })
-    },
+
 
     batchByDivisionId: (req, res) => {
-        CourseDayRoomPreferences.batchByDivisionId(req.body.division_lid, res.locals.slug).then(result => {
+        console.log('Array::::::::::::',JSON.parse(req.body.array))
+        CourseDayRoomPreferences.batchByDivisionId(JSON.parse(req.body.array), res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
