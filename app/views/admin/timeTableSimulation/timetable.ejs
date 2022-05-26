@@ -86,6 +86,9 @@
                                 $("#program-name").on('change', function () {
                                     let programLid = $(this).val();
 
+                                    $('#day').removeAttr('disabled');
+                                    $('#day').val("")
+
                                     let ApiObj = {
                                         url: '/admin/programs/sessions/program-sessions',
                                         type: 'POST',
@@ -118,6 +121,12 @@
                                     })
                                 })
 
+                                // $("#session-name").on('change', function () {
+                                //     if($('#day').attr('disabled'))
+                                //     $('#day').removeAttr('disabled');
+                                //     $(this).val("")
+                                // })
+
 
 
                                 $("#day").on('change', function () {
@@ -125,6 +134,7 @@
                                     let programLid = $("#program-name").val();
                                     let acadSessionLid = $("#session-name").val();
                                     let dayLid = $(this).val();
+                                    console.log('parent day', $(this) )
 
                                     let ApiObj = {
                                         url: '/admin/time-table-simulation/time-table/events',
@@ -185,7 +195,8 @@
                                             }
 
                                       //  }, 2000)
-
+                                      $(this).attr('disabled','disabled');
+                                      
 
 
                                     }).catch(error => {
