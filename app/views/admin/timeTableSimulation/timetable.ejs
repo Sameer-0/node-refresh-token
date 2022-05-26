@@ -15,7 +15,7 @@
         </ul>
     </div>
 
-    <%- include("../partials/timetablesimulation-menu") %>
+    <%- include("../partials/timetableSimulationMenu") %>
     <div class="card table-card mb-3">
         <div class="card-body">
             <div class="row">
@@ -40,7 +40,7 @@
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>Time Table Generated</h5>
+                <h5>Time Table</h5>
             </div>
         </div>
         <div class="d-flex justify-content-evenly align-itmes-center mt-2 day-container">
@@ -57,16 +57,16 @@
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
             </div> -->
             <div class="table-responsive">
-                <table id="" class="table table-bordered time-table-simulation" style="width: 100%">
-                    <!-- <thead> -->
+                <table id="" class="table table-bordered timeTableSimulation" style="width: 100%">
+                    <thead>
                         <tr>
                             <th scope="col" style="width: 4%;">Room No</th>
                             
                             <% for (let slot of uniqueSlotList) { %>
-                                <th style="width: 11%;"><%- slot.school_timing_lid %></th>
+                                <th style="width: 11%;"><%- slot.start_time %> - <%- slot.end_time %></th>
                             <% } %>
                         </tr>
-                    <!-- </thead> -->
+                    </thead>
                     <tbody>
                         <% for(let room of uniqueRoomList) {%>
                             <tr data-room-lid="<%- room.room_lid%>">
@@ -96,7 +96,7 @@
     $("#program-name").on('change', function () {
             let program_lid = $(this).val()
             let ApiObj = {
-                url: '/admin/time-table-simulation/time-table-generation',
+                url: '/admin/time-table-simulation/time-table',
                 type: 'POST',
                 data: {
                     program_lid: program_lid
@@ -131,8 +131,10 @@
     let allocationList = JSON.parse(`<%- allocationList%>`);
     let rowlist = JSON.parse('<%- RoomList%>');
 
+    console.log('allocationList', allocationList)
+
     for ( let allocation of allocationList ){
-        $(`.time-table-simulation tbody tr[data-room-lid="${allocation.room_lid}"] td[data-slot-id = "${allocation.school_timing_lid}"]`).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
+        $(`.timeTableSimulation tbody tr[data-room-lid="${allocation.room_lid}"] td[data-slot-id = "${allocation.school_timing_lid}"]`).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
     }
 
     $('.day-container button').on('click', function() { 
@@ -141,7 +143,7 @@
 
         let apiObj = {
                 type:"POST",  
-                url:"/admin/time-table-simulation/time-table-generation/get-allocationlist-by-dayid",
+                url:"/admin/time-table-simulation/time-table/get-allocationlist-by-dayid",
                 data: {
                     day_lid: day_lid
                 },
@@ -152,10 +154,11 @@
            
             console.log('allocationList', result)
             for ( let allocation of result ){
-                console.log('yee', $(`.time-table-simulation tbody tr[data-room-lid="${allocation.room_lid}"] td[data-slot-id = "${allocation.school_timing_lid}"]`))
-                $(`.time-table-simulation tbody tr[data-room-lid="${allocation.room_lid}"] td[data-slot-id = "${allocation.school_timing_lid}"]`).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
+                console.log('yee', $(document).find(`.timeTableSimulation tbody tr td[data-slot-id]`))
+                $(document).find(`.timeTableSimulation tbody tr td[data-slot-id = "${allocation.school_timing_lid}"][data-room-lid="${allocation.room_lid}"]`).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
+                // $(`.timeTableSimulation tbody tr`).find(`td[data-slot-id = "${allocation.school_timing_lid}"][data-room-lid="${allocation.room_lid}"]`).html(`program_lid: ${allocation.program_lid} slot_lid:${allocation.school_timing_lid}`)
             }
-            
+
             }).catch(err => {
             console.log('error', err)
         })
