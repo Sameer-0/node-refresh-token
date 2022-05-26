@@ -23,6 +23,7 @@ module.exports = {
                 sessionTypes: result[3].recordset,
                 programSessions: result[4].recordset,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         }).catch(error=>{
             if(isJsonString.isJsonString(error.originalError.info.message)){

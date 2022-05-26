@@ -9,6 +9,7 @@ const Faculties = require('../../../models/Faculties')
 const ProgramSessions = require('../../../models/ProgramSessions')
 const CourseWorkload = require('../../../models/CourseWorkload')
 const Settings = require("../../../models/Settings");
+const Programs = require("../../../models/programs");
 const isJsonString = require('../../../utils/util')
 
 
@@ -16,15 +17,17 @@ module.exports = {
     getPage: (req, res) => {
 
         const slug = res.locals.slug;
-        Promise.all([FacultyWorks.fetchAll(10, slug), FacultyWorks.getCount(slug), Faculties.fetchAll(1000, slug), ProgramSessions.fetchAll(100, slug), CourseWorkload.fetchAll(10000, slug)]).then(result => {
-            console.log(result[0].recordset)
+        
+        Promise.all([FacultyWorks.fetchAll(10, slug), FacultyWorks.getCount(slug), Faculties.fetchAll(1000, slug), Programs.fetchAll(100, slug), CourseWorkload.fetchAll(10000, slug)]).then(result => {
+            console.log('program list:::>>>', result[3].recordset)
             res.render('admin/faculty/facultyworks', {
                 facultyWorkList: result[0].recordset,
-                pageCount: result[1].recordset[0].count,
+                pageCount: result[1].recordset[0].count, 
                 facultyList: result[2].recordset,
-                programSession: result[3].recordset,
-                courseWorkload: result[4].recordset, 
+                programList: result[3].recordset,
+                courseWorkload: result[4].recordset,  
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
@@ -146,4 +149,71 @@ module.exports = {
             }
         })
     },
+
+    sessionByProgramId: (req, res) => {
+      
+        FacultyWorks.sessionListByProgram(req.body.program_lid, res.locals.slug).then(result => {
+            console.log('result in controller', result)
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Session List",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            // if (isJsonString.isJsonString(error.originalError.info.message)) {
+            //     res.status(500).json(JSON.parse(error.originalError.info.message))
+            // } else {
+            //     res.status(500).json({
+            //         status: 500,
+            //         description: error.originalError.info.message,
+            //         data: []
+            //     })
+            // }
+            console.log('errooor', error);
+        })
+    },
+
+    moduleByprogramSession: (req, res) => {
+        console.log('request body in controller', req.body)
+        FacultyWorks.moduleByProgramSession(req.body, res.locals.slug).then(result => {
+            console.log('result in controller', result)
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Session List",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            // if (isJsonString.isJsonString(error.originalError.info.message)) {
+            //     res.status(500).json(JSON.parse(error.originalError.info.message))
+            // } else {
+            //     res.status(500).json({
+            //         status: 500,
+            //         description: error.originalError.info.message,
+            //         data: []
+            //     })
+            // }
+            console.log('errooor', error);
+        })
+    },
+
 }

@@ -11,7 +11,7 @@ const dates =  require('../../controllers/admin/sessions/dates')
 const validate = require('../../middlewares/validate')
 
 //Session
-router.get('/sessions', session.getPage)
+router.get('/sessions', session.getPage) 
 
 
 

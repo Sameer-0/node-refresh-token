@@ -20,134 +20,48 @@
                 <h5>COURSE DAY ROOM PREFERENCE</h5>
             </div>
             <div>
-                <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
+                <!-- <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-courseDayPreference-modal">
-                    <i class="fas fa-plus"></i></button>
+                    <i class="fas fa-plus"></i></button> -->
                 <button class="btn btn-danger ms-auto refresh_course_day_room_preferences"><i class="fa-solid fa-rotate"></i> Refresh</button>
-                <!-- <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button> -->
             </div>
         </div>
-
+        
         <div class="card-body table-responsive">
-            <div id="errorHtml"></div>
+           <div class="row">
+               <div class="col-md-3">
+                <label class="form-label">Select Program</label>
+ 
+                <select class="form-select" id="programName" id="programName">
+                    <option value="" disabled>Select Program</option>
+                    <%for(let prog of programList){%>
+                        <option value="<%-prog.id%>" data-programid="<%-prog.program_id%>"><%- prog.program_name %></option>    
+                    <%}%> 
+                  </select>
+               </div>
+
+               <div class="col-md-3">
+                <label class="form-label">Select Academic Session</label>
+                <select class="form-select" id="semesterName">
+                  </select>
+               </div>
+
+               <div class="col-md-3">
+                <label class="form-label">Select Module</label>
+                <select class="form-select" id="moduleName">
+                  </select>
+               </div>
+
+               <div class="col-md-3">
+                <label class="form-label">Select Division</label>
+                <select class="form-select mb-3" id="divisionName">
+              
+                </select>
+               </div>
+           </div>
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-
-            <table class="table custom_row table-bordered" id="courseWorkloadTable">
-                <thead>
-                    <th>Sr No.</th>
-                    <th>Program Name</th>
-                    <th>Program Abbr</th>
-                    <th>Module Name</th>
-                    <th>Module Code</th>
-                    <th>Division</th>
-                    <th>Batch Count</th>
-                    <th>Day</th>
-                    <th>Acad Session</th>
-                    <th>Capacity</th>
-                    <th>Room No.</th>
-                    <th>Floor No.</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>
-                    <%let count = 1;%>
-                   <% for(let preference of coursepreference){%>
-                    <tr>
-                        <td><%- count++ %></td>
-                        <td><%- preference.program_name %></td>
-                        <td><%- preference.program_abbr %></td>
-                        <td><%- preference.module_name %></td>
-                        <td><%- preference.module_code %></td>
-                        <td><%- preference.division %></td>
-                        <td><%- preference.batch_count %></td>
-                        <td><%- preference.day_name %></td>
-                        <td><%- preference.acad_session %></td>
-                        <td><%- preference.capacity %></td>
-                        <td><%- preference.room_number %></td>
-                        <td><%- preference.floor_number %></td>
-                        <td><a><i class="fa fa-edit"></i></a></td>
-                    </tr>
-                    <%}%>
-                </tbody>
-            </table>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <p>Total entries:<%- totalentries %></p>
-                </div>
-                <div>
-                    <p id="pagination"></p>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-</div>
-
-<!-- MODAL FOR COURSE DAY PREFERENCE -->
-<div class="modal fade" id="add-courseDayPreference-modal" tabindex="-1" role="dialog" aria-labelledby="add-holiday-modal"
-    aria-hidden="true">
-    <div class="modal-dialog modal-fullscreen" role="document">
-        <div class="modal-content modal-inputform">
-            <div class="modal-header  modal-inputform-header">
-                <h5 class="modal-title text-dark" id="add-org-modal-title">Add Course Day Room Preference</h5>
-                <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i
-                        class="fas fa-times"></i></button>
-
-            </div>
-            <!-- <form action="/management/campus/add" method="POST"> -->
-            <div class="modal-body">
-                <div id="errorHtml"></div>
-
-
-             <div class="row">
-                 <div class="col-md-2 border-end border-primary">
-                <div class="mb-3">
-                    <label class="form-label">Select Program</label>
-                    <select class="form-select"  name="program_name" id="program_name">
-                    <% for(let programs of programList){%>
-                        <option value="<%- programs.id%>"><%- programs.program_name%></option>
-                        <%}%>
-                    </select>
-
-                </div>
-                <div class="mb-3">
-                 <label class="form-label">Select Session</label>
-                    <select class="form-select" name="acad_session" id="acad_session"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Module Name</label>
-                    <select class="form-select" name="course_name" id="course_name"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Division</label>
-                    <select class="form-select" name="division" id="division"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Day Name</label>
-                    <select class="form-select" name="day_name" id="day_name"></select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Select Room Number</label>
-                    <select class="form-select" name="room_number" id="room_number">
-                        <% for (let rslots of roomSlotsList) {%>
-                            <option value="<%-rslots.room_lid%>"><%- rslots.room_number %></option>
-                        <%}%>
-                    </select>
-                </div>
-
-                <div class="mb-3 d-grid gap-2">
-                    <button class="btn btn-info text-light AddRoomPreference">ADD ROOM PREFERENCE</button>
-                </div>
-
-                 </div>
-                 <div class="col-md-10">
-                    <div class="table-responsive">
+                    <div class="table-responsive" >
                         <table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
                             <thead>
                                 <th>Sr No.</th>
@@ -155,165 +69,269 @@
                                 <th>Acad Session</th>
                                 <th>Module Name</th>
                                 <th>Division</th>
-                                <!-- <th>Batch</th> -->
-                                <th>Day</th>
-                                <th>Room No</th>
-                                <th>Action</th>
+                                <th>Batch</th>
+                                <th>Day Select All <input type="checkbox" id="dayCheck"></th>
+                                <th>Room No Select All <input type="checkbox" id="roomCheck"></th>
                             </thead>
                             <tbody>
-                                <!-- <tr>
+                                <%let _count = 1;%>
+                               <%for(let list of icwList){%>
+                                <tr>
+                                    <td><%- _count++%></td>
+                                    <td data-program-id="<%- list.program_lid %>"><%- list.program_name %></td>
+                                    <td data-session-id="<%- list.session_id %>"><%- list.acad_session %></td>
+                                    <td data-module-id="<%- list.module_id %>"><%- list.module_name %></td>
+                                    <td data-division-id="<%- list.division_id %>"><%- list.division %></td>
+                                    <td data-batch-id="<%- list.batch_id %>"><%- list.batch %> ( <%- list.batch_event %>)</td>
                                     <td>
-                                     1
+                                    <select class="select2 dayName" name="dayName"  multiple>
+                                        <option value="0">All Day</option>
+                                        <%for(let day of dayList){%>
+                                        <option value="<%-day.id%>"><%-day.day_name %></option>
+                                        <%}%>
+                                    </select>
                                     </td>
                                     <td>
-                                        PRogerm Here
+                                        <select class="select2 roomNumber" name="roomNumber"  multiple>
+                                            <option value="0">All Rooms</option>
+                                            <%for(let room of roomLists){%>
+                                            <option value="<%-room.id%>"><%-room.room_number%> (<%-room.room_type%>)</option>
+                                            <%}%>
+                                        </select>
                                     </td>
-                                    <td>
-                                        Session header
-
-                                    </td>
-                                    <td>
-                                        Select Course/ Module
-                                    </td>
-                                    <td>
-                                        Division
-                                    </td>
-                                    <td>
-                                        Select Day
-                                    </td>
-                                    <td>
-                                        Room Number
-                                    </td>
-                                    <td>
-                                        <i class="far fa-edit d-none"></i>
-                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-holidays"></i>
-                                    </td>
-                                </tr> -->
+                                </tr>
+                                <%}%>
                             </tbody>
                         </table>
                     </div>
-                 </div>
-             </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn createCoursePreference modal-inputform-btn">CREATE PREFERENCE</button>
-                <button type="button" class="btn updateHoliday modal-inputform-btn d-none">UPDATE PREFERENCE</button>
+            <div class="float-end">
+                    <button type="button" class="btn createCoursePreference modal-inputform-btn">CREATE PREFERENCE</button>
             </div>
         </div>
     </div>
 </div>
 
-
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 
 <script>
+
     $(document).ready(function () {
+     $('.select2').select2();
+
+   //Day  Check
+   $("#add-more-courseDayRoomPreference-table").on('change','#dayCheck',function(){
+    if($(this).is(":checked")){
+        $(".dayName").prop('disabled','disabled')
+        console.log('True')
+    }else
+    {
+        $(".dayName").removeAttr('disabled')
+        console.log('False')
+    }
+ })
+
+//Day  Check
+    $("#add-more-courseDayRoomPreference-table").on('change','#roomCheck',function(){
+    if($(this).is(":checked")){
+        $(".roomNumber").prop('disabled','disabled')
+        console.log('True')
+    }else
+    {
+        $(".roomNumber").removeAttr('disabled')
+        console.log('False')
+    }
+ })
 
 
-        let counter = 1;
-        $(".AddRoomPreference").on('click',function(){
-            let program_lid = $("#program_name").val()// Get Value of Dropdown
-            let program_text =  $("#program_name option:selected").text(); // Get Text of Dropdown
-            let acad_session_lid = $("#acad_session").val();
-            let acad_session_text =  $("#acad_session option:selected").text();
-            let course_name_lid = $("#course_name").val();
-            let course_text =  $( "#course_name option:selected").text();
-            let division_lid = $("#division").val();
-            let division_text =  $( "#division option:selected").text();
-            let day_name_lid = $("#day_name").val();
-            let day_text =  $( "#day_name option:selected").text();
-            let room_number_lid = $("#room_number").val();
-            let room_number_text =  $("#room_number option:selected").text();
-            let batch_lid = $("#division option:selected").attr("data-batch-lid");
-            console.log('Helllo',program_lid, program_name)
-
-            $("#add-more-courseDayRoomPreference-table tbody").append(`
-            <tr>
-                <td>#</td>
-                <td data-program-lid="${program_lid}">${program_text}</td>
-                <td data-acad-session-lid="${acad_session_lid}">${acad_session_text}</td>
-                <td data-course-name-lid="${course_name_lid}">${course_text}</td>
-                <td data-division-lid="${division_lid}" data-batch-lid="${batch_lid}">${division_text}</td>
-                <td data-day-name-lid="${day_name_lid}">${day_text}</td>
-                <td data-room-number-lid="${room_number_lid}">${room_number_text}</td>
-                <td>
-                    <i class="far fa-edit d-none"></i>
-                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-courseDayRoomPreference"></i>
-                </td>
-            </tr>
-                `)
-        })
-
-
-        //Remove Element
-        $("#add-more-courseDayRoomPreference-table").on('click', '.remove-courseDayRoomPreference', function () {
-            $($(this)).fadeOut(300, function () {
-               $($(this).parent().parent()).remove()
+ $("#programName").on('change',function(){
+     let programId = $(this).val()
+     let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/find-semester-by-programid",
+                data: {
+                    programId: programId
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+               let semesterName = ``;
+                if (result.result.length > 0) {
+                    semesterName +=`<option value="" disabled>Select Semester</option>`;
+                    result.result.forEach(element => {
+                        semesterName +=
+                            `<option value="${element.session_id}" >${element.acad_session}</option>`;
+                    });
+                } else {
+                    semesterName += `<option value="">Semester Not Found!</option>`;
+                }
+                $("#semesterName").html(semesterName)
+                showAjaxTable(result.tabledata)
+            }).catch(error => {
+                showError(error.responseJSON)
             })
-        })
+ })
 
+
+ $("#semesterName").on('change',function(){
+     let sessionId = $(this).val()
+     let programId = $('#programName option:selected').attr('data-programid')
+     let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/find-module-by-programid-semesterid",
+                data: {
+                    sessionId: sessionId,
+                    programId: programId
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+               let moduleName = ``;
+                if (result.result.length > 0) {
+                    moduleName +=`<option value="" disabled>Select Module</option>`;
+                    result.result.forEach(element => {
+                        moduleName +=
+                            `<option value="${element.id}" >${element.module_name}</option>`;
+                    });
+                } else {
+                    moduleName += `<option value="">Module Not Found!</option>`;
+                }
+                $("#moduleName").html(moduleName)
+                showAjaxTable(result.tabledata)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+ })
+
+ //divisionName
+ $("#moduleName").on('change',function(){
+     let moduleId = $(this).val()
+     console.log('moduleId:::::::::>>',moduleId)
+     let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/find-division-by-moduleid",
+                data: {
+                    moduleId: moduleId
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+               let divisionName = ``;
+                if (result.result.length > 0) {
+                    divisionName +=`<option value="" disabled>Select Division</option>`;
+                    result.result.forEach(element => {
+                        divisionName +=
+                            `<option value="${element.id}" >${element.division}</option>`;
+                    });
+                } else {
+                    divisionName += `<option value="">Division Not Found!</option>`;
+                }
+                $("#divisionName").html(divisionName)
+                showAjaxTable(result.tabledata)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+ })
+
+
+// Filter Records
+ $("#divisionName").on('change',function(){
+     let division_id = $(this).val();
+     let program_id = $("#programName").val();
+     let session_id = $("#semesterName").val();
+     let module_id = $("#moduleName").val();
+     let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/filter-records",
+                data: {
+                    division_id: division_id,
+                    program_id: program_id,
+                    session_id: session_id,
+                    module_id: module_id
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                showAjaxTable(result.data)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+ })
 
         //CREATING JSON FOR COURSE DAY ROOM PREFERENCE
         $(".createCoursePreference").on('click',function(){
             let courseDayList = $('#add-more-courseDayRoomPreference-table tbody tr');
             let courseDayCount = courseDayList.length;
             let courseDayJson = [];
+ 
             courseDayList.each(function (index, elem) {
-                let program_lid = $(elem).find('td[data-program-lid]').attr("data-program-lid")
-                let acad_session_lid = $(elem).find('td[data-acad-session-lid]').attr("data-acad-session-lid")
-                let course_lid = $(elem).find('td[data-course-name-lid]').attr("data-course-name-lid")
-                let division_lid = $(elem).find('td[data-division-lid]').attr("data-division-lid")
-                let day_name_lid = $(elem).find('td[data-day-name-lid]').attr("data-day-name-lid")
-                let room_number_lid = $(elem).find('td[data-room-number-lid]').attr("data-room-number-lid")
-                let batch_lid = $(elem).find('td[data-batch-lid]').attr("data-batch-lid")
+                let divArray = []
+                let batchArray = []
+                let programId = $(elem).find(`td[data-program-id]`).attr(`data-program-id`)
+                let sessionId = $(elem).find(`td[data-session-id]`).attr(`data-session-id`)
+                let moduleId = $(elem).find(`td[data-module-id]`).attr(`data-module-id`)
+                divArray.push($(elem).find(`td[data-division-id]`).attr(`data-division-id`))
+                batchArray.push($(elem).find(`td[data-batch-id]`).attr(`data-batch-id`))
+                
+                //IF DAY IS CHEKED (ALL DAY SET 0) THEN IT WILL SET 0 ELSE VALUE WILL SET MANUALLY ACCOURDING TO USER SELECTION
+                let days = 0;
+                if($("#dayCheck").is(":checked")){
+                days = [0]
+                }else{
+                    days = $(elem).find(`select[name='dayName']`).val()
+                }
 
-                console.log('program_lid', program_lid)
-
+                let rooms = 0
+                if($("#roomCheck").is(":checked")){
+                    rooms = [0]
+                }else{
+                    rooms = $(elem).find(`select[name='roomNumber']`).val()
+                }
+              
                 if (index < courseDayCount - 1) {
                     let obj = {
-                        program_lid: program_lid,
-                        acad_session_lid: acad_session_lid,
-                        course_lid: course_lid,
-                        division_lid: division_lid, 
-                        day_name_lid: day_name_lid,
-                        room_number_lid: room_number_lid,
-                        batch_lid:batch_lid
+                        programId: programId,
+                        sessionId: sessionId,
+                        moduleId: moduleId,
+                        divisions: divArray, 
+                        batches: batchArray,
+                        days: days,
+                        rooms: rooms
                     }
                     courseDayJson.push(obj)
                 } else {
                     let obj = {
-                        program_lid: program_lid,
-                        acad_session_lid: acad_session_lid,
-                        course_lid: course_lid,
-                        division_lid: division_lid, 
-                        day_name_lid: day_name_lid,
-                        room_number_lid: room_number_lid,
-                        batch_lid:batch_lid
+                        programId: programId,
+                        sessionId: sessionId,
+                        moduleId: moduleId,
+                        divisions: divArray, 
+                        batches: batchArray,
+                        days: days,
+                        rooms: rooms
                     }
                     courseDayJson.push(obj)
                 }
             })
-            console.log('Hell:::::::::::::::::::::>>>>',courseDayJson)
+            console.log('JSON:::::::::::::::::::::>>>>',JSON.stringify(courseDayJson))
 
-            let apiObj = {
-                type:"POST",
-                url:"/admin/courseworkload/preference/create",
-                data: {
-                    inputJSON: courseDayJson
-                },
-                dataType:"JSON"
-            }
-            ajaxApi(apiObj).then(result => {
-                console.log('result ::::::::::::::::::::::', result)
-                showSuccess(result)
-            }).catch(error => {
-                console.log('Error ::::::::::::::::::::::', error)
-                showError(error.responseJSON)
-            })
+            // let apiObj = {
+            //     type:"POST",
+            //     url:"/admin/courseworkload/preference/create",
+            //     data: {
+            //         inputJSON: JSON.stringify(courseDayJson)
+            //     },
+            //     dataType:"JSON"
+            // }
+            // ajaxApi(apiObj).then(result => {
+            //     console.log('result ::::::::::::::::::::::', result)
+            //     showSuccess(result)
+            // }).catch(error => {
+            //     console.log('Error ::::::::::::::::::::::', error)
+            //     showError(error.responseJSON)
+            // })
         })
 
-     
+
 
         // SEARCH PROGRAM TYPE
          $('#searchkeyword').on('input', delay(function (e) {
@@ -325,201 +343,12 @@
                     keyword: keyword
                 },
                 success: function (data) {
-                    AjaxtTable(data.data)
+                    console.log('response::::::::::::>>',data)
+                    showAjaxTable(data.data)
                 }
             })
         }, 500));
 
-    //On change function
-        $('#program_name').on('change', function() { 
-            let program_lid = $("#program_name").val();
-                
-            let apiObj = {
-                type:"POST",
-                url:"/admin/courseworkload/preference/acadSessionList",
-                data: {
-                    program_lid: program_lid
-                },
-                dataType:"JSON"
-            }
-
-            ajaxApi(apiObj).then(result => {
-                let acadList = ``
-                    if(result.data.acadSessionList.length > 0){
-                        for(let data of result.data.acadSessionList){
-                        acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
-                        }
-                    }
-                    else{
-                        acadList += `<option value=""> NO SESSION FOUND <option>`
-                    }
-                    $("#acad_session").html(acadList);
-
-               // let dayList =  `<select name="day_name" id="day_name" class="form-select">` 
-                dayList =  `` 
-                    if(result.data.dayList.length > 0){
-                        for(let data of result.data.dayList){
-                            dayList += `<option value="${data.day_lid}"> ${data.day_name} </option>` 
-                        }
-                    }
-                    else{
-                        dayList += `<option value=""> NO DAY FOUND <option>`
-                    }
-                   // dayList += `</select>`
-                   
-                    $("#day_name").html(dayList);
-
-
-                console.log('list:::>>>', $(this).next());
-            }).catch(error => console.log('error',error));
-        })
-
-        $('#acad_session').on('input', function() { 
-            let acad_session_lid = $('#acad_session').val();
-            let program_lid = $("#program_name").val();
-            console.log('acad_Sesi:::>>>>', acad_session_lid)
-            console.log('program_lid:::>>>>', program_lid)
-
-            let apiObj = {
-                type:"POST",
-                url:"/admin/courseworkload/preference/courseList",
-                data: {acad_session_lid: acad_session_lid,
-                    program_lid: program_lid},
-                dataType:"JSON"
-            }
-
-            ajaxApi(apiObj).then(result => {
-                let courseList = ``
-               
-                    if(result.data.length > 0){
-                        for(let data of result.data){
-                        courseList += `<option value="${data.id}"> ${data.module_name} </option>` 
-                        }
-                    }
-                    else{
-                        courseList += `<option>NO MODULE FOUND<option>`
-                    }
-                
-                    console.log('LEnght::::::::::::',courseList)
-                    $("#course_name").html(courseList);
-            }).catch(error => console.log('error',error));
-        })
-
-        $('#course_name').on('change', function() { 
-            let course_lid = $('#course_name').val();
-                console.log('course_lid', course_lid)
-
-            let apiObj = {
-                type:"POST",
-                url:"/admin/courseworkload/preference/divList",
-                data: {course_lid: course_lid},
-                dataType:"JSON"
-            }
-
-            ajaxApi(apiObj).then(result => {
-                let divList = ``;
-                    if(result.data.length > 0){
-                        for(let data of result.data){
-                            divList += `<option value="${data.division_lid}" data-batch-lid="${data.batch_lid}"> ${data.division} </option>` 
-                        }
-                    }
-                    else{
-                        divList += `<option> NO MODULE FOUND <option>`
-                    }
-                    
-                   
-                    $("#division").html(divList);
-                console.log('Courselist:::>>>', result.data);
-            }).catch(error => console.log('error',error));
-        })
-
-        //Add course day preference 
-
-$('.add-courseRoomPreference').on('click', function() {
-    let acad_session = $('#acad_session').val();
-    console.log(acad_session)
-})
-
-        //PAGINATION
-        let pageCount = `<%- pageCount %>`
-        let pageNos = Math.ceil(Number(pageCount) / 10)
-        console.log("Page Numbers", pageNos)
-        $('#pagination').bootpag({
-            total: pageNos,
-            page: 1,
-            maxVisible: 10,
-            leaps: true,
-            firstLastUse: true,
-            first: '←',
-            last: '→',
-            wrapClass: 'pagination',
-            activeClass: 'active', 
-            disabledClass: 'disabled',
-            nextClass: 'next',
-            prevClass: 'prev',
-            lastClass: 'last',
-            firstClass: 'first'
-        }).on("page", function (event, num) {
-            console.log('pagination here!!')
-            $.ajax({
-                type: "POST",
-                url: "/admin/courseworkload/preference/pagination",
-                data: {
-                    pageNo: num
-                },
-                success: function (data) {
-                    console.log(data.data)
-                    AjaxtTable(data.data) 
-                }
-            })
-        });
-
-
-        function AjaxtTable(workloadList) {
-            let AjaxTable = `<table class="table custom_row table-bordered" id="courseWorkloadTable">
-                <thead>
-                    <th>Sr No.</th>
-                    <th>Program Name</th>
-                    <th>Program Abbr</th>
-                    <th>Module Name</th>
-                    <th>Module Code</th>
-                    <th>Division</th>
-                    <th>Batch Count</th>
-                    <th>Day</th>
-                    <th>Acad Session</th>
-                    <th>Capacity</th>
-                    <th>Room No.</th>
-                    <th>Floor No.</th>
-                    <th>Action</th>
-                </thead>
-                <tbody>`;
-            if (workloadList.length > 0) {
-                let count = 1;
-                for (let preference of workloadList) {
-                    AjaxTable +=
-                        `<tr>
-                        <td>${count++}</td>
-                        <td>${preference.program_name}</td>
-                        <td>${preference.program_abbr}</td>
-                        <td>${preference.module_name}</td>
-                        <td>${preference.module_code}</td>
-                        <td>${preference.division}</td>
-                        <td>${preference.batch_count}</td>
-                        <td>${preference.day_name}</td>
-                        <td>${preference.acad_session}</td>
-                        <td>${preference.capacity}</td>
-                        <td>${preference.room_number}</td>
-                        <td>${preference.floor_number}</td>
-                        <td><a><i class="fa fa-edit"></i></a></td>
-                    </tr>`
-                }
-            } else {
-                AjaxTable +=
-                    ` <tr><td colspan="15">No Data Found</td></tr>`;
-            }
-            AjaxTable += `<tbody></table>`
-            $("#courseWorkloadTable").html(AjaxTable);
-        }
 
         $(".refresh_course_day_room_preferences").on('click',function(){
             let apiObj = {
@@ -538,24 +367,88 @@ $('.add-courseRoomPreference').on('click', function() {
         })
 
 
+        function showAjaxTable(preferenecesList) {
+            
+            let AjaxTable = `<table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
+                            <thead>
+                                <th>Sr No.</th>
+                                <th>Program Name</th>
+                                <th>Acad Session</th>
+                                <th>Module Name</th>
+                                <th>Division</th>
+                                <th>Batch</th>
+                                <th>Day Select All <input type="checkbox" id="dayCheck"></th>
+                                <th>Room No Select All <input type="checkbox" id="roomCheck"></th>
+                            </thead>
+                            <tbody>`;
+            if (preferenecesList.length > 0) {
+                let count  = 1;
+                for (list of preferenecesList) {
+                    AjaxTable +=
+                    `<tr>
+                                    <td>${count++}</td>
+                                    <td data-program-id="${list.program_lid}">${list.program_name}</td>
+                                    <td data-session-id="${list.session_id}">${list.acad_session}</td>
+                                    <td data-module-id="${list.module_id}">${list.module_name}</td>
+                                    <td data-division-id="${list.division_id}">${list.division}</td>
+                                    <td data-batch-id="${list.batch_id}">${list.batch} ( ${list.batch_event})</td>
+                                    <td>
+                                    <select class="select2 dayName" name="dayName"  multiple>
+                                        <option value="0">All Day</option>
+                                        `
+                                        for(let day of JSON.parse(`<%-dayListJSON%>`)){
+                                            AjaxTable += `<option value="${day.id}">${day.day_name}</option>`
+                                        }
+                                    `</select>`
+                                    AjaxTable +=  `</td>
+                                    <td>
+                                        <select class="select2 roomNumber" name="roomNumber"  multiple>
+                                            <option value="0">All Rooms</option>`
+                                            for(let room of JSON.parse(`<%-roomListsJSON%>`)){
+                                            AjaxTable += `<option value="${room.id}">${room.room_number} (${room.room_type})</option>`
+                                            }
+                                        `</select>`
+                                        AjaxTable += `</td>
+                    </tr>`
+                }
+             //   $('.select2').select2('destroy');
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                         <td colspan="8">No Data Found</td>
+                      </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+              
+            $("#add-more-courseDayRoomPreference-table").html(AjaxTable);
+            $('.select2').select2();
+        }
+
 
         function showError(errors) {
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <p>${errors.description}</p>
-                    <ul>`
-            if (errors.data.length > 0) {
-                $(errors.data).each(function (key, value) {
-                    $.each(this, function (key, value) {
-                        errorHtml +=
-                            `<li>${key} ${value}</li>`
-                    });
-                });
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
             }
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-                $("#errorHtml").html(errorHtml)
-        } 
+            simpleAlert.alert(obj);
+        }
 
 
         function showSuccess(errors) {

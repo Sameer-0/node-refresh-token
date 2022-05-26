@@ -74,11 +74,11 @@ module.exports = class {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type
+                .query(`SELECT TOP ${Number(rowcount)} icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type
                 FROM [${slug}].initial_course_workload icw
                 INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
-                INNER JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
-                WHERE icw.module_name LIKE @keyword OR icw.program_id LIKE @keyword OR icw.module_id LIKE @keyword OR  icw.student_per_division LIKE @keyword OR icw.lec_per_week_per_division LIKE @keyword OR icw.practical_per_week_per_division LIKE @keyword OR icw.tutorial_per_week_per_division LIKE @keyword OR icw.workshop_per_week_per_division LIKE @keyword OR icw.continuous LIKE @keyword OR icw.session_events_per_semester LIKE @keyword OR icw.module_code LIKE @keyword OR acads.acad_session LIKE @keyword
+                LEFT JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
+                WHERE icw.module_name LIKE @keyword  OR icw.program_id LIKE @keyword OR icw.module_id LIKE @keyword OR icw.module_code LIKE  @keyword OR  acads.acad_session LIKE @keyword  OR mt.name LIKE @keyword
                 ORDER BY id DESC`)
         })
     }

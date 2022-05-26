@@ -13,7 +13,7 @@ module.exports = {
             console.log(result.recordset)
             res.render("admin/schooltimings/types", {
                 typeList: result.recordset,
-                pageCount: 0,
+                pageCount: 0, 
                 breadcrumbs: req.breadcrumbs,
           
             })
@@ -34,7 +34,7 @@ module.exports = {
         schoolTimingType.save(req.body, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
-                message: "Success"
+                description: "Success"
             })
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
@@ -94,6 +94,25 @@ module.exports = {
                 data:[]})
             }
         })
+    },
+
+    delete: (req, res) => {
+        console.log(' DELETE RES::::::::::', req.body.Ids)
+        schoolTimingType.delete(req.body.Ids, res.locals.slug).then(result => {
+            res.json({
+                status: 200,
+                description: "Success"
+            })
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        }) 
     },
 
     search: (req, res) => {

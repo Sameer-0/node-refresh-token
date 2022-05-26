@@ -19,32 +19,25 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), Organizations.fetchAll(100), Campuses.fetchAll(100), Rooms.fetchAll(1000), SlotIntervalTimings.fetchAll(1000), AcademicCalender.fetchAll(1000), Buildings.fetchAll(50)]).then(result => {
-            console.log('organization:::::::::::::::::', result[3].recordset)
+        Promise.all([Rooms.bookedRooms(res.locals.slug), RoomTransactions.getCount(res.locals.slug)]).then(result => {
+            console.log('organization:::::::::::::::::', result[0].recordset)
             res.render('admin/rooms/index', {
-                transactionList: result[0].recordset,
+                bookedRoomList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
-                transactionTypes: result[2].recordset, 
-                orgList: result[3].recordset,
-                campusList: result[4].recordset,
-                roomList: result[5].recordset,
-                slotIntervalTimings: result[6].recordset,
-                academicCalender: result[7].recordset,
-                buildingList: result[8].recordset,
                 totalentries: result[0].recordset.length ? result[0].recordset.length : 0,
                 breadcrumbs: req.breadcrumbs,
             })
-        })
-    },
+        }) 
+    }, 
 
     getBookingPage: (req, res) => {
-        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), Organizations.fetchAll(100), Campuses.fetchAll(100), Rooms.fetchAll(1000), SlotIntervalTimings.forRoomBooking(1000), AcademicCalender.fetchAll(1000),Buildings.fetchAll(50)]).then(result => {
+        Promise.all([RoomTransactions.fetchAll(10, res.locals.slug), RoomTransactions.getCount(res.locals.slug), RoomTransactionTypes.fetchAll(100), Organizations.getChildByParentId(res.locals.organizationId), Campuses.fetchAll(100), Rooms.fetchAll(1000), SlotIntervalTimings.forRoomBooking(1000), AcademicCalender.fetchAll(1000),Buildings.fetchAll(50)]).then(result => {
             console.log('Rooms:::::::::::::::::', result[2].recordset)
             res.render('admin/rooms/booking', {
                 transactionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 transactionTypes: JSON.stringify(result[2].recordset),
-                orgList: result[3].recordset,
+                orgList: result[3].recordset, 
                 campusList: result[4].recordset,
                 roomList: result[5].recordset,
                 slotIntervalTimings: JSON.stringify(result[6].recordset),
@@ -65,7 +58,6 @@ module.exports = {
         RoomTransactions.save(res.locals.slug, object, res.locals.userId).then(result => {
             //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
             if (req.body.settingName) {
-         
                 Settings.updateByName(res.locals.slug, req.body.settingName)
             }
             res.status(200).json(JSON.parse(result.output.output_json))
@@ -85,6 +77,7 @@ module.exports = {
         let rowcount = 10;
         RoomTransactions.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
+                console.log('searched items::', result.recordset)
                 res.json({
                     status: "200",
                     message: "Room Type fetched",
@@ -163,6 +156,37 @@ module.exports = {
                 status: 200,
                 roomList: result.recordset
             })
+        })
+    },
+
+    searchForBookedRooms: (req, res) => {
+        let rowcount = 10;
+        RoomTransactions.searchForBookedRooms(rowcount, req.body.keyword, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                console.log('searched items::', result.recordset)
+                res.json({
+                    status: "200",
+                    message: "Booked Room Fetched fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } 
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
     }
 

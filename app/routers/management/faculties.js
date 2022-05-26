@@ -6,7 +6,7 @@ const {
 } = require('express-validator');
 
 const faculties = require('../../controllers/management/faculties');
-const types = require('../../controllers/management/facultytypes');
+const types = require('../../controllers/management/FacultyTypes');
 const slots = require('../../controllers/management/facultyslot');
 const validate = require('../../middlewares/validate')
 const facultypool = require('../../controllers/management/facultypool');

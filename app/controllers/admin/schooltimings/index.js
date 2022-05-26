@@ -16,7 +16,7 @@ const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
 const SchoolTimingSettings = require('../../../models/SchoolTimingSettings')
 
-module.exports = {
+module.exports = { 
     getPage: (req, res) => {
 
         Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug)]).then(result => {
@@ -24,7 +24,7 @@ module.exports = {
             res.render("admin/schooltimings/index",{
                 schoolTimingList: result[0].recordset,
                 programList: result[1].recordset,
-                dayList: JSON.stringify(result[2].recordset),
+                dayList: result[2].recordset,
                 slotTime:result[3].recordset,
                 schoolTimingTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
@@ -36,6 +36,7 @@ module.exports = {
             })
         })
     },
+
 
     create: (req, res) => {
 

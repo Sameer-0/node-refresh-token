@@ -20,6 +20,7 @@ module.exports = {
                 AcademicCalenderList: result[3].recordset,
                 SlotIntervalTimingsList: result[4].recordset,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
 
@@ -32,6 +33,9 @@ module.exports = {
         }
 
         FacultyDateTimes.save(object, res.locals.slug, res.locals.userId).then(result => {
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log(error)

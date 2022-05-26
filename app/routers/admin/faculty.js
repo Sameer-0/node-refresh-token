@@ -40,6 +40,11 @@ router.post('/faculties/batch/search', validate('search'), batch.search)
 router.post('/faculties/batch/pagination', batch.pagination)
 router.post('/faculties/batch/update', validate('JsonValidator'), batch.update)
 router.post('/faculties/batch/delete', validate('delete'), batch.delete)
+router.post('/faculties/batch/program-by-facultyid', batch.programByFacultyId)
+router.post('/faculties/batch/session-by-facultyid-and-programid', batch.sessionByFacultyProgramId)
+router.post('/faculties/batch/module-by-facultyid-programid-sessionid', batch.moduleByFaculty)
+router.post('/faculties/batch/division-by-moduleid', batch.divisionByModuleId)
+router.post('/faculties/batch/batch-by-divisionid', batch.batchByDivisionId)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
@@ -48,7 +53,8 @@ router.post('/faculties/works/search', validate('search'), works.search)
 router.post('/faculties/works/pagination', works.pagination)
 router.post('/faculties/works/update', validate('JsonValidator'), works.update)
 router.post('/faculties/works/delete', validate('delete'), works.delete)
-
+router.post('/faculties/works/session-by-program', works.sessionByProgramId)
+router.post('/faculties/works/module-by-program-session', works.moduleByprogramSession)
 //workpreferences
 router.get('/faculties/workpreferences', preferences.getPage)
 router.post('/faculties/workpreferences/create', validate('JsonValidator'), preferences.create)

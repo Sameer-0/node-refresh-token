@@ -9,46 +9,52 @@ const Programs = require('../../../models/Programs');
 const Days = require('../../../models/Days');
 const RoomSlots = require('../../../models/RoomSlots')
 const isJsonString = require('../../../utils/util')
+const RoomTypes = require('../../../models/RoomTypes')
+const RoomTransactions = require('../../../models/RoomTransactions')
+const CourseWorkload = require('../../../models/CourseWorkload')
+
+
 module.exports = {
 
-    
+
     getPage: (req, res) => {
-        Promise.all([CourseDayRoomPreferences.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.getCount(res.locals.slug), Programs.fetchAll(1000, res.locals.slug), Days.fetchAll(10, res.locals.slug), RoomSlots.SlotsForCourcePreference()]).then(result => {
-            console.log('dayList', result[3].recordset)
+        Promise.all([Days.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
+            console.log('Program List', result[3].recordsets)
             res.render('admin/courseworkload/preference', {
-                coursepreference: result[0].recordset,
-                pageCount: result[1].recordset[0].count,
-                programList: result[2].recordset,
-                dayList: JSON.stringify(result[3].recordset),
-                totalentries: result[0].recordset ? result[0].recordset.length : 0,
-                roomSlotsList: result[4].recordset,
+                dayList: result[0].recordset,
+                icwList: result[1].recordset,
+                roomLists: result[2].recordset,
+                programList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
+                dayListJSON: JSON.stringify(result[0].recordset),
+                roomListsJSON: JSON.stringify(result[2].recordset),
             })
         })
     },
 
     create: (req, res) => {
         let object = {
-            import_faculties: JSON.parse(req.body.inputJSON)
+            set_course_day_room_preferences: JSON.parse(req.body.inputJSON)
         }
         CourseDayRoomPreferences.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            console.log('error:::::::::::::::::::>>>',error)
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            console.log('error:::::::::::::::::::>>>', error)
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
 
     search: (req, res) => {
         let rowcount = 10;
-        CourseDayRoomPreferences.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
+        CourseDayRoomPreferences.search(req.body.keyword, res.locals.slug).then(result => {
 
             if (result.recordset.length > 0) {
                 res.json({
@@ -105,20 +111,21 @@ module.exports = {
         CourseDayRoomPreferences.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
 
     acadSessionList: (req, res) => {
-
-        Promise.all([CourseDayRoomPreferences.getAcadSession(req.body.program_lid, res.locals.slug), CourseDayRoomPreferences.getDayName(req.body.program_lid, res.locals.slug)])
+        console.log('PROGRAMS::::::::::::', req.body.array)
+        Promise.all([CourseDayRoomPreferences.getAcadSessionList(JSON.parse(req.body.array), res.locals.slug), CourseDayRoomPreferences.getDayName(req.body.program_lid, res.locals.slug)])
             .then(result => {
                 res.json({
                     status: 200,
@@ -127,12 +134,12 @@ module.exports = {
                         dayList: result[1].recordset
                     }
                 })
-                console.log('divList', result[1].recordset);
+
             })
     },
 
     courseList: (req, res) => {
-
+        console.log('req.body::::::::::::::::::::', req.body)
         CourseDayRoomPreferences.getCourseList(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
@@ -143,13 +150,11 @@ module.exports = {
     },
 
     divList: (req, res) => {
-
         CourseDayRoomPreferences.getDivList(req.body, res.locals.slug).then(result => {
             res.json({
                 status: 200,
                 data: result.recordset
             })
-
         })
     },
 
@@ -157,14 +162,141 @@ module.exports = {
         CourseDayRoomPreferences.refresh(res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+        })
+    },
+
+
+
+
+    batchByDivisionId: (req, res) => {
+        console.log('Array::::::::::::', JSON.parse(req.body.array))
+        CourseDayRoomPreferences.batchByDivisionId(JSON.parse(req.body.array), res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Division Name",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
             }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    findSemesterByProgramId: (req, res) => {
+        Promise.all([CourseDayRoomPreferences.findSemesterByProgramId(req.body.programId, res.locals.slug), CourseDayRoomPreferences.preferenceByProgramId(req.body.programId, res.locals.slug)]).then(result => {
+            res.json({
+                status: "200",
+                message: "Semester Found",
+                result: result[0].recordset,
+                length: result[0].recordset.length,
+                tabledata: result[1].recordset
+            })
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    findModuleByProgramIdSemId: (req, res) => {
+        Promise.all([CourseDayRoomPreferences.findModuleByProgramIdSemId(req.body, res.locals.slug), CourseDayRoomPreferences.preferenceByProgramIdSessionId(req.body, res.locals.slug)]).then(result => {
+                res.json({
+                    status: "200",
+                    message: "Semester Found",
+                    result: result[0].recordset,              
+                    length: result[0].recordset.length,
+                    tabledata: result[1].recordset
+                })
+            })
+            .catch(error => {
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message))
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    })
+                }
+            })
+    },
+
+    findDivisionByModuleId: (req, res) => {
+        Promise.all([CourseDayRoomPreferences.findDivisionByModuleId(req.body.moduleId, res.locals.slug), CourseDayRoomPreferences.preferenceByModuleId(req.body.moduleId, res.locals.slug)]).then(result => {
+            res.json({
+                status: "200",
+                message: "Divison Found",
+                result: result[0].recordset,              
+                length: result[0].recordset.length,
+                tabledata: result[1].recordset
+            })
+        })
+        .catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    filterPreference: (req, res) => {
+        CourseDayRoomPreferences.searchPreferences(req.body, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Sucessfull",
+                    data: result.recordset,
+                    length: result.recordset.length
+
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.status(500).json(error.originalError.info.message)
         })
     }
 }

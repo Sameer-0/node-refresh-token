@@ -59,4 +59,13 @@ module.exports = class schoolTimingType {
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].school_timing_types`)
         })
     }
+
+    static delete(ids, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            JSON.parse(ids).forEach(element => {
+                return request.query(`DELETE FROM [${slug}].school_timing_types WHERE id = ${element.id}`)
+            });
+        })
+    }
 }

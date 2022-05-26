@@ -19,8 +19,9 @@ module.exports = {
                 FacultyBatchList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
-                batchList : result[3].recordset,
+                batchList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
@@ -39,13 +40,14 @@ module.exports = {
 
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
@@ -115,34 +117,187 @@ module.exports = {
         let object = {
             update_faculty_batches: JSON.parse(req.body.inputJSON)
         }
-           
+
         FacultyBatch.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
 
     delete: (req, res) => {
-        console.log('BODY::::::::::::>>>>>>',req.body.id)
+        console.log('BODY::::::::::::>>>>>>', req.body.id)
         FacultyBatch.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
+
+    programByFacultyId: (req, res) => {
+        FacultyBatch.programByFacultyId(req.body.faculty_lid, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Faculty Program",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    sessionByFacultyProgramId: (req, res) => {
+        FacultyBatch.sessionByFacultyProgramId(req.body, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Faculty Program",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    moduleByFaculty: (req, res) => {
+        FacultyBatch.moduleNameByFaculty(req.body, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Module Name",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+
+    divisionByModuleId: (req, res) => {
+        FacultyBatch.divisionByModuleId(req.body.module_lid, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Module Name",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    batchByDivisionId: (req, res) => {
+        FacultyBatch.batchByDivisionId(req.body.division_lid, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Division Name",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    }
 }

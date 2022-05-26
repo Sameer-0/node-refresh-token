@@ -16,9 +16,10 @@ module.exports = class Divisions {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} d.id, d.division, d.division_num, d.division_count, IIF(d.count_for_theory_batch IS NULL , 0, d.count_for_theory_batch) AS count_for_theory_batch, IIF(d.count_for_practical_batch IS NULL , 0 , d.count_for_practical_batch) AS count_for_practical_batch, IIF(d.count_for_tutorial_batch IS NULL ,0, d.count_for_tutorial_batch) AS count_for_tutorial_batch, IIF(d.count_for_workshop_batch IS NULL ,0 , d.count_for_workshop_batch) AS count_for_workshop_batch, icw.module_name
-            FROM [${slug}].divisions d INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid ORDER BY d.id DESC`)
+            FROM [${slug}].divisions d INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid ORDER BY d.division_num ASC`)
         })
     }
+
 
     static fetchDivisionData(rowcount, slug){
         return poolConnection.then(pool => {

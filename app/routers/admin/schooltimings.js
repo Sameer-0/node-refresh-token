@@ -13,5 +13,6 @@ router.post('/schooltime/pagination', index.pagination)
 router.get('/schooltime/types', type.getPage)
 router.post('/schooltime/types/findone', type.findOne)
 router.post('/schooltime/types', type.create)
-router.post('/schooltime/types/update', type.update)
+router.post('/schooltime/types/update', type.update) 
+router.post('/schooltime/types/delete', type.delete)
 module.exports = router;

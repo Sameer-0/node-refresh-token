@@ -41,7 +41,8 @@
                     <th>Sr.No</th>
                     <th>Faculty</th>
                     <th>Faculty Id</th>
-                    <th>Program Session</th>
+                    <th>Program</th>
+                    <th>Session</th>
                     <th>Module</th>
                     <th>Letcure per week</th>
                     <th>Practical per week</th>
@@ -57,6 +58,7 @@
                         <td><%- count++ %></td>
                         <td><%- faculty.faculty_name %></td>
                         <td><%- faculty.faculty_id %></td>
+                        <td><%- faculty.program_name %></td>
                         <td><%- faculty.acad_session %></td>
                         <td><%- faculty.module_name %></td>
                         <td><%- faculty.lecture_per_week %></td>
@@ -102,7 +104,8 @@
                     <table class="table table-bordered" id="add-more-facultywork-table">
                         <thead>
                             <th>Faculty</th>
-                            <th>Program Session</th>
+                            <th>Program</th>
+                            <th>Session</th>
                             <th>Module</th>
                             <th>Lecture per week</th>
                             <th>Practical per week</th>
@@ -123,11 +126,16 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2 modalSelect2" name="program_session_lid" id="program_session_lid">
-                                        <option value="">--select--</option>
-                                        <% for(session of programSession) {%>
-                                        <option value="<%- session.id %>"><%- session.acad_session %></option>
+                                    <select class="select2 modalSelect2" name="program_lid" id="program_lid">
+                                        <option value="">--select--</option> 
+                                        <% for(program of programList) {%>
+                                        <option value="<%- program.id %>" data-program-id="<%- program.program_id%>"><%- program.program_name%></option>
                                         <%}%>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="select2 modalSelect2" name="session_lid" id="session_lid">
+                                        
                                     </select>
                                 </td>
                                 <td>
@@ -278,7 +286,8 @@ $(document).ready(function () {
             let facultyJson = [];
             facultyElems.each(function (index, elem) {
                 let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
-                let program_session_lid = $(elem).find(`select[name='program_session_lid']`).val();
+                let program_lid = $(elem).find(`select[name='program_lid']`).val();
+                let session_lid = $(elem).find(`select[name='session_lid']`).val();
                 let module_lid = $(elem).find(`select[name='module_lid']`).val();
                 let lecture_per_week = $(elem).find(`input[name='lecture_per_week']`).val();
                 let practical_per_week = $(elem).find(`input[name='practical_per_week']`).val();
@@ -289,7 +298,8 @@ $(document).ready(function () {
                 if (index < facultyCount - 1) {
                     let obj = {
                         faculty_lid: faculty_lid,
-                        program_session_lid: program_session_lid,
+                        program_lid: program_lid,
+                        session_lid:session_lid,
                         module_lid: module_lid,
                         lecture_per_week: lecture_per_week,
                         practical_per_week: practical_per_week,
@@ -301,7 +311,8 @@ $(document).ready(function () {
                 } else {
                     let obj = {
                         faculty_lid: faculty_lid,
-                        program_session_lid: program_session_lid,
+                        program_lid: program_lid,
+                        session_lid:session_lid,
                         module_lid: module_lid,
                         lecture_per_week: lecture_per_week,
                         practical_per_week: practical_per_week,
@@ -438,6 +449,69 @@ $(document).ready(function () {
             })
         })
 
+        //Session by Program API 
+        $("#program_lid").on('change',function(){
+
+        let program_lid =  $(this).val();
+        let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/works/session-by-program',
+                data: {
+                    program_lid: program_lid,
+                  
+                },
+                dataType: 'JSON'
+            }
+
+    
+            ajaxApi(ApiObj).then(result => {
+                console.log('api returnssss:', result)
+                let sessionList = `<option value="">Select Session Name</option>`;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        sessionList +=`<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
+                    });
+                } else {
+                    sessionList += `<option value="">No Session Found!</option>`;
+                }
+                $("#add-facultywork-modal  #session_lid").html(sessionList)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        //Session by Program API 
+        $("#session_lid").on('change',function(){
+
+            let session_lid =  $(this).val();
+            let program_id = $('#program_lid option:selected').attr('data-program-id');
+            let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/faculties/works/module-by-program-session',
+                    data: {
+                        session_lid: session_lid,
+                        program_id: program_id,
+                    
+                    },
+                    dataType: 'JSON'
+                }
+
+
+                ajaxApi(ApiObj).then(result => {
+                    let moduleName = `<option value="">Select Module Name</option>`;
+                    if (result.result.length > 0) {
+                        result.result.forEach(element => {
+                            moduleName +=`<option value="${element.id}">${element.module_name}</option>`;
+                        });
+                    } else {
+                        moduleName += `<option value="">No Module Found!</option>`;
+                    }
+                    $("#add-facultywork-modal  #module_lid").html(moduleName)
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+        })
+
 
         //PAGINATION
     let pageCount = `<%- pageCount %>`
@@ -500,7 +574,8 @@ $(document).ready(function () {
                     <th>Sr.No</th>
                     <th>Faculty</th>
                     <th>Faculty Id</th>
-                    <th>Program Session</th>
+                    <th>Program</th>
+                    <th>Session</th>
                     <th>Module</th>
                     <th>Letcure per week</th>
                     <th>Practical per week</th>
@@ -519,6 +594,7 @@ $(document).ready(function () {
                         <td>${count++}</td>
                         <td>${faculty.faculty_name}</td>
                         <td>${faculty.faculty_id}</td>
+                        <td>${faculty.program_name}</td>
                         <td>${faculty.acad_session}</td>
                         <td>${faculty.module_name}</td>
                         <td>${faculty.lecture_per_week}</td>

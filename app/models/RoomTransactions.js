@@ -8,17 +8,16 @@ const {
 module.exports = class RoomTransactions {
 
     static fetchAll(rowcount, slug) {
+        console.log('searching:::');
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} rt.id, 
-            IIF(rt.transaction_type_lid IS NULL, 'NA',(select rtt.name from  dbo.room_transaction_types rtt where rt.transaction_type_lid = rtt.id)) as transaction_type,
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} rt.id, rtt.name as transaction_type,
             rt.transaction_type_lid, rts.name as stage, stage_lid, org.org_name, org.org_abbr, camp.campus_abbr, u.username  
             FROM [${slug}].room_transactions rt
             INNER JOIN dbo.room_transaction_stages rts ON rt.stage_lid = rts.id
-            INNER JOIN dbo.organizations org ON org.id =  rt.org_lid
-            INNER JOIN dbo.campuses camp ON camp.id =  rt.campus_lid
-            INNER JOIN [${slug}].users u ON u.id =  rt.user_lid  ORDER BY rt.id DESC`)
-        }).catch(error => {
-            throw error
+            INNER JOIN [dbo].room_transaction_types rtt ON rtt.id = rt.transaction_type_lid
+            INNER JOIN [dbo].organizations org ON org.id = rt.org_lid
+            INNER JOIN [dbo].campuses camp ON camp.id = rt.campus_lid
+            INNER JOIN [${slug}].users u ON u.id = rt.user_lid  ORDER BY rt.id DESC`)
         })
     }
 
@@ -38,30 +37,31 @@ module.exports = class RoomTransactions {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT rt.id, 
-                IIF(rt.transaction_type_lid IS NULL, 'NA',(select rtt.name from  dbo.room_transaction_types rtt where rt.transaction_type_lid = rtt.id)) as transaction_type,
+                .query(`SELECT rt.id, rtt.name as transaction_type,
                 rt.transaction_type_lid, rts.name as stage, stage_lid, org.org_name, org.org_abbr, camp.campus_abbr, u.username  
                 FROM [${slug}].room_transactions rt
                 INNER JOIN dbo.room_transaction_stages rts ON rt.stage_lid = rts.id
-                INNER JOIN dbo.organizations org ON org.id =  rt.org_lid
-                INNER JOIN dbo.campuses camp ON camp.id =  rt.campus_lid
-                INNER JOIN [${slug}].users u ON u.id =  rt.user_lid ORDER BY rt.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                INNER JOIN [dbo].room_transaction_types rtt ON rtt.id = rt.transaction_type_lid
+                INNER JOIN [dbo].organizations org ON org.id = rt.org_lid
+                INNER JOIN [dbo].campuses camp ON camp.id = rt.campus_lid
+                INNER JOIN [${slug}].users u ON u.id = rt.user_lid  ORDER BY rt.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
 
     static search(rowcount, keyword, slug) {
+        console.log('Seacrh')
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} rt.id, 
-                IIF(rt.transaction_type_lid IS NULL, 'NA',(select rtt.name from  dbo.room_transaction_types rtt where rt.transaction_type_lid = rtt.id)) as transaction_type,
+                .query(`SELECT TOP ${Number(rowcount)} rt.id, rtt.name as transaction_type,
                 rt.transaction_type_lid, rts.name as stage, stage_lid, org.org_name, org.org_abbr, camp.campus_abbr, u.username  
                 FROM [${slug}].room_transactions rt
                 INNER JOIN dbo.room_transaction_stages rts ON rt.stage_lid = rts.id
-                INNER JOIN dbo.organizations org ON org.id =  rt.org_lid
-                INNER JOIN dbo.campuses camp ON camp.id =  rt.campus_lid
-                INNER JOIN [${slug}].users u ON u.id =  rt.user_lid
-                WHERE rts.name LIKE @keyword OR org.org_name LIKE @keyword OR org.org_abbr LIKE @keyword OR camp.campus_abbr LIKE @keyword OR u.username LIKE @keyword ORDER BY rt.id DESC`)
+                INNER JOIN [dbo].room_transaction_types rtt ON rtt.id = rt.transaction_type_lid
+                INNER JOIN [dbo].organizations org ON org.id = rt.org_lid
+                INNER JOIN [dbo].campuses camp ON camp.id = rt.campus_lid
+                INNER JOIN [${slug}].users u ON u.id = rt.user_lid 
+                WHERE rts.name LIKE @keyword OR org.org_name LIKE @keyword OR org.org_abbr LIKE @keyword OR camp.campus_abbr LIKE @keyword OR u.username LIKE @keyword OR rtt.name LIKE @keyword ORDER BY rt.id DESC`)
         })
     }
 
@@ -73,7 +73,6 @@ module.exports = class RoomTransactions {
     }
 
     // ROOM REQUESTS
-
     static RoomRequest(rowcount, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
@@ -109,6 +108,31 @@ module.exports = class RoomTransactions {
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_delete_room_transaction]`)
+        })
+    }
+
+
+
+    static searchForBookedRooms(rowcount, keyword, slug){
+        return poolConnection.then(pool => {
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%').query(`SELECT DISTINCT TOP ${Number(rowcount)} r.id, r.room_number,r.floor_number, r.capacity, b.building_name FROM [${slug}].room_transactions rt INNER JOIN
+            room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
+            [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
+            INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
+            INNER JOIN [dbo].buildings b ON b.id = r.building_lid
+            WHERE r.room_number LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR  b.building_name LIKE @keyword  ORDER BY r.id DESC`)
+        })
+    }
+
+
+    static roomsForCoursePreferences(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, _rt.name as room_type FROM [${slug}].room_transactions rt INNER JOIN
+            room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
+           [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
+           INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
+           INNER JOIN [dbo].room_types _rt ON _rt.id = r.room_type_id
+           INNER JOIN [dbo].buildings b ON b.id = r.building_lid`)
         })
     }
 }

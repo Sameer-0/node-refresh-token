@@ -13,7 +13,8 @@ module.exports = {
             res.render('management/faculties/types', {
                 typeList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
-                breadcrumbs: req.breadcrumbs
+                breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
        })
     },

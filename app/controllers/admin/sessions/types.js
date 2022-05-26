@@ -16,6 +16,7 @@ module.exports = {
                 sessionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },
@@ -34,7 +35,7 @@ module.exports = {
             res.status(200).json({
                 status: 200,
                 message: "Success"
-            })
+            }) 
         }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message))

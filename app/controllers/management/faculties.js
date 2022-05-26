@@ -24,7 +24,8 @@ module.exports = {
                 facultyList: result[3].recordset,
                 totalentry: result[3].recordset ? result[3].recordset.length : 0,
                 pageCount: result[4].recordset.length ? result[4].recordset[0].count : 0,
-                breadcrumbs: req.breadcrumbs
+                breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
             })
         })
     },

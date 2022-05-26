@@ -29,10 +29,16 @@ router.post('/courseworkload/workload/update', validate('JsonValidator'), course
 
 //Course preference
 router.get('/courseworkload/preference', preference.getPage)
+router.post('/courseworkload/preference/create', preference.create)
 router.post('/courseworkload/preference/search', preference.search)
 router.post('/courseworkload/preference/pagination', preference.pagination)
-router.post('/courseworkload/preference/acadSessionList', preference.acadSessionList)
+router.post('/courseworkload/preference/acadSessionList', validate('isArrayNumber'), preference.acadSessionList)
 router.post('/courseworkload/preference/courseList', preference.courseList)
 router.post('/courseworkload/preference/divList', preference.divList)
 router.post('/courseworkload/preference/refresh', preference.refresh)
+router.post('/courseworkload/preference/batch-by-divisionid', validate('isArrayNumber'), preference.batchByDivisionId)
+router.post('/courseworkload/preference/find-semester-by-programid',  preference.findSemesterByProgramId)
+router.post('/courseworkload/preference/find-module-by-programid-semesterid',  preference.findModuleByProgramIdSemId)
+router.post('/courseworkload/preference/find-division-by-moduleid',  preference.findDivisionByModuleId)
+router.post('/courseworkload/preference/filter-records',  preference.filterPreference)
 module.exports = router

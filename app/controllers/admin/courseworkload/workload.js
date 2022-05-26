@@ -27,6 +27,7 @@ module.exports = {
         AcadSessionList: result[4].recordset,
         moduleList: result[5].recordset,
         breadcrumbs: req.breadcrumbs,
+        moduleListAjax:JSON.stringify(result[5].recordset)
       })
     })
   },
