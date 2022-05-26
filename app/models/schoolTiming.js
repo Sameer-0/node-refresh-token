@@ -20,13 +20,15 @@ module.exports = class schoolTiming {
         })
     }
 
-    static save(inputJSON, slug, userid) {
+    static save(inputJSON, slug, userid, settingId) {
+        console.log('SCHOOL TIMING  inputJSON:::::::::::::',inputJSON)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .input('last_modified_by', sql.Int, userid)
+                .input('school_timing_setting_id', sql.Int, settingId)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_import_faculties]`)
+                .execute(`[${slug}].[sp_insert_school_timings]`)
         })
     }
 
