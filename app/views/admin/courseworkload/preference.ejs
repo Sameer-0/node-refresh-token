@@ -277,10 +277,24 @@
                 let programId = $(elem).find(`td[data-program-id]`).attr(`data-program-id`)
                 let sessionId = $(elem).find(`td[data-session-id]`).attr(`data-session-id`)
                 let moduleId = $(elem).find(`td[data-module-id]`).attr(`data-module-id`)
-                let divisions = divArray.push($(elem).find(`td[data-division-id]`).attr(`data-division-id`))
-                let batches = batchArray.push($(elem).find(`td[data-batch-id]`).attr(`data-batch-id`))
-                let days = $(elem).find(`select[name='dayName']`).val()
-                let rooms = $(elem).find(`select[name='roomNumber']`).val()
+                divArray.push($(elem).find(`td[data-division-id]`).attr(`data-division-id`))
+                batchArray.push($(elem).find(`td[data-batch-id]`).attr(`data-batch-id`))
+                
+                //IF DAY IS CHEKED (ALL DAY SET 0) THEN IT WILL SET 0 ELSE VALUE WILL SET MANUALLY ACCOURDING TO USER SELECTION
+                let days = 0;
+                if($("#dayCheck").is(":checked")){
+                days = [0]
+                }else{
+                    days = $(elem).find(`select[name='dayName']`).val()
+                }
+
+                let rooms = 0
+                if($("#roomCheck").is(":checked")){
+                    rooms = [0]
+                }else{
+                    rooms = $(elem).find(`select[name='roomNumber']`).val()
+                }
+              
                 if (index < courseDayCount - 1) {
                     let obj = {
                         programId: programId,
@@ -307,21 +321,21 @@
             })
             console.log('JSON:::::::::::::::::::::>>>>',JSON.stringify(courseDayJson))
 
-            let apiObj = {
-                type:"POST",
-                url:"/admin/courseworkload/preference/create",
-                data: {
-                    inputJSON: JSON.stringify(courseDayJson)
-                },
-                dataType:"JSON"
-            }
-            ajaxApi(apiObj).then(result => {
-                console.log('result ::::::::::::::::::::::', result)
-                showSuccess(result)
-            }).catch(error => {
-                console.log('Error ::::::::::::::::::::::', error)
-                showError(error.responseJSON)
-            })
+            // let apiObj = {
+            //     type:"POST",
+            //     url:"/admin/courseworkload/preference/create",
+            //     data: {
+            //         inputJSON: JSON.stringify(courseDayJson)
+            //     },
+            //     dataType:"JSON"
+            // }
+            // ajaxApi(apiObj).then(result => {
+            //     console.log('result ::::::::::::::::::::::', result)
+            //     showSuccess(result)
+            // }).catch(error => {
+            //     console.log('Error ::::::::::::::::::::::', error)
+            //     showError(error.responseJSON)
+            // })
         })
 
      
