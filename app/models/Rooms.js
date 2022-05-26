@@ -161,4 +161,13 @@ module.exports = class Rooms {
                 .query(`SELECT * FROM [dbo].rooms WHERE building_lid = @building_lid`)
         })
     }
+
+    static fetchBookedRooms() {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .query(`SELECT r.id, r.room_number, r.room_type_id FROM (SELECT DISTINCT room_lid FROM room_slots WHERE alloted_to = 24) t1
+                INNER JOIN rooms r ON t1.room_lid = r.id
+                ORDER BY r.room_number`)
+        })
+    }
 }
