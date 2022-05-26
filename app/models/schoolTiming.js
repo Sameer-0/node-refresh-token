@@ -65,4 +65,15 @@ module.exports = class schoolTiming {
         })
     }
 
+    static getTimeTableSimulationSlots(slug){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.
+            query(`SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
+            INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
+            INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
+            WHERE program_lid = 1 AND acad_session_lid = 16 AND day_lid = 1`)
+        })
+    }
+
 }
