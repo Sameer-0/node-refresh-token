@@ -85,6 +85,7 @@
                                     <td data-batch-id="<%- list.batch_id %>"><%- list.batch %> ( <%- list.batch_event %>)</td>
                                     <td>
                                     <select class="select2 dayName" name="dayName"  multiple>
+                                        <option value="0">All Day</option>
                                         <%for(let day of dayList){%>
                                         <option value="<%-day.id%>"><%-day.day_name %></option>
                                         <%}%>
@@ -92,6 +93,7 @@
                                     </td>
                                     <td>
                                         <select class="select2 roomNumber" name="roomNumber"  multiple>
+                                            <option value="0">All Rooms</option>
                                             <%for(let room of roomLists){%>
                                             <option value="<%-room.id%>"><%-room.room_number%> (<%-room.room_type%>)</option>
                                             <%}%>
@@ -143,12 +145,12 @@
 
 
  $("#programName").on('change',function(){
-     let programid = $(this).val()
+     let programId = $(this).val()
      let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/find-semester-by-programid",
                 data: {
-                    program_id: programid
+                    programId: programId
                 },
                 dataType:"JSON"
             }
@@ -164,6 +166,7 @@
                     semesterName += `<option value="">Semester Not Found!</option>`;
                 }
                 $("#semesterName").html(semesterName)
+                showAjaxTable(result.tabledata)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -171,14 +174,14 @@
 
 
  $("#semesterName").on('change',function(){
-     let sessionid = $(this).val()
-     let programid = $('#programName option:selected').attr('data-programid')
+     let sessionId = $(this).val()
+     let programId = $('#programName option:selected').attr('data-programid')
      let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/find-module-by-programid-semesterid",
                 data: {
-                    session_id: sessionid,
-                    programid: programid
+                    sessionId: sessionId,
+                    programId: programId
                 },
                 dataType:"JSON"
             }
@@ -194,6 +197,7 @@
                     moduleName += `<option value="">Module Not Found!</option>`;
                 }
                 $("#moduleName").html(moduleName)
+                showAjaxTable(result.tabledata)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -201,13 +205,13 @@
 
  //divisionName
  $("#moduleName").on('change',function(){
-     let module_id = $(this).val()
-     console.log('module_id:::::::::>>',module_id)
+     let moduleId = $(this).val()
+     console.log('moduleId:::::::::>>',moduleId)
      let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/find-division-by-moduleid",
                 data: {
-                    module_id: module_id
+                    moduleId: moduleId
                 },
                 dataType:"JSON"
             }
@@ -223,6 +227,7 @@
                     divisionName += `<option value="">Division Not Found!</option>`;
                 }
                 $("#divisionName").html(divisionName)
+                showAjaxTable(result.tabledata)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -247,7 +252,6 @@
                 dataType:"JSON"
             }
             ajaxApi(apiObj).then(result => {
-                console.log('result:::::::::::::::::::',result)
                 showAjaxTable(result.data)
             }).catch(error => {
                 showError(error.responseJSON)
@@ -329,6 +333,23 @@
 
 
 
+        // SEARCH PROGRAM TYPE
+         $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "POST",
+                url: "/admin/courseworkload/preference/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    console.log('response::::::::::::>>',data)
+                    showAjaxTable(data.data)
+                }
+            })
+        }, 500));
+
+
         $(".refresh_course_day_room_preferences").on('click',function(){
             let apiObj = {
                 type:"POST",
@@ -372,14 +393,17 @@
                                     <td data-division-id="${list.division_id}">${list.division}</td>
                                     <td data-batch-id="${list.batch_id}">${list.batch} ( ${list.batch_event})</td>
                                     <td>
-                                    <select class="select2 dayName" name="dayName"  multiple>`
+                                    <select class="select2 dayName" name="dayName"  multiple>
+                                        <option value="0">All Day</option>
+                                        `
                                         for(let day of JSON.parse(`<%-dayListJSON%>`)){
                                             AjaxTable += `<option value="${day.id}">${day.day_name}</option>`
                                         }
                                     `</select>`
                                     AjaxTable +=  `</td>
                                     <td>
-                                        <select class="select2 roomNumber" name="roomNumber"  multiple>`
+                                        <select class="select2 roomNumber" name="roomNumber"  multiple>
+                                            <option value="0">All Rooms</option>`
                                             for(let room of JSON.parse(`<%-roomListsJSON%>`)){
                                             AjaxTable += `<option value="${room.id}">${room.room_number} (${room.room_type})</option>`
                                             }
