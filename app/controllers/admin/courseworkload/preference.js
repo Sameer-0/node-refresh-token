@@ -206,23 +206,30 @@ console.log('req.body::::::::::::::::::::',req.body)
     },
 
     findSemesterByProgramId: (req, res) => {
-        console.log('program_id::::::::::::',req.body.program_id)
-        CourseDayRoomPreferences.findSemesterByProgramId(req.body.program_id, res.locals.slug).then(result => {
-            if (result.recordset.length > 0) {
+        // CourseDayRoomPreferences.findSemesterByProgramId(req.body.program_id, res.locals.slug).then(result => {
+        //     if (result.recordset.length > 0) {
+        //         res.json({
+        //             status: "200",
+        //             message: "Semester Found",
+        //             result: result.recordset,
+        //             length: result.recordset.length
+        //         })
+        //     } else {
+        //         res.json({
+        //             status: "400",
+        //             message: "No data found",
+        //             result: result.recordset,
+        //             length: result.recordset.length
+        //         })
+        //     }
+        // })
+        Promise.all([CourseDayRoomPreferences.findSemesterByProgramId(req.body.program_id, res.locals.slug), CourseDayRoomPreferences.searchPreferences(req.body, res.locals.slug)]).then(result => {
                 res.json({
                     status: "200",
                     message: "Semester Found",
-                    result: result.recordset,
-                    length: result.recordset.length
+                    result: result[0].recordset,
+                    length: result[0].recordset.length
                 })
-            } else {
-                res.json({
-                    status: "400",
-                    message: "No data found",
-                    result: result.recordset,
-                    length: result.recordset.length
-                })
-            }
         }).catch(error => {
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))

@@ -212,6 +212,7 @@ module.exports = class CourseDayRoomPreferences {
     }
 
     static searchPreferences(body, slug) {
+        console.log('Search :::::::::',body)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('divisionId', sql.Int, body.division_id)

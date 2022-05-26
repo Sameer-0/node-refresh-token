@@ -33,6 +33,7 @@
                 <label class="form-label">Select Program</label>
  
                 <select class="form-select" id="programName" id="programName">
+                    <option value="" disabled>Select Program</option>
                     <%for(let prog of programList){%>
                         <option value="<%-prog.id%>" data-programid="<%-prog.program_id%>"><%- prog.program_name %></option>    
                     <%}%> 
@@ -101,20 +102,8 @@
                             </tbody>
                         </table>
                     </div>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <div class=""><div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="set-preferences" class="set-preferences"  value="0">
-                        <label class="form-check-label" for="inlineRadio1">Any Preferences</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="set-preferences"  class="set-preferences" value="1">
-                        <label class="form-check-label" for="inlineRadio2">Set Preferences</label>
-                      </div></div>
-                </div>
-                <div>
-                    <button type="button" class="btn createCoursePreference modal-inputform-btn" disabled>CREATE PREFERENCE</button>
-                </div>
+            <div class="float-end">
+                    <button type="button" class="btn createCoursePreference modal-inputform-btn">CREATE PREFERENCE</button>
             </div>
         </div>
     </div>
@@ -126,7 +115,7 @@
 <script>
 
     $(document).ready(function () {
-        $('.select2').select2();
+     $('.select2').select2();
 
    //Day  Check
    $("#add-more-courseDayRoomPreference-table").on('change','#dayCheck',function(){
@@ -338,24 +327,7 @@
             // })
         })
 
-     
 
-//Set Preference
-$("input[name='set-preferences']").on('click',function(){
-    let value = $(this).val()
-    //createCoursePreference
-    if(value){
-        $(".createCoursePreference").removeAttr('disabled')
-    }else{
-        $(".createCoursePreference").prop('disabled','disabled')
-    }
-
-    if(value == 0){
-        $("#add-more-courseDayRoomPreference-table").css('visibility','hidden')
-    }else{
-        $("#add-more-courseDayRoomPreference-table").css('visibility','visible')
-    }
-})
 
         $(".refresh_course_day_room_preferences").on('click',function(){
             let apiObj = {
