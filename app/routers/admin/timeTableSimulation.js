@@ -16,7 +16,7 @@ router.get('/time-table-simulation/allocation', timeTableAllocation.getPage)
 
 router.get('/time-table-simulation/time-table', timeTable.getPage)
 router.post('/time-table-simulation/time-table', timeTable.getSessionByProgram)
-router.post('/time-table-simulation/time-table/get-allocationlist-by-dayid', timeTable.getAllocationListBydayid)
+router.post('/time-table-simulation/time-table/events', timeTable.getEventsByProgramSessionDay)
 
 
 
