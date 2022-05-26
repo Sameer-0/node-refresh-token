@@ -24,7 +24,7 @@ module.exports = {
             res.render("admin/schooltimings/index",{
                 schoolTimingList: result[0].recordset,
                 programList: result[1].recordset,
-                dayList: JSON.stringify(result[2].recordset),
+                dayList: result[2].recordset,
                 slotTime:result[3].recordset,
                 schoolTimingTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
@@ -36,6 +36,7 @@ module.exports = {
             })
         })
     },
+
 
     create: (req, res) => {
 

@@ -33,6 +33,7 @@
                 <label class="form-label">Select Program</label>
  
                 <select class="form-select" id="programName" id="programName">
+                    <option value="" disabled>Select Program</option>
                     <%for(let prog of programList){%>
                         <option value="<%-prog.id%>" data-programid="<%-prog.program_id%>"><%- prog.program_name %></option>    
                     <%}%> 
@@ -77,17 +78,14 @@
                                <%for(let list of icwList){%>
                                 <tr>
                                     <td><%- _count++%></td>
-                                    <td><%- list.program_name %></td>
-                                    <td><%- list.acad_session %></td>
-                                    <td><%- list.module_name %></td>
-                                    <td>
-                                        <%- list.division %>
-                                    </td>
-                                    <td>
-                                        <%- list.batch %> ( <%- list.batch_event %>)
-                                    </td>
+                                    <td data-program-id="<%- list.program_lid %>"><%- list.program_name %></td>
+                                    <td data-session-id="<%- list.session_id %>"><%- list.acad_session %></td>
+                                    <td data-module-id="<%- list.module_id %>"><%- list.module_name %></td>
+                                    <td data-division-id="<%- list.division_id %>"><%- list.division %></td>
+                                    <td data-batch-id="<%- list.batch_id %>"><%- list.batch %> ( <%- list.batch_event %>)</td>
                                     <td>
                                     <select class="select2 dayName" name="dayName"  multiple>
+                                        <option value="0">All Day</option>
                                         <%for(let day of dayList){%>
                                         <option value="<%-day.id%>"><%-day.day_name %></option>
                                         <%}%>
@@ -95,8 +93,9 @@
                                     </td>
                                     <td>
                                         <select class="select2 roomNumber" name="roomNumber"  multiple>
+                                            <option value="0">All Rooms</option>
                                             <%for(let room of roomLists){%>
-                                            <option value="<%-room.room_number%>"><%-room.room_number%> (<%-room.room_type%>)</option>
+                                            <option value="<%-room.id%>"><%-room.room_number%> (<%-room.room_type%>)</option>
                                             <%}%>
                                         </select>
                                     </td>
@@ -105,20 +104,8 @@
                             </tbody>
                         </table>
                     </div>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <div class=""><div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="set-preferences" class="set-preferences"  value="0">
-                        <label class="form-check-label" for="inlineRadio1">Any Preferences</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="set-preferences"  class="set-preferences" value="1">
-                        <label class="form-check-label" for="inlineRadio2">Set Preferences</label>
-                      </div></div>
-                </div>
-                <div>
-                    <button type="button" class="btn createCoursePreference modal-inputform-btn" disabled>CREATE PREFERENCE</button>
-                </div>
+            <div class="float-end">
+                    <button type="button" class="btn createCoursePreference modal-inputform-btn">CREATE PREFERENCE</button>
             </div>
         </div>
     </div>
@@ -130,7 +117,7 @@
 <script>
 
     $(document).ready(function () {
-        $('.select2').select2();
+     $('.select2').select2();
 
    //Day  Check
    $("#add-more-courseDayRoomPreference-table").on('change','#dayCheck',function(){
@@ -158,18 +145,19 @@
 
 
  $("#programName").on('change',function(){
-     let programid = $(this).val()
+     let programId = $(this).val()
      let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/find-semester-by-programid",
                 data: {
-                    program_id: programid
+                    programId: programId
                 },
                 dataType:"JSON"
             }
             ajaxApi(apiObj).then(result => {
                let semesterName = ``;
                 if (result.result.length > 0) {
+                    semesterName +=`<option value="" disabled>Select Semester</option>`;
                     result.result.forEach(element => {
                         semesterName +=
                             `<option value="${element.session_id}" >${element.acad_session}</option>`;
@@ -178,6 +166,7 @@
                     semesterName += `<option value="">Semester Not Found!</option>`;
                 }
                 $("#semesterName").html(semesterName)
+                showAjaxTable(result.tabledata)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -185,20 +174,21 @@
 
 
  $("#semesterName").on('change',function(){
-     let sessionid = $(this).val()
-     let programid = $('#programName option:selected').attr('data-programid')
+     let sessionId = $(this).val()
+     let programId = $('#programName option:selected').attr('data-programid')
      let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/find-module-by-programid-semesterid",
                 data: {
-                    session_id: sessionid,
-                    programid: programid
+                    sessionId: sessionId,
+                    programId: programId
                 },
                 dataType:"JSON"
             }
             ajaxApi(apiObj).then(result => {
                let moduleName = ``;
                 if (result.result.length > 0) {
+                    moduleName +=`<option value="" disabled>Select Module</option>`;
                     result.result.forEach(element => {
                         moduleName +=
                             `<option value="${element.id}" >${element.module_name}</option>`;
@@ -207,39 +197,65 @@
                     moduleName += `<option value="">Module Not Found!</option>`;
                 }
                 $("#moduleName").html(moduleName)
+                showAjaxTable(result.tabledata)
             }).catch(error => {
                 showError(error.responseJSON)
             })
  })
 
  //divisionName
-
-
  $("#moduleName").on('change',function(){
-     let module_id = $(this).val()
-     console.log('module_id:::::::::>>',module_id)
+     let moduleId = $(this).val()
+     console.log('moduleId:::::::::>>',moduleId)
      let apiObj = {
                 type:"POST",
                 url:"/admin/courseworkload/preference/find-division-by-moduleid",
                 data: {
+                    moduleId: moduleId
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+               let divisionName = ``;
+                if (result.result.length > 0) {
+                    divisionName +=`<option value="" disabled>Select Division</option>`;
+                    result.result.forEach(element => {
+                        divisionName +=
+                            `<option value="${element.id}" >${element.division}</option>`;
+                    });
+                } else {
+                    divisionName += `<option value="">Division Not Found!</option>`;
+                }
+                $("#divisionName").html(divisionName)
+                showAjaxTable(result.tabledata)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+ })
+
+
+// Filter Records
+ $("#divisionName").on('change',function(){
+     let division_id = $(this).val();
+     let program_id = $("#programName").val();
+     let session_id = $("#semesterName").val();
+     let module_id = $("#moduleName").val();
+     let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/filter-records",
+                data: {
+                    division_id: division_id,
+                    program_id: program_id,
+                    session_id: session_id,
                     module_id: module_id
                 },
                 dataType:"JSON"
             }
-            // ajaxApi(apiObj).then(result => {
-            //    let moduleName = ``;
-            //     if (result.result.length > 0) {
-            //         result.result.forEach(element => {
-            //             moduleName +=
-            //                 `<option value="${element.id}" >${element.module_name}</option>`;
-            //         });
-            //     } else {
-            //         moduleName += `<option value="">Module Not Found!</option>`;
-            //     }
-            //     $("#moduleName").html(moduleName)
-            // }).catch(error => {
-            //     showError(error.responseJSON)
-            // })
+            ajaxApi(apiObj).then(result => {
+                showAjaxTable(result.data)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
  })
 
         //CREATING JSON FOR COURSE DAY ROOM PREFERENCE
@@ -247,83 +263,91 @@
             let courseDayList = $('#add-more-courseDayRoomPreference-table tbody tr');
             let courseDayCount = courseDayList.length;
             let courseDayJson = [];
+ 
             courseDayList.each(function (index, elem) {
-                let program_lid = $(elem).find('td[data-program-lid]').attr("data-program-lid")
-                let acad_session_lid = $(elem).find('td[data-acad-session-lid]').attr("data-acad-session-lid")
-                let course_lid = $(elem).find('td[data-course-name-lid]').attr("data-course-name-lid")
-                let division_lid = $(elem).find('td[data-division-lid]').attr("data-division-lid")
-                let day_name_lid = $(elem).find('td[data-day-name-lid]').attr("data-day-name-lid")
-                let room_number_lid = $(elem).find('td[data-room-number-lid]').attr("data-room-number-lid")
-                let batch_lid = $(elem).find('td[data-batch-lid]').attr("data-batch-lid")
+                let divArray = []
+                let batchArray = []
+                let programId = $(elem).find(`td[data-program-id]`).attr(`data-program-id`)
+                let sessionId = $(elem).find(`td[data-session-id]`).attr(`data-session-id`)
+                let moduleId = $(elem).find(`td[data-module-id]`).attr(`data-module-id`)
+                divArray.push($(elem).find(`td[data-division-id]`).attr(`data-division-id`))
+                batchArray.push($(elem).find(`td[data-batch-id]`).attr(`data-batch-id`))
+                
+                //IF DAY IS CHEKED (ALL DAY SET 0) THEN IT WILL SET 0 ELSE VALUE WILL SET MANUALLY ACCOURDING TO USER SELECTION
+                let days = 0;
+                if($("#dayCheck").is(":checked")){
+                days = [0]
+                }else{
+                    days = $(elem).find(`select[name='dayName']`).val()
+                }
+
+                let rooms = 0
+                if($("#roomCheck").is(":checked")){
+                    rooms = [0]
+                }else{
+                    rooms = $(elem).find(`select[name='roomNumber']`).val()
+                }
+              
                 if (index < courseDayCount - 1) {
                     let obj = {
-                        program_lid: program_lid,
-                        acad_session_lid: acad_session_lid,
-                        course_lid: course_lid,
-                        division_lid: division_lid, 
-                        day_name_lid: day_name_lid,
-                        room_number_lid: room_number_lid,
-                        batch_lid:batch_lid
+                        programId: programId,
+                        sessionId: sessionId,
+                        moduleId: moduleId,
+                        divisions: divArray, 
+                        batches: batchArray,
+                        days: days,
+                        rooms: rooms
                     }
                     courseDayJson.push(obj)
                 } else {
                     let obj = {
-                        program_lid: program_lid,
-                        acad_session_lid: acad_session_lid,
-                        course_lid: course_lid,
-                        division_lid: division_lid, 
-                        day_name_lid: day_name_lid,
-                        room_number_lid: room_number_lid,
-                        batch_lid:batch_lid
+                        programId: programId,
+                        sessionId: sessionId,
+                        moduleId: moduleId,
+                        divisions: divArray, 
+                        batches: batchArray,
+                        days: days,
+                        rooms: rooms
                     }
                     courseDayJson.push(obj)
                 }
             })
-            console.log('Hell:::::::::::::::::::::>>>>',courseDayJson)
+            console.log('JSON:::::::::::::::::::::>>>>',JSON.stringify(courseDayJson))
 
-            let apiObj = {
-                type:"POST",
-                url:"/admin/courseworkload/preference/create",
-                data: {
-                    inputJSON: courseDayJson
-                },
-                dataType:"JSON"
-            }
-            ajaxApi(apiObj).then(result => {
-                console.log('result ::::::::::::::::::::::', result)
-                showSuccess(result)
-            }).catch(error => {
-                console.log('Error ::::::::::::::::::::::', error)
-                showError(error.responseJSON)
-            })
+            // let apiObj = {
+            //     type:"POST",
+            //     url:"/admin/courseworkload/preference/create",
+            //     data: {
+            //         inputJSON: JSON.stringify(courseDayJson)
+            //     },
+            //     dataType:"JSON"
+            // }
+            // ajaxApi(apiObj).then(result => {
+            //     console.log('result ::::::::::::::::::::::', result)
+            //     showSuccess(result)
+            // }).catch(error => {
+            //     console.log('Error ::::::::::::::::::::::', error)
+            //     showError(error.responseJSON)
+            // })
         })
 
-     
-
-    
 
 
-
-
-//Set Preference
-$("input[name='set-preferences']").on('click',function(){
-    let value = $(this).val()
-    //createCoursePreference
-    if(value){
-        $(".createCoursePreference").removeAttr('disabled')
-    }else{
-        $(".createCoursePreference").prop('disabled','disabled')
-    }
-
-    if(value == 0){
-        $("#add-more-courseDayRoomPreference-table").css('visibility','hidden')
-    }else{
-        $("#add-more-courseDayRoomPreference-table").css('visibility','visible')
-    }
-})
-
-      
-
+        // SEARCH PROGRAM TYPE
+         $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "POST",
+                url: "/admin/courseworkload/preference/search",
+                data: {
+                    keyword: keyword
+                },
+                success: function (data) {
+                    console.log('response::::::::::::>>',data)
+                    showAjaxTable(data.data)
+                }
+            })
+        }, 500));
 
 
         $(".refresh_course_day_room_preferences").on('click',function(){
@@ -342,6 +366,63 @@ $("input[name='set-preferences']").on('click',function(){
             })
         })
 
+
+        function showAjaxTable(preferenecesList) {
+            
+            let AjaxTable = `<table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
+                            <thead>
+                                <th>Sr No.</th>
+                                <th>Program Name</th>
+                                <th>Acad Session</th>
+                                <th>Module Name</th>
+                                <th>Division</th>
+                                <th>Batch</th>
+                                <th>Day Select All <input type="checkbox" id="dayCheck"></th>
+                                <th>Room No Select All <input type="checkbox" id="roomCheck"></th>
+                            </thead>
+                            <tbody>`;
+            if (preferenecesList.length > 0) {
+                let count  = 1;
+                for (list of preferenecesList) {
+                    AjaxTable +=
+                    `<tr>
+                                    <td>${count++}</td>
+                                    <td data-program-id="${list.program_lid}">${list.program_name}</td>
+                                    <td data-session-id="${list.session_id}">${list.acad_session}</td>
+                                    <td data-module-id="${list.module_id}">${list.module_name}</td>
+                                    <td data-division-id="${list.division_id}">${list.division}</td>
+                                    <td data-batch-id="${list.batch_id}">${list.batch} ( ${list.batch_event})</td>
+                                    <td>
+                                    <select class="select2 dayName" name="dayName"  multiple>
+                                        <option value="0">All Day</option>
+                                        `
+                                        for(let day of JSON.parse(`<%-dayListJSON%>`)){
+                                            AjaxTable += `<option value="${day.id}">${day.day_name}</option>`
+                                        }
+                                    `</select>`
+                                    AjaxTable +=  `</td>
+                                    <td>
+                                        <select class="select2 roomNumber" name="roomNumber"  multiple>
+                                            <option value="0">All Rooms</option>`
+                                            for(let room of JSON.parse(`<%-roomListsJSON%>`)){
+                                            AjaxTable += `<option value="${room.id}">${room.room_number} (${room.room_type})</option>`
+                                            }
+                                        `</select>`
+                                        AjaxTable += `</td>
+                    </tr>`
+                }
+             //   $('.select2').select2('destroy');
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                         <td colspan="8">No Data Found</td>
+                      </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+              
+            $("#add-more-courseDayRoomPreference-table").html(AjaxTable);
+            $('.select2').select2();
+        }
 
 
         function showError(errors) {
