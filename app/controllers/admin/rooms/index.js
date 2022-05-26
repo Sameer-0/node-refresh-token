@@ -19,7 +19,7 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([RoomTransactions.bookedRooms(res.locals.slug), RoomTransactions.getCount(res.locals.slug)]).then(result => {
+        Promise.all([Rooms.bookedRooms(res.locals.slug), RoomTransactions.getCount(res.locals.slug)]).then(result => {
             console.log('organization:::::::::::::::::', result[0].recordset)
             res.render('admin/rooms/index', {
                 bookedRoomList: result[0].recordset,

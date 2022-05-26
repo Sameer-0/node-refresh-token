@@ -18,7 +18,7 @@ module.exports = {
 
     
     getPage: (req, res) => {
-        Promise.all([Days.fetchAll(10, res.locals.slug),  CourseWorkload.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
+        Promise.all([Days.fetchAll(10, res.locals.slug),  CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
            console.log('Program List',result[3].recordsets)
             res.render('admin/courseworkload/preference', {
                 dayList: result[0].recordset,
@@ -26,14 +26,15 @@ module.exports = {
                 roomLists :result[2].recordset,
                 programList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
-                
+                dayListJSON: JSON.stringify(result[0].recordset),
+                roomListsJSON :JSON.stringify(result[2].recordset),
             })
         })
     },
 
     create: (req, res) => {
         let object = {
-            import_faculties: JSON.parse(req.body.inputJSON)
+            set_course_day_room_preferences: JSON.parse(req.body.inputJSON)
         }
         CourseDayRoomPreferences.save(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
@@ -263,6 +264,60 @@ console.log('req.body::::::::::::::::::::',req.body)
                     data: []
                 })
             }
+        })
+    },
+
+    findDivisionByModuleId: (req, res) => {
+        CourseDayRoomPreferences.findDivisionByModuleId(req.body.module_id, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Divison Found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    filterPreference: (req, res) => {
+        CourseDayRoomPreferences.searchPreferences(req.body, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Sucessfull",
+                    data: result.recordset,
+                    length: result.recordset.length
+
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.status(500).json(error.originalError.info.message)
         })
     }
 }
