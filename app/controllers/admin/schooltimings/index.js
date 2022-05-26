@@ -16,48 +16,48 @@ const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
 const SchoolTimingSettings = require('../../../models/SchoolTimingSettings')
 
-module.exports = { 
+module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug)]).then(result => {
+        Promise.all([schoolTiming.fetchAll(10, res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug)]).then(result => {
             console.log(result[6].recordset)
-            res.render("admin/schooltimings/index",{
+            res.render("admin/schooltimings/index", {
                 schoolTimingList: result[0].recordset,
                 programList: result[1].recordset,
-                dayList: JSON.stringify(result[2].recordset),
-                slotTime:result[3].recordset,
+                dayList: result[2].recordset,
+                slotTime: result[3].recordset,
                 schoolTimingTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
                 schoolTimingSettingsList: result[6].recordset,
                 schoolTimingSettingsListJson: JSON.stringify(result[6].recordset),
                 stsStatus: result[7].recordset.length > 0 ? result[7].recordset[0].status : 0,
-                pageCount: result[0].recordset.length, 
+                pageCount: result[0].recordset.length,
                 breadcrumbs: req.breadcrumbs,
             })
         })
     },
 
-    create: (req, res) => {
 
-        if (req.body.settingName) {
-            Settings.updateByName(res.locals.slug, req.body.settingName)
+    create: (req, res) => {
+        let object = {
+            insert_school_timings: JSON.parse(req.body.inputJSON)
         }
-        res.status(200).json({status:200, description:"success", data:[]})
-        // let object = {
-        //     import_faculties: JSON.parse(req.body.inputJSON)
-        // }
-        // schoolTiming.save(object, res.locals.slug, res.locals.userId).then(result => {
-        //     res.status(200).json(JSON.parse(result.output.output_json))
-        // }).catch(error => {
-        //     if(isJsonString.isJsonString(error.originalError.info.message)){
-        //         res.status(500).json(JSON.parse(error.originalError.info.message))
-        //     }
-        //     else{
-        //         res.status(500).json({status:500,
-        //         description:error.originalError.info.message,
-        //         data:[]})
-        //     }
-        // })
+        schoolTiming.save(object, res.locals.slug, res.locals.userId, req.body.settingId).then(result => {
+            if (req.body.settingName) {
+                Settings.updateByName(res.locals.slug, req.body.settingName)
+            }
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
     },
 
     search: (req, res) => {
@@ -79,13 +79,14 @@ module.exports = {
                 })
             }
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
@@ -108,13 +109,14 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
