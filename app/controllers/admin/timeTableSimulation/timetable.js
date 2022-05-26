@@ -1,14 +1,15 @@
-const TimeTableGeneration = require('../../../models/TimeTableGeneration');
+const TimeTable = require('../../../models/TimeTable');
 const AcademicYear = require('../../../models/AcademicYear');
 const AcademicCalender = require('../../../models/AcademicCalender');
 const Programs = require('../../../models/Programs');
+const SchoolTimings = require('../../../models/SchoolTiming');
 
 module.exports = {
 
     getPage: (req, res) => {
-        Promise.all([AcademicYear.fetchAll(), Programs.fetchAll(1000, res.locals.slug), TimeTableGeneration.fetchAll(1000, res.locals.slug), TimeTableGeneration.getRoomRow(res.locals.slug), TimeTableGeneration.getSlotColumn(res.locals.slug)]).then(result => {
+        Promise.all([AcademicYear.fetchAll(), Programs.fetchAll(1000, res.locals.slug), TimeTable.getAllocationListByDayId(res.locals.slug), TimeTable.getRoomRow(res.locals.slug), SchoolTimings.getTimeTableSimulationSlots(res.locals.slug) ]).then(result => {
             console.log('allocationlist:::',  result[2].recordset)
-            res.render('admin/time-table-simulation/timetablegeneration', {
+            res.render('admin/timeTableSimulation/timetable', {
                 acadmicYear: result[0].recordset,
                 programList: result[1].recordset,
                 allocationList: JSON.stringify(result[2].recordset),
@@ -32,7 +33,7 @@ module.exports = {
 
     getSessionByProgram: (req, res, next) => {
 
-        TimeTableGeneration.getAcadSession(res.locals.slug, req.body.program_lid).then(result => {
+        TimeTable.getAcadSession(res.locals.slug, req.body.program_lid).then(result => {
             console.log(result.recordset)  
             res.status(200).send(result.recordset)
         })
@@ -40,7 +41,7 @@ module.exports = {
 
     getAllocationListBydayid: (req, res, next) => {
 
-        TimeTableGeneration.getAllocationListBydayid(res.locals.slug, req.body.day_lid).then(result => {
+        TimeTable.getAllocationListByDayId(res.locals.slug, req.body.day_lid).then(result => {
             console.log(result.recordset)  
             res.status(200).send(result.recordset)
         })
