@@ -49,5 +49,6 @@ router.post('/programs/sessions/search', validate('search'), sessions.search)
 router.post('/programs/sessions/refresh', sessions.refresh)
 //router.post('/programs/sessions/refresh', sessions.refresh)
 router.post('/programs/sessions/program-sessions', sessions.getSessionsByProgram)
+router.post('/programs/sessions/unlocked-program-sessions', sessions.getUnloackedSessionsByProgram)
 
 module.exports = router;

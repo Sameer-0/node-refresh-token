@@ -13,7 +13,7 @@ module.exports = {
         Promise.all([
                 ProgramSessions.getLockedProgram(res.locals.slug),
                 Rooms.fetchBookedRooms(),
-                Days.fetchAll(7, res.locals.slug)
+                Days.fetchActiveDay(res.locals.slug)
             ])
             .then(result => {
 

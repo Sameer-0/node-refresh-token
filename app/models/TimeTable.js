@@ -40,10 +40,10 @@ module.exports = class TimeTable {
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].days d 
-                ON eb.day_lid = d.id WHERE d.id = @dayLid`
+                ON eb.day_lid = d.id WHERE d.id = @dayLid` 
             }
       
-            return pool.request()
+            return pool.request() 
                 .input('dayLid', sql.Int, day_lid)
                 .input('programLid', sql.Int, program_lid)
                 .input('sessionLid', sql.Int, acad_session_lid)
