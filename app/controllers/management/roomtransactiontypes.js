@@ -10,7 +10,7 @@ const RoomTransactionTypes = require('../../models/RoomTransactionTypes')
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([RoomTransactionTypes.fetchAll(10), RoomTransactionTypes.getCount()]).then(result => {
+        Promise.all([RoomTransactionTypes.fetchAll(100), RoomTransactionTypes.getCount()]).then(result => {
             res.render('management/booking/room_transaction_types', {
                 roomTransactionTypeList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,

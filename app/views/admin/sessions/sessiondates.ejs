@@ -158,10 +158,7 @@
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
     <script>
         $(document).ready(function () {
-
-            $('.modalSelect2').select2({ dropdownParent: $('#add-sessiondate-modal')});
-
-
+        $('.modalSelect2').select2({ dropdownParent: $('#add-sessiondate-modal')});
        $('#add-more-sessiondates').on('click', function () {
         let lastTr = $('#sessionDateTableModal tbody tr:last-child')
         lastTr.find('.modalSelect2').select2('destroy');
@@ -197,6 +194,30 @@
             else {
                     alert('Cannot delete this room.')
                 }
+    })
+
+
+
+    $(document).ready(function () {
+        let username = `<%- locals.userId %>`;
+        //Fetch from SAP
+        $(".fetchFromSAP").on('click', function () {
+
+            let ApiObj = {
+                url: '/admin/sessions/dates/fetch-from-sap',
+                type: 'POST',
+                data: {},
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log('Response ::::::::::::::::::::::', result.data)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
+        })
     })
 
 

@@ -30,6 +30,7 @@ module.exports = class {
     }
  
     static search(rowcount, keyword, slug) {
+        console.log('Search Progrom Day::::::::>>', keyword)
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcount)} pd.id, pd.program_lid, pd.day_lid, IIF(pd.is_lecture = 1 ,'Yes','No') as is_lecture, p.program_name, d.day_name 
@@ -37,7 +38,7 @@ module.exports = class {
                 INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
                 INNER JOIN [${slug}].days d ON pd.day_lid = d.id
                 WHERE d.status = 1 AND 
-                WHERE p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword ORDER BY pd.id DESC`)
+                p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword ORDER BY pd.id DESC`)
         })
     }
 
