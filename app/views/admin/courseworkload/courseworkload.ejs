@@ -28,7 +28,6 @@
             </a>
         </div>
 
-
         <div class="col-xl-2 col-lg-4 col-md-6">
             <a href="/admin/courseworkload/workload">
                 <div class="card row1-data-card text-center">
@@ -71,7 +70,6 @@
             <div id="errorHtml"></div>
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-
             <table class="table custom_row table-bordered" id="courseWorkloadTable">
                 <thead>
                     <th>Sr No.</th>
@@ -162,12 +160,12 @@
                     <div class="col-md-3 col-xxl-3 select-items">
                         <!-- <h4 class="text-center py-1 select-room-header">Select Program</h4> -->
                         <input type="text" placeholder="Search Program" class="form-control searchItemCourse"
-                            style="width:24%">
-                        <ul class="list-group custom-select-list selectList selectListCourse" style="margin-top: 70px;">
+                            style="width:24%;top:87px;left: 4px;">
+                        <ul class="list-group custom-select-list selectList selectListCourse" style="margin-top: 36px;">
                             <% for (let coursewsdl of coursewsdlList){ %>
                             <li class="list-group-item my-1 border-top" data-clickable="true"
-                                data-module-objid="<%-coursewsdl.module_objid %>">
-                                <%- coursewsdl.module_desc %></li>
+                                data-module-objid="<%-coursewsdl.module_objid %>" data-course-wsdl-id="<%- coursewsdl.id %>">
+                                <%- coursewsdl.module_desc %>  <%- coursewsdl.prog_code %></li>
                             <% }%>
                         </ul>
                     </div>
@@ -175,21 +173,19 @@
                         <table class="table table-bordered" id="add-more-course-table">
                             <thead>
                                 <tr>
-                                    <th>Program Name</th>
+                                    <th>Course Name</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
             <div class="error-html"></div>
             <div class="modal-footer">
-                <button type="button" class="btn modal-inputform-btn" id="importProgram">Import Program</button>
+                <button type="button" class="btn modal-inputform-btn" id="importCourse">Import Course</button>
             </div>
         </div>
     </div>
@@ -297,6 +293,10 @@
         })
 
 
+
+
+
+
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
@@ -336,7 +336,7 @@
                 console.log('appending:::::>>')
                 $("#open-course-modal #add-more-course-table  tbody").append(
                     `<tr data-clickable="true">
-                    <td data-value="${$(this).attr('data-program-code')}">${$(this).text()}</td>
+                    <td data-module-objid="${$(this).attr('data-module-objid')}" data-course-wsdl-id="${$(this).attr("data-course-wsdl-id")}">${$(this).text()}</td>
                     <td>
                         <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
                     </td>
@@ -351,8 +351,9 @@
 
         //Remove Element
         $("#add-more-course-table").on('click', '.clicktoremove', function () {
+            console.log('Log Here',$(this).parent().parent().find('td[data-module-objid]').attr('data-module-objid'))
             if ($(this).parent().parent().attr('data-clickable') == 'true') {
-                $(".selectListCourse").append(`<li class="list-group-item my-1 border-top" data-faculty-name="${$(this).parent().attr("data-faculty-name")}" data-faculty-id="${$(this).parent().attr("data-faculty-id")}" data-clickable="true"> ${$(this).parent().parent().find("td[data-value]").text()} 
+                $(".selectListCourse").append(`<li class="list-group-item my-1 border-top" data-module-objid="${$(this).parent().parent().find('td[data-module-objid]').attr('data-module-objid')}" data-course-wsdl-id="${$(this).parent().parent().find('td[data-course-wsdl-id]').attr('data-course-wsdl-id')}" data-clickable="true"> ${$(this).parent().parent().find("td[data-module-objid]").text()} 
                     </li>`)
             }
 
@@ -361,6 +362,49 @@
                 $($(this).parent().parent()).remove()
             })
         })
+
+
+                //Import
+                $('#importCourse').on('click', function() {
+
+                    let courseElems = $('#add-more-course-table tbody tr');
+                    let courseCount = courseElems.length;
+                    let courseJson = [];
+                    courseElems.each(function (index, elem) {
+
+                        let wsdlId = $(elem).find('td[data-course-wsdl-id]').attr('data-course-wsdl-id');
+
+                        if (index < courseCount - 1) {
+                            let obj = {
+                                wsdlId: wsdlId
+                            }
+                            courseJson.push(obj)
+                        } else {
+                            let obj = {
+                                wsdlId: wsdlId
+                            }
+                            courseJson.push(obj)
+                        }
+                    })
+                    console.log('JSON::::::::::::::::',courseJson);
+                    let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/courseworkload/workload/create',
+                    data: {
+                        inputJSON: JSON.stringify(courseJson),
+                    
+                    },
+                    dataType: 'JSON' 
+                    }
+
+                    ajaxApi(ApiObj).then(result => {
+                    console.log('response::::::::::',result)
+                    showSuccess(result)              
+                    }).catch(error => {
+                    console.log('ERROR::::::::::',error.responseJSON)
+                    showError(error.responseJSON)
+                    })
+            })
 
 
         function AjaxtTable(workloadList) {
