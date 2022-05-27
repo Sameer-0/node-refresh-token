@@ -16,7 +16,7 @@ module.exports = class schoolTiming {
            INNER JOIN [${slug}].programs p ON p.id = st.program_lid
            INNER JOIN [${slug}].school_timing_types stt ON stt.id = st.type_lid
            INNER JOIN [dbo].acad_sessions acs ON acs.id = st.acad_session_lid
-           ORDER BY st.acad_session_lid`)
+           ORDER BY st.acad_session_lid`) 
         })
     }
  
@@ -45,8 +45,14 @@ module.exports = class schoolTiming {
                INNER JOIN [${slug}].days d ON d.id =  st.day_lid
                INNER JOIN [${slug}].programs p ON p.id = st.program_lid
                INNER JOIN [${slug}].school_timing_types stt ON stt.id = st.type_lid
-               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.id
+               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.acad_session_lid
                ORDER BY st.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static getCount(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [${slug}].school_timings`)
         })
     }
 
@@ -62,9 +68,9 @@ module.exports = class schoolTiming {
                INNER JOIN [${slug}].days d ON d.id =  st.day_lid
                INNER JOIN [${slug}].programs p ON p.id = st.program_lid
                INNER JOIN [${slug}].school_timing_types stt ON stt.id = st.type_lid
-               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.id
+               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.acad_session_lid
                WHERE st.name LIKE @keyword OR sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR d.day_name LIKE @keyword OR p.program_name LIKE @keyword OR p.abbr LIKE @keyword OR stt.name LIKE @keyword OR acs.acad_session LIKE @keyword OR p.program_id LIKE @keyword
-               ORDER BY st.id DESC`)
+               ORDER BY st.acad_session_lid`)
         })
     }
 

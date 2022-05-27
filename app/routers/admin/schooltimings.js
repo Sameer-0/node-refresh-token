@@ -8,7 +8,7 @@ router.post('/schooltiming/create',  index.create)
 router.post('/schooltiming/search', index.search)
 router.post('/schooltiming/pagination', index.pagination)
 
-//TYPES
+//TYPES 
 router.get('/schooltiming/types', type.getPage)
 router.post('/schooltiming/types/findone', type.findOne)
 router.post('/schooltiming/types', type.create)

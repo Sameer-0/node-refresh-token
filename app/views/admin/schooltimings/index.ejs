@@ -62,10 +62,10 @@
                     <th>Day</th>
                 </thead>
                 <tbody>
-                    <%let count = 1;%>
+                    <%let count = 1%>
                     <% for(let schooltime of schoolTimingList) {%>
                     <tr>
-                    <td>#</td>
+                    <td><%- count++ %></td>
                     <td><%-schooltime.name%></td>
                     <td><%-schooltime.program_name%></td>
                     <td><%-schooltime.program_id%></td>
@@ -186,7 +186,7 @@
 </div>
 
 <%- include("../partials/footer") %>
-
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -366,7 +366,7 @@
                                         <%}%>
                                     </select>
                                 </td>
-                                <td>
+                                <td> 
                                     <select class="select2 modalSelect2" name="startTime">
                                         <% for(time of slotTime){%>
                                             <option value="<%- time.id%>"><%- time.start_time %></option>
@@ -850,7 +850,39 @@
         })
 
  
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
+            console.log("Page Count=====>>>", pageCount)
+            let pageNos = Math.ceil(Number(pageCount) / 10)
+            console.log("Page Numbers", pageNos)
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
 
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/schooltiming/pagination",
+                    data: {
+                        pageNo: num
+                    },
+                    success: function (data) {
+                        AjaxTable(data.data)
+                    }
+                })
+            });
 
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
@@ -868,6 +900,69 @@
             })
         }, 500));
 
+        $('#searchkeyword').on('input', delay(function (e) {
+        let keyword = $("#searchkeyword").val()
+        let ApiObj = {
+            url: "/admin/schooltiming/search",
+            type: "POST",
+            data: {
+                keyword: keyword
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+           AjaxTable(result.data)
+           
+        }).catch(error => {
+
+            showError(error)
+        })
+    }, 500));
+
+
+
+    function AjaxTable (schoolTimingList){
+        let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
+                <thead>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Program Name</th>
+                    <th>Program Name</th>
+                    <th>Session</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>School Timing Type</th>
+                    <th>Day</th>
+                </thead>
+                <tbody>
+                    `;
+
+            if (schoolTimingList.length > 0) {
+                let count = 1;
+                for (schooltime of schoolTimingList) {
+                    AjaxTable +=
+                        `<tr>
+                    <td>${ count++ }</td>
+                    <td>${schooltime.name}</td>
+                    <td>${schooltime.program_name}</td>
+                    <td>${schooltime.program_id}</td>
+                    <td>${schooltime.acad_session}</td>
+                    <td>${schooltime.start_time}</td>
+                    <td>${schooltime.end_time}</td>
+                    <td>${schooltime.schooltimetype}</td>
+                    <td>${schooltime.day_name}</td>
+                    </tr>`
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
+                        <td colspan="9" class="text-center">No Data Found</td>
+                     </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+            $("#divisionTable").html(AjaxTable);
+    }
         
 
         function showSuccess(errors) {

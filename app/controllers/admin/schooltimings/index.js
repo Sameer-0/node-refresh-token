@@ -19,8 +19,8 @@ const SchoolTimingSettings = require('../../../models/SchoolTimingSettings')
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([schoolTiming.fetchAll(10, res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug)]).then(result => {
-            console.log(result[6].recordset)
+        Promise.all([schoolTiming.fetchAll(10, res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), schoolTiming.getCount(res.locals.slug)]).then(result => {
+            console.log(result[8].recordset)
             res.render("admin/schooltimings/index", {
                 schoolTimingList: result[0].recordset,
                 programList: result[1].recordset,
@@ -31,11 +31,11 @@ module.exports = {
                 schoolTimingSettingsList: result[6].recordset,
                 schoolTimingSettingsListJson: JSON.stringify(result[6].recordset),
                 stsStatus: result[7].recordset.length > 0 ? result[7].recordset[0].status : 0,
-                pageCount: result[0].recordset.length,
+                pageCount: result[8].recordset[0].count,
                 breadcrumbs: req.breadcrumbs,
             })
         })
-    },
+    }, 
  
 
     create: (req, res) => {
@@ -66,7 +66,7 @@ module.exports = {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
-                    message: "Room Type fetched",
+                    message: "School Timing fetched",
                     data: result.recordset,
                     length: result.recordset.length
                 })
@@ -102,6 +102,7 @@ module.exports = {
         }
 
         schoolTiming.pagination(req.body.pageNo, res.locals.slug).then(result => {
+            console.log('resp:::', result)
             res.json({
                 status: "200",
                 message: "Quotes fetched",
