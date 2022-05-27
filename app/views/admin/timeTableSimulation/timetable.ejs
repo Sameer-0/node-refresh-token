@@ -20,7 +20,11 @@
         <div class="card-body" id="timetable-filter">
             <div class="row">
                 <div class="input-groups col-md-4 col-sm-12">
-                    <label for="program-name">Select Program:</label>
+                    <label for="program-name" class="d-flex justify-content-between">Select Program: <div class="input-groups">
+                        <label for="all-program">Select All Program</label>
+                        <input type="checkbox" id="all-program">
+                    </div></label>
+                   
                     <select name="program-name" id="program-name" class="form-select">
                         <option selected disabled value>--Select Program--</option>
                         <% for(let program of programList){%>
@@ -121,12 +125,35 @@
                                     })
                                 })
 
+                                
+                                $('#all-program').on('click', function(){
+                                    if(!$('#program-name').attr('disabled')){
+                                   $('#program-name').attr('disabled', 'disabled');
+                                    }else{
+                                        $('#program-name').removeAttr('disabled');
+                                    }
+
+                                    if(!$('#session-name').attr('disabled')){
+                                   $('#session-name').attr('disabled', 'disabled');
+                                    }else{
+                                        $('#session-name').removeAttr('disabled');
+                                    }
+                                    
+                                })
+
+                                // $('#all-session').on('click', function(){
+                                //     if(!$('#session-name').attr('disabled')){
+                                //    $('#session-name').attr('disabled', 'disabled');
+                                //     }else{
+                                //         $('#session-name').removeAttr('disabled');
+                                //     }
+                                // })
+
                                 $("#session-name").on('change', function () {
                                     if($('#day').attr('disabled'))
                                     $('#day').removeAttr('disabled');
                                     $('#day').val("")
                                 })
-
 
 
                                 $("#day").on('change', function () {
@@ -175,7 +202,7 @@
                                             tableStr += '</tr>'
                                         }
 
-                                        tableStr += '</tbody>'
+                                        tableStr += '</tbody>' 
 
                                         $('.timeTableSimulation').html(tableStr)
 
