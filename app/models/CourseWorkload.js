@@ -127,7 +127,8 @@ module.exports = class {
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_insert_initial_course_workload]`)
+               // .execute(`[${slug}].[sp_insert_initial_course_workload]`)
+                .execute(`[${slug}].[sp_import_course_workload_sap]`)
         })
     }
 }

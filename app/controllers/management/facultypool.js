@@ -18,6 +18,7 @@ module.exports = {
 
 
     refresh: (req, res) => {
+
         FacultyPool.refresh(res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
