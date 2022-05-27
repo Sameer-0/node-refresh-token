@@ -31,4 +31,5 @@ router.post('/academic/session/pagination', validate('pagination'), acadsessionc
 router.get('/academic/calender', acadCalender.getPage)
 router.post('/academic/calender/search', validate('search'), acadCalender.search)
 router.post('/academic/calender/pagination', validate('pagination'), acadCalender.pagination)
+router.post('/academic/calender/refresh', acadCalender.refresh)
 module.exports = router;
