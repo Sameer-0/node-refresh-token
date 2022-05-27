@@ -246,7 +246,13 @@
         $(".selectRoomList").on('click', '.list-group-item', function () {
             let building_lid =  $("#building_lid").val()
             let campus_lid =  $("#campus_lid").val()
-            console.log('campus_lid::>>>', campus_lid)
+           // Get Room Slot By Room Id
+        roomSlotByRoomId($(this).attr('data-room-id')).then(result=>{
+            console.log('slotTimeDrop:::::::::::',result)
+           })
+
+
+            
             //remove current element when added to right sidebar
             // if ($(this).attr('data-clickable') == 'true') {
             $(".selectedList table tbody").append(
@@ -279,6 +285,9 @@
             });
             $(this).attr('data-clickable', 'false');
         })
+
+
+
 
         //Remove Element
         $(".selectedList").on('click', '.clicktoremove', function () {
@@ -402,6 +411,21 @@
         }, 500));
 
 
+        //Get Room Slot Time For Specific Room
+        function roomSlotByRoomId(roomLid){
+            console.log('Room Lid Fun:::::::::::>>', roomLid)
+            return $.ajax({
+                type: "POST",
+                url: "/admin/rooms/booking/room-slot-by-room-id",
+                data: {
+                    roomLid: roomLid
+                },
+                success: function (data) {
+                 //   console.log('data::::::::::',data.roomslot)
+                    return data.roomslot;
+                }
+            })
+        }
 
         //Pagination Here
         let pageCount = `<%- pageCount %>`

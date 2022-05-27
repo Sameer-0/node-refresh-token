@@ -24,7 +24,7 @@ router.post('/rooms/delete-room-detail', validate('delete'), details.delete)
 router.get('/rooms/booking', room.getBookingPage)
 router.post('/rooms/booking/getbuildingbycampusid', buildings.getBuildingByCampusId)
 router.post('/rooms/booking/getroomsbybuildingid', room.getroomsbybuildingid)
-
+router.post('/rooms/booking/room-slot-by-room-id', room.roomSlotByRoomId)
 
 
 //ROOM TRANSACTION DETAILS

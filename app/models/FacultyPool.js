@@ -1,4 +1,3 @@
-
 const {
     sql,
     poolConnection,
@@ -22,17 +21,14 @@ module.exports = class FacultyPool {
         })
     }
 
-
     static refresh(userid) {
-        console.log('Refresh::::::::>>')
         return poolConnection.then(pool => {
             const request = pool.request();
             return request
-            .input('last_modified_by', sql.Int, userid)
+                .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[dbo].[sp_refresh_faculties]`)
         })
     }
-
 
 }
