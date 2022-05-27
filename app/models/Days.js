@@ -24,7 +24,6 @@ module.exports = class Days {
         })
     }
 
-
     static fetchAll(rowcont, slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcont)} id, day_name,  IIF(status = 1,'Yes','No') as status FROM [${slug}].[days]  ORDER BY id ASC`)
@@ -36,6 +35,5 @@ module.exports = class Days {
             return pool.request().query(`SELECT id, day_name,  status  FROM [${slug}].[days] WHERE status <> 0`)
         })
     }
-
 
 }
