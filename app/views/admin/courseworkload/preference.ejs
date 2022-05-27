@@ -62,7 +62,7 @@
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
                     <div class="table-responsive" >
-                        <table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
+                        <table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table" loading="lazy" onload="tableLoad()">
                             <thead>
                                 <th>Sr No.</th>
                                 <th>Program Name</th>
@@ -70,8 +70,8 @@
                                 <th>Module Name</th>
                                 <th>Division</th>
                                 <th>Batch</th>
-                                <th>Day Select All <input type="checkbox" id="dayCheck"></th>
-                                <th>Room No Select All <input type="checkbox" id="roomCheck"></th>
+                                <th>Day's <!--Select All <input type="checkbox" id="dayCheck">--></th>
+                                <th>Room No <!--Select All <input type="checkbox" id="roomCheck">--></th>
                             </thead>
                             <tbody>
                                 <%let _count = 1;%>
@@ -85,7 +85,6 @@
                                     <td data-batch-id="<%- list.batch_id %>"><%- list.batch %> ( <%- list.batch_event %>)</td>
                                     <td>
                                     <select class="select2 dayName" name="dayName"  multiple>
-                                        <option value="0">All Day</option>
                                         <%for(let day of dayList){%>
                                         <option value="<%-day.id%>"><%-day.day_name %></option>
                                         <%}%>
@@ -93,7 +92,6 @@
                                     </td>
                                     <td>
                                         <select class="select2 roomNumber" name="roomNumber"  multiple>
-                                            <option value="0">All Rooms</option>
                                             <%for(let room of roomLists){%>
                                             <option value="<%-room.id%>"><%-room.room_number%> (<%-room.room_type%>)</option>
                                             <%}%>
@@ -115,33 +113,42 @@
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 
 <script>
-
+window.addEventListener("load", tableLoad=>{
+    console.log('Fully Loaded')
+});
     $(document).ready(function () {
      $('.select2').select2();
 
    //Day  Check
-   $("#add-more-courseDayRoomPreference-table").on('change','#dayCheck',function(){
-    if($(this).is(":checked")){
-        $(".dayName").prop('disabled','disabled')
-        console.log('True')
-    }else
-    {
-        $(".dayName").removeAttr('disabled')
-        console.log('False')
-    }
- })
+//    $("#add-more-courseDayRoomPreference-table").on('change','#dayCheck',function(){ 
+//     if($(this).is(":checked")){
+//         let tableRow = $('#add-more-courseDayRoomPreference-table tbody tr');
+//         tableRow.each(function (index, elem){
+//             console.log('Element:::::::::>>', $(elem).find(`select[name='dayName']`).val())
+//             let days = $(elem).find(`select[name='dayName']`).val()
+//             $(`#add-more-courseDayRoomPreference-table tbody tr td select[name='dayName']`).val(days).trigger('change')
 
-//Day  Check
-    $("#add-more-courseDayRoomPreference-table").on('change','#roomCheck',function(){
-    if($(this).is(":checked")){
-        $(".roomNumber").prop('disabled','disabled')
-        console.log('True')
-    }else
-    {
-        $(".roomNumber").removeAttr('disabled')
-        console.log('False')
-    }
- })
+//         })
+//        $(".dayName").prop('disabled','disabled')
+//         console.log('True')
+//     }else
+//     {
+//         $(".dayName").removeAttr('disabled')
+//         console.log('False')
+//     }
+//  })
+
+//Room  Check
+//     $("#add-more-courseDayRoomPreference-table").on('change','#roomCheck',function(){
+//     if($(this).is(":checked")){
+//         $(".roomNumber").prop('disabled','disabled')
+//         console.log('True')
+//     }else
+//     {
+//         $(".roomNumber").removeAttr('disabled')
+//         console.log('False')
+//     }
+//  })
 
 
  $("#programName").on('change',function(){
@@ -272,21 +279,8 @@
                 let moduleId = $(elem).find(`td[data-module-id]`).attr(`data-module-id`)
                 divArray.push($(elem).find(`td[data-division-id]`).attr(`data-division-id`))
                 batchArray.push($(elem).find(`td[data-batch-id]`).attr(`data-batch-id`))
-                
-                //IF DAY IS CHEKED (ALL DAY SET 0) THEN IT WILL SET 0 ELSE VALUE WILL SET MANUALLY ACCOURDING TO USER SELECTION
-                let days = 0;
-                if($("#dayCheck").is(":checked")){
-                days = [0]
-                }else{
-                    days = $(elem).find(`select[name='dayName']`).val()
-                }
-
-                let rooms = 0
-                if($("#roomCheck").is(":checked")){
-                    rooms = [0]
-                }else{
-                    rooms = $(elem).find(`select[name='roomNumber']`).val()
-                }
+                let  days = $(elem).find(`select[name='dayName']`).val();
+                let rooms = $(elem).find(`select[name='roomNumber']`).val()
               
                 if (index < courseDayCount - 1) {
                     let obj = {
@@ -314,21 +308,21 @@
             })
             console.log('JSON:::::::::::::::::::::>>>>',JSON.stringify(courseDayJson))
 
-            // let apiObj = {
-            //     type:"POST",
-            //     url:"/admin/courseworkload/preference/create",
-            //     data: {
-            //         inputJSON: JSON.stringify(courseDayJson)
-            //     },
-            //     dataType:"JSON"
-            // }
-            // ajaxApi(apiObj).then(result => {
-            //     console.log('result ::::::::::::::::::::::', result)
-            //     showSuccess(result)
-            // }).catch(error => {
-            //     console.log('Error ::::::::::::::::::::::', error)
-            //     showError(error.responseJSON)
-            // })
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseworkload/preference/create",
+                data: {
+                    inputJSON: JSON.stringify(courseDayJson)
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
         })
 
 
@@ -368,8 +362,7 @@
 
 
         function showAjaxTable(preferenecesList) {
-            
-            let AjaxTable = `<table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table">
+            let AjaxTable = `<table class="table table-bordered table-bordered" id="add-more-courseDayRoomPreference-table" loading="lazy">
                             <thead>
                                 <th>Sr No.</th>
                                 <th>Program Name</th>
@@ -377,8 +370,8 @@
                                 <th>Module Name</th>
                                 <th>Division</th>
                                 <th>Batch</th>
-                                <th>Day Select All <input type="checkbox" id="dayCheck"></th>
-                                <th>Room No Select All <input type="checkbox" id="roomCheck"></th>
+                                <th>Day's <!--Select All <input type="checkbox" id="dayCheck">--></th>
+                                <th>Room No <!--Select All <input type="checkbox" id="roomCheck">--></th>
                             </thead>
                             <tbody>`;
             if (preferenecesList.length > 0) {
@@ -393,17 +386,14 @@
                                     <td data-division-id="${list.division_id}">${list.division}</td>
                                     <td data-batch-id="${list.batch_id}">${list.batch} ( ${list.batch_event})</td>
                                     <td>
-                                    <select class="select2 dayName" name="dayName"  multiple>
-                                        <option value="0">All Day</option>
-                                        `
+                                    <select class="select2 dayName" name="dayName"  multiple>`
                                         for(let day of JSON.parse(`<%-dayListJSON%>`)){
                                             AjaxTable += `<option value="${day.id}">${day.day_name}</option>`
                                         }
                                     `</select>`
                                     AjaxTable +=  `</td>
                                     <td>
-                                        <select class="select2 roomNumber" name="roomNumber"  multiple>
-                                            <option value="0">All Rooms</option>`
+                                        <select class="select2 roomNumber" name="roomNumber"  multiple>`
                                             for(let room of JSON.parse(`<%-roomListsJSON%>`)){
                                             AjaxTable += `<option value="${room.id}">${room.room_number} (${room.room_type})</option>`
                                             }
@@ -411,7 +401,6 @@
                                         AjaxTable += `</td>
                     </tr>`
                 }
-             //   $('.select2').select2('destroy');
             } else {
                 AjaxTable +=
                     ` <tr>
@@ -419,7 +408,6 @@
                       </tr>`;
             }
             AjaxTable += `<tbody></table>`
-              
             $("#add-more-courseDayRoomPreference-table").html(AjaxTable);
             $('.select2').select2();
         }

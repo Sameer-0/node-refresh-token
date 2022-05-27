@@ -169,9 +169,11 @@ module.exports = class Rooms {
                 .query(`SELECT r.id, r.room_number, r.room_type_id FROM (SELECT DISTINCT room_lid FROM room_slots WHERE alloted_to = 24) t1
                 INNER JOIN rooms r ON t1.room_lid = r.id
                 ORDER BY r.room_number`)
+        })
+    }
+
 
     static bookedRooms(slug) {
-
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 

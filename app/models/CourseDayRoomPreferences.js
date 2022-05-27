@@ -114,6 +114,7 @@ module.exports = class CourseDayRoomPreferences {
 
 
     static save(inputJSON, slug, userid) {
+        console.log('inputJSON::::::::::',inputJSON)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))

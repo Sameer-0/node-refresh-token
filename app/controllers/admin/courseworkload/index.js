@@ -15,19 +15,18 @@ var soap = require("soap");
 
 module.exports = {
 
-   getPage: (req, res) => {
-        Promise.all([CourseWorkload.fetchAllWSDL(res.locals.slug),  AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
-          console.log(result[0].recordset)
+    getPage: (req, res) => {
+        Promise.all([CourseWorkload.fetchAllWSDL(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
             res.render('admin/courseworkload/index', {
-            courseWorkloadList: result[0].recordset,
-            acadYear: result[1].recordset[0].input_acad_year,
-            programList: result[2].recordset,
-            AcadSessionList: result[3].recordset,
-            moduleList: result[4].recordset,
-            breadcrumbs: req.breadcrumbs,
-          })
+                courseWorkloadList: result[0].recordset,
+                acadYear: result[1].recordset[0].input_acad_year,
+                programList: result[2].recordset,
+                AcadSessionList: result[3].recordset,
+                moduleList: result[4].recordset,
+                breadcrumbs: req.breadcrumbs,
+            })
         })
-      },
+    },
 
     fetchFromSAP: async (req, res, next) => {
         console.log('REQ::::::::::::::::', req.body)
