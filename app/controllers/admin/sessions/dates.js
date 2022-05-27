@@ -10,7 +10,8 @@ const SessionTypes  = require('../../../models/SessionTypes')
 const ProgramSessions = require('../../../models/ProgramSessions')
 const isJsonString = require('../../../utils/util')
 const Settings = require('../../../models/Settings')
-
+const path = require("path");
+var soap = require("soap");
 
 module.exports = {
     getPage: (req, res) => {
@@ -197,5 +198,60 @@ module.exports = {
                 data:[]})
             }
         })
-    }
+    },
+    
+    fetchFromSAP: async (req, res, next) => {
+      
+
+        var wsdlUrl = path.join(
+            process.env.WSDL_PATH,
+            "zacademic_period_jp_bin_fed110_20200806.wsdl"
+        );
+
+        console.log('wsdlUrl::::::::::::::::', wsdlUrl)
+
+
+        let soapClient = await new Promise(resolve => {
+            soap.createClient(wsdlUrl, async function (err, soapClient) {
+                if (err) {
+                    next(err);
+                }
+                resolve(soapClient);
+            })
+        })
+
+        let courseWorkloadList = await new Promise(async resolve => {
+
+            console.log('soapClient::::::',soapClient)
+
+            await soapClient.ZacademicPeriodJp({
+                    Campusid: res.locals.campusId,
+                    Acadyear: "2022",
+                    Schoolobjectid: "00004533"
+                },
+                async function (err, result) {
+                    let output = await result;
+                    console.log('output::::::::::',output)
+                    resolve(output.WORKLOAD_DETAILS ? output.WORKLOAD_DETAILS.item : []);
+                });
+        })
+
+        console.log('courseWorkloadList:::::::::', JSON.stringify(courseWorkloadList))
+
+
+        // CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
+        //     console.log('Data>>> ', data)
+        //     console.log("acadSessionLif>>> ", acadSessionLid)
+        //     res.status(200).json({
+        //         data: courseWorkloadList
+        //     });
+        // }).catch(err => {
+        //     console.log(err)
+        // });
+        res.status(200).json({
+            "status" : 200,
+            "description" : "Success",
+            "data": {}
+            })
+    },
 }

@@ -33,4 +33,5 @@ router.post('/sessions/dates/delete', dates.delete)
 router.post('/sessions/dates/findone', dates.findOne)
 router.post('/sessions/dates/search', dates.search)
 router.post('/sessions/dates/pagination', dates.pagination)
+router.post('/sessions/dates/fetch-from-sap', dates.fetchFromSAP)
 module.exports = router;
