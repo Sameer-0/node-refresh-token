@@ -60,7 +60,6 @@
                     <th>End Time</th>
                     <th>School Timing Type</th>
                     <th>Day</th>
-                    <th>Action</th>
                 </thead>
                 <tbody>
                     <%let count = 1;%>
@@ -75,12 +74,6 @@
                     <td><%-schooltime.end_time%></td>
                     <td><%-schooltime.schooltimetype%></td>
                     <td><%-schooltime.day_name%></td>
-                     <td>
-                        <i class="fas fa-edit text-dark cursor-pointer edit-school-time-type"
-                            data-time-type-id="<%- schooltime.id %>"></i>
-                            <i class="fas fa-trash text-dark cursor-pointer edit-school-time-type"
-                            data-time-type-id="<%- schooltime.id %>"></i>
-                    </td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -621,7 +614,8 @@
                     schoolTimingJson.push(obj)
                 }
         })
-    } else if($(`.schoolTimingOptions[id="sts-2"]`).is(':checked')){
+        } 
+        else if($(`.schoolTimingOptions[id="sts-2"]`).is(':checked')){
             let schoolTimingElems = $('#add-more-DayWise-table tbody tr');
             let schoolTimingCount = schoolTimingElems.length;
             schoolTimingElems.each(function (index, elem) {
@@ -648,7 +642,8 @@
                 }
         })
         console.log('schoolTimingJson For settingId :::::::::::>>', settingId, schoolTimingJson)
-    } else if($(`.schoolTimingOptions[id="sts-3"]`).is(':checked')){
+        }
+        else if($(`.schoolTimingOptions[id="sts-3"]`).is(':checked')){
             let schoolTimingElems = $('#add-more-programAndDayWise-table tbody tr');
             let schoolTimingCount = schoolTimingElems.length;
             schoolTimingElems.each(function (index, elem) {
@@ -679,7 +674,8 @@
                 }
         })
         console.log('schoolTimingJson For settingId :::::::::::>>', settingId, schoolTimingJson)
-    }else if($(`.schoolTimingOptions[id="sts-4"]`).is(':checked')){
+        }
+        else if($(`.schoolTimingOptions[id="sts-4"]`).is(':checked')){
             let schoolTimingElems = $('#add-more-programDaySessionWise-table tbody tr');
             let schoolTimingCount = schoolTimingElems.length;
             schoolTimingElems.each(function (index, elem) {
@@ -712,10 +708,8 @@
                     schoolTimingJson.push(obj)
                 }
             })
-            console.log('schoolTimingJson For settingId :::::::::::>>', settingId, schoolTimingJson)
+          
         }
-
-        console.log('Final JSON WIth Setting id :::::::::::>>', settingId, schoolTimingJson)
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/schooltiming/create',
@@ -730,98 +724,92 @@
             }).catch(error => {
                 showError(error.responseJSON)
             }) 
-
     })
 
-    if($('schoolTimingOptions').attr('id') == 'sameForAllDay'){}
-    
-        //Api for onchange program event
-        $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
-            let program_lid = $(this).val();
-                console.log('program_lid', program_lid)
-            let apiObj = {
-                type:"POST",
-                url:"/admin/courseDayRoomPreference/acadSessionList",
-                data: {
-                    program_lid: program_lid
-                },
-                dataType:"JSON"
-            }
+        if($('schoolTimingOptions').attr('id') == 'sameForAllDay'){}
+        
+            //Api for onchange program event
+            $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
+                let program_lid = $(this).val();
+                    console.log('program_lid', program_lid)
+                let apiObj = {
+                    type:"POST",
+                    url:"/admin/courseDayRoomPreference/acadSessionList",
+                    data: {
+                        program_lid: program_lid
+                    },
+                    dataType:"JSON"
+                }
 
-            ajaxApi(apiObj).then(result => {
-                let acadList = `<select class="form-select sessionForProgram" name="acadSession" id="">`
-                    if(result.data.acadSessionList.length > 0){
-                        for(let data of result.data.acadSessionList){
-                        acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
+                ajaxApi(apiObj).then(result => {
+                    let acadList = `<select class="form-select sessionForProgram" name="acadSession" id="">`
+                        if(result.data.acadSessionList.length > 0){
+                            for(let data of result.data.acadSessionList){
+                            acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
+                            }
                         }
-                    }
-                    else{
-                        acadList += `<option value=""> NO SESSION FOUND <option>`
-                    }
-                    acadList += `</select>`
-                    $(this).parent().next().html(acadList);
+                        else{
+                            acadList += `<option value=""> NO SESSION FOUND <option>`
+                        }
+                        acadList += `</select>`
+                        $(this).parent().next().html(acadList);
 
-                console.log('list:::>>>', $(this).parent().next());
-            }).catch(error =>{
-                showError(error.responseJSON)
-            });
-        })
-
-        $(".AddRoomPreference").on('click',function(){
-            let school_timings_name = $("#school_timings_name").val()
-            let program_lid = $("#program_name").val()// Get Value of Dropdown
-            let program_text =  $("#program_name option:selected").text(); // Get Text of Dropdown
-            let acad_session_lid = $("#acad_session").val();
-            let acad_session_text =  $("#acad_session option:selected").text();
-            let day_name_lid = $("#day_name").val();
-            let day_text =  $( "#day_name option:selected").text();
-            let slot_start_lid = $("#slot_start_lid").val();
-            let slot_start_text =  $( "#slot_start_lid option:selected").text();
-            let slot_end_lid = $("#slot_end_lid").val();
-            let slot_end_text =  $( "#slot_end_lid option:selected").text();
-            $("#add-more-schoolTiming-table tbody").append(`
-            <tr>
-                                    <td>
-                                    #
-                                    </td>
-                                    <td data-school-timings-name="${school_timings_name}">
-                                        ${school_timings_name}
-                                    </td>
-                                    <td data-program-lid="${program_lid}">
-                                        ${program_text}
-                                    </td>
-                                    <td data-acad-session-lid="${acad_session_lid}">
-                                        ${acad_session_text}
-                                    </td>
-                                    <td data-day-name-lid="${day_name_lid}">
-                                        ${day_text}
-                                    </td>
-                                    <td data-slot-start-lid="${slot_start_lid}">
-                                        ${slot_start_text}
-                                    </td>
-                                    <td data-start-end-lid="${slot_end_lid}">
-                                        ${slot_end_text}
-                                    </td>
-                                    <td>
-                                        <i class="far fa-edit d-none"></i>
-                                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingRow"></i>
-                                    </td>
-                                </tr>
-                    `)
-
-        })
-
-
-        //Remove Element
-        $("#add-more-schoolTiming-table").on('click', '.remove-schoolTimingRow', function () {
-            $($(this)).fadeOut(300, function () {
-               $($(this).parent().parent()).remove()
+                    console.log('list:::>>>', $(this).parent().next());
+                }).catch(error =>{
+                    showError(error.responseJSON)
+                });
             })
-        })
+
+            $(".AddRoomPreference").on('click',function(){
+                let school_timings_name = $("#school_timings_name").val()
+                let program_lid = $("#program_name").val()// Get Value of Dropdown
+                let program_text =  $("#program_name option:selected").text(); // Get Text of Dropdown
+                let acad_session_lid = $("#acad_session").val();
+                let acad_session_text =  $("#acad_session option:selected").text();
+                let day_name_lid = $("#day_name").val();
+                let day_text =  $( "#day_name option:selected").text();
+                let slot_start_lid = $("#slot_start_lid").val();
+                let slot_start_text =  $( "#slot_start_lid option:selected").text();
+                let slot_end_lid = $("#slot_end_lid").val();
+                let slot_end_text =  $( "#slot_end_lid option:selected").text();
+                $("#add-more-schoolTiming-table tbody").append(`
+                <tr>
+                                        <td>
+                                        #
+                                        </td>
+                                        <td data-school-timings-name="${school_timings_name}">
+                                            ${school_timings_name}
+                                        </td>
+                                        <td data-program-lid="${program_lid}">
+                                            ${program_text}
+                                        </td>
+                                        <td data-acad-session-lid="${acad_session_lid}">
+                                            ${acad_session_text}
+                                        </td>
+                                        <td data-day-name-lid="${day_name_lid}">
+                                            ${day_text}
+                                        </td>
+                                        <td data-slot-start-lid="${slot_start_lid}">
+                                            ${slot_start_text}
+                                        </td>
+                                        <td data-start-end-lid="${slot_end_lid}">
+                                            ${slot_end_text}
+                                        </td>
+                                        <td>
+                                            <i class="far fa-edit d-none"></i>
+                                            <i class="fas fa-trash-alt text-danger cursor-pointer remove-schoolTimingRow"></i>
+                                        </td>
+                                    </tr>
+                        `)
+            })
 
 
-
-            
+            //Remove Element
+            $("#add-more-schoolTiming-table").on('click', '.remove-schoolTimingRow', function () {
+                $($(this)).fadeOut(300, function () {
+                $($(this).parent().parent()).remove()
+                })
+            })
 
             //On change function
             $('#program_name').on('change', function() { 
@@ -879,11 +867,6 @@
                 }
             })
         }, 500));
-
-
-
-  
-
 
         function showSuccess(errors) {
             console.log(errors);

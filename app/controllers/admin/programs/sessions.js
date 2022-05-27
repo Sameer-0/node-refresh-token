@@ -119,5 +119,28 @@ module.exports = {
                 data:[]})
             }
         })
+    },
+
+    getUnloackedSessionsByProgram: (req, res) => {
+        console.log('getSessionsByProgram::::::::>>', req.body)
+
+        ProgramSessions.getUnockedSessionByProgram(res.locals.slug, req.body.programLid)
+        .then(result => {
+            console.log(result)
+            res.status(200).json(result.recordset)
+        })
+        .catch(error => {
+
+            console.log(error)
+
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
     }
 }

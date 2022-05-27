@@ -20,35 +20,35 @@
         <div class="card-body" id="timetable-filter">
             <div class="row">
                 <div class="input-groups col-md-4 col-sm-12">
-                    <label for="program-name" class="d-flex justify-content-between">Select Program: <div class="input-groups">
-                        <label for="all-program">Select All Program</label>
-                        <input type="checkbox" id="all-program">
-                    </div></label>
+                    <label for="program-name" class="d-flex justify-content-between">Select Program:</label>
                    
                     <select name="program-name" id="program-name" class="form-select">
                         <option selected disabled value>--Select Program--</option>
+                        <% if(programList.length>0){ %>
+                        <option value="">Select All</option>
+                        <% } %>
                         <% for(let program of programList){%>
                         <option value="<%- program.id%>"><%-program.program_name%></option>
                         <%}%>
                     </select>
                 </div>
-            <div class="input-groups col-md-4 col-sm-12">
-                <label for="program-name">Select Session:</label>
-                <select name="session-name" id="session-name" class="form-select">
-                    <option selected disabled value>--Select Session--</option>
-                </select>
-            </div>
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name">Select Session:</label>
+                    <select name="session-name" id="session-name" class="form-select">
+                        <option selected disabled value>--Select Session--</option>
+                    </select>
+                </div>
 
-            <div class="input-groups col-md-4 col-sm-12">
-                <label for="program-name">Select Day:</label>
-                <select name="day" id="day" class="form-select">
-                    <option selected disabled value>--Select Day--</option>
-                    <% for(let day of dayList){%>
-                        <option value="<%- day.id%>"><%- day.day_name %></option>
-                        <%}%>
-                </select>
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name">Select Day:</label>
+                    <select name="day" id="day" class="form-select">
+                        <option selected disabled value>--Select Day--</option>
+                        <% for(let day of dayList){%>
+                            <option value="<%- day.id%>"><%- day.day_name %></option>
+                            <%}%>
+                    </select>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 
@@ -125,7 +125,7 @@
                                     })
                                 })
 
-                                
+                                 
                                 $('#all-program').on('click', function(){
 
                                     $('#program-name').val("");
