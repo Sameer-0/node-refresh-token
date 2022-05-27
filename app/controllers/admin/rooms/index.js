@@ -159,6 +159,15 @@ module.exports = {
         })
     },
 
+    roomSlotByRoomId: (req, res, next) => {
+        SlotIntervalTimings.roomSlotByRoomId(req.body.roomLid).then(result => {
+            res.json({
+                status: 200,
+                roomslot: result.recordset
+            })
+        })
+    },
+
     searchForBookedRooms: (req, res) => {
         let rowcount = 10;
         RoomTransactions.searchForBookedRooms(rowcount, req.body.keyword, res.locals.slug).then(result => {
