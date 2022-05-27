@@ -53,8 +53,8 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, body.id)
-            .input('Status', sql.TinyInt, body.status)
-            .query(`UPDATE [${slug}].initial_course_workload SET active = @Status WHERE id = @Id`)
+                .input('Status', sql.TinyInt, body.status)
+                .query(`UPDATE [${slug}].initial_course_workload SET active = @Status WHERE id = @Id`)
         })
     }
 
@@ -87,22 +87,22 @@ module.exports = class {
     static fetchCourseWorklaodSap(inputJson, userId, slug) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('input_json', sql.NVarChar(sql.MAX), inputJson)
-            .input('last_modified_by', sql.Int, userId)
-            .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${slug}].[sp_insert_course_work_wsdl]`)
+                .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+                .input('last_modified_by', sql.Int, userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_insert_course_work_wsdl]`)
         })
     }
 
-//object, res.locals.slug, res.locals.userId
+    //object, res.locals.slug, res.locals.userId
     static update(inputJson, slug, userId) {
-        console.log('JSON::::::::::::::::::>>',JSON.stringify(inputJson))
+        console.log('JSON::::::::::::::::::>>', JSON.stringify(inputJson))
         return poolConnection.then(pool => {
             return pool.request()
-            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
-            .input('last_modified_by', sql.Int, userId)
-            .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${slug}].[update_initial_course_workload]`)
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                .input('last_modified_by', sql.Int, userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[update_initial_course_workload]`)
         })
     }
 
@@ -113,5 +113,14 @@ module.exports = class {
         })
     }
 
-
+    //object, res.locals.slug, res.locals.userId
+    static create(inputJson, slug, userId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                .input('last_modified_by', sql.Int, userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_insert_initial_course_workload]`)
+        })
+    }
 }
