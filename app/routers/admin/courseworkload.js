@@ -5,7 +5,7 @@ const {
     body
 } = require('express-validator');
 const validate = require('../../middlewares/validate')
-const courseworkload =  require('../../controllers/admin/courseworkload/workload')
+const courseworkload = require('../../controllers/admin/courseworkload/workload')
 const preference = require('../../controllers/admin/courseworkload/preference')
 const index = require('../../controllers/admin/courseworkload/index')
 
@@ -26,8 +26,11 @@ router.get('/courseworkload/workload/getAll', courseworkload.getAll)
 router.post('/courseworkload/workload/search', courseworkload.search)
 router.post('/courseworkload/workload/pagination', courseworkload.pagination)
 router.post('/courseworkload/workload/update', validate('JsonValidator'), courseworkload.update)
+router.post('/courseworkload/workload/create', validate('JsonValidator'), courseworkload.create)
+
 
 //Course preference
+
 router.get('/courseDayRoomPreference', preference.getPage)
 router.post('/courseDayRoomPreference/create', preference.create)
 router.post('/courseDayRoomPreference/search', preference.search)
@@ -41,4 +44,5 @@ router.post('/courseDayRoomPreference/find-semester-by-programid',  preference.f
 router.post('/courseDayRoomPreference/find-module-by-programid-semesterid',  preference.findModuleByProgramIdSemId)
 router.post('/courseDayRoomPreference/find-division-by-moduleid',  preference.findDivisionByModuleId)
 router.post('/courseDayRoomPreference/filter-records',  preference.filterPreference)
+
 module.exports = router

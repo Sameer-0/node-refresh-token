@@ -172,8 +172,8 @@ module.exports = class Rooms {
         })
     }
 
-    static bookedRooms(slug) {
 
+    static bookedRooms(slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
