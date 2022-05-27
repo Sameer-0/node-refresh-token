@@ -209,23 +209,17 @@
             dropdownParent: $('#open-transaction-modal')
         })
 
-        let slotObj = JSON.parse(`<%- slotIntervalTimings %>`);
+       // let slotObj = JSON.parse(`<%- slotIntervalTimings %>`);
         let acadDate = JSON.parse(`<%- academicCalender %>`);
         let transactionType = JSON.parse(`<%- transactionTypes %>`);
 
-        let optionStartTime;
-        let optionEndTime;
+
         let startDate;
         let endDate;
         let transactionTypeList;
+        let optionStartTime = ``;
+        let optionEndTime =  ``;
 
-        for (let obj of slotObj) {
-            optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
-        }
-
-        for (let obj of slotObj) {
-            optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
-        }
 
         for (let obj of acadDate) {
             startDate += `<option value="${obj.id}">${obj.date}</option>`;
@@ -244,14 +238,21 @@
         
         //DATA SELECT FOR ROOM
         $(".selectRoomList").on('click', '.list-group-item', function () {
+
             let building_lid =  $("#building_lid").val()
             let campus_lid =  $("#campus_lid").val()
            // Get Room Slot By Room Id
         roomSlotByRoomId($(this).attr('data-room-id')).then(result=>{
-            console.log('slotTimeDrop:::::::::::',result)
+            console.log('slotTimeDrop:::::::::::',result.roomslot)
+
+            for (let obj of result.roomslot) {
+            optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
+        }
+
+            for (let obj of result.roomslot) {
+                optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
+            }
            })
-
-
             
             //remove current element when added to right sidebar
             // if ($(this).attr('data-clickable') == 'true') {
