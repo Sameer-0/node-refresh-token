@@ -114,9 +114,12 @@
                                                     </option>`
                                             });
                                         } else {
-                                            sessionList += `<option value="">
-                                        No Session Found!
-                                    </option>`
+                                            if($('#program-name').val() !== ""){
+                                                sessionList += `<option value=""> No Session Found! </option>`
+                                            }
+                                            else{
+                                                sessionList += `<option value=""> All Session </option>`
+                                            }
                                         }
                                         sessionList += `</select>`;
                                         $("#session-name").html(sessionList).trigger('change')
@@ -125,33 +128,7 @@
                                     })
                                 })
 
-                                 
-                                $('#all-program').on('click', function(){
-
-                                    $('#program-name').val("");
-                                    $("#session-name").val("");
-                                    if(!$('#program-name').attr('disabled')){
-                                   $('#program-name').attr('disabled', 'disabled');
-                                    }else{
-                                        $('#program-name').removeAttr('disabled');
-                                    }
-
-                                    if(!$('#session-name').attr('disabled')){
-                                   $('#session-name').attr('disabled', 'disabled');
-                                    }else{
-                                        $('#session-name').removeAttr('disabled');
-                                    }
-                                    
-                                })
-
-                                // $('#all-session').on('click', function(){
-                                //     if(!$('#session-name').attr('disabled')){
-                                //    $('#session-name').attr('disabled', 'disabled');
-                                //     }else{
-                                //         $('#session-name').removeAttr('disabled');
-                                //     }
-                                // })
-
+   
                                 $("#session-name").on('change', function () {
                                     if($('#day').attr('disabled'))
                                     $('#day').removeAttr('disabled');
