@@ -15,4 +15,4 @@ router.post('/schooltiming/types', type.create)
 router.post('/schooltiming/types/update', type.update) 
 router.post('/schooltiming/types/delete', type.delete)
 
-module.exports = router;
+module.exports = router; 
