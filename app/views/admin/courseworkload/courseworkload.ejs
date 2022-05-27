@@ -164,8 +164,8 @@
                         <ul class="list-group custom-select-list selectList selectListCourse" style="margin-top: 36px;">
                             <% for (let coursewsdl of coursewsdlList){ %>
                             <li class="list-group-item my-1 border-top" data-clickable="true"
-                                data-module-objid="<%-coursewsdl.module_objid %>" data-course-wsdl-id="<%- coursewsdl.id %>">
-                                <%- coursewsdl.module_desc %>  <%- coursewsdl.prog_code %></li>
+                                data-module-objid="<%-coursewsdl.module_objid %>" data-course-wsdl-id="<%- coursewsdl.id %>" data-module-name="<%-coursewsdl.module_desc %>" data-program-name="<%-coursewsdl.program_name%>" data-session-desc="<%-coursewsdl.sess_desc%>">
+                                <%- coursewsdl.module_desc %>  <%- coursewsdl.program_name %>  <%- coursewsdl.sess_desc %></li>
                             <% }%>
                         </ul>
                     </div>
@@ -174,6 +174,8 @@
                             <thead>
                                 <tr>
                                     <th>Course Name</th>
+                                    <th>Program Name</th>
+                                    <th>Session</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -333,10 +335,12 @@
         $(".selectListCourse").on('click', '.list-group-item', function () {
             // remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
-                console.log('appending:::::>>')
+                console.log('appending:::::>>', $(this).attr("data-module-name"))
                 $("#open-course-modal #add-more-course-table  tbody").append(
                     `<tr data-clickable="true">
-                    <td data-module-objid="${$(this).attr('data-module-objid')}" data-course-wsdl-id="${$(this).attr("data-course-wsdl-id")}">${$(this).text()}</td>
+                    <td data-module-objid="${$(this).attr('data-module-objid')}" data-module-name="${$(this).attr('data-module-name')}" data-course-wsdl-id="${$(this).attr("data-course-wsdl-id")}">${$(this).attr("data-module-name")}</td>
+                    <td data-program-name="${$(this).attr('data-program-name')}" data-program-name="${$(this).attr("data-program-name")}">${$(this).attr("data-program-name")}</td>
+                    <td data-session-desc="${$(this).attr('data-session-desc')}" data-session-desc="${$(this).attr("data-session-desc")}">${$(this).attr("data-session-desc")}</td>
                     <td>
                         <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
                     </td>
@@ -351,9 +355,9 @@
 
         //Remove Element
         $("#add-more-course-table").on('click', '.clicktoremove', function () {
-            console.log('Log Here',$(this).parent().parent().find('td[data-module-objid]').attr('data-module-objid'))
+            console.log('Log Here',$(this).parent().parent().find('td[data-module-name]').attr('data-module-name'))
             if ($(this).parent().parent().attr('data-clickable') == 'true') {
-                $(".selectListCourse").append(`<li class="list-group-item my-1 border-top" data-module-objid="${$(this).parent().parent().find('td[data-module-objid]').attr('data-module-objid')}" data-course-wsdl-id="${$(this).parent().parent().find('td[data-course-wsdl-id]').attr('data-course-wsdl-id')}" data-clickable="true"> ${$(this).parent().parent().find("td[data-module-objid]").text()} 
+                $(".selectListCourse").append(`<li class="list-group-item my-1 border-top" data-module-objid="${$(this).parent().parent().find('td[data-module-objid]').attr('data-module-objid')}" data-course-wsdl-id="${$(this).parent().parent().find('td[data-course-wsdl-id]').attr('data-course-wsdl-id')}" data-program-name="${$(this).parent().parent().find('td[data-program-name]').attr('data-program-name')}" data-session-desc="${$(this).parent().parent().find('td[data-session-desc]').attr('data-session-desc')}" data-module-name="${$(this).parent().parent().find('td[data-module-name]').attr('data-module-name')}" data-clickable="true"> ${$(this).parent().parent().find("td[data-module-objid]").text()} 
                     </li>`)
             }
 

@@ -102,7 +102,7 @@ module.exports = class {
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[update_initial_course_workload]`)
+                .execute(`[${slug}].[sp_update_initial_course_workload]`)
         })
     }
 
@@ -110,6 +110,13 @@ module.exports = class {
     static fetchAllWSDL(slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`select * from [${slug}].course_work_wsdl`)
+        })
+    }
+
+    static fetchAllWSDLWithProgramName(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`select cww.id, cww.module_desc, cww.prog_code, cww.module_objid, p.program_name, cww.sess_desc from [${slug}].course_work_wsdl cww 
+            INNER JOIN  [${slug}].programs p ON cww.prog_objid = p.program_id`)
         })
     }
 
