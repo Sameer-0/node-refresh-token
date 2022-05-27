@@ -19,9 +19,9 @@ module.exports = class schoolTiming {
            ORDER BY st.id DESC`)
         })
     }
-
+ 
     static save(inputJSON, slug, userid, settingId) {
-        console.log('SCHOOL TIMING  inputJSON:::::::::::::',inputJSON)
+        console.log('SCHOOL TIMING  inputJSON:::::::::::::',inputJSON + settingId)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -68,11 +68,6 @@ module.exports = class schoolTiming {
     }
 
     static getTimeTableSimulationSlots(slug, dayLid, programLid, acadSessionLid){
-
-        console.log('programLid>>> ', programLid)
-        console.log('acadSessionLid>>> ', acadSessionLid)
-        console.log('dayLid>>> ', dayLid)
-
 
         return poolConnection.then(pool => {
             return pool.request()

@@ -86,6 +86,9 @@
                                 $("#program-name").on('change', function () {
                                     let programLid = $(this).val();
 
+                                    $('#day').removeAttr('disabled');
+                                    $('#day').val("")
+
                                     let ApiObj = {
                                         url: '/admin/programs/sessions/program-sessions',
                                         type: 'POST',
@@ -118,6 +121,12 @@
                                     })
                                 })
 
+                                $("#session-name").on('change', function () {
+                                    if($('#day').attr('disabled'))
+                                    $('#day').removeAttr('disabled');
+                                    $('#day').val("")
+                                })
+
 
 
                                 $("#day").on('change', function () {
@@ -125,6 +134,7 @@
                                     let programLid = $("#program-name").val();
                                     let acadSessionLid = $("#session-name").val();
                                     let dayLid = $(this).val();
+                                    console.log('parent day', $(this) )
 
                                     let ApiObj = {
                                         url: '/admin/time-table-simulation/time-table/events',
@@ -180,12 +190,13 @@
                                                 $(document).find(`.timeTableSimulation tbody td[data-start-time-id="91"][data-end-time-id="102"][data-room-no="701"]`)
                                                
                                                 
-                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `Module Name: ${event.module_name} <br> Division:${event.division} <br> Batch:${event.batch}`)
+                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} <br> ${event.batch}`)
 
                                             }
 
                                       //  }, 2000)
-
+                                      $(this).attr('disabled','disabled');
+                                      
 
 
                                     }).catch(error => {

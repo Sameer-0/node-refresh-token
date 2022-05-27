@@ -18,7 +18,7 @@
 
     <div class="row my-3 gx-3 gy-3 row1-data">
         <div class="col-xl-2 col-lg-4 col-md-6 ">
-            <a href="/admin/schooltime/types">
+            <a href="/admin/schooltiming/types">
                 <div class="card row1-data-card text-center">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <img src="/icon_imgs/room-type.PNG" alt="">
@@ -119,7 +119,7 @@
                     if(stsStatus > 0) { %>
                     <div class="col-lg-3 col-md-6 col-12">
                         <div class="form-check">
-                            <input class="form-check-input schoolTimingOptions me-1" type="radio" id="sts-<%- stsCount %>" name="school-timing-setting" data-name="<%- setting.name %>" <%- setting.status != 1 ? 'disabled' : '' %> <%- setting.status == 1 ? 'checked' : '' %>>
+                            <input class="form-check-input schoolTimingOptions me-1" type="radio" id="sts-<%- stsCount %>" name="school-timing-setting" data-setting-id="<%- setting.id%>" data-name="<%- setting.name %>" <%- setting.status != 1 ? 'disabled' : '' %> <%- setting.status == 1 ? 'checked' : '' %>>
                             <label class="form-check-label" for="sts-<%- stsCount %>">
                                 <%- setting.name %>
                             </label>
@@ -460,7 +460,7 @@
         $('#add-more-schoolTiming').on('click', function(){
          
             if($('.sameForAllDay[data-dis]').attr('data-dis') == 'true'){
-                console.log('hello')
+            
                 let lastTr = $('#add-more-sameForAllDay-table tbody tr:last-child')
                 lastTr.find('.modalSelect2').select2('destroy');
                 let startTime = lastTr.find(`select[name="startTime"]`).val();
@@ -479,7 +479,8 @@
                 $('#add-more-sameForAllDay-table tbody').append(clonedTr)
              }
             else if($('.DayWise[data-dis]').attr('data-dis') == 'true'){
-                let lastTr = $('#add-more-DayWise-table tbody tr:last-child')
+
+                let lastTr = $('#add-more-DayWise-table tbody tr:last-child');
                 lastTr.find('.modalSelect2').select2('destroy');
                 let day = lastTr.find(`select[name="day"]`).val();
                 let startTime = lastTr.find(`select[name="startTime"]`).val();
@@ -498,6 +499,7 @@
                 $('#add-more-DayWise-table tbody').append(clonedTr)
             }
             else if($('.programAndDayWise[data-dis]').attr('data-dis') == 'true'){
+
                 let lastTr = $('#add-more-programAndDayWise-table tbody tr:last-child')
                 lastTr.find('.modalSelect2').select2('destroy');
                 let programName = lastTr.find(`select[name="programName"]`).val();
@@ -518,6 +520,7 @@
                 $('#add-more-programAndDayWise-table tbody').append(clonedTr)
             }
             else if($('.programDaySessionWise[data-dis]').attr('data-dis') == 'true'){
+
                 let lastTr = $('#add-more-programDaySessionWise-table tbody tr:last-child')
                 lastTr.find('.modalSelect2').select2('destroy');
                 let programName = lastTr.find(`select[name="programName"]`).val();
@@ -588,143 +591,145 @@
 
         // CREATING JSON     
         $(".createSchoolTiming").on('click', function () {
-        let settingId =  $(`input[name='school-timing-setting']:checked`).val();
-        console.log('settingId:::::::::::',settingId)
-        let schoolTimingJson = [];
-            if($(`.schoolTimingOptions[id="sts-1"]`).is(':checked')){
-        let schoolTimingElems = $('#add-more-sameForAllDay-table tbody tr');
-        let schoolTimingCount = schoolTimingElems.length;
 
-        schoolTimingElems.each(function (index, elem) {
-            let startTimeId = $(elem).find(`select[name='startTime']`).val()
-            let endTimeId = $(elem).find(`select[name='endTime']`).val();
-            let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
-            
-            if (index < schoolTimingCount - 1) {
-                let obj = {
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
+        let settingId =  $(`input[name='school-timing-setting']:checked`).attr('data-setting-id');
+        console.log("settingID", settingId)
+        let schoolTimingJson = [];
+
+        if($(`.schoolTimingOptions[id="sts-1"]`).is(':checked')){
+            let schoolTimingElems = $('#add-more-sameForAllDay-table tbody tr');
+            let schoolTimingCount = schoolTimingElems.length;
+
+            schoolTimingElems.each(function (index, elem) {
+                let startTimeId = $(elem).find(`select[name='startTime']`).val()
+                let endTimeId = $(elem).find(`select[name='endTime']`).val();
+                let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
+                
+                if (index < schoolTimingCount - 1) {
+                    let obj = {
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
+                } else {
+                    let obj = {
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
                 }
-                schoolTimingJson.push(obj)
-            } else {
-                let obj = {
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
-                }
-                schoolTimingJson.push(obj)
-            }
         })
     } else if($(`.schoolTimingOptions[id="sts-2"]`).is(':checked')){
-        let schoolTimingElems = $('#add-more-DayWise-table tbody tr');
-        let schoolTimingCount = schoolTimingElems.length;
-        schoolTimingElems.each(function (index, elem) {
-            let dayId = $(elem).find(`select[name='day']`).val()
-            let startTimeId = $(elem).find(`select[name='startTime']`).val()
-            let endTimeId = $(elem).find(`select[name='endTime']`).val();
-            let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
-            if (index < schoolTimingCount - 1) {
-                let obj = {
-                    dayId: dayId,
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
+            let schoolTimingElems = $('#add-more-DayWise-table tbody tr');
+            let schoolTimingCount = schoolTimingElems.length;
+            schoolTimingElems.each(function (index, elem) {
+                let dayId = $(elem).find(`select[name='day']`).val()
+                let startTimeId = $(elem).find(`select[name='startTime']`).val()
+                let endTimeId = $(elem).find(`select[name='endTime']`).val();
+                let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
+                if (index < schoolTimingCount - 1) {
+                    let obj = {
+                        dayId: dayId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
+                } else {
+                    let obj = {
+                        dayId: dayId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
                 }
-                schoolTimingJson.push(obj)
-            } else {
-                let obj = {
-                    dayId: dayId,
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
-                }
-                schoolTimingJson.push(obj)
-            }
         })
         console.log('schoolTimingJson For settingId :::::::::::>>', settingId, schoolTimingJson)
     } else if($(`.schoolTimingOptions[id="sts-3"]`).is(':checked')){
-        let schoolTimingElems = $('#add-more-programAndDayWise-table tbody tr');
-        let schoolTimingCount = schoolTimingElems.length;
-        schoolTimingElems.each(function (index, elem) {
-            let dayId = $(elem).find(`select[name='day']`).val()
-            let programId = $(elem).find(`select[name='programName']`).val()
-            let startTimeId = $(elem).find(`select[name='startTime']`).val()
-            let endTimeId = $(elem).find(`select[name='endTime']`).val();
-            let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
-            
-            if (index < schoolTimingCount - 1) {
-                let obj = {
-                    dayId: dayId,
-                    programId: programId,
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
+            let schoolTimingElems = $('#add-more-programAndDayWise-table tbody tr');
+            let schoolTimingCount = schoolTimingElems.length;
+            schoolTimingElems.each(function (index, elem) {
+                let dayId = $(elem).find(`select[name='day']`).val()
+                let programId = $(elem).find(`select[name='programName']`).val()
+                let startTimeId = $(elem).find(`select[name='startTime']`).val()
+                let endTimeId = $(elem).find(`select[name='endTime']`).val();
+                let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
+                
+                if (index < schoolTimingCount - 1) {
+                    let obj = {
+                        dayId: dayId,
+                        programId: programId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
+                } else {
+                    let obj = {
+                        dayId: dayId,
+                        programId: programId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
                 }
-                schoolTimingJson.push(obj)
-            } else {
-                let obj = {
-                    dayId: dayId,
-                    programId: programId,
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
-                }
-                schoolTimingJson.push(obj)
-            }
         })
         console.log('schoolTimingJson For settingId :::::::::::>>', settingId, schoolTimingJson)
     }else if($(`.schoolTimingOptions[id="sts-4"]`).is(':checked')){
-        let schoolTimingElems = $('#add-more-programDaySessionWise-table tbody tr');
-        let schoolTimingCount = schoolTimingElems.length;
-        schoolTimingElems.each(function (index, elem) {
-            let dayId = $(elem).find(`select[name='day']`).val()
-            let programId = $(elem).find(`select[name='programName']`).val()
-            let sessionId = $(elem).find(`select[name='acadSession']`).val()
-            let startTimeId = $(elem).find(`select[name='startTime']`).val()
-            let endTimeId = $(elem).find(`select[name='endTime']`).val();
-            let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
-            
-            if (index < schoolTimingCount - 1) {
-                let obj = {
-                    dayId: dayId,
-                    programId: programId,
-                    sessionId: sessionId,
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
+            let schoolTimingElems = $('#add-more-programDaySessionWise-table tbody tr');
+            let schoolTimingCount = schoolTimingElems.length;
+            schoolTimingElems.each(function (index, elem) {
+                let dayId = $(elem).find(`select[name='day']`).val()
+                let programId = $(elem).find(`select[name='programName']`).val()
+                let sessionId = $(elem).find(`select[name='acadSession']`).val()
+                let startTimeId = $(elem).find(`select[name='startTime']`).val()
+                let endTimeId = $(elem).find(`select[name='endTime']`).val();
+                let schoolTimingTypeId = $(elem).find(`select[name='schoolTimingType']`).val();
+                
+                if (index < schoolTimingCount - 1) {
+                    let obj = {
+                        dayId: dayId,
+                        programId: programId,
+                        sessionId: sessionId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
+                } else {
+                    let obj = {
+                        dayId: dayId,
+                        programId: programId,
+                        sessionId: sessionId,
+                        startTimeId: startTimeId,
+                        endTimeId: endTimeId,
+                        schoolTimingTypeId: schoolTimingTypeId
+                    }
+                    schoolTimingJson.push(obj)
                 }
-                schoolTimingJson.push(obj)
-            } else {
-                let obj = {
-                    dayId: dayId,
-                    programId: programId,
-                    sessionId: sessionId,
-                    startTimeId: startTimeId,
-                    endTimeId: endTimeId,
-                    schoolTimingTypeId: schoolTimingTypeId
-                }
-                schoolTimingJson.push(obj)
-            }
-        })
-        console.log('schoolTimingJson For settingId :::::::::::>>', settingId, schoolTimingJson)
-    }
-
-    console.log('Final JSON WIth Setting id :::::::::::>>', settingId, schoolTimingJson)
-        let ApiObj = {
-            type: 'POST',
-            url: '/admin/schooltime/create',
-            data: {
-                inputJSON: JSON.stringify(schoolTimingJson),
-                settingId: settingId
-            },
-            dataType: 'JSON'
+            })
+            console.log('schoolTimingJson For settingId :::::::::::>>', settingId, schoolTimingJson)
         }
-        ajaxApi(ApiObj).then(result => { 
-            showSuccess(result)
-        }).catch(error => {
-            showError(error.responseJSON)
-        }) 
+
+        console.log('Final JSON WIth Setting id :::::::::::>>', settingId, schoolTimingJson)
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/schooltiming/create',
+                data: {
+                    inputJSON: JSON.stringify(schoolTimingJson),
+                    settingId: settingId
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => { 
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            }) 
 
     })
 
@@ -736,7 +741,7 @@
                 console.log('program_lid', program_lid)
             let apiObj = {
                 type:"POST",
-                url:"/admin/courseworkload/preference/acadSessionList",
+                url:"/admin/courseDayRoomPreference/acadSessionList",
                 data: {
                     program_lid: program_lid
                 },
@@ -824,7 +829,7 @@
                 
             let apiObj = {
                 type:"POST",
-                url:"/admin/courseworkload/preference/acadSessionList",
+                url:"/admin/courseDayRoomPreference/acadSessionList",
                 data: {
                     program_lid: program_lid
                 },

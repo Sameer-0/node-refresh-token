@@ -27,7 +27,7 @@ module.exports = class TimeTable {
 
         return poolConnection.then(pool => {
 
-            let stmt = `SELECT eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid FROM [${slug}].event_bookings_bkp eb 
+            let stmt = `SELECT eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name FROM [${slug}].event_bookings eb 
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].days d 

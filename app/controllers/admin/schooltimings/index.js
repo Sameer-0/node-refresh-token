@@ -12,7 +12,7 @@ const Days = require('../../../models/Days');
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings');
 const SchoolTimingType = require('../../../models/SchoolTimingType');
 const AcadSession = require('../../../models/AcadSession');
-const Settings = require('../../../models/Settings')
+const Settings = require('../../../models/Settings') 
 const isJsonString = require('../../../utils/util')
 const SchoolTimingSettings = require('../../../models/SchoolTimingSettings')
 
