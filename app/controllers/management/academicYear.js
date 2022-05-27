@@ -16,7 +16,7 @@ module.exports = {
                 academicDetails: result.recordset[0],
                 status: 200,
                 message: "Sucess",
-                title:"Academic Year",
+                title: "Academic Year",
                 breadcrumbs: req.breadcrumbs,
                 Url: req.originalUrl
             })
