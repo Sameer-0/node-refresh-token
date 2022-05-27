@@ -92,7 +92,7 @@
 
 
 <!-- MODAL FOR SCHOOL TIMING -->
-<div class="modal fade" id="add-schooltiming-modal" tabindex="-1" role="dialog" aria-labelledby="add-holiday-modal" aria-hidden="true">
+<div class="modal fade" id="add-schooltiming-modal" tabindex="-1" role="dialog" aria-labelledby="add-schooltiming-modal" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content modal-inputform">
             <div class="modal-header  modal-inputform-header">
@@ -283,7 +283,7 @@
                         <tbody>                           
                             <tr>
                                 <td>
-                                    <select class="select2 modalSelect2" name="programName">
+                                    <select class="select2 modalSelect2" name="programName" id="program-name">
                                         <% for(program of programList){%>
                                             <option value="<%- program.id%>"><%- program.program_name%></option>
                                         <%}%>
@@ -346,17 +346,15 @@
                         <tbody>                           
                             <tr>
                                 <td>
-                                    <select class="select2 modalSelect2 programNameForSession" name="programName" id="">
+                                    <select class="select2 modalSelect2 programNameForSession" name="programName" id="program-name">
                                         <% for(program of programList){%>
                                             <option value="<%- program.id%>"><%- program.program_name%></option>
                                         <%}%>
                                     </select>
                                 </td>
                                 <td>
-                                    <select class="select2 modalSelect2 sessionForProgram" name="acadSession" id="">
-                                        <% for(acadSession of AcadSessionList){%>
-                                            <option value="<%- acadSession.acadSessionId%>"><%- acadSession.acad_session %></option>
-                                        <%}%>
+                                    <select class="select2 modalSelect2 sessionForProgram" name="acadSession" id="session-name">
+                                        
                                     </select>
                                 </td>
                                 <td>
@@ -471,7 +469,7 @@
 
                 $('#add-more-sameForAllDay-table tbody').append(clonedTr)
              }
-            else if($('.DayWise[data-dis]').attr('data-dis') == 'true'){
+            else if($('.DayWise[data-dis]').attr('data-dis') == 'true'){ 
 
                 let lastTr = $('#add-more-DayWise-table tbody tr:last-child');
                 lastTr.find('.modalSelect2').select2('destroy');
@@ -581,6 +579,44 @@
                     alert('Cannot delete this.')
                 }
             })
+
+        //Getting session List Ajax
+        $("#add-schooltiming-modal").on('change','#program-name', function () {
+            console.log('yello')
+            let programLid = $(this).val();
+
+        
+            let ApiObj = {
+                url: '/admin/programs/sessions/unlocked-program-sessions',
+                type: 'POST',
+                data: {
+                    programLid: programLid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                let sessionList = ``;
+
+                if (result.length > 0) {
+                    sessionList +=
+                        `<option disabled selected value="">--Select Session--</option>`;
+                    result.forEach(element => {
+                        sessionList += `<option value="${element.id}">
+                            ${element.acad_session}
+                            </option>`
+                    });
+                } else {
+                    sessionList += `<option value="">
+                                         No Session Found!
+                                    </option>`
+                }
+                sessionList += `</select>`;
+                $(document).find($("#session-name")).html(sessionList).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+                })
 
         // CREATING JSON     
         $(".createSchoolTiming").on('click', function () {
@@ -729,36 +765,36 @@
         if($('schoolTimingOptions').attr('id') == 'sameForAllDay'){}
         
             //Api for onchange program event
-            $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
-                let program_lid = $(this).val();
-                    console.log('program_lid', program_lid)
-                let apiObj = {
-                    type:"POST",
-                    url:"/admin/courseDayRoomPreference/acadSessionList",
-                    data: {
-                        program_lid: program_lid
-                    },
-                    dataType:"JSON"
-                }
+            // $('.schoolTimingOptionsContainer').on('change', '.programNameForSession', function() { 
+            //     let program_lid = $(this).val();
+            //         console.log('program_lid', program_lid)
+            //     let apiObj = {
+            //         type:"POST",
+            //         url:"/admin/courseDayRoomPreference/acadSessionList",
+            //         data: {
+            //             program_lid: program_lid
+            //         },
+            //         dataType:"JSON"
+            //     }
 
-                ajaxApi(apiObj).then(result => {
-                    let acadList = `<select class="form-select sessionForProgram" name="acadSession" id="">`
-                        if(result.data.acadSessionList.length > 0){
-                            for(let data of result.data.acadSessionList){
-                            acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
-                            }
-                        }
-                        else{
-                            acadList += `<option value=""> NO SESSION FOUND <option>`
-                        }
-                        acadList += `</select>`
-                        $(this).parent().next().html(acadList);
+            //     ajaxApi(apiObj).then(result => {
+            //         let acadList = `<select class="form-select sessionForProgram" name="acadSession" id="">`
+            //             if(result.data.acadSessionList.length > 0){
+            //                 for(let data of result.data.acadSessionList){
+            //                 acadList += `<option value="${data.acad_session_lid}"> ${data.acad_session} </option>` 
+            //                 }
+            //             }
+            //             else{
+            //                 acadList += `<option value=""> NO SESSION FOUND <option>`
+            //             }
+            //             acadList += `</select>`
+            //             $(this).parent().next().html(acadList);
 
-                    console.log('list:::>>>', $(this).parent().next());
-                }).catch(error =>{
-                    showError(error.responseJSON)
-                });
-            })
+            //         console.log('list:::>>>', $(this).parent().next());
+            //     }).catch(error =>{
+            //         showError(error.responseJSON)
+            //     });
+            // })
 
             $(".AddRoomPreference").on('click',function(){
                 let school_timings_name = $("#school_timings_name").val()
@@ -934,7 +970,7 @@
                     <th>End Time</th>
                     <th>School Timing Type</th>
                     <th>Day</th>
-                </thead>
+                </thead> 
                 <tbody>
                     `;
 

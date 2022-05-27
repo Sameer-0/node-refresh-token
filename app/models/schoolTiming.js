@@ -16,7 +16,7 @@ module.exports = class schoolTiming {
            INNER JOIN [${slug}].programs p ON p.id = st.program_lid
            INNER JOIN [${slug}].school_timing_types stt ON stt.id = st.type_lid
            INNER JOIN [dbo].acad_sessions acs ON acs.id = st.acad_session_lid
-           ORDER BY st.acad_session_lid`) 
+           ORDER BY st.acad_session_lid`)
         })
     }
  

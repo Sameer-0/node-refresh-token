@@ -7,7 +7,7 @@ const {
 
 const schoolTiming = require("../../../models/SchoolTiming")
 const CourseDayRoomPreferences = require('../../../models/CourseDayRoomPreferences');
-const Programs = require('../../../models/Programs');
+const ProgramSessions = require('../../../models/ProgramSessions');
 const Days = require('../../../models/Days');
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings');
 const SchoolTimingType = require('../../../models/SchoolTimingType');
@@ -19,12 +19,12 @@ const SchoolTimingSettings = require('../../../models/SchoolTimingSettings')
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([schoolTiming.fetchAll(10, res.locals.slug), Programs.fetchAll(10, res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(100), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), schoolTiming.getCount(res.locals.slug)]).then(result => {
-            console.log(result[8].recordset)
+        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  ProgramSessions.getUnlockedProgram(res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(1000), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), schoolTiming.getCount(res.locals.slug)]).then(result => {
+            console.log('school timing',result[0].recordset)
             res.render("admin/schooltimings/index", {
                 schoolTimingList: result[0].recordset,
                 programList: result[1].recordset,
-                dayList: result[2].recordset,
+                dayList: result[2].recordset, 
                 slotTime: result[3].recordset,
                 schoolTimingTypeList: result[4].recordset,
                 AcadSessionList: result[5].recordset,
