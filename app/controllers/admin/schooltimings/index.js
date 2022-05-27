@@ -5,7 +5,7 @@ const {
 } = require('express-validator');
 
 
-const schoolTiming = require("../../../models/schoolTiming")
+const schoolTiming = require("../../../models/SchoolTiming")
 const CourseDayRoomPreferences = require('../../../models/CourseDayRoomPreferences');
 const Programs = require('../../../models/Programs');
 const Days = require('../../../models/Days');

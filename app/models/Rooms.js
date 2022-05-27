@@ -162,6 +162,14 @@ module.exports = class Rooms {
         })
     }
 
+
+    static fetchBookedRooms() {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .query(`SELECT r.id, r.room_number, r.room_type_id FROM (SELECT DISTINCT room_lid FROM room_slots WHERE alloted_to = 24) t1
+                INNER JOIN rooms r ON t1.room_lid = r.id
+                ORDER BY r.room_number`)
+
     static bookedRooms(slug) {
 
         return poolConnection.then(pool => {
@@ -170,6 +178,7 @@ module.exports = class Rooms {
             [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
             INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
             INNER JOIN [dbo].buildings b ON b.id = r.building_lid`)
+
         })
     }
 }

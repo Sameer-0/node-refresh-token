@@ -1,0 +1,199 @@
+<%- include("../partials/head") %>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <!--DASHBOARD CONTENT START-->
+    <div class="breadcrumbs-container">
+
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+            <%} }%>
+        </ul>
+    </div>
+
+    <%- include("../partials/timetableSimulationMenu") %>
+    <div class="card table-card mb-3">
+        <div class="card-body" id="timetable-filter">
+            <div class="row">
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name">Select Program:</label>
+                    <select name="program-name" id="program-name" class="form-select">
+                        <option selected disabled value>--Select Program--</option>
+                        <% for(let program of programList){%>
+                        <option value="<%- program.id%>"><%-program.program_name%></option>
+                        <%}%>
+                    </select>
+                </div>
+            <div class="input-groups col-md-4 col-sm-12">
+                <label for="program-name">Select Session:</label>
+                <select name="session-name" id="session-name" class="form-select">
+                    <option selected disabled value>--Select Session--</option>
+                </select>
+            </div>
+
+            <div class="input-groups col-md-4 col-sm-12">
+                <label for="program-name">Select Day:</label>
+                <select name="day" id="day" class="form-select">
+                    <option selected disabled value>--Select Day--</option>
+                    <% for(let day of dayList){%>
+                        <option value="<%- day.id%>"><%- day.day_name %></option>
+                        <%}%>
+                </select>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Time Table</h5>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
+            </div> -->
+            <div class="table-responsive">
+                <table id="" class="table table-bordered timeTableSimulation" style="width: 100%">
+                    
+                </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <%- include("../partials/footer") %>
+
+                        </script>
+
+                        <script>
+                            $(document).ready(function () {
+
+                                let roomList = JSON.parse(`<%- roomList %>`);
+
+                                console.log("RoomLIST>>>>>>> ", roomList)
+
+
+                                //Getting session List Ajax
+                                $("#program-name").on('change', function () {
+                                    let programLid = $(this).val();
+
+                                    let ApiObj = {
+                                        url: '/admin/programs/sessions/program-sessions',
+                                        type: 'POST',
+                                        data: {
+                                            programLid: programLid
+                                        },
+                                        dataType: 'JSON'
+                                    }
+
+                                    ajaxApi(ApiObj).then(result => {
+                                        let sessionList = ``;
+
+                                        if (result.length > 0) {
+                                            sessionList +=
+                                                `<option disabled selected value="">--Select Session--</option>`;
+                                            result.forEach(element => {
+                                                sessionList += `<option value="${element.id}">
+                                                    ${element.acad_session}
+                                                    </option>`
+                                            });
+                                        } else {
+                                            sessionList += `<option value="">
+                                        No Session Found!
+                                    </option>`
+                                        }
+                                        sessionList += `</select>`;
+                                        $("#session-name").html(sessionList).trigger('change')
+                                    }).catch(error => {
+                                        showError(error.responseJSON)
+                                    })
+                                })
+
+
+
+                                $("#day").on('change', function () {
+
+                                    let programLid = $("#program-name").val();
+                                    let acadSessionLid = $("#session-name").val();
+                                    let dayLid = $(this).val();
+
+                                    let ApiObj = {
+                                        url: '/admin/time-table-simulation/time-table/events',
+                                        type: 'POST',
+                                        data: {
+                                            programLid: programLid,
+                                            acadSessionLid: acadSessionLid,
+                                            dayLid: dayLid
+                                        },
+                                        dataType: 'JSON'
+                                    }
+
+                                    ajaxApi(ApiObj).then(result => {
+
+                                        console.log('allocationList', result)
+
+                                        let slotList = result.slotList;
+                                        let eventList = result.eventList;
+
+                                        let tableStr = `<thead><tr><th>Room No</th>`;
+
+                                        for (let slot of slotList) {
+                                            tableStr +=
+                                                `<th>${slot.start_time}-${slot.end_time}</th>`
+                                        }
+
+                                        tableStr += `</tr></thead><tbody>`;
+
+                                        for (let room of roomList) {
+                                            tableStr +=
+                                                `<tr data-room-no="${room.room_number}"><td data-room-no="${room.room_number}">${room.room_number}</td>`
+
+                                            for (let slot of slotList) {
+                                                tableStr +=
+                                                    ` <td data-start-time-id="${slot.slot_start_lid}" data-end-time-id="${slot.slot_end_lid}" data-room-id="${room.id}">NA</td>`
+                                            }
+
+                                            tableStr += '</tr>'
+                                        }
+
+                                        tableStr += '</tbody>'
+
+                                        $('.timeTableSimulation').html(tableStr)
+
+
+                                      //  setTimeout(function () {
+                                            for (let event of eventList) {
+
+                                                console.log("${event.slot_start_lid}>> ", event.slot_start_lid)
+                                                console.log("${event.slot_end_lid}>> ", event.slot_end_lid)
+                                                console.log("${event.room_lid}>> ", event.room_lid)
+
+                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="91"][data-end-time-id="102"][data-room-no="701"]`)
+                                               
+                                                
+                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `Module Name: ${event.module_name} <br> Division:${event.division} <br> Batch:${event.batch}`)
+
+                                            }
+
+                                      //  }, 2000)
+
+
+
+                                    }).catch(error => {
+                                        showError(error.responseJSON)
+                                    })
+                                })
+
+
+                            })
+                        </script>
+                        <%- include("../partials/footerEnd") %>

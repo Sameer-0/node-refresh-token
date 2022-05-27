@@ -67,4 +67,23 @@ module.exports = class schoolTiming {
         })
     }
 
+    static getTimeTableSimulationSlots(slug, dayLid, programLid, acadSessionLid){
+
+        console.log('programLid>>> ', programLid)
+        console.log('acadSessionLid>>> ', acadSessionLid)
+        console.log('dayLid>>> ', dayLid)
+
+
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('programLid', sql.Int, programLid)
+            .input('acadSessionLid', sql.Int, acadSessionLid)
+            .input('dayLid', sql.Int, dayLid)
+            .query(`SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
+            INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
+            INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
+            WHERE sct.program_lid = @programLid AND sct.acad_session_lid = @acadSessionLid AND sct.day_lid = @dayLid`)
+        })
+    }
+
 }
