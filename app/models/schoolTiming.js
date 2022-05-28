@@ -1,7 +1,7 @@
 const {
     sql,
     poolConnection,
-    execPreparedStmt
+    execPreparedStmt 
 } = require('../../config/db')
 
 module.exports = class schoolTiming {
@@ -15,13 +15,14 @@ module.exports = class schoolTiming {
            INNER JOIN [${slug}].days d ON d.id =  st.day_lid
            INNER JOIN [${slug}].programs p ON p.id = st.program_lid
            INNER JOIN [${slug}].school_timing_types stt ON stt.id = st.type_lid
-           INNER JOIN [dbo].acad_sessions acs ON acs.id = st.id
-           ORDER BY st.id DESC`)
+           INNER JOIN [dbo].acad_sessions acs ON acs.id = st.acad_session_lid
+           ORDER BY st.acad_session_lid`)
         })
     }
-
+ 
     static save(inputJSON, slug, userid, settingId) {
         console.log('SCHOOL TIMING  inputJSON:::::::::::::',inputJSON)
+        console.log('Setting Id:::::::::::::',settingId)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -44,8 +45,14 @@ module.exports = class schoolTiming {
                INNER JOIN [${slug}].days d ON d.id =  st.day_lid
                INNER JOIN [${slug}].programs p ON p.id = st.program_lid
                INNER JOIN [${slug}].school_timing_types stt ON stt.id = st.type_lid
-               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.id
+               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.acad_session_lid
                ORDER BY st.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static getCount(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT COUNT(*) AS count FROM [${slug}].school_timings`)
         })
     }
 
@@ -61,20 +68,35 @@ module.exports = class schoolTiming {
                INNER JOIN [${slug}].days d ON d.id =  st.day_lid
                INNER JOIN [${slug}].programs p ON p.id = st.program_lid
                INNER JOIN [${slug}].school_timing_types stt ON stt.id = st.type_lid
-               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.id
+               INNER JOIN [dbo].acad_sessions acs ON acs.id = st.acad_session_lid
                WHERE st.name LIKE @keyword OR sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR d.day_name LIKE @keyword OR p.program_name LIKE @keyword OR p.abbr LIKE @keyword OR stt.name LIKE @keyword OR acs.acad_session LIKE @keyword OR p.program_id LIKE @keyword
-               ORDER BY st.id DESC`)
+               ORDER BY st.acad_session_lid`)
         })
     }
 
-    static getTimeTableSimulationSlots(slug){
+    static getTimeTableSimulationSlots(slug, dayLid, programLid, acadSessionLid){
+
         return poolConnection.then(pool => {
-            let request = pool.request()
-            return request.
-            query(`SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
-            INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
-            INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
-            WHERE program_lid = 1 AND acad_session_lid = 16 AND day_lid = 1`)
+            let stmt
+
+            if(programLid && acadSessionLid){
+                stmt= `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
+                INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
+                INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
+                WHERE sct.program_lid = @programLid AND sct.acad_session_lid = @acadSessionLid AND sct.day_lid = @dayLid`
+            }
+            else{
+                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
+                INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
+                INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
+                WHERE sct.program_lid = 1 AND sct.acad_session_lid = 16 AND sct.day_lid = 1`
+            }
+
+            return pool.request()
+            .input('programLid', sql.Int, programLid)
+            .input('acadSessionLid', sql.Int, acadSessionLid)
+            .input('dayLid', sql.Int, dayLid)
+            .query(stmt)
         })
     }
 

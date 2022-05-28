@@ -19,7 +19,6 @@ module.exports = {
 
     getPage: (req, res) => {
         Promise.all([Days.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
-            console.log('Program List', result[3].recordsets)
             res.render('admin/courseworkload/preference', {
                 dayList: result[0].recordset,
                 icwList: result[1].recordset,

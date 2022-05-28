@@ -233,32 +233,27 @@
         }
 
         let username = `<%- locals.userId %>`;
+        let optionStartTime = ``;
+        let optionEndTime =  ``;
+        
         //DATA SELECT FOR ROOM
         $(".selectRoomList").on('click', '.list-group-item', function () {
+         
             let building_lid =  $("#building_lid").val()
             let campus_lid =  $("#campus_lid").val()
-            // Get Room Slot By Room Id
-        roomSlotByRoomId($(this).attr('data-room-id')).then(result=>{
-            let optionStartTime = ``;
-            let optionEndTime =  ``;
-          for (let obj of result.data.roomslot) {
-                optionStartTime += `<option value="${obj.id}">${obj.start_time}</option>`;
-            }
+           // Get Room Slot By Room Id
+     
 
-          for (let obj of result.data.roomslot) {
-              optionEndTime += `<option value="${obj.id}">${obj.end_time}</option>`;
-          }
-
-                let table =`<tr data-clickable="true" data-building-lid="${building_lid}" data-campus-lid="${campus_lid}">
+            //remove current element when added to right sidebar
+            // if ($(this).attr('data-clickable') == 'true') {
+            $(".selectedList table tbody").append(
+                `<tr data-clickable="true" data-building-lid="${building_lid}" data-campus-lid="${campus_lid}">
                     <td data-room-id="${$(this).attr('data-room-id')}">${$(this).text()}</td>
-                    <td> <select class="select2 modalSelect2" name="startTime">
+                    <td>
                         ${optionStartTime}
-                         </select>
                     </td>
                     <td>
-                    <select class="select2 modalSelect2" name="endTime">
                         ${optionEndTime}
-                    </select>
                     </td>
                     <td>
                         <select class="select2 modalSelect2" name="startDate">${startDate}</select>
@@ -273,15 +268,16 @@
                         <i class="fas fa-trash-alt text-danger cursor-pointer clicktoremove"></i>
                     </td>
                 </tr>
-                `;
-            $(".selectedList table tbody").append(table)
+                ` 
+            )
             // }
             $('#add-more-room-table tbody tr:last-child .select2').select2({
                 dropdownParent: $('#open-transaction-modal')
             });
             $(this).attr('data-clickable', 'false');
-         })
         })
+
+
 
 
         //Remove Element
@@ -381,6 +377,7 @@
                 },
                 dataType: 'JSON'
             }
+
             ajaxApi(ApiObj).then(result => {
                 showSuccess(result)
             }).catch(error => {
@@ -408,8 +405,7 @@
         //Get Room Slot Time For Specific Room
         function roomSlotByRoomId(roomLid){
             console.log('Room Lid Fun:::::::::::>>', roomLid)
-            return new Promise((resolve, reject) =>{
-                $.ajax({
+            return $.ajax({
                 type: "POST",
                 url: "/admin/rooms/booking/room-slot-by-room-id",
                 data: {
@@ -417,19 +413,8 @@
                 },
                 success: function (data) {
                  //   console.log('data::::::::::',data.roomslot)
-                    // return data.roomslot;
-                    resolve({
-                        status:"success",
-                        data:data
-                    })
-                },
-                error: function(data){
-                    resolve({
-                        status:"failed",
-                        err: error
-                    })
+                    return data.roomslot;
                 }
-            })
             })
         }
 

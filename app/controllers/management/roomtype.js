@@ -8,7 +8,7 @@ const RoomTypes = require('../../models/RoomTypes')
 
 module.exports = {
     getPage: (req, res) => {
-        RoomTypes.fetchAll(10).then(result => {
+        RoomTypes.fetchAll(100).then(result => {
             res.render('management/room/roomtype', {
                 roomTypes: result.recordset,
                 breadcrumbs: req.breadcrumbs,

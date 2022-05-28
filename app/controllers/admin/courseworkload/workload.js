@@ -18,7 +18,7 @@ module.exports = {
 
 
   getPage: (req, res) => {
-    Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
+    Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug), CourseWorkload.fetchAllWSDLWithProgramName(res.locals.slug)]).then(result => {
       res.render('admin/courseworkload/courseworkload', {
         courseWorkloadList: result[0].recordset,
         pageCount: result[1].recordset[0].count,
@@ -27,12 +27,13 @@ module.exports = {
         AcadSessionList: result[4].recordset,
         moduleList: result[5].recordset,
         breadcrumbs: req.breadcrumbs,
-        moduleListAjax:JSON.stringify(result[5].recordset)
+        moduleListAjax: JSON.stringify(result[5].recordset),
+        coursewsdlList: result[6].recordset
       })
     })
   },
 
-  
+
 
   changestatus: (req, res) => {
     CourseWorkload.changeStatus(req.body, res.locals.slug).then(result => {
@@ -106,7 +107,7 @@ module.exports = {
 
     console.log('userid', res.locals.userId, req.body.settingName)
     CourseWorkload.update(object, res.locals.slug, res.locals.userId).then(result => {
-     // console.log('result:::::::::::>>>', result)
+      // console.log('result:::::::::::>>>', result)
 
       //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
       if (req.body.settingName) {
@@ -116,14 +117,35 @@ module.exports = {
 
       res.status(200).json(JSON.parse(result.output.output_json))
     }).catch(error => {
-      if(isJsonString.isJsonString(error.originalError.info.message)){
+      if (isJsonString.isJsonString(error.originalError.info.message)) {
         res.status(500).json(JSON.parse(error.originalError.info.message))
+      } else {
+        res.status(500).json({
+          status: 500,
+          description: error.originalError.info.message,
+          data: []
+        })
+      }
+    })
+  },
+
+
+  create: (req, res) => {
+    let object = {
+      insert_initial_course_workload: JSON.parse(req.body.inputJSON)
     }
-    else{
-        res.status(500).json({status:500,
-        description:error.originalError.info.message,
-        data:[]})
-    }
+    CourseWorkload.create(object, res.locals.slug, res.locals.userId).then(result => {
+      res.status(200).json(JSON.parse(result.output.output_json))
+    }).catch(error => {
+      if (isJsonString.isJsonString(error.originalError.info.message)) {
+        res.status(500).json(JSON.parse(error.originalError.info.message))
+      } else {
+        res.status(500).json({
+          status: 500,
+          description: error.originalError.info.message,
+          data: []
+        })
+      }
     })
   }
 }

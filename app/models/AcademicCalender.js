@@ -101,7 +101,7 @@ module.exports = class AcademicCalender {
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [dbo].academic_calendar`)
         })
-    } 
+    }
 
 
 
@@ -113,6 +113,15 @@ module.exports = class AcademicCalender {
         })
     }
 
-
+    static refresh(slug, userId) {
+        console.log('Refresh::::::::>>')
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request
+                .input('last_modified_by', sql.Int, userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[dbo].[sp_generate_academic_calendar]`)
+        })
+    }
 
 }
