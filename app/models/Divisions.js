@@ -82,5 +82,11 @@ module.exports = class Divisions {
     }
 
 
+    static getAll(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`select DISTINCT course_lid, division from [${slug}].divisions `)
+        })
+    }
+
 
 }
