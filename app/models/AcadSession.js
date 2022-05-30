@@ -81,4 +81,12 @@ module.exports = class AcadSession {
             return request.query(`SELECT COUNT(*) as count FROM [dbo].acad_sessions`)
         })
     }
+
+
+    static sessionForCoursePreferences(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT DISTINCT ads.id, ads.acad_session FROM [${slug}].program_sessions ps 
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid`)
+        })
+    }
 }

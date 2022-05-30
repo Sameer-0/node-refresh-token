@@ -12,13 +12,14 @@ const isJsonString = require('../../../utils/util')
 const RoomTypes = require('../../../models/RoomTypes')
 const RoomTransactions = require('../../../models/RoomTransactions')
 const CourseWorkload = require('../../../models/CourseWorkload')
-
+const AcadSession = require('../../../models/AcadSession')
+const Divisions = require('../../../models/Divisions')
 
 module.exports = {
 
 
     getPage: (req, res) => {
-        Promise.all([Days.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
+        Promise.all([Days.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug), AcadSession.sessionForCoursePreferences(res.locals.slug), CourseWorkload.fetchAll(1000,res.locals.slug), Divisions.getAll(res.locals.slug)]).then(result => {
             res.render('admin/courseworkload/preference', {
                 dayList: result[0].recordset,
                 icwList: result[1].recordset,
@@ -27,6 +28,9 @@ module.exports = {
                 breadcrumbs: req.breadcrumbs,
                 dayListJSON: JSON.stringify(result[0].recordset),
                 roomListsJSON: JSON.stringify(result[2].recordset),
+                acadSession: result[4].recordset,
+                courseList : result[5].recordset,
+                divisionList : result[6].recordset
             })
         })
     },
@@ -234,7 +238,7 @@ module.exports = {
                 res.json({
                     status: "200",
                     message: "Semester Found",
-                    result: result[0].recordset,              
+                    result: result[0].recordset,
                     length: result[0].recordset.length,
                     tabledata: result[1].recordset
                 })
@@ -254,25 +258,25 @@ module.exports = {
 
     findDivisionByModuleId: (req, res) => {
         Promise.all([CourseDayRoomPreferences.findDivisionByModuleId(req.body.moduleId, res.locals.slug), CourseDayRoomPreferences.preferenceByModuleId(req.body.moduleId, res.locals.slug)]).then(result => {
-            res.json({
-                status: "200",
-                message: "Divison Found",
-                result: result[0].recordset,              
-                length: result[0].recordset.length,
-                tabledata: result[1].recordset
-            })
-        })
-        .catch(error => {
-            if (isJsonString.isJsonString(error.originalError.info.message)) {
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            } else {
-                res.status(500).json({
-                    status: 500,
-                    description: error.originalError.info.message,
-                    data: []
+                res.json({
+                    status: "200",
+                    message: "Divison Found",
+                    result: result[0].recordset,
+                    length: result[0].recordset.length,
+                    tabledata: result[1].recordset
                 })
-            }
-        })
+            })
+            .catch(error => {
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message))
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    })
+                }
+            })
     },
 
     filterPreference: (req, res) => {
