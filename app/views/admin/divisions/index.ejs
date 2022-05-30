@@ -35,13 +35,15 @@
             <div>
                 <h5>DIVISIONS LIST</h5>
             </div>
-            <!-- <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
+           
+            <div>
+                 <button class="btn btn-danger ms-auto generate-divisions-btn"><i class="fa-solid fa-rotate"></i> Genearte Division</button>
+                <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
-            </div> -->
+                        width="26px" height="32px"></button> -->
+            </div>
         </div>
 
         <div class="card-body table-responsive">
@@ -194,7 +196,7 @@
         function loadAll() {
             let ApiObj = {
                 url: '/admin/divisions/getAll',
-                type: 'GET',
+                type: 'POST',
                 data: {},
                 dataType: 'JSON'
             }
@@ -206,6 +208,24 @@
 
             })
         }
+
+
+
+        //REFRESH
+        $(".generate-divisions-btn").on('click',function(){
+            let apiObj = {
+                type:"POST",
+                url:"/admin/divisions/generate-division",
+                data: {},
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                showSuccess(result)
+            }).catch(error => {
+
+                showError(error.responseJSON)
+            })
+        })
 
 
         // SEARCH PROGRAM TYPE

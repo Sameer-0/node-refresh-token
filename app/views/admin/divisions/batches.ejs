@@ -21,13 +21,14 @@
             <div>
                 <h5>Batches</h5>
             </div>
-            <!-- <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
+            <div>
+                <button class="btn btn-danger ms-auto generate-division-batch-btn"><i class="fa-solid fa-rotate"></i> Genearte Division Batches</button>
+                <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-campuses add-btn "><img src="/icons/delete.png" alt=""
-                        width="26px" height="32px"></button>
-            </div> -->
+                        width="26px" height="32px"></button> -->
+            </div>
         </div>
 
         <div id="errorHtml"></div>
@@ -145,6 +146,23 @@
                 showSuccess(result)
 
             }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+        //REFRESH
+        $(".generate-division-batch-btn").on('click',function(){
+            let apiObj = {
+                type:"POST",
+                url:"/admin/divisions/batches/generate-batches-division",
+                data: {},
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                showSuccess(result)
+            }).catch(error => {
+
                 showError(error.responseJSON)
             })
         })
