@@ -19,7 +19,7 @@ module.exports = {
         const slug = res.locals.slug;
         
         Promise.all([FacultyWorks.fetchAll(10, slug), FacultyWorks.getCount(slug), Faculties.fetchAll(1000, slug), Programs.fetchAll(100, slug), CourseWorkload.fetchAll(10000, slug)]).then(result => {
-            console.log('program list:::>>>', result[3].recordset)
+            
             res.render('admin/faculty/facultyworks', {
                 facultyWorkList: result[0].recordset,
                 pageCount: result[1].recordset[0].count, 
