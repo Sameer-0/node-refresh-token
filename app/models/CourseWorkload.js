@@ -122,6 +122,7 @@ module.exports = class {
 
     //object, res.locals.slug, res.locals.userId
     static create(inputJson, slug, userId) {
+        console.log('Import Course::::::::::::::>',JSON.stringify(inputJson))
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
