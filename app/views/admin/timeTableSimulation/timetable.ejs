@@ -194,15 +194,9 @@
                                       //  setTimeout(function () {
                                             for (let event of eventList) {
 
-                                                console.log("${event.slot_start_lid}>> ", event.slot_start_lid)
-                                                console.log("${event.slot_end_lid}>> ", event.slot_end_lid)
-                                                console.log("${event.room_lid}>> ", event.room_lid)
+                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time}`)
 
-                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="91"][data-end-time-id="102"][data-room-no="701"]`)
-                                               
-                                                
-                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} <br> ${event.batch} <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time}`)
-
+                                             
                                             }
 
                                       //  }, 2000)
@@ -215,7 +209,9 @@
                                     })
                                 })
 
-
+                                $(document).on('click', '.timeTableSimulation tbody td', function() {
+                                    console.log(this)
+                                })
                             })
                         </script>
                         <%- include("../partials/footerEnd") %>
