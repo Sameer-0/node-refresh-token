@@ -121,10 +121,16 @@
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 
 <script>
-window.addEventListener("load", tableLoad=>{
+ $(".modal-loader").removeClass('d-none')
+ window.addEventListener("load", tableLoad=>{
     console.log('Fully Loaded')
+    $(".modal-loader").addClass('d-none')
+    
 });
     $(document).ready(function () {
+
+
+
      $('.select2').select2();
 
    //Day  Check
@@ -180,7 +186,7 @@ window.addEventListener("load", tableLoad=>{
                 } else {
                     semesterName += `<option value="">Semester Not Found!</option>`;
                 }
-                $("#semesterName").html(semesterName)
+               // $("#semesterName").html(semesterName)
                 showAjaxTable(result.tabledata)
             }).catch(error => {
                 showError(error.responseJSON)
@@ -317,21 +323,21 @@ window.addEventListener("load", tableLoad=>{
             console.log('JSON:::::::::::::::::::::>>>>',JSON.stringify(courseDayJson))
 
 
-            // let apiObj = {
-            //     type:"POST",
-            //     url:"/admin/courseDayRoomPreference/create",
-            //     data: {
-            //         inputJSON: JSON.stringify(courseDayJson)
-            //     },
-            //     dataType:"JSON"
-            // }
-            // ajaxApi(apiObj).then(result => {
-            //     console.log('result ::::::::::::::::::::::', result)
-            //     showSuccess(result)
-            // }).catch(error => {
-            //     console.log('Error ::::::::::::::::::::::', error)
-            //     showError(error.responseJSON)
-            // })
+            let apiObj = {
+                type:"POST",
+                url:"/admin/courseDayRoomPreference/create",
+                data: {
+                    inputJSON: JSON.stringify(courseDayJson)
+                },
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
 
         })
 
