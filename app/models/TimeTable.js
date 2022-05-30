@@ -29,7 +29,7 @@ module.exports = class TimeTable {
 
             if(program_lid && acad_session_lid){
 
-                stmt= `SELECT eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].event_bookings eb 
+                stmt= `SELECT eb.id as eb.lid, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].event_bookings eb 
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
@@ -41,7 +41,7 @@ module.exports = class TimeTable {
             }
             else if(!program_lid && acad_session_lid){
              
-                stmt= `SELECT eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].event_bookings eb 
+                stmt= `SELECT eb.id as eb.lid, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].event_bookings eb 
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
@@ -53,7 +53,7 @@ module.exports = class TimeTable {
             }
             else if(program_lid && !acad_session_lid){
              
-                stmt= `SELECT eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].event_bookings eb 
+                stmt= `SELECT eb.id as eb.lid, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].event_bookings eb 
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = eb.program_lid

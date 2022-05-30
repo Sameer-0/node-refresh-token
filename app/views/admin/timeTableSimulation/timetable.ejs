@@ -64,7 +64,7 @@
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
             </div> -->
             <div class="table-responsive">
-                <table id="" class="table table-bordered timeTableSimulation" style="width: 100%">
+                <table id="" class="table table-bordered timetable-simulation" style="width: 100%; cursor: pointer;">
                     
                 </table>
                 </div>
@@ -73,6 +73,26 @@
 
 
     </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="slotModal" tabindex="-1" aria-labelledby="slotModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="slotModalLabel">Slot Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+          <button type="button" class="btn btn-primary">Drop</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <%- include("../partials/footer") %>
 
@@ -188,15 +208,24 @@
 
                                         tableStr += '</tbody>' 
 
-                                        $('.timeTableSimulation').html(tableStr)
+                                        $('.timetable-simulation').html(tableStr)
 
 
                                       //  setTimeout(function () {
                                             for (let event of eventList) {
 
-                                                $(document).find(`.timeTableSimulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time}`)
+                                                $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time}`)
 
-                                             
+                                                $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).attr({
+                                                    "data-event-id": `${event.id}`,
+                                                    "data-module-name": `${event.module_name}`,
+                                                    "data-division-name": `${event.division}`,
+                                                    "data-batch-name": `${event.batch}`,
+                                                    "data-session-name": `${event.acad_session}`,
+                                                    "data-program-name": `${event.program_name}`,
+                                                    "data-start-time": `${event.start_time}`,
+                                                    "data-end-time": `${event.end_time}`,
+                                                })
                                             }
 
                                       //  }, 2000)
@@ -209,8 +238,11 @@
                                     })
                                 })
 
-                                $(document).on('click', '.timeTableSimulation tbody td', function() {
-                                    console.log(this)
+                                $(document).on('click', '.timetable-simulation tbody td', function() {
+                                    $('#slotModal').modal('show');
+                                    $('#slotModal .modal-body').html($(this).text());
+                                  
+
                                 })
                             })
                         </script>
