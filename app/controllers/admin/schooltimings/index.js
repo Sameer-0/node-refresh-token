@@ -19,7 +19,7 @@ const SchoolTimingSettings = require('../../../models/SchoolTimingSettings')
 module.exports = {
     getPage: (req, res) => {
 
-        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  ProgramSessions.getUnlockedProgram(res.locals.slug), Days.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(1000), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), schoolTiming.getCount(res.locals.slug)]).then(result => {
+        Promise.all([schoolTiming.fetchAll(10, res.locals.slug),  ProgramSessions.getUnlockedProgram(res.locals.slug), Days.fetchActiveDay(res.locals.slug), SlotIntervalTimings.fetchAll(1000), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(100, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), schoolTiming.getCount(res.locals.slug)]).then(result => {
             console.log('school timing',result[0].recordset)
             res.render("admin/schooltimings/index", {
                 schoolTimingList: result[0].recordset,
