@@ -132,7 +132,7 @@ module.exports = {
 
   create: (req, res) => {
     let object = {
-      insert_initial_course_workload: JSON.parse(req.body.inputJSON)
+      insert_initial_course_worklaod: JSON.parse(req.body.inputJSON)
     }
     CourseWorkload.create(object, res.locals.slug, res.locals.userId).then(result => {
       res.status(200).json(JSON.parse(result.output.output_json))
