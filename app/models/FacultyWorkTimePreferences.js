@@ -107,8 +107,30 @@ module.exports = class FacultyWorkTimePreferences {
 
     static facultyPrefList(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT f.faculty_name, f.faculty_dbo_lid, f.faculty_id, f.id as faculty_lid, fw.id AS faculty_work_lid FROM [${slug}].faculty_works fw
+            return pool.request().query(`SELECT DISTINCT f.faculty_name, f.faculty_id, fw.faculty_lid,  f.faculty_dbo_lid FROM [${slug}].faculty_works fw
             INNER JOIN [${slug}].faculties f ON f.id =  fw.faculty_lid`)
+        })
+    }
+
+    static programByFacultyId(facultyId, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('facultyId', sql.Int, facultyId).query(`select p.id, p.program_name from [${slug}].faculty_works fw
+            INNER JOIN [${slug}].program_sessions ps ON ps.id =  fw.program_session_lid
+            INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
+            where fw.faculty_lid = @facultyId`)
+        })
+    }
+
+
+    static moduleByprogramAndSessionId(body, slug) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('programId', sql.Int, body.programId)
+            .input('sessionId', sql.Int, body.sessionId)
+            .query(`SELECT DISTINCT fw.module_lid, icw.module_name FROM [${slug}].faculty_works fw
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
+            INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
+            WHERE ps.program_lid = @programId AND ps.acad_session_lid = @sessionId`)
         })
     }
 }

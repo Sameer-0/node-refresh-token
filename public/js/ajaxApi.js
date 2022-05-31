@@ -8,12 +8,10 @@ function ajaxApi(obj) {
             console.log('Show beforeSend::::::::>')
         },
         success: data => {
-            console.log('success data::::::::::>',data)
             return data
         },
         complete: function () {
             $(".modal-loader").addClass('d-none')
-            console.log('Show complete::::::::>')
         },
         showSuccess(result) {
             console.log('Show Succces::::::::>', result)
