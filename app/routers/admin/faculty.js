@@ -64,4 +64,6 @@ router.post('/workpreferences/search', preferences.search)
 router.post('/workpreferences/pagination', preferences.pagination)
 router.post('/workpreferences/update', validate('JsonValidator'), preferences.update)
 router.post('/workpreferences/delete', validate('delete'), preferences.delete)
+router.post('/faculties/workpreferences/faculty-slots-and-programs', validate('single'), preferences.getSlotsByIdAndPrograms)
+router.post('/faculties/workpreferences/module-by-program-session-id', preferences.moduleByprogramAndSessionId)
 module.exports = router

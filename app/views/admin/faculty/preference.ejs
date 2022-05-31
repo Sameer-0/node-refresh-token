@@ -100,7 +100,7 @@
                         <option value="">Select faculty</option>
                         <% for (let faculty of facultyList) { %>
                             <option  data-faculty-name="<%- faculty.faculty_name %>"
-                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%-faculty.faculty_lid%>" data-faculty-dbo-lid="<%-faculty.faculty_dbo_lid%>"  value="<%- faculty.faculty_work_lid %>">
+                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.faculty_lid%>"   value="<%- faculty.faculty_dbo_lid %>">
                                 <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
                                 %></option>
                             <% } %>
@@ -357,10 +357,8 @@
 
         })
 
-
-
             //Delete Faculty API
-            $("#facultyWorkTimePreference").on('click','.delete-faculty-preference',function(){
+        $("#facultyWorkTimePreference").on('click','.delete-faculty-preference',function(){
             let id = $(this).attr("data-id");
             let ApiObj = {
                 type: 'POST',
@@ -381,25 +379,24 @@
 
 
         $(".faculty-drop-down").on('change',function(){
-            let facultyid =$('#faculty-drop-down').find('option:selected').attr('data-faculty-dbo-lid');// $(this).attr('data-faculty-lid')
-            console.log('facultyid:::::::::',facultyid)
+            let facultyDboLId = $(this).val();
+            let faculty_lid = $('#faculty-drop-down').find('option:selected').attr('data-faculty-lid');
             let ApiObj = {
             type: 'POST',
-            url: '/admin/faculties/date-time/getslottime',
+            url: '/admin/faculties/workpreferences/faculty-slots-and-programs',
             data: {
-                facultyid: facultyid
+                facultyDboLId: facultyDboLId,
+                faculty_lid: faculty_lid
             },
             dataType: 'JSON'
         }
-
         ajaxApi(ApiObj).then(result => {
-            let startTime = ``;
+            console.log('result:::::::::::::',result)
+                let startTime = ``;
                 let endTime = ``;
-                if (result.result.length > 0) {
-                    //startTime += `<option disabled selected value="">--Select Time--</option>`;
-                    //endTime += `<option disabled selected value="">--Select Time--</option>`;
-
-                    result.result.forEach(element => {
+                let programLists = ``;
+                if (result.slotList.length > 0) {
+                    result.slotList.forEach(element => {
                         startTime +=
                             `<option value="${element.id}">${element.start_time}</option>`;
                         endTime +=
@@ -409,15 +406,98 @@
                 } else {
                     startTime += `<option value="">No Slot Found!</option>`;
                     endTime += `<option value="">No Slot Found!</option>`;
-                    $('.add-faculty-date-time').attr('disabled','disabled')
                 }
+
+
+
+                if (result.programList.length > 0) {
+                    programLists = `<option value="" disabled>Select Program</option>`
+                    result.programList.forEach(element => {
+                        programLists +=
+                            `<option value="${element.id}">${element.program_name}</option>`;
+                    });
+                } else {
+                    programLists += `<option value="">No Program Found!</option>`;
+                }
+
                 $("#add-facultypreference-modal  #start_time_id").html(startTime);
                 $("#add-facultypreference-modal  #end_time_id").html(endTime);
+                $("#add-facultypreference-modal  #programName").html(programLists);
           
         }).catch(error => {
             showError(error.responseJSON)
         })
         })
+
+        //GET SESSION NAME
+        $("#programName").on('change',function(){
+            let programId = $(this).val()
+            console.log('programId::::::::::::',programId)
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/works/session-by-program',
+            data: {
+                program_lid:programId
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            console.log('result:::::::::::::',result)
+                let sessionName = ``;
+                if (result.result.length > 0) {
+                    sessionName = `<option value="" disabled>Select Session</option>`
+                    result.result.forEach(element => {
+                        sessionName +=
+                            `<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
+                    });
+                } else {
+                    sessionName += `<option value="">No Slot Found!</option>`;
+                }
+                $("#add-facultypreference-modal  #sessionName").html(sessionName);
+          
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+
+        })
+
+
+
+        //GET MODULE NAME
+        $("#sessionName").on('change',function(){
+            let programId = $("#programName").val()
+            let sessionId = $("#sessionName").val()
+            console.log('programId::::::::::::',programId)
+            console.log('sessionId::::::::::::',sessionId)
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/works/session-by-program',
+            data: {
+                programId: programId,
+                sessionId: sessionId
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            console.log('mODULE lIST:::::::::::::',result)
+                let moduleName = ``;
+                if (result.result.length > 0) {
+                    moduleName = `<option value="" disabled>Select Module</option>`
+                    result.result.forEach(element => {
+                        moduleName +=
+                            `<option value="${element.module_lid}">${element.module_name}</option>`;
+                    });
+                } else {
+                    moduleName += `<option value="">No Module Found!</option>`;
+                }
+                $("#add-facultypreference-modal  #moduleName").html(moduleName);
+          
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+        })
+
+        
 
 
         //PAGINATION
