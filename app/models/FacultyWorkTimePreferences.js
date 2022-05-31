@@ -103,4 +103,12 @@ module.exports = class FacultyWorkTimePreferences {
                 .execute(`[${slug}].[sp_delete_faculty_work_time_preference]`)
         })
     }
+
+
+    static facultyPrefList(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT DISTINCT f.faculty_name, f.faculty_dbo_lid, f.faculty_id, f.id as faculty_lid, fw.id AS faculty_work_lid FROM [${slug}].faculty_works fw
+            INNER JOIN [${slug}].faculties f ON f.id =  fw.faculty_lid`)
+        })
+    }
 }

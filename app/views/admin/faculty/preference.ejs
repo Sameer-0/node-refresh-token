@@ -89,64 +89,85 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div class="errorHtml"></div>
-                <input type="hidden" id="hidden_id">
-                <div class="table-responsive ">
-                    <table class="table table-bordered" id="facultyworktimepreferencesTable">
-                        <thead>
-                            <th>Faculty Work</th>
-                            <th>Program Day</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select class="select2 modalSelect2" name="faculty_work_lid" id="faculty_work_lid">
-                                        <% for(faculty of facultyWorkList) {%>
-                                        <option value="<%- faculty.id %>">
-                                            <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td> 
-                                    <select class="select2 modalSelect2" name="p_day_lid" id="p_day_lid">
-                                        <% for(programday of programDayList) {%>
-                                        <option value="<%- programday.id %>"><%- programday.program_name %> ( <%- programday.day_name %> )</option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2 modalSelect2" name="start_time_id" id="start_time_id">
-                                        <option value="">Select Start Time</option>
-                                        <%for(let startlist of slotIntervalTimings){%>
-                                            <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
-                                            <%}%>
-                                </select>
-                                </td>
-                                <td>
-                                    <select class="select2 modalSelect2" name="end_time_id" id="end_time_id">
-                                        <option value="">Select End Time</option>
-                                        <%for(let endlist of slotIntervalTimings){%>
-                                            <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
-                                        <%}%>
-                                </select>
-                                </td>
-                           
+                <div id="errorHtml"></div>
 
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworktimepreference"></i>
-                                </td>
-                            </tr>
-                        </tbody>
 
-                    </table>
+             <div class="row">
+                 <div class="col-md-3 select-items">
+                <div class="mb-3">
+                    <label class="form-label">Select Faculty</label>
+                    <select class="form-select select2 faculty-drop-down" id="faculty-drop-down">
+                        <option value="">Select faculty</option>
+                        <% for (let faculty of facultyList) { %>
+                            <option  data-faculty-name="<%- faculty.faculty_name %>"
+                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%-faculty.faculty_lid%>" data-faculty-dbo-lid="<%-faculty.faculty_dbo_lid%>"  value="<%- faculty.faculty_work_lid %>">
+                                <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                                %></option>
+                            <% } %>
+                    </select>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Program</label>
+                       <select class="form-select" name="programName" id="programName"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Session</label>
+                       <select class="form-select" name="sessionName" id="sessionName"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Module</label>
+                       <select class="form-select" name="moduleName" id="moduleName"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Day</label>
+                       <select class="form-select" name="dayName" id="dayName"></select>
+                </div>
+
+                <div class="mb-3">
+                 <label class="form-label">Select Start Time</label>
+                    <select class="form-select" name="start_time_id" id="start_time_id"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select End Time</label>
+                    <select class="form-select" name="end_time_id" id="end_time_id"></select>
+                </div>
+
+  
+                <div class="mb-3 d-grid gap-2">
+                    <button class="btn btn-info text-light add-faculty-date-time" disabled>ADD FACULTY DATE TIME</button>
+                </div>
+
+                <div class="alert alert-success rounded-0" role="alert">
+                    Note: Select Faculty First.
+                  </div>
+
+                 </div>
+                 <div class="col-md-9 selected-items">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-bordered" id="add-more-faculty-date-time-table">
+                            <thead>
+                                <th>Sr No.</th>
+                                <th>Faculty Name</th>
+                                <th>Faculty Id</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                 </div>
+             </div>
             </div>
             <div class="modal-footer">
-                <div id="errorMsg"></div>
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-facultyworktimepreferences"><i class="fas fa-plus"></i>Add More Fields</button>
                 <button type="submit" class="btn  createFacultyWorkTimePref modal-inputform-btn">Create</button>
                 <button type="submit" class="btn  updateFacultyWorkTimePref modal-inputform-btn d-none">Update</button>
@@ -357,6 +378,46 @@
             })
         })
 
+
+
+        $(".faculty-drop-down").on('change',function(){
+            let facultyid =$('#faculty-drop-down').find('option:selected').attr('data-faculty-dbo-lid');// $(this).attr('data-faculty-lid')
+            console.log('facultyid:::::::::',facultyid)
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/date-time/getslottime',
+            data: {
+                facultyid: facultyid
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            let startTime = ``;
+                let endTime = ``;
+                if (result.result.length > 0) {
+                    //startTime += `<option disabled selected value="">--Select Time--</option>`;
+                    //endTime += `<option disabled selected value="">--Select Time--</option>`;
+
+                    result.result.forEach(element => {
+                        startTime +=
+                            `<option value="${element.id}">${element.start_time}</option>`;
+                        endTime +=
+                            `<option value="${element.id}">${element.end_time}</option>`;
+                    });
+                    $('.add-faculty-date-time').removeAttr('disabled')
+                } else {
+                    startTime += `<option value="">No Slot Found!</option>`;
+                    endTime += `<option value="">No Slot Found!</option>`;
+                    $('.add-faculty-date-time').attr('disabled','disabled')
+                }
+                $("#add-facultypreference-modal  #start_time_id").html(startTime);
+                $("#add-facultypreference-modal  #end_time_id").html(endTime);
+          
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+        })
 
 
         //PAGINATION
