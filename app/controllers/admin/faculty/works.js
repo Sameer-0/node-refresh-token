@@ -33,10 +33,11 @@ module.exports = {
     },
 
     create: (req, res) => {
-        console.log('inputJSON11::::::::::::::::::::>>',res.locals.slug, res.locals.userId)
+     
         let object = {
             add_faculty_works: JSON.parse(req.body.inputJSON)
         }
+        console.log('FACULTY WORK::::::::::::::::::::>>',object)
         FacultyWorks.save(object, res.locals.slug, res.locals.userId).then(result => {
             if (req.body.settingName) {
                 Settings.updateByName(res.locals.slug, req.body.settingName)
@@ -213,6 +214,17 @@ module.exports = {
             //     })
             // }
             console.log('errooor', error);
+        })
+    },
+
+    findOne: (req, res) => {
+        FacultyWorks.findOne(req.body.Id, res.locals.slug).then(result => {
+            res.json({
+                status: 200,
+                data: result.recordset[0]
+            })
+        }).catch(error => {
+            res.status(500).json(JSON.parse(error.originalError.info.message))
         })
     },
 

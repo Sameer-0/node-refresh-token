@@ -71,11 +71,23 @@ module.exports = class {
 
     static getLockedSessionByProgram(slug, programLid) {
         return poolConnection.then(pool => {
+
+            let stmt;
+
+            if(programLid){
+                stmt = `SELECT ads.id, ads.acad_session, ps.program_lid FROM [${slug}].program_sessions ps 
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
+                WHERE ps.is_locked = 1 AND ps.program_lid = @programLid`
+            }
+            else{
+                stmt = `SELECT distinct ads.id, ads.acad_session FROM [${slug}].program_sessions ps 
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
+                WHERE ps.is_locked = 1`
+            }
             return pool.request()
+
             .input('programLid', sql.Int, programLid)
-            .query(`SELECT ads.id, ads.acad_session, ps.program_lid FROM [${slug}].program_sessions ps 
-            INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
-            WHERE ps.is_locked = 1 AND ps.program_lid = @programLid`)
+            .query(stmt)
         })
     }
 
@@ -90,3 +102,4 @@ module.exports = class {
     }
 
 }
+ 

@@ -17,7 +17,7 @@ module.exports = {
             ])
             .then(result => {
 
-                console.log('allocationlist:::', result[1].recordset);
+               
 
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
@@ -48,14 +48,14 @@ module.exports = {
 
     getEventsByProgramSessionDay: (req, res, next) => {
 
-        console.log("req.body>>> ", req.body)
+        
 
         Promise.all([
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
             SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)
         ]).then(results => {
 
-            console.log(results[1])
+            console.log(results[0])
 
             res.status(200).send({
                 eventList: results[0].recordset,
