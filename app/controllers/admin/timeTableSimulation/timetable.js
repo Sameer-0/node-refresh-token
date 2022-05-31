@@ -13,16 +13,16 @@ module.exports = {
         Promise.all([
                 ProgramSessions.getLockedProgram(res.locals.slug),
                 Rooms.fetchBookedRooms(),
-                Days.fetchActiveDay(res.locals.slug)
+                Days.fetchActiveDay(res.locals.slug),
+                TimeTable.getPendingEvents(res.locals.slug)
             ])
             .then(result => {
-
-               
-
+                // console.log('pending::::',  result[3].recordset)
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     roomList: JSON.stringify(result[1].recordset),
                     dayList: result[2].recordset,
+                    pendingEvents: result[3].recordset,
                     breadcrumbs: req.breadcrumbs,
                     Url: req.originalUrl
                 })
@@ -41,26 +41,33 @@ module.exports = {
     getSessionByProgram: (req, res, next) => {
 
         ProgramSessions.getLockedSessionByProgram(res.locals.slug, req.body.program_lid).then(result => {
-            console.log(result.recordset)
+           
             res.status(200).send(result.recordset)
         })
     },
 
     getEventsByProgramSessionDay: (req, res, next) => {
 
-        
-
         Promise.all([
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
             SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)
         ]).then(results => {
 
-            console.log(results[0])
+            
 
             res.status(200).send({
                 eventList: results[0].recordset,
                 slotList: results[1].recordset
             })
+        })
+    },
+
+    getPendingEvents: (req, res, next) => {
+        console.log('pending req', req.body)
+        
+        TimeTable.getPendingEvents(res.locals.slug, req.body.programLid, req.body.acadSessionLid).then(result => {
+            console.log('jjjj',result.recordset)
+            res.status(200).send(result.recordset)
         })
     }
 }

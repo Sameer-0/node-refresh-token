@@ -200,7 +200,7 @@
 
                                             for (let slot of slotList) {
                                                 tableStr +=
-                                                    ` <td data-start-time-id="${slot.slot_start_lid}" data-end-time-id="${slot.slot_end_lid}" data-room-id="${room.id}">NA</td>`
+                                                    ` <td data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}">NA</td>`
                                             }
 
                                             tableStr += '</tr>'
@@ -230,18 +230,51 @@
 
                                       //  }, 2000)
                                     //   $(this).attr('disabled','disabled');
-                                      
-
-
                                     }).catch(error => {
                                         showError(error.responseJSON)
                                     })
                                 })
 
                                 $(document).on('click', '.timetable-simulation tbody td', function() {
+                                   
+                                    if($(this).text() == "NA"){
+
+                                        let programLid = $("#program-name").val();
+                                        let acadSessionLid = $("#session-name").val();
+
+                                        let ApiObj = {
+                                        url: '/admin/time-table-simulation/time-table/pending-events',
+                                        type: 'POST',
+                                        data: {
+                                            programLid: programLid,
+                                            acadSessionLid: acadSessionLid,
+                                        },
+                                        dataType: 'JSON'
+                                        }
+
+                                        ajaxApi(ApiObj).then(result => {
+                                           console.log('result;;;;;', result)
+                                           let pendingEventList = ``;
+                                           pendingEventList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+                                           pendingEventList +=`<select class="form-select">`;
+                                           for( let pendingEvents of result ){
+                                            pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
+                                           }
+                                           pendingEventList += `</select>`
+
+                                           $('#slotModal .modal-body').html(pendingEventList);
+                                           $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
+                                        })
+                                        .catch(err => {})
+
+
+                                        
+                                    }
+                                    else{
+                                        $('#slotModal .modal-body').html($(this).text());
+                                    }
+
                                     $('#slotModal').modal('show');
-                                    $('#slotModal .modal-body').html($(this).text());
-                                  
                                 })
                             })
                         </script>
