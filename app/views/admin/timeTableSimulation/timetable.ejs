@@ -242,30 +242,62 @@
                                         let programLid = $("#program-name").val();
                                         let acadSessionLid = $("#session-name").val();
 
-                                        let ApiObj = {
-                                        url: '/admin/time-table-simulation/time-table/pending-events',
-                                        type: 'POST',
-                                        data: {
-                                            programLid: programLid,
-                                            acadSessionLid: acadSessionLid,
-                                        },
-                                        dataType: 'JSON'
-                                        }
+                                            if(programLid && acadSessionLid){
 
-                                        ajaxApi(ApiObj).then(result => {
-                                           console.log('result;;;;;', result)
-                                           let pendingEventList = ``;
-                                           pendingEventList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
-                                           pendingEventList +=`<select class="form-select">`;
-                                           for( let pendingEvents of result ){
-                                            pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
-                                           }
-                                           pendingEventList += `</select>`
+                                                let ApiObj = {
+                                                url: '/admin/time-table-simulation/time-table/pending-events',
+                                                type: 'POST',
+                                                data: {
+                                                    programLid: programLid,
+                                                    acadSessionLid: acadSessionLid,
+                                                    },
+                                                dataType: 'JSON'
+                                                }
 
-                                           $('#slotModal .modal-body').html(pendingEventList);
-                                           $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
-                                        })
-                                        .catch(err => {})
+                                                ajaxApi(ApiObj).then(result => {
+                                                console.log('result;;;;;', result)
+                                                let pendingEventList = ``;
+                                                pendingEventList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+                                                pendingEventList +=`<select class="form-select">`;
+                                                for( let pendingEvents of result ){
+                                                    pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
+                                                }
+                                                pendingEventList += `</select>`
+
+                                                $('#slotModal .modal-body').html(pendingEventList);
+                                                $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
+                                                })
+                                                .catch(err => {})
+                                            
+                                            }
+                                            // else if(!programLid && !acadSessionLid){
+                                            //     let ApiObj = {
+                                            //     url: '/admin/time-table-simulation/time-table/pending-events',
+                                            //     type: 'POST',
+                                            //     data: {
+                                            //         programLid: programLid,
+                                            //         acadSessionLid: acadSessionLid,
+                                            //         },
+                                            //     dataType: 'JSON'
+                                            //     }
+
+                                            //     ajaxApi(ApiObj).then(result => {
+                                            //     console.log('result;;;;;', result)
+                                            //     let pendingEventList = ``;
+                                            //     pendingEventList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+                                            //     pendingEventList +=`<select class="form-select">`;
+                                            //     for( let pendingEvents of result ){
+                                            //         pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
+                                            //     }
+                                            //     pendingEventList += `</select>`
+
+                                            //     $('#slotModal .modal-body').html(pendingEventList);
+                                            //     $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
+                                            //     })
+                                            //     .catch(err => {})
+                                            // }
+
+                                       
 
 
                                         
