@@ -84,7 +84,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-         
+            
         </div>
         <div class="modal-footer">
           <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
@@ -96,16 +96,13 @@
 
     <%- include("../partials/footer") %>
 
-                        </script>
-
                         <script>
                             $(document).ready(function () {
 
                                 let roomList = JSON.parse(`<%- roomList %>`);
+                                let programListJson = JSON.parse(`<%- programListJson %>`);
 
-                                console.log("RoomLIST>>>>>>> ", roomList)
-
-
+                 
                                 //Getting session List Ajax
                                 $("#program-name").on('change', function () {
                                     let programLid = $(this).val();
@@ -165,7 +162,7 @@
                                     let programLid = $("#program-name").val();
                                     let acadSessionLid = $("#session-name").val();
                                     let dayLid = $(this).val();
-                                    console.log('parent day', $(this) )
+                                    console.log('parent day', $(this))
 
                                     let ApiObj = {
                                         url: '/admin/time-table-simulation/time-table/events',
@@ -188,6 +185,7 @@
                                         let tableStr = `<thead><tr><th>Room No</th>`;
 
                                         for (let slot of slotList) {
+                                           
                                             tableStr +=
                                                 `<th>${slot.start_time}-${slot.end_time}</th>`
                                         }
@@ -195,6 +193,7 @@
                                         tableStr += `</tr></thead><tbody>`;
 
                                         for (let room of roomList) {
+                                          
                                             tableStr +=
                                                 `<tr data-room-no="${room.room_number}"><td data-room-no="${room.room_number}">${room.room_number}</td>`
 
@@ -235,16 +234,108 @@
                                     })
                                 })
 
+
                                 $(document).on('click', '.timetable-simulation tbody td', function() {
                                    
-                                    if($(this).text() == "NA"){
+                                   if($(this).text() == "NA"){
 
-                                        let programLid = $("#program-name").val();
-                                        let acadSessionLid = $("#session-name").val();
+                                       let programLid = $("#program-name").val();
+                                       let acadSessionLid = $("#session-name").val();
+                                       let programList = ``;
+                                       programList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+                                       if(!$('#program-name').val()){
+                                            
+                                               programList +=`<select class="form-select" id="program-name-modal">`;
+                                               for( let program of programListJson ){
+                                                   programList += `<option value="${program.id}">${program.program_name}</option>`
+                                               }
+                                               programList += `</select>`
+                                               
+                                            }
+                                        else{
+                                            programList +=`<select class="form-select" id="program-name-modal">`;
+                                            programList += `<option value="" selected>--Select Session</option>`
+                                            programList += `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
+                                            programList += `</select>`
+                                            }
+                                                programList += `<select class="form-select my-3" id="session-name-modal"></select>`
+                                                programList += `<select class="form-select my-3" id="pending-events"></select>`
 
-                                            if(programLid && acadSessionLid){
+                                                $('#slotModal .modal-body').html(programList);
+                                                $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
+                                           
+                                           
+                                   }
+                                   else{
+                                       $('#slotModal .modal-body').html($(this).text());
+                                       $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-primary">Drop</button>`)
+                                   }
 
-                                                let ApiObj = {
+                                   $('#slotModal').modal('show');
+                               })
+
+
+                                $(document).on('change', '#program-name-modal', function () {
+                                   
+                                    let programLid = $(this).val();
+                                    console.log('jello mello', programLid)
+                                    let ApiObj = {
+                                        url: '/admin/programs/sessions/program-sessions',
+                                        type: 'POST',
+                                        data: {
+                                            programLid: programLid
+                                        },
+                                        dataType: 'JSON'
+                                    }
+                                    let sessionList = ``;
+                                    if($('#session-name').val()){
+                                        sessionList += `<option disabled selected value="">--Select Session--</option>`;
+                                        sessionList += `<option value="${$('#session-name').val()}"> ${$('#session-name option:selected').text()}</option>`
+
+                                        $(document).find("#slotModal #session-name-modal").html(sessionList)
+                                    }
+                                    else{
+                                    ajaxApi(ApiObj).then(result => {
+                                        console.log('jello mello progrmas',result )
+                                        
+
+
+                                        if (result.length > 0) {
+
+                                            sessionList +=
+                                                `<option disabled selected value="">--Select Session--</option>`;
+                                            result.forEach(element => {
+                                                sessionList += `<option value="${element.id}">
+                                                    ${element.acad_session} 
+                                                    </option>`
+                                            });
+
+
+                                        } else {
+                                            // if($('#program-name').val() !== ""){
+                                                sessionList += `<option value=""> No Session Found! </option>`
+                                            // }
+                                            // else{
+                                            //     sessionList += `<option value=""> All Session </option>`
+                                            // }
+                                        }
+                                        sessionList += `</select>`;
+                                        $(document).find("#slotModal #session-name-modal").html(sessionList)
+                                    }).catch(error => {
+                                        showError(error.responseJSON)
+                                    })
+                                }
+                                })
+                                
+
+                                $(document).on('change', '#session-name-modal', function() {
+
+                                    let programLid = $('#program-name-modal').val();
+                                    let acadSessionLid = $(this).val();
+
+                                    console.log('programLid lid', programLid);
+
+                                    let ApiObj = {
                                                 url: '/admin/time-table-simulation/time-table/pending-events',
                                                 type: 'POST',
                                                 data: {
@@ -254,59 +345,25 @@
                                                 dataType: 'JSON'
                                                 }
 
+
                                                 ajaxApi(ApiObj).then(result => {
+                                                    if(result.length > 0){
                                                 console.log('result;;;;;', result)
                                                 let pendingEventList = ``;
-                                                pendingEventList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
-                                                pendingEventList +=`<select class="form-select">`;
+                                                
                                                 for( let pendingEvents of result ){
                                                     pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
-                                                pendingEventList += `</select>`
+                                                }
 
-                                                $('#slotModal .modal-body').html(pendingEventList);
-                                                $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
+                                                else{
+                                                    pendingEventList = `<option> No Pending Events </option>`
+                                                }
+                                                $(document).find('#pending-events').html(pendingEventList);
+                                    
                                                 })
                                                 .catch(err => {})
                                             
-                                            }
-                                            // else if(!programLid && !acadSessionLid){
-                                            //     let ApiObj = {
-                                            //     url: '/admin/time-table-simulation/time-table/pending-events',
-                                            //     type: 'POST',
-                                            //     data: {
-                                            //         programLid: programLid,
-                                            //         acadSessionLid: acadSessionLid,
-                                            //         },
-                                            //     dataType: 'JSON'
-                                            //     }
-
-                                            //     ajaxApi(ApiObj).then(result => {
-                                            //     console.log('result;;;;;', result)
-                                            //     let pendingEventList = ``;
-                                            //     pendingEventList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
-                                            //     pendingEventList +=`<select class="form-select">`;
-                                            //     for( let pendingEvents of result ){
-                                            //         pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
-                                            //     }
-                                            //     pendingEventList += `</select>`
-
-                                            //     $('#slotModal .modal-body').html(pendingEventList);
-                                            //     $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
-                                            //     })
-                                            //     .catch(err => {})
-                                            // }
-
-                                       
-
-
-                                        
-                                    }
-                                    else{
-                                        $('#slotModal .modal-body').html($(this).text());
-                                    }
-
-                                    $('#slotModal').modal('show');
                                 })
                             })
                         </script>
