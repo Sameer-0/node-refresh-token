@@ -33,9 +33,9 @@ module.exports = class TimeTable {
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN acad_sessions ads ON ads.id = eb.acad_session_lid
-				INNER JOIN slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
+				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
+				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
                 INNER JOIN [${slug}].days d 
                 ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.program_lid = @programLid AND eb.acad_session_lid = @sessionLid`
             }
@@ -45,9 +45,9 @@ module.exports = class TimeTable {
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN acad_sessions ads ON ads.id = eb.acad_session_lid
-				INNER JOIN slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
+				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
+				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
                 INNER JOIN [${slug}].days d  
                 ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.acad_session_lid = @sessionLid`
             }
@@ -57,9 +57,9 @@ module.exports = class TimeTable {
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN acad_sessions ads ON ads.id = eb.acad_session_lid
-				INNER JOIN slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
+				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
+				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
                 INNER JOIN [${slug}].days d  
                 ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.program_lid = @programLid`
             }
@@ -69,9 +69,9 @@ module.exports = class TimeTable {
                 INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN acad_sessions ads ON ads.id = eb.acad_session_lid
-				INNER JOIN slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
+				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
+				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
                 INNER JOIN [${slug}].days d 
                 ON eb.day_lid = d.id WHERE d.id = @dayLid` 
             }
@@ -86,4 +86,60 @@ module.exports = class TimeTable {
     }
 
 
+    static getPendingEvents(slug, program_lid, acad_session_lid) {
+
+        return poolConnection.then(pool => {
+            let stmt;
+
+            if(program_lid && acad_session_lid){
+
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
+                INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
+				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
+				INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid
+                WHERE pe.program_lid = @programLid AND pe.acad_session_lid = @sessionLid`
+            }
+            else if(!program_lid && acad_session_lid){
+             
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
+                INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
+				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
+				INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid
+                WHERE pe.acad_session_lid = @sessionLid`
+            }
+            else if(program_lid && !acad_session_lid){
+             
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
+                INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
+				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
+				INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid
+                WHERE pe.program_lid = @programLid`
+            }
+            else{
+               
+                stmt = `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
+                INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
+				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
+				INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid` 
+            }
+      
+            return pool.request()
+                .input('programLid', sql.Int, program_lid)
+                .input('sessionLid', sql.Int, acad_session_lid)
+                .query(stmt);
+            
+        })
+    }
 }
