@@ -66,7 +66,7 @@ module.exports = {
         console.log('pending req', req.body)
         
         TimeTable.getPendingEvents(res.locals.slug, req.body.programLid, req.body.acadSessionLid).then(result => {
-            console.log('jjjj',result.recordset)
+            console.log('jjjj', result.recordset)
             res.status(200).send(result.recordset)
         })
     }
