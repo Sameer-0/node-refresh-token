@@ -371,6 +371,7 @@ $(document).ready(function () {
             let id = $("#hidden_id").val()
 
             facultyElems.each(function (index, elem) {
+                console.log('Element::::::::::::',$(elem).find(`select[name="module_lid"]`))
                 let faculty_lid = $(elem).find(`select[name='faculty_lid']`).val()
                 let program_lid = $(elem).find(`select[name='program_lid']`).val();
                 let session_lid = $(elem).find(`select[name='session_lid']`).val();
@@ -480,7 +481,8 @@ $(document).ready(function () {
                     dataType: 'JSON'
                 }
                 ajaxApi(ApiObj).then(result => {
-                    let moduleName = `<option value="">Select Module Name</option>`;
+                   // let moduleName = `<option value="">Select Module Name</option>`;
+                    let moduleName = ``;
                     if (result.result.length > 0) {
                         result.result.forEach(element => {
                             moduleName +=`<option value="${element.id}">${element.module_name}</option>`;
@@ -535,7 +537,8 @@ $(document).ready(function () {
             }
             ajaxApi(ApiObj).then(result => {
                 console.log('api returnssss:', result.result)
-                let sessionList = `<option value="">Select Session Name</option>`;
+                //let sessionList = `<option value="">Select Session Name</option>`;
+                let sessionList = ``;
                 if (result.result.length > 0) {
                     result.result.forEach(element => {
                         sessionList +=`<option value="${element.acad_session_lid}">${element.acad_session}</option>`;

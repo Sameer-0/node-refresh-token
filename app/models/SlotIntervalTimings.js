@@ -127,7 +127,7 @@ module.exports = class SlotIntervalTimings {
          on st.id >= fp.start_time_id
          and st.id <= fp.end_time_id
          WHERE f.id = @faculty_dbo_lid
-         GROUP BY st.id, st.start_time,st.end_time ORDER BY st.id ASC`)
+         GROUP BY st.id, st.start_time, st.end_time ORDER BY st.id ASC`)
         })
     }
 
