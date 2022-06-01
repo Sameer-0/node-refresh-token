@@ -28,7 +28,7 @@ module.exports = class {
                 ORDER BY pd.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
- 
+
     static search(rowcount, keyword, slug) {
         console.log('Search Progrom Day::::::::>>', keyword)
         return poolConnection.then(pool => {
@@ -52,7 +52,7 @@ module.exports = class {
     }
 
     static update(body, slug, userId) {
-        console.log('slug',slug)
+        console.log('slug', slug)
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('Id', sql.Int, body.id)
@@ -71,6 +71,17 @@ module.exports = class {
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_refresh_program_days]`)
+        })
+    }
+
+    static dayByProgramId(programId, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('programId', sql.Int, programId)
+                .query(`SELECT ps.id as programday_lid, d.day_name FROM [${slug}].program_days ps
+            INNER JOIN [${slug}].days d ON d.id = ps.day_lid
+            WHERE ps.program_lid = @programId`)
         })
     }
 }

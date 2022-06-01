@@ -124,4 +124,19 @@ module.exports = class {
             INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid  WHERE fw.id = @Id`)
         })
     }
+
+    static facultyWorkloadForPrefernce(body, slug) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            request.input('facultyLid', sql.Int, body.facultyLid)
+            request.input('moduleLid', sql.Int, body.moduleLid)
+            request.input('programLid', sql.Int, body.programLid)
+            request.input('acadSessionLid', sql.Int, body.acadSessionLid)
+            return request.query(`SELECT fw.id AS faculty_work_lid, fw.faculty_lid, icw.module_name, icw.program_id, f.faculty_name, f.faculty_id FROM [${slug}].faculty_works fw
+            INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
+            INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
+            WHERE fw.faculty_lid = @facultyLid AND fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @acadSessionLid`)
+        })
+    }
 }
