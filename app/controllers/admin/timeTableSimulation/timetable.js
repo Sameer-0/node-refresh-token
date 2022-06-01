@@ -69,5 +69,23 @@ module.exports = {
            console.log('pending list:::', result.recordset)
             res.status(200).send(result.recordset)
         })
+    },
+
+    dropEvent: (req, res, next) => {
+        console.log(req.body);
+
+        TimeTable.dropEvent(res.locals.slug, res.locals.userId, req.body.eventLid).then(result => {
+            res.status(200).send(result);
+        })
+
+    },
+
+    scheduleEvent: (req, res, next) => {
+        console.log(req.body);
+      
+        TimeTable.scheduleEvent(res.locals.slug, res.locals.userId, req.body).then(result => {
+            res.status(200).send(result);
+        })
+
     }
 }

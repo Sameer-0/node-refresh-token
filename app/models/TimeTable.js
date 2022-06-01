@@ -94,7 +94,7 @@ module.exports = class TimeTable {
             // if(program_lid && acad_session_lid){
                 console.log('im in:::', program_lid + acad_session_lid)
 
-                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name FROM [${slug}].pending_events pe
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
@@ -141,6 +141,32 @@ module.exports = class TimeTable {
                 .input('sessionLid', sql.Int, acad_session_lid)
                 .query(stmt);
             
+        })
+    }
+
+    static dropEvent(slug, userId, eventLid){
+
+        return poolConnection.then(pool => {
+
+            return pool.request() 
+            .input('event_lid', sql.Int, eventLid)
+            .input('last_modified_by', sql.Int, userId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}]`);
+
+        })
+    }
+
+    static scheduleEvent(slug, userId, inputJSON){
+
+        return poolConnection.then(pool => {
+
+            return pool.request() 
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+            .input('last_modified_by', sql.Int, userId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}]`);
+
         })
     }
 }
