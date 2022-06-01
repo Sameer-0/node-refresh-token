@@ -149,10 +149,10 @@ module.exports = class TimeTable {
         return poolConnection.then(pool => {
 
             return pool.request() 
-            .input('event_lid', sql.Int, eventLid)
+            .input('event_booking_lid', sql.Int, eventLid)
             .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${slug}]`);
+            .execute(`[${slug}].sp_drop_events`);
 
         })
     }
@@ -165,7 +165,7 @@ module.exports = class TimeTable {
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
             .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${slug}]`);
+            .execute(`[${slug}].sp_allocate_events`);
 
         })
     }

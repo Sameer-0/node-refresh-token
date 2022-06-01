@@ -198,7 +198,7 @@
 
                                             for (let slot of slotList) {
                                                 tableStr +=
-                                                    ` <td data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}">NA</td>`
+                                                    ` <td data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
                                             }
 
                                             tableStr += '</tr>'
@@ -223,7 +223,6 @@
                                                     "data-program-name": `${event.program_name}`,
                                                     "data-start-time": `${event.start_time}`,
                                                     "data-end-time": `${event.end_time}`,
-                                                    // "data-room": `${event.end_time}`
                                                 })
                                             }
 
@@ -242,7 +241,7 @@
                                        let programLid = $("#program-name").val();
                                        let acadSessionLid = $("#session-name").val();
                                        let programList = ``;
-                                       programList += `<div class="mb-2" >Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+                                       programList += `<div class="mb-2" >Slot Available || ${$(this).attr('data-room-no')} || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
 
                                        if(!$('#program-name').val()){
                                             programList +=`<select class="form-select" id="program-name-modal">`;
@@ -304,19 +303,12 @@
                                             sessionList +=
                                                 `<option disabled selected value="">--Select Session--</option>`;
                                             result.forEach(element => {
-                                                sessionList += `<option value="${element.id}">
-                                                    ${element.acad_session} 
-                                                    </option>`
+                                                sessionList += `<option value="${element.id}"> ${element.acad_session} </option>`
                                             });
 
 
                                         } else {
-                                            // if($('#program-name').val() !== ""){
-                                                sessionList += `<option value=""> No Session Found! </option>`
-                                            // }
-                                            // else{
-                                            //     sessionList += `<option value=""> All Session </option>`
-                                            // }
+                                            sessionList += `<option value=""> No Session Found! </option>`
                                         }
                                         sessionList += `</select>`;
                                         $(document).find("#slotModal #session-name-modal").html(sessionList)
@@ -379,12 +371,12 @@
                                                 dataType: 'JSON'
                                     }
 
-                                    // ajaxApi(ApiObj).then((result) => {
-                                    //     console.log(result);
-                                    // })
-                                    // .catch((error) => {
-                                    //     console.log('error', error);
-                                    // })
+                                    ajaxApi(ApiObj).then((result) => {
+                                        console.log(result);
+                                    })
+                                    .catch((error) => {
+                                        console.log('error', error);
+                                    })
                                     
                                 })
 
@@ -401,10 +393,7 @@
                                     let batchLid = $("#pending-events option:selected").attr("data-batch-lid");
                                     let dayLid = $("#day").val();
 
-                                    let ApiObj = {
-                                                url: '/admin/time-table-simulation/time-table/schedule-event',
-                                                type: 'POST',
-                                                data: [{
+                                    let obj = [{
                                                     roomLid: roomLid,
                                                     startTimeId: startTimeId,
                                                     endTimeId: endTimeId,
@@ -414,18 +403,25 @@
                                                     divisionLid: divisionLid,
                                                     batchLid: batchLid,
                                                     dayLid: dayLid,
-                                                    }],
+                                                }]
+                                    let ApiObj = {
+                                                url: '/admin/time-table-simulation/time-table/schedule-event',
+                                                type: 'POST',
+                                                data: {
+                                                    json: JSON.stringify(obj),
+                                                    
+                                                    },
                                                 dataType: 'JSON'
                                     }
 
                                     console.log('obj::::', ApiObj.data)
 
-                                    // ajaxApi(ApiObj).then((result) => {
-                                    //     console.log(result);
-                                    // })
-                                    // .catch((error) => {
-                                    //     console.log('error', error);
-                                    // })
+                                    ajaxApi(ApiObj).then((result) => {
+                                        console.log(result);
+                                    })
+                                    .catch((error) => {
+                                        console.log('error', error);
+                                    })
 
                                 })
                             

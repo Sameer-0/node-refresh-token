@@ -81,9 +81,10 @@ module.exports = {
     },
 
     scheduleEvent: (req, res, next) => {
-        console.log(req.body);
+        
       
         TimeTable.scheduleEvent(res.locals.slug, res.locals.userId, req.body).then(result => {
+            console.log('reqqqq', req.body)
             res.status(200).send(result);
         })
 
