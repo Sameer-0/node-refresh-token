@@ -151,6 +151,7 @@ module.exports = {
     getSlotsByIdAndPrograms: (req, res, next) => {
         console.log('BODY:::::::::', req.body.facultyId)
         Promise.all([SlotIntervalTimings.getFacultySlotsById(req.body.facultyDboLId, res.locals.slug), FacultyWorkTimePreferences.programByFacultyId(req.body.faculty_lid, res.locals.slug)]).then(result => {
+            console.log('result::::::::',result[1].recordset)
             res.json({
                 status: 200,
                 message: "Success",
@@ -190,5 +191,53 @@ module.exports = {
                 })
             }
         })
-    }
+    },
+
+    sessionDayByProgramId: (req, res, next) => {
+        Promise.all([FacultyWorks.sessionListByProgram(req.body.programId, res.locals.slug), ProgramDays.dayByProgramId(req.body.programId, res.locals.slug)]).then(result => {
+            console.log('Result:::::::::::::::', result)
+            res.json({
+                status: 200,
+                message: "Success",
+                sessonList: result[0].recordset,
+                dayList: result[1].recordset,
+            })
+         }).catch(error => {
+             console.log(error)
+             if (isJsonString.isJsonString(error.originalError.info.message)) {
+                 res.status(500).json(JSON.parse(error.originalError.info.message))
+             } else {
+                 res.status(500).json({
+                     status: 500,
+                     description: error.originalError.info.message,
+                     data: []
+                 })
+             }
+         })
+     },
+
+     //facultyWorkloadForPrefernce
+
+
+     facultyWorkloadForPrefernce: (req, res, next) => {
+        FacultyWorks.facultyWorkloadForPrefernce(req.body, res.locals.slug).then(result => {
+            console.log('Result:::::::::::::::', result)
+            res.json({
+                status: 200,
+                message: "Success",
+                worklist: result.recordset,
+            })
+         }).catch(error => {
+             console.log(error)
+             if (isJsonString.isJsonString(error.originalError.info.message)) {
+                 res.status(500).json(JSON.parse(error.originalError.info.message))
+             } else {
+                 res.status(500).json({
+                     status: 500,
+                     description: error.originalError.info.message,
+                     data: []
+                 })
+             }
+         })
+     }
 }
