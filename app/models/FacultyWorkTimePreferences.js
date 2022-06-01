@@ -21,7 +21,7 @@ module.exports = class FacultyWorkTimePreferences {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id, 
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
-            f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code,p.abbr as program_abbr, d.day_name
+            f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code,p.abbr as program_abbr, d.day_name, icw.module_name
             FROM [${slug}].faculty_work_time_preferences fwtp
             INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
             INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
@@ -30,6 +30,7 @@ module.exports = class FacultyWorkTimePreferences {
             INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
             INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
             INNER JOIN [${slug}].days d ON d.id = pd.day_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
             ORDER BY fwtp.id DESC`)
         })
     }
@@ -50,7 +51,7 @@ module.exports = class FacultyWorkTimePreferences {
                 .query(`SELECT TOP ${Number(rowcount)} fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id, 
                 CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
                 CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
-                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.abbr as program_abbr, d.day_name
+                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.abbr as program_abbr, d.day_name, icw.module_name
                 FROM [${slug}].faculty_work_time_preferences fwtp
                 INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
                 INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
@@ -59,6 +60,7 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
                 INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
                 INNER JOIN [${slug}].days d ON d.id = pd.day_lid
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
                 WHERE sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR RTRIM(p.program_name) LIKE @keyword OR p.program_id LIKE @keyword OR p.program_code LIKE @keyword OR d.day_name LIKE @keyword  OR f.faculty_name LIKE @keyword OR f.faculty_id LIKE @keyword OR CONVERT(NVARCHAR, sit.start_time, 0) LIKE @keyword OR CONVERT(NVARCHAR, _sit.end_time, 0) LIKE @keyword
                 ORDER BY fwtp.id DESC`)
         })
@@ -71,7 +73,7 @@ module.exports = class FacultyWorkTimePreferences {
                 .query(`SELECT fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id, 
                 CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
                 CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
-                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code,p.abbr as program_abbr, d.day_name
+                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code,p.abbr as program_abbr, d.day_name, icw.module_name
                 FROM [${slug}].faculty_work_time_preferences fwtp
                 INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
                 INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
@@ -80,6 +82,7 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
                 INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
                 INNER JOIN [${slug}].days d ON d.id = pd.day_lid
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
                 ORDER BY fwtp.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -131,6 +134,20 @@ module.exports = class FacultyWorkTimePreferences {
             INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
             INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
             WHERE ps.program_lid = @programId AND ps.acad_session_lid = @sessionId`)
+        })
+    }
+
+    static findOne(id, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('Id', sql.Int, id)
+                .query(`SELECT fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id,
+                fw.faculty_lid, fw.module_lid, ps.program_lid, ps.acad_session_lid,
+                f.faculty_dbo_lid
+                from [${slug}].faculty_work_time_preferences fwtp
+                INNER JOIN [${slug}].faculty_works  fw ON fw.id = fwtp.faculty_work_lid
+                INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
+                INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
+                WHERE fwtp.id = @Id`)
         })
     }
 }
