@@ -169,13 +169,39 @@
              </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-facultyworktimepreferences"><i class="fas fa-plus"></i>Add More Fields</button>
                 <button type="submit" class="btn  createFacultyWorkTimePref modal-inputform-btn">Create</button>
-                <button type="submit" class="btn  updateFacultyWorkTimePref modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
     </div>
+
+
+    <!-- edit modal -->
+<div class="modal fade" id="edit-faculty-preference-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <input type="hidden" id="facultypreference_lid" name="facultypreference_lid">
+                <label for="exampleFormControlInput1" class="form-label">Start Time</label>
+               <select class="form-select" id="start_time_id"></select>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">End Time</label>
+               <select class="form-select" id="end_time_id"></select>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary updateFacultyPref">UPDATE</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
     <%- include("../partials/footer") %>
@@ -194,7 +220,7 @@
             let keyword = $("#searchkeyword").val()
             $.ajax({
                 type: "POST",
-            url: "/admin/workpreferences/search",
+            url: "/admin/faculties/workpreferences/search",
             data: {
                 keyword: keyword
             },
@@ -207,64 +233,12 @@
 
 
 
-        //Update Preferences
-        $(".updateFacultyWorkTimePref").on('click', function(){
-            console.log('Read....')
-        let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
-        let facultyWorkPrefCount = facultyWorkElems.length;
-        let facultyWorkJSON = [];
-        let id = $("#hidden_id").val()
-            facultyWorkElems.each(function (index, elem) {
-                let faculty_work_lid = $(elem).find(`select[name="faculty_work_lid"]`).val()
-                let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
-                let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
-                let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
-
-                if (index < facultyWorkPrefCount - 1) {
-                    let obj = {
-                        id: id,
-                        faculty_work_lid: faculty_work_lid,
-                        p_day_lid: p_day_lid,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id
-                    }
-                    facultyWorkJSON.push(obj)
-                } else {
-                    let obj = {
-                        id: id,
-                        faculty_work_lid: faculty_work_lid,
-                        p_day_lid: p_day_lid,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id
-                    }
-                    facultyWorkJSON.push(obj)
-                }
-            })
-            console.log(facultyWorkJSON)
-
-            let ApiObj = {
-                type: 'POST',
-                url: '/admin/workpreferences/update',
-                data: {
-                    inputJSON: JSON.stringify(facultyWorkJSON)
-                },
-                dataType: 'JSON'
-            }
-            ajaxApi(ApiObj).then(result => {
-                console.log(result)
-                showSuccess(result)
-               // notify()
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-        })
-
         //Delete Faculty API
         $("#facultyWorkTimePreference").on('click','.delete-faculty-preference',function(){
             let id = $(this).attr("data-id");
             let ApiObj = {
                 type: 'POST',
-                url: '/admin/workpreferences/delete',
+                url: '/admin/faculties/workpreferences/delete',
                 data: {
                     id: id
                 },
@@ -318,9 +292,9 @@
                     programLists += `<option value="">No Program Found!</option>`;
                 }
 
-                $("#add-facultypreference-modal  #start_time_id").html(startTime);
-                $("#add-facultypreference-modal  #end_time_id").html(endTime);
-                $("#add-facultypreference-modal  #programName").html(programLists);
+                $("#add-facultypreference-modal  #start_time_id").html(startTime).trigger('change');
+                $("#add-facultypreference-modal  #end_time_id").html(endTime).trigger('change');
+                $("#add-facultypreference-modal  #programName").html(programLists).trigger('change');
         }).catch(error => {
             showError(error.responseJSON)
         })
@@ -361,8 +335,8 @@
                 } else {
                     datNames += `<option value="">No Program Found!</option>`;
                 }
-                $("#add-facultypreference-modal  #sessionName").html(sessionName);
-                $("#add-facultypreference-modal  #dayName").html(datNames);
+                $("#add-facultypreference-modal  #sessionName").html(sessionName).trigger('change');
+                $("#add-facultypreference-modal  #dayName").html(datNames).trigger('change');
           
         }).catch(error => {
             showError(error.responseJSON)
@@ -397,7 +371,7 @@
                 } else {
                     moduleName += `<option value="">No Module Found!</option>`;
                 }
-                $("#add-facultypreference-modal  #moduleName").html(moduleName);
+                $("#add-facultypreference-modal  #moduleName").html(moduleName).trigger('change');
           
         }).catch(error => {
             showError(error.responseJSON)
@@ -503,7 +477,7 @@
 
         let ApiObj = {
             type: 'POST',
-            url: '/admin/workpreferences/create',
+            url: '/admin/faculties/workpreferences/create',
             data: {
                 inputJSON: JSON.stringify(facultyWorkJSON)
             },
@@ -517,6 +491,101 @@
             showError(error.responseJSON)
         })
     })
+
+    //EDIT
+    $("#facultyWorkTimePreference").on('click','.edit-preference',function(){
+        let id = $(this).attr("data-id")
+        console.log('ID:::::::::::::::',id)
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/find-one',
+            data: {
+                id: id
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+         let obj = result.result
+         console.log('Response Result:::::::::::::::::::>',obj)
+         facultySlotForEdit(obj.faculty_dbo_lid, obj.start_time_id, obj.end_time_id)
+         $("#facultypreference_lid").val(obj.id)
+        $("#edit-faculty-preference-modal").modal('show')
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+    })
+
+    function facultySlotForEdit(facultyid, start_time_id, end_time_id){
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/date-time/getslottime',
+            data: {
+                facultyid: facultyid
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            let startTime = ``;
+                let endTime = ``;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        startTime +=
+                            `<option value="${element.id}">${element.start_time}</option>`;
+                        endTime +=
+                            `<option value="${element.id}">${element.end_time}</option>`;
+                    });
+                    $('.add-faculty-date-time').removeAttr('disabled')
+                } else {
+                    startTime += `<option value="">No Slot Found!</option>`;
+                    endTime += `<option value="">No Slot Found!</option>`;
+                    $('.add-faculty-date-time').attr('disabled','disabled')
+                }
+                $("#edit-faculty-preference-modal  #start_time_id").html(startTime);
+                $("#edit-faculty-preference-modal  #end_time_id").html(endTime);
+                $("#edit-faculty-preference-modal  #start_time_id").val(start_time_id).trigger('change')
+                $("#edit-faculty-preference-modal  #end_time_id").val(end_time_id).trigger('change')
+          
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+        }
+
+
+
+
+                //Update Preferences
+        $(".updateFacultyPref").on('click', function(){
+        console.log('Read....')
+       
+        let facultyWorkPrefCount = facultyWorkElems.length;
+        let facultyWorkJSON = [];
+        let id = $("#facultypreference_lid").val()
+        let start_time_id = $("#edit-faculty-preference-modal #start_time_id").val()
+        let end_time_id = $("#edit-faculty-preference-modal #end_time_id").val()
+        let obj = {
+                        id: id,
+                        start_time_id: start_time_id,
+                        end_time_id: end_time_id,
+                    }
+            facultyWorkJSON.push(obj)
+            console.log(facultyWorkJSON)
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/workpreferences/update',
+                data: {
+                    inputJSON: JSON.stringify(facultyWorkJSON)
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
         //PAGINATION
     let pageCount = `<%- pageCount %>`
@@ -541,7 +610,7 @@
         console.log('pagination here!!')
         $.ajax({
             type: "POST",
-            url: "/admin/workpreferences/pagination",
+            url: "/admin/faculties/workpreferences/pagination",
             data: {
                 pageNo: num
             },

@@ -216,9 +216,6 @@ module.exports = {
          })
      },
 
-     //facultyWorkloadForPrefernce
-
-
      facultyWorkloadForPrefernce: (req, res, next) => {
         FacultyWorks.facultyWorkloadForPrefernce(req.body, res.locals.slug).then(result => {
             console.log('Result:::::::::::::::', result)
@@ -239,5 +236,18 @@ module.exports = {
                  })
              }
          })
-     }
+     },
+
+     findOne: (req, res) => {
+        FacultyWorkTimePreferences.findOne(req.body.id, res.locals.slug).then(result => {
+            res.json({
+                status: 200,
+                message: "Success",
+                result: result.recordset[0]
+            })
+        }).catch(error => {
+            console.log('error::::::::',error)
+            res.status(500).json(error.originalError.info.message)
+        })
+    },
 }

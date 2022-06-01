@@ -133,4 +133,18 @@ module.exports = class FacultyWorkTimePreferences {
             WHERE ps.program_lid = @programId AND ps.acad_session_lid = @sessionId`)
         })
     }
+
+    static findOne(id, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('Id', sql.Int, id)
+                .query(`SELECT fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id,
+                fw.faculty_lid, fw.module_lid, ps.program_lid, ps.acad_session_lid,
+                f.faculty_dbo_lid
+                from [${slug}].faculty_work_time_preferences fwtp
+                INNER JOIN [${slug}].faculty_works  fw ON fw.id = fwtp.faculty_work_lid
+                INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
+                INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
+                WHERE fwtp.id = @Id`)
+        })
+    }
 }
