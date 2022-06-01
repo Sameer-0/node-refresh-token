@@ -144,7 +144,7 @@
                                         sessionList += `</select>`;
                                         $("#session-name").html(sessionList)
                                     }).catch(error => {
-                                        showError(error.responseJSON)
+                                        // showError(error.responseJSON)
                                     })
                                 })
 
@@ -162,8 +162,7 @@
                                     let programLid = $("#program-name").val();
                                     let acadSessionLid = $("#session-name").val();
                                     let dayLid = $(this).val();
-                                    console.log('parent day', $(this))
-
+                                
                                     let ApiObj = {
                                         url: '/admin/time-table-simulation/time-table/events',
                                         type: 'POST',
@@ -231,7 +230,7 @@
                                       //  }, 2000)
                                     //   $(this).attr('disabled','disabled');
                                     }).catch(error => {
-                                        showError(error.responseJSON)
+                                        // showError(error.responseJSON)
                                     })
                                 })
 
@@ -281,7 +280,7 @@
                                 $(document).on('change', '#program-name-modal', function () {
                                    
                                     let programLid = $(this).val();
-                                    console.log('jello mello', programLid)
+                                    
                                     let ApiObj = {
                                         url: '/admin/programs/sessions/program-sessions',
                                         type: 'POST',
@@ -299,9 +298,6 @@
                                     }
                                     else{
                                     ajaxApi(ApiObj).then(result => {
-                                        console.log('jello mello progrmas',result )
-                                        
-
 
                                         if (result.length > 0) {
 
@@ -325,7 +321,7 @@
                                         sessionList += `</select>`;
                                         $(document).find("#slotModal #session-name-modal").html(sessionList)
                                     }).catch(error => {
-                                        showError(error.responseJSON)
+                                        // showError(error.responseJSON)
                                     })
                                 }
                                 })
@@ -335,8 +331,6 @@
 
                                     let programLid = $('#program-name-modal').val();
                                     let acadSessionLid = $(this).val();
-
-                                    console.log('programLid lid', programLid);
 
                                     let ApiObj = {
                                                 url: '/admin/time-table-simulation/time-table/pending-events',
@@ -351,13 +345,13 @@
                                                 let pendingEventList ;
                                                 ajaxApi(ApiObj).then(result => {
                                                     if(result.length > 0){
-                                                console.log('result;;;;;', result)
+                                                console.log('Pending-event-list:::>>', result)
                                                 
                                                 for( let pendingEvents of result ){
-                                                    console.log('hello')
+                                                   
                                                     pendingEventList += `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
-                                                console.log('pending event list', pendingEventList)
+                                      
                                                 }
 
                                                 else{
@@ -373,7 +367,6 @@
                             
                                 //DROP EVENT
                                 $(document).on('click', '#drop-slot', function() {
-                                    console.log('drop it:::', $(this).attr('data-lid'))
 
                                     let eventLid = $(this).attr('data-lid');
 
@@ -386,8 +379,6 @@
                                                 dataType: 'JSON'
                                     }
 
-                                    console.log('drop api call')
-                                    
                                     // ajaxApi(ApiObj).then((result) => {
                                     //     console.log(result);
                                     // })
@@ -399,7 +390,7 @@
 
                                 //SCHEDULE EVENT
                                 $(document).on('click', '#schedule-slot', function() {
-                                    console.log('schedule it:::', $(this).attr("data-start-time-id"))
+
                                     let roomLid = $(this).attr("data-room-id");
                                     let startTimeId = $(this).attr("data-start-time-id");
                                     let endTimeId = $(this).attr("data-end-time-id");
@@ -408,6 +399,7 @@
                                     let moduleLid = $("#pending-events option:selected").attr("data-module-lid");
                                     let divisionLid = $("#pending-events option:selected").attr("data-division-lid");
                                     let batchLid = $("#pending-events option:selected").attr("data-batch-lid");
+                                    let dayLid = $("#day").val();
 
                                     let ApiObj = {
                                                 url: '/admin/time-table-simulation/time-table/schedule-event',
@@ -421,11 +413,12 @@
                                                     moduleLid: moduleLid,
                                                     divisionLid: divisionLid,
                                                     batchLid: batchLid,
+                                                    dayLid: dayLid,
                                                     }],
                                                 dataType: 'JSON'
                                     }
 
-                                    console.log('schedule:::::::::', ApiObj.data)
+                                    console.log('obj::::', ApiObj.data)
 
                                     // ajaxApi(ApiObj).then((result) => {
                                     //     console.log(result);
@@ -434,7 +427,6 @@
                                     //     console.log('error', error);
                                     // })
 
-                                    
                                 })
                             
                             })
