@@ -100,4 +100,50 @@ module.exports = class schoolTiming {
         })
     }
 
+
+    static fetchAllBySettingName(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`IF((SELECT status FROM [asmsoc-mum].school_timing_settings WHERE status = 1 and name='Same For All Day') = 1)
+            SELECT 'Same For All Day' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
+            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
+            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time
+            FROM [asmsoc-mum].school_timings st
+            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
+            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
+            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time FOR JSON AUTO) AS schoolsetting
+        ELSE IF ((SELECT status FROM [asmsoc-mum].school_timing_settings WHERE status = 1 and name='Day Wise') = 1)
+            SELECT 'Day Wise' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
+            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
+            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time,
+            st.day_lid, d.day_name
+            FROM [asmsoc-mum].school_timings st
+            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
+            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
+            INNER JOIN [asmsoc-mum].days d ON d.id = st.day_lid
+            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time, st.day_lid, d.day_name FOR JSON AUTO)  AS schoolsetting
+        ELSE IF ((SELECT status FROM [asmsoc-mum].school_timing_settings WHERE status = 1 and name='Day and Program Wise') = 1)
+            SELECT 'Day and Program Wise' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
+            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
+            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time,
+            st.day_lid, d.day_name, p.program_name
+            FROM [asmsoc-mum].school_timings st
+            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
+            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
+            INNER JOIN [asmsoc-mum].days d ON d.id = st.day_lid
+            INNER JOIN [asmsoc-mum].programs p ON p.id = st.program_lid
+            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time, st.day_lid, d.day_name, p.program_name  FOR JSON AUTO)  AS schoolsetting
+        ELSE IF ((SELECT status FROM [asmsoc-mum].school_timing_settings WHERE status = 1 and name='Day, Program and Session Wise') = 1)
+            SELECT 'Day and Program Wise' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
+            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
+            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time,
+            st.day_lid, d.day_name, p.program_name, ads.acad_session
+            FROM [asmsoc-mum].school_timings st
+            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
+            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
+            INNER JOIN [asmsoc-mum].days d ON d.id = st.day_lid
+            INNER JOIN [asmsoc-mum].programs p ON p.id = st.program_lid
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = st.acad_session_lid
+            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time, st.day_lid, d.day_name, p.program_name, ads.acad_session FOR JSON AUTO)  AS schoolsetting`)
+        })
+    }
 }
