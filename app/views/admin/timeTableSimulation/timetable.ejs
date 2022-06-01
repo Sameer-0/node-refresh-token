@@ -88,7 +88,7 @@
         </div>
         <div class="modal-footer">
           <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-          <button type="button" class="btn btn-primary">Drop</button>
+          <button type="button" class="btn btn-primary" id="drop-slot">Drop</button>
         </div>
       </div>
     </div>
@@ -224,6 +224,7 @@
                                                     "data-program-name": `${event.program_name}`,
                                                     "data-start-time": `${event.start_time}`,
                                                     "data-end-time": `${event.end_time}`,
+                                                    // "data-room": `${event.end_time}`
                                                 })
                                             }
 
@@ -237,42 +238,43 @@
 
                                 $(document).on('click', '.timetable-simulation tbody td', function() {
                                    
-                                   if($(this).text() == "NA"){
+                                    if($(this).text() == "NA"){
 
                                        let programLid = $("#program-name").val();
                                        let acadSessionLid = $("#session-name").val();
                                        let programList = ``;
-                                       programList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+                                       programList += `<div class="mb-2" >Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+
                                        if(!$('#program-name').val()){
-                                            
-                                                programList +=`<select class="form-select" id="program-name-modal">`;
-                                                programList += `<option value="" selected>--select program--</option>`
-                                               for( let program of programListJson ){
-                                                   programList += `<option value="${program.id}">${program.program_name}</option>`
-                                               }
-                                               programList += `</select>`
-                                               
+                                            programList +=`<select class="form-select" id="program-name-modal">`;
+                                            programList += `<option value="" selected>--select program--</option>`
+                                            for( let program of programListJson ){
+                                                programList += `<option value="${program.id}">${program.program_name}</option>`
                                             }
+                                            programList += `</select>`
+                                               
+                                        }
                                         else{
                                             programList +=`<select class="form-select" id="program-name-modal">`;
                                             programList += `<option value="" selected>--Select Session</option>`
                                             programList += `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
                                             programList += `</select>`
                                             }
-                                                programList += `<select class="form-select my-3" id="session-name-modal"></select>`
-                                                programList += `<select class="form-select my-3" id="pending-events"></select>`
 
-                                                $('#slotModal .modal-body').html(programList);
-                                                $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success">Schedule</button>`);
-                                           
-                                           
-                                   }
-                                   else{
-                                       $('#slotModal .modal-body').html($(this).text());
-                                       $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-primary">Drop</button>`)
-                                   }
+                                            programList += `<select class="form-select my-3" id="session-name-modal"></select>`
+                                            programList += `<select class="form-select my-3" id="pending-events"></select>`
 
-                                   $('#slotModal').modal('show');
+                                            $('#slotModal .modal-body').html(programList);
+                                            $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}">Schedule</button>`);
+                                                  
+                                    }
+                                    else{
+                                        $('#slotModal .modal-body').html($(this).text());
+                                        $('#slotModal .modal-body').attr('data-lid', $(this).attr("data-lid"));
+                                        $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-primary" id="drop-slot" data-lid="${$(this).attr("data-lid")}">Drop</button>`)
+                                    }
+
+                                    $('#slotModal').modal('show');
                                })
 
 
@@ -353,7 +355,7 @@
                                                 
                                                 for( let pendingEvents of result ){
                                                     console.log('hello')
-                                                    pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
+                                                    pendingEventList += `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
                                                 console.log('pending event list', pendingEventList)
                                                 }
@@ -368,6 +370,73 @@
                                                 .catch(err => {console.log('err', err)})
                                             
                                 })
+                            
+                                //DROP EVENT
+                                $(document).on('click', '#drop-slot', function() {
+                                    console.log('drop it:::', $(this).attr('data-lid'))
+
+                                    let eventLid = $(this).attr('data-lid');
+
+                                    let ApiObj = {
+                                                url: '/admin/time-table-simulation/time-table/drop-event',
+                                                type: 'POST',
+                                                data: {
+                                                    eventLid: eventLid,
+                                                    },
+                                                dataType: 'JSON'
+                                    }
+
+                                    console.log('drop api call')
+                                    
+                                    // ajaxApi(ApiObj).then((result) => {
+                                    //     console.log(result);
+                                    // })
+                                    // .catch((error) => {
+                                    //     console.log('error', error);
+                                    // })
+                                    
+                                })
+
+                                //SCHEDULE EVENT
+                                $(document).on('click', '#schedule-slot', function() {
+                                    console.log('schedule it:::', $(this).attr("data-start-time-id"))
+                                    let roomLid = $(this).attr("data-room-id");
+                                    let startTimeId = $(this).attr("data-start-time-id");
+                                    let endTimeId = $(this).attr("data-end-time-id");
+                                    let programLid = $("#slotModal #program-name-modal").val();
+                                    let sessionLid = $("#slotModal #session-name-modal").val();
+                                    let moduleLid = $("#pending-events option:selected").attr("data-module-lid");
+                                    let divisionLid = $("#pending-events option:selected").attr("data-division-lid");
+                                    let batchLid = $("#pending-events option:selected").attr("data-batch-lid");
+
+                                    let ApiObj = {
+                                                url: '/admin/time-table-simulation/time-table/schedule-event',
+                                                type: 'POST',
+                                                data: [{
+                                                    roomLid: roomLid,
+                                                    startTimeId: startTimeId,
+                                                    endTimeId: endTimeId,
+                                                    programLid: programLid,
+                                                    sessionLid: sessionLid,
+                                                    moduleLid: moduleLid,
+                                                    divisionLid: divisionLid,
+                                                    batchLid: batchLid,
+                                                    }],
+                                                dataType: 'JSON'
+                                    }
+
+                                    console.log('schedule:::::::::', ApiObj.data)
+
+                                    // ajaxApi(ApiObj).then((result) => {
+                                    //     console.log(result);
+                                    // })
+                                    // .catch((error) => {
+                                    //     console.log('error', error);
+                                    // })
+
+                                    
+                                })
+                            
                             })
                         </script>
                         <%- include("../partials/footerEnd") %>
