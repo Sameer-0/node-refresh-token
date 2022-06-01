@@ -245,7 +245,8 @@
                                        programList += `<div class="mb-2">Slot Available || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
                                        if(!$('#program-name').val()){
                                             
-                                               programList +=`<select class="form-select" id="program-name-modal">`;
+                                                programList +=`<select class="form-select" id="program-name-modal">`;
+                                                programList += `<option value="" selected>--select program--</option>`
                                                for( let program of programListJson ){
                                                    programList += `<option value="${program.id}">${program.program_name}</option>`
                                                }
@@ -345,24 +346,26 @@
                                                 dataType: 'JSON'
                                                 }
 
-
+                                                let pendingEventList ;
                                                 ajaxApi(ApiObj).then(result => {
                                                     if(result.length > 0){
                                                 console.log('result;;;;;', result)
-                                                let pendingEventList = ``;
                                                 
                                                 for( let pendingEvents of result ){
+                                                    console.log('hello')
                                                     pendingEventList += `<option>${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
+                                                console.log('pending event list', pendingEventList)
                                                 }
 
                                                 else{
                                                     pendingEventList = `<option> No Pending Events </option>`
                                                 }
+
                                                 $(document).find('#pending-events').html(pendingEventList);
                                     
                                                 })
-                                                .catch(err => {})
+                                                .catch(err => {console.log('err', err)})
                                             
                                 })
                             })
