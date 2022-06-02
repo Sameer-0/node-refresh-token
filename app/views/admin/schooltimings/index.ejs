@@ -50,104 +50,143 @@
                 <button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
                 </div>  -->
-                <table class="table table-bordered custom_row" id="divisionTable">
-                   <%if(schoolTiming.settingname =="Same For All Day"){%>
-                        <thead>
-                            <th>#</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <% let count = 1%>
-                            <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
-                                <tr>
-                                    <td><%- count++ %></td>
-                                    <td><%-schooltime.start_time%></td>
-                                    <td><%-schooltime.end_time%></td>
-                                    <td><a class="edit-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-edit"></span></a>
-                                        <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
-                                    </td>
-                                </tr>
-                            <%}%>
-                        </tbody>
-                    <%} else if (schoolTiming.settingname =="Day Wise"){%>
-                        <thead>
-                            <th>#</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Day</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <% let count = 1%>
-                            <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
-                                <tr>
-                                    <td><%- count++ %></td>
-                                    <td><%-schooltime.start_time%></td>
-                                    <td><%-schooltime.end_time%></td>
-                                    <td><%-schooltime.day_name%></td>
-                                    <td><a class="edit-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-edit"></span></a>
-                                        <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
-                                    </td>
-                                </tr>
-                            <%}%>
-                        </tbody>
-                    <%} else if (schoolTiming.settingname =="Day and Program Wise"){%>
-                        <thead>
-                            <th>#</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Day</th>
-                            <th>Program Name</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <% let count = 1 %>
-                            <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
-                                <tr>
-                                    <td><%- count++ %></td>
-                                    <td><%- schooltime.start_time %></td>
-                                    <td><%- schooltime.end_time %></td>
-                                    <td><%- schooltime.day_name %></td>
-                                    <td><%- schooltime.program_name %></td>
-                                    <td><a class="edit-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-edit"></span></a>
-                                        <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
-                                    </td>
-                                </tr>
-                            <%}%>
-                        </tbody>
-                    <%}  else if (schoolTiming.settingname =="Day, Program and Session Wise"){%>
-                        <thead>
-                            <th>#</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Day</th>
-                            <th>Program Name</th>
-                            <th>Academic Session</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <% let count = 1 %>
-                            <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
-                                <tr>
-                                    <td><%- count++ %></td>
-                                    <td><%-schooltime.start_time%></td>
-                                    <td><%-schooltime.end_time%></td>
-                                    <td><%-schooltime.day_name%></td>
-                                    <td><%-schooltime.program_name%></td>
-                                    <td><%-schooltime.acad_session%></td>
-                                    <td><a class="edit-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-edit"></span></a>
-                                        <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
-                                    </td>
-                                </tr>
-                            <%}%>
-                        </tbody>
+                <table class="table table-bordered custom_row" id="schoolTimingTable">
+                    <%if(schoolTiming == "undefined"){%>
+                  No Data found
+                    <%}else{%>
+                        <%if(schoolTiming.settingname =="Same For All Day"){%>
+                            <thead>
+                                <th>#</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <% let count = 1%>
+                                <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
+                                    <tr>
+                                        <td><%- count++ %></td>
+                                        <td><%-schooltime.start_time%></td>
+                                        <td><%-schooltime.end_time%></td>
+                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-edit"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
+                                        </td>
+                                    </tr>
+                                <%}%>
+    
+                            </tbody>
+                        <%} else if (schoolTiming.settingname =="Day Wise"){%>
+                            <thead>
+                                <th>#</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Day</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <% let count = 1%>
+                                <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
+                                    <tr>
+                                        <td><%- count++ %></td>
+                                        <td><%-schooltime.start_time%></td>
+                                        <td><%-schooltime.end_time%></td>
+                                        <td><%-schooltime.day_name%></td>
+                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-edit"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
+                                        </td>
+                                    </tr>
+                                <%}%>
+                            </tbody>
+                        <%} else if (schoolTiming.settingname =="Day and Program Wise"){%>
+                            <thead>
+                                <th>#</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Day</th>
+                                <th>Program Name</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <% let count = 1 %>
+                                <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
+                                    <tr>
+                                        <td><%- count++ %></td>
+                                        <td><%- schooltime.start_time %></td>
+                                        <td><%- schooltime.end_time %></td>
+                                        <td><%- schooltime.day_name %></td>
+                                        <td><%- schooltime.program_name %></td>
+                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-edit"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
+                                        </td>
+                                    </tr>
+                                <%}%>
+                            </tbody>
+                        <%}  else if (schoolTiming.settingname =="Day, Program and Session Wise"){%>
+                            <thead>
+                                <th>#</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Day</th>
+                                <th>Program Name</th>
+                                <th>Academic Session</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <% let count = 1 %>
+                                <% for(let schooltime of JSON.parse(schoolTiming.schoolsetting)) {%>
+                                    <tr>
+                                        <td><%- count++ %></td>
+                                        <td><%-schooltime.start_time%></td>
+                                        <td><%-schooltime.end_time%></td>
+                                        <td><%-schooltime.day_name%></td>
+                                        <td><%-schooltime.program_name%></td>
+                                        <td><%-schooltime.acad_session%></td>
+                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-edit"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
+                                        </td>
+                                    </tr>
+                                <%}%>
+                            </tbody>
+                        <%}%>
                     <%}%>
                 </table>
 </div>
 </div>
 </div>
+
+<!-- edit modal -->
+<div class="modal fade" id="editschoolTimeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Start Time</label>
+                <select class="select2 modalSelect2" name="start_date_id" id="start_date_id">
+                    <% for(stime of slotTime){%>
+                        <option value="<%- stime.id%>"><%- stime.start_time %></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">End Time</label>
+                <select class="select2 modalSelect2" name="end_date_id" id="end_date_id">
+                    <% for(etime of slotTime){%>
+                        <option value="<%- etime.id%>"><%- etime.end_time %></option>
+                    <%}%>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary update-school-time">UPDATE</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 <!-- MODAL FOR SCHOOL TIMING -->
@@ -243,6 +282,11 @@
         </div>
     </div>
 </div>
+
+
+
+
+
 
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
@@ -983,52 +1027,47 @@
 
 
 
-    function AjaxTable (schoolTimingList){
-        let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
-                <thead>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Program Name</th>
-                    <th>Program Name</th>
-                    <th>Session</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>School Timing Type</th>
-                    <th>Day</th>
-                    <th>Action</th>
-                </thead> 
-                <tbody>
-                    `;
+    $('.select2').select2({
+                dropdownParent: $('#editschoolTimeModal')});
 
-            if (schoolTimingList.length > 0) {
-                let count = 1;
-                for (schooltime of schoolTimingList) {
-                    AjaxTable +=
-                        `<tr>
-                    <td>${ count++ }</td>
-                    <td>${schooltime.name}</td>
-                    <td>${schooltime.program_name}</td>
-                    <td>${schooltime.program_id}</td>
-                    <td>${schooltime.acad_session}</td>
-                    <td>${schooltime.start_time}</td>
-                    <td>${schooltime.end_time}</td>
-                    <td>${schooltime.schooltimetype}</td>
-                    <td>${schooltime.day_name}</td>
-                    <td><a class="edit-schooltime" data-id="${schooltime.id}"><span class="fa fa-edit"></span></a>
-                        <a class="delete-schooltime" data-id="${schooltime.id}"><span class="fa fa-trash"></span></a>
-                    </td>
-                    </tr>`
-                }
-            } else {
-                AjaxTable +=
-                    ` <tr>
-                        <td colspan="9" class="text-center">No Data Found</td>
-                     </tr>`;
+        $("#schoolTimingTable").on('click','.edit-schooltime',function(){
+            let start_date_id = $(this).attr('data-slot-start-lid')
+            let end_date_id = $(this).attr('data-slot-end-lid')
+           
+            $("#editschoolTimeModal #start_date_id").val(start_date_id).trigger('change')
+            $("#editschoolTimeModal #end_date_id").val(end_date_id).trigger('change')
+            $("#editschoolTimeModal").modal('show')
+        })
+
+        $(".update-school-time").on('click',function(){
+           let start_date_id = $("#editschoolTimeModal #start_date_id").val()
+           let end_date_id =  $("#editschoolTimeModal #end_date_id").val()
+           console.log('UPDATE',start_date_id, end_date_id)
+
+           let array = []
+
+           let obj = {
+            start_date_id: start_date_id,
+            end_date_id: end_date_id
+           }
+
+           array.push(obj)
+           console.log('Update JSON::::::::>>',array)
+           let ApiObj = {
+                type: 'POST',
+                url: '/admin/schooltiming/update',
+                data: {
+                    inputJSON: JSON.stringify(array),
+                },
+                dataType: 'JSON'
             }
-            AjaxTable += `<tbody></table>`
-            $("#divisionTable").html(AjaxTable);
-    }
-        
+            ajaxApi(ApiObj).then(result => { 
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            }) 
+
+        })
 
         function showSuccess(errors) {
             console.log(errors);

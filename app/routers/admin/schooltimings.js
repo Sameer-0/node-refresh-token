@@ -7,6 +7,7 @@ router.get('/schooltiming', index.getPage)
 router.post('/schooltiming/create',  index.create) 
 router.post('/schooltiming/search', index.search)
 router.post('/schooltiming/pagination', index.pagination)
+router.post('/schooltiming/update', validate('JsonValidator'),  index.update) 
 
 //TYPES 
 router.get('/schooltiming/types', type.getPage)
