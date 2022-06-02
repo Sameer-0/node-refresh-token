@@ -114,7 +114,7 @@ module.exports = class CourseDayRoomPreferences {
 
 
     static save(inputJSON, slug, userid) {
-        console.log('inputJSON::::::::::',inputJSON)
+        console.log('inputJSON::::::::::', inputJSON)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -198,7 +198,7 @@ module.exports = class CourseDayRoomPreferences {
     }
 
     static searchPreferences(body, slug) {
-        console.log('Search :::::::::',body)
+        console.log('Search :::::::::', body)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('divisionId', sql.Int, body.division_id)
@@ -232,7 +232,7 @@ module.exports = class CourseDayRoomPreferences {
     }
 
     static preferenceByProgramIdSessionId(body, slug) {
-        console.log('body:::::::',body)
+        console.log('body:::::::', body)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request

@@ -126,6 +126,7 @@ module.exports = {
         let object = {
             update_school_timings: JSON.parse(req.body.inputJSON)
         }
+        
         schoolTiming.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
