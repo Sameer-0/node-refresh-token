@@ -34,6 +34,7 @@ module.exports = class schoolTiming {
     }
 
     static update(inputJSON, slug, userid) {
+        console.log('JSON::::::::::>>>>>>',JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
