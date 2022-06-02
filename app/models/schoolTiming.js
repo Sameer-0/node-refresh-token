@@ -1,7 +1,7 @@
 const {
     sql,
     poolConnection,
-    execPreparedStmt 
+    execPreparedStmt
 } = require('../../config/db')
 
 module.exports = class schoolTiming {
@@ -19,10 +19,10 @@ module.exports = class schoolTiming {
            ORDER BY st.acad_session_lid`)
         })
     }
- 
+
     static save(inputJSON, slug, userid, settingId) {
-        console.log('SCHOOL TIMING  inputJSON:::::::::::::',inputJSON)
-        console.log('Setting Id:::::::::::::',settingId)
+        console.log('SCHOOL TIMING  inputJSON:::::::::::::', inputJSON)
+        console.log('Setting Id:::::::::::::', settingId)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -74,18 +74,17 @@ module.exports = class schoolTiming {
         })
     }
 
-    static getTimeTableSimulationSlots(slug, dayLid, programLid, acadSessionLid){
+    static getTimeTableSimulationSlots(slug, dayLid, programLid, acadSessionLid) {
 
         return poolConnection.then(pool => {
             let stmt
 
-            if(programLid && acadSessionLid){
-                stmt= `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
+            if (programLid && acadSessionLid) {
+                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
                 INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
                 INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
                 WHERE sct.program_lid = @programLid AND sct.acad_session_lid = @acadSessionLid AND sct.day_lid = @dayLid`
-            }
-            else{
+            } else {
                 stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
                 INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
                 INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
@@ -93,10 +92,10 @@ module.exports = class schoolTiming {
             }
 
             return pool.request()
-            .input('programLid', sql.Int, programLid)
-            .input('acadSessionLid', sql.Int, acadSessionLid)
-            .input('dayLid', sql.Int, dayLid)
-            .query(stmt)
+                .input('programLid', sql.Int, programLid)
+                .input('acadSessionLid', sql.Int, acadSessionLid)
+                .input('dayLid', sql.Int, dayLid)
+                .query(stmt)
         })
     }
 
