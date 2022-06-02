@@ -20,6 +20,7 @@ module.exports = {
     getPage: (req, res) => {
 
         Promise.all([schoolTiming.fetchAllBySettingName(res.locals.slug),  ProgramSessions.getUnlockedProgram(res.locals.slug), Days.fetchActiveDay(res.locals.slug), SlotIntervalTimings.fetchAll(1000), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(1000, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), schoolTiming.getCount(res.locals.slug)]).then(result => {
+          console.log('RESULE::::::::::::::::', result[0].recordset)
             res.render("admin/schooltimings/index", {
                 schoolTiming: (typeof result[0].recordset !== "undefined") ? result[0].recordset[0] : '',
                 programList: result[1].recordset,
