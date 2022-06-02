@@ -91,7 +91,7 @@
                                         <td><%-schooltime.start_time%></td>
                                         <td><%-schooltime.end_time%></td>
                                         <td><%-schooltime.day_name%></td>
-                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-edit"></span></a>
+                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>" data-day-lid="<%-schooltime.day_lid%>"><span class="fa fa-edit"></span></a>
                                             <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
@@ -115,7 +115,7 @@
                                         <td><%- schooltime.end_time %></td>
                                         <td><%- schooltime.day_name %></td>
                                         <td><%- schooltime.program_name %></td>
-                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-edit"></span></a>
+                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid %>" data-program-lid="<%-schooltime.program_lid%>" data-day-lid="<%-schooltime.day_lid%>"><span class="fa fa-edit"></span></a>
                                             <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
@@ -141,7 +141,7 @@
                                         <td><%-schooltime.day_name%></td>
                                         <td><%-schooltime.program_name%></td>
                                         <td><%-schooltime.acad_session%></td>
-                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-edit"></span></a>
+                                        <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>" data-program-lid="<%-schooltime.program_lid%>" data-day-lid="<%-schooltime.day_lid%>" data-session-lid="<%-schooltime.session_lid%>"><span class="fa fa-edit"></span></a>
                                             <a class="delete-schooltime" data-id="<%-schooltime.id%>"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
@@ -165,7 +165,12 @@
         <div class="modal-body">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Start Time</label>
-                <select class="select2 modalSelect2" name="start_date_id" id="start_date_id">
+                <input id="old_start_time_id" type="hidden" >
+                <input id="old_end_time_id" type="hidden">
+                <input id="daylid" type="hidden">
+                <input id="programlid" type="hidden">
+                <input id="sessionlid" type="hidden">
+                <select class="select2 modalSelect2" name="start_time_id" id="start_time_id">
                     <% for(stime of slotTime){%>
                         <option value="<%- stime.id%>"><%- stime.start_time %></option>
                     <%}%>
@@ -173,7 +178,7 @@
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">End Time</label>
-                <select class="select2 modalSelect2" name="end_date_id" id="end_date_id">
+                <select class="select2 modalSelect2" name="end_time_id" id="end_time_id">
                     <% for(etime of slotTime){%>
                         <option value="<%- etime.id%>"><%- etime.end_time %></option>
                     <%}%>
@@ -1031,24 +1036,42 @@
                 dropdownParent: $('#editschoolTimeModal')});
 
         $("#schoolTimingTable").on('click','.edit-schooltime',function(){
-            let start_date_id = $(this).attr('data-slot-start-lid')
-            let end_date_id = $(this).attr('data-slot-end-lid')
-           
-            $("#editschoolTimeModal #start_date_id").val(start_date_id).trigger('change')
-            $("#editschoolTimeModal #end_date_id").val(end_date_id).trigger('change')
+            let start_time_id = $(this).attr('data-slot-start-lid')
+            let end_time_id = $(this).attr('data-slot-end-lid')
+            let day_lid = $(this).attr('data-day-lid')
+            let program_lid = $(this).attr('data-program-lid')
+            let session_lid = $(this).attr('data-session-lid')
+            $("#editschoolTimeModal #old_start_time_id").val(start_time_id).trigger('change')
+            $("#editschoolTimeModal #old_end_time_id").val(end_time_id).trigger('change')
+            $("#editschoolTimeModal #daylid").val(day_lid).trigger('change')
+            $("#editschoolTimeModal #programlid").val(program_lid).trigger('change')
+            $("#editschoolTimeModal #sessionlid").val(session_lid).trigger('change')
+
+            $("#editschoolTimeModal #start_time_id").val(start_time_id).trigger('change')
+            $("#editschoolTimeModal #end_time_id").val(end_time_id).trigger('change')
             $("#editschoolTimeModal").modal('show')
         })
 
         $(".update-school-time").on('click',function(){
-           let start_date_id = $("#editschoolTimeModal #start_date_id").val()
-           let end_date_id =  $("#editschoolTimeModal #end_date_id").val()
-           console.log('UPDATE',start_date_id, end_date_id)
+           let start_time_id = $("#editschoolTimeModal #start_time_id").val()
+           let end_time_id =  $("#editschoolTimeModal #end_time_id").val()
+           let old_start_time_id = $("#editschoolTimeModal #old_start_time_id").val()
+           let old_end_time_id =  $("#editschoolTimeModal #old_end_time_id").val()
+           let day_lid =  $("#editschoolTimeModal #daylid").val()
+           let program_lid =  $("#editschoolTimeModal #programlid").val()
+           let session_lid =  $("#editschoolTimeModal #sessionlid").val()
+           console.log('UPDATE',start_time_id, end_time_id)
 
            let array = []
 
            let obj = {
-            start_date_id: start_date_id,
-            end_date_id: end_date_id
+            start_time_id: start_time_id,
+            end_time_id: end_time_id,
+            old_start_time_id: old_start_time_id,
+            old_end_time_id:old_end_time_id,
+            day_lid: day_lid,
+            program_lid: program_lid,
+            session_lid: session_lid
            }
 
            array.push(obj)
