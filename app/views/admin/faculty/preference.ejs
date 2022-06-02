@@ -39,6 +39,7 @@
                     <th>Faculty Id</th>
                     <th>Program Name</th>
                     <th>Program Id</th>
+                    <th>Module Name</th>
                     <th>Program Day</th>
                     <th>Start Time</th>
                     <th>End Time</th>
@@ -53,6 +54,7 @@
                         <td><%- list.faculty_id %></td>
                         <td><%- list.program_name %></td>
                         <td><%- list.program_id %></td>
+                        <td><%- list.module_name %></td>
                         <td><%- list.day_name %></td>
                         <td><%- list.start_time %></td>
                         <td><%- list.end_time %></td>
@@ -89,71 +91,119 @@
                         class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
-                <div class="errorHtml"></div>
-                <input type="hidden" id="hidden_id">
-                <div class="table-responsive ">
-                    <table class="table table-bordered" id="facultyworktimepreferencesTable">
-                        <thead>
-                            <th>Faculty Work</th>
-                            <th>Program Day</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <select class="select2 modalSelect2" name="faculty_work_lid" id="faculty_work_lid">
-                                        <% for(faculty of facultyWorkList) {%>
-                                        <option value="<%- faculty.id %>">
-                                            <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td> 
-                                    <select class="select2 modalSelect2" name="p_day_lid" id="p_day_lid">
-                                        <% for(programday of programDayList) {%>
-                                        <option value="<%- programday.id %>"><%- programday.program_name %> ( <%- programday.day_name %> )</option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="select2 modalSelect2" name="start_time_id" id="start_time_id">
-                                        <option value="">Select Start Time</option>
-                                        <%for(let startlist of slotIntervalTimings){%>
-                                            <option value="<%-startlist.id%>"><%- startlist.start_time %></option>
-                                            <%}%>
-                                </select>
-                                </td>
-                                <td>
-                                    <select class="select2 modalSelect2" name="end_time_id" id="end_time_id">
-                                        <option value="">Select End Time</option>
-                                        <%for(let endlist of slotIntervalTimings){%>
-                                            <option value="<%-endlist.id%>"><%- endlist.end_time %></option>
-                                        <%}%>
-                                </select>
-                                </td>
-                           
+                <div id="errorHtml"></div>
 
-                                <td>
-                                    <i class="far fa-edit d-none"></i>
-                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworktimepreference"></i>
-                                </td>
-                            </tr>
-                        </tbody>
 
-                    </table>
+             <div class="row">
+                 <div class="col-md-3 select-items">
+                <div class="mb-3">
+                    <label class="form-label">Select Faculty</label>
+                    <select class="form-select select2 faculty-drop-down" id="faculty-drop-down">
+                        <option value="">Select faculty</option>
+                        <% for (let faculty of facultyList) { %>
+                            <option  data-faculty-name="<%- faculty.faculty_name %>"
+                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.faculty_lid%>"   value="<%- faculty.faculty_dbo_lid %>">
+                                <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                                %></option>
+                            <% } %>
+                    </select>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Program</label>
+                       <select class="form-select" name="programName" id="programName"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Session</label>
+                       <select class="form-select" name="sessionName" id="sessionName"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Module</label>
+                       <select class="form-select" name="moduleName" id="moduleName"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select Day</label>
+                       <select class="form-select" name="dayName" id="dayName"></select>
+                </div>
+
+                <div class="mb-3">
+                 <label class="form-label">Select Start Time</label>
+                    <select class="form-select" name="start_time_id" id="start_time_id"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Select End Time</label>
+                    <select class="form-select" name="end_time_id" id="end_time_id"></select>
+                </div>
+
+  
+                <div class="mb-3 d-grid gap-2">
+                    <button class="btn btn-info text-light add-faculty-preference">ADD FACULTY PREFERENCES</button>
+                </div>
+
+                <div class="alert alert-success rounded-0" role="alert">
+                    Note: Select Faculty First.
+                  </div>
+
+                 </div>
+                 <div class="col-md-9 selected-items">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-bordered" id="add-more-faculty-preferernce">
+                            <thead>
+                                <th>Sr No.</th>
+                                <th>Faculty Name</th>
+                                <th>Faculty Id</th>
+                                <th>Module Name</th>
+                                <th>Program Id</th>
+                                <th>Program Day</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                 </div>
+             </div>
             </div>
             <div class="modal-footer">
-                <div id="errorMsg"></div>
-                <button type="button" class="btn btn-success  btn-sm" id="add-more-facultyworktimepreferences"><i class="fas fa-plus"></i>Add More Fields</button>
                 <button type="submit" class="btn  createFacultyWorkTimePref modal-inputform-btn">Create</button>
-                <button type="submit" class="btn  updateFacultyWorkTimePref modal-inputform-btn d-none">Update</button>
             </div>
         </div>
     </div>
     </div>
+
+
+    <!-- edit modal -->
+<div class="modal fade" id="edit-faculty-preference-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <input type="hidden" id="facultypreference_lid" name="facultypreference_lid">
+                <label for="exampleFormControlInput1" class="form-label">Start Time</label>
+               <select class="form-select" id="start_time_id"></select>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">End Time</label>
+               <select class="form-select" id="end_time_id"></select>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary updateFacultyPref">UPDATE</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
     <%- include("../partials/footer") %>
@@ -166,53 +216,247 @@
     });
 
     $('.select2').select2({dropdownParent: $('#add-facultypreference-modal')});
-       $('#add-more-facultyworktimepreferences').on('click', function () {
-        let lastTr = $('#facultyworktimepreferencesTable tbody tr:last-child')
-        lastTr.find('.modalSelect2').select2('destroy');
-        let faculty_work_lid = lastTr.find(`select[name="faculty_work_lid"]`).val();
-        let p_day_lid = lastTr.find(`select[name="p_day_lid"]`).val();
-        let start_time_id = lastTr.find(`select[name="start_time_id"]`).val();
-        let end_time_id = lastTr.find(`select[name="end_time_id"]`).val();  
-        let clonedTr = lastTr.clone();
-        clonedTr.find(`select[name="faculty_work_lid"]`).val(faculty_work_lid).trigger('change');
-        clonedTr.find(`select[name="p_day_lid"]`).val(p_day_lid).trigger('change');
-        clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
-        clonedTr.find(`select[name="start_time_id"]`).val(start_time_id).trigger('change');
-        clonedTr.find(`select[name="end_time_id"]`).val(end_time_id).trigger('change');
-
-            lastTr.find('.modalSelect2').select2({
-                    dropdownParent: $('#add-facultypreference-modal')
-                });
-
-            clonedTr.find('.modalSelect2').select2({
-                    dropdownParent: $('#add-facultypreference-modal')
-                });
-
-        $('#facultyworktimepreferencesTable tbody').append(clonedTr);
-    })
+    
+        //search feature delay function is writter in script.js file which is located in public/js/script.js
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "POST",
+            url: "/admin/faculties/workpreferences/search",
+            data: {
+                keyword: keyword
+            },
+            success: function (data) {
+                console.log(data)
+                showAjaxTable(data.data) // Facilty List
+            }
+        })
+        }, 500));
 
 
-    $('#facultyworktimepreferencesTable').on('click', '.remove-facultyworktimepreference',
-            function () {
-            let trLength = $('#facultyworktimepreferencesTable tbody tr').length;
-            if (trLength > 1) {
-                    $(this).closest('tr').remove()
+
+        //Delete Faculty API
+        $("#facultyWorkTimePreference").on('click','.delete-faculty-preference',function(){
+            let id = $(this).attr("data-id");
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/workpreferences/delete',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        $(".faculty-drop-down").on('change',function(){
+            let facultyDboLId = $(this).val();
+            let faculty_lid = $('#faculty-drop-down').find('option:selected').attr('data-faculty-lid');
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/faculty-slots-and-programs',
+            data: {
+                facultyDboLId: facultyDboLId,
+                faculty_lid: faculty_lid
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            console.log('result:::::::::::::',result)
+                let startTime = ``;
+                let endTime = ``;
+                let programLists = ``;
+                if (result.slotList.length > 0) {
+                    result.slotList.forEach(element => {
+                        startTime +=
+                            `<option value="${element.id}">${element.start_time}</option>`;
+                        endTime +=
+                            `<option value="${element.id}">${element.end_time}</option>`;
+                    });
+                    $('.add-faculty-date-time').removeAttr('disabled')
+                } else {
+                    startTime += `<option value="">No Slot Found!</option>`;
+                    endTime += `<option value="">No Slot Found!</option>`;
                 }
-            else {
-                    alert('Cannot delete this room.')
+
+                if (result.programList.length > 0) {
+                    programLists = `<option value="" disabled>Select Program</option>`
+                    result.programList.forEach(element => {
+                        programLists +=
+                            `<option value="${element.id}">${element.program_name}</option>`;
+                    });
+                } else {
+                    programLists += `<option value="">No Program Found!</option>`;
                 }
-    })
+
+                $("#add-facultypreference-modal  #start_time_id").html(startTime).trigger('change');
+                $("#add-facultypreference-modal  #end_time_id").html(endTime).trigger('change');
+                $("#add-facultypreference-modal  #programName").html(programLists).trigger('change');
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+        })
+
+        //GET SESSION NAME
+        $("#programName").on('change',function(){
+            let programId = $(this).val()
+            console.log('programId::::::::::::',programId)
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/session-day-by-program-id',
+            data: {
+                programId: programId
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            console.log('result:::::::::::::',result)
+                let sessionName = ``;
+                if (result.sessonList.length > 0) {
+                    sessionName = `<option value="" disabled>Select Session</option>`
+                    result.sessonList.forEach(element => {
+                        sessionName +=
+                            `<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
+                    });
+                } else {
+                    sessionName += `<option value="">No Slot Found!</option>`;
+                }
+
+                if (result.dayList.length > 0) {
+                    datNames = `<option value="" disabled>Select Program</option>`
+                    datNames += `<option value="0" >All Days</option>`
+                    result.dayList.forEach(element => {
+                        datNames +=
+                            `<option value="${element.programday_lid}">${element.day_name}</option>`;
+                    });
+                } else {
+                    datNames += `<option value="">No Program Found!</option>`;
+                }
+                $("#add-facultypreference-modal  #sessionName").html(sessionName).trigger('change');
+                $("#add-facultypreference-modal  #dayName").html(datNames).trigger('change');
+          
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+
+        })
+
+        //GET MODULE NAME
+        $("#sessionName").on('change',function(){
+            let programId = $("#programName").val()
+            let sessionId = $("#sessionName").val()
+            console.log('programId::::::::::::',programId)
+            console.log('sessionId::::::::::::',sessionId)
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/module-by-program-session-id',
+            data: {
+                programId: programId,
+                sessionId: sessionId
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            console.log('mODULE lIST:::::::::::::',result)
+                let moduleName = ``;
+                if (result.result.length > 0) {
+                    moduleName = `<option value="" disabled>Select Module</option>`
+                    result.result.forEach(element => {
+                        moduleName +=
+                            `<option value="${element.module_lid}">${element.module_name}</option>`;
+                    });
+                } else {
+                    moduleName += `<option value="">No Module Found!</option>`;
+                }
+                $("#add-facultypreference-modal  #moduleName").html(moduleName).trigger('change');
+          
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+        })
+
+        //ADD FACULTY PREFERNCES
+        $(".add-faculty-preference").on('click',function(){
+            let faculty_lid  = $("#faculty-drop-down").find('option:selected').attr("data-faculty-lid")
+            let program_lid = $("#programName").val()
+            let session_lid = $("#sessionName").val()
+            let module_lid = $("#moduleName").val()
+            console.log("faculty_lid::::::::::::",faculty_lid)
+            console.log("program_lid::::::::::::",program_lid)
+            console.log("sessionName::::::::::::",session_lid)
+            console.log("moduleName::::::::::::",module_lid)
+
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/faculty-work-preference-by-pro-sess-module',
+            data: {
+                facultyLid: faculty_lid,
+                programLid: program_lid,
+                acadSessionLid: session_lid,
+                moduleLid: module_lid
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            console.log('FACULTY WORK LIST:::::::::::::',result)
+
+            if(result.worklist.length > 0){
+
+                let htmlTable =  ``
+                let start_time_id = $("#start_time_id").val();
+                let start_time_text = $("#start_time_id option:selected").text();
+                let end_time_id = $("#end_time_id").val();
+                let end_time_text = $("#end_time_id option:selected").text();
+                let p_day_lid = $("#dayName").val()
+                let day_text = $("#dayName option:selected").text()
+                result.worklist.forEach(function(item){
+                    console.log('item::::::::::::::',item)
+                    htmlTable +=  `<tr>
+                <td>#</td>
+                <td data-work-lid="${item.faculty_work_lid}">${item.faculty_name}</td>
+                <td data-faculty-lid="${item.faculty_lid}">${item.faculty_id}</td>
+                <td>${item.module_name}</td>
+                <td>${item.program_id}</td>
+                <td data-program-day-lid="${p_day_lid}">${day_text}</td>
+                <td data-start-time-id="${start_time_id}">${start_time_text}</td>
+                <td data-end-time-id="${end_time_id}">${end_time_text}</td>
+                <td>
+                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-faculty-preferernce"></i></td>
+                </tr>`
+                })
+                $('#add-more-faculty-preferernce tbody').append(htmlTable)
+            }else{
+                alert('Faculty is not mapped or module is not present for the selected semester')
+            }
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+
+        })
+
+        //Remove Element
+        $("#add-more-faculty-preferernce").on('click', '.remove-faculty-preferernce', function () {
+            $($(this)).fadeOut(300, function () {
+               $($(this).parent().parent()).remove()
+            })
+        })
 
 
-    $(".createFacultyWorkTimePref").on('click', function () {
-        let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
+
+        $(".createFacultyWorkTimePref").on('click', function () {
+        let facultyWorkElems = $('#add-more-faculty-preferernce tbody tr');
         let facultyWorkPrefCount = facultyWorkElems.length;
         let facultyWorkJSON = [];
         facultyWorkElems.each(function (index, elem) {
-            let faculty_work_lid = $(elem).find(`select[name="faculty_work_lid"]`).val()
-            let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
-            let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
-            let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
+            let faculty_work_lid = $(elem).find(`td[data-work-lid]`).attr(`data-work-lid`)
+            let p_day_lid = $(elem).find(`td[data-program-day-lid]`).attr(`data-program-day-lid`)
+            let start_time_id = $(elem).find(`td[data-start-time-id]`).attr(`data-start-time-id`)
+            let end_time_id = $(elem).find(`td[data-end-time-id]`).attr(`data-end-time-id`)
 
             if (index < facultyWorkPrefCount - 1) {
                 let obj = {
@@ -235,7 +479,7 @@
 
         let ApiObj = {
             type: 'POST',
-            url: '/admin/workpreferences/create',
+            url: '/admin/faculties/workpreferences/create',
             data: {
                 inputJSON: JSON.stringify(facultyWorkJSON)
             },
@@ -250,114 +494,100 @@
         })
     })
 
-        //search feature delay function is writter in script.js file which is located in public/js/script.js
-        $('#searchkeyword').on('input', delay(function (e) {
-            let keyword = $("#searchkeyword").val()
-            $.ajax({
-                type: "POST",
-            url: "/admin/workpreferences/search",
+    //EDIT
+    $("#facultyWorkTimePreference").on('click','.edit-preference',function(){
+        let id = $(this).attr("data-id")
+        console.log('ID:::::::::::::::',id)
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/find-one',
             data: {
-                keyword: keyword
+                id: id
             },
-            success: function (data) {
-                console.log(data)
-                showAjaxTable(data.data) // Facilty List
-            }
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+         let obj = result.result
+         console.log('Response Result:::::::::::::::::::>',obj)
+         facultySlotForEdit(obj.faculty_dbo_lid, obj.start_time_id, obj.end_time_id)
+         $("#facultypreference_lid").val(obj.id)
+        $("#edit-faculty-preference-modal").modal('show')
+        }).catch(error => {
+            showError(error.responseJSON)
         })
-        }, 500));
+    })
 
-        //Edit Read
-        $("#facultyWorkTimePreference").on('click','.edit-preference', function(){
-            $("#add-more-facultyworktimepreferences").addClass('d-none')
-            $(".createFacultyWorkTimePref").addClass('d-none')
-            $(".updateFacultyWorkTimePref").removeClass('d-none')
-            $("#hidden_id").val($(this).attr('data-id'))
-            $("#faculty_work_lid").val($(this).attr('data-faculty-work-lid')).trigger('change')
-            $("#start_time_id").val($(this).attr('data-start-time-id')).trigger('change')
-            $("#end_time_id").val($(this).attr('data-end-time-id')).trigger('change')
-            $("#p_day_lid").val($(this).attr('data-program-day-lid')).trigger('change')
-            $("#p_day_lid").attr("disabled", "disabled");
-            $("#faculty_work_lid").attr("disabled", "disabled");
-            $("#add-facultypreference-modal").modal('show')
+    function facultySlotForEdit(facultyid, start_time_id, end_time_id){
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/date-time/getslottime',
+            data: {
+                facultyid: facultyid
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            let startTime = ``;
+                let endTime = ``;
+                if (result.result.length > 0) {
+                    result.result.forEach(element => {
+                        startTime +=
+                            `<option value="${element.id}">${element.start_time}</option>`;
+                        endTime +=
+                            `<option value="${element.id}">${element.end_time}</option>`;
+                    });
+                    $('.add-faculty-date-time').removeAttr('disabled')
+                } else {
+                    startTime += `<option value="">No Slot Found!</option>`;
+                    endTime += `<option value="">No Slot Found!</option>`;
+                    $('.add-faculty-date-time').attr('disabled','disabled')
+                }
+                $("#edit-faculty-preference-modal  #start_time_id").html(startTime);
+                $("#edit-faculty-preference-modal  #end_time_id").html(endTime);
+                $("#edit-faculty-preference-modal  #start_time_id").val(start_time_id).trigger('change')
+                $("#edit-faculty-preference-modal  #end_time_id").val(end_time_id).trigger('change')
+          
+        }).catch(error => {
+            showError(error.responseJSON)
         })
+        }
+
+
 
 
         //Update Preferences
-        $(".updateFacultyWorkTimePref").on('click', function(){
-            console.log('Read....')
-        let facultyWorkElems = $('#facultyworktimepreferencesTable tbody tr');
+        $(".updateFacultyPref").on('click', function(){
+        console.log('Read....')
+       
         let facultyWorkPrefCount = facultyWorkElems.length;
         let facultyWorkJSON = [];
-        let id = $("#hidden_id").val()
-            facultyWorkElems.each(function (index, elem) {
-                let faculty_work_lid = $(elem).find(`select[name="faculty_work_lid"]`).val()
-                let p_day_lid = $(elem).find(`select[name="p_day_lid"]`).val();
-                let start_time_id = $(elem).find(`select[name="start_time_id"]`).val();
-                let end_time_id = $(elem).find(`select[name="end_time_id"]`).val();
-
-                if (index < facultyWorkPrefCount - 1) {
-                    let obj = {
+        let id = $("#facultypreference_lid").val()
+        let start_time_id = $("#edit-faculty-preference-modal #start_time_id").val()
+        let end_time_id = $("#edit-faculty-preference-modal #end_time_id").val()
+        let obj = {
                         id: id,
-                        faculty_work_lid: faculty_work_lid,
-                        p_day_lid: p_day_lid,
                         start_time_id: start_time_id,
-                        end_time_id: end_time_id
+                        end_time_id: end_time_id,
                     }
-                    facultyWorkJSON.push(obj)
-                } else {
-                    let obj = {
-                        id: id,
-                        faculty_work_lid: faculty_work_lid,
-                        p_day_lid: p_day_lid,
-                        start_time_id: start_time_id,
-                        end_time_id: end_time_id
-                    }
-                    facultyWorkJSON.push(obj)
-                }
-            })
+            facultyWorkJSON.push(obj)
             console.log(facultyWorkJSON)
 
             let ApiObj = {
                 type: 'POST',
-                url: '/admin/workpreferences/update',
+                url: '/admin/faculties/workpreferences/update',
                 data: {
                     inputJSON: JSON.stringify(facultyWorkJSON)
                 },
                 dataType: 'JSON'
             }
-
             ajaxApi(ApiObj).then(result => {
                 console.log(result)
                 showSuccess(result)
-               // notify()
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-
-        })
-
-
-
-            //Delete Faculty API
-            $("#facultyWorkTimePreference").on('click','.delete-faculty-preference',function(){
-            let id = $(this).attr("data-id");
-            let ApiObj = {
-                type: 'POST',
-                url: '/admin/workpreferences/delete',
-                data: {
-                    id: id
-                },
-                dataType: 'JSON'
-            }
-            ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
-                showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
-
-
 
         //PAGINATION
     let pageCount = `<%- pageCount %>`
@@ -382,7 +612,7 @@
         console.log('pagination here!!')
         $.ajax({
             type: "POST",
-            url: "/admin/workpreferences/pagination",
+            url: "/admin/faculties/workpreferences/pagination",
             data: {
                 pageNo: num
             },
@@ -403,6 +633,7 @@
                     <th>Faculty Id</th>
                     <th>Program Name</th>
                     <th>Program Id</th>
+                    <th>Module Name</th>
                     <th>Program Day</th>
                     <th>Start Time</th>
                     <th>End Time</th>
@@ -420,6 +651,7 @@
                         <td>${list.faculty_id}</td>
                         <td>${list.program_name }</td>
                         <td>${list.program_id }</td>
+                        <td>${list.module_name }</td>
                         <td>${list.day_name}</td>
                         <td>${list.start_time}</td>
                         <td>${list.end_time}</td>
@@ -490,8 +722,6 @@
             }
             simpleAlert.alert(obj);
         }
-
-
 
         })
     </script>

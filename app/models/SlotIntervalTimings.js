@@ -115,6 +115,7 @@ module.exports = class SlotIntervalTimings {
 
     //Fetching time for specific faculty
     static getFacultySlotsById(faculty_id, slug) {
+        console.log('getFacultySlotsById::::::::::', faculty_id)
         return poolConnection.then(pool => {
             //APPLY WHERE CONDITION WITH FACULTY ID
             let request = pool.request();
@@ -127,7 +128,7 @@ module.exports = class SlotIntervalTimings {
          on st.id >= fp.start_time_id
          and st.id <= fp.end_time_id
          WHERE f.id = @faculty_dbo_lid
-         GROUP BY st.id, st.start_time,st.end_time ORDER BY st.id ASC`)
+         GROUP BY st.id, st.start_time, st.end_time ORDER BY st.id ASC`)
         })
     }
 

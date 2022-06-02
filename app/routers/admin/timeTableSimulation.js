@@ -22,6 +22,9 @@ router.post('/time-table-simulation/allocation/generate', allocation.generateTim
 router.get('/time-table-simulation/time-table', timeTable.getPage)
 router.post('/time-table-simulation/time-table', timeTable.getSessionByProgram)
 router.post('/time-table-simulation/time-table/events', timeTable.getEventsByProgramSessionDay)
+router.post('/time-table-simulation/time-table/pending-events', timeTable.getPendingEvents)
+router.post('/time-table-simulation/time-table/drop-event', timeTable.dropEvent)
+router.post('/time-table-simulation/time-table/schedule-event', timeTable.scheduleEvent)
 
 
 module.exports = router
