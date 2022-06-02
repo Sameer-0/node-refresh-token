@@ -21,7 +21,7 @@ module.exports = {
 
         Promise.all([schoolTiming.fetchAllBySettingName(res.locals.slug),  ProgramSessions.getUnlockedProgram(res.locals.slug), Days.fetchActiveDay(res.locals.slug), SlotIntervalTimings.fetchAll(1000), SchoolTimingType.fetchAll(10), AcadSession.fetchAll(1000), SchoolTimingSettings.fetchAll(1000, res.locals.slug), SchoolTimingSettings.checkStatus(res.locals.slug), schoolTiming.getCount(res.locals.slug)]).then(result => {
             res.render("admin/schooltimings/index", {
-                schoolTiming: result[0].recordset[0],
+                schoolTiming: (typeof result[0].recordset !== "undefined") ? result[0].recordset[0] : '',
                 programList: result[1].recordset,
                 dayList: result[2].recordset, 
                 slotTime: result[3].recordset,
@@ -108,6 +108,26 @@ module.exports = {
                 data: result.recordset,
                 length: result.recordset.length
             })
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+
+    update: (req, res) => {
+        let object = {
+            update_school_timings: JSON.parse(req.body.inputJSON)
+        }
+        schoolTiming.update(object, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
