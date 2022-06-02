@@ -21,7 +21,7 @@ module.exports = class schoolTiming {
     }
 
     static save(inputJSON, slug, userid, settingId) {
-        console.log('SCHOOL TIMING  inputJSON:::::::::::::', inputJSON)
+        console.log('SCHOOL TIMING  inputJSON:::::::::::::', JSON.stringify(inputJSON))
         console.log('Setting Id:::::::::::::', settingId)
         return poolConnection.then(pool => {
             const request = pool.request();
@@ -102,47 +102,7 @@ module.exports = class schoolTiming {
 
     static fetchAllBySettingName(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`IF((SELECT status FROM [${slug}].school_timing_settings WHERE status = 1 and name='Same For All Day') = 1)
-            SELECT 'Same For All Day' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
-            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
-            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time
-            FROM [${slug}].school_timings st
-            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
-            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
-            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time FOR JSON PATH) AS schoolsetting
-        ELSE IF ((SELECT status FROM [${slug}].school_timing_settings WHERE status = 1 and name='Day Wise') = 1)
-            SELECT 'Day Wise' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
-            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
-            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time,
-            st.day_lid, d.day_name
-            FROM [${slug}].school_timings st
-            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
-            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
-            INNER JOIN [${slug}].days d ON d.id = st.day_lid
-            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time, st.day_lid, d.day_name FOR JSON PATH)  AS schoolsetting
-        ELSE IF ((SELECT status FROM [${slug}].school_timing_settings WHERE status = 1 and name='Day and Program Wise') = 1)
-            SELECT 'Day and Program Wise' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
-            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
-            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time,
-            st.day_lid, d.day_name, p.program_name
-            FROM [${slug}].school_timings st
-            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
-            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
-            INNER JOIN [${slug}].days d ON d.id = st.day_lid
-            INNER JOIN [${slug}].programs p ON p.id = st.program_lid
-            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time, st.day_lid, d.day_name, p.program_name  FOR JSON PATH)  AS schoolsetting
-        ELSE IF ((SELECT status FROM [${slug}].school_timing_settings WHERE status = 1 and name='Day, Program and Session Wise') = 1)
-            SELECT 'Day, Program and Session Wise' AS settingname, (SELECT st.slot_start_lid, st.slot_end_lid, 
-            CONVERT(NVARCHAR, sit.start_time, 100) AS start_time,
-            CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time,
-            st.day_lid, d.day_name, p.program_name, ads.acad_session
-            FROM [${slug}].school_timings st
-            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
-            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
-            INNER JOIN [${slug}].days d ON d.id = st.day_lid
-            INNER JOIN [${slug}].programs p ON p.id = st.program_lid
-            INNER JOIN [dbo].acad_sessions ads ON ads.id = st.acad_session_lid
-            GROUP BY st.slot_start_lid, st.slot_end_lid, sit.start_time, _sit.end_time, st.day_lid, d.day_name, p.program_name, ads.acad_session FOR JSON PATH)  AS schoolsetting`)
+            return pool.request().execute(`[${slug}].[school_timing_list]`)
         })
     }
 }
