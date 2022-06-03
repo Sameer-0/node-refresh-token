@@ -45,6 +45,9 @@ router.post('/faculties/batch/session-by-facultyid-and-programid', batch.session
 router.post('/faculties/batch/module-by-facultyid-programid-sessionid', batch.moduleByFaculty)
 router.post('/faculties/batch/division-by-moduleid', batch.divisionByModuleId)
 router.post('/faculties/batch/batch-by-divisionid', batch.batchByDivisionId)
+router.post('/faculties/batch/find-batch-by-facultyid', batch.batchByFacultyIdAndBatchId)
+
+
 
 //faculty works
 router.get('/faculties/works', works.getPage)

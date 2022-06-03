@@ -188,7 +188,11 @@ module.exports = class CourseDayRoomPreferences {
     static icwForPreference(slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
-            (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event
+            (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
+            (SELECT d.id, d.day_name from [asmsoc-mum].course_day_room_preferences cdrp
+                INNER JOIN [asmsoc-mum].days d ON d.id = cdrp.day_lid
+                WHERE cdrp.program_lid = p.id AND cdrp.acad_session_lid = ads.id AND cdrp.course_lid = icw.id AND cdrp.batch_lid = db.id AND cdrp.day_lid = d.id
+                 FOR JSON PATH) AS days
         FROM [${slug}].initial_course_workload icw
         INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
         INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid

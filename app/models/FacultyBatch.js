@@ -146,4 +146,14 @@ module.exports = class FacultyBatch {
         })
     }
 
+    static  batchByFacultyIdAndBatchId(division_lid, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('division_lid', sql.Int, division_lid)
+                .query(`SELECT db.id, db.batch, et.name from [asmsoc-mum].division_batches db 
+                INNER JOIN [dbo].event_types et ON et.id = db.event_type_lid
+                where db.division_lid = @division_lid`)
+        })
+    }
+
 }
