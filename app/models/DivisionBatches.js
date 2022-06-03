@@ -129,4 +129,21 @@ module.exports = class DivisionBatches {
                     .execute(`[${slug}].[sp_generate_division_batches]`)
             })
         }
+
+        static findDivisionsByBatchId (batchid, slug) {
+            return poolConnection.then(pool => {
+                return pool.request().input('batchId', sql.Int, batchid)
+                .query(`select * from [${slug}].division_batches where id = @batchId`)
+            })
+        }
+
+        static findBatchesByDivisionId(divisionId, slug) {
+            return poolConnection.then(pool => {
+                return pool.request().input('divisionId', sql.Int, divisionId)
+                .query(`select db.id, db.batch, et.name, d.division from [${slug}].division_batches db
+                INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid
+                INNER JOIN [${slug}].divisions d ON d.id =  db.division_lid
+                where db.division_lid = @divisionId`)
+            })
+        }
 }

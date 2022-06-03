@@ -233,15 +233,12 @@ $(document).ready(function(){
             let id = $(this).attr('data-id')
             let faculty_lid = $(this).attr('data-faculty-lid')
             let faculty_batch = $(this).attr('data-batch')
-            let division_lid = $(this).attr('data-batch-lid')
-
 
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/faculties/batch/find-batch-by-facultyid',
                 data: {
                     id: id,
-                    division_lid: division_lid
                 },
                 dataType: 'JSON'
             }
@@ -253,18 +250,19 @@ $(document).ready(function(){
                     batchList = `<option value="" disabled>Select Module</option>`
                     result.result.forEach(element => {
                         batchList +=
-                            `<option value="${element.id}">${element.batch}(${element.name})</option>`;
+                            `<option value="${element.id}">Batch-${element.batch} / Div-${element.division} (${element.name})</option>`;
                     });
                 } else {
                     batchList += `<option value="">No Batch Found!</option>`;
                 }
                 console.log('faculty_batch:::::::',faculty_batch)
-                console.log('division_batch_lid:::::::',division_lid)
                 $("#faculty_batch").val(faculty_batch).trigger('change')
                 $("#edit-faculty-batch-modal  #faculty_lid").val(faculty_lid).trigger('change')
                 $("#edit-faculty-batch-modal #faculty_lid").attr("disabled", "disabled");
                 $("#hidden_id").val(id)
-                $("#edit-faculty-batch-modal  #batchName").html(batchList).trigger('change');
+                $("#edit-faculty-batch-modal  #batchName").html(batchList)
+                let batch_lid = $(this).attr('data-batch-lid')
+                $("#edit-faculty-batch-modal  #batchName").val(batch_lid).trigger('change');
                 $("#edit-faculty-batch-modal").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)

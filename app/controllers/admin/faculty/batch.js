@@ -302,22 +302,27 @@ module.exports = {
     },
 
     batchByFacultyIdAndBatchId: (req, res) => {
-        FacultyBatch.batchByFacultyIdAndBatchId(req.body.division_lid, res.locals.slug).then(result => {
-            if (result.recordset.length > 0) {
-                res.json({
-                    status: "200",
-                    message: "Division Name",
-                    result: result.recordset,
-                    length: result.recordset.length
+        FacultyBatch.findFacultyBatchById(req.body.id, res.locals.slug).then(result => {
+            DivisionBatches.findDivisionsByBatchId(result.recordset[0].batch_lid, res.locals.slug).then(batchresult => {
+                DivisionBatches.findBatchesByDivisionId(batchresult.recordset[0].division_lid, res.locals.slug).then(divresult => {
+                    console.log('divresult::::::::::::::::::::', divresult.recordset)
+                    if (result.recordset.length > 0) {
+                        res.json({
+                            status: "200",
+                            message: "Division Name",
+                            result: divresult.recordset,
+                            length: divresult.recordset.length
+                        })
+                    } else {
+                        res.json({
+                            status: "400",
+                            message: "No data found",
+                            result: divresult.recordset,
+                            length: divresult.recordset.length
+                        })
+                    }
                 })
-            } else {
-                res.json({
-                    status: "400",
-                    message: "No data found",
-                    result: result.recordset,
-                    length: result.recordset.length
-                })
-            }
+            })
         }).catch(error => {
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
