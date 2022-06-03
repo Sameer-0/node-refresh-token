@@ -47,8 +47,7 @@
                         <td><%- faculty.faculty_name %></td>
                         <td><%- faculty.faculty_id %></td>
                         <td><%- faculty.batch %></td>
-                        <td><i class="fas fa-edit text-dark cursor-pointer edit-facultybatch"
-                                data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-batch="<%- faculty.batch %>"></i>
+                        <td><a class="edit-facultybatch" data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-batch="<%- faculty.batch %>" data-batch-lid="<%-faculty.batch_lid%>"><i class="fas fa-edit text-dark"></i></a>
                                 <a class="delete-faculty" data-id="<%- faculty.id %>"><i class="fa fa-trash text-danger"></i></a>
                             </td>
                     </tr>
@@ -152,6 +151,52 @@ aria-hidden="true">
 </div>
 
 
+<!-- Edit Faculty -->
+<div class="modal fade" id="edit-faculty-batch-modal" tabindex="-1" aria-labelledby="edit-faculty-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h3 class="modal-title" id="open-faculty-modal-title">Edit Faculty</h3>
+                <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times text-dark"></i></button>
+            </div>
+
+            <div class="modal-body py-0">
+                <input type="hidden" id="hidden_id" name="hidden_id">
+                <table class="table table-bordered" id="update-faculty-batch-table">
+                    <thead>
+                        <tr>
+                        <th>Faculty Name</th>
+                        <th>Faculty Batch</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select class="batch-select2" name="faculty_lid" id="faculty_lid">
+                                    <option value="">--select--</option>
+                                    <% for(faculty of facultyList) {%>
+                                    <option value="<%- faculty.id %>">
+                                        <%- faculty.faculty_name %>  (<%- faculty.faculty_id %>)</option>
+                                    <%}%>
+                                </select>
+                            </td>                      
+                            <td>
+                                <select class="form-select" name="batchName" id="batchName"></select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-3 errorHtml"></div>
+            <div class="modal-footer">
+                <button type="submit" class="btn updatefacultybatch modal-inputform-btn">Update Faculty</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <%- include("../partials/footer") %>
 <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
 <script src="/js/dashboardscript.js"></script>
@@ -184,28 +229,58 @@ $(document).ready(function(){
         //Edit Read
         $("#facultyBatch").on('click','.edit-facultybatch', function(){
             $(".createfacultybatch").addClass('d-none')
-            $("#add-more-facultybatch-fields").addClass('d-none')
             $(".updatefacultybatch").removeClass('d-none')
             let id = $(this).attr('data-id')
             let faculty_lid = $(this).attr('data-faculty-lid')
             let faculty_batch = $(this).attr('data-batch')
-            $("#faculty_batch").val(faculty_batch).trigger('change')
-            $("#faculty_lid").val(faculty_lid).trigger('change')
-            $("#faculty_lid").attr("disabled", "disabled");
-            $("#hidden_id").val(id)
-            $("#add-facultybatch-modal").modal('show')
+            let division_lid = $(this).attr('data-batch-lid')
+
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/faculties/batch/find-batch-by-facultyid',
+                data: {
+                    id: id,
+                    division_lid: division_lid
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log(result.result)
+
+                let batchList = ``;
+                if (result.result.length > 0) {
+                    batchList = `<option value="" disabled>Select Module</option>`
+                    result.result.forEach(element => {
+                        batchList +=
+                            `<option value="${element.id}">${element.batch}(${element.name})</option>`;
+                    });
+                } else {
+                    batchList += `<option value="">No Batch Found!</option>`;
+                }
+                console.log('faculty_batch:::::::',faculty_batch)
+                console.log('division_batch_lid:::::::',division_lid)
+                $("#faculty_batch").val(faculty_batch).trigger('change')
+                $("#edit-faculty-batch-modal  #faculty_lid").val(faculty_lid).trigger('change')
+                $("#edit-faculty-batch-modal #faculty_lid").attr("disabled", "disabled");
+                $("#hidden_id").val(id)
+                $("#edit-faculty-batch-modal  #batchName").html(batchList).trigger('change');
+                $("#edit-faculty-batch-modal").modal('show')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
         })
 
 
         //Update
         $(".updatefacultybatch").on('click', function () {
-        let facultyBatchElems = $('#add-more-facultybatch-table tbody tr');
+        let facultyBatchElems = $('#update-faculty-batch-table tbody tr');
         let facultyBatchCount = facultyBatchElems.length;
         let facultyBatchJson = [];
         let id = $("#hidden_id").val();
         facultyBatchElems.each(function (index, elem) {
             let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
-            let faculty_batch = $(elem).find(`select[name="faculty_batch"]`).val();
+            let faculty_batch = $(elem).find(`select[name="batchName"]`).val();
             
 
             if (index < facultyBatchCount - 1) {
@@ -224,6 +299,9 @@ $(document).ready(function(){
                 facultyBatchJson.push(obj)
             }
         })
+
+
+        console.log('facultyBatchJson:::::::::::::>',facultyBatchJson)
 
         let ApiObj = {
                 type: 'POST',
@@ -535,9 +613,9 @@ $(document).ready(function(){
                         <td>${faculty.faculty_name}</td>
                         <td>${faculty.faculty_id}</td>
                         <td>${faculty.batch}</td>
-                        <td><i class="fas fa-edit text-dark cursor-pointer edit-facultybatch"
-                                data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-batch="${faculty.batch_lid}"></i>
-                                <a class="delete-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-trash text-danger"></i></a></td>
+                        <td><a class="edit-facultybatch" data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-batch-lid="${faculty.batch_lid}" data-batch="${faculty.batch_lid}"><i class="fas fa-edit text-dark"></i></a>
+                            <a class="delete-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-trash text-danger"></i></a>
+                        </td>
                     </tr>`
                 }
             } else {
