@@ -174,16 +174,16 @@ module.exports = class CourseDayRoomPreferences {
     }
 
     //WITH JSON DATA
-    //     static icwForPreference(slug) {
-    //         return poolConnection.then(pool => {
-    //             return pool.request().query(`SELECT icw.id, icw.module_name,p.program_name, ads.acad_session, p.program_id,
-    // (SELECT id, RTRIM(LTRIM(division)) as division FROM [${slug}].divisions WHERE  divisions.course_lid = icw.id FOR JSON PATH) AS divisions,
-    // (SELECT db.id, db.batch FROM [${slug}].division_batches db INNER JOIN [asmsoc-mum].divisions d ON d.id = db.division_lid WHERE d.course_lid = icw.id FOR JSON PATH) as division_batches
-    // FROM [${slug}].initial_course_workload icw
-    // INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
-    // INNER JOIN [dbo].acad_sessions ads ON ads.id =icw.acad_session_lid`)
-    //         })
-    //     }
+        static icwForPreferenceTest(slug) {
+            return poolConnection.then(pool => {
+                return pool.request().query(`SELECT icw.id, icw.module_name,p.program_name, ads.acad_session, p.program_id,
+    (SELECT id, RTRIM(LTRIM(division)) as division FROM [${slug}].divisions WHERE  divisions.course_lid = icw.id FOR JSON PATH) AS divisions,
+    (SELECT db.id, db.batch FROM [${slug}].division_batches db INNER JOIN [asmsoc-mum].divisions d ON d.id = db.division_lid WHERE d.course_lid = icw.id FOR JSON PATH) as division_batches
+    FROM [${slug}].initial_course_workload icw
+    INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+    INNER JOIN [dbo].acad_sessions ads ON ads.id =icw.acad_session_lid`)
+            })
+        }
 
     static icwForPreference(slug) {
         return poolConnection.then(pool => {
