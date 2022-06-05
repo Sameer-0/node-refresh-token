@@ -100,7 +100,7 @@ module.exports = class TimeTable {
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
                 INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
 				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
-				INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid
+				INNER JOIN [dbo].event_types et on et.id = db.event_type_lid
                 WHERE pe.program_lid = @programLid AND pe.acad_session_lid = @sessionLid`
             // }
             // else if(!program_lid && acad_session_lid){
