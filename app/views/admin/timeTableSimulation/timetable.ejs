@@ -98,7 +98,7 @@
 
                         <script>
                             $(document).ready(function () {
-
+let currentTd ;
                                 let roomList = JSON.parse(`<%- roomList %>`);
                                 let programListJson = JSON.parse(`<%- programListJson %>`);
 
@@ -185,6 +185,8 @@
 
 
                                 $(document).on('click', '.timetable-simulation tbody td', function() {
+
+                                  currentTd = $(this)
                                    
                                     if($(this).text() == "NA"){
 
@@ -195,7 +197,7 @@
 
                                        if(!$('#program-name').val()){
                                             programList +=`<select class="form-select" id="program-name-modal">`;
-                                            programList += `<option value="" selected>--select program--</option>`
+                                            programList += `<option value="" selected>--select Program--</option>`
                                             for( let program of programListJson ){
                                                 programList += `<option value="${program.id}">${program.program_name}</option>`
                                             }
@@ -204,7 +206,7 @@
                                         }
                                         else{
                                             programList +=`<select class="form-select" id="program-name-modal">`;
-                                            programList += `<option value="" selected>--Select Session</option>`
+                                            programList += `<option value="" selected>--Select Program</option>`
                                             programList += `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
                                             programList += `</select>`
                                             }
@@ -213,7 +215,7 @@
                                             programList += `<select class="form-select my-3" id="pending-events"></select>`
 
                                             $('#slotModal .modal-body').html(programList);
-                                            $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}">Schedule</button>`);
+                                            $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}">Schedule</button>`);
                                                   
                                     }
                                     else{
@@ -320,7 +322,24 @@
                                     }
                                     ajaxApi(ApiObj).then((result) => {
                                         console.log('Response::::::::::::',result);
-                                        loadAfterDrop()
+                                        //currentTd.html('NA')// SET NA AFTER DROP
+                                        console.log('currentTd::::::::::',currentTd)
+                                        currentTd.html("NA")
+                                        //SET EMPTY CURRENT TD
+                                        // currentTd.attr('data-school-time-id', '')
+                                        // currentTd.attr('data-start-time-id', '')
+                                        // currentTd.attr('data-end-time-id', '')
+                                        // currentTd.attr('data-room-id', '')
+                                        // currentTd.attr('data-room-no', '')
+                                        // currentTd.attr('data-lid', '')
+                                        // currentTd.attr('data-module-name', '')
+                                        // currentTd.attr('data-division-name', '')
+                                        // currentTd.attr('data-batch-name', '')
+                                        // currentTd.attr('data-session-name', '')
+                                        // currentTd.attr('data-program-name', '')
+                                        // currentTd.attr('data-start-time', '')
+                                        // currentTd.attr('data-end-time', '')
+
                                         $("#slotModal").modal('hide');
                                         console.log('Successfully table reinitialize:::',result);
                                     })
@@ -337,11 +356,11 @@
                                     let endTimeId = $(this).attr("data-end-time-id");
                                     let programLid = $("#slotModal #program-name-modal").val();
                                     let sessionLid = $("#slotModal #session-name-modal").val();
-                                    let moduleLid = $("#pending-events option:selected").attr("data-module-lid");
-                                    let divisionLid = $("#pending-events option:selected").attr("data-division-lid");
-                                    let batchLid = $("#pending-events option:selected").attr("data-batch-lid");
+                                    let moduleLid = $("#slotModal #pending-events option:selected").attr("data-module-lid");
+                                    let divisionLid = $("#slotModal #pending-events option:selected").attr("data-division-lid");
+                                    let batchLid = $("#slotModal #pending-events option:selected").attr("data-batch-lid");
                                     let dayLid = $("#day").val();
-
+                                    let schoolTimeLid = $(this).attr("data-school-time-id");
                                     let obj = [{
                                                     room_lid: roomLid,
                                                     start_time_id: startTimeId,
@@ -352,7 +371,11 @@
                                                     division_lid: divisionLid,
                                                     batch_lid: batchLid,
                                                     day_lid: dayLid,
+                                                    school_time_lid:schoolTimeLid
                                                 }]
+
+                                        console.log('JSON::::::::::::::::',obj)
+
                                     let ApiObj = {
                                                 url: '/admin/time-table-simulation/time-table/schedule-event',
                                                 type: 'POST',
@@ -366,39 +389,17 @@
 
                                     ajaxApi(ApiObj).then((result) => {
                                         console.log(result);
+                                        showSuccess(result)
                                     })
                                     .catch((error) => {
                                         console.log('error', error);
+                                        showError(error.responseJSON)
                                     })
 
                                 })
 
 
-                                //this function use for loading data after drop ithout page refresh
-                                function loadAfterDrop(){
-                                    let programLid = $("#program-name").val();
-                                    let acadSessionLid = $("#session-name").val();
-                                    let dayLid = $("#day").val();
-                                
-                                    let ApiObj = {
-                                        url: '/admin/time-table-simulation/time-table/events',
-                                        type: 'POST',
-                                        data: {
-                                            programLid: programLid,
-                                            acadSessionLid: acadSessionLid,
-                                            dayLid: dayLid
-                                        },
-                                        dataType: 'JSON'
-                                    }
-
-                                    ajaxApi(ApiObj).then(result => {
-                                        allocationHtmlTable(result)
-                                      //  }, 2000)
-                                    //   $(this).attr('disabled','disabled');
-                                    }).catch(error => {
-                                        // showError(error.responseJSON)
-                                    })
-                                }
+                            
 
 
                             //FUNCTION FOR DISPLAYING TIMETABLE     
@@ -422,7 +423,7 @@
 
                                         for (let slot of slotList) {
                                             tableStr +=
-                                                ` <td data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
+                                                ` <td data-school-time-id="${slot.id}" data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
                                         }
 
                                         tableStr += '</tr>'
@@ -451,6 +452,59 @@
                                         }
 
                             }
+
+
+
+            function showError(errors) {
+            console.log('error::::::::::', errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+
+
+        function showSuccess(errors) {
+            console.log('error::::::::::', errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: errors.data,
+                type: 'alert-success',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
                             
                             })
                         </script>

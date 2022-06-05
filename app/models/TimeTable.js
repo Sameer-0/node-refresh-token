@@ -170,7 +170,7 @@ module.exports = class TimeTable {
     }
 
     static scheduleEvent(slug, userId, inputJSON){
-
+        console.log('EVENT ALLOCATION JSON::::::::::',JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
 
             return pool.request() 
