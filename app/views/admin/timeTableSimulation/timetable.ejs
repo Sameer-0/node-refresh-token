@@ -175,57 +175,7 @@
                                     }
 
                                     ajaxApi(ApiObj).then(result => {
-
-                                        console.log('allocationList', result)
-
-                                        let slotList = result.slotList;
-                                        let eventList = result.eventList;
-
-                                        let tableStr = `<thead><tr><th>Room No</th>`;
-
-                                        for (let slot of slotList) {
-                                           
-                                            tableStr +=
-                                                `<th>${slot.start_time}-${slot.end_time}</th>`
-                                        }
-
-                                        tableStr += `</tr></thead><tbody>`;
-
-                                        for (let room of roomList) {
-                                          
-                                            tableStr +=
-                                                `<tr data-room-no="${room.room_number}"><td data-room-no="${room.room_number}">${room.room_number}</td>`
-
-                                            for (let slot of slotList) {
-                                                tableStr +=
-                                                    ` <td data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
-                                            }
-
-                                            tableStr += '</tr>'
-                                        }
-
-                                        tableStr += '</tbody>' 
-
-                                        $('.timetable-simulation').html(tableStr)
-
-
-                                      //  setTimeout(function () {
-                                            for (let event of eventList) {
-
-                                                $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time}`)
-
-                                                $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).attr({
-                                                    "data-lid": `${event.id}`,
-                                                    "data-module-name": `${event.module_name}`,
-                                                    "data-division-name": `${event.division}`,
-                                                    "data-batch-name": `${event.batch}`,
-                                                    "data-session-name": `${event.acad_session}`,
-                                                    "data-program-name": `${event.program_name}`,
-                                                    "data-start-time": `${event.start_time}`,
-                                                    "data-end-time": `${event.end_time}`,
-                                                })
-                                            }
-
+                                        allocationHtmlTable(result)
                                       //  }, 2000)
                                     //   $(this).attr('disabled','disabled');
                                     }).catch(error => {
@@ -345,7 +295,6 @@
                                                 }
                                       
                                                 }
-
                                                 else{
                                                     pendingEventList = `<option> No Pending Events </option>`
                                                 }
@@ -357,11 +306,10 @@
                                             
                                 })
                             
-                                //DROP EVENT
-                                $(document).on('click', '#drop-slot', function() {
-
+                                //DROP EVENT SURAJ
+                             //   $(document).on('click', '#drop-slot', function() 
+                                $("#slotModal").on('click', '#drop-slot', function() {
                                     let eventLid = $(this).attr('data-lid');
-
                                     let ApiObj = {
                                                 url: '/admin/time-table-simulation/time-table/drop-event',
                                                 type: 'POST',
@@ -370,14 +318,15 @@
                                                     },
                                                 dataType: 'JSON'
                                     }
-
                                     ajaxApi(ApiObj).then((result) => {
-                                        console.log(result);
+                                        console.log('Response::::::::::::',result);
+                                        loadAfterDrop()
+                                        $("#slotModal").modal('hide');
+                                        console.log('Successfully table reinitialize:::',result);
                                     })
                                     .catch((error) => {
                                         console.log('error', error);
                                     })
-                                    
                                 })
 
                                 //SCHEDULE EVENT
@@ -424,6 +373,85 @@
                                     })
 
                                 })
+
+
+                                //this function use for loading data after drop ithout page refresh
+                                function loadAfterDrop(){
+                                    let programLid = $("#program-name").val();
+                                    let acadSessionLid = $("#session-name").val();
+                                    let dayLid = $("#day").val();
+                                
+                                    let ApiObj = {
+                                        url: '/admin/time-table-simulation/time-table/events',
+                                        type: 'POST',
+                                        data: {
+                                            programLid: programLid,
+                                            acadSessionLid: acadSessionLid,
+                                            dayLid: dayLid
+                                        },
+                                        dataType: 'JSON'
+                                    }
+
+                                    ajaxApi(ApiObj).then(result => {
+                                        allocationHtmlTable(result)
+                                      //  }, 2000)
+                                    //   $(this).attr('disabled','disabled');
+                                    }).catch(error => {
+                                        // showError(error.responseJSON)
+                                    })
+                                }
+
+
+                            //FUNCTION FOR DISPLAYING TIMETABLE     
+                            function allocationHtmlTable(result){
+
+                                    let slotList = result.slotList;
+                                    let eventList = result.eventList;
+                                    let tableStr = `<thead><tr><th>Room No</th>`;
+                                    for (let slot of slotList) {
+                                    
+                                        tableStr +=
+                                            `<th>${slot.start_time}-${slot.end_time}</th>`
+                                    }
+
+                                    tableStr += `</tr></thead><tbody>`;
+
+                                    for (let room of roomList) {
+                                    
+                                        tableStr +=
+                                            `<tr data-room-no="${room.room_number}"><td data-room-no="${room.room_number}">${room.room_number}</td>`
+
+                                        for (let slot of slotList) {
+                                            tableStr +=
+                                                ` <td data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
+                                        }
+
+                                        tableStr += '</tr>'
+                                    }
+
+                                    tableStr += '</tbody>' 
+                                    console.log('tableStr:::::::::::::::',tableStr)
+                                    $('.timetable-simulation').html(tableStr)
+
+
+                                    //  setTimeout(function () {
+                                        for (let event of eventList) {
+
+                                            $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time}`)
+
+                                            $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).attr({
+                                                "data-lid": `${event.id}`,
+                                                "data-module-name": `${event.module_name}`,
+                                                "data-division-name": `${event.division}`,
+                                                "data-batch-name": `${event.batch}`,
+                                                "data-session-name": `${event.acad_session}`,
+                                                "data-program-name": `${event.program_name}`,
+                                                "data-start-time": `${event.start_time}`,
+                                                "data-end-time": `${event.end_time}`,
+                                            })
+                                        }
+
+                            }
                             
                             })
                         </script>

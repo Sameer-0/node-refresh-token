@@ -183,4 +183,15 @@ module.exports = class Rooms {
 
         })
     }
+
+    //GENERATE ROOM SLOTS
+    static refresh(userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[dbo].[sp_generate_room_slots]`)
+        })
+    }
 }
