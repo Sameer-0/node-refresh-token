@@ -82,7 +82,7 @@ module.exports = {
         let object = { 
             allocate_events: JSON.parse(req.body.inputJSON)
         }
-        console.log('EVENT ALLOCATION JSON::::::::::',object)
+        
         TimeTable.scheduleEvent(res.locals.slug, res.locals.userId, object).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
