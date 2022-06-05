@@ -63,9 +63,7 @@ module.exports = class {
 
     static getUnlockedProgram(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT p.id, p.program_id, p.program_name FROM [${slug}].program_sessions ps 
-            INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
-            WHERE is_locked = 0`)
+            return pool.request().query(`SELECT p.id, p.program_id, p.program_name FROM [${slug}].programs p`)
         })
     }
 
@@ -74,32 +72,30 @@ module.exports = class {
 
             let stmt;
 
-            if(programLid){
+            if (programLid) {
                 stmt = `SELECT ads.id, ads.acad_session, ps.program_lid FROM [${slug}].program_sessions ps 
                 INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
                 WHERE ps.is_locked = 1 AND ps.program_lid = @programLid`
-            }
-            else{
+            } else {
                 stmt = `SELECT distinct ads.id, ads.acad_session FROM [${slug}].program_sessions ps 
                 INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
                 WHERE ps.is_locked = 1`
             }
             return pool.request()
 
-            .input('programLid', sql.Int, programLid)
-            .query(stmt)
+                .input('programLid', sql.Int, programLid)
+                .query(stmt)
         })
     }
 
     static getUnockedSessionByProgram(slug, programLid) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('programLid', sql.Int, programLid)
-            .query(`SELECT ads.id, ads.acad_session, ps.program_lid FROM [${slug}].program_sessions ps 
+                .input('programLid', sql.Int, programLid)
+                .query(`SELECT ads.id, ads.acad_session, ps.program_lid FROM [${slug}].program_sessions ps 
             INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
             WHERE ps.is_locked = 0 AND ps.program_lid = @programLid`)
         })
     }
 
 }
- 

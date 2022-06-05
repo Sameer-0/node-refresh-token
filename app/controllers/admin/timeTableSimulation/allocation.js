@@ -25,8 +25,21 @@ module.exports = {
 
     generateTimeTable:(req, res) => {
 
-        TimeTableAllocation.generateTimeTable(programLid, sessionLid, res.locals.slug)
-        .then(result => {})
+        TimeTableAllocation.generateTimeTable(req.body.programLid, req.body.sessionLid, res.locals.slug)
+        .then(result => {
+            res.status(200).json({message: "Timetable allocation successfull!"})
+        })
+        .catch(err => { console.log(err)})
+    },
+
+    deAllocateTimeTable:(req, res) => {
+
+        TimeTableAllocation.deAllocateTimeTable(req.body.programLid, req.body.sessionLid, res.locals.slug)
+        .then(result => {
+
+            res.status(200).json({message: "Deallocation successfull!"})
+
+        })
         .catch(err => { console.log(err)})
     }
 } 

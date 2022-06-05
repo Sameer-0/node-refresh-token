@@ -16,6 +16,9 @@ router.get('/time-table-simulation', index.getPage)
 //TIME TABLE ALLOCATION
 router.get('/time-table-simulation/allocation', allocation.getPage)
 router.post('/time-table-simulation/allocation/generate', allocation.generateTimeTable)
+
+//TIMETABLE DEALLOCATION
+router.post('/time-table-simulation/de-allocate', allocation.deAllocateTimeTable)
 // router.post('/time-table-simulation/allocation/clear', allocation.clearTimeTable)
 
 //TIME TABLE 
