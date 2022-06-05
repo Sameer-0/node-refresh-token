@@ -28,6 +28,8 @@ router.post('/rooms/rooms_isprocessed', roomcontroller.isProcessed)
 router.post('/rooms/buildinglist', roomcontroller.buildingList)
 router.post('/rooms/pagination', validate('pagination'), roomcontroller.pagination)
 router.post('/rooms/room/getroomtimeslots', roomcontroller.getRoomTimeSlots)
+router.post('/rooms/room/refresh', roomcontroller.refresh)
+
 
 //ROOM TYPE ROUTER
 router.get('/rooms/roomtypes', roomtype.getPage)

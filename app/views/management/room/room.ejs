@@ -62,8 +62,10 @@
                 <h5>ROOM DATA</h5>
             </div>
             <div>
+                
                 <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-room-modal"><i
                         class="fas fa-plus"></i></button>
+                        <button class="btn btn-danger ms-auto generate_room_slot"><i class="fa-solid fa-rotate"></i> Refresh</button>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -109,7 +111,7 @@
                             <%}else{%>
                             <div class="form-check form-switch switch-checkbox">
                                 <input class="form-check-input is_processed_click" type="checkbox" role="switch"
-                                    data-is-processed="<%-room.is_processed%>" data-room-id="<%- room.roomid %>">
+                                    data-is-processed="<%-room.is_processed%>" data-room-id="<%- room.roomid %>" disabled>
                             </div>
                             <%}%>  
                         </td>
@@ -746,6 +748,24 @@
         })
 
 
+        
+        $(".generate_room_slot").on('click',function(){
+            let apiObj = {
+                type:"POST",
+                url:"/management/rooms/room/refresh",
+                data: {},
+                dataType:"JSON"
+            }
+            ajaxApi(apiObj).then(result => {
+                console.log('result ::::::::::::::::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                showError(error.responseJSON)
+            })
+        })
+
+
         function showSuccess(errors) {
             console.log(errors);
             let simpleAlert = new SimpleAlert();
@@ -841,7 +861,7 @@
                     } else {
                         quoteAjax += `<div class="form-check form-switch switch-checkbox">
                                 <input class="form-check-input" type="checkbox" role="switch"
-                                    id="flexSwitchCheckChecked">
+                                    id="flexSwitchCheckChecked" disabled>
                             </div>`
                     }
                     quoteAjax += `</td>
