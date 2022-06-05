@@ -29,5 +29,7 @@ router.post('/time-table-simulation/time-table/pending-events', timeTable.getPen
 router.post('/time-table-simulation/time-table/drop-event', timeTable.dropEvent)
 router.post('/time-table-simulation/time-table/schedule-event', timeTable.scheduleEvent)
 
+router.post('/time-table-simulation/allocate-faculties', timeTable.allocateFaculties)
+
 
 module.exports = router

@@ -87,6 +87,24 @@
     </div>
 
 
+    <div class="card table-card mt-5">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Faculty Allocation</h5>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="mt-3">
+                <em class="text-danger">Please process faculty allocation after all the events are generated.</em>
+                <br>
+                <button class="btn btn-dark" id="allocate-faculties">Allocate Faculty</button>
+            </div>
+        </div>
+        
+    </div>
+
+
 </div>
 
 <%- include("../partials/footer") %>
@@ -115,13 +133,13 @@
                         `<option disabled selected value="">--Select Session--</option>`;
                     result.forEach(element => {
                         sessionList += `<option value="${element.id}">
-                            ${element.acad_session}
-                            </option>`
+        ${element.acad_session}
+    </option>`
                     });
                 } else {
                     sessionList += `<option value="">
-                                         No Session Found!
-                                    </option>`
+        No Session Found!
+    </option>`
                 }
                 sessionList += `</select>`;
                 $("#session-name-a").html(sessionList)
@@ -186,13 +204,13 @@
                         `<option disabled selected value="">--Select Session--</option>`;
                     result.forEach(element => {
                         sessionList += `<option value="${element.id}">
-                            ${element.acad_session}
-                            </option>`
+        ${element.acad_session}
+    </option>`
                     });
                 } else {
                     sessionList += `<option value="">
-                                         No Session Found!
-                                    </option>`
+        No Session Found!
+    </option>`
                 }
                 sessionList += `</select>`;
                 $("#session-name-d").html(sessionList)
@@ -205,43 +223,50 @@
 
         $("#clear-sheet").on('click', function () {
 
-        let programLid = $('#program-name-d').val();
-        let sessionLid = $('#session-name-d').val();
+            let programLid = $('#program-name-d').val();
+            let sessionLid = $('#session-name-d').val();
 
-        if (programLid && sessionLid) {
+            if (programLid && sessionLid) {
 
-            let ApiObj = {
-                url: '/admin/time-table-simulation/de-allocate',
-                type: 'POST',
-                data: {
-                    programLid: programLid,
-                    sessionLid: sessionLid,
-                },
-                dataType: 'JSON'
+                let ApiObj = {
+                    url: '/admin/time-table-simulation/de-allocate',
+                    type: 'POST',
+                    data: {
+                        programLid: programLid,
+                        sessionLid: sessionLid,
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    //showSuccess(result);
+                    alert('SUCCESS')
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+
+            } else {
+                alert('Please select program and acad session.')
             }
+        }) 
+        
+        $("#allocate-faculties").on('click', function () {
 
-            ajaxApi(ApiObj).then(result => {
-                //showSuccess(result);
-                alert('SUCCESS')
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
+                let ApiObj = {
+                    url: '/admin/time-table-simulation/allocate-faculties',
+                    type: 'POST',
+                    data: {},
+                    dataType: 'JSON'
+                }
 
-        } else {
-            alert('Please select program and acad session.')
-        }
-
-
+                ajaxApi(ApiObj).then(result => {
+                    //showSuccess(result);
+                    alert('SUCCESS')
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
 
         })
-
-
-
-
-
-
-
-
 
 
     })

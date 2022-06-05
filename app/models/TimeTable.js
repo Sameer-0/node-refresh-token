@@ -181,4 +181,16 @@ module.exports = class TimeTable {
 
         })
     }
+
+    static allocateFaculties(slug){
+        return poolConnection.then(pool => {
+
+            return pool.request() 
+            .input('last_modified_by', sql.Int, 1)
+            .output('output_flag', sql.Int)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].sp_allocate_faculties`);
+
+        })
+    }
 }
