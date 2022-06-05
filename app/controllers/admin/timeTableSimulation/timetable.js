@@ -5,7 +5,7 @@ const ProgramSessions = require('../../../models/ProgramSessions');
 const SchoolTimings = require('../../../models/SchoolTiming');
 const Rooms = require('../../../models/Rooms');
 const Days = require('../../../models/Days');
-
+const isJsonString = require('../../../utils/util')
 
 module.exports = {
 
@@ -53,8 +53,6 @@ module.exports = {
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
             SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)
         ]).then(results => {
-      
-
             res.status(200).send({
                 eventList: results[0].recordset,
                 slotList: results[1].recordset
@@ -80,13 +78,22 @@ module.exports = {
 
     },
 
-    scheduleEvent: (req, res, next) => {
-        
-      
-        TimeTable.scheduleEvent(res.locals.slug, res.locals.userId, req.body).then(result => {
-            console.log('reqqqq', req.body)
-            res.status(200).send(result);
+    scheduleEvent: (req, res) => {
+        let object = { 
+            allocate_events: JSON.parse(req.body.inputJSON)
+        }
+        console.log('EVENT ALLOCATION JSON::::::::::',object)
+        TimeTable.scheduleEvent(res.locals.slug, res.locals.userId, object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
-
-    }
+    },
 }
