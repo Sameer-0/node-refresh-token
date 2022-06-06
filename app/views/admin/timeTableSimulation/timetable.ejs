@@ -293,7 +293,7 @@ let currentTd ;
                                                 
                                                 for( let pendingEvents of result ){
                                                    
-                                                    pendingEventList += `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
+                                                    pendingEventList += `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
                                       
                                                 }
@@ -354,10 +354,10 @@ let currentTd ;
                                     let roomLid = $(this).attr("data-room-id");
                                     let startTimeId = $(this).attr("data-start-time-id");
                                     let endTimeId = $(this).attr("data-end-time-id");
-                                    let divisionName = $(this).attr("data-division-name")
-                                    let moduleName = $(this).attr("data-module-name")
-                                    let batchName = $(this).attr("data-batch-name")
-                                    let sessionName = $(this).attr("data-session-name")
+                                    let divisionName = $("#slotModal #pending-events option:selected").attr("data-division-name")
+                                    let moduleName = $("#slotModal #program-name-modal option:selected").text()
+                                    let batchName = $("#slotModal #pending-events option:selected").attr("data-batch-name")
+                                    let sessionName = $("#slotModal #session-name-modal  option:selected").text()
                                     let programName = $(this).attr("data-program-name")
                                     let startTimeText = $(this).attr("data-start-time")
                                     let endTimeText = $(this).attr("data-end-time")
@@ -413,7 +413,7 @@ let currentTd ;
                                         currentTd.attr('data-program-name', programName)
                                         currentTd.attr('data-start-time', startTimeText)
                                         currentTd.attr('data-end-time', endTimeText)
-                                        currentTd.html(`${moduleName}<br>${divisionName}<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`)
+                                        currentTd.html(`${moduleName}<br>${divisionName} (${batchName})<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`)
                                       $("#slotModal").modal('hide')
                                         // showSuccess(result)
                                     })
