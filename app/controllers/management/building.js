@@ -13,9 +13,10 @@ const isJsonString = require('../../utils/util')
 module.exports = {
 
     getPage: (req, res) => {
-        let rowcount = 10
+
         if (req.method == "GET") {
-            Promise.all([Buildings.fetchAll(10), Organizations.fetchAll(50), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(50), Buildings.getCount()]).then(result => {
+            Promise.all([Buildings.fetchAll(10), Organizations.fetchAll(50), Campuses.fetchAll(50), SlotIntervalTimings.fetchAll(1000), Buildings.getCount()]).then(result => {
+               console.log(result[3].recordset)
                 res.render('management/buildings/index', {
                     buildingList: result[0].recordset,
                     orgList: result[1].recordset,
