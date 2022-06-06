@@ -102,7 +102,8 @@
                                 let roomList = JSON.parse(`<%- roomList %>`);
                                 let programListJson = JSON.parse(`<%- programListJson %>`);
 
-                                initDraggable();
+                                //DRAG EVENT
+                                initDrag()
                                 //Getting session List Ajax
                                 $("#program-name").on('change', function () {
                                     let programLid = $(this).val();
@@ -577,27 +578,32 @@
 
                             //DRAG FUNCTION
 
-                                $(".timetable-simulation").on('dragstart','.draggableTd',function(){
-                                 console.log('THIS::::::::::', $(this))
+                                function initDrag(){
+                                    let dragTd, targetTd, dragindex;
+                                    $(".timetable-simulation").on('dragover','.draggableTd',function(event){
+                                    event.preventDefault();  
+                                    event.stopPropagation();
+                                    console.log('dragover',$(this).text())
+                                    $(this).addClass('dragging'+$(this).text());
                                 })
 
-                                function initDraggable() {
-                                    console.log("====>>> initializing draggable")
-                                    let dragTd, targetTd, dragindex;
-                                    let dragTdData = "";
+                                $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
+                                    event.preventDefault();  
+                                    event.stopPropagation();
+                                    $(this).removeClass('dragging');
+                                });
 
-                                    $('.timetable-simulation tbody').on('mousedown', '.draggableTd', function () {
-                                        console.log('DRAG ON')
-                                        document.getSelection().removeAllRanges()
-                                    })
-
-                                    $('.timetable-simulation tbody').on('dragstart', '.draggableTd', function (e) {
-                                        dragTd = $(e.target);
-                                        console.log('DRAG ID',dragTd)
-                                        $('.dragTd').removeClass('dragTd')
-                                        dragTd.addClass('dragTd')
-                                    })
+                                $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
+                                        event.preventDefault();  
+                                        event.stopPropagation();
+                                        console.log($(this))
+                                        console.log('Dropped',$(this).text())
+                                        alert("Dropped!"+$(this).text());
+                                });
                                 }
+                              
+
+                              
 
                             })
                         </script>
