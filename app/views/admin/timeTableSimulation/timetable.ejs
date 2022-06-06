@@ -21,7 +21,7 @@
             <div class="row">
                 <div class="input-groups col-md-4 col-sm-12">
                     <label for="program-name" class="d-flex justify-content-between">Select Program:</label>
-                   
+
                     <select name="program-name" id="program-name" class="form-select">
                         <option selected disabled value>--Select Program--</option>
                         <% if(programList.length>0){ %>
@@ -44,8 +44,8 @@
                     <select name="day" id="day" class="form-select" disabled>
                         <option selected disabled value>--Select Day--</option>
                         <% for(let day of dayList){%>
-                            <option value="<%- day.id%>"><%- day.day_name %></option>
-                            <%}%>
+                        <option value="<%- day.id%>"><%- day.day_name %></option>
+                        <%}%>
                     </select>
                 </div>
             </div>
@@ -98,18 +98,18 @@
 
                         <script>
                             $(document).ready(function () {
-let currentTd ;
+                                let currentTd;
                                 let roomList = JSON.parse(`<%- roomList %>`);
                                 let programListJson = JSON.parse(`<%- programListJson %>`);
 
-                 
+                                initDraggable();
                                 //Getting session List Ajax
                                 $("#program-name").on('change', function () {
                                     let programLid = $(this).val();
 
-                                    if(!$('#day').attr('disabled')){
+                                    if (!$('#day').attr('disabled')) {
                                         $('#day').val("")
-                                    $('#day').attr('disabled','disabled');
+                                        $('#day').attr('disabled', 'disabled');
 
                                     }
 
@@ -135,7 +135,8 @@ let currentTd ;
                                             });
                                         } else {
                                             // if($('#program-name').val() !== ""){
-                                                sessionList += `<option value=""> No Session Found! </option>`
+                                            sessionList +=
+                                                `<option value=""> No Session Found! </option>`
                                             // }
                                             // else{
                                             //     sessionList += `<option value=""> All Session </option>`
@@ -148,10 +149,10 @@ let currentTd ;
                                     })
                                 })
 
-   
+
                                 $("#session-name").on('change', function () {
-                                    if($('#day').attr('disabled')){
-                                    $('#day').removeAttr('disabled');
+                                    if ($('#day').attr('disabled')) {
+                                        $('#day').removeAttr('disabled');
                                     }
                                     $('#day').val("")
                                 })
@@ -162,7 +163,7 @@ let currentTd ;
                                     let programLid = $("#program-name").val();
                                     let acadSessionLid = $("#session-name").val();
                                     let dayLid = $(this).val();
-                                
+
                                     let ApiObj = {
                                         url: '/admin/time-table-simulation/time-table/events',
                                         type: 'POST',
@@ -176,62 +177,74 @@ let currentTd ;
 
                                     ajaxApi(ApiObj).then(result => {
                                         allocationHtmlTable(result)
-                                      //  }, 2000)
-                                    //   $(this).attr('disabled','disabled');
+                                        //  }, 2000)
+                                        //   $(this).attr('disabled','disabled');
                                     }).catch(error => {
                                         // showError(error.responseJSON)
                                     })
                                 })
 
 
-                                $(document).on('click', '.timetable-simulation tbody td', function() {
+                                $(document).on('click', '.timetable-simulation tbody td', function () {
 
-                                  currentTd = $(this)
-                                   
-                                    if($(this).text() == "NA"){
+                                    currentTd = $(this)
 
-                                       let programLid = $("#program-name").val();
-                                       let acadSessionLid = $("#session-name").val();
-                                       let programList = ``;
-                                       programList += `<div class="mb-2" >Slot Available || ${$(this).attr('data-room-no')} || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+                                    if ($(this).text() == "NA") {
 
-                                       if(!$('#program-name').val()){
-                                            programList +=`<select class="form-select" id="program-name-modal">`;
-                                            programList += `<option value="" selected>--select Program--</option>`
-                                            for( let program of programListJson ){
-                                                programList += `<option value="${program.id}">${program.program_name}</option>`
+                                        let programLid = $("#program-name").val();
+                                        let acadSessionLid = $("#session-name").val();
+                                        let programList = ``;
+                                        programList +=
+                                            `<div class="mb-2" >Slot Available || ${$(this).attr('data-room-no')} || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
+
+                                        if (!$('#program-name').val()) {
+                                            programList +=
+                                                `<select class="form-select" id="program-name-modal">`;
+                                            programList +=
+                                                `<option value="" selected>--select Program--</option>`
+                                            for (let program of programListJson) {
+                                                programList +=
+                                                    `<option value="${program.id}">${program.program_name}</option>`
                                             }
                                             programList += `</select>`
-                                               
+
+                                        } else {
+                                            programList +=
+                                                `<select class="form-select" id="program-name-modal">`;
+                                            programList +=
+                                                `<option value="" selected>--Select Program</option>`
+                                            programList +=
+                                                `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
+                                            programList += `</select>`
                                         }
-                                        else{
-                                            programList +=`<select class="form-select" id="program-name-modal">`;
-                                            programList += `<option value="" selected>--Select Program</option>`
-                                            programList += `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
-                                            programList += `</select>`
-                                            }
 
-                                            programList += `<select class="form-select my-3" id="session-name-modal"></select>`
-                                            programList += `<select class="form-select my-3" id="pending-events"></select>`
+                                        programList +=
+                                            `<select class="form-select my-3" id="session-name-modal"></select>`
+                                        programList +=
+                                            `<select class="form-select my-3" id="pending-events"></select>`
 
-                                            $('#slotModal .modal-body').html(programList);
-                                            $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}" data-division-name="${$(this).attr("data-division-name")}" data-module-name="${$(this).attr("data-module-name")}" data-batch-name="${$(this).attr("data-batch-name")}" data-session-name="${$(this).attr("data-session-name")}"  data-program-name="${$(this).attr("data-program-name")}" data-start-time="${$(this).attr("data-start-time")}"  data-end-time="${$(this).attr("data-end-time")}" data-room-no="${$(this).attr("data-room-no")}"  data-lid="${$(this).attr("data-lid")}">Schedule</button>`);
-                                                  
-                                    }
-                                    else{
+                                        $('#slotModal .modal-body').html(programList);
+                                        $('#slotModal .modal-footer').html(
+                                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}" data-division-name="${$(this).attr("data-division-name")}" data-module-name="${$(this).attr("data-module-name")}" data-batch-name="${$(this).attr("data-batch-name")}" data-session-name="${$(this).attr("data-session-name")}"  data-program-name="${$(this).attr("data-program-name")}" data-start-time="${$(this).attr("data-start-time")}"  data-end-time="${$(this).attr("data-end-time")}" data-room-no="${$(this).attr("data-room-no")}"  data-lid="${$(this).attr("data-lid")}">Schedule</button>`
+                                        );
+
+                                    } else {
                                         $('#slotModal .modal-body').html($(this).text());
-                                        $('#slotModal .modal-body').attr('data-lid', $(this).attr("data-lid"));
-                                        $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-primary" id="drop-slot" data-lid="${$(this).attr("data-lid")}">Drop</button>`)
+                                        $('#slotModal .modal-body').attr('data-lid', $(this).attr(
+                                            "data-lid"));
+                                        $('#slotModal .modal-footer').html(
+                                            `<button type="button" class="btn btn-primary" id="drop-slot" data-lid="${$(this).attr("data-lid")}">Drop</button>`
+                                        )
                                     }
 
                                     $('#slotModal').modal('show');
-                               })
+                                })
 
 
                                 $(document).on('change', '#program-name-modal', function () {
-                                   
+
                                     let programLid = $(this).val();
-                                    
+
                                     let ApiObj = {
                                         url: '/admin/programs/sessions/program-sessions',
                                         type: 'POST',
@@ -241,201 +254,221 @@ let currentTd ;
                                         dataType: 'JSON'
                                     }
                                     let sessionList = ``;
-                                    if($('#session-name').val()){
-                                        sessionList += `<option disabled selected value="">--Select Session--</option>`;
-                                        sessionList += `<option value="${$('#session-name').val()}"> ${$('#session-name option:selected').text()}</option>`
+                                    if ($('#session-name').val()) {
+                                        sessionList +=
+                                            `<option disabled selected value="">--Select Session--</option>`;
+                                        sessionList +=
+                                            `<option value="${$('#session-name').val()}"> ${$('#session-name option:selected').text()}</option>`
 
-                                        $(document).find("#slotModal #session-name-modal").html(sessionList)
+                                        $(document).find("#slotModal #session-name-modal").html(
+                                            sessionList)
+                                    } else {
+                                        ajaxApi(ApiObj).then(result => {
+
+                                            if (result.length > 0) {
+
+                                                sessionList +=
+                                                    `<option disabled selected value="">--Select Session--</option>`;
+                                                result.forEach(element => {
+                                                    sessionList +=
+                                                        `<option value="${element.id}"> ${element.acad_session} </option>`
+                                                });
+
+
+                                            } else {
+                                                sessionList +=
+                                                    `<option value=""> No Session Found! </option>`
+                                            }
+                                            sessionList += `</select>`;
+                                            $(document).find("#slotModal #session-name-modal")
+                                                .html(sessionList)
+                                        }).catch(error => {
+                                            // showError(error.responseJSON)
+                                        })
                                     }
-                                    else{
-                                    ajaxApi(ApiObj).then(result => {
-
-                                        if (result.length > 0) {
-
-                                            sessionList +=
-                                                `<option disabled selected value="">--Select Session--</option>`;
-                                            result.forEach(element => {
-                                                sessionList += `<option value="${element.id}"> ${element.acad_session} </option>`
-                                            });
-
-
-                                        } else {
-                                            sessionList += `<option value=""> No Session Found! </option>`
-                                        }
-                                        sessionList += `</select>`;
-                                        $(document).find("#slotModal #session-name-modal").html(sessionList)
-                                    }).catch(error => {
-                                        // showError(error.responseJSON)
-                                    })
-                                }
                                 })
-                                
 
-                                $(document).on('change', '#session-name-modal', function() {
+
+                                $(document).on('change', '#session-name-modal', function () {
 
                                     let programLid = $('#program-name-modal').val();
                                     let acadSessionLid = $(this).val();
 
                                     let ApiObj = {
-                                                url: '/admin/time-table-simulation/time-table/pending-events',
-                                                type: 'POST',
-                                                data: {
-                                                    programLid: programLid,
-                                                    acadSessionLid: acadSessionLid,
-                                                    },
-                                                dataType: 'JSON'
-                                                }
+                                        url: '/admin/time-table-simulation/time-table/pending-events',
+                                        type: 'POST',
+                                        data: {
+                                            programLid: programLid,
+                                            acadSessionLid: acadSessionLid,
+                                        },
+                                        dataType: 'JSON'
+                                    }
 
-                                                let pendingEventList ;
-                                                ajaxApi(ApiObj).then(result => {
-                                                    if(result.length > 0){
+                                    let pendingEventList;
+                                    ajaxApi(ApiObj).then(result => {
+                                            if (result.length > 0) {
                                                 console.log('Pending-event-list:::>>', result)
-                                                
-                                                for( let pendingEvents of result ){
-                                                   
-                                                    pendingEventList += `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
-                                                }
-                                      
-                                                }
-                                                else{
-                                                    pendingEventList = `<option> No Pending Events </option>`
+
+                                                for (let pendingEvents of result) {
+
+                                                    pendingEventList +=
+                                                        `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
 
-                                                $(document).find('#pending-events').html(pendingEventList);
-                                    
-                                                })
-                                                .catch(err => {console.log('err', err)})
-                                            
+                                            } else {
+                                                pendingEventList =
+                                                    `<option> No Pending Events </option>`
+                                            }
+
+                                            $(document).find('#pending-events').html(
+                                                pendingEventList);
+
+                                        })
+                                        .catch(err => {
+                                            console.log('err', err)
+                                        })
+
                                 })
-                            
+
                                 //DROP EVENT SURAJ
-                             //   $(document).on('click', '#drop-slot', function() 
-                                $("#slotModal").on('click', '#drop-slot', function() {
+                                //   $(document).on('click', '#drop-slot', function() 
+                                $("#slotModal").on('click', '#drop-slot', function () {
                                     let eventLid = $(this).attr('data-lid');
                                     let ApiObj = {
-                                                url: '/admin/time-table-simulation/time-table/drop-event',
-                                                type: 'POST',
-                                                data: {
-                                                    eventLid: eventLid,
-                                                    },
-                                                dataType: 'JSON'
+                                        url: '/admin/time-table-simulation/time-table/drop-event',
+                                        type: 'POST',
+                                        data: {
+                                            eventLid: eventLid,
+                                        },
+                                        dataType: 'JSON'
                                     }
                                     ajaxApi(ApiObj).then((result) => {
-                                        console.log('Response::::::::::::',result);
-                                        //currentTd.html('NA')// SET NA AFTER DROP
-                                        console.log('currentTd::::::::::',currentTd)
-                                        currentTd.html("NA")
-                                        //SET EMPTY CURRENT TD
-                                        // currentTd.attr('data-school-time-id', '')
-                                        // currentTd.attr('data-start-time-id', '')
-                                        // currentTd.attr('data-end-time-id', '')
-                                        // currentTd.attr('data-room-id', '')
-                                        // currentTd.attr('data-room-no', '')
-                                        // currentTd.attr('data-lid', '')
-                                        // currentTd.attr('data-module-name', '')
-                                        // currentTd.attr('data-division-name', '')
-                                        // currentTd.attr('data-batch-name', '')
-                                        // currentTd.attr('data-session-name', '')
-                                        // currentTd.attr('data-program-name', '')
-                                        // currentTd.attr('data-start-time', '')
-                                        // currentTd.attr('data-end-time', '')
+                                            console.log('Response::::::::::::', result);
+                                            //currentTd.html('NA')// SET NA AFTER DROP
+                                            console.log('currentTd::::::::::', currentTd)
+                                            currentTd.html("NA")
+                                            //SET EMPTY CURRENT TD
+                                            // currentTd.attr('data-school-time-id', '')
+                                            // currentTd.attr('data-start-time-id', '')
+                                            // currentTd.attr('data-end-time-id', '')
+                                            // currentTd.attr('data-room-id', '')
+                                            // currentTd.attr('data-room-no', '')
+                                            // currentTd.attr('data-lid', '')
+                                            // currentTd.attr('data-module-name', '')
+                                            // currentTd.attr('data-division-name', '')
+                                            // currentTd.attr('data-batch-name', '')
+                                            // currentTd.attr('data-session-name', '')
+                                            // currentTd.attr('data-program-name', '')
+                                            // currentTd.attr('data-start-time', '')
+                                            // currentTd.attr('data-end-time', '')
 
-                                        $("#slotModal").modal('hide');
-                                        console.log('Successfully table reinitialize:::',result);
-                                    })
-                                    .catch((error) => {
-                                        console.log('error', error);
-                                    })
+                                            $("#slotModal").modal('hide');
+                                            console.log('Successfully table reinitialize:::',
+                                                result);
+                                        })
+                                        .catch((error) => {
+                                            console.log('error', error);
+                                        })
                                 })
 
                                 //SCHEDULE EVENT
-                                $(document).on('click', '#schedule-slot', function() {
+                                $(document).on('click', '#schedule-slot', function () {
 
                                     let roomLid = $(this).attr("data-room-id");
                                     let startTimeId = $(this).attr("data-start-time-id");
                                     let endTimeId = $(this).attr("data-end-time-id");
-                                    let divisionName = $("#slotModal #pending-events option:selected").attr("data-division-name")
-                                    let moduleName = $("#slotModal #pending-events option:selected").text()
-                                    let batchName = $("#slotModal #pending-events option:selected").attr("data-batch-name")
-                                    let sessionName = $("#slotModal #session-name-modal  option:selected").text()
-                                    let programName = $("#slotModal #program-name-modal option:selected").text()
+                                    let divisionName = $("#slotModal #pending-events option:selected")
+                                        .attr("data-division-name")
+                                    let moduleName = $("#slotModal #pending-events option:selected")
+                                        .text()
+                                    let batchName = $("#slotModal #pending-events option:selected")
+                                        .attr("data-batch-name")
+                                    let sessionName = $(
+                                        "#slotModal #session-name-modal  option:selected").text()
+                                    let programName = $(
+                                        "#slotModal #program-name-modal option:selected").text()
                                     let startTimeText = $(this).attr("data-start-time")
                                     let endTimeText = $(this).attr("data-end-time")
                                     let roomNo = $(this).attr("data-room-no")
                                     let dataLid = $(this).attr("data-lid")
                                     let programLid = $("#slotModal #program-name-modal").val();
                                     let sessionLid = $("#slotModal #session-name-modal").val();
-                                    let moduleLid = $("#slotModal #pending-events option:selected").attr("data-module-lid");
-                                    let divisionLid = $("#slotModal #pending-events option:selected").attr("data-division-lid");
-                                    let batchLid = $("#slotModal #pending-events option:selected").attr("data-batch-lid");
+                                    let moduleLid = $("#slotModal #pending-events option:selected")
+                                        .attr("data-module-lid");
+                                    let divisionLid = $("#slotModal #pending-events option:selected")
+                                        .attr("data-division-lid");
+                                    let batchLid = $("#slotModal #pending-events option:selected").attr(
+                                        "data-batch-lid");
                                     let dayLid = $("#day").val();
                                     let schoolTimeLid = $(this).attr("data-school-time-id");
                                     let obj = [{
-                                                    room_lid: roomLid,
-                                                    start_time_id: startTimeId,
-                                                    end_time_id: endTimeId,
-                                                    program_lid: programLid,
-                                                    acad_session_lid: sessionLid,
-                                                    course_lid: moduleLid,
-                                                    division_lid: divisionLid,
-                                                    batch_lid: batchLid,
-                                                    day_lid: dayLid,
-                                                    school_time_lid:schoolTimeLid
-                                                }]
+                                        room_lid: roomLid,
+                                        start_time_id: startTimeId,
+                                        end_time_id: endTimeId,
+                                        program_lid: programLid,
+                                        acad_session_lid: sessionLid,
+                                        course_lid: moduleLid,
+                                        division_lid: divisionLid,
+                                        batch_lid: batchLid,
+                                        day_lid: dayLid,
+                                        school_time_lid: schoolTimeLid
+                                    }]
 
-                                        console.log('JSON::::::::::::::::',obj)
+                                    console.log('JSON::::::::::::::::', obj)
 
                                     let ApiObj = {
-                                                url: '/admin/time-table-simulation/time-table/schedule-event',
-                                                type: 'POST',
-                                                data: {
-                                                    inputJSON: JSON.stringify(obj)
-                                                    },
-                                                dataType: 'JSON'
+                                        url: '/admin/time-table-simulation/time-table/schedule-event',
+                                        type: 'POST',
+                                        data: {
+                                            inputJSON: JSON.stringify(obj)
+                                        },
+                                        dataType: 'JSON'
                                     }
 
                                     console.log('obj::::', ApiObj.data)
 
                                     ajaxApi(ApiObj).then((result) => {
-                                        console.log(result);
+                                            console.log(result);
 
-                                        //SET DATA CURRENT TD
-                                        currentTd.attr('data-school-time-id', schoolTimeLid)
-                                        currentTd.attr('data-start-time-id', startTimeId)
-                                        currentTd.attr('data-end-time-id', endTimeId)
-                                        currentTd.attr('data-room-id', roomLid)
-                                        currentTd.attr('data-room-no', roomNo)
-                                        currentTd.attr('data-lid', dataLid)
-                                        currentTd.attr('data-module-name', moduleName)
-                                        currentTd.attr('data-division-name', divisionName)
-                                        currentTd.attr('data-batch-name', batchName)
-                                        currentTd.attr('data-session-name', sessionName)
-                                        currentTd.attr('data-program-name', programName)
-                                        currentTd.attr('data-start-time', startTimeText)
-                                        currentTd.attr('data-end-time', endTimeText)
-                                        currentTd.html(`${moduleName}<br>${divisionName} (${batchName})<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`)
-                                      $("#slotModal").modal('hide')
-                                        // showSuccess(result)
-                                    })
-                                    .catch((error) => {
-                                        console.log('error', error);
-                                        showError(error.responseJSON)
-                                    })
+                                            //SET DATA CURRENT TD
+                                            currentTd.attr('data-school-time-id', schoolTimeLid)
+                                            currentTd.attr('data-start-time-id', startTimeId)
+                                            currentTd.attr('data-end-time-id', endTimeId)
+                                            currentTd.attr('data-room-id', roomLid)
+                                            currentTd.attr('data-room-no', roomNo)
+                                            currentTd.attr('data-lid', dataLid)
+                                            currentTd.attr('data-module-name', moduleName)
+                                            currentTd.attr('data-division-name', divisionName)
+                                            currentTd.attr('data-batch-name', batchName)
+                                            currentTd.attr('data-session-name', sessionName)
+                                            currentTd.attr('data-program-name', programName)
+                                            currentTd.attr('data-start-time', startTimeText)
+                                            currentTd.attr('data-end-time', endTimeText)
+                                            currentTd.html(
+                                                `${moduleName}<br>${divisionName} (${batchName})<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`
+                                            )
+                                            $("#slotModal").modal('hide')
+                                            // showSuccess(result)
+                                        })
+                                        .catch((error) => {
+                                            console.log('error', error);
+                                            showError(error.responseJSON)
+                                        })
 
                                 })
 
 
-                            
 
 
-                            //FUNCTION FOR DISPLAYING TIMETABLE     
-                            function allocationHtmlTable(result) {
+
+                                //FUNCTION FOR DISPLAYING TIMETABLE     
+                                function allocationHtmlTable(result) {
 
                                     let slotList = result.slotList;
                                     let eventList = result.eventList;
                                     let tableStr = `<thead><tr><th>Room No</th>`;
                                     for (let slot of slotList) {
-                                    
+
                                         tableStr +=
                                             `<th>${slot.start_time}-${slot.end_time}</th>`
                                     }
@@ -443,95 +476,129 @@ let currentTd ;
                                     tableStr += `</tr></thead><tbody>`;
 
                                     for (let room of roomList) {
-                                    
+
                                         tableStr +=
-                                            `<tr data-room-no="${room.room_number}"><td data-room-no="${room.room_number}">${room.room_number}</td>`
+                                            `<tr  data-room-no="${room.room_number}"><td data-room-no="${room.room_number}">${room.room_number}</td>`
 
                                         for (let slot of slotList) {
                                             tableStr +=
-                                                ` <td data-school-time-id="${slot.id}" data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
+                                                ` <td  data-school-time-id="${slot.id}" data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
                                         }
 
                                         tableStr += '</tr>'
                                     }
 
-                                    tableStr += '</tbody>' 
-                                    console.log('tableStr:::::::::::::::',tableStr)
+                                    tableStr += '</tbody>'
+                                    console.log('tableStr:::::::::::::::', tableStr)
                                     $('.timetable-simulation').html(tableStr)
 
 
                                     //  setTimeout(function () {
-                                        for (let event of eventList) {
+                                    for (let event of eventList) {
 
-                                            $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).html( `${event.module_name} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time} <br> (${event.faculty_name ? event.faculty_name : 'Faculty NA'})`)
+                                        $(document).find(
+                                            `.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"] `
+                                        ).html(
+                                            `${event.module_name} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time} <br> (${event.faculty_name ? event.faculty_name : 'Faculty NA'})`
+                                        )
 
-                                            $(document).find(`.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`).attr({
-                                                "data-lid": `${event.id}`,
-                                                "data-module-name": `${event.module_name}`,
-                                                "data-division-name": `${event.division}`,
-                                                "data-batch-name": `${event.batch}`,
-                                                "data-session-name": `${event.acad_session}`,
-                                                "data-program-name": `${event.program_name}`,
-                                                "data-start-time": `${event.start_time}`,
-                                                "data-end-time": `${event.end_time}`,
-                                            })
+                                        $(document).find(
+                                            `.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"]`
+                                        ).attr({
+                                            "data-lid": `${event.id}`,
+                                            "data-module-name": `${event.module_name}`,
+                                            "data-division-name": `${event.division}`,
+                                            "data-batch-name": `${event.batch}`,
+                                            "data-session-name": `${event.acad_session}`,
+                                            "data-program-name": `${event.program_name}`,
+                                            "data-start-time": `${event.start_time}`,
+                                            "data-end-time": `${event.end_time}`,
+                                            "class": 'draggableTd dragtargetTd',
+                                            "draggable":"true"
+                                        })
+                                    }
+
+                                }
+
+
+
+                                function showError(errors) {
+                                    console.log('error::::::::::', errors)
+                                    let simpleAlert = new SimpleAlert();
+                                    let obj = {
+                                        title: errors.description,
+                                        message: errors.data,
+                                        type: 'alert-danger',
+                                        buttons: {
+                                            positive: {
+                                                text: "Okay",
+                                                action: function () {
+                                                    document.querySelector('.simple-alert').remove();
+                                                }
+                                            },
+                                            negative: {
+                                                text: "Cancel",
+                                                action: function () {
+                                                    alert('Negative')
+                                                }
+                                            }
                                         }
-
-                            }
-
-
-
-            function showError(errors) {
-            console.log('error::::::::::', errors)
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title: errors.description,
-                message: errors.data,
-                type: 'alert-danger',
-                buttons: {
-                    positive: {
-                        text: "Okay",
-                        action: function () {
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                            alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-        }
+                                    }
+                                    simpleAlert.alert(obj);
+                                }
 
 
-        function showSuccess(errors) {
-            console.log('error::::::::::', errors)
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title: errors.description,
-                message: errors.data,
-                type: 'alert-success',
-                buttons: {
-                    positive: {
-                        text: "Okay",
-                        action: function () {
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                            alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-        }
-                            
+                                function showSuccess(errors) {
+                                    console.log('error::::::::::', errors)
+                                    let simpleAlert = new SimpleAlert();
+                                    let obj = {
+                                        title: errors.description,
+                                        message: errors.data,
+                                        type: 'alert-success',
+                                        buttons: {
+                                            positive: {
+                                                text: "Okay",
+                                                action: function () {
+                                                    document.querySelector('.simple-alert').remove();
+                                                }
+                                            },
+                                            negative: {
+                                                text: "Cancel",
+                                                action: function () {
+                                                    alert('Negative')
+                                                }
+                                            }
+                                        }
+                                    }
+                                    simpleAlert.alert(obj);
+                                }
+
+
+
+                            //DRAG FUNCTION
+
+                                $(".timetable-simulation").on('dragstart','.draggableTd',function(){
+                                 console.log('THIS::::::::::', $(this))
+                                })
+
+                                function initDraggable() {
+                                    console.log("====>>> initializing draggable")
+                                    let dragTd, targetTd, dragindex;
+                                    let dragTdData = "";
+
+                                    $('.timetable-simulation tbody').on('mousedown', '.draggableTd', function () {
+                                        console.log('DRAG ON')
+                                        document.getSelection().removeAllRanges()
+                                    })
+
+                                    $('.timetable-simulation tbody').on('dragstart', '.draggableTd', function (e) {
+                                        dragTd = $(e.target);
+                                        console.log('DRAG ID',dragTd)
+                                        $('.dragTd').removeClass('dragTd')
+                                        dragTd.addClass('dragTd')
+                                    })
+                                }
+
                             })
                         </script>
                         <%- include("../partials/footerEnd") %>
