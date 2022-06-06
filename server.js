@@ -21,16 +21,12 @@ const {
     appendFile
 } = require('fs');
 
-let sslOptions;
-
-if (!process.env.APP_ENV === 'LOCAL') {
-
-    sslOptions = {
+let sslOptions = {
         pfx: readFileSync(__dirname + `/cert/server.pfx`),
         passphrase: 'time#2021'
     };
 
-}
+
 
 
 //redis
@@ -179,7 +175,7 @@ app.use(function (req, res) {
 //const server = https.createServer(options, app).listen(process.env.APP_PORT);// Enable with ssl 
 //app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
 
-if (!process.env.APP_ENV === 'LOCAL') {
+if (process.env.APP_ENV === 'PRODUCTION') {
     const server = https.createServer(sslOptions, app);
     server.listen(process.env.APP_PORT);
 } else {
