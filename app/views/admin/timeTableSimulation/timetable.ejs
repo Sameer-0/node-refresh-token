@@ -215,7 +215,7 @@ let currentTd ;
                                             programList += `<select class="form-select my-3" id="pending-events"></select>`
 
                                             $('#slotModal .modal-body').html(programList);
-                                            $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}">Schedule</button>`);
+                                            $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}" data-division-name="${$(this).attr("data-division-name")}" data-module-name="${$(this).attr("data-module-name")}" data-batch-name="${$(this).attr("data-batch-name")}" data-session-name="${$(this).attr("data-session-name")}"  data-program-name="${$(this).attr("data-program-name")}" data-start-time="${$(this).attr("data-start-time")}"  data-end-time="${$(this).attr("data-end-time")}" data-room-no="${$(this).attr("data-room-no")}"  data-lid="${$(this).attr("data-lid")}">Schedule</button>`);
                                                   
                                     }
                                     else{
@@ -354,6 +354,15 @@ let currentTd ;
                                     let roomLid = $(this).attr("data-room-id");
                                     let startTimeId = $(this).attr("data-start-time-id");
                                     let endTimeId = $(this).attr("data-end-time-id");
+                                    let divisionName = $(this).attr("data-division-name")
+                                    let moduleName = $(this).attr("data-module-name")
+                                    let batchName = $(this).attr("data-batch-name")
+                                    let sessionName = $(this).attr("data-session-name")
+                                    let programName = $(this).attr("data-program-name")
+                                    let startTimeText = $(this).attr("data-start-time")
+                                    let endTimeText = $(this).attr("data-end-time")
+                                    let roomNo = $(this).attr("data-room-no")
+                                    let dataLid = $(this).attr("data-lid")
                                     let programLid = $("#slotModal #program-name-modal").val();
                                     let sessionLid = $("#slotModal #session-name-modal").val();
                                     let moduleLid = $("#slotModal #pending-events option:selected").attr("data-module-lid");
@@ -389,7 +398,24 @@ let currentTd ;
 
                                     ajaxApi(ApiObj).then((result) => {
                                         console.log(result);
-                                        showSuccess(result)
+
+                                        //SET DATA CURRENT TD
+                                        currentTd.attr('data-school-time-id', schoolTimeLid)
+                                        currentTd.attr('data-start-time-id', startTimeId)
+                                        currentTd.attr('data-end-time-id', endTimeId)
+                                        currentTd.attr('data-room-id', roomLid)
+                                        currentTd.attr('data-room-no', roomNo)
+                                        currentTd.attr('data-lid', dataLid)
+                                        currentTd.attr('data-module-name', moduleName)
+                                        currentTd.attr('data-division-name', divisionName)
+                                        currentTd.attr('data-batch-name', batchName)
+                                        currentTd.attr('data-session-name', sessionName)
+                                        currentTd.attr('data-program-name', programName)
+                                        currentTd.attr('data-start-time', startTimeText)
+                                        currentTd.attr('data-end-time', endTimeText)
+                                        currentTd.html(`${moduleName}<br>${divisionName}<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`)
+                                      
+                                        // showSuccess(result)
                                     })
                                     .catch((error) => {
                                         console.log('error', error);
