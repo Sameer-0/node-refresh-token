@@ -350,14 +350,17 @@
         $("#sessionName").on('change',function(){
             let programId = $("#programName").val()
             let sessionId = $("#sessionName").val()
+            let facultyId = $("#faculty-drop-down option:selected").attr('data-faculty-lid')
             console.log('programId::::::::::::',programId)
             console.log('sessionId::::::::::::',sessionId)
+            console.log('facultyId::::::::::::',facultyId)
             let ApiObj = {
             type: 'POST',
             url: '/admin/faculties/workpreferences/module-by-program-session-id',
             data: {
                 programId: programId,
-                sessionId: sessionId
+                sessionId: sessionId,
+                facultyId: facultyId
             },
             dataType: 'JSON'
         }
@@ -431,7 +434,7 @@
                 })
                 $('#add-more-faculty-preferernce tbody').append(htmlTable)
             }else{
-                alert('Faculty is not mapped or module is not present for the selected semester')
+                showError({status:0, description:"Faculty work and modules are not assigned to the selected faculty", data:[{}]})
             }
         }).catch(error => {
             showError(error.responseJSON)

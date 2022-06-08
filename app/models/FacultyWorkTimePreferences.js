@@ -126,14 +126,16 @@ module.exports = class FacultyWorkTimePreferences {
 
 
     static moduleByprogramAndSessionId(body, slug) {
+        console.log('Body::::::',body)
         return poolConnection.then(pool => {
             return pool.request()
             .input('programId', sql.Int, body.programId)
             .input('sessionId', sql.Int, body.sessionId)
+            .input('facultyId', sql.Int, body.facultyId)
             .query(`SELECT DISTINCT fw.module_lid, icw.module_name FROM [${slug}].faculty_works fw
             INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
             INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
-            WHERE ps.program_lid = @programId AND ps.acad_session_lid = @sessionId`)
+            WHERE ps.program_lid = @programId AND ps.acad_session_lid = @sessionId AND fw.faculty_lid = @facultyId`)
         })
     }
 

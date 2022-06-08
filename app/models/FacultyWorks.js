@@ -126,6 +126,7 @@ module.exports = class {
     }
 
     static facultyWorkloadForPrefernce(body, slug) {
+        console.log('body::::::::',body)
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('facultyLid', sql.Int, body.facultyLid)
