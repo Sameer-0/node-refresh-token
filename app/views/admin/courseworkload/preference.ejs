@@ -417,16 +417,27 @@
                                     <td data-batch-id="${list.batch_id}">${list.batch} ( ${list.batch_event})</td>
                                     <td>
                                     <select class="select2 dayName" name="dayName"  multiple>`
-                                        for(let day of JSON.parse(`<%-dayListJSON%>`)){
-                                            AjaxTable += `<option value="${day.id}">${day.day_name}</option>`
+                                    //     dayArr.forEach(function(day){
+                                    // AjaxTable += `<option value="${day.id}">${day.day_name}</option>`
+                                    //     })
+
+                                        for (let day of JSON.parse(list.days)) {
+                                        console.log('DAY ID',day.id);
+                                        AjaxTable += `<option value="${day.id}"  selected="selected">${day.day_name}</option>`
                                         }
+                                        
                                     `</select>`
                                     AjaxTable +=  `</td>
                                     <td>
                                         <select class="select2 roomNumber" name="roomNumber"  multiple>`
-                                            for(let room of JSON.parse(`<%-roomListsJSON%>`)){
-                                            AjaxTable += `<option value="${room.id}">${room.room_number} (${room.room_type})</option>`
-                                            }
+                                    //        list.rooms.forEach(function(room){
+                                    // AjaxTable += `<option value="${room.id}">${room.room_number} (${room.room_type})</option>`
+                                    //     })
+
+                                    for (let room of JSON.parse(list.rooms)) {
+                                        console.log('ROOM ID',room.room_type_name);
+                                        AjaxTable += `<option value="${room.id}"  selected="selected">${room.room_number} (${room.room_type_name})</option>`
+                                        }
                                         `</select>`
                                         AjaxTable += `</td>
                     </tr>`
