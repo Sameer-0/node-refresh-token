@@ -35,7 +35,10 @@ module.exports = {
                 .then(pool => {
                     return pool.request()
                         .input('slugName', sql.NVarChar(50), subDomain)
-                        .query(`SELECT slug_name, campus_lid, org_lid FROM [dbo].tenants WHERE slug_name = @slugName`);
+                        .query(`SELECT t.slug_name, t.campus_lid, t.org_lid, org.org_id as org_id, c.campus_id FROM [dbo].tenants t
+                        INNER JOIN [dbo].organizations org ON org.id = t.org_lid
+                        INNER JOIN [dbo].campuses c ON c.id =  t.campus_lid
+                        WHERE slug_name = @slugName`);
                 }).then(result => {
                     if (result.recordset.length === 0) {
                         return res.send('Invalid subdomain!!!')
@@ -43,7 +46,9 @@ module.exports = {
                     res.locals.slug = result.recordset[0].slug_name
                     res.locals.organizationId = result.recordset[0].org_lid
                     res.locals.campusId = result.recordset[0].campus_lid
-                    console.log('Domain:::::::', res.locals.slug)
+                    res.locals.campusIdSap = result.recordset[0].campus_id
+                    res.locals.organizationIdSap = result.recordset[0].org_id
+                    console.log('LOCALS:::::::', res.locals)
                     next();
                 })
         } else {
