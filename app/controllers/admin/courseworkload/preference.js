@@ -200,6 +200,7 @@ module.exports = {
                 })
             }
         }).catch(error => {
+            
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
             } else {
@@ -235,6 +236,7 @@ module.exports = {
     },
 
     findModuleByProgramIdSemId: (req, res) => {
+        console.log('req.body::::::::::::',req.body)
         Promise.all([CourseDayRoomPreferences.findModuleByProgramIdSemId(req.body, res.locals.slug), CourseDayRoomPreferences.preferenceByProgramIdSessionId(req.body, res.locals.slug)]).then(result => {
                 res.json({
                     status: "200",
@@ -245,6 +247,7 @@ module.exports = {
                 })
             })
             .catch(error => {
+                console.log('error::::::::::::::',error)
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
                     res.status(500).json(JSON.parse(error.originalError.info.message))
                 } else {
