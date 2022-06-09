@@ -36,6 +36,9 @@
                     <th>Sr.No.</th>
                     <th>Faculty Name</th>
                     <th>Faculty Id</th>
+                    <th>Program Name</th>
+                    <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Division</th>
                     <th>Batch</th>
                     <th>Action</th>
@@ -47,6 +50,9 @@
                         <td><%- count++ %></td>
                         <td><%- faculty.faculty_name %></td>
                         <td><%- faculty.faculty_id %></td>
+                        <td><%- faculty.program_name %></td>
+                        <td><%- faculty.module_name %></td>
+                        <td><%- faculty.acad_session %></td>
                         <td><%- faculty.division %></td>
                         <td><%- faculty.batch %></td>
                         <td><a class="edit-facultybatch" data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-batch="<%- faculty.batch %>" data-batch-lid="<%-faculty.batch_lid%>"><i class="fas fa-edit text-dark"></i></a>
@@ -133,6 +139,9 @@ aria-hidden="true">
                         <thead>
                             <th>Sr No.</th>
                             <th>Faculty Name</th>
+                            <th>Program Name</th>
+                            <th>Academic Session</th>
+                            <th>Module Name</th>
                             <th>Division</th>
                             <th>Batch</th>
                             <th>Action</th>
@@ -528,10 +537,16 @@ $(document).ready(function(){
             let batch_lid = $("#batchName").val();
             let batch_name = $("#batchName option:selected").text();
             let division = $("#divisionName option:selected").text();
+            let programName = $("#programName option:selected").text();
+            let academicSessionName = $("#sessionName option:selected").text();
+            let moduleName = $("#moduleName option:selected").text();
 
             $('#add-more-faculty-batch-table tbody').append(`<tr>
                 <td>#</td>
                 <td data-faculty-lid="${faculty_lid}">${faculty_name}</td>
+                <td>${programName}</td>
+                <td>${academicSessionName}</td>
+                <td>${moduleName}</td>
                 <td>${division}</td>
                 <td data-batch-lid="${batch_lid}">${batch_name}</td>
                 <td>
@@ -600,11 +615,14 @@ $(document).ready(function(){
                     <th>Sr.No.</th>
                     <th>Faculty Name</th>
                     <th>Faculty Id</th>
+                    <th>Program Name</th>
+                    <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Division</th>
                     <th>Batch</th>
                     <th>Action</th>
                 </thead>
-                <tbody> `;
+                <tbody>`;
 
             if (facultiesList.length > 0) {
                 let count  = 1;
@@ -614,6 +632,9 @@ $(document).ready(function(){
                         <td>${count++}</td>
                         <td>${faculty.faculty_name}</td>
                         <td>${faculty.faculty_id}</td>
+                        <td>${faculty.program_name}</td>
+                        <td>${faculty.module_name}</td>
+                        <td>${faculty.acad_session}</td>
                         <td>${faculty.division}</td>
                         <td>${faculty.batch}</td>
                         <td><a class="edit-facultybatch" data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-batch-lid="${faculty.batch_lid}" data-batch="${faculty.batch_lid}"><i class="fas fa-edit text-dark"></i></a>
@@ -624,7 +645,7 @@ $(document).ready(function(){
             } else {
                 AjaxTable +=
                     ` <tr>
-                         <td colspan="6">No Data Found</td>
+                         <td colspan="9">No Data Found</td>
                       </tr>`;
             }
             AjaxTable += `<tbody></table>`
