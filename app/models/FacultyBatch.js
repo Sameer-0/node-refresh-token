@@ -30,10 +30,16 @@ module.exports = class FacultyBatch {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id, db.batch
-            FROM [${slug}].faculty_batches fb
-            INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id       
-			INNER JOIN [${slug}].[division_batches] db ON db.id = fb.batch_lid
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id, db.batch, d.division,
+            icw.module_name, p.program_name, ads.acad_session, et.name as event_type
+             FROM [${slug}].faculty_batches fb
+            INNER JOIN [${slug}].faculties f ON fb.faculty_lid =  f.id       
+            INNER JOIN [${slug}].division_batches db ON db.id = fb.batch_lid
+            INNER JOIN [${slug}].divisions d ON d.id =  db.division_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid
             ORDER BY fb.id DESC`)
         })
     }
@@ -49,11 +55,20 @@ module.exports = class FacultyBatch {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id, db.batch
-                FROM [${slug}].faculty_batches fb
-                INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id 
-                INNER JOIN [${slug}].[division_batches] db ON db.id = fb.batch_lid
+                .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, 
+                f.faculty_id, db.batch, d.division,
+                icw.module_name, p.program_name, ads.acad_session, et.name as event_type
+                 FROM [${slug}].faculty_batches fb
+                INNER JOIN [${slug}].faculties f ON fb.faculty_lid =  f.id       
+                INNER JOIN [${slug}].division_batches db ON db.id = fb.batch_lid
+                INNER JOIN [${slug}].divisions d ON d.id =  db.division_lid
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+                INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid
                 WHERE  f.faculty_name LIKE @keyword OR  f.faculty_id LIKE @keyword OR fb.batch_lid LIKE @keyword
+                OR d.division LIKE @keyword OR icw.module_name LIKE @keyword OR p.program_name LIKE @keyword
+                OR ads.acad_session LIKE @keyword OR et.name LIKE @keyword
                 ORDER BY fb.id DESC`)
         })
     }
@@ -62,10 +77,16 @@ module.exports = class FacultyBatch {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id, db.batch
-                FROM [${slug}].faculty_batches fb
-                INNER JOIN [${slug}].[faculties] f ON fb.faculty_lid =  f.id    
-                INNER JOIN [${slug}].[division_batches] db ON db.id = fb.batch_lid     
+                .query(`SELECT fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id, db.batch, d.division,
+                icw.module_name, p.program_name, ads.acad_session, et.name as event_type
+                 FROM [${slug}].faculty_batches fb
+                INNER JOIN [${slug}].faculties f ON fb.faculty_lid =  f.id       
+                INNER JOIN [${slug}].division_batches db ON db.id = fb.batch_lid
+                INNER JOIN [${slug}].divisions d ON d.id =  db.division_lid
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+                INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid   
                 ORDER BY fb.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -94,9 +115,9 @@ module.exports = class FacultyBatch {
         return poolConnection.then(pool => { 
             let request = pool.request()
             return request.input('facultyLid', sql.Int, faculty_lid)
-                .query(`SELECT DISTINCT p.id AS program_lid, p.program_name from [asmsoc-mum].faculty_works fw
-                INNER JOIN [asmsoc-mum].program_sessions ps ON ps.id = fw.program_session_lid
-                INNER JOIN [asmsoc-mum].programs p ON p.id = ps.program_lid
+                .query(`SELECT DISTINCT p.id AS program_lid, p.program_name from [${slug}].faculty_works fw
+                INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
+                INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
                 WHERE fw.faculty_lid = @facultyLid`)
         })
     }
@@ -151,7 +172,7 @@ module.exports = class FacultyBatch {
             let request = pool.request()
             return request
             .input('Id', sql.Int, id)
-                .query(`select * from [asmsoc-mum].faculty_batches where id = @Id`)
+                .query(`select * from [${slug}].faculty_batches where id = @Id`)
         })
     }
 

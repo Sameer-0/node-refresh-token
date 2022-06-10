@@ -33,7 +33,7 @@ module.exports = {
     },
 
     search: (req, res) => {
-        let rowcount = 10;
+        let rowcount = 100;
         DivisionBatches.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
