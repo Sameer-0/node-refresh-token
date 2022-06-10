@@ -302,6 +302,7 @@ module.exports = {
     },
 
     batchByFacultyIdAndBatchId: (req, res) => {
+        console.log('req.body::::::::::::::::',req.body)
         FacultyBatch.findFacultyBatchById(req.body.id, res.locals.slug).then(result => {
             DivisionBatches.findDivisionsByBatchId(result.recordset[0].batch_lid, res.locals.slug).then(batchresult => {
                 DivisionBatches.findBatchesByDivisionId(batchresult.recordset[0].division_lid, res.locals.slug).then(divresult => {
