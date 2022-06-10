@@ -75,6 +75,7 @@ module.exports = class {
     }
 
     static dayByProgramId(programId, slug) {
+        console.log('PromName::::::::',programId)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
