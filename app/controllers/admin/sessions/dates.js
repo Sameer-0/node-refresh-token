@@ -224,7 +224,7 @@ module.exports = {
            // console.log('soapClient::::::',soapClient)
             await soapClient.ZacademicPeriodJp({
                     Campusid: res.locals.campusIdSap,
-                    Acadyear: "2021",
+                    Acadyear: "2022",
                     Schoolobjectid: res.locals.organizationIdSap
                 },
                 async function (err, result) {
