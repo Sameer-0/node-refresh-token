@@ -419,11 +419,11 @@
                 let day_text = $("#dayName option:selected").text()
                
                 if(p_day_lid > 0){
-                    days.push(`'`+p_day_lid+`'`)
+                    days.push(p_day_lid)
                 }else{
                     $("#dayName option").each(function()
                     {
-                        days.push(`'`+$(this).val()+`'`)
+                        days.push($(this).val())
                     });
            
                 }
@@ -436,7 +436,7 @@
                 <td data-faculty-lid="${item.faculty_lid}">${item.faculty_id}</td>
                 <td>${item.module_name}</td>
                 <td>${item.program_id}</td>
-                <td data-program-day-lid="[${days}]">${day_text}</td>
+                <td data-program-day-lid="${days}">${day_text}</td>
                 <td data-start-time-id="${start_time_id}">${start_time_text}</td>
                 <td data-end-time-id="${end_time_id}">${end_time_text}</td>
                 <td>
@@ -473,11 +473,21 @@
             let start_time_id = $(elem).find(`td[data-start-time-id]`).attr(`data-start-time-id`)
             let end_time_id = $(elem).find(`td[data-end-time-id]`).attr(`data-end-time-id`)
 
-            console.log('p_day_lid:::::::::::::::',p_day_lid)
+            let dayArray = p_day_lid.split(",")
+            
+            let filteredDays = dayArray.filter(function(el) {
+                if(!el.includes("")){
+                    return el > 0
+                }
+                return el > 0
+                });
+
+                console.log('filteredDays', filteredDays)
+
             if (index < facultyWorkPrefCount - 1) {
                 let obj = {
                     faculty_work_lid: faculty_work_lid,
-                    p_day_lid: p_day_lid,
+                    p_day_lid: filteredDays,
                     start_time_id: start_time_id,
                     end_time_id: end_time_id
                 }
@@ -485,7 +495,7 @@
             } else {
                 let obj = {
                     faculty_work_lid: faculty_work_lid,
-                    p_day_lid: p_day_lid,
+                    p_day_lid: filteredDays,
                     start_time_id: start_time_id,
                     end_time_id: end_time_id
                 }
@@ -504,11 +514,11 @@
             dataType: 'JSON'
         }
 
-        // ajaxApi(ApiObj).then(result => {
-        //     showSuccess(result)
-        // }).catch(error => {
-        //     showError(error.responseJSON)
-        // })
+        ajaxApi(ApiObj).then(result => {
+            showSuccess(result)
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
     })
 
     //EDIT
@@ -639,7 +649,7 @@
         })
     });
 
-
+ 
 
     function showAjaxTable(facultiesList) {
             let AjaxTable = `<table class="table custom_row table-bordered" id="facultyWorkTimePreference">
