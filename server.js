@@ -22,11 +22,15 @@ const {
 } = require('fs');
 
 let sslOptions = {
-        pfx: readFileSync(__dirname + `/cert/server.pfx`),
-        passphrase: 'time#2021'
-    };
+    pfx: readFileSync(__dirname + `/cert/server.pfx`),
+    passphrase: 'time#2021'
+};
 
+//if (!process.env.APP_ENV === 'LOCAL') {
 
+    
+
+//}
 
 
 //redis
