@@ -20,7 +20,7 @@ module.exports = {
 
     getPage: (req, res) => {
         Promise.all([Days.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug), AcadSession.sessionForCoursePreferences(res.locals.slug), CourseWorkload.fetchAll(1000,res.locals.slug), Divisions.getAll(res.locals.slug)]).then(result => {
-           console.log('result::::::::::',result[1].recordset)
+         //  console.log('result::::::::::',result[1].recordset)
             res.render('admin/courseworkload/preference', {
                 dayList: result[0].recordset,
                 icwList: result[1].recordset,
