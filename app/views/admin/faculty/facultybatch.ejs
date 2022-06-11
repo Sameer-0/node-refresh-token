@@ -36,6 +36,9 @@
                     <th>Sr.No.</th>
                     <th>Faculty Name</th>
                     <th>Faculty Id</th>
+                    <th>Program Name</th>
+                    <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Division</th>
                     <th>Batch</th>
                     <th>Action</th>
@@ -47,8 +50,11 @@
                         <td><%- count++ %></td>
                         <td><%- faculty.faculty_name %></td>
                         <td><%- faculty.faculty_id %></td>
+                        <td><%- faculty.program_name %></td>
+                        <td><%- faculty.module_name %></td>
+                        <td><%- faculty.acad_session %></td>
                         <td><%- faculty.division %></td>
-                        <td><%- faculty.batch %></td>
+                        <td><%- faculty.batch %> (<%-faculty.event_type%>)</td>
                         <td><a class="edit-facultybatch" data-id="<%- faculty.id %>" data-faculty-lid="<%- faculty.faculty_lid %>" data-batch="<%- faculty.batch %>" data-batch-lid="<%-faculty.batch_lid%>"><i class="fas fa-edit text-dark"></i></a>
                                 <a class="delete-faculty" data-id="<%- faculty.id %>"><i class="fa fa-trash text-danger"></i></a>
                             </td>
@@ -133,6 +139,9 @@ aria-hidden="true">
                         <thead>
                             <th>Sr No.</th>
                             <th>Faculty Name</th>
+                            <th>Program Name</th>
+                            <th>Academic Session</th>
+                            <th>Module Name</th>
                             <th>Division</th>
                             <th>Batch</th>
                             <th>Action</th>
@@ -163,34 +172,42 @@ aria-hidden="true">
             </div>
 
             <div class="modal-body py-0">
-                <input type="hidden" id="hidden_id" name="hidden_id">
-                <table class="table table-bordered" id="update-faculty-batch-table">
-                    <thead>
-                        <tr>
-                        <th>Faculty Name</th>
-                        <th>Faculty Batch</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <select class="batch-select2" name="faculty_lid" id="faculty_lid">
-                                    <option value="">--select--</option>
-                                    <% for(faculty of facultyList) {%>
-                                    <option value="<%- faculty.id %>">
-                                        <%- faculty.faculty_name %>  (<%- faculty.faculty_id %>)</option>
-                                    <%}%>
-                                </select>
-                            </td>                      
-                            <td>
-                                <select class="form-select" name="batchName" id="batchName"></select>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                
+                <div class="row g-3">
+                    <input type="hidden" id="hidden_id" name="hidden_id">
+                    <div class="col-md-6">
+                      <label for="inputEmail4" class="form-label">Faculty Name</label>
+                      <select class="batch-select2" name="faculty_lid" id="faculty_lid">
+                        <option value="">--select--</option>
+                        <% for(faculty of facultyList) {%>
+                        <option value="<%- faculty.id %>">
+                            <%- faculty.faculty_name %>  (<%- faculty.faculty_id %>)</option>
+                        <%}%>
+                    </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="inputPassword4" class="form-label">Program Name</label>
+                      <input type="text" class="form-control" id="programName" disabled>
+                    </div>
+                    <div class="col-12">
+                      <label for="inputAddress" class="form-label">Module Name</label>
+                      <input type="text" class="form-control" id="moduleName" disabled>
+                    </div>
+                    <div class="col-12">
+                      <label for="inputAddress2" class="form-label">Academic Session</label>
+                      <input type="text" class="form-control" id="acadSessionName" disabled>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="inputCity" class="form-label">Division</label>
+                      <input type="text" class="form-control" id="divisionName" disabled>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="inputState" class="form-label">Select Batch</label>
+                      <select class="form-select" name="batchName" id="batchName"></select>
+                    </div>
+                  </div>
             </div>
-            <div class="px-3 errorHtml"></div>
-            <div class="modal-footer">
+            <div class="modal-footer mt-2">
                 <button type="submit" class="btn updatefacultybatch modal-inputform-btn">Update Faculty</button>
             </div>
         </div>
@@ -244,14 +261,18 @@ $(document).ready(function(){
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                console.log(result.result)
+                console.log('Result:::::::::::>>',result.result)
 
                 let batchList = ``;
                 if (result.result.length > 0) {
                     batchList = `<option value="" disabled>Select Module</option>`
                     result.result.forEach(element => {
                         batchList +=
-                            `<option value="${element.id}">Batch-${element.batch} / Div-${element.division} (${element.name})</option>`;
+                            `<option value="${element.id}">Batch-${element.batch} / (${element.name})</option>`;
+                            $("#edit-faculty-batch-modal #programName").val(element.program_name)
+                            $("#edit-faculty-batch-modal #moduleName").val(element.module_name)
+                            $("#edit-faculty-batch-modal #acadSessionName").val(element.acad_session)
+                            $("#edit-faculty-batch-modal #divisionName").val(element.division)
                     });
                 } else {
                     batchList += `<option value="">No Batch Found!</option>`;
@@ -260,6 +281,7 @@ $(document).ready(function(){
                 $("#faculty_batch").val(faculty_batch).trigger('change')
                 $("#edit-faculty-batch-modal  #faculty_lid").val(faculty_lid).trigger('change')
                 $("#edit-faculty-batch-modal #faculty_lid").attr("disabled", "disabled");
+                
                 $("#hidden_id").val(id)
                 $("#edit-faculty-batch-modal  #batchName").html(batchList)
                 let batch_lid = $(this).attr('data-batch-lid')
@@ -273,33 +295,17 @@ $(document).ready(function(){
 
         //Update
         $(".updatefacultybatch").on('click', function () {
-        let facultyBatchElems = $('#update-faculty-batch-table tbody tr');
-        let facultyBatchCount = facultyBatchElems.length;
         let facultyBatchJson = [];
-        let id = $("#hidden_id").val();
-        facultyBatchElems.each(function (index, elem) {
-            let faculty_lid = $(elem).find(`select[name="faculty_lid"]`).val()
-            let faculty_batch = $(elem).find(`select[name="batchName"]`).val();
-            
+        let id = $("#edit-faculty-batch-modal #hidden_id").val();
+        let faculty_lid = $("#edit-faculty-batch-modal #faculty_lid").val()
+        let faculty_batch = $("#edit-faculty-batch-modal #batchName").val();
 
-            if (index < facultyBatchCount - 1) {
                 let obj = {
                     id: id,
                     faculty_lid: faculty_lid,
                     batch_lid: faculty_batch
                 }
                 facultyBatchJson.push(obj)
-            } else {
-                let obj = {
-                    id: id,
-                    faculty_lid: faculty_lid,
-                    batch_lid: faculty_batch
-                }
-                facultyBatchJson.push(obj)
-            }
-        })
-
-
         console.log('facultyBatchJson:::::::::::::>',facultyBatchJson)
 
         let ApiObj = {
@@ -528,10 +534,16 @@ $(document).ready(function(){
             let batch_lid = $("#batchName").val();
             let batch_name = $("#batchName option:selected").text();
             let division = $("#divisionName option:selected").text();
+            let programName = $("#programName option:selected").text();
+            let academicSessionName = $("#sessionName option:selected").text();
+            let moduleName = $("#moduleName option:selected").text();
 
             $('#add-more-faculty-batch-table tbody').append(`<tr>
                 <td>#</td>
                 <td data-faculty-lid="${faculty_lid}">${faculty_name}</td>
+                <td>${programName}</td>
+                <td>${academicSessionName}</td>
+                <td>${moduleName}</td>
                 <td>${division}</td>
                 <td data-batch-lid="${batch_lid}">${batch_name}</td>
                 <td>
@@ -600,11 +612,14 @@ $(document).ready(function(){
                     <th>Sr.No.</th>
                     <th>Faculty Name</th>
                     <th>Faculty Id</th>
+                    <th>Program Name</th>
+                    <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Division</th>
                     <th>Batch</th>
                     <th>Action</th>
                 </thead>
-                <tbody> `;
+                <tbody>`;
 
             if (facultiesList.length > 0) {
                 let count  = 1;
@@ -614,8 +629,11 @@ $(document).ready(function(){
                         <td>${count++}</td>
                         <td>${faculty.faculty_name}</td>
                         <td>${faculty.faculty_id}</td>
+                        <td>${faculty.program_name}</td>
+                        <td>${faculty.module_name}</td>
+                        <td>${faculty.acad_session}</td>
                         <td>${faculty.division}</td>
-                        <td>${faculty.batch}</td>
+                        <td>${faculty.batch} (${faculty.event_type})</td>
                         <td><a class="edit-facultybatch" data-id="${faculty.id}" data-faculty-lid="${faculty.faculty_lid}" data-batch-lid="${faculty.batch_lid}" data-batch="${faculty.batch_lid}"><i class="fas fa-edit text-dark"></i></a>
                             <a class="delete-faculty" data-faculty-id="${faculty.id}"><i class="fa fa-trash text-danger"></i></a>
                         </td>
@@ -624,7 +642,7 @@ $(document).ready(function(){
             } else {
                 AjaxTable +=
                     ` <tr>
-                         <td colspan="6">No Data Found</td>
+                         <td colspan="9">No Data Found</td>
                       </tr>`;
             }
             AjaxTable += `<tbody></table>`

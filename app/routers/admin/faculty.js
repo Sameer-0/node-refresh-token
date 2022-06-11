@@ -69,6 +69,8 @@ router.post('/faculties/workpreferences/update', validate('JsonValidator'), pref
 router.post('/faculties/workpreferences/delete', validate('delete'), preferences.delete)
 router.post('/faculties/workpreferences/faculty-slots-and-programs', validate('single'), preferences.getSlotsByIdAndPrograms)
 router.post('/faculties/workpreferences/module-by-program-session-id', preferences.moduleByprogramAndSessionId)
+
+
 //Get Days by program id for faculty preference
 router.post('/faculties/workpreferences/session-day-by-program-id', preferences.sessionDayByProgramId)
 router.post('/faculties/workpreferences/faculty-work-preference-by-pro-sess-module', preferences.facultyWorkloadForPrefernce)

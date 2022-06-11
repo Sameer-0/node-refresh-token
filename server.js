@@ -4,6 +4,7 @@ require('dotenv').config()
 const http = require('http');
 const https = require("https");
 const path = require('path');
+const os = require('os')
 const setRouter = require("./router")
 const {
     verifySubdomain
@@ -25,12 +26,6 @@ let sslOptions = {
     pfx: readFileSync(__dirname + `/cert/server.pfx`),
     passphrase: 'time#2021'
 };
-
-//if (!process.env.APP_ENV === 'LOCAL') {
-
-    
-
-//}
 
 
 //redis
@@ -179,10 +174,24 @@ app.use(function (req, res) {
 //const server = https.createServer(options, app).listen(process.env.APP_PORT);// Enable with ssl 
 //app.listen(process.env.APP_PORT, () => console.log('Server started at port: ', process.env.APP_PORT))
 
-if (process.env.APP_ENV === 'PRODUCTION') {
+//const server = http.createServer(app);
+//server.listen(process.env.APP_PORT);
+
+
+console.log('HOSTNAME::::::::',os.hostname())
+
+if (process.env.PRODUCTION == 'PRODUCTION') {
     const server = https.createServer(sslOptions, app);
     server.listen(process.env.APP_PORT);
 } else {
-    const server = http.createServer(app);
+    const server = https.createServer(app);
     server.listen(process.env.APP_PORT);
 }
+
+// if (process.env.APP_ENV === 'PRODUCTION') {
+//     const server = https.createServer(sslOptions, app);
+//     server.listen(process.env.APP_PORT);
+// } else {
+//     const server = http.createServer(app);
+//     server.listen(process.env.APP_PORT);
+// }

@@ -12,7 +12,7 @@ module.exports = {
     getPage: (req, res) => {
         Promise.all([
                 ProgramSessions.getLockedProgram(res.locals.slug),
-                Rooms.fetchBookedRooms(),
+                Rooms.fetchBookedRooms(res.locals.organizationId),
                 Days.fetchActiveDay(res.locals.slug),
                 TimeTable.getPendingEvents(res.locals.slug)
             ])
@@ -31,7 +31,6 @@ module.exports = {
     },
 
     getAcadCalenderEvnt: (req, res, next) => {
-
         AcademicCalender.fetchAll(10000).then(result => {
             console.log(JSON.stringify(result.recordset))
             res.status(200).send(result.recordset)
@@ -40,15 +39,12 @@ module.exports = {
     },
 
     getSessionByProgram: (req, res, next) => {
-
         ProgramSessions.getLockedSessionByProgram(res.locals.slug, req.body.program_lid).then(result => {
-           
             res.status(200).send(result.recordset)
         })
     },
 
     getEventsByProgramSessionDay: (req, res, next) => {
-
         Promise.all([
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
             SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)
@@ -62,7 +58,6 @@ module.exports = {
 
     getPendingEvents: (req, res, next) => {
         console.log('pending req', req.body)
-        
         TimeTable.getPendingEvents(res.locals.slug, req.body.programLid, req.body.acadSessionLid).then(result => {
            console.log('pending list:::', result.recordset)
             res.status(200).send(result.recordset)
@@ -71,7 +66,6 @@ module.exports = {
 
     dropEvent: (req, res, next) => {
         console.log(req.body);
-
         TimeTable.dropEvent(res.locals.slug, res.locals.userId, req.body.eventLid).then(result => {
             res.status(200).send(result);
         })
@@ -97,9 +91,7 @@ module.exports = {
         })
     },
 
-    allocateFaculties: (req, res) => {
-
-        
+    allocateFaculties: (req, res) => {        
         TimeTable.allocateFaculties(res.locals.slug).then(result => {
             res.status(200).json({message: "Successful!"})
         })

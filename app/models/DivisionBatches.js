@@ -140,10 +140,13 @@ module.exports = class DivisionBatches {
         static findBatchesByDivisionId(divisionId, slug) {
             return poolConnection.then(pool => {
                 return pool.request().input('divisionId', sql.Int, divisionId)
-                .query(`select db.id, db.batch, et.name, d.division from [${slug}].division_batches db
+                .query(`SELECT db.id, db.batch, et.name, d.division, icw.module_name, p.program_name, ads.acad_session FROM [${slug}].division_batches db
                 INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid
                 INNER JOIN [${slug}].divisions d ON d.id =  db.division_lid
-                where db.division_lid = @divisionId`)
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+                INNER JOIN [${slug}].programs p  ON p.program_id = icw.program_id
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+                 WHERE db.division_lid = @divisionId`)
             })
         }
 }

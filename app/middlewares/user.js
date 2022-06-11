@@ -40,11 +40,18 @@ module.exports = {
         }
 
         store.get(req.sessionID, async (err, result) => {
-            console.log('redirectIfLoggedIn result::::::::::::::::::>> ', result);
-
+           
+            console.log('redirectIfLoggedIn::::::::::::::::::>> ', result)
             if (!result) {
                //return res.redirect('/user/login')
                return next();
+            }
+            else{
+                console.log('redirect if loggedout result::::::::::::::::::>> ', result)
+                console.log('Logged out:::::::::>>')
+                setTimeout(function(){
+                    return res.redirect('/user/login')
+                },2000)
             }
 
             // if (result.modules.length > 1) {

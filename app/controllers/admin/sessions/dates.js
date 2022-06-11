@@ -16,7 +16,6 @@ var soap = require("soap");
 module.exports = {
     getPage: (req, res) => {
         Promise.all([SessionDates.fetchAll(10, res.locals.slug), SessionDates.getCount(res.locals.slug), AcademicCalender.fetchAll(100), SessionTypes.fetchAll(10, res.locals.slug), ProgramSessions.fetchAll(10, res.locals.slug)]).then(result => {
-            console.log('result:::::programsession',result[0].recordset)
             res.render('admin/sessions/sessiondates.ejs', {
                 sessionDateList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -222,23 +221,24 @@ module.exports = {
 
         let courseWorkloadList = await new Promise(async resolve => {
 
-            console.log('soapClient::::::',soapClient)
-
+           // console.log('soapClient::::::',soapClient)
             await soapClient.ZacademicPeriodJp({
-                    Campusid: res.locals.campusId,
+                    Campusid: res.locals.campusIdSap,
                     Acadyear: "2022",
-                    Schoolobjectid: "00004533"
+                    Schoolobjectid: res.locals.organizationIdSap
                 },
                 async function (err, result) {
                     let output = await result;
                     console.log('output::::::::::',output)
-                    resolve(output.WORKLOAD_DETAILS ? output.WORKLOAD_DETAILS.item : []);
+                    //resolve(output.WORKLOAD_DETAILS ? output.WORKLOAD_DETAILS.item : []);
+                    resolve(output)
                 });
         })
 
-        console.log('courseWorkloadList:::::::::', JSON.stringify(courseWorkloadList))
+        console.log('courseWorkloadList:::::::::', courseWorkloadList)
 
-
+        if(!courseWorkloadList){
+            console.log('Here::::::::::::',courseWorkloadList)
         // CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
         //     console.log('Data>>> ', data)
         //     console.log("acadSessionLif>>> ", acadSessionLid)
@@ -248,10 +248,18 @@ module.exports = {
         // }).catch(err => {
         //     console.log(err)
         // });
-        res.status(200).json({
+        return  res.status(200).json({
             "status" : 200,
-            "description" : "Success",
-            "data": {}
+            "description" : "APi Integrated",
+            "data": []
             })
+        }else{
+            console.log('Here Else::::::::::::')
+          return  res.status(500).json({
+                "status" : 500,
+                "description" : "Something went wrong try after some time",
+                "data": []
+                })
+        }
     },
 }
