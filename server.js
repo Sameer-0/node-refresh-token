@@ -4,7 +4,6 @@ require('dotenv').config()
 const http = require('http');
 const https = require("https");
 const path = require('path');
-const os = require('os')
 const setRouter = require("./router")
 const {
     verifySubdomain
@@ -178,20 +177,12 @@ app.use(function (req, res) {
 //server.listen(process.env.APP_PORT);
 
 
-console.log('HOSTNAME::::::::',os.hostname())
 
-if (process.env.PRODUCTION == 'PRODUCTION') {
+
+if (process.env.APP_ENV === 'PRODUCTION') {
     const server = https.createServer(sslOptions, app);
     server.listen(process.env.APP_PORT);
 } else {
-    const server = https.createServer(app);
+    const server = http.createServer(app);
     server.listen(process.env.APP_PORT);
 }
-
-// if (process.env.APP_ENV === 'PRODUCTION') {
-//     const server = https.createServer(sslOptions, app);
-//     server.listen(process.env.APP_PORT);
-// } else {
-//     const server = http.createServer(app);
-//     server.listen(process.env.APP_PORT);
-// }
