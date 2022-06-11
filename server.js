@@ -179,8 +179,9 @@ app.use(function (req, res) {
 //server.listen(process.env.APP_PORT);
 
 
+console.log('HOSTNAME::::::::',os.hostname())
 
-if (os.hostname() == 'MUM15119CPU1991') {
+if (os.hostname() == 'DESKTOP-OMO8SJB') {
     const server = http.createServer(app);
     server.listen(process.env.APP_PORT);
 } else {

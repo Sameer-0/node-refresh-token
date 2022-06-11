@@ -328,11 +328,11 @@
                 }
 
                 if (result.dayList.length > 0) {
-                    datNames = `<option value="" disabled>Select Program</option>`
-                    datNames += `<option value="0" >All Days</option>`
+                    datNames = `<option  value="" disabled>Select Days</option>`
+                    datNames += `<option value="0">All Days</option>`
                     result.dayList.forEach(element => {
                         datNames +=
-                            `<option value="${element.programday_lid}">${element.day_name}</option>`;
+                            `<option value="${element.programday_lid}" data-day-lid="${element.programday_lid}">${element.day_name}</option>`;
                     });
                 } else {
                     datNames += `<option value="">No Program Found!</option>`;
@@ -407,9 +407,9 @@
         }
         ajaxApi(ApiObj).then(result => {
             console.log('FACULTY WORK LIST:::::::::::::',result)
-
+            let days = []
             if(result.worklist.length > 0){
-
+               
                 let htmlTable =  ``
                 let start_time_id = $("#start_time_id").val();
                 let start_time_text = $("#start_time_id option:selected").text();
@@ -417,15 +417,26 @@
                 let end_time_text = $("#end_time_id option:selected").text();
                 let p_day_lid = $("#dayName").val()
                 let day_text = $("#dayName option:selected").text()
+               
+                if(p_day_lid > 0){
+                    days.push(p_day_lid)
+                }else{
+                    $("#dayName option").each(function()
+                    {
+                        days.push($(this).val())
+                    });
+           
+                }
+                console.log('DAYA:::::::',days)
+               
                 result.worklist.forEach(function(item){
-                    console.log('item::::::::::::::',item)
-                    htmlTable +=  `<tr>
+                htmlTable +=  `<tr>
                 <td>#</td>
                 <td data-work-lid="${item.faculty_work_lid}">${item.faculty_name}</td>
                 <td data-faculty-lid="${item.faculty_lid}">${item.faculty_id}</td>
                 <td>${item.module_name}</td>
                 <td>${item.program_id}</td>
-                <td data-program-day-lid="${p_day_lid}">${day_text}</td>
+                <td data-program-day-lid="${days}">${day_text}</td>
                 <td data-start-time-id="${start_time_id}">${start_time_text}</td>
                 <td data-end-time-id="${end_time_id}">${end_time_text}</td>
                 <td>
@@ -455,16 +466,28 @@
         let facultyWorkElems = $('#add-more-faculty-preferernce tbody tr');
         let facultyWorkPrefCount = facultyWorkElems.length;
         let facultyWorkJSON = [];
+        let daysArray = [];
         facultyWorkElems.each(function (index, elem) {
             let faculty_work_lid = $(elem).find(`td[data-work-lid]`).attr(`data-work-lid`)
             let p_day_lid = $(elem).find(`td[data-program-day-lid]`).attr(`data-program-day-lid`)
             let start_time_id = $(elem).find(`td[data-start-time-id]`).attr(`data-start-time-id`)
             let end_time_id = $(elem).find(`td[data-end-time-id]`).attr(`data-end-time-id`)
 
+            let dayArray = p_day_lid.split(",")
+            
+            let filteredDays = dayArray.filter(function(el) {
+                if(!el.includes("")){
+                    return el > 0
+                }
+                return el > 0
+                });
+
+                console.log('filteredDays', filteredDays)
+
             if (index < facultyWorkPrefCount - 1) {
                 let obj = {
                     faculty_work_lid: faculty_work_lid,
-                    p_day_lid: p_day_lid,
+                    p_day_lid: filteredDays,
                     start_time_id: start_time_id,
                     end_time_id: end_time_id
                 }
@@ -472,13 +495,15 @@
             } else {
                 let obj = {
                     faculty_work_lid: faculty_work_lid,
-                    p_day_lid: p_day_lid,
+                    p_day_lid: filteredDays,
                     start_time_id: start_time_id,
                     end_time_id: end_time_id
                 }
                 facultyWorkJSON.push(obj)
             }
         })
+
+        console.log('JSON:::::::::::',facultyWorkJSON)
 
         let ApiObj = {
             type: 'POST',
@@ -491,7 +516,6 @@
 
         ajaxApi(ApiObj).then(result => {
             showSuccess(result)
-            // location.reload()
         }).catch(error => {
             showError(error.responseJSON)
         })
@@ -625,7 +649,7 @@
         })
     });
 
-
+ 
 
     function showAjaxTable(facultiesList) {
             let AjaxTable = `<table class="table custom_row table-bordered" id="facultyWorkTimePreference">
