@@ -121,7 +121,7 @@ module.exports = class Divisions {
             return request.input('input_division_lid', sql.Int, id)
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[delete_division]`)
+                .execute(`[${slug}].[sp_delete_division]`)
         })
     }
 
