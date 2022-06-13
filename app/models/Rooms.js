@@ -58,20 +58,7 @@ module.exports = class Rooms {
     }
 
 
-    static fetchChunkRows(rowCount, pageNo) {
-        return poolConnection.then(pool => {
-            return pool.request().input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
-                CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
-                o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
-                INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
-                INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
-                INNER JOIN [dbo].organizations o ON o.id = r.handled_by
-                INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
-                INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
-                INNER JOIN [dbo].campuses c ON c.id = b.campus_lid ORDER BY r.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
-        })
-    }
+
 
 
     static getCount() {
@@ -193,6 +180,22 @@ module.exports = class Rooms {
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[dbo].[sp_generate_room_slots]`)
+        })
+    }
+
+
+    static pagination(slug, pageNo) {
+        return poolConnection.then(pool => {
+            return pool.request().input('pageNo', sql.Int, pageNo)
+                .query(`SELECT r.id, r.id as roomid,  r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
+                CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
+                o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
+                INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
+                INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
+                INNER JOIN [dbo].organizations o ON o.id = r.handled_by
+                INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
+                INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
+                INNER JOIN [dbo].campuses c ON c.id = b.campus_lid ORDER BY r.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 }

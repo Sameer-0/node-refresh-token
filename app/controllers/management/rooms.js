@@ -171,7 +171,7 @@ module.exports = {
             return;
         }
 
-        Rooms.fetchChunkRows(10, req.body.pageNo).then(result => {
+        Rooms.pagination( res.locals.slug, req.body.pageNo).then(result => {
             res.json({
                 status: "200",
                 message: "Quotes fetched",
