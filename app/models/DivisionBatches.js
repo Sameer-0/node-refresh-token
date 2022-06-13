@@ -19,23 +19,24 @@ module.exports = class DivisionBatches {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [${slug}].division_batches db
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code from [${slug}].division_batches db
             INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
             INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
-            INNER JOIN [dbo].event_types et on db.event_type_lid = et.id`)
+            INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id`)
         })
     }
 
     static addBatch(body, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('divisionId', sql.Int, body.divisionId)
-            .input('batch', sql.Int, body.batch)
-            .input('eventType', sql.Char, body.eventType)
-            .input('divisionCount', sql.Int, body.divisionCount)
-            .input('batchCount', sql.Int, body.batchCount)
-            .input('inputBatchCount', sql.Int, body.inputBatchCount)
-            .input('facultyCount', sql.SmallInt, body.facultyCount)
-            .query(`INSERT INTO [${slug}].[division_batches] (division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count) 
+                .input('batch', sql.Int, body.batch)
+                .input('eventType', sql.Char, body.eventType)
+                .input('divisionCount', sql.Int, body.divisionCount)
+                .input('batchCount', sql.Int, body.batchCount)
+                .input('inputBatchCount', sql.Int, body.inputBatchCount)
+                .input('facultyCount', sql.SmallInt, body.facultyCount)
+                .query(`INSERT INTO [${slug}].[division_batches] (division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count) 
             values (@divisionId, @batch, @eventType, @divisionCount, @batchCount, @inputBatchCount, @facultyCount)`)
         })
     }
@@ -43,28 +44,28 @@ module.exports = class DivisionBatches {
     static getBatch(id, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, id)
-            .query(`SELECT id, division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count FROM [${slug}].division_batches WHERE id = @id`)
+                .query(`SELECT id, division_id, batch, event_type, division_count, batch_count, input_batch_count, faculty_count FROM [${slug}].division_batches WHERE id = @id`)
         })
     }
 
     static updateBatch(body, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, body.id)
-            .input('divisionId', sql.Int, body.divisionId)
-            .input('batch', sql.Int, body.batch)
-            .input('eventType', sql.Char, body.eventType)
-            .input('divisionCount', sql.Int, body.divisionCount)
-            .input('batchCount', sql.Int, body.batchCount)
-            .input('inputBatchCount', sql.Int, body.inputBatchCount)
-            .input('facultyCount', sql.SmallInt, body.facultyCount)
-            .query(`UPDATE [${slug}].division_batches SET division_id = @divisionId, batch = @batch, event_type =@eventType, division_count =@divisionCount,
+                .input('divisionId', sql.Int, body.divisionId)
+                .input('batch', sql.Int, body.batch)
+                .input('eventType', sql.Char, body.eventType)
+                .input('divisionCount', sql.Int, body.divisionCount)
+                .input('batchCount', sql.Int, body.batchCount)
+                .input('inputBatchCount', sql.Int, body.inputBatchCount)
+                .input('facultyCount', sql.SmallInt, body.facultyCount)
+                .query(`UPDATE [${slug}].division_batches SET division_id = @divisionId, batch = @batch, event_type =@eventType, division_count =@divisionCount,
             batch_count =@batchCount, input_batch_count =@inputBatchCount, faculty_count =@facultyCount WHERE id = @id`)
         })
     }
 
     static getCount(slug) {
         return poolConnection.then(pool => {
-            let request = pool.request() 
+            let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].division_batches`)
         })
     }
@@ -74,20 +75,21 @@ module.exports = class DivisionBatches {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('Id', sql.Int, body.id)
-            .input('Status', sql.TinyInt, body.status)
-            .query(`UPDATE [${slug}].division_batches SET active = @Status WHERE id = @Id`)
+                .input('Status', sql.TinyInt, body.status)
+                .query(`UPDATE [${slug}].division_batches SET active = @Status WHERE id = @Id`)
         })
     }
 
-    
+
     static pagination(pageNo, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT db.id, db.division_lid, db.batch, db.event_type_lid, db.divison_count, db.batch_count, 
-                db.input_batch_count, db.faculty_count, d.division, et.name FROM [${slug}].[division_batches] db
-                INNER JOIN [${slug}].[divisions] d on d.id = db.division_lid
-                INNER JOIN [dbo].[event_types] et on et.id = db.event_type_lid
+                .query(`SELECT  db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code from [${slug}].division_batches db
+                INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
+                INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
+                INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
                 ORDER BY d.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -95,51 +97,52 @@ module.exports = class DivisionBatches {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`select TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name from [${slug}].division_batches db
+                .query(`SELECT TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code from [${slug}].division_batches db
                 INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
                 INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
-                INNER JOIN [dbo].event_types et on db.event_type_lid = et.id WHERE et.name LIKE @keyword OR icw.module_name LIKE @keyword ORDER BY db.id DESC`)
+                INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id WHERE et.name LIKE @keyword OR icw.module_name LIKE @keyword OR p.program_code LIKE @keyword OR icw.module_id LIKE @keyword ORDER BY db.id DESC`)
         })
     }
 
-        //object, res.locals.slug, res.locals.userId
-        static update(inputJson, slug, userId) {
-            return poolConnection.then(pool => {
-                return pool.request()
+    //object, res.locals.slug, res.locals.userId
+    static update(inputJson, slug, userId) {
+        return poolConnection.then(pool => {
+            return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_update_division_batches]`)
-            })
-        }
+        })
+    }
 
 
-        static fetchDistinctBatches(slug) {
-            return poolConnection.then(pool => {
-                return pool.request().query(`select DISTINCT batch from [${slug}].division_batches`)
-            })
-        }
+    static fetchDistinctBatches(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`select DISTINCT batch from [${slug}].division_batches`)
+        })
+    }
 
-        static generateBatch(slug, userid) {
-            return poolConnection.then(pool => {
-                const request = pool.request();
-                return request
-                    .input('last_modified_by', sql.Int, userid)
-                    .output('output_json', sql.NVarChar(sql.MAX))
-                    .execute(`[${slug}].[sp_generate_division_batches]`)
-            })
-        }
+    static generateBatch(slug, userid) {
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_generate_division_batches]`)
+        })
+    }
 
-        static findDivisionsByBatchId (batchid, slug) {
-            return poolConnection.then(pool => {
-                return pool.request().input('batchId', sql.Int, batchid)
+    static findDivisionsByBatchId(batchid, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('batchId', sql.Int, batchid)
                 .query(`select * from [${slug}].division_batches where id = @batchId`)
-            })
-        }
+        })
+    }
 
-        static findBatchesByDivisionId(divisionId, slug) {
-            return poolConnection.then(pool => {
-                return pool.request().input('divisionId', sql.Int, divisionId)
+    static findBatchesByDivisionId(divisionId, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('divisionId', sql.Int, divisionId)
                 .query(`SELECT db.id, db.batch, et.name, d.division, icw.module_name, p.program_name, ads.acad_session FROM [${slug}].division_batches db
                 INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid
                 INNER JOIN [${slug}].divisions d ON d.id =  db.division_lid
@@ -147,6 +150,6 @@ module.exports = class DivisionBatches {
                 INNER JOIN [${slug}].programs p  ON p.program_id = icw.program_id
                 INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
                  WHERE db.division_lid = @divisionId`)
-            })
-        }
+        })
+    }
 }
