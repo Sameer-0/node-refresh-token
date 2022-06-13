@@ -63,6 +63,7 @@
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     <%let count = 1;%>
@@ -83,7 +84,7 @@
                         <td><input class="form-control rounded-0" name="count_for_practical_batch" value="<%-division.count_for_practical_batch%>"></td>
                         <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="<%-division.count_for_tutorial_batch%>"></td>
                         <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="<%-division.count_for_workshop_batch%>"></td>
-                       
+                        <td><a data-id="<%-division.id%>" class="text-danger delete-division"><span class="fa fa-trash"></span></a></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -251,6 +252,27 @@
         }, 500));
 
 
+
+        //DELETE DIVISION BATCH
+        $("#divisionTable").on('click','.delete-division',function(){
+            let id = $(this).attr("data-id")
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/divisions/delete',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
         function AjaxtTable(divisionList) {
             let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
@@ -265,6 +287,7 @@
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
+                    <th>Action</th>
                 </thead>`;
             if (divisionList.length > 0) {
                 let count = 1;
@@ -285,7 +308,7 @@
                         <td><input class="form-control rounded-0" name="count_for_practical_batch" value="${division.count_for_practical_batch}"></td>
                         <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="${division.count_for_tutorial_batch}"></td>
                         <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="${division.count_for_workshop_batch}"></td>
-                       
+                        <td><a data-id="${division.id}" class="text-danger delete-division"><span class="fa fa-trash"></span></a></td>
                     </tr>`
                 }
             } else {
