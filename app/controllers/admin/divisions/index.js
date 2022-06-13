@@ -5,7 +5,7 @@ const {
 } = require('express-validator');
 
 const Divisions = require('../../../models/Divisions')
-const Settings =  require('../../../models/Settings')
+const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
 
 module.exports = {
@@ -102,13 +102,14 @@ module.exports = {
 
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
@@ -119,13 +120,30 @@ module.exports = {
         Divisions.generateDivision(res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+        })
+    },
+
+    delete: (req, res) => {
+        Divisions.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     }

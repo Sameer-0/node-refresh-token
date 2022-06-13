@@ -219,12 +219,12 @@ module.exports = {
             })
         })
 
-        let courseWorkloadList = await new Promise(async resolve => {
+        let sessionDate = await new Promise(async resolve => {
 
            // console.log('soapClient::::::',soapClient)
             await soapClient.ZacademicPeriodJp({
                     Campusid: res.locals.campusIdSap,
-                    Acadyear: "2022",
+                    Acadyear: process.env.ACADEMIC_YEAR,
                     Schoolobjectid: res.locals.organizationIdSap
                 },
                 async function (err, result) {
@@ -235,10 +235,10 @@ module.exports = {
                 });
         })
 
-        console.log('courseWorkloadList:::::::::', courseWorkloadList)
+        console.log('sessionDate:::::::::', sessionDate)
 
-        if(!courseWorkloadList){
-            console.log('Here::::::::::::',courseWorkloadList)
+        if(!sessionDate){
+            console.log('Here::::::::::::',sessionDate)
         // CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
         //     console.log('Data>>> ', data)
         //     console.log("acadSessionLif>>> ", acadSessionLid)

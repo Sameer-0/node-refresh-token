@@ -152,4 +152,15 @@ module.exports = class DivisionBatches {
                  WHERE db.division_lid = @divisionId`)
         })
     }
+
+    static delete(id, slug, userid) {
+        console.log('id:::::::', id)
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_batch_lid', sql.Int, id)
+                .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[delete_division_batches]`)
+        })
+    }
 }
