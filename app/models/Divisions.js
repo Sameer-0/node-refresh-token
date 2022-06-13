@@ -86,6 +86,7 @@ module.exports = class Divisions {
 
     //object, res.locals.slug, res.locals.userId
     static update(inputJson, slug, userId) {
+        console.log('UPDATE DIVISION JSON::::::::>>',JSON.stringify(inputJson))
         return poolConnection.then(pool => {
             return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
