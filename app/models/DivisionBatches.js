@@ -160,7 +160,7 @@ module.exports = class DivisionBatches {
             return request.input('input_batch_lid', sql.Int, id)
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[delete_division_batches]`)
+                .execute(`[${slug}].[sp_delete_division_batch]`)
         })
     }
 }
