@@ -30,7 +30,6 @@ module.exports = {
 
             if (subDomain === 'timetable')
                 return next()
-
             poolConnection
                 .then(pool => {
                     return pool.request()

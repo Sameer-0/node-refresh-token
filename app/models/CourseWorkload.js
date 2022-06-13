@@ -33,9 +33,10 @@ module.exports = class {
 
     static getAll(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type
+            return pool.request().query(`SELECT icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type, p.program_code
             FROM [${slug}].initial_course_workload icw
             INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
             LEFT JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
             ORDER BY id DESC`)
         })
@@ -63,9 +64,10 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type
+                .query(`SELECT  icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type, p.program_code
                 FROM [${slug}].initial_course_workload icw
                 INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
                 INNER JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
                 ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
@@ -74,11 +76,12 @@ module.exports = class {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type
+                .query(`SELECT TOP ${Number(rowcount)} icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type, p.program_code
                 FROM [${slug}].initial_course_workload icw
                 INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
                 LEFT JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
-                WHERE icw.module_name LIKE @keyword  OR icw.program_id LIKE @keyword OR icw.module_id LIKE @keyword OR icw.module_code LIKE  @keyword OR  acads.acad_session LIKE @keyword  OR mt.name LIKE @keyword
+                WHERE icw.module_name LIKE @keyword  OR icw.program_id LIKE @keyword OR icw.module_id LIKE @keyword OR icw.module_code LIKE  @keyword OR  acads.acad_session LIKE @keyword  OR mt.name LIKE @keyword OR p.program_code LIKE @keyword
                 ORDER BY id DESC`)
         })
     }

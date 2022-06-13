@@ -11,7 +11,7 @@ const isJsonString = require('../../../utils/util')
 module.exports = {
     getPage: (req, res) => {
         Promise.all([Divisions.fetchAll(10000, res.locals.slug), Divisions.getCount(res.locals.slug)]).then(result => {
-            console.log('Result::::::::',result[0].recordset)
+            //console.log('Result::::::::',result[0].recordset)
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,

@@ -179,7 +179,7 @@ app.use(function (req, res) {
 
 
 
-if (process.env.APP_ENV === 'PRODUCTION') {
+if (!process.env.APP_ENV === 'PRODUCTION') {
     const server = https.createServer(sslOptions, app);
     server.listen(process.env.APP_PORT);
 } else {
