@@ -305,5 +305,36 @@ module.exports = {
             console.log(error)
             res.status(500).json(error.originalError.info.message)
         })
+    },
+
+    occupiedRoomDays:(req, res)=>{
+        CourseDayRoomPreferences.occupiedRoomDays(res.locals.slug, req.body).then(result=>{
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Sucessfull",
+                    data: result.recordset,
+                    length: result.recordset.length
+
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
     }
 }
