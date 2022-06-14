@@ -465,6 +465,40 @@
         }
 
 
+
+          //API FOR DISPLAYING OCCUPIED DATA
+
+          $("#add-more-courseDayRoomPreference-table").on('click','.show-occupied-list',function(){
+           let batch_lid = $(this).attr("data-batch-id")
+           let division_lid = $(this).attr("data-division-id")
+           let course_lid = $(this).attr("data-module-id")
+           let program_lid = $(this).attr("data-program-id")
+           let acad_session_lid = $(this).attr("data-session-id")
+           console.log('batch_lid::::::::::::::::>>',batch_lid)
+           console.log('division_lid::::::::::::::::>>',division_lid)
+           console.log('course_lid::::::::::::::::>>',course_lid)
+           console.log('program_lid::::::::::::::::>>',program_lid)
+           console.log('acad_session_lid::::::::::::::::>>',acad_session_lid)
+
+           $.ajax({
+               type: "POST",
+               url: "/admin/courseDayRoomPreference/occupiedroomdays",
+               data: {
+                   batch_lid: batch_lid,
+                   division_lid: division_lid,
+                   course_lid: course_lid,
+                   program_lid: program_lid,
+                   acad_session_lid: acad_session_lid
+               },
+               success: function (data) {
+                   console.log('response::::::::::::>>',data)
+                   showAjaxTable(data.data)
+               }
+           })
+
+       })
+
+
         function showError(errors) {
             console.log(errors);
             let simpleAlert = new SimpleAlert();

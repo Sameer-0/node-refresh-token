@@ -44,5 +44,5 @@ router.post('/courseDayRoomPreference/find-semester-by-programid',  preference.f
 router.post('/courseDayRoomPreference/find-module-by-programid-semesterid',  preference.findModuleByProgramIdSemId)
 router.post('/courseDayRoomPreference/find-division-by-moduleid',  preference.findDivisionByModuleId)
 router.post('/courseDayRoomPreference/filter-records',  preference.filterPreference)
-
+router.post('/courseDayRoomPreference/occupiedroomdays', preference.occupiedRoomDays)
 module.exports = router
