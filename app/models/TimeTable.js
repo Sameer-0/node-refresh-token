@@ -182,6 +182,19 @@ module.exports = class TimeTable {
         })
     }
 
+    static swapEvents(slug, userId, inputJSON){
+        console.log('swap JSON::::::::::',JSON.stringify(inputJSON))
+        return poolConnection.then(pool => {
+
+            return pool.request() 
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+            .input('last_modified_by', sql.Int, userId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].sp_swap_events`);
+
+        })
+    }
+
     static allocateFaculties(slug){
         return poolConnection.then(pool => {
 
