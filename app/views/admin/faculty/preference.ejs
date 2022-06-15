@@ -20,7 +20,7 @@
     <div class="card table-card">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>Faculy Work Time Preference</h5>
+                <h5>Faculy Work Time Preference (VISITING FACULTY)</h5>
             </div>
             <div>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-facultypreference-modal"><i class="fas fa-plus"></i>
@@ -40,6 +40,7 @@
                     <th>Program Name</th>
                     <th>Program Id</th>
                     <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Day</th>
                     <th>Start Time</th>
                     <th>End Time</th>
@@ -55,6 +56,7 @@
                         <td><%- list.program_name %></td>
                         <td><%- list.program_id %></td>
                         <td><%- list.module_name %></td>
+                        <td><%- list.acad_session %></td>
                         <td><%- list.day_name %></td>
                         <td><%- list.start_time %></td>
                         <td><%- list.end_time %></td>
@@ -158,6 +160,8 @@
                                 <th>Faculty Id</th>
                                 <th>Module Name</th>
                                 <th>Program Id</th>
+                                <th>Program Name</th>
+                                <th>Academic Session</th>
                                 <th>Day</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
@@ -207,7 +211,7 @@
 
 
     <%- include("../partials/footer") %>
-    <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+    <!--  -->
     <script>
         $(document).ready(function () {
 
@@ -427,7 +431,7 @@
                     });
            
                 }
-                console.log('DAYA:::::::',days)
+                // console.log('DAYA:::::::',item)
                
                 result.worklist.forEach(function(item){
                 htmlTable +=  `<tr>
@@ -436,6 +440,8 @@
                 <td data-faculty-lid="${item.faculty_lid}">${item.faculty_id}</td>
                 <td>${item.module_name}</td>
                 <td>${item.program_id}</td>
+                <td>${$('#programName option:selected').text()}</td>
+                <td>${$('#sessionName option:selected').text()}</td>
                 <td data-program-day-lid="${days}">${day_text}</td>
                 <td data-start-time-id="${start_time_id}">${start_time_text}</td>
                 <td data-end-time-id="${end_time_id}">${end_time_text}</td>
@@ -660,6 +666,7 @@
                     <th>Program Name</th>
                     <th>Program Id</th>
                     <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Day</th>
                     <th>Start Time</th>
                     <th>End Time</th>
@@ -678,6 +685,7 @@
                         <td>${list.program_name }</td>
                         <td>${list.program_id }</td>
                         <td>${list.module_name }</td>
+                        <td>${list.acad_session }</td>
                         <td>${list.day_name}</td>
                         <td>${list.start_time}</td>
                         <td>${list.end_time}</td>

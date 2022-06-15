@@ -91,6 +91,27 @@ module.exports = {
         })
     },
 
+    swapEvents: (req, res) => {
+        let object = { 
+            "swap_events": JSON.parse(req.body.inputJSON)
+        }
+        
+        TimeTable.swapEvents(res.locals.slug, res.locals.userId, object).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
+
+
+
     allocateFaculties: (req, res) => {        
         TimeTable.allocateFaculties(res.locals.slug).then(result => {
             res.status(200).json({message: "Successful!"})
