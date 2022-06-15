@@ -95,57 +95,108 @@
                             <td data-division-id="<%- list.division_id %>"><%- list.division %></td>
                             <td data-batch-id="<%- list.batch_id %>"><%- list.batch %> ( <%- list.batch_event %>)</td>
                             <td>
-                                <select class=" dayName" name="dayName" multiple>
-                                    <% /* %>
-                                    <%for(let day of dayList){%>
-                                    <option value="<%-day.id%>"><%-day.day_name %></option>
-                                    <%}%>
-                                        <% */ %>
-                                    <%if(JSON.parse(list.days).length > 0){%>
 
-                                    <% for(let day of JSON.parse(list.days)) {%>
-                                    <option value="<%-day.id%>" selected="selected"><%-day.day_name %></option>
-                                    <%}%>
+                                <%if(JSON.parse(list.days).length > 0){%>
 
-                                        <%}else{%>
-
-                                    <%for(let day of dayList){%>
-                                    <option value="<%-day.id%>"><%-day.day_name %></option>
-                                    <%}%>
-
-                                        <%}%>
-                                </select>
+                                <% for(let day of JSON.parse(list.days)) {%>
+                                <%-day.day_name %>
+                                <%}%>
+                                    <%}else{%>
+                                NA
+                                <%}%>
                             </td>
                             <td>
-                                <select class=" roomNumber" name="roomNumber" multiple>
-                                    <% /* %>
-                                    <%for(let room of roomLists){%>
-                                    <option value="<%-room.id%>"><%-room.room_number%> (<%-room.room_type%>)</option>
-                                    <%}%>
-                                            <% */ %>
+                               
+                                    <%if(JSON.parse(list.rooms).length > 0){%>
+                                <% for(let room of JSON.parse(list.rooms)) {%>
+                                <%-room.room_number%> (<%-room.room_type_name%>)
+                                <%}%>
+                                    <%}else{%>
+                                NA
+                                <%}%>   
 
-                                    <% for(let room of JSON.parse(list.rooms)) {%>
-                                    <option value="<%-room.id%>" selected="selected"><%-room.room_number%>
-                                        (<%-room.room_type_name%>)</option>
-                                    <%}%>
-                                           
-                                        </select>
                                     </td>
                                     <td><a class="btn btn-success add-course-pref-modal" data-batch-id="<%- list.batch_id %>"
-                                    data-division-id="<%- list.division_id %>" data-module-id="<%- list.module_id %>"
-                                    data-session-id="<%- list.session_id %>"
-                                    data-program-id="<%- list.program_lid %>">Add</a></td>
+                                data-division-id="<%- list.division_id %>" data-module-id="<%- list.module_id %>"
+                                data-session-id="<%- list.session_id %>"
+                                data-program-id="<%- list.program_lid %>">Add</a></td>
                         </tr>
                         <%}%>
                             </tbody>
                         </table>
                     </div>
-            <div class="float-end">
+            <!-- <div class="float-end">
                     <button type="button" class="btn createCoursePreference modal-inputform-btn">CREATE PREFERENCE</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<!--ADD Modal -->
+<div class="modal fade" id="open-course-pref-modal" tabindex="-1" aria-labelledby="open-course-pref-modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content modal-inputform">
+            <div class="modal-header modal-inputform-header">
+                <h5 class="modal-title" id="add-facultywork-modal-title">ADD COURSE DAY ROOM PREFERENCE</h5>
+                <button type="button" class="btn fs-4" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="errorHtml"></div>
+                <input type="hidden" id="hidden_id">
+                <div class="table-responsive ">
+                    <table class="table table-bordered" id="add-more-course-day-preference-table">
+                        <thead>
+                            <th>Days</th>
+                            <th>Rooms</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select class="form-select dayName" name="dayName">
+                                        <option value="">--select--</option>
+                                        <%for(let day of dayList){%>
+                        <option value="<%-day.id%>"><%-day.day_name %></option>
+                        <%}%>
+                                    </select>
+                                </td>
+                                
+                                <td>
+                                    <select class="form-select roomNumber" name="roomNumber">
+                                        <option value="">--select--</option>
+                                        <%for(let room of roomLists){%>
+                        <option value="<%-room.id%>"><%-room.room_number%> (<%-room.room_type%>)</option>
+                        <%}%>
+                                    </select>
+                                </td>
+
+                                <td>
+                                    <i class="far fa-edit d-none"></i>
+                                    <i class="fas fa-trash-alt text-danger cursor-pointer remove-facultyworkfield"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <div class="errorHtml"></div> -->
+                <button type="button" class="btn btn-success  btn-sm" id="add-more-course-day-preference"><i
+                        class="fas fa-plus"></i>
+                    Add More Fields</button>
+                <button type="submit" class="btn  createFacultyWorkLoad modal-inputform-btn">Create
+                    </button>
+                <button type="submit" class="btn  updateFacultyWorkLoad modal-inputform-btn d-none">Update
+                    </button>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <%- include("../partials/footer") %>
 
@@ -158,18 +209,41 @@
 
                             });
                             $(document).ready(function () {
-
-
-
                                 $('.select2').select2();
 
 
 
-                                $("#add-more-courseDayRoomPreference-table").on('click',
-                                    '.add-course-pref-modal',
-                                    function () {
+
+    //Add more rows for FacultyWorks
+    $('#add-more-course-day-preference').on('click', function () {
+        console.log("Adding faculty work fields::::")
+        let lastTr = $(
+            '#add-more-course-day-preference-table tbody tr:last-child'
+        )
+      
+
+        $('#add-more-course-day-preference-table tbody').append(
+            clonedTr)
+    })
+
+
+    $('#add-more-course-day-preference-table').on('click',
+        '.remove-facultyworkfield',
+        function () {
+            let trLength = $(
+                    '#add-more-course-day-preference-table tbody tr')
+                .length;
+            if (trLength > 1) {
+                $(this).closest('tr').remove()
+            } else {
+                alert('Cannot delete this room.')
+            }
+        })
+
+                                $("#add-more-courseDayRoomPreference-table").on('click','.add-course-pref-modal',function () {
                                         console.log('CLICK:::::::>>')
-                                    })
+                                        $("#open-course-pref-modal").modal('show')
+                                })
 
                                 //Day  Check
                                 //    $("#add-more-courseDayRoomPreference-table").on('change','#dayCheck',function(){ 
