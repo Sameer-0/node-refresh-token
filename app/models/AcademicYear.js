@@ -48,7 +48,7 @@ module.exports = class AcademicYear {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('acadYearId', sql.Int, id)
-                .query(`DELETE FROM  [dbo].academic_year  WHERE id = @acadYearId`)
+                .query(`DELETE FROM [dbo].academic_year WHERE id = @acadYearId`)
         }).catch(error => {
             throw error
         })
