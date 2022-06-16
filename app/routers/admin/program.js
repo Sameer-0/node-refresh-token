@@ -56,5 +56,9 @@ router.post('/programs/sessions/unlocked-program-sessions', sessions.getUnlocked
 //PROGRAM SESSION TIME PREFERENCE
 router.get('/program-session-time-preference', timePreference.getPage)
 router.post('/program-session-time-preference/create', timePreference.create)
+router.post('/program-session-time-preference/findone', timePreference.findOne)
+router.post('/program-session-time-preference/update', timePreference.update)
+router.post('/program-session-time-preference/delete', timePreference.delete)
+
 
 module.exports = router;

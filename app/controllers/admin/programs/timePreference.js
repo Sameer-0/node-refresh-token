@@ -35,7 +35,7 @@ module.exports = {
         console.log(obj)
         ProgramSessionTimings.save(obj, res.locals.slug, res.locals.userId).then( result => {
 
-            res.status(200).json(result.recordset)
+            res.status(200).json(result)
         })
         .catch(error => {
 
@@ -50,5 +50,54 @@ module.exports = {
             //     data:[]})
             // }
         })
-    }
+    },
+
+    delete: (req, res, next) => {
+        console.log('delete::::<><>');
+        ProgramSessionTimings.delete(res.locals.slug, req.body.id).then( result => {
+            console.log('delete time pre::::', result);
+            res.status(200).json(result)
+        })
+        .catch( error => {
+            res.status(500).json(error);
+        })
+
+    },
+
+    findOne: (req, res) => {
+        ProgramSessionTimings.findOne(req.body.id, res.locals.slug).then(result => {
+            console.log('edit result::::', result.recordset[0] )
+            res.json({
+                status: 200,
+                message: "Success",
+                result: result.recordset[0]
+            })
+        }).catch(error => {
+            console.log('error::::::::',error)
+            res.status(500).json(error.originalError.info.message)
+        })
+    },
+
+    update: (req, res) => {
+
+        let object = {
+            updateProgramSessionTimings: JSON.parse(req.body.inputJSON)
+        }
+        console.log('pre update::', JSON.parse(req.body.inputJSON)[0].sessionLid)
+        ProgramSessionTimings.update(JSON.parse(req.body.inputJSON)[0].startTimeId, JSON.parse(req.body.inputJSON)[0].endTimeId, JSON.parse(req.body.inputJSON)[0].id, res.locals.slug).then(result => {
+            console.log('im done', result)
+            res.status(200).json(result)
+        }).catch(error => {
+            // if (isJsonString.isJsonString(error.originalError.info.message)) {
+            //     res.status(500).json(JSON.parse(error.originalError.info.message))
+            // } else {
+            //     res.status(500).json({
+            //         status: 500,
+            //         description: error.originalError.info.message,
+            //         data: []
+            //     })
+            // }
+            console.log('error', error)
+        })
+    },
 }
