@@ -100,7 +100,7 @@
                                 <%if(JSON.parse(list.days).length > 0){%>
 
                                 <% for(let day of JSON.parse(list.days)) {%>
-                                <%-day.day_name %>
+                                <span class="badge bg-secondary"><%-day.day_name %></span>
                                 <%}%>
                                     <%}else{%>
                                 NA
@@ -110,7 +110,7 @@
                                
                                     <%if(JSON.parse(list.rooms).length > 0){%>
                                 <% for(let room of JSON.parse(list.rooms)) {%>
-                                <%-room.room_number%> (<%-room.room_type_name%>)
+                                <span class="badge bg-secondary"><%-room.room_number%> (<%-room.room_type_name%>)</span>
                                 <%}%>
                                     <%}else{%>
                                 NA
@@ -563,14 +563,14 @@
                                     <td data-batch-id="${list.batch_id}">${list.batch} ( ${list.batch_event})</td>
                                     <td>`
                                             for (let day of JSON.parse(list.days)) {
-                                                AjaxTable += `${day.day_name}`
+                                                AjaxTable += `<span  class="badge bg-secondary">${day.day_name}</span>`
                                             }
                                             AjaxTable += `</td>
                                     <td>`
                                             for (let room of JSON.parse(list.rooms)) {
                                                 console.log('ROOM ID', room.room_type_name);
                                                 AjaxTable +=
-                                                    `${room.room_number} (${room.room_type_name})`
+                                                    `<span class="badge bg-secondary">${room.room_number} (${room.room_type_name})</span>`
                                             }
                                             AjaxTable += `</td>
                                     <td><a class="btn btn-success add-course-pref-modal" data-batch-id="${list.batch_id}"
