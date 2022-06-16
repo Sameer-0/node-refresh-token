@@ -87,6 +87,7 @@
                     <th>Workshop count per batch per week</th>
                     <th>Session Events per Semester</th>
                     <th>Continuous</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     <%
@@ -128,6 +129,7 @@
                                 value="<%-course.session_events_per_semester%>"></td>
                         <td><input type="number" class="form-control rounded-0" name="continuous"
                                 value="<%-course.continuous%>"></td>
+                                <td><a class="delete-course-workload" data-id="<%-course.id%>"><span class="fa fa-trash"></span></a></td>
                     </tr>
                     <% } %>
                 </tbody>
@@ -413,8 +415,30 @@
             })
 
 
+            $("#courseWorkloadTable").on('click','.delete-course-workload',function(){
+                let id = $(this).attr('data-id')
+                console.log('id::::::::::::', id)
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/courseworkload/workload/delete',
+                    data: {
+                        id: id,
+                    
+                    },
+                    dataType: 'JSON' 
+                    }
+                    ajaxApi(ApiObj).then(result => {
+                    console.log('response::::::::::',result)
+                    showSuccess(result)              
+                    }).catch(error => {
+                    console.log('ERROR::::::::::',error.responseJSON)
+                    showError(error.responseJSON)
+                    })
+            })
+
+
         function AjaxtTable(workloadList) {
-            console.log('workloadList::::::::::::', workloadList)
+         
             let AjaxTable = `<table class="table custom_row table-bordered" id="courseWorkloadTable">
                 <thead>
                     <th>Sr No.</th>
