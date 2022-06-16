@@ -159,7 +159,7 @@ module.exports = class TimeTable {
     static dropEvent(slug, userId, eventLid){
 
         return poolConnection.then(pool => {
-
+ 
             return pool.request() 
             .input('event_booking_lid', sql.Int, eventLid)
             .input('last_modified_by', sql.Int, userId)
