@@ -144,6 +144,58 @@
     </div>
     </div>
 
+        <!-- edit modal -->
+        <div class="modal fade" id="edit-program-session-timings-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" id="program-session-timings-lid" name="program-session-timings-lid">
+                        <label class="form-label">Select Program</label>
+                        <select class="form-select" name="programName" id="programName">
+                            <option value="">--SELECT PROGRAM--</option>
+                                <% for (program of programList) { %>
+                                    <option value="<%- program.id%>"><%- program.program_name %></option>
+                                <%}%>
+                        </select>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label class="form-label">Select Session</label>
+                           <select class="form-select" name="sessionName" id="sessionName"></select>
+                    </div>
+    
+                    <div class="mb-3">
+                     <label class="form-label">Select Start Time</label>
+                        <select class="form-select" name="start_time_id" id="start_time_id">
+                            <option value="">--SELECT START TIME--</option>
+                                <% for (time of timeList) { %>
+                                    <option value="<%- time.id%>"><%- time.start_time %></option>
+                                <%}%>
+                        </select>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label class="form-label">Select End Time</label>
+                        <select class="form-select" name="end_time_id" id="end_time_id">
+                            <option value="">--SELECT END TIME--</option>
+                            <% for (time of timeList) { %>
+                                <option value="<%- time.id%>"><%- time.end_time %></option>
+                            <%}%>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary updateTimePref">UPDATE</button>
+                </div>
+            </div>
+            </div>
+        </div>
 
     
 
@@ -177,7 +229,7 @@
 
                     $('#sessionName').html(sessionList);
                 }).catch(error => {
-                    // showError(error.responseJSON)
+                    showError(error.responseJSON)
                 })
             })
     
@@ -252,11 +304,12 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-                    
-                    console.log('success result',result)
+                    console.log('successs;;;;;', result)
+                    showSuccess('success result',result)
                    
                 }).catch(error => {
-                    console.log('error:::',error)
+                    console.log('errror;;;;;', result)
+                    showError('error:::',error)
                 })
 
             })
@@ -268,6 +321,217 @@
                 $($(this).parent().parent()).remove()
                 })
             })
+
+            //EDIT
+            $("#programSessionTimePreference").on('click','.edit-preference',function(){
+                let id = $(this).attr("data-id")
+                console.log('ID:::::::::::::::',id)
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/program-session-time-preference/findone',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'JSON'
+                }
+                ajaxApi(ApiObj).then(result => {
+                let obj = result.result
+                console.log('Response Result:::::::::::::::::::>',obj)
+                // programSessionTimingsForEdit(obj.program_lid, obj.acad_session_lid, obj.start_time_id, obj.end_time_id)
+                $("#program-session-timings-lid").val(obj.id)
+              
+                SessionEdit(obj.program_lid, obj.acad_session_lid)
+                $("#edit-program-session-timings-modal  #programName").val(obj.program_lid).trigger('change')
+                $("#edit-program-session-timings-modal  #start_time_id").val(obj.start_time_id).trigger('change')
+                $("#edit-program-session-timings-modal  #end_time_id").val(obj.end_time_id).trigger('change')
+
+                }).catch(error => {
+                    // showError(error.responseJSON)
+                })
+            })
+
+            function SessionEdit(programLid, acadSessionLid){
+                    let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/programs/sessions/unlocked-program-sessions',
+                    data: {
+                        programLid: programLid
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+
+                    console.log('session edit list:::::>>>>>>', result)
+                    let sessionList = ``;
+                        
+                        if (result.length > 0) {
+                            result.forEach(element => {
+                                sessionList +=
+                                    `<option value="${element.id}" data-program-session-lid="${element.program_session_lid}">${element.acad_session}</option>`;
+                              
+                            });
+                            
+                        } else {
+                            
+                            sessionList += `<option value="">No Session Found!</option>`;
+                      
+                        }
+
+                        console.log('session edit list:::', sessionList);
+                        $("#edit-program-session-timings-modal  #sessionName").html(sessionList);
+                        
+                        $("#edit-program-session-timings-modal #sessionName").val(acadSessionLid).trigger('change')
+                        $("#edit-program-session-timings-modal").modal('show')
+                        $("#edit-program-session-timings-modal  #sessionName").attr('disabled', 'disabled');
+                        $("#edit-program-session-timings-modal  #programName").attr('disabled', 'disabled');
+
+                
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+                }
+
+            //Update Preferences
+            $(".updateTimePref").on('click', function(){
+                console.log('Read....')
+            
+                let programSessionTimingJSON = [];
+                let id = $("#program-session-timings-lid").val()
+                let programSessionLid = $("#edit-program-session-timings-modal #sessionName option:selected").attr("data-program-session-lid")
+                let programLid = $("#edit-program-session-timings-modal #programName").val()
+                let sessionLid = $("#edit-program-session-timings-modal #sessionName").val()
+                let startTimeId = $("#edit-program-session-timings-modal #start_time_id").val()
+                let endTimeId = $("#edit-program-session-timings-modal #end_time_id").val()
+                let obj = {
+                                id: id,
+                                programSessionLid : programSessionLid,
+                                programLid : programLid,
+                                sessionLid : sessionLid,
+                                startTimeId: startTimeId,
+                                endTimeId: endTimeId,
+                            }
+                            programSessionTimingJSON.push(obj)
+                    console.log(programSessionTimingJSON)
+
+                    let ApiObj = {
+                        type: 'POST',
+                        url: '/admin/program-session-time-preference/update',
+                        data: {
+                            inputJSON: JSON.stringify(programSessionTimingJSON)
+                        },
+                        dataType: 'JSON'
+                    }
+                    ajaxApi(ApiObj).then(result => {
+                        console.log(result)
+                        showSuccess(result)
+                    }).catch(error => {
+                        showError(error.responseJSON)
+                    })
+            })
+
+
+            //Delete API
+            $("#programSessionTimePreference").on('click','.delete-time-preference', function(){
+               
+                let id = $(this).attr("data-id");
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/program-session-time-preference/delete',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'JSON'
+                }
+                console.log('delete::::')
+                ajaxApi(ApiObj).then(result => {
+                   console.log('successs ;;;;;delete', result)
+                    // showSuccess(result);
+                    showExpressSuccess(result);
+                }).catch(error => {
+                    showError(error);
+                })
+            })
+
+
+
+
+
+            function showError(errors) {
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+
+
+        function showSuccess(errors) {
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : "success",
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+
+        function showExpressSuccess(errors) {
+            console.log('success',errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : "Successfully Deleted",
+                message:"",
+                type: 'alert-success',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+            }
         })
     </script>
     <%- include("../partials/footerEnd") %>
