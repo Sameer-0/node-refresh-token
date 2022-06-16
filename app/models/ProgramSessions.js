@@ -88,11 +88,11 @@ module.exports = class {
         })
     }
 
-    static getUnockedSessionByProgram(slug, programLid) {
+    static getUnlockedSessionByProgram(slug, programLid) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('programLid', sql.Int, programLid)
-                .query(`SELECT ads.id, ads.acad_session, ps.program_lid FROM [${slug}].program_sessions ps 
+                .query(`SELECT ads.id, ads.acad_session, ps.program_lid, ps.id as program_session_lid FROM [${slug}].program_sessions ps 
             INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
             WHERE ps.is_locked = 0 AND ps.program_lid = @programLid`)
         })

@@ -74,7 +74,7 @@ module.exports = {
 
     scheduleEvent: (req, res) => {
         let object = { 
-            allocate_events: JSON.parse(req.body.inputJSON)
+            allocate_events: JSON.parse(req.body.inputJSON) 
         }
         
         TimeTable.scheduleEvent(res.locals.slug, res.locals.userId, object).then(result => {
