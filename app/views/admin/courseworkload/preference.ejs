@@ -35,28 +35,24 @@
 
                     <select class="form-select select2" id="programName" id="programName">
                         <option value="" disabled selected>Select Program</option>
-                        <%for(let prog of programList){%>
-                        <option value="<%-prog.id%>" data-programid="<%-prog.program_id%>"><%- prog.program_name %>
-                        </option>
-                        <%}%> 
+                            <%for(let prog of programList){%>
+                            <option value="<%-prog.id%>" data-programid="<%-prog.program_id%>"><%- prog.program_name %>
+                            </option>
+                            <%}%> 
                   </select>
                </div>
 
                <div class="col-md-3">
                 <label class="form-label">Select Academic Session</label>
                 <select class="form-select select2" id="semesterName">
-                    <%for(let session of acadSession){%>
-                        <option value="<%-session.id%>"><%- session.acad_session %></option>
-                        <%}%> 
+                    
                   </select>
                </div>
 
                <div class="col-md-3">
                 <label class="form-label">Select Module</label>
                 <select class="form-select select2" id="moduleName">
-                    <%for(let module of courseList){%>
-                        <option value="<%-module.id%>"><%- module.module_name %></option>
-                        <%}%> 
+                   
                   </select>
                </div>
 
@@ -200,6 +196,36 @@
                             $(document).ready(function () {
                                 $('.select2').select2();
 
+
+                                $("#programName").on('change', function () {
+
+                                    let programLid = $(this).val();
+
+                                    console.log('program-id:::', programLid)
+                                    let ApiObj = {
+                                        url: '/admin/programs/sessions/sessions-for-program',
+                                        type: 'POST',
+                                        data: {
+                                            programLid: programLid,
+                                        },
+                                        dataType: 'JSON'
+                                    }
+ 
+                                    ajaxApi(ApiObj).then(result => {
+                                        
+                                        console.log('session list',result)
+                                        let sessionList = `<option>--select session--</option>`;
+                                        for(let session of result){
+                                            sessionList += `<option value="${session.id}" data-program-session-lid="${session.program_session_lid}">${session.acad_session}</option>`
+                                        }
+
+                                        $('#semesterName').html(sessionList);
+                                    }).catch(error => {
+                                        showError(error.responseJSON)
+                                    })
+                                    })
+
+                                
 
                                 //ADD DAYS 
                                 $('#open-course-pref-modal #add-more-course-day-preference-table tbody tr td')
