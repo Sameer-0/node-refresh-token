@@ -100,4 +100,16 @@ module.exports = class Faculties {
         })
     }
 
+
+    static isBatchPrefSet(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT  f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, ft.name AS faculty_type, f.faculty_type_lid
+            FROM [${slug}].faculties f 
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            INNER JOIN [${slug}].faculty_works fw ON fw.faculty_lid = f.id
+            WHERE fw.is_batch_preference_set = 1
+            ORDER BY f.id DESC`)
+        })
+    }
+
 }

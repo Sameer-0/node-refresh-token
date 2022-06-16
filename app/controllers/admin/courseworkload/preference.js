@@ -308,7 +308,9 @@ module.exports = {
     },
 
     occupiedRoomDays:(req, res)=>{
+        console.log('GET OCCUPIED ROOMS',req.body)
         CourseDayRoomPreferences.occupiedRoomDays(res.locals.slug, req.body).then(result=>{
+            console.log('result::::::::::::::::>>>')
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

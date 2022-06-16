@@ -121,10 +121,10 @@ module.exports = {
         })
     },
 
-    getUnloackedSessionsByProgram: (req, res) => {
+    getUnlockedSessionsByProgram: (req, res) => {
         console.log('getSessionsByProgram::::::::>>', req.body)
 
-        ProgramSessions.getUnockedSessionByProgram(res.locals.slug, req.body.programLid)
+        ProgramSessions.getUnlockedSessionByProgram(res.locals.slug, req.body.programLid)
         .then(result => {
             console.log(result)
             res.status(200).json(result.recordset)
