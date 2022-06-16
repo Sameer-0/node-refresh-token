@@ -98,6 +98,18 @@ module.exports = {
         })
     },
 
+    getSessions: (req, res, next) => {
+        ProgramSessions.getSessionForProgram(res.locals.slug, req.body.programLid)
+        .then( result => {
+            console.log('result', result)
+            res.status(200).json(result.recordset)
+      
+        })
+        .catch( error => {
+            console.log('error', error);
+        })
+    },
+
     getSessionsByProgram: (req, res) => {
         console.log('getSessionsByProgram::::::::>>', req.body)
 
