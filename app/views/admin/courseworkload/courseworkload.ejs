@@ -416,29 +416,25 @@
 
 
             $("#courseWorkloadTable").on('click','.delete-course-workload',function(){
-                let id = $(this).attr('data-id')
-                console.log('id::::::::::::', id)
+
+                //showAlert({status:0, description:"", data:[]})
                 let ApiObj = {
                     type: 'POST',
                     url: '/admin/courseworkload/workload/delete',
                     data: {
-                        id: id,
-                    
+                        id: $(this).attr('data-id')
                     },
                     dataType: 'JSON' 
                     }
                     ajaxApi(ApiObj).then(result => {
-                    console.log('response::::::::::',result)
-                    showSuccess(result)              
+                        showSuccess(result)              
                     }).catch(error => {
-                    console.log('ERROR::::::::::',error.responseJSON)
-                    showError(error.responseJSON)
+                     showError(error.responseJSON)
                     })
             })
 
 
         function AjaxtTable(workloadList) {
-         
             let AjaxTable = `<table class="table custom_row table-bordered" id="courseWorkloadTable">
                 <thead>
                     <th>Sr No.</th>
@@ -456,6 +452,7 @@
                     <th>Workshop count per batch per week</th>
                     <th>Session Events per Semester</th>
                     <th>Continuous</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>`;
             if (workloadList.length > 0) {
@@ -488,14 +485,14 @@
                             <td><input type="number" class="form-control rounded-0" name="workshop_count_per_batch" value="${course.workshop_count_per_batch}"></td>
                             <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="${course.session_events_per_semester}"></td>
                             <td><input type="number" class="form-control rounded-0" name="continuous" value="${course.continuous}"></td>
-                        </tr>`
+                            <td><a class="delete-course-workload" data-id="${course.id}"><span class="fa fa-trash"></span></a></td>
+                            </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr><td colspan="14">No Data Found</td></tr>`;
             }
             AjaxTable += `<tbody></table>`
-            console.log('AjaxTable:::::::::::::::', AjaxTable)
             $("#courseWorkloadTable").html(AjaxTable);
         }
 
@@ -528,6 +525,32 @@
 
 
         function showSuccess(errors) {
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+
+
+        function showAlert(errors) {
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {

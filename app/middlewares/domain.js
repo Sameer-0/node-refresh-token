@@ -33,7 +33,7 @@ module.exports = {
                 .then(pool => {
                     return pool.request()
                         .input('slugName', sql.NVarChar(50), subDomain)
-                        .query(`SELECT t.slug_name, t.campus_lid, t.org_lid, org.org_id as org_id, c.campus_id FROM [dbo].tenants t
+                        .query(`SELECT t.slug_name, t.campus_lid, t.org_lid, org.org_id_str as org_id, c.campus_id_str FROM [dbo].tenants t
                         INNER JOIN [dbo].organizations org ON org.id = t.org_lid
                         INNER JOIN [dbo].campuses c ON c.id =  t.campus_lid
                         WHERE slug_name = @slugName`);
@@ -45,7 +45,7 @@ module.exports = {
                     res.locals.slug = result.recordset[0].slug_name
                     res.locals.organizationId = result.recordset[0].org_lid
                     res.locals.campusId = result.recordset[0].campus_lid
-                    res.locals.campusIdSap = result.recordset[0].campus_id
+                    res.locals.campusIdSap = result.recordset[0].campus_id_str
                     res.locals.organizationIdSap = result.recordset[0].org_id
                     res.locals.acadmicYear = process.env.ACADEMIC_YEAR
                     console.log('LOCALS:::::::', res.locals)
