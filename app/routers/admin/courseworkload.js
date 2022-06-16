@@ -27,7 +27,7 @@ router.post('/courseworkload/workload/search', courseworkload.search)
 router.post('/courseworkload/workload/pagination', courseworkload.pagination)
 router.post('/courseworkload/workload/update', validate('JsonValidator'), courseworkload.update)
 router.post('/courseworkload/workload/create', validate('JsonValidator'), courseworkload.create)
-
+router.post('/courseworkload/workload/delete',  courseworkload.delete)
 
 //Course preference
 

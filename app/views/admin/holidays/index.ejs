@@ -6,7 +6,6 @@
 
 <div class="main-content">
     <div class="breadcrumbs-container">
-    
         <ul class="breadcrumb">
             <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
                 <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
@@ -38,8 +37,8 @@
                    <h3></h3>
                 </div>
                 <div class="p-2 bd-highlight">
-                    <label>Select Year</label>
-                    <input type="text" class="form-control" id="acadYear" value="<%- acadYear %>">
+                    <label>Academic Year</label>
+                    <input type="text" class="form-control" id="acadYear" value="<%- acadYear %>" disabled>
                 </div>
                 <div class="p-2 bd-highlight mt-2">
                     <button class="btn btn-danger mt-3 fetchFromSAP"><i class="fa fa-download"></i> Fetch From SAP</button>
@@ -211,9 +210,10 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('Response ::::::::::::::::::::::', result.data)
+                showSuccess(result)
             }).catch(error => {
                 console.log('Error ::::::::::::::::::::::', error)
-                // showError(error.responseJSON)
+                showError(error.responseJSON)
             })
         })
 
