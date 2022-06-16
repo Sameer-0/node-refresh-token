@@ -433,12 +433,16 @@ module.exports = class CourseDayRoomPreferences {
     static occupiedRoomDays(slug, body){
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.Int, body.batch_lid)
-                .query(`SELECT DISTINCT d.day_name, r.room_number from [asmsoc-mum].course_day_room_preferences cdrp
-                INNER JOIN [asmsoc-mum].days d ON d.id =  cdrp.day_lid
+            return request.input('batches', sql.Int, body.batches)
+            .input('divisions', sql.Int, body.divisions)
+            .input('moduleId', sql.Int, body.moduleId)
+            .input('sessionId', sql.Int, body.sessionId)
+            .input('programId', sql.Int, body.programId)
+                .query(`SELECT DISTINCT d.day_name, r.room_number from [${slug}].course_day_room_preferences cdrp
+                INNER JOIN [${slug}].days d ON d.id =  cdrp.day_lid
                 INNER JOIN [dbo].rooms r ON r.id = cdrp.room_lid
-                WHERE cdrp.program_lid = 1 and cdrp.acad_session_lid = 20 AND cdrp.course_lid = 52
-                AND cdrp.division_lid = 226 AND cdrp.batch_lid = 236 and cdrp.status = 1`)
+                WHERE cdrp.program_lid = @programId and cdrp.acad_session_lid = @sessionId AND cdrp.course_lid = @moduleId
+                AND cdrp.division_lid = @divisions AND cdrp.batch_lid = @batches`)
         })
     }
 }
