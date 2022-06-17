@@ -8,7 +8,7 @@ const Programs = require('../../../models/Programs');
 const ProgramSessionTimings = require('../../../models/ProgramSessionTimings');
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings')
 // const ProgramSessions = require('../../../models/ProgramSessions')
-// const isJsonString = require('../../../utils/util')
+const isJsonString = require('../../../utils/util')
 
 
 module.exports = {
@@ -39,16 +39,16 @@ module.exports = {
         })
         .catch(error => {
 
-            console.log(error)
-
-            // if(isJsonString.isJsonString(error.originalError.info.message)){
-            //     res.status(500).json(JSON.parse(error.originalError.info.message))
-            // }
-            // else{
-            //     res.status(500).json({status:500,
-            //     description:error.originalError.info.message,
-            //     data:[]})
-            // }
+            console.log('ERROR:::::',error)
+            
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } 
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]}) 
+            }
         })
     },
 

@@ -135,4 +135,24 @@ module.exports = class {
                 
         })
     }
+
+
+    
+    static delete(id, slug, userid) {
+        console.log('id:::::::', id)
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('course_lid', sql.Int, id)
+             //   .input('last_modified_by', sql.Int, userid)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_delete_initial_course_workload]`)
+        })
+    }
+
+    static getmoduleByProgramId(programid, slug){
+        return poolConnection.then(pool => {
+            return pool.request().input('programId', sql.Int, programid)
+                .query(`select * from [${slug}].initial_course_workload where program_id  = @programId`)
+        })
+    }
 }

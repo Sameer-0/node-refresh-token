@@ -7,12 +7,13 @@ const {
 const Holidays = require('../../../models/Holidays')
 const HolidayType = require('../../../models/HolidayTypes')
 const AcadYear = require('../../../models/AcademicYear')
-const AcademicCalender =  require('../../../models/AcademicCalender')
+const AcademicCalender = require('../../../models/AcademicCalender')
 const Settings = require('../../../models/Settings');
 
 const path = require("path");
 var soap = require("soap");
-const isJsonString = require('../../../utils/util')
+const isJsonString = require('../../../utils/util');
+
 module.exports = {
 
 
@@ -23,14 +24,14 @@ module.exports = {
                 holidayType: result[1].recordset,
                 pageCount: result[2].recordset[0].count,
                 acadYear: result[3].recordset[0].input_acad_year,
-                academicCalender : result[4].recordset,
+                academicCalender: result[4].recordset,
                 breadcrumbs: req.breadcrumbs,
             })
         })
     },
 
     create: (req, res) => {
-        console.log('holidays controller', req.body )
+        console.log('holidays controller', req.body)
         if (req.body.settingName) {
             Settings.updateByName(res.locals.slug, req.body.settingName)
         }
@@ -44,13 +45,14 @@ module.exports = {
             console.log('result:::<><', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
@@ -73,13 +75,14 @@ module.exports = {
         Holidays.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
@@ -94,13 +97,14 @@ module.exports = {
         Holidays.delete(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
@@ -168,26 +172,25 @@ module.exports = {
     },
 
     fetchFromSAP: async (req, res, next) => {
-        let {acadYear} = req.body;
+        let {
+            acadYear
+        } = req.body;
         var wsdlUrl = path.join(
             process.env.WSDL_PATH,
-            "zhr_holiday_date_jp_bin_sep_20211129.wsdl"
-          );
-          console.log('wsdlUrl::::::::::::::::', wsdlUrl)    
-
-          let soapClient = await new Promise(resolve => {
+            "zhr_holiday_date_jp_bin_sep_20220509.wsdl"
+        );
+           let soapClient = await new Promise(resolve => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
-              if (err) {
-                next(err);
-              }
-              resolve(soapClient);
+                if (err) {
+                    next(err);
+                }
+                resolve(soapClient);
             })
-          })  
+        })
 
-          console.log('soapClient:::::::::::::::::>>>',soapClient)
-
-          let holidayList = await new Promise(async resolve => {
+        let holidayList = await new Promise(async resolve => {
             await soapClient.ZhrHolidayDateJp({
+<<<<<<< HEAD
                 Acadyear: process.env.acadmicYear,
                // Campusid: "00004533",
                Campusid: res.locals.campusIdSap,
@@ -200,19 +203,33 @@ module.exports = {
                 resolve(1);
               });
           })
+=======
+                    Acadyear: res.locals.acadmicYear,
+                    Campusid: res.locals.campusIdSap,
+                    Schoolobjectid: res.locals.organizationIdSap,
+                },
+                async function (err, result) {
+                    let output = await result;
+                    resolve(output.Output.item);
+                });
+        })
+        console.log('output::::::::::::::>>> ', holidayList)
+>>>>>>> 5e6f546ef4746df2c4ba0622f88cc5937181acec
 
-        //   Holidays.fetchHolidaySap(JSON.stringify(holidayList), res.locals.slug).then(data => {
-        //     console.log('Data>>> ', data)
-        //     res.status(200).json({
-        //       data: courseWorkloadList
-        //     });
-        //   }).catch(err => {
-        //     console.log(err)
-        //   });
-
-        res.status(200).json({
-              data: holidayList
-            });
+        Holidays.fetchHolidaySap(JSON,stringify(holidayList), res.locals.slug).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            console.log(error)
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
     }
 
 
