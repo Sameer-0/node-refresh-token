@@ -27,6 +27,7 @@ router.post('/divisions/batches/getAll', batch.getAll)
 router.post('/divisions/batches/update', batch.update)
 router.post('/divisions/batches/generate-batches-division', batch.generateBatch)
 router.post('/divisions/batches/delete', batch.delete)
-
+router.post('/divisions/batches/batch-by-moduleid', batch.divisionByModuleId)
+router.post('/divisions/batches/batch-by-programid', batch.batchByProgramId)
 
 module.exports = router

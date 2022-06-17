@@ -34,14 +34,44 @@
         <div id="errorHtml"></div>
 
         <div class="card-body table-responsive">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div> -->
+
+                    <div class="row">
+                        <div class="col-md-3">
+                                <select class="form-select select2" id="programName">
+                                    <option>Select Program</option>
+                                    <%for(let program of programList){%>
+                                        <option value="<%-program.id%>" data-program-id="<%-program.program_id%>"><%-program.program_name%></option>
+                                        <%}%>
+                                </select>
+                        </div>
+                
+                        <div class="col-md-3">
+                            <select class="form-select select2" id="moduleName">
+                                <option>Select Module</option>
+                            <%for(let module of moduleList){%>
+                                <option value="<%-module.id%>"><%-module.module_name%></option>
+                                <%}%>
+                            </select>
+                        </div>
+                
+                        <div class="col-md-3">
+                
+                        </div>
+                
+                        <div class="col-md-3">
+                            <input type="search" id="searchkeyword" placeholder="Enter keywords" class="form-control">
+                        </div>
+                        </div>
 
             <table class="table custom_row table-bordered" id="batchesTable">
                 <thead>
                     <th>#</th>
+                     <th>Program Name</th>
                     <th>Division</th>
                     <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Module ID</th>
                     <th>Program Code</th>
                     <th>Batch</th>
@@ -57,8 +87,10 @@
                     <% for(let batch of divisionBatchList) {%>
                     <tr>
                         <td><%- count++ %><input type="hidden" class="form-control" name="batch_id" value="<%- batch.id %>"></td>
+                        <td><%- batch.program_name %></td>
                         <td><%- batch.division %></td>
                         <td><%- batch.module_name %></td>
+                        <td><%- batch.acad_session %></td>
                         <td><%- batch.module_id %></td>
                         <td><%- batch.program_code %></td>
                         <td><%- batch.batch%></td>
@@ -94,9 +126,65 @@
 <script>
     $(document).ready(function () {
 
+        $('.select2').select2();
+
+//FILTER APIS
+$("#programName").on('change',function(){
+    let programid =  $(this).val()
+    let program_id =  $("#programName option:selected").attr('data-program-id')
+    let ApiObj = {
+        type: 'POST',
+        url: '/admin/divisions/batches/batch-by-programid',
+        data: {
+            programid: programid,
+            program_id: program_id
+        },
+        dataType: 'JSON'
+    }
+
+    ajaxApi(ApiObj).then(result => {
+        let moduleName = ``;
+                                if (result.moduleList.length > 0) {
+                                    moduleName +=
+                                        `<option value="" disabled>Select Module</option>`;
+                                        result.moduleList.forEach(element => {
+                                        moduleName +=
+                                            `<option value="${element.id}" >${element.module_name}</option>`;
+                                    });
+                                } else {
+                                    moduleName +=
+                                        `<option value="">Module Not Found!</option>`;
+                                }
+                                $("#moduleName").html(moduleName)
+        AjaxtTable(result.division)
+    }).catch(error => {
+        showError(error.responseJSON)
+    })
+})
+
+$("#moduleName").on('change',function(){
+    let moduleid =  $(this).val()
+    let programid =  $("#programName").val()
+    let ApiObj = {
+        type: 'POST',
+        url: '/admin/divisions/batches/batch-by-moduleid',
+        data: {
+            moduleid: moduleid,
+            programid: programid
+        },
+        dataType: 'JSON'
+    }
+
+    ajaxApi(ApiObj).then(result => {
+        AjaxtTable(result.result)
+    }).catch(error => {
+        showError(error.responseJSON)
+    })
+})
+
+
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
-            
             let keyword = $("#searchkeyword").val()
             console.log('searching',keyword)
             $.ajax({
@@ -199,8 +287,10 @@
             let AjaxTable = `<table class="table table-bordered custom_row" id="batchesTable">
                 <thead>
                     <th>#</th>
+                    <th>Program Name</th>
                     <th>Division</th>
                     <th>Module Name</th>
+                    <th>Academic Session</th>
                     <th>Module ID</th>
                     <th>Program Code</th>
                     <th>Batch</th>
@@ -217,8 +307,10 @@
                     AjaxTable +=
                         `<tr>
                         <td>${count++}<input type="hidden" class="form-control" name="batch_id" value="${batch.id}"></td>
+                        <td>${batch.program_name}</td>
                         <td>${batch.division}</td>
                         <td>${batch.module_name}</td>
+                        <td>${batch.acad_session}</td>
                         <td>${batch.module_id}</td>
                         <td>${batch.program_code}</td>
                         <td>${batch.batch}</td>
@@ -233,7 +325,7 @@
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="10">No Data Found</td>
+                                <td colspan="14">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
