@@ -213,11 +213,11 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('Response ::::::::::::::::::::::', result.data)
+                console.log('Response ::::::::::::::::::::::', result)
                 showSuccess(result)
             }).catch(error => {
                 console.log('Error ::::::::::::::::::::::', error)
-                showError(error)
+                showError(error.responseJSON)
             })
         })
     })
@@ -264,8 +264,8 @@
             },
             dataType: 'JSON'
         }
-
         ajaxApi(ApiObj).then(result => {
+            console.log('RESPONSE:::::::::::::::::::::',result)
             showSuccess(result)
         }).catch(error => {
             showError(error.responseJSON)
@@ -474,34 +474,6 @@
 
             
             function showSuccess(errors) {
-
-            console.log(errors);
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title : errors.description,
-                message: errors.obj,
-                type: 'alert-success',
-                buttons: {
-                    positive:{
-                        text: "Okay",
-                        action: function(){
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                        alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-
-            }
-
-
-            function showError(errors) {
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
@@ -524,8 +496,32 @@
                 }
             }
             simpleAlert.alert(obj);
+            }
 
-            
+
+            function showError(errors) {
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
             }
         })
     </script>

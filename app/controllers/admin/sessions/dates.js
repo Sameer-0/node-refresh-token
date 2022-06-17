@@ -230,25 +230,24 @@ module.exports = {
                 });
         })
 
-        console.log('sessionDate:::::::::', sessionDate)
-        sessionDate.forEach(function(item){
-            let sql = `INSERT into [asmsoc-mum].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id)
-            values(${item.Acadsession}, 1, '${item.Startdate}','${item.Enddate}')`;
-            console.log(sql)
 
+        let object = {
+            add_session_dates: sessionDate
+          }
+
+        SessionDates.fetchSessionDateSap(res.locals.slug, object).then(_result => {
+            //console.log('Success:::::::::::::>>>>>',_result)
+            res.status(200).json(JSON.parse(_result.output.output_json))
+        }).catch(error => {
+         
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
         })
- 
-            //console.log('Here::::::::::::',sessionDate)
-
-            
-        // CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
-        //     console.log('Data>>> ', data)
-        //     console.log("acadSessionLif>>> ", acadSessionLid)
-        //     res.status(200).json({
-        //         data: courseWorkloadList
-        //     });
-        // }).catch(err => {
-        //     console.log(err)
-        // });
     },
 }
