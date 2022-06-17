@@ -229,13 +229,17 @@ module.exports = {
                     resolve(output.Output.item)
                 });
         })
-        SessionDates.fetchSessionDateSap(res.locals.slug, JSON.stringify(sessionDate)).then(data => {
-            console.log('Data>>> ', data)
-            console.log("acadSessionLif>>> ", acadSessionLid)
-            res.status(200).json({
-                data: sessionDate
-            });
+
+
+        let object = {
+            add_session_dates: sessionDate
+          }
+
+        SessionDates.fetchSessionDateSap(res.locals.slug, object).then(_result => {
+            //console.log('Success:::::::::::::>>>>>',_result)
+            res.status(200).json(JSON.parse(_result.output.output_json))
         }).catch(error => {
+         
             if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message))
             }
