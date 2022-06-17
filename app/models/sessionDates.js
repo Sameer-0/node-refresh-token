@@ -104,5 +104,15 @@ module.exports = class {
         })
     }
 
+    static fetchSessionDateSap(slug, inputJSON){
+        console.log('JSON:::::::::',JSON.stringify(inputJSON))
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_add_session_dates]`)
+        })
+    }
+    
 
 }
