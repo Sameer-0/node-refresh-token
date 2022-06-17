@@ -153,7 +153,7 @@ module.exports = class Rooms {
     static fetchBookedRooms(alloted_to) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('alloted_to', sql.Int, alloted_to)
+                .input('alloted_to', sql.Int, alloted_to)
                 .query(`SELECT r.id, r.room_number, r.room_type_id FROM (SELECT DISTINCT room_lid FROM room_slots WHERE alloted_to = @alloted_to) t1
                 INNER JOIN rooms r ON t1.room_lid = r.id
                 ORDER BY r.room_number`)
@@ -163,12 +163,13 @@ module.exports = class Rooms {
 
     static bookedRooms(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name FROM [${slug}].room_transactions rt INNER JOIN
+            return pool.request().query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(nvarchar, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
             [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
             INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
-            INNER JOIN [dbo].buildings b ON b.id = r.building_lid`)
-
+            INNER JOIN [dbo].buildings b ON b.id = r.building_lid
+            INNER JOIN [dbo].slot_interval_timings sit ON sit.id = rtd.start_time_id
+            INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id`)
         })
     }
 
