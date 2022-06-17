@@ -181,7 +181,7 @@ app.use(function (req, res) {
 
 console.log('HOSTNAME::::::::',os.hostname())
 
-if (os.hostname() == 'DESKTOP-OMO8SJB') {
+if (os.hostname() == 'KHG1519CPU0381') {
     const server = http.createServer(app);
     server.listen(process.env.APP_PORT);
 } else {
