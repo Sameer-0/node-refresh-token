@@ -14,13 +14,14 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session, p.program_name
             FROM [${slug}].session_dates sd 
             INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
             INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
             INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
             INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
             INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+            INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
             ORDER BY sd.id DESC`)
         })
     }
@@ -70,14 +71,15 @@ module.exports = class {
         console.log(rowcount, keyword, slug)
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
+                .query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session, p.program_name
                 FROM [${slug}].session_dates sd 
                 INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
                 INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
                 INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
-                WHERE ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword OR acs.acad_session LIKE @keyword
+                INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
+                WHERE ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword OR acs.acad_session LIKE @keyword OR p.program_name LIKE @keyword
 				ORDER BY sd.id DESC`)
         })
     }
@@ -86,13 +88,14 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session
+                .query(`SELECT sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, st.name as session_type, acs.acad_session, p.program_name
                 FROM [${slug}].session_dates sd 
                 INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
                 INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
                 INNER JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+                INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
                 ORDER BY sd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
