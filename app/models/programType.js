@@ -13,7 +13,7 @@ module.exports = class ProgramTypes {
 
     static fetchAll() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, name FROM [dbo].program_types`)
+            return pool.request().query(`SELECT  id, name FROM [dbo].program_types`)
         })
     }
 
