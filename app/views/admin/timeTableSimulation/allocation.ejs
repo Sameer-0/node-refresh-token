@@ -166,8 +166,9 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-                    //showSuccess(result);
-                    alert('SUCCESS')
+                    console.log('time table generated:::::::', result);
+                    showSuccess(result);
+                    // alert('SUCCESS')
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
@@ -239,8 +240,8 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-                    //showSuccess(result);
-                    alert('SUCCESS')
+                    showSuccess(result);
+                    // alert('SUCCESS')
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
@@ -260,13 +261,65 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-                    //showSuccess(result);
-                    alert('SUCCESS')
+                    showSuccess(result);
+                    // alert('SUCCESS')
                 }).catch(error => {
                     showError(error.responseJSON)
                 })
 
         })
+
+        function showError(errors) {
+                console.log(errors);
+                let simpleAlert = new SimpleAlert();
+                let obj = {
+                    title: errors.description,
+                    message: "",
+                    type: 'alert-success',
+                    buttons: {
+                        positive: {
+                            text: "Okay",
+                            action: function () {
+                                document.querySelector('.simple-alert').remove();
+                            }
+                        },
+                        negative: {
+                            text: "Cancel",
+                            action: function () {
+                                alert('Negative')
+                            }
+                        }
+                    }
+                }
+                simpleAlert.alert(obj);
+            }
+
+
+        function showSuccess(errors) {
+            console.log(errors);
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: "",
+                type: 'alert-success',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
+
 
 
     })

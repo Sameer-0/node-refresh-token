@@ -114,7 +114,7 @@ module.exports = {
 
     allocateFaculties: (req, res) => {        
         TimeTable.allocateFaculties(res.locals.slug).then(result => {
-            res.status(200).json({message: "Successful!"})
+            res.status(200).json({description: "Successful!"})
         })
     },
 }
