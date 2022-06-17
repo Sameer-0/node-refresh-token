@@ -19,12 +19,12 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([Rooms.bookedRooms(res.locals.slug), RoomTransactions.getCount(res.locals.slug)]).then(result => {
+        Promise.all([Rooms.bookedRooms(res.locals.slug), Rooms.bookedRoomsCount(res.locals.slug)]).then(result => {
             console.log('organization:::::::::::::::::', result[0].recordset)
             res.render('admin/rooms/index', {
                 bookedRoomList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
-                totalentries: result[0].recordset.length ? result[0].recordset.length : 0,
+                totalentries: result[1].recordset.length ? result[0].recordset.length : 0,
                 breadcrumbs: req.breadcrumbs,
             })
         }) 
@@ -197,6 +197,35 @@ module.exports = {
                 data:[]})
             }
         })
-    }
+    },
 
+
+    bookedRoompagination: (req, res, ) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+
+        Rooms.bookedRoomsPagination(res.locals.slug, req.body.pageNo).then(result => {
+            res.json({
+                status: "200",
+                message: "Quotes fetched",
+                data: result.recordset,
+                length: result.recordset.length
+            })
+        }).catch(error => {
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
 }
