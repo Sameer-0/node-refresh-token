@@ -14,7 +14,7 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, IIF(st.name IS NULL,'NA', st.name) as session_type, acs.acad_session
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, IIF(st.name IS NULL,'NA', st.name) as session_type, acs.acad_session, p.program_name
             FROM [${slug}].session_dates sd 
             INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
             INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
@@ -71,7 +71,7 @@ module.exports = class {
         console.log(rowcount, keyword, slug)
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, IIF(st.name IS NULL,'NA', st.name) as session_type, acs.acad_session
+                .query(`SELECT TOP ${Number(rowcount)} sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, IIF(st.name IS NULL,'NA', st.name) as session_type, acs.acad_session, p.program_name
                 FROM [${slug}].session_dates sd 
                 INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
                 INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
@@ -88,7 +88,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, IIF(st.name IS NULL,'NA', st.name) as session_type, acs.acad_session
+                .query(`SELECT sd.id, sd.program_session_lid, sd.session_type_lid, sd.start_date_id, sd.end_date_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, IIF(st.name IS NULL,'NA', st.name) as session_type, acs.acad_session, p.program_name
                 FROM [${slug}].session_dates sd 
                 INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
                 INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
