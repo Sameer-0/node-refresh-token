@@ -59,7 +59,7 @@ module.exports = class CourseDayRoomPreferences {
     static getAcadSession(program_lid, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            return request.input('program_lid', sql.Int, program_lid).query(`SELECT  p.id, p.program_name, ps.acad_session_lid, acs.acad_session FROM [asmsoc-mum].program_sessions ps 
+            return request.input('program_lid', sql.Int, program_lid).query(`SELECT  p.id, p.program_name, ps.acad_session_lid, acs.acad_session FROM [${slug}].program_sessions ps 
                 INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
                 INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
                 WHERE p.id = @program_lid`)
@@ -81,7 +81,7 @@ module.exports = class CourseDayRoomPreferences {
     static getCourseList(body, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            let stmt = `SELECT icw.id, icw.module_name, icw.program_id, p.id as program_lid FROM [asmsoc-mum].initial_course_workload icw
+            let stmt = `SELECT icw.id, icw.module_name, icw.program_id, p.id as program_lid FROM [${slug}].initial_course_workload icw
             INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
             WHERE p.id IN(${JSON.parse(body.program_lid)}) AND acad_session_lid IN(${JSON.parse(body.acad_session_lid)})`;
             console.log('stmt::::::::::::::', stmt)
@@ -138,7 +138,7 @@ module.exports = class CourseDayRoomPreferences {
     static getAcadSessionList(program_lids, slug) {
         return poolConnection.then(pool => {
             let request = pool.request();
-            let stmt = `SELECT  DISTINCT ps.acad_session_lid, acs.acad_session FROM [asmsoc-mum].program_sessions ps 
+            let stmt = `SELECT  DISTINCT ps.acad_session_lid, acs.acad_session FROM [${slug}].program_sessions ps 
             INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
             INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
             WHERE p.id IN(${program_lids})`;
@@ -152,7 +152,7 @@ module.exports = class CourseDayRoomPreferences {
             let request = pool.request()
             return request.input('programId', sql.Int, programid).query(`select ads.id as session_id, ads.acad_session , p.program_id from [${slug}].program_sessions ps
             INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
-            INNER JOIN [asmsoc-mum].programs p ON p.id = ps.program_lid
+            INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
             WHERE ps.program_lid = @programId`)
         })
     }
@@ -179,7 +179,7 @@ module.exports = class CourseDayRoomPreferences {
             return poolConnection.then(pool => {
                 return pool.request().query(`SELECT icw.id, icw.module_name,p.program_name, ads.acad_session, p.program_id,
     (SELECT id, RTRIM(LTRIM(division)) as division FROM [${slug}].divisions WHERE  divisions.course_lid = icw.id FOR JSON PATH) AS divisions,
-    (SELECT db.id, db.batch FROM [${slug}].division_batches db INNER JOIN [asmsoc-mum].divisions d ON d.id = db.division_lid WHERE d.course_lid = icw.id FOR JSON PATH) as division_batches
+    (SELECT db.id, db.batch FROM [${slug}].division_batches db INNER JOIN [${slug}].divisions d ON d.id = db.division_lid WHERE d.course_lid = icw.id FOR JSON PATH) as division_batches
     FROM [${slug}].initial_course_workload icw
     INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
     INNER JOIN [dbo].acad_sessions ads ON ads.id =icw.acad_session_lid`)
@@ -190,8 +190,8 @@ module.exports = class CourseDayRoomPreferences {
     //     return poolConnection.then(pool => {
     //         return pool.request().query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
     //         (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
-    //         (SELECT d.id, d.day_name from [asmsoc-mum].course_day_room_preferences cdrp
-    //             INNER JOIN [asmsoc-mum].days d ON d.id = cdrp.day_lid
+    //         (SELECT d.id, d.day_name from [${slug}].course_day_room_preferences cdrp
+    //             INNER JOIN [${slug}].days d ON d.id = cdrp.day_lid
     //             WHERE cdrp.program_lid = p.id AND cdrp.acad_session_lid = ads.id AND cdrp.course_lid = icw.id AND cdrp.batch_lid = db.id AND cdrp.day_lid = d.id
     //              FOR JSON PATH) AS days
     //     FROM [${slug}].initial_course_workload icw
@@ -205,22 +205,27 @@ module.exports = class CourseDayRoomPreferences {
 
     static icwForPreference(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
-            (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
-            (SELECT DISTINCT  d.id, d.day_name FROM [asmsoc-mum].course_day_room_preferences sp
-            INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
-            INNER JOIN [${slug}].days d ON d.id =  sp.day_lid
-            WHERE sp.program_lid = pf.program_lid AND sp.acad_session_lid = pf.acad_session_lid AND sp.course_lid = pf.course_lid AND sp.division_lid = pf.division_lid AND sp.batch_lid = pf.batch_lid AND sp.status = 1 AND pf.status = 1 and d.status = 1 FOR JSON PATH) AS days,
-            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [asmsoc-mum].course_day_room_preferences sp
-            INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
-            INNER JOIN [dbo].rooms r ON r.id =  sp.room_lid
-            INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id
-            WHERE sp.program_lid = pf.program_lid AND sp.acad_session_lid = pf.acad_session_lid AND sp.course_lid = pf.course_lid AND sp.division_lid = pf.division_lid AND sp.batch_lid = pf.batch_lid AND sp.status = 1 AND pf.status = 1 FOR JSON PATH) AS rooms
-            FROM [${slug}].initial_course_workload icw
-            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
-            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
-            INNER JOIN [${slug}].divisions d ON d.course_lid = icw.id
-            INNER JOIN [${slug}].division_batches db ON db.division_lid = d.id`)
+            return pool.request().query(`SELECT t1.program_lid, p.program_name, t1.acad_Session_lid, ads.acad_session, t1.course_lid, icw.module_name, t1.division_lid, d.division, t1.batch_lid, db.batch, et.name as batch_type, 
+            (
+            SELECT d.id, d.day_name FROM (SELECT DISTINCT day_lid FROM [${slug}].course_day_room_preferences icw WHERE icw.program_lid = t1.program_lid AND icw.acad_session_lid = t1.acad_session_lid AND icw.course_lid  = t1.course_lid AND icw.division_lid = t1.division_lid AND icw.batch_lid = t1.batch_lid) t1
+            INNER JOIN days d ON d.id = t1.day_lid FOR JSON PATH
+            ) AS days,
+            (
+            SELECT r.id, r.room_number, rt.name as room_type  FROM (SELECT DISTINCT room_lid FROM [${slug}].course_day_room_preferences WHERE program_lid = t1.program_lid AND acad_session_lid = t1.acad_session_lid AND course_lid  = t1.course_lid AND division_lid = t1.division_lid AND batch_lid = t1.batch_lid) t2 
+            INNER JOIN rooms r ON r.id = t2.room_lid
+            INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id
+            FOR JSON PATH
+            
+            )  AS rooms
+            FROM 
+            (SELECT DISTINCT program_lid, acad_session_lid, course_lid, division_lid, batch_lid FROM [${slug}].course_day_room_preferences) t1
+            INNER JOIN [${slug}].programs p ON p.id = t1.program_lid
+            INNER JOIN acad_sessions ads ON ads.id = t1.acad_session_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = t1.course_lid
+            INNER JOIN [${slug}].divisions d ON d.id = t1.division_lid
+            INNER JOIN [${slug}].division_batches db ON db.id = t1.batch_lid
+            INNER JOIN event_types et ON et.id = db.event_type_lid
+            `)
         })
     }
 
@@ -242,11 +247,11 @@ module.exports = class CourseDayRoomPreferences {
             let request = pool.request()
             return request.input('programId', sql.Int, programId).query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
             (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
-            (SELECT DISTINCT  d.id, d.day_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT  d.id, d.day_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [${slug}].days d ON d.id =  sp.day_lid
             WHERE sp.program_lid = pf.program_lid AND sp.acad_session_lid = pf.acad_session_lid AND sp.course_lid = pf.course_lid AND sp.division_lid = pf.division_lid AND sp.batch_lid = pf.batch_lid AND sp.status = 1 AND pf.status = 1 and d.status = 1 FOR JSON PATH) AS days,
-            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [dbo].rooms r ON r.id =  sp.room_lid
             INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id
@@ -284,11 +289,11 @@ module.exports = class CourseDayRoomPreferences {
             .input('sessionId', sql.Int, body.sessionId)
             .query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
             (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
-            (SELECT DISTINCT  d.id, d.day_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT  d.id, d.day_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [${slug}].days d ON d.id =  sp.day_lid
             WHERE sp.program_lid = pf.program_lid AND sp.acad_session_lid = pf.acad_session_lid AND sp.course_lid = pf.course_lid AND sp.division_lid = pf.division_lid AND sp.batch_lid = pf.batch_lid AND sp.status = 1 AND pf.status = 1 and d.status = 1 FOR JSON PATH) AS days,
-            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [dbo].rooms r ON r.id =  sp.room_lid
             INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id
@@ -322,11 +327,11 @@ module.exports = class CourseDayRoomPreferences {
             return request.input('moduleId', sql.Int, moduleId)
             .query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
             (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
-            (SELECT DISTINCT  d.id, d.day_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT  d.id, d.day_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [${slug}].days d ON d.id =  sp.day_lid
             WHERE sp.program_lid = pf.program_lid AND sp.acad_session_lid = pf.acad_session_lid AND sp.course_lid = pf.course_lid AND sp.division_lid = pf.division_lid AND sp.batch_lid = pf.batch_lid AND sp.status = 1 AND pf.status = 1 and d.status = 1 FOR JSON PATH) AS days,
-            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [dbo].rooms r ON r.id =  sp.room_lid
             INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id
@@ -365,11 +370,11 @@ module.exports = class CourseDayRoomPreferences {
                 .input('moduleId', sql.Int, body.module_id)
             .query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
             (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
-            (SELECT DISTINCT  d.id, d.day_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT  d.id, d.day_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [${slug}].days d ON d.id =  sp.day_lid
             WHERE sp.program_lid = pf.program_lid AND sp.acad_session_lid = pf.acad_session_lid AND sp.course_lid = pf.course_lid AND sp.division_lid = pf.division_lid AND sp.batch_lid = pf.batch_lid AND sp.status = 1 AND pf.status = 1 and d.status = 1 FOR JSON PATH) AS days,
-            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [asmsoc-mum].course_day_room_preferences sp
+            (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [${slug}].course_day_room_preferences sp
             INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
             INNER JOIN [dbo].rooms r ON r.id =  sp.room_lid
             INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id
@@ -412,11 +417,11 @@ module.exports = class CourseDayRoomPreferences {
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT icw.id, icw.module_name, p.program_name, ads.acad_session, p.program_id, p.id as program_lid, ads.id as session_id, icw.id as module_id, d.division, d.id as division_id, db.batch, db.id as batch_id,
                 (SELECT et.name from [dbo].event_types et WHERE et.id = db.event_type_lid) as batch_event,
-                (SELECT DISTINCT  d.id, d.day_name FROM [asmsoc-mum].course_day_room_preferences sp
+                (SELECT DISTINCT  d.id, d.day_name FROM [${slug}].course_day_room_preferences sp
                 INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
                 INNER JOIN [${slug}].days d ON d.id =  sp.day_lid
                 WHERE sp.program_lid = pf.program_lid AND sp.acad_session_lid = pf.acad_session_lid AND sp.course_lid = pf.course_lid AND sp.division_lid = pf.division_lid AND sp.batch_lid = pf.batch_lid AND sp.status = 1 AND pf.status = 1 and d.status = 1 FOR JSON PATH) AS days,
-                (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [asmsoc-mum].course_day_room_preferences sp
+                (SELECT DISTINCT r.id, r.room_number, rt.name as room_type_name FROM [${slug}].course_day_room_preferences sp
                 INNER JOIN [${slug}].course_day_room_preferences pf ON pf.id = sp.id
                 INNER JOIN [dbo].rooms r ON r.id =  sp.room_lid
                 INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id
