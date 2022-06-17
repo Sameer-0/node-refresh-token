@@ -7,16 +7,21 @@ const res = require('express/lib/response');
 const Divisions = require('../../../models/Divisions')
 const DivisionBatches = require('../../../models/DivisionBatches')
 const Settings = require('../../../models/Settings')
+const CourseWorkload = require('../../../models/CourseWorkload')
+const Programs = require('../../../models/Programs')
 const isJsonString = require('../../../utils/util')
 
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([DivisionBatches.fetchAll(1000, res.locals.slug), DivisionBatches.getCount(res.locals.slug)]).then(result => {
+        let slugName = res.locals.slug;
+        Promise.all([DivisionBatches.fetchAll(1000, slugName), DivisionBatches.getCount(slugName), CourseWorkload.fetchAll(1000, slugName), Programs.fetchAll(10000, slugName)]).then(result => {
             console.log('divisionBatchList', result[0].recordset)
             res.render('admin/divisions/batches', {
                 divisionBatchList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
+                moduleList: result[2].recordset,
+                programList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
 
             })
@@ -142,5 +147,57 @@ module.exports = {
                 })
             }
         })
-    }
+    },
+
+    divisionByModuleId: (req, res) => {
+        DivisionBatches.batchByModuleId(req.body, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Division Name",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    result: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    batchByProgramId: (req, res) => {
+        Promise.all([DivisionBatches.batchByProgramId(req.body.programid, res.locals.slug), CourseWorkload.getmoduleByProgramId(req.body.program_id, res.locals.slug)]).then(result => {
+            console.log('result::::::::::', result[0])
+            res.json({
+                status: "200",
+                message: "success",
+                division: result[0].recordset,
+                moduleList: result[1].recordset,
+            })
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
 }

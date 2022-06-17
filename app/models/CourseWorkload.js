@@ -148,4 +148,11 @@ module.exports = class {
                 .execute(`[${slug}].[sp_delete_initial_course_workload]`)
         })
     }
+
+    static getmoduleByProgramId(programid, slug){
+        return poolConnection.then(pool => {
+            return pool.request().input('programId', sql.Int, programid)
+                .query(`select * from [${slug}].initial_course_workload where program_id  = @programId`)
+        })
+    }
 }
