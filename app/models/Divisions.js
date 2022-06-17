@@ -125,4 +125,34 @@ module.exports = class Divisions {
         })
     }
 
+
+    static divisionByModuleId(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('moduleId', sql.Int, body.moduleid)
+            .input('programId', sql.Int, body.programid)
+            .query(`SELECT  d.id, d.division, d.division_num, d.division_count, p.program_name, ads.acad_session, IIF(d.count_for_theory_batch IS NULL , 0, d.count_for_theory_batch) AS count_for_theory_batch, IIF(d.count_for_practical_batch IS NULL , 0 , d.count_for_practical_batch) AS count_for_practical_batch, IIF(d.count_for_tutorial_batch IS NULL ,0, d.count_for_tutorial_batch) AS count_for_tutorial_batch, IIF(d.count_for_workshop_batch IS NULL ,0 , d.count_for_workshop_batch) AS count_for_workshop_batch, icw.module_name
+            FROM [${slug}].divisions d 
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            WHERE icw.id = @moduleId AND p.id = @programId
+            ORDER BY d.division_num ASC`)
+        })
+    }
+
+    static divisionByProgramId(programid, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('programId', sql.Int, programid)
+            .query(`SELECT  d.id, d.division, d.division_num, d.division_count, p.program_name, ads.acad_session, IIF(d.count_for_theory_batch IS NULL , 0, d.count_for_theory_batch) AS count_for_theory_batch, IIF(d.count_for_practical_batch IS NULL , 0 , d.count_for_practical_batch) AS count_for_practical_batch, IIF(d.count_for_tutorial_batch IS NULL ,0, d.count_for_tutorial_batch) AS count_for_tutorial_batch, IIF(d.count_for_workshop_batch IS NULL ,0 , d.count_for_workshop_batch) AS count_for_workshop_batch, icw.module_name
+            FROM [${slug}].divisions d 
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            WHERE p.id = @programId
+            ORDER BY d.division_num ASC`)
+        })
+    }
+
 }

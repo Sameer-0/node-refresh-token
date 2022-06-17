@@ -19,11 +19,12 @@ module.exports = class DivisionBatches {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code from [${slug}].division_batches db
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code, p.program_name, ads.acad_session from [${slug}].division_batches db
             INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
             INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
             INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
-            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id`)
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id =  icw.acad_session_lid`)
         })
     }
 
@@ -85,11 +86,12 @@ module.exports = class DivisionBatches {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT  db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code from [${slug}].division_batches db
+                .query(`SELECT  db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code, p.program_name, ads.acad_session from [${slug}].division_batches db
                 INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
                 INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
                 INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
                 INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+                INNER JOIN [dbo].acad_sessions ads ON ads.id =  icw.acad_session_lid
                 ORDER BY d.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -97,11 +99,12 @@ module.exports = class DivisionBatches {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code from [${slug}].division_batches db
+                .query(`SELECT TOP ${Number(rowcount)} db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code, p.program_name, ads.acad_session from [${slug}].division_batches db
                 INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
                 INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
                 INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
-                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id WHERE et.name LIKE @keyword OR icw.module_name LIKE @keyword OR p.program_code LIKE @keyword OR icw.module_id LIKE @keyword ORDER BY db.id DESC`)
+                INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+                INNER JOIN [dbo].acad_sessions ads ON ads.id =  icw.acad_session_lid WHERE et.name LIKE @keyword OR icw.module_name LIKE @keyword OR p.program_code LIKE @keyword OR icw.module_id LIKE @keyword ORDER BY db.id DESC`)
         })
     }
 
@@ -161,6 +164,37 @@ module.exports = class DivisionBatches {
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_delete_division_batch]`)
+        })
+    }
+
+
+    static batchByModuleId(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('moduleId', sql.Int, body.moduleid)
+            .input('programId', sql.Int, body.programid)
+            .query(`SELECT  db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code, p.program_name, ads.acad_session from [${slug}].division_batches db
+            INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
+            INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
+            INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id =  icw.acad_session_lid
+            WHERE p.id = @programId AND icw.id = @moduleId`)
+        })
+    }
+
+
+    static batchByProgramId(programid, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('programId', sql.Int, programid)
+            .query(`SELECT  db.id,  db.batch, db.divison_count, db.batch_count, db.input_batch_count, db.faculty_count, div.division, et.name as event_name, icw.module_name ,icw.module_id, p.program_code, p.program_name, ads.acad_session from [${slug}].division_batches db
+            INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
+            INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
+            INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id =  icw.acad_session_lid
+            WHERE p.id = @programId`)
         })
     }
 }
