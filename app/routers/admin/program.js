@@ -9,6 +9,7 @@ const program = require("../../controllers/admin/programs/program")
 const days = require("../../controllers/admin/programs/days")
 const sessions = require("../../controllers/admin/programs/sessions")
 const programType = require('../../controllers/admin/programs/programType')
+const timePreference = require('../../controllers/admin/programs/timePreference')
 const validate = require('../../middlewares/validate')
 
 
@@ -49,6 +50,16 @@ router.post('/programs/sessions/search', validate('search'), sessions.search)
 router.post('/programs/sessions/refresh', sessions.refresh)
 //router.post('/programs/sessions/refresh', sessions.refresh)
 router.post('/programs/sessions/program-sessions', sessions.getSessionsByProgram)
-router.post('/programs/sessions/unlocked-program-sessions', sessions.getUnloackedSessionsByProgram)
+router.post('/programs/sessions/unlocked-program-sessions', sessions.getUnlockedSessionsByProgram)
+router.post('/programs/sessions/sessions-for-program', sessions.getSessions)
+
+
+//PROGRAM SESSION TIME PREFERENCE
+router.get('/program-session-time-preference', timePreference.getPage)
+router.post('/program-session-time-preference/create', timePreference.create)
+router.post('/program-session-time-preference/findone', timePreference.findOne)
+router.post('/program-session-time-preference/update', timePreference.update)
+router.post('/program-session-time-preference/delete', timePreference.delete)
+
 
 module.exports = router;

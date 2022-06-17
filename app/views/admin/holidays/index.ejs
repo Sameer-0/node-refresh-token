@@ -6,7 +6,6 @@
 
 <div class="main-content">
     <div class="breadcrumbs-container">
-    
         <ul class="breadcrumb">
             <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
                 <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
@@ -30,7 +29,7 @@
 
     <div class="card table-card mb-3">
         <div class="card-header table-card-header text-uppercase ">
-            <h5>FETCH HOLIDAY FORM SAP</h5>
+            <h5>FETCH HOLIDAY FROM SAP</h5>
         </div>
         <div class="card-body">
             <div class="d-flex bd-highlight">
@@ -38,8 +37,8 @@
                    <h3></h3>
                 </div>
                 <div class="p-2 bd-highlight">
-                    <label>Select Year</label>
-                    <input type="text" class="form-control" id="acadYear" value="<%- acadYear %>">
+                    <label>Academic Year</label>
+                    <input type="text" class="form-control" id="acadYear" value="<%- acadYear %>" disabled>
                 </div>
                 <div class="p-2 bd-highlight mt-2">
                     <button class="btn btn-danger mt-3 fetchFromSAP"><i class="fa fa-download"></i> Fetch From SAP</button>
@@ -188,7 +187,7 @@
 </div>
 
 <%- include("../partials/footer") %>
-<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>
+
 
 <script>
     $(document).ready(function () {
@@ -211,9 +210,10 @@
 
             ajaxApi(ApiObj).then(result => {
                 console.log('Response ::::::::::::::::::::::', result.data)
+                showSuccess(result)
             }).catch(error => {
                 console.log('Error ::::::::::::::::::::::', error)
-                // showError(error.responseJSON)
+                showError(error.responseJSON)
             })
         })
 

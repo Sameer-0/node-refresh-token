@@ -1,7 +1,7 @@
 <%- include("../partials/head") %>
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
-<!--Notificaion icon-->
+<!--Notification icon-->
 <!--HEADER END-->
 
 <div class="main-content">
@@ -22,7 +22,7 @@
                 <h5>Batches</h5>
             </div>
             <div>
-                <button class="btn btn-danger ms-auto generate-division-batch-btn"><i class="fa-solid fa-rotate"></i> Genearte Division Batches</button>
+                <button class="btn btn-danger ms-auto generate-division-batch-btn"><i class="fa-solid fa-rotate"></i> Generate Division Batches</button>
                 <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
@@ -41,13 +41,16 @@
                 <thead>
                     <th>#</th>
                     <th>Division</th>
-                    <th>Batch</th>
                     <th>Module Name</th>
+                    <th>Module ID</th>
+                    <th>Program Code</th>
+                    <th>Batch</th>
                     <th>Event Name</th>
                     <th>Division Count</th>
                     <th>Batch Count</th>
                     <th>Input Batch Count</th>
                     <th>Faculty Count</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     <%let count = 1;%>
@@ -55,13 +58,16 @@
                     <tr>
                         <td><%- count++ %><input type="hidden" class="form-control" name="batch_id" value="<%- batch.id %>"></td>
                         <td><%- batch.division %></td>
-                        <td><%- batch.batch%></td>
                         <td><%- batch.module_name %></td>
+                        <td><%- batch.module_id %></td>
+                        <td><%- batch.program_code %></td>
+                        <td><%- batch.batch%></td>
                         <td><%- batch.event_name %></td>
                         <td><%- batch.divison_count %></td>
                         <td><%- batch.batch_count %></td>
                         <td><%- batch.input_batch_count %></td>
                         <td><input type="number" class="form-control" name="faculty_count" value="<%- batch.faculty_count %>"></td>
+                        <td><a data-id="<%- batch.id %>" class="text-danger delete-division-batch"><span class="fa fa-trash"></span></a></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -166,6 +172,26 @@
                 showError(error.responseJSON)
             })
         })
+
+
+        //DELETE DIVISION BATCH
+        $("#batchesTable").on('click','.delete-division-batch',function(){
+            let id = $(this).attr("data-id")
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/divisions/batches/delete',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
         
 
 
@@ -174,13 +200,16 @@
                 <thead>
                     <th>#</th>
                     <th>Division</th>
-                    <th>Batch</th>
                     <th>Module Name</th>
+                    <th>Module ID</th>
+                    <th>Program Code</th>
+                    <th>Batch</th>
                     <th>Event Name</th>
                     <th>Division Count</th>
                     <th>Batch Count</th>
                     <th>Input Batch Count</th>
                     <th>Faculty Count</th>
+                    <th>Action</th>
                 </thead>`;
             if (divisionBatchList.length > 0) {
                 let count = 1;
@@ -189,19 +218,22 @@
                         `<tr>
                         <td>${count++}<input type="hidden" class="form-control" name="batch_id" value="${batch.id}"></td>
                         <td>${batch.division}</td>
-                        <td>${batch.batch}</td>
                         <td>${batch.module_name}</td>
+                        <td>${batch.module_id}</td>
+                        <td>${batch.program_code}</td>
+                        <td>${batch.batch}</td>
                         <td>${batch.event_name}</td>
                         <td>${batch.divison_count}</td>
                         <td>${batch.batch_count}</td>
                         <td>${batch.input_batch_count}</td>
                         <td><input type="number" class="form-control" name="faculty_count" value="${batch.faculty_count}"></td>
+                        <td><a data-id="${batch.id}" class="text-danger delete-division-batch"><span class="fa fa-trash"></span></a></td>
                     </tr>`
                 }
             } else {
                 AjaxTable +=
                     ` <tr>
-                                <td colspan="8">No Data Found</td>
+                                <td colspan="10">No Data Found</td>
                             </tr>`;
             }
             AjaxTable += `<tbody></table>`
@@ -215,7 +247,7 @@
             let obj = {
                 title : errors.description,
                 message: errors.data,
-                type: 'alert-success',
+                type: 'alert-danger',
                 buttons: {
                     positive:{
                         text: "Okay",

@@ -429,4 +429,20 @@ module.exports = class CourseDayRoomPreferences {
             WHERE icw.module_name LIKE @keyword OR p.program_name LIKE @keyword OR ads.acad_session LIKE @keyword OR p.program_id LIKE @keyword ORDER BY icw.id DESC`)
         })
     }
+
+    static occupiedRoomDays(slug, body){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('batches', sql.Int, body.batches)
+            .input('divisions', sql.Int, body.divisions)
+            .input('moduleId', sql.Int, body.moduleId)
+            .input('sessionId', sql.Int, body.sessionId)
+            .input('programId', sql.Int, body.programId)
+                .query(`SELECT DISTINCT d.day_name, r.room_number from [${slug}].course_day_room_preferences cdrp
+                INNER JOIN [${slug}].days d ON d.id =  cdrp.day_lid
+                INNER JOIN [dbo].rooms r ON r.id = cdrp.room_lid
+                WHERE cdrp.program_lid = @programId and cdrp.acad_session_lid = @sessionId AND cdrp.course_lid = @moduleId
+                AND cdrp.division_lid = @divisions AND cdrp.batch_lid = @batches`)
+        })
+    }
 }

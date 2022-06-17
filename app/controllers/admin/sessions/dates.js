@@ -200,15 +200,10 @@ module.exports = {
     },
     
     fetchFromSAP: async (req, res, next) => {
-      
-
         var wsdlUrl = path.join(
             process.env.WSDL_PATH,
-            "zacademic_period_jp_bin_fed110_20200806.wsdl"
+            "zacademic_period_jp_bin_sep_20220509.wsdl"
         );
-
-        console.log('wsdlUrl::::::::::::::::', wsdlUrl)
-
 
         let soapClient = await new Promise(resolve => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
@@ -219,26 +214,33 @@ module.exports = {
             })
         })
 
-        let courseWorkloadList = await new Promise(async resolve => {
+        let sessionDate = await new Promise(async resolve => {
 
            // console.log('soapClient::::::',soapClient)
             await soapClient.ZacademicPeriodJp({
                     Campusid: res.locals.campusIdSap,
-                    Acadyear: "2022",
+                    Acadyear: res.locals.acadmicYear,
                     Schoolobjectid: res.locals.organizationIdSap
                 },
                 async function (err, result) {
                     let output = await result;
-                    console.log('output::::::::::',output)
+                   // console.log('output::::::::::',output.Output.item)
                     //resolve(output.WORKLOAD_DETAILS ? output.WORKLOAD_DETAILS.item : []);
-                    resolve(output)
+                    resolve(output.Output.item)
                 });
         })
 
-        console.log('courseWorkloadList:::::::::', courseWorkloadList)
+        console.log('sessionDate:::::::::', sessionDate)
+        sessionDate.forEach(function(item){
+            let sql = `INSERT into [asmsoc-mum].session_dates (program_session_lid, session_type_lid, start_date_id, end_date_id)
+            values(${item.Acadsession}, 1, '${item.Startdate}','${item.Enddate}')`;
+            console.log(sql)
 
-        if(!courseWorkloadList){
-            console.log('Here::::::::::::',courseWorkloadList)
+        })
+ 
+            //console.log('Here::::::::::::',sessionDate)
+
+            
         // CourseWorkload.fetchCourseWorklaodSap(JSON.stringify(courseWorkloadList), req.session.userId, res.locals.slug).then(data => {
         //     console.log('Data>>> ', data)
         //     console.log("acadSessionLif>>> ", acadSessionLid)
@@ -248,18 +250,5 @@ module.exports = {
         // }).catch(err => {
         //     console.log(err)
         // });
-        return  res.status(200).json({
-            "status" : 200,
-            "description" : "APi Integrated",
-            "data": []
-            })
-        }else{
-            console.log('Here Else::::::::::::')
-          return  res.status(500).json({
-                "status" : 500,
-                "description" : "Something went wrong try after some time",
-                "data": []
-                })
-        }
     },
 }

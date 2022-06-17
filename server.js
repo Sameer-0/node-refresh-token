@@ -4,7 +4,6 @@ require('dotenv').config()
 const http = require('http');
 const https = require("https");
 const path = require('path');
-const os = require('os')
 const setRouter = require("./router")
 const {
     verifySubdomain
@@ -24,9 +23,8 @@ const {
 
 let sslOptions = {
     pfx: readFileSync(__dirname + `/cert/server.pfx`),
-    passphrase: 'time#2021'
+    passphrase: '1234'
 };
-
 
 
 //redis
@@ -179,20 +177,17 @@ app.use(function (req, res) {
 //server.listen(process.env.APP_PORT);
 
 
-console.log('HOSTNAME::::::::',os.hostname())
 
+<<<<<<< HEAD
 if (os.hostname() == 'KHG1519CPU0381') {
     const server = http.createServer(app);
+=======
+
+if (process.env.APP_ENV === 'PRODUCTION') {
+    const server = https.createServer(sslOptions, app);
+>>>>>>> refs/remotes/origin/surajvsk
     server.listen(process.env.APP_PORT);
 } else {
-    const server = https.createServer(sslOptions, app);
+    const server = http.createServer(app);
     server.listen(process.env.APP_PORT);
 }
-
-// if (process.env.APP_ENV === 'PRODUCTION') {
-//     const server = https.createServer(sslOptions, app);
-//     server.listen(process.env.APP_PORT);
-// } else {
-//     const server = http.createServer(app);
-//     server.listen(process.env.APP_PORT);
-// }

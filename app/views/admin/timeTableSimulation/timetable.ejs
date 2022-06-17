@@ -1,3 +1,6 @@
+
+
+
 <%- include("../partials/head") %>
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
@@ -331,6 +334,7 @@
 
                                 })
 
+
                                 //DROP EVENT SURAJ
                                 //   $(document).on('click', '#drop-slot', function() 
                                 $("#slotModal").on('click', '#drop-slot', function () {
@@ -445,6 +449,10 @@
                                             currentTd.attr('data-program-name', programName)
                                             currentTd.attr('data-start-time', startTimeText)
                                             currentTd.attr('data-end-time', endTimeText)
+                                            currentTd.attr('draggable', true)
+                                            currentTd.addClass('draggableTd dragtargetTd')
+
+                                         
                                             currentTd.html(
                                                 `${moduleName}<br>${divisionName} (${batchName})<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`
                                             )
@@ -457,9 +465,6 @@
                                         })
 
                                 })
-
-
-
 
 
                                 //FUNCTION FOR DISPLAYING TIMETABLE     
@@ -490,10 +495,10 @@
                                     }
 
                                     tableStr += '</tbody>'
-                                    console.log('tableStr:::::::::::::::', tableStr)
+                                    // console.log('tableStr:::::::::::::::', tableStr)
                                     $('.timetable-simulation').html(tableStr)
 
-
+                                    console.log('eventslist:::::', eventList)
                                     //  setTimeout(function () {
                                     for (let event of eventList) {
 
@@ -520,7 +525,6 @@
                                     }
 
                                 }
-
 
 
                                 function showError(errors) {
@@ -575,36 +579,73 @@
                                 }
 
 
-
-                            //DRAG FUNCTION
+                                //DRAG FUNCTION
 
                                 function initDrag(){
-                                    let dragTd, targetTd, dragindex;
+                                    let dragTd, targetTd, dragTdLid, targetTdLid, dragContent, targetContent, dragindex;
+
                                     $(".timetable-simulation").on('dragover','.draggableTd',function(event){
                                     event.preventDefault();  
                                     event.stopPropagation();
-                                    console.log('dragover',$(this).text())
-                                    $(this).addClass('dragging'+$(this).text());
+                                    // console.log('dragover', this)
+                                    // console.log('dragover',$(this).text())
+                                    // $(this).addClass('dragging'+$(this).text());
+                                })
+
+                                $(".timetable-simulation").on('dragstart','.draggableTd',function(event){
+                                    
+                                    // console.log('dragover',$(this).text())
+                                    // $(this).addClass('dragging'+$(this).text());
+                                    dragTd = $(this);
+                                    dragTdLid = $(this).attr('data-lid');
+                                    dragContent = $(this).text();
+                                    console.log('dragstart', dragTd)
                                 })
 
                                 $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
                                     event.preventDefault();  
                                     event.stopPropagation();
-                                    $(this).removeClass('dragging');
+                                    // $(this).removeClass('dragging');
+                                    // console.log('dragleave', this)
                                 });
 
                                 $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
-                                        event.preventDefault();  
-                                        event.stopPropagation();
-                                        console.log($(this))
-                                        console.log('Dropped',$(this).text())
-                                        alert("Dropped!"+$(this).text());
+                                    event.preventDefault();  
+                                    event.stopPropagation();
+                                    targetTd = $(this);
+                                    targetTdLid = $(this).attr('data-lid');
+                                    targetContent = $(this).text();
+                                    console.log('dropppp', targetTd)
+                                    
+                                    let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
+                                                
+
+                                    console.log('JSON::::::::::::::::', obj)
+
+                                    let ApiObj = {
+                                        url: '/admin/time-table-simulation/time-table/swap-events',
+                                        type: 'POST',
+                                        data: {
+                                            inputJSON: JSON.stringify(obj)
+                                        },
+                                        dataType: 'JSON'
+                                    }
+                                    console.log('target',targetContent)
+                                    console.log('dragTd',dragContent)
+                                    ajaxApi(ApiObj)
+                                    .then((result) => {
+                                        targetTd.html(dragContent);
+                                        dragTd.html(targetContent);
+                                        showSuccess(result);
+                                    
+                                    })
+                                    .catch(err => {console.log('err')
+                                        showError(err);
+                                })
+
+
                                 });
                                 }
-                              
-
-                              
-
                             })
                         </script>
                         <%- include("../partials/footerEnd") %>

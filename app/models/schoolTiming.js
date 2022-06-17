@@ -34,7 +34,7 @@ module.exports = class schoolTiming {
     }
 
     static update(inputJSON, slug, userid) {
-        console.log('JSON::::::::::>>>>>>',JSON.stringify(inputJSON))
+        console.log('JSON::::::::::>>>>>>', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -114,6 +114,16 @@ module.exports = class schoolTiming {
     static fetchAllBySettingName(slug) {
         return poolConnection.then(pool => {
             return pool.request().execute(`[${slug}].[school_timing_list]`)
+        })
+    }
+
+
+    static delete(slug, body) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('start_time_lid', sql.Int, body.start_time_lid)
+                .input('end_time_lid', sql.Int, body.end_time_lid)
+                .query(`DELETE FROM [${slug}].school_timings WHERE slot_start_lid = @start_time_lid and slot_end_lid = @end_time_lid`)
         })
     }
 }

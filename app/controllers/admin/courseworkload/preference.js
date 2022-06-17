@@ -20,7 +20,7 @@ module.exports = {
 
     getPage: (req, res) => {
         Promise.all([Days.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug), AcadSession.sessionForCoursePreferences(res.locals.slug), CourseWorkload.fetchAll(1000,res.locals.slug), Divisions.getAll(res.locals.slug)]).then(result => {
-           console.log('result::::::::::',result[1].recordset)
+         //  console.log('result::::::::::',result[1].recordset)
             res.render('admin/courseworkload/preference', {
                 dayList: result[0].recordset,
                 icwList: result[1].recordset,
@@ -304,6 +304,39 @@ module.exports = {
         }).catch(error => {
             console.log(error)
             res.status(500).json(error.originalError.info.message)
+        })
+    },
+
+    occupiedRoomDays:(req, res)=>{
+        console.log('GET OCCUPIED ROOMS',req.body)
+        CourseDayRoomPreferences.occupiedRoomDays(res.locals.slug, req.body).then(result=>{
+            console.log('result::::::::::::::::>>>')
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Sucessfull",
+                    data: result.recordset,
+                    length: result.recordset.length
+
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
         })
     }
 }

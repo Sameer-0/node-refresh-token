@@ -37,7 +37,7 @@
             </div>
            
             <div>
-                 <button class="btn btn-danger ms-auto generate-divisions-btn"><i class="fa-solid fa-rotate"></i> Genearte Division</button>
+                 <button class="btn btn-danger ms-auto generate-divisions-btn"><i class="fa-solid fa-rotate"></i> Generate Division</button>
                 <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
@@ -54,6 +54,8 @@
                 <thead>
                     <th>#</th>
                     <th>Module Name</th>
+                    <th>Program Name</th>
+                    <th>Academic Session</th>
                     <th>Division</th>
                     <th>Division Number</th>
                     <th>Student count</th>
@@ -61,6 +63,7 @@
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                     <%let count = 1;%>
@@ -68,8 +71,12 @@
                     <tr>
                         <td><%- count++ %><input class="form-control rounded-0" type="hidden" name="division_id" value="<%-division.id%>"></td>
                         <td>
-                            <%- division.module_name%>
+                            <%- division.module_name %>
                         </td>
+                        <td>
+                            <%- division.program_name %>
+                        </td>
+                        <td><%- division.acad_session %></td>
                         <td><%- division.division%></td>
                         <td><%- division.division_num%></td>
                         <td><%- division.division_count%></td>
@@ -77,7 +84,7 @@
                         <td><input class="form-control rounded-0" name="count_for_practical_batch" value="<%-division.count_for_practical_batch%>"></td>
                         <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="<%-division.count_for_tutorial_batch%>"></td>
                         <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="<%-division.count_for_workshop_batch%>"></td>
-                       
+                        <td><a data-id="<%-division.id%>" class="text-danger delete-division"><span class="fa fa-trash"></span></a></td>
                     </tr>
                     <%}%>
                 </tbody>
@@ -245,11 +252,34 @@
         }, 500));
 
 
+
+        //DELETE DIVISION BATCH
+        $("#divisionTable").on('click','.delete-division',function(){
+            let id = $(this).attr("data-id")
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/divisions/delete',
+                data: {
+                    id: id
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('sucess:::::::::', result)
+                showSuccess(result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
         function AjaxtTable(divisionList) {
             let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
                     <th>Module Name</th>
+                    <td>Program Name</td>
+                    <td>Academic Session</td>
                     <th>Division</th>
                     <th>Division Number</th>
                     <th>Student count</th>
@@ -257,6 +287,7 @@
                     <th>Count for practical batch</th>
                     <th>Count for tutorial batch</th>
                     <th>Count for workshop batch</th>
+                    <th>Action</th>
                 </thead>`;
             if (divisionList.length > 0) {
                 let count = 1;
@@ -268,6 +299,8 @@
                         <td>
                             ${division.module_name}
                         </td>
+                        <td>${division.program_name}</td>
+                        <td>${division.acad_session}</td>
                         <td>${division.division}</td>
                         <td>${division.division_num}</td>
                         <td>${division.division_count}</td>
@@ -275,7 +308,7 @@
                         <td><input class="form-control rounded-0" name="count_for_practical_batch" value="${division.count_for_practical_batch}"></td>
                         <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="${division.count_for_tutorial_batch}"></td>
                         <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="${division.count_for_workshop_batch}"></td>
-                       
+                        <td><a data-id="${division.id}" class="text-danger delete-division"><span class="fa fa-trash"></span></a></td>
                     </tr>`
                 }
             } else {

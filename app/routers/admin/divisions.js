@@ -15,7 +15,7 @@ router.post('/divisions/pagination', index.pagination)
 router.post('/divisions/change', index.changestatus)
 router.post('/divisions/getAll', index.getAll)
 router.post('/divisions/generate-division', index.generateDivision)
-
+router.post('/divisions/delete', index.delete)
 
 //BATCHES
 router.get('/divisions/batches', batch.getPage)
@@ -25,4 +25,7 @@ router.post('/divisions/batches/changestatus', batch.changestatus)
 router.post('/divisions/batches/getAll', batch.getAll)
 router.post('/divisions/batches/update', batch.update)
 router.post('/divisions/batches/generate-batches-division', batch.generateBatch)
+router.post('/divisions/batches/delete', batch.delete)
+
+
 module.exports = router

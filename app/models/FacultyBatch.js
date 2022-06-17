@@ -44,6 +44,8 @@ module.exports = class FacultyBatch {
         })
     }
 
+
+
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()

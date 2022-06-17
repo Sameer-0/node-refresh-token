@@ -27,7 +27,7 @@ router.post('/courseworkload/workload/search', courseworkload.search)
 router.post('/courseworkload/workload/pagination', courseworkload.pagination)
 router.post('/courseworkload/workload/update', validate('JsonValidator'), courseworkload.update)
 router.post('/courseworkload/workload/create', validate('JsonValidator'), courseworkload.create)
-
+router.post('/courseworkload/workload/delete',  courseworkload.delete)
 
 //Course preference
 
@@ -44,5 +44,5 @@ router.post('/courseDayRoomPreference/find-semester-by-programid',  preference.f
 router.post('/courseDayRoomPreference/find-module-by-programid-semesterid',  preference.findModuleByProgramIdSemId)
 router.post('/courseDayRoomPreference/find-division-by-moduleid',  preference.findDivisionByModuleId)
 router.post('/courseDayRoomPreference/filter-records',  preference.filterPreference)
-
+router.post('/courseDayRoomPreference/occupiedroomdays', preference.occupiedRoomDays)
 module.exports = router

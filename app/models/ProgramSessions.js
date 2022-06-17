@@ -7,9 +7,11 @@ const {
 module.exports = class {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} ps.id, p.program_name, p.program_code, adc.acad_session FROM [${slug}].program_sessions ps 
+            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowcount)} ps.id, p.program_name, p.program_code, adc.acad_session, cww.acad_year FROM [${slug}].program_sessions ps 
             INNER JOIN [${slug}].programs p ON ps.program_lid = p.id
             INNER JOIN [dbo].acad_sessions adc ON adc.id = ps.acad_session_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.program_id =  p.program_id
+            INNER JOIN [${slug}].course_work_wsdl cww ON cww.id = icw.course_wsdl_lid
             ORDER BY ps.id DESC`)
         })
     }
@@ -18,9 +20,11 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT ps.id, p.program_name, p.program_code, adc.acad_session FROM [${slug}].program_sessions ps 
+                .query(`SELECT DISTINCT ps.id, p.program_name, p.program_code, adc.acad_session, cww.acad_year FROM [${slug}].program_sessions ps 
                 INNER JOIN [${slug}].programs p ON ps.program_lid = p.id
                 INNER JOIN [dbo].acad_sessions adc ON adc.id = ps.acad_session_lid
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.program_id =  p.program_id
+                INNER JOIN [${slug}].course_work_wsdl cww ON cww.id = icw.course_wsdl_lid
                 ORDER BY ps.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -28,10 +32,12 @@ module.exports = class {
     static search(rowcount, keyword, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} ps.id, p.program_name, p.program_code, adc.acad_session FROM [${slug}].program_sessions ps 
+                .query(`SELECT DISTINCT TOP ${Number(rowcount)} ps.id, p.program_name, p.program_code, adc.acad_session, cww.acad_year FROM [${slug}].program_sessions ps 
                 INNER JOIN [${slug}].programs p ON ps.program_lid = p.id
                 INNER JOIN [dbo].acad_sessions adc ON adc.id = ps.acad_session_lid
-                WHERE p.program_name LIKE @keyword OR adc.acad_session LIKE @keyword ORDER BY ps.id DESC`)
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.program_id =  p.program_id
+                INNER JOIN [${slug}].course_work_wsdl cww ON cww.id = icw.course_wsdl_lid
+                WHERE p.program_name LIKE @keyword OR adc.acad_session LIKE @keyword OR cww.acad_year LIKE @keyword ORDER BY ps.id DESC`)
         })
     }
 
@@ -88,13 +94,23 @@ module.exports = class {
         })
     }
 
-    static getUnockedSessionByProgram(slug, programLid) {
+    static getUnlockedSessionByProgram(slug, programLid) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('programLid', sql.Int, programLid)
-                .query(`SELECT ads.id, ads.acad_session, ps.program_lid FROM [${slug}].program_sessions ps 
+                .query(`SELECT ads.id, ads.acad_session, ps.program_lid, ps.id as program_session_lid FROM [${slug}].program_sessions ps 
             INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
             WHERE ps.is_locked = 0 AND ps.program_lid = @programLid`)
+        })
+    }
+
+    static getSessionForProgram(slug, programLid) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('programLid', sql.Int, programLid)
+                .query(`SELECT ads.id, ads.acad_session, ps.program_lid, ps.id as program_session_lid FROM [${slug}].program_sessions ps 
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = ps.acad_session_lid
+            WHERE ps.program_lid = @programLid`)
         })
     }
 
