@@ -46,18 +46,44 @@
             </div>
         </div>
 
-        <div class="card-body table-responsive">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-<div id="errorHtml"></div>
+<div class="card-body table-responsive">
+        <div class="row">
+
+        <div class="col-md-3">
+                <select class="form-select select2" id="programName">
+                    <option>Select Program</option>
+                    <%for(let program of programList){%>
+                        <option value="<%-program.id%>" data-program-id="<%-program.program_id%>"><%-program.program_name%></option>
+                        <%}%>
+                </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-select select2" id="moduleName">
+                <option>Select Module</option>
+            <%for(let module of moduleList){%>
+                <option value="<%-module.id%>"><%-module.module_name%></option>
+                <%}%>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+
+        </div>
+
+        <div class="col-md-3">
+            <input type="search" id="searchkeyword" placeholder="Enter keywords" class="form-control">
+        </div>
+        </div>
+            <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div> -->
             <table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
-                    <th>Module Name</th>
                     <th>Program Name</th>
+                    <th>Module Name</th>
                     <th>Academic Session</th>
                     <th>Division</th>
-                    <th>Division Number</th>
                     <th>Student count</th>
                     <th>Count for theory batch</th>
                     <th>Count for practical batch</th>
@@ -71,14 +97,13 @@
                     <tr>
                         <td><%- count++ %><input class="form-control rounded-0" type="hidden" name="division_id" value="<%-division.id%>"></td>
                         <td>
-                            <%- division.module_name %>
+                            <%- division.program_name %>
                         </td>
                         <td>
-                            <%- division.program_name %>
+                            <%- division.module_name %>
                         </td>
                         <td><%- division.acad_session %></td>
                         <td><%- division.division%></td>
-                        <td><%- division.division_num%></td>
                         <td><%- division.division_count%></td>
                         <td><input class="form-control rounded-0" name="count_for_theory_batch" value="<%-division.count_for_theory_batch%>"></td>
                         <td><input class="form-control rounded-0" name="count_for_practical_batch" value="<%-division.count_for_practical_batch%>"></td>
@@ -108,10 +133,63 @@
 
 <script>
     $(document).ready(function () {
+        $('.select2').select2();
 
+        //FILTER APIS
+        $("#programName").on('change',function(){
+            let programid =  $(this).val()
+            let program_id =  $("#programName option:selected").attr('data-program-id')
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/divisions/division-by-programid',
+                data: {
+                    programid: programid,
+                    program_id: program_id
+                },
+                dataType: 'JSON'
+            }
 
+            ajaxApi(ApiObj).then(result => {
+                let moduleName = ``;
+                                        if (result.moduleList.length > 0) {
+                                            moduleName +=
+                                                `<option value="" disabled>Select Module</option>`;
+                                                result.moduleList.forEach(element => {
+                                                moduleName +=
+                                                    `<option value="${element.id}" >${element.module_name}</option>`;
+                                            });
+                                        } else {
+                                            moduleName +=
+                                                `<option value="">Module Not Found!</option>`;
+                                        }
+                                        $("#moduleName").html(moduleName)
+                AjaxtTable(result.division)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
 
-                //SaveAll
+        $("#moduleName").on('change',function(){
+            let moduleid =  $(this).val()
+            let programid =  $("#programName").val()
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/divisions/division-by-moduleid',
+                data: {
+                    moduleid: moduleid,
+                    programid: programid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                AjaxtTable(result.result)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+            //SaveAll
             $(".SaveAll").on('click',function(){
             console.log('SaveAll::::::::::>>>')
             let divElems = $('#divisionTable tbody tr');
@@ -277,11 +355,10 @@
             let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
                     <th>#</th>
+                    <th>Program Name</th>
                     <th>Module Name</th>
-                    <td>Program Name</td>
-                    <td>Academic Session</td>
+                    <th>Academic Session</th>
                     <th>Division</th>
-                    <th>Division Number</th>
                     <th>Student count</th>
                     <th>Count for theory batch</th>
                     <th>Count for practical batch</th>
@@ -296,13 +373,12 @@
                         `<tr>
                         <td>
                             ${count++}<input class="form-control rounded-0" type="hidden" name="division_id" value="${division.id}"></td>
-                        <td>
+                            <td>${division.program_name}</td>
+                            <td>
                             ${division.module_name}
-                        </td>
-                        <td>${division.program_name}</td>
+                           </td>
                         <td>${division.acad_session}</td>
                         <td>${division.division}</td>
-                        <td>${division.division_num}</td>
                         <td>${division.division_count}</td>
                         <td><input class="form-control rounded-0" name="count_for_theory_batch" value="${division.count_for_theory_batch}"></td>
                         <td><input class="form-control rounded-0" name="count_for_practical_batch" value="${division.count_for_practical_batch}"></td>

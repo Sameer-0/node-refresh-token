@@ -178,14 +178,9 @@ app.use(function (req, res) {
 
 
 
-<<<<<<< HEAD
-if (os.hostname() == 'KHG1519CPU0381') {
-    const server = http.createServer(app);
-=======
 
-if (process.env.APP_ENV === 'PRODUCTION') {
+if (!process.env.APP_ENV === 'PRODUCTION') {
     const server = https.createServer(sslOptions, app);
->>>>>>> refs/remotes/origin/surajvsk
     server.listen(process.env.APP_PORT);
 } else {
     const server = http.createServer(app);
