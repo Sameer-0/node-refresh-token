@@ -188,9 +188,11 @@ module.exports = {
 
           let holidayList = await new Promise(async resolve => {
             await soapClient.ZhrHolidayDateJp({
-                Acadyear: "2018",
-                Campusid: "00004533",
-                Schoolobjectid: "00004533",
+                Acadyear: process.env.acadmicYear,
+               // Campusid: "00004533",
+               Campusid: res.locals.campusIdSap,
+               Schoolobjectid: res.locals.organizationIdSap,
+                //Schoolobjectid: "00004533",
               },
               async function (err, result) {
                 let output = await result;
