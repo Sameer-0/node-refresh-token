@@ -201,7 +201,11 @@ module.exports = {
         })
         console.log('output::::::::::::::>>> ', holidayList)
 
-        Holidays.fetchHolidaySap(JSON,stringify(holidayList), res.locals.slug).then(result => {
+        let object = {
+            add_holidays: holidayList
+          }
+
+        Holidays.fetchHolidaySap(object, res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log(error)

@@ -92,12 +92,6 @@ module.exports = class {
     static fetchHolidaySap(inputJSON, slug) {
         return poolConnection.then(pool => {
             const request = pool.request();
-
-            // inputJSON.forEach(function(item){
-            //    // console.log(item)
-            //     let sql = `insert into [${slug}].holidays (calendar_year, h_date, reason, holiday_type_lid, calendar_id) values('${item.Calendaryear}', '${item.Holidaydate}', '${item.Description}', 1, ${item.Calendarid})` 
-            // console.log(sql)  
-            // })
             return request.input('input_json', sql.NVarChar(sql.MAX), inputJSON)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_insert_holidays_wsdl]`)
