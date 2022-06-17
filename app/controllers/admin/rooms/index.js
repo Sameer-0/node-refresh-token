@@ -17,14 +17,15 @@ const User = require('../../../models/User')
 const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
 
+
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([Rooms.bookedRooms(res.locals.slug), Rooms.bookedRoomsCount(res.locals.slug)]).then(result => {
-            console.log('organization:::::::::::::::::', result[0].recordset)
+        Promise.all([Rooms.bookedRooms(res.locals.slug, 10), Rooms.bookedRoomsCount(res.locals.slug)]).then(result => {
+            console.log('organization:::::::::::::::::', result[1].recordset[0].count)
             res.render('admin/rooms/index', {
                 bookedRoomList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
-                totalentries: result[1].recordset.length ? result[0].recordset.length : 0,
+                totalentries: result[1].recordset[0] ? result[1].recordset[0].count : 0,
                 breadcrumbs: req.breadcrumbs,
             })
         }) 
@@ -210,7 +211,10 @@ module.exports = {
             return;
         }
 
+        console.log('HITTING PAGINATION::::::::::::::',req.body.pageNo)
+
         Rooms.bookedRoomsPagination(res.locals.slug, req.body.pageNo).then(result => {
+            console.log('PAGINATION RESULT ::::::::::::::',result.recordset)
             res.json({
                 status: "200",
                 message: "Quotes fetched",
@@ -218,6 +222,7 @@ module.exports = {
                 length: result.recordset.length
             })
         }).catch(error => {
+            console.log('PAGINATION error ::::::::::::::',error)
             if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message))
             }

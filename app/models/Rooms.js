@@ -161,9 +161,9 @@ module.exports = class Rooms {
     }
 
 
-    static bookedRooms(slug) {
+    static bookedRooms(slug, rowCount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowCount)} r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
@@ -196,7 +196,7 @@ module.exports = class Rooms {
     static bookedRoomsPagination(slug, pageNo) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('pageNo', sql.Int, pageNo).query(`SELECT DISTINCT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            .input('pageNo', sql.Int, pageNo).query(`SELECT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
@@ -208,6 +208,25 @@ module.exports = class Rooms {
             INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
             INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
             ORDER BY rt.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+    static searchBookedRoom(rowCount, keyword, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+                .query(`SELECT DISTINCT TOP ${Number(rowCount)} r.id, r.room_number, r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+                CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
+                FROM [${slug}].room_transactions rt INNER JOIN
+                room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
+                [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
+                INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
+                INNER JOIN [dbo].buildings b ON b.id = r.building_lid
+                INNER JOIN [dbo].slot_interval_timings sit ON sit.id = rtd.start_time_id
+                INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
+                INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
+                INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
+                WHERE r.room_number LIKE @keyword OR b.building_name LIKE @keyword OR _sit.end_time LIKE @keyword OR sit.start_time LIKE @keyword OR  cal.date LIKE @keyword OR _cal.date LIKE @keyword`)
         })
     }
 
