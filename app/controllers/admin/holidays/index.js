@@ -190,6 +190,20 @@ module.exports = {
 
         let holidayList = await new Promise(async resolve => {
             await soapClient.ZhrHolidayDateJp({
+<<<<<<< HEAD
+                Acadyear: process.env.acadmicYear,
+               // Campusid: "00004533",
+               Campusid: res.locals.campusIdSap,
+               Schoolobjectid: res.locals.organizationIdSap,
+                //Schoolobjectid: "00004533",
+              },
+              async function (err, result) {
+                let output = await result;
+                console.log('output::::::::::::::>>>',output)
+                resolve(1);
+              });
+          })
+=======
                     Acadyear: res.locals.acadmicYear,
                     Campusid: res.locals.campusIdSap,
                     Schoolobjectid: res.locals.organizationIdSap,
@@ -200,6 +214,7 @@ module.exports = {
                 });
         })
         console.log('output::::::::::::::>>> ', holidayList)
+>>>>>>> 5e6f546ef4746df2c4ba0622f88cc5937181acec
 
         Holidays.fetchHolidaySap(JSON,stringify(holidayList), res.locals.slug).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
