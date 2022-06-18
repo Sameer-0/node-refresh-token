@@ -41,6 +41,7 @@ module.exports = {
             set_course_day_room_preferences: JSON.parse(req.body.inputJSON)
         }
         CourseDayRoomPreferences.save(object, res.locals.slug, res.locals.userId).then(result => {
+            console.log('success course prefernce::>>', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log('error:::::::::::::::::::>>>', error)
@@ -261,7 +262,7 @@ module.exports = {
     },
 
     findDivisionByModuleId: (req, res) => {
-        Promise.all([CourseDayRoomPreferences.findDivisionByModuleId(req.body.moduleId, res.locals.slug), CourseDayRoomPreferences.preferenceByModuleId(req.body.moduleId, res.locals.slug)]).then(result => {
+        Promise.all([CourseDayRoomPreferences.findDivisionByModuleId(req.body.moduleLid, res.locals.slug), CourseDayRoomPreferences.preferenceByModuleId(req.body.moduleLid, res.locals.slug)]).then(result => {
                 res.json({
                     status: "200",
                     message: "Divison Found",
