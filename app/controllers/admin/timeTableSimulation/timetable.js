@@ -97,8 +97,10 @@ module.exports = {
         }
         
         TimeTable.swapEvents(res.locals.slug, res.locals.userId, object).then(result => {
+            console.log('successfully swaped', result)
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            console.log('error::::::', error);
             if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message))
             }
