@@ -544,10 +544,13 @@
                                     
                                     // console.log('dragover',$(this).text())
                                     // $(this).addClass('dragging'+$(this).text());
+                                    $(this).css({'background':'#5ecf73',
+                                                  'color' : '#fff'  })
                                     dragTd = $(this);
                                     dragTdLid = $(this).attr('data-lid');
                                     dragContent = $(this).text();
                                     console.log('dragstart', dragTd)
+                                    
                                 })
 
                                 $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
@@ -558,6 +561,10 @@
                                 });
 
                                 $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
+
+                                    $(this).css({'background':'#5ecf73',
+                                                  'color' : '#fff'  })
+                                                  
                                     event.preventDefault();  
                                     event.stopPropagation();
                                     targetTd = $(this);
@@ -584,7 +591,7 @@
                                     .then((result) => {
                                         targetTd.html(dragContent);
                                         dragTd.html(targetContent);
-                                        showSuccess(result);
+                                        // showSuccess(result);
                                     
                                     })
                                     .catch(err => {console.log('err', err)
