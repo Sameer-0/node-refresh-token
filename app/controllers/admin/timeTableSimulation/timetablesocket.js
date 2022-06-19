@@ -10,6 +10,8 @@ module.exports.respond = async socket => {
         console.log(data);
     });
 
+
+    //Schedule Event
     socket.on('schedule-event-request', async function (slug, userId, data) {
         console.log('schedule-event-request::::::::')
         console.log('data:::::::::::::>>>', data)
@@ -36,7 +38,7 @@ module.exports.respond = async socket => {
         })
     })
 
-
+    //Drop Event
     socket.on('drop-event-request', async function (slug, userId, eventid) {
         console.log('drop-event-request::::::::')
         TimeTable.dropEvent(slug, userId, eventid).then(result => {
@@ -56,6 +58,7 @@ module.exports.respond = async socket => {
         })
     })
 
+    //Swap Event
     socket.on('swap-events-request', async function (slug, userId, inputJSON) {
         console.log('swap-events-request::::::::')
 
