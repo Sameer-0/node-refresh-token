@@ -519,6 +519,7 @@
                                             "data-program-name": `${event.program_name}`,
                                             "data-start-time": `${event.start_time}`,
                                             "data-end-time": `${event.end_time}`,
+                                            "data-faculty-name": `${event.faculty_name ? event.faculty_name : 'Faculty NA'}`,
                                             "class": 'draggableTd dragtargetTd',
                                             "draggable":"true"
                                         })
@@ -548,8 +549,7 @@
                                                   'color' : '#fff'  })
                                     dragTd = $(this);
                                     dragTdLid = $(this).attr('data-lid');
-                                    dragContent = $(this).text();
-                                    console.log('dragstart', dragTd)
+                                    
                                     
                                 })
 
@@ -569,8 +569,14 @@
                                     event.stopPropagation();
                                     targetTd = $(this);
                                     targetTdLid = $(this).attr('data-lid');
-                                    targetContent = $(this).text();
-                                    console.log('dropppp', targetTd)
+
+                                    dragContent = `${dragTd.attr('data-module-name')} <br> ${dragTd.attr('data-division-name')} (${dragTd.attr('data-batch-name')}) <br> ${dragTd.attr('data-session-name')} <br> ${dragTd.attr('data-program-name')} <br> ${$(this).attr('data-start-time')} to ${$(this).attr('data-end-time')} <br> (${dragTd.attr('data-faculty-name')})`
+
+                                    targetContent = `${$(this).attr('data-module-name')} <br> ${$(this).attr('data-division-name')} (${$(this).attr('data-batch-name')}) <br> ${$(this).attr('data-session-name')} <br> ${$(this).attr('data-program-name')} <br> ${dragTd.attr('data-start-time')} to ${dragTd.attr('data-end-time')} <br> (${$(this).attr('data-faculty-name')})`
+
+                                    console.log('dragstart:::', dragContent)
+                                    
+                                    console.log('dropppp:::', targetContent)
                                     
                                     let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
                                                 
