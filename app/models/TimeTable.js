@@ -170,15 +170,12 @@ module.exports = class TimeTable {
     }
 
     static scheduleEvent(slug, userId, inputJSON){
-        console.log('EVENT ALLOCATION JSON::::::::::',JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
-
             return pool.request() 
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
             .input('last_modified_by', sql.Int, userId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].sp_allocate_events`);
-
         })
     }
 
