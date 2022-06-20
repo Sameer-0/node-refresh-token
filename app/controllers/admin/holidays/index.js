@@ -199,7 +199,7 @@ module.exports = {
                     resolve(output.Output.item);
                 });
         })
-        console.log('output::::::::::::::>>> ', holidayList)
+      
 
         let object = {
             add_holidays: holidayList
