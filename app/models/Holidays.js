@@ -14,7 +14,7 @@ module.exports = class {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 103) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 103) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h LEFT JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC`)
         })
     }
 
@@ -35,7 +35,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 101) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
+            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 101) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h LEFT JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
         })
     }
 
@@ -73,7 +73,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  WHERE h.calendar_year LIKE @keyword OR CONVERT(NVARCHAR,h.h_date,105) LIKE @keyword OR h.reason LIKE @keyword OR ht.name LIKE @keyword ORDER by h.id DESC`)
+                .query(`SELECT TOP ${Number(rowcount)} h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h LEFT JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  WHERE h.calendar_year LIKE @keyword OR CONVERT(NVARCHAR,h.h_date,105) LIKE @keyword OR h.reason LIKE @keyword OR ht.name LIKE @keyword ORDER by h.id DESC`)
         })
     }
 
@@ -83,7 +83,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
-                .query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                .query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR,h.h_date,105) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h LEFT JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         }).catch(error => {
             throw error
         })
