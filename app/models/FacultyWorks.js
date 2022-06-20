@@ -141,4 +141,17 @@ module.exports = class {
             WHERE fw.faculty_lid = @facultyLid AND fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @acadSessionLid`)
         })
     }
+
+
+    static changePreferenceStatus(body, slug, userId) {
+        console.log('slug', slug)
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            request.input('Id', sql.Int, body.id)
+                .input('Status', sql.TinyInt, body.status)
+                .input('userId', sql.TinyInt, userId)
+            let stmt = `UPDATE [${slug}].faculty_works SET is_batch_preference_set = @Status, last_modified_by = @userId WHERE id =  @Id`
+            return request.query(stmt)
+        })
+    }
 }

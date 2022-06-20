@@ -15,17 +15,14 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-
         const slug = res.locals.slug;
-        
         Promise.all([FacultyWorks.fetchAll(10, slug), FacultyWorks.getCount(slug), Faculties.fetchAll(1000, slug), Programs.fetchAll(100, slug), CourseWorkload.fetchAll(10000, slug)]).then(result => {
-            
             res.render('admin/faculty/facultyworks', {
                 facultyWorkList: result[0].recordset,
-                pageCount: result[1].recordset[0].count, 
+                pageCount: result[1].recordset[0].count,
                 facultyList: result[2].recordset,
                 programList: result[3].recordset,
-                courseWorkload: result[4].recordset,  
+                courseWorkload: result[4].recordset,
                 breadcrumbs: req.breadcrumbs,
                 Url: req.originalUrl
             })
@@ -33,24 +30,26 @@ module.exports = {
     },
 
     create: (req, res) => {
-     
+
         let object = {
             add_faculty_works: JSON.parse(req.body.inputJSON)
         }
-        console.log('FACULTY WORK::::::::::::::::::::>>',object)
+
+        console.log('FACULTY WORK::::::::::::::::::::>>', object)
         FacultyWorks.save(object, res.locals.slug, res.locals.userId).then(result => {
             if (req.body.settingName) {
                 Settings.updateByName(res.locals.slug, req.body.settingName)
             }
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
@@ -120,39 +119,40 @@ module.exports = {
         let object = {
             update_faculty_works: JSON.parse(req.body.inputJSON)
         }
-           
+
         FacultyWorks.update(object, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
 
     delete: (req, res) => {
-        console.log('Delete::::::::::::>>',req.body.id)
+        console.log('Delete::::::::::::>>', req.body.id)
         FacultyWorks.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
-            if(isJsonString.isJsonString(error.originalError.info.message)){
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
-            }
-            else{
-                res.status(500).json({status:500,
-                description:error.originalError.info.message,
-                data:[]})
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
             }
         })
     },
 
     sessionByProgramId: (req, res) => {
-      
         FacultyWorks.sessionListByProgram(req.body.program_lid, res.locals.slug).then(result => {
             console.log('result in controller', result)
             if (result.recordset.length > 0) {
@@ -225,6 +225,52 @@ module.exports = {
             })
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message))
+        })
+    },
+
+
+    changeStatus: (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(422).json({
+                statuscode: 422,
+                errors: errors.array()
+            });
+            return;
+        }
+        FacultyWorks.changePreferenceStatus(req.body, res.locals.slug, res.locals.userId).then(result => {
+            res.status(200).json({
+                status: 200,
+                message: "Success"
+            })
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    getAll: (req, res) => {
+        FacultyWorks.fetchAll(10, res.locals.slug).then(result => {
+            res.status(200).json({
+                result: result.recordset
+            })
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
         })
     },
 
