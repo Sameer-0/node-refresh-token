@@ -59,6 +59,8 @@ router.post('/faculties/works/delete', validate('delete'), works.delete)
 router.post('/faculties/works/session-by-program', works.sessionByProgramId)
 router.post('/faculties/works/module-by-program-session', works.moduleByprogramSession)
 router.post('/faculties/works/findone', validate('single'), works.findOne)
+router.post('/faculties/works/change', works.changeStatus)
+router.post('/faculties/works/GetAll', works.getAll)
 
 //workpreferences
 router.get('/workpreferences', preferences.getPage)
