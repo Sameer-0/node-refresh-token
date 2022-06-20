@@ -428,7 +428,7 @@
                                         //Set Data Here after socket response
                                         currentTd.html("NA")
                                             $("#slotModal").modal('hide');
-                                        showSuccess(response)
+                                        //showSuccess(response)
                                     });
 
                                     // let ApiObj = {
@@ -517,7 +517,7 @@
                                     socket.on('schedule-event-response', function(response){
                                         console.log('schedule-event-response::::::::::::::::', response)
                                         //Set Data Here after socket response
-                                        showSuccess(response)
+                                       // showSuccess(response)
                                     });
 
                                     // let ApiObj = {
@@ -582,7 +582,7 @@
 
                                         for (let slot of slotList) {
                                             tableStr +=
-                                                ` <td  data-school-time-id="${slot.id}" data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}">NA</td>`
+                                                ` <td  data-school-time-id="${slot.id}" data-start-time-id="${slot.slot_start_lid}" data-start-time="${slot.start_time}" data-end-time-id="${slot.slot_end_lid}" data-end-time="${slot.end_time}" data-room-id="${room.id}" data-room-no="${room.room_number}" draggable ="true" class="draggableTd dragtargetTd">NA</td>`
                                         }
 
                                         tableStr += '</tr>'
@@ -645,94 +645,94 @@
                                 }
 
 
-                                //DRAG FUNCTION
+                                // DRAG FUNCTION
 
-                                // function initDrag(){
-                                //     let dragTd, targetTd, dragTdLid, targetTdLid, dragContent, targetContent, dragindex;
+                                function initDrag(){
+                                    let dragTd, targetTd, dragTdLid, targetTdLid, dragContent, targetContent, dragindex;
 
-                                //     $(".timetable-simulation").on('dragover','.draggableTd',function(event){
-                                //     event.preventDefault();  
-                                //     event.stopPropagation();
-                                //     // console.log('dragover', this)
-                                //     // console.log('dragover',$(this).text())
-                                //     // $(this).addClass('dragging'+$(this).text());
-                                // })
+                                    $(".timetable-simulation").on('dragover','.draggableTd',function(event){
+                                    event.preventDefault();  
+                                    event.stopPropagation();
+                                    // console.log('dragover', this)
+                                    // console.log('dragover',$(this).text())
+                                    // $(this).addClass('dragging'+$(this).text());
+                                })
 
-                                // $(".timetable-simulation").on('dragstart','.draggableTd',function(event){
+                                $(".timetable-simulation").on('dragstart','.draggableTd',function(event){
                                     
-                                //     // console.log('dragover',$(this).text())
-                                //     // $(this).addClass('dragging'+$(this).text());
-                                //     $(this).css({'background':'#5ecf73',
-                                //                   'color' : '#fff'  })
-                                //     dragTd = $(this);
-                                //     dragTdLid = $(this).attr('data-lid');
+                                    // console.log('dragover',$(this).text())
+                                    // $(this).addClass('dragging'+$(this).text());
+                                    $(this).css({'background':'#5ecf73',
+                                                  'color' : '#fff'  })
+                                    dragTd = $(this);
+                                    dragTdLid = $(this).attr('data-lid');
                                     
                                     
-                                // })
+                                })
 
-                                // $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
-                                //     event.preventDefault();  
-                                //     event.stopPropagation();
-                                //     // $(this).removeClass('dragging');
-                                //     // console.log('dragleave', this)
-                                // });
+                                $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
+                                    event.preventDefault();  
+                                    event.stopPropagation();
+                                    // $(this).removeClass('dragging');
+                                    // console.log('dragleave', this)
+                                });
 
-                                // $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
+                                $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
 
-                                //     $(this).css({'background':'#5ecf73',
-                                //                   'color' : '#fff'  })
+                                    console.log('drop::::::::')
+
+                                    $(this).css({'background':'#5ecf73',
+                                                  'color' : '#fff'  })
                                                   
-                                //     event.preventDefault();  
-                                //     event.stopPropagation();
-                                //     targetTd = $(this);
-                                //     targetTdLid = $(this).attr('data-lid');
+                                    event.preventDefault();  
+                                    event.stopPropagation();
+                                    targetTd = $(this);
+                                    targetTdLid = $(this).attr('data-lid');
 
-                                //     dragContent = `${dragTd.attr('data-module-name')} <br> ${dragTd.attr('data-division-name')} (${dragTd.attr('data-batch-name')}) <br> ${dragTd.attr('data-session-name')} <br> ${dragTd.attr('data-program-name')} <br> ${$(this).attr('data-start-time')} to ${$(this).attr('data-end-time')} <br> (${dragTd.attr('data-faculty-name')})`
+                                    dragContent = `${dragTd.attr('data-module-name')} <br> ${dragTd.attr('data-division-name')} (${dragTd.attr('data-batch-name')}) <br> ${dragTd.attr('data-session-name')} <br> ${dragTd.attr('data-program-name')} <br> ${$(this).attr('data-start-time')} to ${$(this).attr('data-end-time')} <br> (${dragTd.attr('data-faculty-name')})`
 
-                                //     targetContent = `${$(this).attr('data-module-name')} <br> ${$(this).attr('data-division-name')} (${$(this).attr('data-batch-name')}) <br> ${$(this).attr('data-session-name')} <br> ${$(this).attr('data-program-name')} <br> ${dragTd.attr('data-start-time')} to ${dragTd.attr('data-end-time')} <br> (${$(this).attr('data-faculty-name')})`
+                                    targetContent = `${$(this).attr('data-module-name')} <br> ${$(this).attr('data-division-name')} (${$(this).attr('data-batch-name')}) <br> ${$(this).attr('data-session-name')} <br> ${$(this).attr('data-program-name')} <br> ${dragTd.attr('data-start-time')} to ${dragTd.attr('data-end-time')} <br> (${$(this).attr('data-faculty-name')})`
 
-                                //     console.log('dragstart:::', dragContent)
+                                    console.log('dragstart:::', dragContent)
                                     
-                                //     console.log('dropppp:::>', targetContent)
+                                    console.log('dropppp:::>', targetContent)
                                     
-                                //     let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
+                                    let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
                                                 
-                                //     console.log('JSON::::::::::::::::', obj)
-                                //     //'/admin/time-table-simulation/time-table/schedule-event'
-                                //     socket.emit('swap-events-request', slugName, userId, JSON.stringify(obj));
-                                //     socket.on('swap-events-response', function(response){
-                                //         console.log('swap-events-response::::::::::::::::', response)
-                                //         //Set Data Here after socket response
-                                //         targetTd.html(dragContent);
-                                //         dragTd.html(targetContent);
-                                //         // showSuccess(response)
-                                //     });
+                                    console.log('JSON::::::::::::::::', obj)
+                                    //'/admin/time-table-simulation/time-table/schedule-event'
+                                    // socket.emit('swap-events-request', slugName, userId, JSON.stringify(obj));
+                                    // socket.on('swap-events-response', function(response){
+                                    //     console.log('swap-events-response::::::::::::::::', response)
+                                    //     //Set Data Here after socket response
+                                    //     targetTd.html(dragContent);
+                                    //     dragTd.html(targetContent);
+                                    //     showSuccess(response)
+                                    // });
 
-                                //     let ApiObj = {
-                                //         url: '/admin/time-table-simulation/time-table/swap-events',
-                                //         type: 'POST',
-                                //         data: {
-                                //             inputJSON: JSON.stringify(obj)
-                                //         },
-                                //         dataType: 'JSON'
-                                //     }
-                                //     console.log('target',targetContent)
-                                //     console.log('dragTd',dragContent)
-                                //     ajaxApi(ApiObj)
-                                //     .then((result) => {
-                                //         targetTd.html(dragContent);
-                                //         dragTd.html(targetContent);
-                                //         showSuccess(result);
-                                // showSuccess(result);      
-                                //     })
-                                //     .catch(err => {console.log('err', err)
-                                //         showError(err.responseJSON);
-                                // })
+                                    let ApiObj = {
+                                        url: '/admin/time-table-simulation/time-table/swap-events',
+                                        type: 'POST',
+                                        data: {
+                                            inputJSON: JSON.stringify(obj)
+                                        },
+                                        dataType: 'JSON'
+                                    }
+                                    console.log('target',targetContent)
+                                    console.log('dragTd',dragContent)
+                                    ajaxApi(ApiObj)
+                                    .then((result) => {
+                                        targetTd.html(dragContent);
+                                        dragTd.html(targetContent);
+                                      
+                                        showSuccess(result);      
+                                    })
+                                    .catch(err => {console.log('err', err)
+                                        showError(err.responseJSON);
+                                })
 
-                                // });
-                                // }
-
-
+                                });
+                                }
 
                                 function showError(errors) {
                                     console.log('error::::::::::', errors)

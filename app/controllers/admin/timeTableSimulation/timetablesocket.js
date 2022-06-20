@@ -14,12 +14,12 @@ module.exports.respond = async socket => {
     //Schedule Event
     socket.on('schedule-event-request', async function (slug, userId, data) {
         console.log('schedule-event-request::::::::')
-        console.log('data:::::::::::::>>>', data)
+    
 
         let object = {
             allocate_events: JSON.parse(data)
         }
-
+        console.log('data:::::::::::::>>>', object)
         TimeTable.scheduleEvent(slug, userId, object).then(result => {
             console.log('result::::::::', result)
             socket.emit('schedule-event-response', JSON.parse(result.output.output_json))
