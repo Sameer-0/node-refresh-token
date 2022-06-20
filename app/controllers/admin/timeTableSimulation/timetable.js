@@ -10,21 +10,24 @@ const isJsonString = require('../../../utils/util')
 module.exports = {
 
     getPage: (req, res) => {
-        console.log('im hitting get page')
+        console.log('Hitting get page', )
         Promise.all([
                 ProgramSessions.getLockedProgram(res.locals.slug),
                 Rooms.fetchBookedRooms(res.locals.organizationId),
                 Days.fetchActiveDay(res.locals.slug),
+                TimeTable.getPendingEventPrograms(res.locals.slug),
+               
                 
             ])
             .then(result => {
-                // console.log('pending::::',  result[3].recordset)
+                console.log('pending programs list::::',  result[3].recordset)
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     programListJson: JSON.stringify(result[0].recordset),
                     roomList: JSON.stringify(result[1].recordset),
                     dayList: result[2].recordset,
-                    // pendingEvents: result[3].recordset,
+                    pendingEventPrograms: JSON.stringify(result[3].recordset),
+                    
                     breadcrumbs: req.breadcrumbs,
                     Url: req.originalUrl
                 })
@@ -65,6 +68,14 @@ module.exports = {
         console.log('pending req', req.body)
         TimeTable.getPendingEvents(res.locals.slug, req.body.programLid, req.body.acadSessionLid).then(result => {
            console.log('pending list:::', result.recordset)
+            res.status(200).send(result.recordset)
+        })
+    },
+
+    getPendingEventSessions: (req, res, next) => {
+        console.log('pending req', req.body)
+        TimeTable.getPendingEventSessions(res.locals.slug, req.body.programLid).then(result => {
+           console.log('pending event session list:::', result.recordset)
             res.status(200).send(result.recordset)
         })
     },

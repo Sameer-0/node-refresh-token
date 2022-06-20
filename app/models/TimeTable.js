@@ -183,6 +183,41 @@ module.exports = class TimeTable {
         })
     }
 
+    static getPendingEventPrograms(slug) {
+
+        return poolConnection.then(pool => {
+            let stmt;
+
+            console.log('getPendingEventPrograms:::')
+
+                stmt= `SELECT DISTINCT program_lid, p.program_name, p.program_id FROM [${slug}].pending_events pe 
+				INNER JOIN [${slug}].programs p on p.id = pe.program_lid`
+            
+            return pool.request()
+                .query(stmt);
+            
+        })
+    }
+
+
+    static getPendingEventSessions(slug, programLid) {
+console.log('hitting pending session::::::', programLid)
+        return poolConnection.then(pool => {
+            let stmt;
+
+                console.log('getPendingEventSessions:::')
+
+                stmt= `SELECT DISTINCT acad_session_lid, ads.acad_session FROM [${slug}].pending_events pe
+				INNER JOIN acad_sessions ads on ads.id = pe.acad_session_lid
+				WHERE program_lid = @programLid`
+            
+            return pool.request()
+                .input('programLid', sql.Int, programLid)
+                .query(stmt);
+            
+        })
+    }
+
     static dropEvent(slug, userId, eventLid){
 
         return poolConnection.then(pool => {
