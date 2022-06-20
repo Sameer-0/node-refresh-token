@@ -19,7 +19,7 @@
     </div>
 
     <%- include("../partials/timetableSimulationMenu") %>
-    <div class="card table-card mb-1">
+    <div class="card table-card mb-1 timetable-filter-container">
         <div class="card-body" id="timetable-filter">
             <div class="row">
                 <div class="input-groups col-md-4 col-sm-12">
@@ -116,7 +116,15 @@
                                 let currentTd;
                                 let roomList = JSON.parse(`<%- roomList %>`);
                                 let programListJson = JSON.parse(`<%- programListJson %>`);
-
+                                let pendingEventPrograms = JSON.parse(`<%- pendingEventPrograms%>`);
+                                let pendingEventProgramLi = JSON.parse(`<%- pendingEventPrograms%>`);
+                                var pendingEventProgramLids = pendingEventProgramLi.map(function (obj) {
+                                                                                    return obj.program_lid;
+                                                                                    });
+                                    
+                                    console.log('pending event programs::::::', pendingEventPrograms)
+                      
+                            
                                 //DRAG EVENT
                                 // initDrag()
                                 //Getting session List Ajax
@@ -205,12 +213,15 @@
 
                                     currentTd = $(this)
                                     let programList = ``;
-
+            
                                     if ($(this).text() == "NA") {
 
-                                        let programLid = $("#program-name").val();
+                                        let programLid = parseInt($("#program-name").val());
                                         let acadSessionLid = $("#session-name").val();
-                                   
+                                        
+                                        console.log('checking eventssss and programs for pending::::', typeof programLid)
+                                        // console.log('checking eventssss and programs for pending::::2', typeof pendingEventProgramLids[0])
+                                        // console.log('checking eventssss and programs for pending::::3', pendingEventProgramLids.includes(parseInt(programLid)))
                                         programList +=
                                             `<div class="mb-2" >Slot Available || ${$(this).attr('data-room-no')} || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
 
@@ -219,13 +230,21 @@
                                                 `<select class="form-select" id="program-name-modal">`;
                                             programList +=
                                                 `<option value="" selected>--select Program--</option>`
-                                            for (let program of programListJson) {
+                                            for (let program of pendingEventPrograms) {
                                                 programList +=
-                                                    `<option value="${program.id}">${program.program_name}</option>`
+                                                    `<option value="${program.program_lid}">${program.program_name}</option>`
                                             }
                                             programList += `</select>`
 
+                                            programList +=
+                                            `<select class="form-select my-3" id="session-name-modal"></select>`
+                                            programList +=
+                                            `<select class="form-select my-3" id="pending-events"></select>`
+
                                         } else {
+                                         
+
+                                                if (pendingEventProgramLids.includes(programLid)){
                                             programList +=
                                                 `<select class="form-select" id="program-name-modal">`;
                                             programList +=
@@ -233,18 +252,28 @@
                                             programList +=
                                                 `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
                                             programList += `</select>`
+
+                                            programList +=
+                                            `<select class="form-select my-3" id="session-name-modal"></select>`
+                                            programList +=
+                                            `<select class="form-select my-3" id="pending-events"></select>`
+                                                }
+                                                else{
+                                                    
+                                                    programList += '<h4 style="text-align: center;">No Pending Events Found!!<h4>'
+                                                 
+                                                }
+                                            
+                                            
                                         }
 
-                                        programList +=
-                                            `<select class="form-select my-3" id="session-name-modal"></select>`
-                                        programList +=
-                                            `<select class="form-select my-3" id="pending-events"></select>`
+                                       
 
                                         $('#slotModal .modal-body').html(programList);
                                         $('#slotModal .modal-footer').html(
-                                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}" data-division-name="${$(this).attr("data-division-name")}" data-module-name="${$(this).attr("data-module-name")}" data-batch-name="${$(this).attr("data-batch-name")}" data-session-name="${$(this).attr("data-session-name")}"  data-program-name="${$(this).attr("data-program-name")}" data-start-time="${$(this).attr("data-start-time")}"  data-end-time="${$(this).attr("data-end-time")}" data-room-no="${$(this).attr("data-room-no")}"  data-lid="${$(this).attr("data-lid")}">Schedule</button>`
+                                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}" data-division-name="${$(this).attr("data-division-name")}" data-module-name="${$(this).attr("data-module-name")}" data-batch-name="${$(this).attr("data-batch-name")}" data-session-name="${$(this).attr("data-session-name")}"  data-program-name="${$(this).attr("data-program-name")}" data-start-time="${$(this).attr("data-start-time")}"  data-end-time="${$(this).attr("data-end-time")}" data-room-no="${$(this).attr("data-room-no")}"  data-lid="${$(this).attr("data-lid")}" ${pendingEventProgramLids.includes(programLid) ? '' : (!programLid ? '' : 'disabled')}>Schedule</button>`
                                         );
-
+                                        
                                     } else {
                                         $('#slotModal .modal-body').html($(this).text());
                                         if($(this).attr("data-faculty-lid")){
@@ -299,9 +328,10 @@
                                 $(document).on('change', '#program-name-modal', function () {
 
                                     let programLid = $(this).val();
+                                    console.log('progranmlid:::::::::', programLid)
 
                                     let ApiObj = {
-                                        url: '/admin/programs/sessions/program-sessions',
+                                        url: '/admin/time-table-simulation/time-table/pending-events-sessions',
                                         type: 'POST',
                                         data: {
                                             programLid: programLid
@@ -319,6 +349,7 @@
                                             sessionList)
                                     } else {
                                         ajaxApi(ApiObj).then(result => {
+                                            console.log('pending sessionsss;;;', result)
 
                                             if (result.length > 0) {
 
@@ -326,7 +357,7 @@
                                                     `<option disabled selected value="">--Select Session--</option>`;
                                                 result.forEach(element => {
                                                     sessionList +=
-                                                        `<option value="${element.id}"> ${element.acad_session} </option>`
+                                                        `<option value="${element.acad_session_lid}"> ${element.acad_session} </option>`
                                                 });
 
 
@@ -605,11 +636,7 @@
                                             `.timetable-simulation tbody td[data-start-time-id="${allEvent.slot_start_lid}"][data-end-time-id="${allEvent.slot_end_lid}"][data-room-id="${allEvent.room_lid}"] `);
 
                                             occupiedSlot.text('Occupied');
-                                            occupiedSlot.css({'cursor' : 'not-allowed',
-                                            'background' : '#c94c4c',
-                                            'pointer-events': 'none',
-                                            'color' : '#fff'
-                                        })
+                                            occupiedSlot.addClass('occupied-td');
                                             
                                         }
                                        
