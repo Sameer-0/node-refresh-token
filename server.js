@@ -4,7 +4,9 @@ require('dotenv').config()
 const http = require('http');
 const https = require("https");
 const path = require('path');
+
 const setRouter = require("./router")
+const timetablesocket = require("./app/controllers/admin/timeTableSimulation/timetablesocket");
 const {
     verifySubdomain
 } = require('./app/middlewares/domain')
@@ -35,7 +37,9 @@ const {
 } = require('./config/redis')
 const device = require('express-device');
 
-app.use(express.json({limit: '50mb'}));
+app.use(express.json({
+    limit: '50mb'
+}));
 app.use(
     express.urlencoded({
         extended: false,
@@ -179,10 +183,17 @@ app.use(function (req, res) {
 
 
 
+
 if (!process.env.APP_ENV === 'PRODUCTION') {
-    const server = https.createServer(sslOptions, app);
-    server.listen(process.env.APP_PORT);
+    const server = https.createServer(sslOptions, app).listen(process.env.APP_PORT);
+    //socket initialization
+    global.io = require("socket.io")(server);
+    //SOCKET CONNECTION
+    global.io.on("connection", timetablesocket.respond);
 } else {
-    const server = http.createServer(app);
-    server.listen(process.env.APP_PORT);
+    const server = http.createServer(app).listen(process.env.APP_PORT);
+    //socket initialization
+    global.io = require("socket.io")(server);
+    //SOCKET CONNECTION
+    global.io.on("connection", timetablesocket.respond);
 }
