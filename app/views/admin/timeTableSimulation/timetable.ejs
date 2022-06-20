@@ -98,9 +98,20 @@
   </div>
 
     <%- include("../partials/footer") %>
-
+    <script src="/socket.io/socket.io.js"></script>
                         <script>
                             $(document).ready(function () {
+                                let socket = io();
+                                socket.on('connect', () => {
+                                    console.log('Socket Connection::::::::::::>>',socket.connected)
+                                });
+
+                                socket.emit('join', 'Timetable rescheduling module')
+
+                                let  slugName = `<%-locals.slug %>`
+                                let  userId = `<%-locals.userId %>`
+                                console.log('slugName::::::::::::>>',slugName)
+                                console.log('userId::::::::::::>>',userId)
                                 let currentTd;
                                 let roomList = JSON.parse(`<%- roomList %>`);
                                 let programListJson = JSON.parse(`<%- programListJson %>`);
@@ -336,49 +347,57 @@
 
 
                                 //DROP EVENT SURAJ
-                                //   $(document).on('click', '#drop-slot', function() 
+                                //$(document).on('click', '#drop-slot', function() 
                                 $("#slotModal").on('click', '#drop-slot', function () {
                                     let eventLid = $(this).attr('data-lid');
-                                    let ApiObj = {
-                                        url: '/admin/time-table-simulation/time-table/drop-event',
-                                        type: 'POST',
-                                        data: {
-                                            eventLid: eventLid,
-                                        },
-                                        dataType: 'JSON'
-                                    }
-                                    ajaxApi(ApiObj).then((result) => {
-                                            console.log('Response::::::::::::', result);
-                                            //currentTd.html('NA')// SET NA AFTER DROP
-                                            console.log('currentTd::::::::::', currentTd)
-                                            currentTd.html("NA")
-                                            //SET EMPTY CURRENT TD
-                                            // currentTd.attr('data-school-time-id', '')
-                                            // currentTd.attr('data-start-time-id', '')
-                                            // currentTd.attr('data-end-time-id', '')
-                                            // currentTd.attr('data-room-id', '')
-                                            // currentTd.attr('data-room-no', '')
-                                            // currentTd.attr('data-lid', '')
-                                            // currentTd.attr('data-module-name', '')
-                                            // currentTd.attr('data-division-name', '')
-                                            // currentTd.attr('data-batch-name', '')
-                                            // currentTd.attr('data-session-name', '')
-                                            // currentTd.attr('data-program-name', '')
-                                            // currentTd.attr('data-start-time', '')
-                                            // currentTd.attr('data-end-time', '')
-
+                                    socket.emit('drop-event-request', slugName, userId, eventLid);
+                                    socket.on('drop-event-response', function(response){
+                                        console.log('drop-event-response::::::::::::::::', response)
+                                        //Set Data Here after socket response
+                                        currentTd.html("NA")
                                             $("#slotModal").modal('hide');
-                                            console.log('Successfully table reinitialize:::',
-                                                result);
-                                        })
-                                        .catch((error) => {
-                                            console.log('error', error);
-                                        })
+                                        showSuccess(response)
+                                    });
+
+                                    // let ApiObj = {
+                                    //     url: '/admin/time-table-simulation/time-table/drop-event',
+                                    //     type: 'POST',
+                                    //     data: {
+                                    //         eventLid: eventLid,
+                                    //     },
+                                    //     dataType: 'JSON'
+                                    // }
+                                    // ajaxApi(ApiObj).then((result) => {
+                                    //         console.log('Response::::::::::::', result);
+                                    //         //currentTd.html('NA')// SET NA AFTER DROP
+                                    //         console.log('currentTd::::::::::', currentTd)
+                                    //         currentTd.html("NA")
+                                    //         //SET EMPTY CURRENT TD
+                                    //         // currentTd.attr('data-school-time-id', '')
+                                    //         // currentTd.attr('data-start-time-id', '')
+                                    //         // currentTd.attr('data-end-time-id', '')
+                                    //         // currentTd.attr('data-room-id', '')
+                                    //         // currentTd.attr('data-room-no', '')
+                                    //         // currentTd.attr('data-lid', '')
+                                    //         // currentTd.attr('data-module-name', '')
+                                    //         // currentTd.attr('data-division-name', '')
+                                    //         // currentTd.attr('data-batch-name', '')
+                                    //         // currentTd.attr('data-session-name', '')
+                                    //         // currentTd.attr('data-program-name', '')
+                                    //         // currentTd.attr('data-start-time', '')
+                                    //         // currentTd.attr('data-end-time', '')
+
+                                    //         $("#slotModal").modal('hide');
+                                    //         console.log('Successfully table reinitialize:::',
+                                    //             result);
+                                    //     })
+                                    //     .catch((error) => {
+                                    //         console.log('error', error);
+                                    //     })
                                 })
 
                                 //SCHEDULE EVENT
                                 $(document).on('click', '#schedule-slot', function () {
-
                                     let roomLid = $(this).attr("data-room-id");
                                     let startTimeId = $(this).attr("data-start-time-id");
                                     let endTimeId = $(this).attr("data-end-time-id");
@@ -406,6 +425,7 @@
                                         "data-batch-lid");
                                     let dayLid = $("#day").val();
                                     let schoolTimeLid = $(this).attr("data-school-time-id");
+
                                     let obj = [{
                                         room_lid: roomLid,
                                         start_time_id: startTimeId,
@@ -420,50 +440,51 @@
                                     }]
 
                                     console.log('JSON::::::::::::::::', obj)
+                                    //'/admin/time-table-simulation/time-table/schedule-event'
+                                    socket.emit('schedule-event-request', slugName, userId, JSON.stringify(obj));
+                                    socket.on('schedule-event-response', function(response){
+                                        console.log('schedule-event-response::::::::::::::::', response)
+                                        //Set Data Here after socket response
+                                        showSuccess(response)
+                                    });
 
-                                    let ApiObj = {
-                                        url: '/admin/time-table-simulation/time-table/schedule-event',
-                                        type: 'POST',
-                                        data: {
-                                            inputJSON: JSON.stringify(obj)
-                                        },
-                                        dataType: 'JSON'
-                                    }
+                                    // let ApiObj = {
+                                    //     url: '/admin/time-table-simulation/time-table/schedule-event',
+                                    //     type: 'POST',
+                                    //     data: {
+                                    //         inputJSON: JSON.stringify(obj)
+                                    //     },
+                                    //     dataType: 'JSON'
+                                    // }
 
-                                    console.log('obj::::', ApiObj.data)
-
-                                    ajaxApi(ApiObj).then((result) => {
-                                            console.log(result);
-
-                                            //SET DATA CURRENT TD
-                                            currentTd.attr('data-school-time-id', schoolTimeLid)
-                                            currentTd.attr('data-start-time-id', startTimeId)
-                                            currentTd.attr('data-end-time-id', endTimeId)
-                                            currentTd.attr('data-room-id', roomLid)
-                                            currentTd.attr('data-room-no', roomNo)
-                                            currentTd.attr('data-lid', dataLid)
-                                            currentTd.attr('data-module-name', moduleName)
-                                            currentTd.attr('data-division-name', divisionName)
-                                            currentTd.attr('data-batch-name', batchName)
-                                            currentTd.attr('data-session-name', sessionName)
-                                            currentTd.attr('data-program-name', programName)
-                                            currentTd.attr('data-start-time', startTimeText)
-                                            currentTd.attr('data-end-time', endTimeText)
-                                            currentTd.attr('draggable', true)
-                                            currentTd.addClass('draggableTd dragtargetTd')
-
-                                         
-                                            currentTd.html(
-                                                `${moduleName}<br>${divisionName} (${batchName})<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`
-                                            )
-                                            $("#slotModal").modal('hide')
-                                            // showSuccess(result)
-                                        })
-                                        .catch((error) => {
-                                            console.log('error', error);
-                                            showError(error.responseJSON)
-                                        })
-
+                                    // console.log('obj::::', ApiObj.data)
+                                    // ajaxApi(ApiObj).then((result) => {
+                                    //         console.log(result);
+                                    //         //SET DATA CURRENT TD
+                                    //         currentTd.attr('data-school-time-id', schoolTimeLid)
+                                    //         currentTd.attr('data-start-time-id', startTimeId)
+                                    //         currentTd.attr('data-end-time-id', endTimeId)
+                                    //         currentTd.attr('data-room-id', roomLid)
+                                    //         currentTd.attr('data-room-no', roomNo)
+                                    //         currentTd.attr('data-lid', dataLid)
+                                    //         currentTd.attr('data-module-name', moduleName)
+                                    //         currentTd.attr('data-division-name', divisionName)
+                                    //         currentTd.attr('data-batch-name', batchName)
+                                    //         currentTd.attr('data-session-name', sessionName)
+                                    //         currentTd.attr('data-program-name', programName)
+                                    //         currentTd.attr('data-start-time', startTimeText)
+                                    //         currentTd.attr('data-end-time', endTimeText)
+                                    //         currentTd.attr('draggable', true)
+                                    //         currentTd.addClass('draggableTd dragtargetTd')
+                                    //         currentTd.html(
+                                    //             `${moduleName}<br>${divisionName} (${batchName})<br>${sessionName}<br>${programName}<br>${startTimeText} to ${endTimeText}`
+                                    //         )
+                                    //         $("#slotModal").modal('hide')
+                                    //     })
+                                    //     .catch((error) => {
+                                    //         console.log('error', error);
+                                    //         showError(error.responseJSON)
+                                    //     })
                                 })
 
 
@@ -584,30 +605,38 @@
                                     
                                     let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
                                                 
-
                                     console.log('JSON::::::::::::::::', obj)
-
-                                    let ApiObj = {
-                                        url: '/admin/time-table-simulation/time-table/swap-events',
-                                        type: 'POST',
-                                        data: {
-                                            inputJSON: JSON.stringify(obj)
-                                        },
-                                        dataType: 'JSON'
-                                    }
-                                    console.log('target',targetContent)
-                                    console.log('dragTd',dragContent)
-                                    ajaxApi(ApiObj)
-                                    .then((result) => {
+                                    //'/admin/time-table-simulation/time-table/schedule-event'
+                                    socket.emit('swap-events-request', slugName, userId, JSON.stringify(obj));
+                                    socket.on('swap-events-response', function(response){
+                                        console.log('swap-events-response::::::::::::::::', response)
+                                        //Set Data Here after socket response
                                         targetTd.html(dragContent);
                                         dragTd.html(targetContent);
-                                        // showSuccess(result);
-                                    
-                                    })
-                                    .catch(err => {console.log('err', err)
-                                        showError(err.responseJSON);
-                                })
 
+                                        showSuccess(response)
+                                    });
+
+                                //     let ApiObj = {
+                                //         url: '/admin/time-table-simulation/time-table/swap-events',
+                                //         type: 'POST',
+                                //         data: {
+                                //             inputJSON: JSON.stringify(obj)
+                                //         },
+                                //         dataType: 'JSON'
+                                //     }
+                                //     console.log('target',targetContent)
+                                //     console.log('dragTd',dragContent)
+                                //     ajaxApi(ApiObj)
+                                //     .then((result) => {
+                                //         targetTd.html(dragContent);
+                                //         dragTd.html(targetContent);
+                                //         showSuccess(result);
+                                // showSuccess(result);      
+                                //     })
+                                //     .catch(err => {console.log('err', err)
+                                //         showError(err.responseJSON);
+                                // })
 
                                 });
                                 }

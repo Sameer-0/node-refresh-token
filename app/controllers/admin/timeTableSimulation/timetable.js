@@ -67,14 +67,16 @@ module.exports = {
         })
     },
 
+
+//Implemented in timetablesocket
     dropEvent: (req, res, next) => {
         console.log(req.body);
         TimeTable.dropEvent(res.locals.slug, res.locals.userId, req.body.eventLid).then(result => {
             res.status(200).send(result);
         })
-
     },
 
+//Implemented in timetablesocket
     scheduleEvent: (req, res) => {
         let object = { 
             allocate_events: JSON.parse(req.body.inputJSON) 
@@ -94,6 +96,8 @@ module.exports = {
         })
     },
 
+
+    //Implemented in timetablesocket
     swapEvents: (req, res) => {
         let object = { 
             "swap_events": JSON.parse(req.body.inputJSON)
