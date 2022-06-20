@@ -22,6 +22,33 @@ module.exports = class TimeTable {
         })
     }
 
+    // static getAllEvents(slug, day_lid){
+
+    //     return poolConnection.then(pool => {
+    //         let stmt;
+
+    //         stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, fe.faculty_lid, f.faculty_name, f.faculty_id 
+    //             FROM [${slug}].event_bookings eb 
+    //             LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
+    //             LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
+    //             INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
+    //             INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
+    //             INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
+	// 			INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
+	// 			INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
+	// 			INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+    //             INNER JOIN [${slug}].days d 
+    //             ON eb.day_lid = d.id WHERE d.id = @dayLid`
+
+    //             return pool.request() 
+    //             .input('dayLid', sql.Int, day_lid)
+    //             .input('programLid', sql.Int, program_lid)
+    //             .input('sessionLid', sql.Int, acad_session_lid)
+    //             .query(stmt);
+    //     })
+
+    // }
+
     static getEventsByProgramSessionDay(slug, day_lid, program_lid, acad_session_lid) {
 
         return poolConnection.then(pool => {
@@ -192,7 +219,8 @@ module.exports = class TimeTable {
         })
     }
 
-    static allocateFaculties(slug){
+    static allocateFaculties(slug, body){
+        console.log('for faculty allocation',body);
         return poolConnection.then(pool => {
 
             return pool.request() 
@@ -200,6 +228,18 @@ module.exports = class TimeTable {
             .output('output_flag', sql.Int)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].sp_allocate_faculties`);
+
+        })
+    }
+
+    static deallocateFaculties(slug, body){
+        console.log('for faculty allocation',body);
+        return poolConnection.then(pool => {
+
+            return pool.request() 
+            .query(`UPDATE [${slug}].faculty_work_events SET status = 0;UPDATE [${slug}].faculty_week_slots SET status = 0;TRUNCATE TABLE [${slug}].faculty_events`)
+            
+            
 
         })
     }

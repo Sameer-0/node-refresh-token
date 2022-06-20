@@ -88,9 +88,11 @@ class SimpleAlert {
 
         this.positiveElem.addEventListener('click', () => {
             this.removeAlert();
+            
             if(obj.type == 'alert-success'){
             location.reload();
             }
+            
         })
 
         this.negativeElem.addEventListener('click', () => {
