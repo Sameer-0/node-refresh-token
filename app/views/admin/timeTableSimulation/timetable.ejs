@@ -19,7 +19,7 @@
     </div>
 
     <%- include("../partials/timetableSimulationMenu") %>
-    <div class="card table-card mb-3">
+    <div class="card table-card mb-1">
         <div class="card-body" id="timetable-filter">
             <div class="row">
                 <div class="input-groups col-md-4 col-sm-12">
@@ -66,7 +66,7 @@
             <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
             </div> -->
-            <div class="table-responsive">
+            <div class="table-responsive timetable-simulation-container" >
                 <table id="" class="table table-bordered timetable-simulation" style="width: 100%; cursor: pointer;">
                     
                 </table>
@@ -91,7 +91,7 @@
         </div>
         <div class="modal-footer">
           <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-          <button type="button" class="btn btn-primary" id="drop-slot">Drop</button>
+          <button type="button" class="btn btn-primary" id="drop-slot">Drop Slot</button>
         </div>
       </div>
     </div>
@@ -99,11 +99,12 @@
 
     <%- include("../partials/footer") %>
     <script src="/socket.io/socket.io.js"></script>
+
                         <script>
                             $(document).ready(function () {
                                 let socket = io();
                                 socket.on('connect', () => {
-                                    console.log('Socket Connection::::::::::::>>',socket.connected)
+                                    console.log('Socket Connection::::::::::::>>', socket.connected)
                                 });
 
                                 socket.emit('join', 'Timetable rescheduling module')
@@ -117,7 +118,7 @@
                                 let programListJson = JSON.parse(`<%- programListJson %>`);
 
                                 //DRAG EVENT
-                                initDrag()
+                                // initDrag()
                                 //Getting session List Ajax
                                 $("#program-name").on('change', function () {
                                     let programLid = $(this).val();
@@ -203,12 +204,13 @@
                                 $(document).on('click', '.timetable-simulation tbody td', function () {
 
                                     currentTd = $(this)
+                                    let programList = ``;
 
                                     if ($(this).text() == "NA") {
 
                                         let programLid = $("#program-name").val();
                                         let acadSessionLid = $("#session-name").val();
-                                        let programList = ``;
+                                   
                                         programList +=
                                             `<div class="mb-2" >Slot Available || ${$(this).attr('data-room-no')} || ${$(this).attr('data-start-time')}-${$(this).attr('data-end-time')}</div>`
 
@@ -245,10 +247,48 @@
 
                                     } else {
                                         $('#slotModal .modal-body').html($(this).text());
+                                        if($(this).attr("data-faculty-lid")){
+
+                                        $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="change-faculty">Change Faculty</button><div>`);
+                                        }
+                                        else{
+                                        //     if (!$('#program-name').val()) {
+                                        //     programList +=
+                                        //         `<select class="form-select" id="program-name-modal">`;
+                                        //     programList +=
+                                        //         `<option value="" selected>--select Program--</option>`
+                                        //     for (let program of programListJson) {
+                                        //         programList +=
+                                        //             `<option value="${program.id}">${program.program_name}</option>`
+                                        //     }
+                                        //     programList += `</select>`
+
+                                        // } else {
+                                        //     programList +=
+                                        //         `<select class="form-select" id="program-name-modal">`;
+                                        //     programList +=
+                                        //         `<option value="" selected>--Select Program</option>`
+                                        //     programList +=
+                                        //         `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
+                                        //     programList += `</select>`
+                                        // }
+
+                                        // programList +=
+                                        //     `<select class="form-select my-3" id="session-name-modal"></select>`
+                                        // programList +=
+                                        //     `<select class="form-select my-3" id="module-details">
+                                        //        ${$(this).attr('data-lid')}
+                                        //     </select>`
+
+                                        //     $('#slotModal .modal-body').append(programList);
+                                           
+
+                                            $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
+                                        }
                                         $('#slotModal .modal-body').attr('data-lid', $(this).attr(
                                             "data-lid"));
                                         $('#slotModal .modal-footer').html(
-                                            `<button type="button" class="btn btn-primary" id="drop-slot" data-lid="${$(this).attr("data-lid")}">Drop</button>`
+                                            `<button type="button" class="btn btn-primary" id="drop-slot" data-lid="${$(this).attr("data-lid")}">Drop Slot</button>`
                                         )
                                     }
 
@@ -335,6 +375,7 @@
                                                     `<option> No Pending Events </option>`
                                             }
 
+                                            console.log('pendingevents:::', pendingEventList)
                                             $(document).find('#pending-events').html(
                                                 pendingEventList);
 
@@ -493,6 +534,7 @@
 
                                     let slotList = result.slotList;
                                     let eventList = result.eventList;
+                                    let allEventList = result.allEventList;
                                     let tableStr = `<thead><tr><th>Room No</th>`;
                                     for (let slot of slotList) {
 
@@ -519,7 +561,8 @@
                                     // console.log('tableStr:::::::::::::::', tableStr)
                                     $('.timetable-simulation').html(tableStr)
 
-                                    console.log('eventslist:::::', eventList)
+                                    console.log('eventList:::::', eventList)
+                                    console.log('allEventList:::::', allEventList)
                                     //  setTimeout(function () {
                                     for (let event of eventList) {
 
@@ -538,6 +581,7 @@
                                         ).attr({
                                             "data-lid": `${event.id}`,
                                             "data-module-name": `${event.module_name}`,
+                                            "data-module-lid": `${event.course_lid}`,
                                             "data-division-name": `${event.division}`,
                                             "data-batch-name": `${event.batch}`,
                                             "data-session-name": `${event.acad_session}`,
@@ -545,9 +589,30 @@
                                             "data-start-time": `${event.start_time}`,
                                             "data-end-time": `${event.end_time}`,
                                             "data-faculty-name": `${event.faculty_name ? event.faculty_name : 'Faculty NA'}`,
+                                            "data-faculty-lid": `${event.faculty_lid ? event.faculty_lid : ''}`,
                                             "class": 'draggableTd dragtargetTd',
                                             "draggable":"true"
                                         })
+                                    }
+
+                                    for ( let allEvent of allEventList ){
+
+                                        if($(document).find(
+                                            `.timetable-simulation tbody td[data-start-time-id="${allEvent.slot_start_lid}"][data-end-time-id="${allEvent.slot_end_lid}"][data-room-id="${allEvent.room_lid}"] `
+                                        ).text() == "NA"){
+
+                                            let occupiedSlot = $(document).find(
+                                            `.timetable-simulation tbody td[data-start-time-id="${allEvent.slot_start_lid}"][data-end-time-id="${allEvent.slot_end_lid}"][data-room-id="${allEvent.room_lid}"] `);
+
+                                            occupiedSlot.text('Occupied');
+                                            occupiedSlot.css({'cursor' : 'not-allowed',
+                                            'background' : '#c94c4c',
+                                            'pointer-events': 'none',
+                                            'color' : '#fff'
+                                        })
+                                            
+                                        }
+                                       
                                     }
 
                                 }
@@ -555,66 +620,66 @@
 
                                 //DRAG FUNCTION
 
-                                function initDrag(){
-                                    let dragTd, targetTd, dragTdLid, targetTdLid, dragContent, targetContent, dragindex;
+                                // function initDrag(){
+                                //     let dragTd, targetTd, dragTdLid, targetTdLid, dragContent, targetContent, dragindex;
 
-                                    $(".timetable-simulation").on('dragover','.draggableTd',function(event){
-                                    event.preventDefault();  
-                                    event.stopPropagation();
-                                    // console.log('dragover', this)
-                                    // console.log('dragover',$(this).text())
-                                    // $(this).addClass('dragging'+$(this).text());
-                                })
+                                //     $(".timetable-simulation").on('dragover','.draggableTd',function(event){
+                                //     event.preventDefault();  
+                                //     event.stopPropagation();
+                                //     // console.log('dragover', this)
+                                //     // console.log('dragover',$(this).text())
+                                //     // $(this).addClass('dragging'+$(this).text());
+                                // })
 
-                                $(".timetable-simulation").on('dragstart','.draggableTd',function(event){
+                                // $(".timetable-simulation").on('dragstart','.draggableTd',function(event){
                                     
-                                    // console.log('dragover',$(this).text())
-                                    // $(this).addClass('dragging'+$(this).text());
-                                    $(this).css({'background':'#5ecf73',
-                                                  'color' : '#fff'  })
-                                    dragTd = $(this);
-                                    dragTdLid = $(this).attr('data-lid');
+                                //     // console.log('dragover',$(this).text())
+                                //     // $(this).addClass('dragging'+$(this).text());
+                                //     $(this).css({'background':'#5ecf73',
+                                //                   'color' : '#fff'  })
+                                //     dragTd = $(this);
+                                //     dragTdLid = $(this).attr('data-lid');
                                     
                                     
-                                })
+                                // })
 
-                                $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
-                                    event.preventDefault();  
-                                    event.stopPropagation();
-                                    // $(this).removeClass('dragging');
-                                    // console.log('dragleave', this)
-                                });
+                                // $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
+                                //     event.preventDefault();  
+                                //     event.stopPropagation();
+                                //     // $(this).removeClass('dragging');
+                                //     // console.log('dragleave', this)
+                                // });
 
-                                $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
+                                // $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
 
-                                    $(this).css({'background':'#5ecf73',
-                                                  'color' : '#fff'  })
+                                //     $(this).css({'background':'#5ecf73',
+                                //                   'color' : '#fff'  })
                                                   
-                                    event.preventDefault();  
-                                    event.stopPropagation();
-                                    targetTd = $(this);
-                                    targetTdLid = $(this).attr('data-lid');
+                                //     event.preventDefault();  
+                                //     event.stopPropagation();
+                                //     targetTd = $(this);
+                                //     targetTdLid = $(this).attr('data-lid');
 
-                                    dragContent = `${dragTd.attr('data-module-name')} <br> ${dragTd.attr('data-division-name')} (${dragTd.attr('data-batch-name')}) <br> ${dragTd.attr('data-session-name')} <br> ${dragTd.attr('data-program-name')} <br> ${$(this).attr('data-start-time')} to ${$(this).attr('data-end-time')} <br> (${dragTd.attr('data-faculty-name')})`
+                                //     dragContent = `${dragTd.attr('data-module-name')} <br> ${dragTd.attr('data-division-name')} (${dragTd.attr('data-batch-name')}) <br> ${dragTd.attr('data-session-name')} <br> ${dragTd.attr('data-program-name')} <br> ${$(this).attr('data-start-time')} to ${$(this).attr('data-end-time')} <br> (${dragTd.attr('data-faculty-name')})`
 
-                                    targetContent = `${$(this).attr('data-module-name')} <br> ${$(this).attr('data-division-name')} (${$(this).attr('data-batch-name')}) <br> ${$(this).attr('data-session-name')} <br> ${$(this).attr('data-program-name')} <br> ${dragTd.attr('data-start-time')} to ${dragTd.attr('data-end-time')} <br> (${$(this).attr('data-faculty-name')})`
+                                //     targetContent = `${$(this).attr('data-module-name')} <br> ${$(this).attr('data-division-name')} (${$(this).attr('data-batch-name')}) <br> ${$(this).attr('data-session-name')} <br> ${$(this).attr('data-program-name')} <br> ${dragTd.attr('data-start-time')} to ${dragTd.attr('data-end-time')} <br> (${$(this).attr('data-faculty-name')})`
 
-                                    console.log('dragstart:::', dragContent)
+                                //     console.log('dragstart:::', dragContent)
                                     
-                                    console.log('dropppp:::', targetContent)
+                                //     console.log('dropppp:::>', targetContent)
                                     
-                                    let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
+                                //     let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
                                                 
-                                    console.log('JSON::::::::::::::::', obj)
-                                    //'/admin/time-table-simulation/time-table/schedule-event'
-                                    socket.emit('swap-events-request', slugName, userId, JSON.stringify(obj));
-                                    socket.on('swap-events-response', function(response){
-                                        console.log('swap-events-response::::::::::::::::', response)
-                                        //Set Data Here after socket response
-                                        targetTd.html(dragContent);
-                                        dragTd.html(targetContent);
-                                        showSuccess(response)
-                                    });
+                                //     console.log('JSON::::::::::::::::', obj)
+                                //     //'/admin/time-table-simulation/time-table/schedule-event'
+                                //     socket.emit('swap-events-request', slugName, userId, JSON.stringify(obj));
+                                //     socket.on('swap-events-response', function(response){
+                                //         console.log('swap-events-response::::::::::::::::', response)
+                                //         //Set Data Here after socket response
+                                //         targetTd.html(dragContent);
+                                //         dragTd.html(targetContent);
+                                //         // showSuccess(response)
+                                //     });
 
                                 //     let ApiObj = {
                                 //         url: '/admin/time-table-simulation/time-table/swap-events',
@@ -637,8 +702,8 @@
                                 //         showError(err.responseJSON);
                                 // })
 
-                                });
-                                }
+                                // });
+                                // }
 
 
 

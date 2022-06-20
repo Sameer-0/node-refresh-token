@@ -31,6 +31,7 @@ router.post('/time-table-simulation/time-table/schedule-event', timeTable.schedu
 router.post('/time-table-simulation/time-table/swap-events', timeTable.swapEvents)
 
 router.post('/time-table-simulation/allocate-faculties', timeTable.allocateFaculties) 
+router.post('/time-table-simulation/deallocate-faculties', timeTable.deallocateFaculties) 
 
 
 module.exports = router

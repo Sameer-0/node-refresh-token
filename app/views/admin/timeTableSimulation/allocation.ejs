@@ -90,15 +90,34 @@
     <div class="card table-card mt-5">
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>Faculty Allocation</h5>
+                <h5>Faculty Allocation And Deallocation</h5>
             </div>
         </div>
 
         <div class="card-body">
-            <div class="mt-3">
-                <em class="text-danger">Please process faculty allocation after all the events are generated.</em>
-                <br>
+            <em class="text-danger">*Please process faculty allocation after all the events are generated.</em>
+            <!-- <div class="my-3 row">
+                <div class="input-groups col-md-6 col-sm-12">
+                    <label for="program-name" class="d-flex justify-content-between">Select Program:</label>
+                   
+                    <select name="program-name" id="program-name-faculty" class="form-select">
+                        <option selected disabled value>--Select Program--</option>
+                        <% for(let program of programList){%>
+                        <option value="<%- program.id%>"><%-program.program_name%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div class="input-groups col-md-6 col-sm-12">
+                    <label for="program-name">Select Session:</label>
+                    <select name="session-name" id="session-name-faculty" class="form-select">
+                        <option selected disabled value>--Select Session--</option>
+                    </select>
+                </div>
+                
+            </div> -->
+            <div class="my-3">
                 <button class="btn btn-dark" id="allocate-faculties">Allocate Faculty</button>
+                <button class="btn btn-danger" id="deallocate-faculties">Deallocate Faculty</button>
             </div>
         </div>
         
@@ -205,16 +224,53 @@
                         `<option disabled selected value="">--Select Session--</option>`;
                     result.forEach(element => {
                         sessionList += `<option value="${element.id}">
-        ${element.acad_session}
-    </option>`
-                    });
-                } else {
-                    sessionList += `<option value="">
-        No Session Found!
-    </option>`
+                            ${element.acad_session}
+                        </option>`
+                                        });
+                                    } else {
+                                        sessionList += `<option value="">
+                            No Session Found!
+                        </option>`
                 }
                 sessionList += `</select>`;
                 $("#session-name-d").html(sessionList)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+        
+        $("#program-name-faculty").on('change', function () {
+            let programLid = $(this).val();
+
+
+            let ApiObj = {
+                url: '/admin/programs/sessions/sessions-for-program',
+                type: 'POST',
+                data: {
+                    programLid: programLid
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                let sessionList = ``;
+
+                if (result.length > 0) {
+                    sessionList +=
+                        `<option disabled selected value="">--Select Session--</option>`;
+                    result.forEach(element => {
+                        sessionList += `<option value="${element.id}">
+                        ${element.acad_session}
+                    </option>`
+                                    });
+                                } else {
+                                    sessionList += `<option value="">
+                        No Session Found!
+                    </option>`
+                }
+                sessionList += `</select>`;
+                $("#session-name-faculty").html(sessionList)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -253,10 +309,40 @@
         
         $("#allocate-faculties").on('click', function () {
 
+            // let programLid = $('#program-name-faculty').val();
+            // let sessionLid = $('#session-name-faculty').val();
+
                 let ApiObj = {
                     url: '/admin/time-table-simulation/allocate-faculties',
                     type: 'POST',
-                    data: {},
+                    data: {
+                        // programLid: programLid,
+                        // sessionLid: sessionLid,
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    showSuccess(result);
+                    // alert('SUCCESS')
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+
+        })
+
+        $("#deallocate-faculties").on('click', function () {
+
+            // let programLid = $('#program-name-faculty').val();
+            // let sessionLid = $('#session-name-faculty').val();
+
+                let ApiObj = {
+                    url: '/admin/time-table-simulation/deallocate-faculties',
+                    type: 'POST',
+                    data: {
+                        // programLid: programLid,
+                        // sessionLid: sessionLid,
+                    },
                     dataType: 'JSON'
                 }
 
