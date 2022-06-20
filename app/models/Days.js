@@ -32,7 +32,7 @@ module.exports = class Days {
 
     static fetchActiveDay(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, day_name,  status  FROM [${slug}].[days] WHERE status <> 0`)
+            return pool.request().query(`SELECT id, day_name,  status  FROM [${slug}].[days] WHERE day_of_week <> 7`)
         })
     }
 

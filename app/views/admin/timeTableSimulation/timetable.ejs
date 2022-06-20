@@ -523,6 +523,10 @@
                                     //  setTimeout(function () {
                                     for (let event of eventList) {
 
+                                        console.log('event.slot_start_lid>> ', event.slot_start_lid)
+                                        console.log('event.slot_end_lid>> ', event.slot_end_lid)
+                                        console.log('event.room_lid>> ', event.room_lid)
+
                                         $(document).find(
                                             `.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"] `
                                         ).html(
@@ -540,6 +544,7 @@
                                             "data-program-name": `${event.program_name}`,
                                             "data-start-time": `${event.start_time}`,
                                             "data-end-time": `${event.end_time}`,
+                                            "data-faculty-name": `${event.faculty_name ? event.faculty_name : 'Faculty NA'}`,
                                             "class": 'draggableTd dragtargetTd',
                                             "draggable":"true"
                                         })
@@ -565,10 +570,12 @@
                                     
                                     // console.log('dragover',$(this).text())
                                     // $(this).addClass('dragging'+$(this).text());
+                                    $(this).css({'background':'#5ecf73',
+                                                  'color' : '#fff'  })
                                     dragTd = $(this);
                                     dragTdLid = $(this).attr('data-lid');
-                                    dragContent = $(this).text();
-                                    console.log('dragstart', dragTd)
+                                    
+                                    
                                 })
 
                                 $(".timetable-simulation").on("dragleave",'.draggableTd', function(event) {
@@ -579,12 +586,22 @@
                                 });
 
                                 $(".timetable-simulation").on("drop",'.draggableTd', function(event) {
+
+                                    $(this).css({'background':'#5ecf73',
+                                                  'color' : '#fff'  })
+                                                  
                                     event.preventDefault();  
                                     event.stopPropagation();
                                     targetTd = $(this);
                                     targetTdLid = $(this).attr('data-lid');
-                                    targetContent = $(this).text();
-                                    console.log('dropppp', targetTd)
+
+                                    dragContent = `${dragTd.attr('data-module-name')} <br> ${dragTd.attr('data-division-name')} (${dragTd.attr('data-batch-name')}) <br> ${dragTd.attr('data-session-name')} <br> ${dragTd.attr('data-program-name')} <br> ${$(this).attr('data-start-time')} to ${$(this).attr('data-end-time')} <br> (${dragTd.attr('data-faculty-name')})`
+
+                                    targetContent = `${$(this).attr('data-module-name')} <br> ${$(this).attr('data-division-name')} (${$(this).attr('data-batch-name')}) <br> ${$(this).attr('data-session-name')} <br> ${$(this).attr('data-program-name')} <br> ${dragTd.attr('data-start-time')} to ${dragTd.attr('data-end-time')} <br> (${$(this).attr('data-faculty-name')})`
+
+                                    console.log('dragstart:::', dragContent)
+                                    
+                                    console.log('dropppp:::', targetContent)
                                     
                                     let obj = [{"event_booking_lid": dragTdLid }, {"event_booking_lid": targetTdLid}]
                                                 

@@ -10,11 +10,12 @@ const isJsonString = require('../../../utils/util')
 module.exports = {
 
     getPage: (req, res) => {
+        console.log('im hitting get page')
         Promise.all([
                 ProgramSessions.getLockedProgram(res.locals.slug),
                 Rooms.fetchBookedRooms(res.locals.organizationId),
                 Days.fetchActiveDay(res.locals.slug),
-                TimeTable.getPendingEvents(res.locals.slug)
+                
             ])
             .then(result => {
                 // console.log('pending::::',  result[3].recordset)
@@ -23,10 +24,12 @@ module.exports = {
                     programListJson: JSON.stringify(result[0].recordset),
                     roomList: JSON.stringify(result[1].recordset),
                     dayList: result[2].recordset,
-                    pendingEvents: result[3].recordset,
+                    // pendingEvents: result[3].recordset,
                     breadcrumbs: req.breadcrumbs,
                     Url: req.originalUrl
                 })
+            }).catch( error => {
+                console.log('error', error)
             })
     },
 
