@@ -113,7 +113,7 @@ module.exports = class {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_add_session_dates]`)
+                .execute(`[${slug}].[sp_session_dates_wsdl]`)
         })
     }
     

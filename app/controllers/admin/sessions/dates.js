@@ -230,26 +230,32 @@ module.exports = {
                 });
         })
 
+        console.log('sessionDate:::::::::::::::::::::',JSON.stringify(sessionDate))
 
-        let object = {
-            add_session_dates: sessionDate
-          }
-                res.status(200).json({status:200,
-                description:'Success',
+        if(sessionDate.length > 0){
+            SessionDates.fetchSessionDateSap(res.locals.slug, sessionDate).then(_result => {
+                //console.log('Success:::::::::::::>>>>>',_result)
+                res.status(200).json(JSON.parse(_result.output.output_json))
+
+            }).catch(error => {
+             console.log('error:::::::::::::',error)
+                if(isJsonString.isJsonString(error.originalError.info.message)){
+                    res.status(500).json(JSON.parse(error.originalError.info.message))
+                
+                }
+                else{
+                  res.status(500).json({status:500,
+                    description:error.originalError.info.message,
+                    data:[]})
+                  
+                }
+            })
+        }else{
+            res.status(500).json({status:500,
+                description:'Something went wrong try after some time.',
                 data:[]})
-        // SessionDates.fetchSessionDateSap(res.locals.slug, object).then(_result => {
-        //     //console.log('Success:::::::::::::>>>>>',_result)
-        //     res.status(200).json(JSON.parse(_result.output.output_json))
-        // }).catch(error => {
-         
-        //     if(isJsonString.isJsonString(error.originalError.info.message)){
-        //         res.status(500).json(JSON.parse(error.originalError.info.message))
-        //     }
-        //     else{
-        //         res.status(500).json({status:500,
-        //         description:error.originalError.info.message,
-        //         data:[]})
-        //     }
-        // })
+        }
+               
+
     },
 }

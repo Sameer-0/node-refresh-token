@@ -49,9 +49,9 @@ module.exports = {
             else{
                 console.log('redirect if loggedout result::::::::::::::::::>> ', result)
                 console.log('Logged out:::::::::>>')
-                setTimeout(function(){
-                    return res.redirect('/user/login')
-                },2000)
+                // setTimeout(function(){
+                //     return res.redirect('/user/login')
+                // },2000)
             }
 
             // if (result.modules.length > 1) {
