@@ -184,7 +184,7 @@ app.use(function (req, res) {
 
 
 
-if (process.env.APP_ENV === 'PRODUCTION') {
+if (!process.env.APP_ENV === 'PRODUCTION') {
     const server = https.createServer(sslOptions, app).listen(process.env.APP_PORT);
     //socket initialization
     global.io = require("socket.io")(server);
