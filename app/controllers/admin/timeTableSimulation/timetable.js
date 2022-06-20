@@ -50,11 +50,13 @@ module.exports = {
     getEventsByProgramSessionDay: (req, res, next) => {
         Promise.all([
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
+            TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid),
             SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)
         ]).then(results => {
             res.status(200).send({
                 eventList: results[0].recordset,
-                slotList: results[1].recordset
+                allEventList: results[1].recordset,
+                slotList: results[2].recordset
             })
         })
     },
@@ -122,7 +124,17 @@ module.exports = {
 
 
     allocateFaculties: (req, res) => {        
-        TimeTable.allocateFaculties(res.locals.slug).then(result => {
+        console.log('faculty allocation request', req.body)
+        TimeTable.allocateFaculties(res.locals.slug, req.body).then(result => {
+
+            res.status(200).json({description: "Successful!"})
+        })
+    },
+
+    deallocateFaculties: (req, res) => {        
+        console.log('faculty deallocation request', req.body)
+        TimeTable.deallocateFaculties(res.locals.slug, req.body).then(result => {
+
             res.status(200).json({description: "Successful!"})
         })
     },
