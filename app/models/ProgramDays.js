@@ -11,8 +11,7 @@ module.exports = class {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} pd.id, pd.program_lid, pd.day_lid, IIF(pd.is_lecture = 1 ,'Yes','No') as is_lecture, p.program_name, d.day_name 
             FROM [${slug}].program_days pd
             INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
-            INNER JOIN [${slug}].days d ON pd.day_lid = d.id
-            WHERE d.status = 1 ORDER BY pd.id DESC`)
+            INNER JOIN [${slug}].days d ON pd.day_lid = d.id ORDER BY pd.id DESC`)
         })
     }
 
@@ -24,7 +23,6 @@ module.exports = class {
                 FROM [${slug}].program_days pd
                 INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
                 INNER JOIN [${slug}].days d ON pd.day_lid = d.id
-                WHERE d.status = 1
                 ORDER BY pd.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
@@ -37,8 +35,7 @@ module.exports = class {
                 FROM [${slug}].program_days pd
                 INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
                 INNER JOIN [${slug}].days d ON pd.day_lid = d.id
-                WHERE d.status = 1 AND 
-                p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword ORDER BY pd.id DESC`)
+                WHERE p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword ORDER BY pd.id DESC`)
         })
     }
 
