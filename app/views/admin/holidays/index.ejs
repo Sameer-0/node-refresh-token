@@ -120,7 +120,6 @@
                         class="fas fa-times"></i></button>
 
             </div>
-            <!-- <form action="/management/campus/add" method="POST"> -->
             <div class="modal-body">
                 <div id="errorHtml"></div>
 
@@ -136,7 +135,6 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <input name="Id" id="Id" type="hidden" class="form-control" >
                                     <input name="calendar_year" id="calendar_year" type="number" value="<%-acadYear%>" class="form-control"
                                     placeholder="Calender Year" required>
                                 </td>
@@ -168,22 +166,50 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-success  btn-sm" id="add-more-holidays"><i class="fas fa-plus"></i>
                     Add More Holidays</button>
                 <button type="button" class="btn createHoliday modal-inputform-btn">Create Holidays</button>
                 <button type="button" class="btn updateHoliday modal-inputform-btn d-none">Update Holiday</button>
             </div>
-            <!-- </form> -->
-
         </div>
-
     </div>
+</div>
 
 
+
+<!-- EDIT HOLIDAY MODAL -->
+<div class="modal fade" id="edit-holiday-modal" tabindex="-1" role="dialog" aria-labelledby="edit-holiday-modal"
+    aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content rounded-0 modal-inputform">
+            <div class="modal-header  modal-inputform-header">
+                <h5 class="modal-title text-dark" id="edit-org-modal-title">Add New Holiday</h5>
+                <button type="button" class="btn fs-4 text-dark" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Holiday Date</label>
+                    <input name="holiday_date" id="holiday_date" type="date" class="form-control"
+                    placeholder="Holiday Date" disabled>
+                    <input name="Id" id="Id" type="hidden" class="form-control" >
+                  </div>
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput2" class="form-label">Holiday Type</label>
+                    <select class="select2 editselect2" name="holiday_type" id="holiday_type">
+                        <% for(let type of holidayType){%>
+                        <option value="<%- type.id %>"><%- type.name %></option>
+                        <%}%>
+                    </select>
+                  </div>
+            </div>
+            <div class="modal-footer text-center">
+                <button type="button" class="btn updateHoliday modal-inputform-btn">Update Holiday</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <%- include("../partials/footer") %>
@@ -194,6 +220,10 @@
 
         $('.select2').select2({
         dropdownParent: $('#add-holiday-modal')});
+
+       
+        $('.editselect2').select2({
+        dropdownParent: $('#edit-holiday-modal')});
 
             //Fetch form SAP
             $(".fetchFromSAP").on('click', function () {
@@ -305,9 +335,7 @@
         //Edit Holiday
         //edit-holiday
         $('#holidayTable').on('click','.edit-holiday', function () {
-            $("#add-more-holidays").addClass('d-none')
-            $(".createHoliday").addClass('d-none')
-            $(".updateHoliday").removeClass('d-none')
+            console.log('EDIT ID:::::::::::',$(this).attr('data-holiday-id'))
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/holidays/findone',
@@ -318,13 +346,11 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('result::::::::::::::::::::',result.data.h_date)
-                $("#calendar_year").val(result.data.calendar_year)
-                $("#holiday_date").val(result.data.h_date).trigger('change')
-                $("#holiday_type").val(result.data.holiday_type_lid).trigger('change')
-                $("#Id").val(result.data.id)
-                $("#reason").val(result.data.reason)
-                $("#add-holiday-modal").modal('show')
+                console.log('result::::::::::::::::::::',result)
+                $("#edit-holiday-modal #holiday_date").val(result.data.h_date).trigger('change')
+                $("#edit-holiday-modal #holiday_type").val(result.data.holiday_type_lid).trigger('change')
+                $("#edit-holiday-modal #Id").val(result.data.id)
+                $("#edit-holiday-modal").modal('show')
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -332,35 +358,16 @@
 
 
         $('.updateHoliday').on('click', function () {
-            let holidayElems = $('#add-more-holidays-table tbody tr');
-            let holidayCount = holidayElems.length;
             let holidayJson = [];
-            holidayElems.each(function (index, elem) {
-                let calendar_year = $(elem).find(`input[name='calendar_year']`).val()
-                let holiday_date = $(elem).find(`select[name='holiday_date']`).val()
-                let holiday_type = $(elem).find(`select[name='holiday_type']`).val()
-                let reason = $(elem).find(`input[name='reason']`).val()
-                let id = $(elem).find(`input[name='Id']`).val()
-                if (index < holidayCount - 1) {
-                    let obj = {
+                let holiday_type = $("#edit-holiday-modal #holiday_type").val()
+                let id = $("#edit-holiday-modal #Id").val()
+                let obj = {
                         id:id,
-                        calendar_year: calendar_year,
-                        h_date: holiday_date,
-                        holiday_type_lid: holiday_type,
-                        reason: reason
+                        holiday_type_lid: holiday_type
                     }
                     holidayJson.push(obj)
-                } else {
-                    let obj = {
-                        id:id,
-                        calendar_year: calendar_year,
-                        h_date: holiday_date,
-                        holiday_type_lid: holiday_type,
-                        reason: reason
-                    }
-                    holidayJson.push(obj)
-                }
-            })
+
+                    console.log('UPDATE JSON::::::::::>>', holidayJson)
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/holidays/update',

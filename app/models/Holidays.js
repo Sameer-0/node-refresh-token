@@ -35,7 +35,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             const request = pool.request();
             request.input('id', sql.Int, id)
-            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 101) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h LEFT JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
+            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 120) as h_date, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
         })
     }
 
