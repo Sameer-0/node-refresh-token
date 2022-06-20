@@ -183,9 +183,13 @@ app.use(function (req, res) {
 
 
 
-if (process.env.APP_ENV === 'PRODUCTION') {
-    const server = https.createServer(sslOptions, app);
-    server.listen(process.env.APP_PORT);
+
+if (!process.env.APP_ENV === 'PRODUCTION') {
+    const server = https.createServer(sslOptions, app).listen(process.env.APP_PORT);
+    //socket initialization
+    global.io = require("socket.io")(server);
+    //SOCKET CONNECTION
+    global.io.on("connection", timetablesocket.respond);
 } else {
     const server = http.createServer(app).listen(process.env.APP_PORT);
     //socket initialization
