@@ -90,9 +90,10 @@ module.exports = class {
     }
 
     static fetchHolidaySap(inputJSON, slug) {
+        console.log('HOLIDAY SAP DATA::::::::::',JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
-            return request.input('input_json', sql.NVarChar(sql.MAX), inputJSON)
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_import_holidays]`)
         })
