@@ -137,7 +137,7 @@ module.exports = class TimeTable {
             // if(program_lid && acad_session_lid){
                 console.log('im in:::', program_lid + acad_session_lid)
 
-                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name, et.abbr as event_type_abbr FROM [${slug}].pending_events pe
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name, et.abbr as event_type_abbr, et.id as event_type_lid FROM [${slug}].pending_events pe
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid

@@ -270,7 +270,7 @@
 
                                         $('#slotModal .modal-body').html(programList);
                                         $('#slotModal .modal-footer').html(
-                                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}" data-division-name="${$(this).attr("data-division-name")}" data-module-name="${$(this).attr("data-module-name")}" data-batch-name="${$(this).attr("data-batch-name")}" data-session-name="${$(this).attr("data-session-name")}"  data-program-name="${$(this).attr("data-program-name")}" data-start-time="${$(this).attr("data-start-time")}"  data-end-time="${$(this).attr("data-end-time")}" data-room-no="${$(this).attr("data-room-no")}"  data-lid="${$(this).attr("data-lid")}" ${pendingEventProgramLids.includes(programLid) ? '' : (!programLid ? '' : 'disabled')}>Schedule</button>`
+                                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-time-id="${$(this).attr("data-start-time-id")}" data-end-time-id="${$(this).attr("data-end-time-id")}" data-room-id="${$(this).attr("data-room-id")}"  data-school-time-id="${$(this).attr("data-school-time-id")}" data-division-name="${$(this).attr("data-division-name")}" data-module-name="${$(this).attr("data-module-name")}" data-batch-name="${$(this).attr("data-batch-name")}" data-session-name="${$(this).attr("data-session-name")}"  data-program-name="${$(this).attr("data-program-name")}" data-start-time="${$(this).attr("data-start-time")}"  data-end-time="${$(this).attr("data-end-time")}" data-room-no="${$(this).attr("data-room-no")}"  data-lid="${$(this).attr("data-lid")}"  data-event-type-lid="${$("#slotModal #pending-events option:selected").attr("data-event-type-lid")}"  ${pendingEventProgramLids.includes(programLid) ? '' : (!programLid ? '' : 'disabled')}>Schedule</button>`
                                         );
                                         
                                     } else {
@@ -447,7 +447,7 @@
                                                 for (let pendingEvents of result) {
 
                                                     pendingEventList +=
-                                                        `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
+                                                        `<option data-module-lid="${pendingEvents.module_lid}" data-event-type-lid="${pendingEvents.event_type_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
                                             } else {
                                                 pendingEventList =
@@ -542,6 +542,7 @@
                                         "data-batch-lid");
                                     let dayLid = $("#day").val();
                                     let schoolTimeLid = $(this).attr("data-school-time-id");
+                                    let event_type_lid = $("#slotModal #pending-events option:selected").attr("data-event-type-lid");
 
                                     let obj = [{
                                         room_lid: roomLid,
@@ -553,7 +554,8 @@
                                         division_lid: divisionLid,
                                         batch_lid: batchLid,
                                         day_lid: dayLid,
-                                        school_time_lid: schoolTimeLid
+                                        school_time_lid: schoolTimeLid,
+                                        event_type_lid: event_type_lid
                                     }]
 
                                     console.log('JSON::::::::::::::::', obj)
