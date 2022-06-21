@@ -19,7 +19,7 @@ module.exports.respond = async socket => {
         let object = {
             allocate_events: JSON.parse(data)
         }
-        console.log('data:::::::::::::>>>', object)
+
         TimeTable.scheduleEvent(slug, userId, object).then(result => {
             console.log('result::::::::', result)
             socket.emit('schedule-event-response', JSON.parse(result.output.output_json))
