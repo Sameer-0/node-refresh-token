@@ -12,7 +12,6 @@ module.exports = {
     getPage: (req, res) => {
 
         Promise.all([FacultyDateTimes.fetchAll(10, res.locals.slug), FacultyDateTimes.getCount(res.locals.slug), Faculties.fetchAll(1000, res.locals.slug), AcademicCalender.fetchAll(1000), SlotIntervalTimings.fetchAll(1000)]).then(result => {
-            console.log('result::::::::>>',result[3].recordset)
             res.render('admin/faculty/facultydatetime', {
                 FacultyDateTimeList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,

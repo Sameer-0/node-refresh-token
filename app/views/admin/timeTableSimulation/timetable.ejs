@@ -400,21 +400,17 @@
                                                     pendingEventList +=
                                                         `<option data-module-lid="${pendingEvents.module_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
-
                                             } else {
                                                 pendingEventList =
                                                     `<option> No Pending Events </option>`
                                             }
-
                                             console.log('pendingevents:::', pendingEventList)
                                             $(document).find('#pending-events').html(
                                                 pendingEventList);
-
                                         })
                                         .catch(err => {
                                             console.log('err', err)
                                         })
-
                                 })
 
 
@@ -516,8 +512,35 @@
                                     socket.emit('schedule-event-request', slugName, userId, JSON.stringify(obj));
                                     socket.on('schedule-event-response', function(response){
                                         console.log('schedule-event-response::::::::::::::::', response)
-                                        //Set Data Here after socket response
-                                       // showSuccess(response)
+                                        if(response.status == 1 && response.data.length > 0){
+                                            let respobj = response.data[0]
+                                            //Set Data Here after socket response
+                                            //SET DATA CURRENT TD
+                                            currentTd.attr('data-school-time-id', respobj.school_timing_lid)
+                                            currentTd.attr('data-start-time-id', respobj.slot_start_lid)
+                                            currentTd.attr('data-end-time-id', respobj.slot_end_lid)
+                                            currentTd.attr('data-room-id', respobj.room_lid)
+                                            currentTd.attr('data-room-no', respobj.room_number)
+                                            currentTd.attr('data-lid', respobj.id)
+                                            currentTd.attr('data-module-name', respobj.module_name)
+                                            currentTd.attr('data-division-name', respobj.division)
+                                            currentTd.attr('data-batch-name', respobj.batch)
+                                            currentTd.attr('data-session-name', respobj.acad_session)
+                                            currentTd.attr('data-program-name', respobj.program_name)
+                                            currentTd.attr('data-start-time', respobj.start_time)
+                                            currentTd.attr('data-end-time', respobj.end_time)
+                                            currentTd.attr('data-faculty-name', respobj.faculty_name)
+                                            currentTd.attr('data-faculty-lid', respobj.faculty_lid)
+                                            currentTd.attr('draggable', true)
+                                            currentTd.addClass('draggableTd dragtargetTd')
+                                            currentTd.html(
+                                                `${respobj.module_name}<br>${respobj.division} (${respobj.batch})<br>${respobj.acad_session}<br>${respobj.program_name}<br>${respobj.start_time} to ${respobj.end_time} <br> (Faculty ${respobj.faculty_name})`
+                                            )
+                                            $("#slotModal").modal('hide')
+                                        }else{
+                                            //SHOW ERROR MESSAGE IF ANYTHING GOING WRONG OR SOCKET THOW ERROR
+                                            showError(response)
+                                        }
                                     });
 
                                     // let ApiObj = {
