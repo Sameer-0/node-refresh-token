@@ -20,7 +20,7 @@ module.exports = class {
             INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
             LEFT JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
             INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
-            INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+            INNER JOIN [dbo].acad_sessions acs ON acs.id = sd.sap_acad_session_lid
             INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
             ORDER BY sd.id DESC`)
         })
@@ -77,7 +77,7 @@ module.exports = class {
                 INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
                 LEFT JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
-                INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+                INNER JOIN [dbo].acad_sessions acs ON acs.id = sd.sap_acad_session_lid
                 INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
                 WHERE ac.date LIKE @keyword OR ac1.date LIKE @keyword OR st.name LIKE @keyword OR acs.acad_session LIKE @keyword OR p.program_name LIKE @keyword
 				ORDER BY sd.id DESC`)
@@ -94,7 +94,7 @@ module.exports = class {
                 INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
                 LEFT JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
                 INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
-                INNER JOIN [dbo].acad_sessions acs ON acs.id = ps.acad_session_lid
+                INNER JOIN [dbo].acad_sessions acs ON acs.id = sd.sap_acad_session_lid
                 INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
                 ORDER BY sd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
