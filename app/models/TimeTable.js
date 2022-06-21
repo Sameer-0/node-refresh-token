@@ -56,7 +56,7 @@ module.exports = class TimeTable {
 
             if(program_lid && acad_session_lid){
 
-                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, fe.faculty_lid, f.faculty_name, f.faculty_id 
+                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
                 FROM [${slug}].event_bookings eb 
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
@@ -66,12 +66,13 @@ module.exports = class TimeTable {
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
 				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
 				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
                 INNER JOIN [${slug}].days d 
                 ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.program_lid = @programLid AND eb.acad_session_lid = @sessionLid`
             }
             else if(!program_lid && acad_session_lid){
              
-                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, fe.faculty_lid, f.faculty_name, f.faculty_id 
+                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
                 FROM [${slug}].event_bookings eb 
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
@@ -81,12 +82,13 @@ module.exports = class TimeTable {
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
 				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
 				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
                 INNER JOIN [${slug}].days d  
                 ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.acad_session_lid = @sessionLid`
             }
             else if(program_lid && !acad_session_lid){
              
-                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, fe.faculty_lid, f.faculty_name, f.faculty_id 
+                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
                 FROM [${slug}].event_bookings eb
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid 
@@ -96,12 +98,13 @@ module.exports = class TimeTable {
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
 				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
 				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
                 INNER JOIN [${slug}].days d  
                 ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.program_lid = @programLid`
             }
             else{
                
-                stmt = `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, fe.faculty_lid, f.faculty_name, f.faculty_id 
+                stmt = `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
                 FROM [${slug}].event_bookings eb
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
@@ -111,6 +114,7 @@ module.exports = class TimeTable {
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
 				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
 				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
                 INNER JOIN [${slug}].days d 
                 ON eb.day_lid = d.id WHERE d.id = @dayLid` 
             }
@@ -133,7 +137,7 @@ module.exports = class TimeTable {
             // if(program_lid && acad_session_lid){
                 console.log('im in:::', program_lid + acad_session_lid)
 
-                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name FROM [${slug}].pending_events pe
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name, et.abbr as event_type_abbr FROM [${slug}].pending_events pe
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
                 INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
 				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
