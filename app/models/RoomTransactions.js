@@ -49,11 +49,12 @@ module.exports = class RoomTransactions {
     }
 
 
-    static search(rowcount, keyword, slug) {
+    static search(body, slug) {
         console.log('Seacrh')
         return poolConnection.then(pool => {
-            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} rt.id, rtt.name as transaction_type,
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT rt.id, rtt.name as transaction_type,
                 rt.transaction_type_lid, rts.name as stage, stage_lid, org.org_name, org.org_abbr, camp.campus_abbr, u.username  
                 FROM [${slug}].room_transactions rt
                 INNER JOIN dbo.room_transaction_stages rts ON rt.stage_lid = rts.id
@@ -61,7 +62,7 @@ module.exports = class RoomTransactions {
                 INNER JOIN [dbo].organizations org ON org.id = rt.org_lid
                 INNER JOIN [dbo].campuses camp ON camp.id = rt.campus_lid
                 INNER JOIN [${slug}].users u ON u.id = rt.user_lid 
-                WHERE rts.name LIKE @keyword OR org.org_name LIKE @keyword OR org.org_abbr LIKE @keyword OR camp.campus_abbr LIKE @keyword OR u.username LIKE @keyword OR rtt.name LIKE @keyword ORDER BY rt.id DESC`)
+                WHERE rts.name LIKE @keyword OR org.org_name LIKE @keyword OR org.org_abbr LIKE @keyword OR camp.campus_abbr LIKE @keyword OR u.username LIKE @keyword OR rtt.name LIKE @keyword ORDER BY rt.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -113,14 +114,16 @@ module.exports = class RoomTransactions {
 
 
 
-    static searchForBookedRooms(rowcount, keyword, slug){
+    static searchForBookedRooms(body, slug){
         return poolConnection.then(pool => {
-            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%').query(`SELECT DISTINCT TOP ${Number(rowcount)} r.id, r.room_number,r.floor_number, r.capacity, b.building_name FROM [${slug}].room_transactions rt INNER JOIN
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+            .input('pageNo', sql.Int, body.pageNo)
+            .query(`SELECT DISTINCT  r.id, r.room_number,r.floor_number, r.capacity, b.building_name FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
             [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
             INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
             INNER JOIN [dbo].buildings b ON b.id = r.building_lid
-            WHERE r.room_number LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR  b.building_name LIKE @keyword  ORDER BY r.id DESC`)
+            WHERE r.room_number LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR  b.building_name LIKE @keyword  ORDER BY r.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

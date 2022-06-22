@@ -53,10 +53,11 @@ module.exports = class FacultyBatch {
         })
     }
 
-    static search(rowcount, keyword, slug) {
+    static search(body, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+            return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+            .input('pageNo', sql.Int, body.pageNo)
                 .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, 
                 f.faculty_id, db.batch, d.division,
                 icw.module_name, p.program_name, ads.acad_session, et.name as event_type
@@ -71,7 +72,7 @@ module.exports = class FacultyBatch {
                 WHERE  f.faculty_name LIKE @keyword OR  f.faculty_id LIKE @keyword OR fb.batch_lid LIKE @keyword
                 OR d.division LIKE @keyword OR icw.module_name LIKE @keyword OR p.program_name LIKE @keyword
                 OR ads.acad_session LIKE @keyword OR et.name LIKE @keyword
-                ORDER BY fb.id DESC`)
+                ORDER BY fb.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

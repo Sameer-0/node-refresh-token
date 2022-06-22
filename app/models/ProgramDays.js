@@ -27,15 +27,15 @@ module.exports = class {
         })
     }
 
-    static search(rowcount, keyword, slug) {
-        console.log('Search Progrom Day::::::::>>', keyword)
+    static search(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} pd.id, pd.program_lid, pd.day_lid, IIF(pd.is_lecture = 1 ,'Yes','No') as is_lecture, p.program_name, d.day_name 
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT  pd.id, pd.program_lid, pd.day_lid, IIF(pd.is_lecture = 1 ,'Yes','No') as is_lecture, p.program_name, d.day_name 
                 FROM [${slug}].program_days pd
                 INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
                 INNER JOIN [${slug}].days d ON pd.day_lid = d.id
-                WHERE p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword ORDER BY pd.id DESC`)
+                WHERE p.program_name LIKE @keyword OR d.day_name LIKE @keyword OR is_lecture LIKE @keyword ORDER BY pd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -44,7 +44,7 @@ module.exports = class {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].program_days pd INNER JOIN
-            [${slug}].days d on d.id = pd.day_lid where d.status =1`)
+            [${slug}].days d on d.id = pd.day_lid`)
         })
     }
 
@@ -72,7 +72,7 @@ module.exports = class {
     }
 
     static dayByProgramId(programId, slug) {
-        console.log('PromName::::::::',programId)
+        console.log('PromName::::::::', programId)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request

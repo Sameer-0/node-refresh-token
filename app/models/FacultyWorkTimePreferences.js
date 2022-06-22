@@ -45,10 +45,11 @@ module.exports = class FacultyWorkTimePreferences {
     }
 
 
-    static search(rowcount, keyword, slug) {
+    static search(body, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+            return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
                 .query(`SELECT TOP ${Number(rowcount)} fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id, 
                 CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
                 CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
@@ -64,7 +65,7 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
                 INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
                 WHERE sit.start_time LIKE @keyword OR _sit.end_time LIKE @keyword OR RTRIM(p.program_name) LIKE @keyword OR p.program_id LIKE @keyword OR p.program_code LIKE @keyword OR d.day_name LIKE @keyword  OR f.faculty_name LIKE @keyword OR f.faculty_id LIKE @keyword OR CONVERT(NVARCHAR, sit.start_time, 0) LIKE @keyword OR CONVERT(NVARCHAR, _sit.end_time, 0) LIKE @keyword OR icw.module_name LIKE @keyword OR ads.acad_session LIKE @keyword
-                ORDER BY fwtp.id DESC`)
+                ORDER BY fwtp.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -129,13 +130,13 @@ module.exports = class FacultyWorkTimePreferences {
 
 
     static moduleByprogramAndSessionId(body, slug) {
-        console.log('Body::::::',body)
+        console.log('Body::::::', body)
         return poolConnection.then(pool => {
             return pool.request()
-            .input('programId', sql.Int, body.programId)
-            .input('sessionId', sql.Int, body.sessionId)
-            .input('facultyId', sql.Int, body.facultyId)
-            .query(`SELECT DISTINCT fw.module_lid, icw.module_name FROM [${slug}].faculty_works fw
+                .input('programId', sql.Int, body.programId)
+                .input('sessionId', sql.Int, body.sessionId)
+                .input('facultyId', sql.Int, body.facultyId)
+                .query(`SELECT DISTINCT fw.module_lid, icw.module_name FROM [${slug}].faculty_works fw
             INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
             INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
             WHERE ps.program_lid = @programId AND ps.acad_session_lid = @sessionId AND fw.faculty_lid = @facultyId`)

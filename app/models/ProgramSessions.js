@@ -25,19 +25,20 @@ module.exports = class {
                 INNER JOIN [dbo].acad_sessions adc ON adc.id = ps.acad_session_lid
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.program_id =  p.program_id
                 INNER JOIN [${slug}].course_work_wsdl cww ON cww.id = icw.course_wsdl_lid
-                ORDER BY ps.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+                ORDER BY ps.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
-    static search(rowcount, keyword, slug) {
+    static search(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT DISTINCT TOP ${Number(rowcount)} ps.id, p.program_name, p.program_code, adc.acad_session, cww.acad_year FROM [${slug}].program_sessions ps 
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT DISTINCT ps.id, p.program_name, p.program_code, adc.acad_session, cww.acad_year FROM [${slug}].program_sessions ps 
                 INNER JOIN [${slug}].programs p ON ps.program_lid = p.id
                 INNER JOIN [dbo].acad_sessions adc ON adc.id = ps.acad_session_lid
                 INNER JOIN [${slug}].initial_course_workload icw ON icw.program_id =  p.program_id
                 INNER JOIN [${slug}].course_work_wsdl cww ON cww.id = icw.course_wsdl_lid
-                WHERE p.program_name LIKE @keyword OR adc.acad_session LIKE @keyword OR cww.acad_year LIKE @keyword ORDER BY ps.id DESC`)
+                WHERE p.program_name LIKE @keyword OR adc.acad_session LIKE @keyword OR cww.acad_year LIKE @keyword ORDER BY ps.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

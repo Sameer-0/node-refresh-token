@@ -226,7 +226,8 @@
                     type: "POST",
                     url: "/admin/programs/days/search",
                     data: {
-                        keyword: keyword
+                        keyword: keyword,
+                        pageNo: 1
                     },
                     success: function (data) {
                         AjaxtTable(data.data)
@@ -234,6 +235,26 @@
                 })
             }, 500));
 
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                console.log('PAGE NO.:::::::::::', $(this).attr('data-lp'))
+                console.log('keyword.:::::::::::', keyword)
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/programs/days/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        AjaxtTable(data.data)
+                        console.log(data.data);
+                    }
+                })
+            })
 
 
             //Pagination Here

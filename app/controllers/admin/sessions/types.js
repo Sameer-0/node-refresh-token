@@ -118,7 +118,7 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        SessionTypes.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
+        SessionTypes.search(req.body, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
