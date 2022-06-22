@@ -112,13 +112,13 @@ module.exports = class {
 
     static fetchAllWSDL(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select * from [${slug}].course_work_wsdl`)
+            return pool.request().query(`SELECT * FROM [${slug}].course_work_wsdl`)
         })
     }
 
     static fetchAllWSDLWithProgramName(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select cww.id, cww.module_desc, cww.prog_code, cww.module_objid, p.program_name, cww.sess_desc from [${slug}].course_work_wsdl cww 
+            return pool.request().query(`SELECT cww.id, cww.module_desc, cww.prog_code, cww.module_objid, p.program_name, cww.sess_desc FROM [${slug}].course_work_wsdl cww 
             INNER JOIN  [${slug}].programs p ON cww.prog_objid = p.program_id`)
         })
     }
@@ -152,7 +152,25 @@ module.exports = class {
     static getmoduleByProgramId(programid, slug){
         return poolConnection.then(pool => {
             return pool.request().input('programId', sql.Int, programid)
-                .query(`select * from [${slug}].initial_course_workload where program_id  = @programId`)
+                .query(`SELECT * FROM [${slug}].initial_course_workload where program_id  = @programId`)
+        })
+    }
+
+    static sessionByProgramId(programid, slug){
+        return poolConnection.then(pool => {
+            return pool.request().input('programId', sql.Int, programid)
+                .query(`SELECT DISTINCT sap_acad_session, sess_desc FROM [${slug}].course_work_wsdl where prog_objid = @programId`)
+        })
+    }
+
+    static courseBySessionIdAndProgramId(body, slug){
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('programId', sql.Int, body.programId)
+            .input('sessionId', sql.Int, body.sessionId)
+            .query(`SELECT cww.id, cww.module_desc, cww.prog_code, cww.module_objid, p.program_name, cww.sess_desc FROM [${slug}].course_work_wsdl cww 
+            INNER JOIN  [${slug}].programs p ON cww.prog_objid = p.program_id
+            WHERE cww.prog_objid = @programId AND cww.sap_acad_session = @sessionId`)
         })
     }
 }

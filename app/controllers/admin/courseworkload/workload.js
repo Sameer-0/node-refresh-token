@@ -18,7 +18,8 @@ module.exports = {
 
 
   getPage: (req, res) => {
-    Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug), CourseWorkload.fetchAllWSDLWithProgramName(res.locals.slug)]).then(result => {
+    Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
+     console.log('result::::::::::::::',result[3].recordset)
       res.render('admin/courseworkload/courseworkload', {
         courseWorkloadList: result[0].recordset,
         pageCount: result[1].recordset[0].count,
@@ -27,8 +28,7 @@ module.exports = {
         AcadSessionList: result[4].recordset,
         moduleList: result[5].recordset,
         breadcrumbs: req.breadcrumbs,
-        moduleListAjax: JSON.stringify(result[5].recordset),
-        coursewsdlList: result[6].recordset
+        moduleListAjax: JSON.stringify(result[5].recordset)
       })
     })
   },
@@ -164,4 +164,54 @@ module.exports = {
         }
     })
 },
+
+sessionByProgramId: (req, res) => {
+  CourseWorkload.sessionByProgramId(req.body.programId, res.locals.slug).then(result => {
+      if (result.recordset.length > 0) {
+          res.json({
+              status: "200",
+              message: "Sucessfull",
+              data: result.recordset,
+              length: result.recordset.length
+
+          })
+      } else {
+          res.json({
+              status: "400",
+              message: "No data found",
+              data: result.recordset,
+              length: result.recordset.length
+          })
+      }
+  }).catch(error => {
+      console.log(error)
+      res.status(500).json(error.originalError.info.message)
+  })
+},
+
+
+courseBySessionIdAndProgramId: (req, res) => {
+  CourseWorkload.courseBySessionIdAndProgramId(req.body, res.locals.slug).then(result => {
+      if (result.recordset.length > 0) {
+          res.json({
+              status: "200",
+              message: "Sucessfull",
+              data: result.recordset,
+              length: result.recordset.length
+
+          })
+      } else {
+          res.json({
+              status: "400",
+              message: "No data found",
+              data: result.recordset,
+              length: result.recordset.length
+          })
+      }
+  }).catch(error => {
+      console.log(error)
+      res.status(500).json(error.originalError.info.message)
+  })
+}
+
 }
