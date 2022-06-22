@@ -274,4 +274,22 @@ module.exports = {
         })
     },
 
+    getFacultyWorks: (req, res) => {
+        FacultyWorks.facultyWorkEvents(req.body, res.locals.slug).then(result => {
+            res.status(200).json({
+                result: result.recordset
+            })
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
 }

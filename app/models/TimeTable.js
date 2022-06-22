@@ -134,7 +134,7 @@ module.exports = class TimeTable {
         return poolConnection.then(pool => {
             let stmt;
 
-            // if(program_lid && acad_session_lid){
+            if(program_lid && acad_session_lid){
                 console.log('im in:::', program_lid + acad_session_lid)
 
                 stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name, et.abbr as event_type_abbr, et.id as event_type_lid FROM [${slug}].pending_events pe
@@ -145,39 +145,39 @@ module.exports = class TimeTable {
 				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
 				INNER JOIN [dbo].event_types et on et.id = db.event_type_lid
                 WHERE pe.program_lid = @programLid AND pe.acad_session_lid = @sessionLid`
-            // }
-            // else if(!program_lid && acad_session_lid){
+            }
+            else if(!program_lid && acad_session_lid){
              
-                // stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
-                // INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
-                // INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
-				// INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
-                // INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
-				// INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
-				// INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid
-                // WHERE pe.acad_session_lid = @sessionLid`
-            // }
-            // else if(program_lid && !acad_session_lid){
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name, et.abbr as event_type_abbr, et.id as event_type_lid FROM [${slug}].pending_events pe
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
+                INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
+				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
+				INNER JOIN [dbo].event_types et on et.id = db.event_type_lid
+                WHERE pe.acad_session_lid = @sessionLid`
+            }
+            else if(program_lid && !acad_session_lid){
              
-                // stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
-                // INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
-                // INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
-				// INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
-                // INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
-				// INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
-				// INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid
-                // WHERE pe.program_lid = @programLid`
-            // }
-            // else{
+                stmt= `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name, et.abbr as event_type_abbr, et.id as event_type_lid FROM [${slug}].pending_events pe
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
+                INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
+				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
+				INNER JOIN [dbo].event_types et on et.id = db.event_type_lid
+                WHERE pe.program_lid = @programLid`
+            }
+            else{
                
-                // stmt = `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, db.batch, et.name as event_name FROM [${slug}].pending_events pe
-                // INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
-                // INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
-				// INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
-                // INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
-				// INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
-				// INNER JOIN [dbo].event_types et on et.id = pe.event_type_lid` 
-            // }
+                stmt = `SELECT p.id as program_lid, p.program_id, p.program_name, ads.id as session_lid, ads.acad_session, icw.id as module_lid, icw.module_name, d.division, d.id as division_lid, db.batch, db.id as batch_lid, et.name as event_name, et.abbr as event_type_abbr, et.id as event_type_lid FROM [${slug}].pending_events pe
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = pe.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = pe.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = pe.acad_session_lid
+                INNER JOIN [${slug}].divisions d ON d.id = pe.division_lid
+				INNER JOIN [${slug}].division_batches db on db.id = pe.batch_lid
+				INNER JOIN [dbo].event_types et on et.id = db.event_type_lid` 
+            }
       
             return pool.request()
                 .input('programLid', sql.Int, program_lid)

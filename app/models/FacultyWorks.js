@@ -154,4 +154,19 @@ module.exports = class {
             return request.query(stmt)
         })
     }
+
+    static facultyWorkEvents(body, slug) {
+        console.log('slug', slug)
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            request.input('programLid', sql.Int, body.programLid)
+                .input('sessionLid', sql.Int, body.sessionLid)
+                .input('moduleLid', sql.Int, body.moduleLid)
+                .input('eventTypeLid', sql.Int, body.eventTypeLid)
+            let stmt = `SELECT DISTINCT faculty_work_lid, f.faculty_name, f.id as faculty_lid from [${slug}].faculty_work_events fwe
+             INNER JOIN [${slug}].faculties f on f.id = fwe.faculty_lid
+             WHERE program_lid = @programLid AND acad_session_lid = @sessionLid AND module_lid = @moduleLid AND event_type_lid = @eventTypeLid AND status = 0 `
+            return request.query(stmt)
+        })
+    }
 }
