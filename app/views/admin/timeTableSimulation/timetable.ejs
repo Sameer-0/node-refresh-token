@@ -52,6 +52,11 @@
                     </select>
                 </div>
             </div>
+            <div class="my-3">
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
+            </div>
+            </div>
         </div>
     </div>
 
@@ -59,6 +64,10 @@
         <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
                 <h5>Time Table</h5>
+            </div>
+            <div class="ms-auto me-2">
+                <button class="btn btn-primary pending-events-modal my-2" data-target="#pendingEventModal"><i class="fa-solid fa-list-ul"></i> Pending Events</button>
+                
             </div>
         </div>
 
@@ -97,6 +106,38 @@
     </div>
   </div>
 
+  <!-- Pending event list modal -->
+  <div class="modal fade" id="pendingEventModal" tabindex="-1" aria-labelledby="pendingEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="pendingEventModalLabel">Pending Event List</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <table class="table pending-events-table">
+                <thead>
+                    <th>Sr.No</th>
+                    <th>Program Name</th>
+                    <th>Academic Session</th>
+                    <th>Module Name</th>
+                    <th>Division</th>
+                    <th>Batch</th>
+                    <th>Event Type</th>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary" id="drop-slot">Drop Slot</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
     <%- include("../partials/footer") %>
     <script src="/socket.io/socket.io.js"></script>
 
@@ -124,9 +165,88 @@
                                     
                                     console.log('pending event programs::::::', pendingEventPrograms)
                       
-                            
+                            //PENDING EVENT LIST   
+                                $('.pending-events-modal').on('click', function() {
+                                        console.log('yello hello')
+
+                                        if($("#day").val()){
+                                        let programLid = $("#program-name").val();
+                                        let acadSessionLid = $("#session-name").val();
+
+                                        let ApiObj = {
+                                            url: '/admin/time-table-simulation/time-table/pending-events',
+                                            type: 'POST',
+                                            data: {
+                                                programLid: programLid,
+                                                acadSessionLid: acadSessionLid,
+                                            },
+                                            dataType: 'JSON'
+                                        }
+
+                                        ajaxApi(ApiObj).then(result => {
+
+                                          console.log('result:::pending event>>>>>s', result)
+
+                                          let tableRow = ``;
+                                          let count = 1;
+                                          if(result.length > 0){
+                                            
+                                                for(let penEvent of result){
+                                                    tableRow += `<tr>`
+                                                    tableRow += `<td> ${count++}`
+                                                    tableRow += `<td> ${penEvent.program_name}`
+                                                    tableRow += `<td> ${penEvent.acad_session}`
+                                                    tableRow += `<td> ${penEvent.module_name}`
+                                                    tableRow += `<td> ${penEvent.division}`
+                                                    tableRow += `<td> ${penEvent.batch}`
+                                                    tableRow += `<td> ${penEvent.event_name}`
+                                                    tableRow += `<tr>`
+                                                }
+   
+                                          }
+                                          else{
+                                            tableRow += `<tr> No Data Found </tr>`
+                                          }
+
+                                          $('#pendingEventModal .pending-events-table tbody').html(tableRow);
+                                            $('#pendingEventModal').modal('show');
+                                            //  }, 2000)
+                                            //   $(this).attr('disabled','disabled');
+                                        }).catch(error => {
+                                            // showError(error.responseJSON)
+                                        })
+                                    }else{
+                                        alert('Please Select Program, Session and Day')
+                                    }
+
+                                    })
+                                
+                            // SEARCH
+                                $('#searchkeyword').on('input', function () {
+
+                                    let searchStr = $(this).val().toLowerCase()
+
+                                    if (searchStr.length > 1) {
+                                    $('tr[data-room-no]').addClass('d-none')
+                                    $('tr[data-room-no]').each(function (iTr, thisTr) {
+                                        $(thisTr).find('td:not(:first-child)').each(function (iTd, thisTd) {
+                                        if ($(thisTd).html().toLowerCase().includes(searchStr)) {
+                                            $(thisTd).addClass('bg-info').parent().removeClass('d-none')
+                                        } else {
+                                            $(thisTd).removeClass('bg-info')
+                                        }
+                                        })
+
+                                    })
+                                    } else {
+                                    $('tr[data-room-no]').removeClass('d-none')
+                                    $('tr[data-room-no] td').removeClass('bg-info')
+                                    }
+                                    })
+
                                 //DRAG EVENT
                                 // initDrag()
+
                                 //Getting session List Ajax
                                 $("#program-name").on('change', function () {
                                     let programLid = $(this).val();
@@ -280,9 +400,52 @@
                                         $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="change-faculty">Change Faculty</button><div>`);
                                         }
                                         else{
-                                            
 
+                                            let programLid = $(this).attr('data-program-lid');
+                                            let sessionLid = $(this).attr('data-session-lid');
+                                            let moduleLid = $(this).attr('data-module-lid');
+                                            let eventTypeLid = $(this).attr('data-event-type-lid');
+                                            
+                                            let ApiObj = {
+                                                    url: '/admin/faculties/works/get-faculty-work-events',
+                                                    type: 'POST',
+                                                    data: {
+                                                        programLid: programLid,
+                                                        sessionLid: sessionLid,
+                                                        moduleLid: moduleLid,
+                                                        eventTypeLid:eventTypeLid
+                                                    },
+                                                    dataType: 'JSON'
+                                                }
+
+                                            ajaxApi(ApiObj).then(result => {
+                                            console.log('faculty available::>>>', result.result)
+                                            let facultyList=``
+                                            facultyList += `<select id="faculty-work-event-list" class="form-select my-4">`
+                                            if (result.result.length > 0) {
+                                                
+                                                facultyList +=
+                                                    `<option disabled  selected value="">--Select Faculty--</option>`;
+                                                
+                                                    for  (let faculty of result.result){
+
+                                                        facultyList +=
+                                                        `<option value="${faculty.faculty_lid}"> ${faculty.faculty_name} </option>`
+                                                    }
+
+                                            } else {
+                                                facultyList +=
+                                                    `<option value=""> No Faculty Found! </option>`
+                                            }
+                                            facultyList += `</select>`;
+                                            $(document).find("#slotModal .modal-body").append(facultyList)
                                             $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
+                                        }).catch(error => {
+                                            // showError(error.responseJSON)
+                                            console.log('error', error);
+                                        })
+
+                                         
                                         }
                                         $('#slotModal .modal-body').attr('data-lid', $(this).attr(
                                             "data-lid"));
@@ -616,7 +779,7 @@
                                     for (let slot of slotList) {
 
                                         tableStr +=
-                                            `<th>${slot.start_time}-${slot.end_time}</th>`
+                                            `<th class="header-test" scope="col">${slot.start_time}-${slot.end_time}</th>`
                                     }
 
                                     tableStr += `</tr></thead><tbody>`;

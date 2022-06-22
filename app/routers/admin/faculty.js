@@ -61,6 +61,7 @@ router.post('/faculties/works/module-by-program-session', works.moduleByprogramS
 router.post('/faculties/works/findone', validate('single'), works.findOne)
 router.post('/faculties/works/change', works.changeStatus)
 router.post('/faculties/works/GetAll', works.getAll)
+router.post('/faculties/works/get-faculty-work-events', works.getFacultyWorks)
 
 //workpreferences
 router.get('/workpreferences', preferences.getPage)
