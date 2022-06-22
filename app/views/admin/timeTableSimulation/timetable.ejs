@@ -280,36 +280,7 @@
                                         $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="change-faculty">Change Faculty</button><div>`);
                                         }
                                         else{
-                                            if (!$('#program-name').val()) {
-                                            programList +=
-                                                `<select class="form-select" id="program-name-for-faculty">`;
-                                            programList +=
-                                                `<option value="" selected>--select Program--</option>`
-                                            for (let program of programListJson) {
-                                                programList +=
-                                                    `<option value="${program.id}">${program.program_name}</option>`
-                                            }
-                                            programList += `</select>`
-
-                                        } else {
-                                            programList +=
-                                                `<select class="form-select" id="program-name-for-faculty">`;
-                                            programList +=
-                                                `<option value="" selected>--Select Program</option>`
-                                            programList +=
-                                                `<option value="${$('#program-name').val()}">${$('#program-name option:selected').text()} </option>`
-                                            programList += `</select>`
-                                        }
-
-                                        programList +=
-                                            `<select class="form-select my-3" id="session-name-for-faculty"></select>`
-                                        programList +=
-                                            `<select class="form-select my-3" id="module-details">
-                                               ${$(this).attr('data-lid')}
-                                            </select>`
-
-                                            $('#slotModal .modal-body').append(programList);
-                                           
+                                            
 
                                             $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
                                         }
@@ -447,7 +418,7 @@
                                                 for (let pendingEvents of result) {
 
                                                     pendingEventList +=
-                                                        `<option data-module-lid="${pendingEvents.module_lid}" data-event-type-lid="${pendingEvents.event_type_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
+                                                        `<option data-module-lid="${pendingEvents.module_lid}" data-event-type-lid="${pendingEvents.event_type_lid}" data-division-lid="${pendingEvents.division_lid}" data-batch-lid="${pendingEvents.batch_lid}" data-program-lid="${pendingEvents.program_lid}" data-sesison-lid="${pendingEvents.session_lid}" data-division-name="${pendingEvents.division}" data-batch-name="${pendingEvents.batch}">${pendingEvents.module_name} - ${pendingEvents.event_type_abbr} || ${pendingEvents.division}(${pendingEvents.batch}-${pendingEvents.event_name})</option>`
                                                 }
                                             } else {
                                                 pendingEventList =
@@ -586,7 +557,7 @@
                                             currentTd.attr('draggable', true)
                                             currentTd.addClass('draggableTd dragtargetTd')
                                             currentTd.html(
-                                                `${respobj.module_name}<br>${respobj.division} (${respobj.batch})<br>${respobj.acad_session}<br>${respobj.program_name}<br>${respobj.start_time} to ${respobj.end_time} <br> (Faculty ${respobj.faculty_name})`
+                                                `${respobj.module_name} - ${respobj.event_type_abbr}<br>${respobj.division} (${respobj.batch})<br>${respobj.acad_session}<br>${respobj.program_name}<br>${respobj.start_time} to ${respobj.end_time} <br> (Faculty ${respobj.faculty_name})`
                                             )
                                             $("#slotModal").modal('hide')
                                         }else{
@@ -679,7 +650,7 @@
                                         $(document).find(
                                             `.timetable-simulation tbody td[data-start-time-id="${event.slot_start_lid}"][data-end-time-id="${event.slot_end_lid}"][data-room-id="${event.room_lid}"] `
                                         ).html(
-                                            `${event.module_name} ${event.event_type_abbr} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time} <br> (${event.faculty_name ? event.faculty_name : 'Faculty NA'})`
+                                            `${event.module_name} - ${event.event_type_abbr} <br> ${event.division} (${event.batch}) <br> ${event.acad_session} <br> ${event.program_name} <br> ${event.start_time} to ${event.end_time} <br> (${event.faculty_name ? event.faculty_name : 'Faculty NA'})`
                                         )
 
                                         $(document).find(
