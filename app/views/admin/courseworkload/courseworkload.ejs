@@ -68,6 +68,26 @@
             </div>
         </div>
 
+
+        <div class="row my-2 ms-2">
+            <div class="col-md-3">
+                <select class="form-select form-control select2" id="programNameFilter">
+                    <option selected>Select Program</option>
+                    <%for(let prog of programList){%>
+                    <option value="<%-prog.program_id%>"><%-prog.program_name%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select form-control select2" id="moduleNameFilter">
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select form-control select2" id="sessionNameFilter">
+                </select>
+            </div>
+        </div>
+
         <div class="card-body table-responsive">
           
             
@@ -233,7 +253,38 @@
     $(document).ready(function () {
         let username = `<%- locals.userId %>`;
         $('.select2').select2();
-        //priviewModal
+
+        //Filter APIS FOR INITIALCOURSE WORKLOAD
+        $("#programNameFilter").on('change',function(){
+            let programId = $(this).val()
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/courseworkload/workload/workload-by-programid',
+                data: {
+                    programId: programId
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('result:::::::::::::',result)
+                let moduleName = ``;
+                if (result.data.length > 0) {
+                    moduleName += `<option value="">Select Session</option>`;
+                    result.data.forEach(element => {
+                        moduleName +=`<option value="${element.sap_acad_session}">${element.sess_desc}</option>`;
+                    });
+                    // $('.add-faculty-date-time').removeAttr('disabled')
+                } else {
+                    moduleName += `<option value="">No Session Found!</option>`;
+                }
+                $("#open-course-modal  #moduleNameFilter").html(moduleName).trigger('change')
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+        })
+
+
+        //previewModal
         $(".preview-btn").on('click',function(){
             let courseElems = $('#courseWorkloadTable tbody tr');
             let courseCount = courseElems.length;
