@@ -99,8 +99,8 @@
                         <td data-module-name="<%-course.module_name%>"><%-course.module_name%></td>
                         <td data-module-id="<%-course.module_id%>"><%-course.module_id%></td>
                         <td data-program-id="<%-course.program_id%>"><%-course.program_id%></td>
-                        <td data-program-program-code="${course.program_code}"><%-course.program_code%></td>
-                        <td data-acad-session-lid="<%-course.acad_session_lid%>"><%-course.acad_session%></td>
+                        <td data-program-code="<%-course.program_code%>"><%-course.program_code%></td>
+                        <td data-acad-session-lid="<%-course.acad_session_lid%>" data-acad-session="<%-course.acad_session%>"><%-course.acad_session%></td>
                         <td>
                             <select class="form-select rounded-0" name="module_type_lid">
                                 <!-- <option value="">Select Module Type</option> -->
@@ -139,6 +139,7 @@
                     <p>Total entries:<%- pageCount %></p>
                 </div>
                 <div>
+                    <button class="btn btn-danger priview-btn"><span class="fa fa-eye"></span> Priview </button>
                     <button class="btn btn-success SaveAll"><span class="fa fa-pen"></span> Update </button>
                     <!-- <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Final Submit </button> -->
                 </div>
@@ -203,15 +204,121 @@
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="open-priview-modal" tabindex="-1" aria-labelledby="open-priview-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="open-priview-modal-Label">Priview Course workload</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body priview-table">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Download Excel</button> -->
+          <button type="button" class="btn btn-secondary"  onclick="tableToExcel('priviewTable', 'Course Workload')" ><span class="fa fa-download"></span> Download Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <%- include("../partials/footer") %>
-
-
-
 <script>
     $(document).ready(function () {
         let username = `<%- locals.userId %>`;
         $('.select2').select2();
+        //priviewModal
+        $(".priview-btn").on('click',function(){
+            let courseElems = $('#courseWorkloadTable tbody tr');
+            let courseCount = courseElems.length;
+            let courseJSON = [];
+            courseElems.each(function (index, elem) {
+                let workloadlid = $(elem).find(`input[name='workloadlid']`).val()
+                let intake = $(elem).find(`input[name='intake']`).val()
+                let student_per_division = $(elem).find(`input[name='student_per_division']`).val();
+                let lecture_count_per_batch = $(elem).find(
+                    `input[name='lecture_count_per_batch']`).val();
+                let practical_count_per_batch = $(elem).find(
+                    `input[name='practical_count_per_batch']`).val();
+                let tutorial_count_per_batch = $(elem).find(
+                    `input[name='tutorial_count_per_batch']`).val();
+                let workshop_count_per_batch = $(elem).find(
+                    `input[name='workshop_count_per_batch']`).val();
+                let session_events_per_semester = $(elem).find(
+                    `input[name='session_events_per_semester']`).val();
+                let module_type_lid = $(elem).find(`select[name='module_type_lid'] option:selected`).text();
+                let continuous = $(elem).find(`input[name='continuous']`).val();
+                let module_name = $(elem).find(`td[data-module-name]`).attr(`data-module-name`);
+                let program_id = $(elem).find(`td[data-program-id]`).attr(`data-program-id`);
+                let module_id = $(elem).find(`td[data-module-id]`).attr(`data-module-id`);
+                let acad_session = $(elem).find(`td[data-acad-session]`).attr(
+                    `data-acad-session`);
+                let program_code = $(elem).find(`td[data-program-code]`).attr(
+                    `data-program-code`);
+                    let obj = {
+                        id: workloadlid,
+                        intake: intake,
+                        student_per_division: student_per_division,
+                        lecture_count_per_batch: lecture_count_per_batch,
+                        practical_count_per_batch: practical_count_per_batch,
+                        tutorial_count_per_batch: tutorial_count_per_batch,
+                        workshop_count_per_batch: workshop_count_per_batch,
+                        session_events_per_semester: session_events_per_semester,
+                        continuous: continuous,
+                        module_type_lid: module_type_lid,
+                        user_id: username,
+                        module_name: module_name,
+                        program_id: program_id,
+                        module_id: module_id,
+                        acad_session: acad_session,
+                        program_code: program_code
+                    }
+                    courseJSON.push(obj)
+            })
+            let priviewTable = `<table class="table custom_row table-bordered" id="priviewTable" summary="Code page support in different versions of MS Windows." rules="groups" frame="hsides">
+                <thead>
+                    <th>Sr No.</th>
+                    <th>Module Name</th>
+                    <th>Module Code</th>
+                    <th>Program Id</th>
+                    <th>Program Code</th>
+                    <th>Acad Session</th>
+                    <th>Module Type</th>
+                    <th>Intake</th>
+                    <th>Student per division</th>
+                    <th>Lecture count per batch per week</th>
+                    <th>Practical count per batch per week</th>
+                    <th>Tutorial count_per batch per week</th>
+                    <th>Workshop count per batch per week</th>
+                    <th>Session Events per Semester</th>
+                    <th>Continuous</th>
+                </thead>`;
+                let count = 1;
+                courseJSON.forEach(function(course){
+                    priviewTable +=`<tr>
+                            <td>${count++}</td>
+                            <td>${course.module_name}</td>
+                            <td>${course.module_id}</td>
+                            <td>${course.program_id}</td>
+                            <td>${course.program_code}</td>
+                            <td>${course.acad_session}</td>
+                            <td>${course.module_type_lid}</td>
+                            <td>${course.intake}</td>
+                            <td>${course.student_per_division}</td>
+                            <td>${course.lecture_count_per_batch}</td>
+                            <td>${course.practical_count_per_batch}</td>
+                            <td>${course.tutorial_count_per_batch}</td>
+                            <td>${course.workshop_count_per_batch}</td>
+                            <td>${course.session_events_per_semester}</td>
+                            <td>${course.continuous}</td>
+                            </tr>` 
+                })
+        $(".priview-table").html(priviewTable)
+         $("#open-priview-modal").modal('show')
+        })
+
 
         //FILTER APIS
         $("#programName").on('change',function(){
@@ -281,10 +388,6 @@
 
             }
         })
-
-
-
-
 
 
         //SaveAll
@@ -377,6 +480,9 @@
                 showError(error.responseJSON)
             })
         })
+
+
+
 
         // SEARCH PROGRAM TYPE
         $('#searchkeyword').on('input', delay(function (e) {
@@ -538,8 +644,8 @@
                             <td data-module-name="${course.module_name}">${course.module_name}</td>
                             <td data-module-id="${course.module_id}">${course.module_id}</td>
                             <td data-program-id="${course.program_id}">${course.program_id}</td>
-                            <td data-program-program-code="${course.program_code}">${course.program_code}</td>
-                            <td data-acad-session-lid="${course.acad_session_lid}">${course.acad_session}</td>
+                            <td data-program-code="${course.program_code}">${course.program_code}</td>
+                            <td data-acad-session-lid="${course.acad_session_lid}" data-acad-session="${course.acad_session}">${course.acad_session}</td>
                             <td>
                             <select class="form-select rounded-0" name="module_type_lid" >`
                     for (let module of JSON.parse(`<%-moduleListAjax%>`)) {
@@ -651,4 +757,18 @@
 
     })
 </script>
+
+<script type="text/javascript">
+    var tableToExcel = (function() {
+      var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+        , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+      return function(table, name) {
+        if (!table.nodeType) table = document.getElementById(table)
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = uri + base64(format(template, ctx))
+      }
+    })()
+    </script>
 <%- include("../partials/footerEnd") %>
