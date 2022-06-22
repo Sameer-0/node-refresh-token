@@ -7,7 +7,7 @@ const {
 module.exports = class schoolTimingType {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select TOP ${Number(rowcount)} id, name, description from [asmsoc-mum].school_timing_types ORDER by id DESC`)
+            return pool.request().query(`select TOP ${Number(rowcount)} id, name, description from [${slug}].school_timing_types ORDER by id DESC`)
         })
     }
 
