@@ -52,11 +52,12 @@ module.exports = class {
     }
 
 
-    static search(rowcount, keyword, slug) {
+    static search(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+            .input('pageNo', sql.Int, body.pageNo)
                 .query(`SELECT TOP ${Number(rowcount)}  pt.id , pt.name, pt.description FROM 
-                [dbo].session_types pt WHERE pt.name LIKE @keyword OR pt.description LIKE @keyword ORDER BY pt.id DESC`)
+                [dbo].session_types pt WHERE pt.name LIKE @keyword OR pt.description LIKE @keyword ORDER BY pt.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

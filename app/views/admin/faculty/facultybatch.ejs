@@ -68,7 +68,7 @@
                     </p>
                 </div> 
                 <div>
-                    <p id="pagination"></p>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
@@ -227,14 +227,15 @@ $(document).ready(function(){
          dropdownParent: $('#add-facultybatch-modal')});
 
 
-            //search feature delay function is writter in script.js file which is located in public/js/script.js
-            $('#searchkeyword').on('input', delay(function (e) {
+        //search feature delay function is writter in script.js file which is located in public/js/script.js
+        $('#searchkeyword').on('input', delay(function (e) {
             let keyword = $("#searchkeyword").val()
             $.ajax({
-                type: "POST",
+            type: "POST",
             url: "/admin/faculties/batch/search",
             data: {
-                keyword: keyword
+                keyword: keyword,
+                pageNo: 1
             },
             success: function (data) {
                 console.log(data)
@@ -242,6 +243,24 @@ $(document).ready(function(){
             }
         })
         }, 500));
+
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/faculties/batch/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        showAjaxTable(data.data) // Faculty List
+                    }
+                })
+            })
 
 
         //Edit Read
@@ -583,8 +602,6 @@ $(document).ready(function(){
                 facultyBatchJson.push(obj)
             }
         })
-
-        console.log('facultyBatchJson:::::::::::::',facultyBatchJson)
 
         let ApiObj = {
                 type: 'POST',

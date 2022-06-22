@@ -4,7 +4,7 @@ const {
     execPreparedStmt
 } = require('../../config/db')
 
-module.exports = class Programs{
+module.exports = class Programs {
     constructor(program_id, program_name, program_type_lid, abbr) {
         this.program_id = program_id;
         this.program_name = program_name;
@@ -24,7 +24,7 @@ module.exports = class Programs{
         return poolConnection.then(pool => {
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [${slug}].programs`)
-        }) 
+        })
     }
 
 
@@ -36,10 +36,11 @@ module.exports = class Programs{
         })
     }
 
-    static search(rowcount, keyword, slug) {
+    static search(body, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, p.program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id WHERE p.program_name LIKE @keyword OR p.abbr LIKE @keyword OR pt.name LIKE @keyword ORDER BY p.id DESC`)
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, p.program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id WHERE p.program_name LIKE @keyword OR p.abbr LIKE @keyword OR pt.name LIKE @keyword ORDER BY p.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -61,7 +62,7 @@ module.exports = class Programs{
     }
 
     static save(inputJSON, slug, userid) {
-        console.log('Programs::::::::::::',JSON.stringify(inputJSON))
+        console.log('Programs::::::::::::', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -73,7 +74,7 @@ module.exports = class Programs{
 
     static delete(id, slug, userid) {
         return poolConnection.then(pool => {
-            const request = pool.request(); 
+            const request = pool.request();
             return request.input('input_program_lid', sql.Int, id)
                 .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))

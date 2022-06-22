@@ -69,7 +69,7 @@
                     </p>
                 </div>
                 <div>
-                    <p id="pagination"></p>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
@@ -243,7 +243,8 @@
                     type: "POST",
                     url: "/admin/sessions/types/search",
                     data: {
-                        keyword: keyword
+                        keyword: keyword,
+                        pageNo: 1
                     },
                     success: function (data) {
                         AjaxtTable(data.data)
@@ -251,6 +252,22 @@
                 })
             }, 500));
 
+               //Search With Pagination
+              $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/sessions/types/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        AjaxtTable(data.data)
+                    }
+                })
+            })
 
 
         //Pagination Here

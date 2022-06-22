@@ -87,7 +87,7 @@
                     </p>
                 </div>
                 <div>
-                    <p id="pagination"></p>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
@@ -335,7 +335,6 @@ $(document).ready(function () {
         let clonedTr = lastTr.clone();
         console.log(lastTr.find(`select[name='module_lid']`)
             .val())
-        console.log('faculty_lid::::::::::', module_lid)
 
         clonedTr.find(`select[name='faculty_lid']`).val(
             faculty_lid).trigger('change')
@@ -455,15 +454,32 @@ $(document).ready(function () {
                 type: "POST",
             url: "/admin/faculties/works/search",
             data: {
-                keyword: keyword
+                keyword: keyword,
+                pageNo: 1
             },
             success: function (data) {
-                console.log(data)
-                showAjaxTable(data.data) // Facilty List
+                showAjaxTable(data.data)
             }
         })
         }, 500));
 
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/faculties/works/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        showAjaxTable(data.data)
+                    }
+                })
+            })
 
         //Update Faculty Workload
         $(".updateFacultyWorkLoad").on('click', function(){

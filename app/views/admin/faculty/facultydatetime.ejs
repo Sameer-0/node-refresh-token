@@ -92,7 +92,7 @@
                     </p>
                 </div>
                 <div>
-                    <p id="pagination"></p>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
@@ -380,7 +380,8 @@ $(document).ready(function(){
                 type: "POST",
             url: "/admin/faculties/date-time/search",
             data: {
-                keyword: keyword
+                keyword: keyword,
+                pageNo: 1
             },
             success: function (data) {
                 console.log(data)
@@ -389,6 +390,23 @@ $(document).ready(function(){
         })
         }, 500));
 
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/faculties/date-time/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        showAjaxTable(data.data) // Facilty List
+                    }
+                })
+            })
 
         //PAGINATION
     let pageCount = `<%- pageCount %>`

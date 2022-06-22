@@ -76,7 +76,7 @@ module.exports = {
 
     search: (req, res) => {
         let rowcount = 10;
-        RoomTransactions.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
+        RoomTransactions.search(req.body, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 console.log('searched items::', result.recordset)
                 res.json({
@@ -171,7 +171,7 @@ module.exports = {
 
     searchForBookedRooms: (req, res) => {
         let rowcount = 10;
-        RoomTransactions.searchForBookedRooms(rowcount, req.body.keyword, res.locals.slug).then(result => {
+        RoomTransactions.searchForBookedRooms(req.body, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 console.log('searched items::', result.recordset)
                 res.json({

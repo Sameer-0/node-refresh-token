@@ -74,7 +74,7 @@
                     </p>
                 </div>
                 <div>
-                    <p id="pagination"></p>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
@@ -231,11 +231,28 @@
                 keyword: keyword
             },
             success: function (data) {
-                console.log(data)
-                showAjaxTable(data.data) // Facilty List
+                showAjaxTable(data.data)
             }
         })
         }, 500));
+
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/faculties/workpreferences/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        showAjaxTable(data.data)
+                    }
+                })
+            })
 
 
 

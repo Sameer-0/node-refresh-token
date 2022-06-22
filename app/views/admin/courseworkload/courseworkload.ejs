@@ -140,15 +140,14 @@
                     <p>Total entries:<%- pageCount %></p>
                 </div>
                 <div>
-                    <button class="btn btn-danger priview-btn"><span class="fa fa-eye"></span> Priview </button>
-                    <button class="btn btn-success SaveAll"><span class="fa fa-pen"></span> Update </button>
+                    <!-- <button class="btn btn-success SaveAll"><span class="fa fa-pen"></span> Update </button> -->
                     <!-- <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Final Submit </button> -->
                 </div>
             </div>
         </div>
         <div class="ms-auto me-2">
+            <button class="btn btn-danger preview-btn"><span class="fa fa-eye"></span> Preview </button>
             <button class="btn btn-success SaveAll my-2"><span class="fa fa-pen"></span> Update </button>
-            <!-- <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Final Submit </button> -->
         </div>
     </div>
 </div>
@@ -214,7 +213,7 @@
     <div class="modal-dialog modal-fullscreen">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="open-priview-modal-Label">Priview Course workload</h5>
+          <h5 class="modal-title" id="open-priview-modal-Label">Preview Course workload</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body priview-table">
@@ -223,7 +222,7 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
           <!-- <button type="button" class="btn btn-primary">Download Excel</button> -->
-          <button type="button" class="btn btn-secondary"  onclick="tableToExcel('priviewTable', 'Course Workload')" ><span class="fa fa-download"></span> Download Excel</button>
+          <button type="button" class="btn btn-secondary"  onclick="tableToExcel('previewTable', 'Course Workload')" ><span class="fa fa-download"></span> Download Excel</button>
         </div>
       </div>
     </div>
@@ -235,7 +234,7 @@
         let username = `<%- locals.userId %>`;
         $('.select2').select2();
         //priviewModal
-        $(".priview-btn").on('click',function(){
+        $(".preview-btn").on('click',function(){
             let courseElems = $('#courseWorkloadTable tbody tr');
             let courseCount = courseElems.length;
             let courseJSON = [];
@@ -282,7 +281,7 @@
                     }
                     courseJSON.push(obj)
             })
-            let priviewTable = `<table class="table custom_row table-bordered" id="priviewTable" summary="Code page support in different versions of MS Windows." rules="groups" frame="hsides">
+            let previewTable = `<table class="table custom_row table-bordered" id="previewTable" summary="Code page support in different versions of MS Windows." rules="groups" >
                 <thead>
                     <th>Sr No.</th>
                     <th>Module Name</th>
@@ -302,7 +301,7 @@
                 </thead>`;
                 let count = 1;
                 courseJSON.forEach(function(course){
-                    priviewTable +=`<tr>
+                    previewTable +=`<tr>
                             <td>${count++}</td>
                             <td>${course.module_name}</td>
                             <td>${course.module_id}</td>
@@ -320,7 +319,7 @@
                             <td>${course.continuous}</td>
                             </tr>` 
                 })
-        $(".priview-table").html(priviewTable)
+        $(".priview-table").html(previewTable)
          $("#open-priview-modal").modal('show')
         })
 
@@ -504,6 +503,8 @@
                 }
             })
         }, 500));
+
+     
 
 
         // //search 

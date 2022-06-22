@@ -52,15 +52,16 @@ module.exports = class Faculties {
         })
     }
 
-    static search(rowcount, keyword, slug) {
+    static search(body, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, ft.name AS faculty_type, f.faculty_type_lid
+            return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT f.id, f.faculty_id, f.faculty_name, f.faculty_dbo_lid, ft.name AS faculty_type, f.faculty_type_lid
                 FROM [${slug}].faculties f 
                 INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
                 WHERE f.faculty_id LIKE @keyword OR f.faculty_name LIKE @keyword OR ft.name LIKE @keyword
-                ORDER BY f.id DESC`)
+                ORDER BY f.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

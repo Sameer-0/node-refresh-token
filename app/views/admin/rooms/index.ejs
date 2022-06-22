@@ -92,7 +92,7 @@
                         <p>Total entries: <%- totalentries %> </p>
                     </div>
                     <div>
-                        <p id="pagination"></p>
+                        <p id="pagination" class="pagination-search"></p>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,8 @@
             type: "POST",
             url: "/admin/rooms/search",
             data: {
-            keyword: keyword
+            keyword: keyword,
+            pageNo: 1
             },
             success: function (data) {
                 console.log('earch data', data.data)
@@ -187,6 +188,25 @@
             })
         }, 500));
 
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                console.log('PAGE NO.:::::::::::', $(this).attr('data-lp'))
+                console.log('keyword.:::::::::::', keyword)
+                $.ajax({ 
+                    type: "POST",
+                    url: "/admin/rooms/search",
+                    data: {
+                    keyword: keyword,
+                    pageNo: 1
+                    },
+                    success: function (data) {
+                         AjaxtTable(data.data)
+                    }
+                })
+            })
 
 
     //Pagination Here

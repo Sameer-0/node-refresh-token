@@ -63,9 +63,7 @@ module.exports = {
             return;
         }
 
-        //here 10is rowcount
-        let rowcount = 10;
-        FacultyBatch.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
+        FacultyBatch.search(req.body, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
