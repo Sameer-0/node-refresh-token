@@ -125,52 +125,90 @@ module.exports = class {
 
     //object, res.locals.slug, res.locals.userId
     static create(inputJson, slug, userId) {
-        console.log('Import Course::::::::::::::>',JSON.stringify(inputJson))
+        console.log('Import Course::::::::::::::>', JSON.stringify(inputJson))
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_insert_initial_course_workload]`)
-                
+
         })
     }
 
 
-    
+
     static delete(id, slug, userid) {
         console.log('id:::::::', id)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('course_lid', sql.Int, id)
-             //   .input('last_modified_by', sql.Int, userid)
+                //   .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_delete_initial_course_workload]`)
         })
     }
 
-    static getmoduleByProgramId(programid, slug){
+    static getmoduleByProgramId(programid, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('programId', sql.Int, programid)
                 .query(`SELECT * FROM [${slug}].initial_course_workload where program_id  = @programId`)
         })
     }
 
-    static sessionByProgramId(programid, slug){
+    static sessionByProgramId(programid, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('programId', sql.Int, programid)
                 .query(`SELECT DISTINCT sap_acad_session, sess_desc FROM [${slug}].course_work_wsdl where prog_objid = @programId`)
         })
     }
 
-    static courseBySessionIdAndProgramId(body, slug){
+    static courseBySessionIdAndProgramId(body, slug) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('programId', sql.Int, body.programId)
-            .input('sessionId', sql.Int, body.sessionId)
-            .query(`SELECT cww.id, cww.module_desc, cww.prog_code, cww.module_objid, p.program_name, cww.sess_desc FROM [${slug}].course_work_wsdl cww 
+                .input('programId', sql.Int, body.programId)
+                .input('sessionId', sql.Int, body.sessionId)
+                .query(`SELECT cww.id, cww.module_desc, cww.prog_code, cww.module_objid, p.program_name, cww.sess_desc FROM [${slug}].course_work_wsdl cww 
             INNER JOIN  [${slug}].programs p ON cww.prog_objid = p.program_id
             WHERE cww.prog_objid = @programId AND cww.sap_acad_session = @sessionId`)
+        })
+    }
+
+    static workloadByProgramId(programId, slug) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('programId', sql.Int, programId)
+                .query(`SELECT icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type, p.program_code
+            FROM [${slug}].initial_course_workload icw
+            INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            LEFT JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
+            WHERE icw.program_id = @programId
+            ORDER BY id DESC`)
+        })
+    }
+
+    static sessionByProgramId(programid, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('programId', sql.Int, programid)
+                .query(`SELECT DISTINCT icw.acad_session_lid, ads.acad_session FROM [${slug}].initial_course_workload icw 
+                INNER JOIN [dbo].acad_sessions ads ON icw.acad_session_lid = ads.id
+                WHERE icw.program_id = @programId`)
+        })
+    }
+
+    static workloadByProgramIdSessionId(body, slug){
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('programId', sql.Int, body.programId)
+                .input('sessionId', sql.Int, body.sessionId)
+                .query(`SELECT icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type, p.program_code
+            FROM [${slug}].initial_course_workload icw
+            INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            LEFT JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
+            WHERE icw.program_id = @programId AND icw.acad_session_lid = @sessionId
+            ORDER BY id DESC`)
         })
     }
 }

@@ -19,7 +19,7 @@ module.exports = {
 
   getPage: (req, res) => {
     Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
-     console.log('result::::::::::::::',result[3].recordset)
+      console.log('result::::::::::::::', result[3].recordset)
       res.render('admin/courseworkload/courseworkload', {
         courseWorkloadList: result[0].recordset,
         pageCount: result[1].recordset[0].count,
@@ -151,67 +151,107 @@ module.exports = {
 
   delete: (req, res) => {
     CourseWorkload.delete(req.body.id, res.locals.slug, res.locals.userId).then(result => {
-        res.status(200).json(JSON.parse(result.output.output_json))
+      res.status(200).json(JSON.parse(result.output.output_json))
     }).catch(error => {
       console.log('testt::::::', error);
-        if(isJsonString.isJsonString(error.originalError.info.message)){
-            res.status(500).json(JSON.parse(error.originalError.info.message))
-        }
-        else{
-            res.status(500).json({status:500,
-            description:error.originalError.info.message,
-            data:[]})
-        }
+      if (isJsonString.isJsonString(error.originalError.info.message)) {
+        res.status(500).json(JSON.parse(error.originalError.info.message))
+      } else {
+        res.status(500).json({
+          status: 500,
+          description: error.originalError.info.message,
+          data: []
+        })
+      }
     })
-},
+  },
 
-sessionByProgramId: (req, res) => {
-  CourseWorkload.sessionByProgramId(req.body.programId, res.locals.slug).then(result => {
+  sessionByProgramId: (req, res) => {
+    CourseWorkload.sessionByProgramId(req.body.programId, res.locals.slug).then(result => {
       if (result.recordset.length > 0) {
-          res.json({
-              status: "200",
-              message: "Sucessfull",
-              data: result.recordset,
-              length: result.recordset.length
+        res.json({
+          status: "200",
+          message: "Sucessfull",
+          data: result.recordset,
+          length: result.recordset.length
 
-          })
+        })
       } else {
-          res.json({
-              status: "400",
-              message: "No data found",
-              data: result.recordset,
-              length: result.recordset.length
-          })
+        res.json({
+          status: "400",
+          message: "No data found",
+          data: result.recordset,
+          length: result.recordset.length
+        })
       }
-  }).catch(error => {
+    }).catch(error => {
       console.log(error)
       res.status(500).json(error.originalError.info.message)
-  })
-},
+    })
+  },
 
 
-courseBySessionIdAndProgramId: (req, res) => {
-  CourseWorkload.courseBySessionIdAndProgramId(req.body, res.locals.slug).then(result => {
+  courseBySessionIdAndProgramId: (req, res) => {
+    CourseWorkload.courseBySessionIdAndProgramId(req.body, res.locals.slug).then(result => {
       if (result.recordset.length > 0) {
-          res.json({
-              status: "200",
-              message: "Sucessfull",
-              data: result.recordset,
-              length: result.recordset.length
+        res.json({
+          status: "200",
+          message: "Sucessfull",
+          data: result.recordset,
+          length: result.recordset.length
 
-          })
+        })
       } else {
-          res.json({
-              status: "400",
-              message: "No data found",
-              data: result.recordset,
-              length: result.recordset.length
-          })
+        res.json({
+          status: "400",
+          message: "No data found",
+          data: result.recordset,
+          length: result.recordset.length
+        })
       }
-  }).catch(error => {
+    }).catch(error => {
       console.log(error)
       res.status(500).json(error.originalError.info.message)
-  })
-}
+    })
+  },
+
+  workloadByProgramId: (req, res) => {
+    Promise.all([CourseWorkload.workloadByProgramId(req.body.programId, res.locals.slug), CourseWorkload.sessionByProgramId(req.body.
+      programId, res.locals.slug)]).then(result => {
+        console.log('req.body:::::::::::::',result)
+      res.json({
+        status: "200",
+        message: "Sucessfull",
+        workload: result[0].recordset,
+        sessionList :  result[1].recordset
+      })
+    }).catch(error => {
+      console.log(error)
+      res.status(500).json(error.originalError.info.message)
+    })
+  },
+
+  workloadByProgramIdSessionId: (req, res) => {
+    CourseWorkload.workloadByProgramIdSessionId(req.body, res.locals.slug).then(result => {
+      if (result.recordset.length > 0) {
+        res.json({
+          status: "200",
+          message: "Sucessfull",
+          data: result.recordset,
+          length: result.recordset.length
+        })
+      } else {
+        res.json({
+          status: "400",
+          message: "No data found",
+          data: result.recordset,
+          length: result.recordset.length
+        })
+      }
+    }).catch(error => {
+      console.log(error)
+      res.status(500).json(error.originalError.info.message)
+    })
+  }
 
 }
