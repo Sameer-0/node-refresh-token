@@ -41,7 +41,7 @@ module.exports = {
 
         store.get(req.sessionID, async (err, result) => {
            
-            console.log('redirectIfLoggedIn::::::::::::::::::>> ', result)
+            console.log('redirectIfLoggedIn::::::::::::::::::>> ', req.session.cookie)
             if (!result) {
                //return res.redirect('/user/login')
                return next();
