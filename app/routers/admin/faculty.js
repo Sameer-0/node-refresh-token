@@ -10,7 +10,9 @@ const works =  require('../../controllers/admin/faculty/works')
 const dateTimes = require('../../controllers/admin/faculty/dateTimes')
 const preferences = require('../../controllers/admin/faculty/preferences')
 const batch = require('../../controllers/admin/faculty/batch')
+const allocation = require('../../controllers/admin/faculty/allocation')
 const validate = require('../../middlewares/validate')
+
 
 //Faculty
 router.get('/faculties', index.getPage)
@@ -47,7 +49,8 @@ router.post('/faculties/batch/division-by-moduleid', batch.divisionByModuleId)
 router.post('/faculties/batch/batch-by-divisionid', batch.batchByDivisionId)
 router.post('/faculties/batch/find-batch-by-facultyid', batch.batchByFacultyIdAndBatchId)
 
-
+//FACULTY ALLOCATION STATUS
+router.get('/faculties/allocation-status', allocation.getPage)
 
 //faculty works
 router.get('/faculties/works', works.getPage)
