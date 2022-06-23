@@ -25,7 +25,7 @@ module.exports = class Rooms {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowCount)} r.id, r.id as roomid,  r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
             CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
-            o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
+            o.org_abbr AS handled_by, c.campus_abbr AS campus, IIF(r.is_basement = 1,'Yes', 'No') AS is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
             INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
             INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
             INNER JOIN [dbo].organizations o ON o.id = r.handled_by
@@ -68,20 +68,21 @@ module.exports = class Rooms {
         })
     }
 
-    static searchRoom(rowCount, keyword) {
+    static searchRoom(body) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowCount)} r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
+            return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT r.id as roomid, r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
                 CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
-                o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
+                o.org_abbr AS handled_by, c.campus_abbr AS campus, IIF(r.is_basement = 1,'Yes', 'No') AS is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
                 INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
                 INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
                 INNER JOIN [dbo].organizations o ON o.id = r.handled_by
                 INNER JOIN [dbo].slot_interval_timings st ON st.id = r.start_time_id
                 INNER JOIN [dbo].slot_interval_timings et ON et.id = r.end_time_id
                 INNER JOIN [dbo].campuses c ON c.id = b.campus_lid WHERE r.room_number 
-                LIKE @keyword OR b.building_name LIKE @keyword OR rt.name LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR o.org_abbr LIKE @keyword ORDER BY r.id DESC`)
+                LIKE @keyword OR b.building_name LIKE @keyword OR rt.name LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR o.org_abbr LIKE @keyword ORDER BY r.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
@@ -196,7 +197,7 @@ module.exports = class Rooms {
     static bookedRoomsPagination(slug, pageNo) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('pageNo', sql.Int, pageNo).query(`SELECT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+                .input('pageNo', sql.Int, pageNo).query(`SELECT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
@@ -247,7 +248,7 @@ module.exports = class Rooms {
             return pool.request().input('pageNo', sql.Int, pageNo)
                 .query(`SELECT r.id, r.id as roomid,  r.room_number, b.building_name AS building_name, rt.name AS room_type, r.floor_number, r.capacity,
                 CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time,
-                o.org_abbr AS handled_by, c.campus_abbr AS campus, r.is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
+                o.org_abbr AS handled_by, c.campus_abbr AS campus, IIF(r.is_basement = 1,'Yes', 'No') AS is_basement, CONVERT(NVARCHAR, r.is_processed) AS is_processed  FROM [dbo].rooms r
                 INNER JOIN [dbo].[buildings] b ON b.id = r.building_lid
                 INNER JOIN [dbo].room_types rt ON rt.id = r.room_type_id 
                 INNER JOIN [dbo].organizations o ON o.id = r.handled_by

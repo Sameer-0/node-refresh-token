@@ -25,9 +25,7 @@ module.exports = {
 
 
     search: (req, res) => {
-
-        let rowcount = 10;
-        RoomTransactionRequest.search(rowcount, req.body.keyword, res.locals.slug).then(result => {
+        RoomTransactionRequest.search(req.body, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.status(200).json({
                     status: "200",
@@ -75,7 +73,7 @@ module.exports = {
             console.log('Room Transaction:::::::::::::', _tresult.recordset[0])
             Tenants.findOne(_tresult.recordset[0].tenant_id).then(_tenant => {
                 RoomTransactionDetails.roomInfo(_tenant.recordset[0].slug_name, _tresult.recordset[0].tenant_room_transaction_id).then(_rinfo => {
-                    //console.log('_rinfo::::::::::::',_rinfo)
+                    console.log('_rinfo::::::::::::',_rinfo)
                     res.status(200).json({
                         data: _rinfo.recordset,
                         transactionid: _tresult.recordset[0].id

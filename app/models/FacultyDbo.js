@@ -70,11 +70,12 @@ module.exports = class FacultyDbo {
         })
     }
 
-    static search(rowcount, keyword) {
+    static search(body) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} fs.id, fs.faculty_id, fs.faculty_name ,fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs WHERE fs.faculty_id LIKE @keyword OR fs.faculty_name LIKE @keyword ORDER BY fs.id DESC`)
+            return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT  fs.id, fs.faculty_id, fs.faculty_name ,fs.is_processed, IIF(fs.is_processed = 1, 'Yes','No') as is_processed_status FROM [dbo].faculties fs WHERE fs.faculty_id LIKE @keyword OR fs.faculty_name LIKE @keyword ORDER BY fs.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 

@@ -59,7 +59,7 @@ module.exports = class RoomTransactionStages {
         })
     }
 
- 
+
 
 
     static getRTSCount() {

@@ -265,7 +265,8 @@
                 type: "POST",
                 url: "/management/faculties/faculty/search",
                 data: {
-                    keyword: keyword
+                    keyword: keyword,
+                    pageNo: 1
                 },
                 success: function (data) {
                     console.log('search data::::::::',data.data)
@@ -273,6 +274,25 @@
                 }
             })
         }, 500));
+
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/management/faculties/faculty/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        AjaxtTable(data.data)
+                        console.log(data.data);
+                    }
+                })
+            })
 
 
         //Create 
@@ -413,7 +433,7 @@
 
 
         function showAjaxTable(facultiesList) {
-            let AjaxTable = `<table class="table custom_row" id="holidayTable">
+            let AjaxTable = `<table class="table custom_row" id="facultyTable">
                 <thead>
                     <th>Faculty Id</th>
                     <th>Faculty Name</th>

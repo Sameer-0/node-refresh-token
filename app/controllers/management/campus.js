@@ -102,9 +102,7 @@ module.exports = {
 
 
     search: (req, res) => {
-        //here 10is rowcount
-        let rowcont = 10;
-        Campuses.searchCampus(rowcont, req.body.keyword).then(result => {
+        Campuses.searchCampus(req.body).then(result => {
             console.log('campyus searchh', result.recordset)
             if (result.recordset.length > 0) {
                 res.json({

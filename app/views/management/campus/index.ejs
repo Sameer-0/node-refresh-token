@@ -369,13 +369,31 @@
                 type: "POST",
                 url: "/management/campuses/search",
                 data: {
-                    keyword: keyword
+                    keyword: keyword,
+                    pageNo: 1
                 },
                 success: function (data) {
                     showAjaxTable(data.data) //data.data contain campus list
                 }
             })
         }, 500));
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/management/campuses/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        showAjaxTable(data.data)
+                    }
+                })
+            })
 
 
         function showSuccess(errors) {

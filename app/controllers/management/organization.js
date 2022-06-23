@@ -104,9 +104,8 @@ module.exports = {
 
 
     search: (req, res) => {
-        //here 10is rowcount
-        let rowcont = 10;
-        Organizations.searchOrg(rowcont, req.body.keyword).then(result => {
+
+        Organizations.searchOrg(req.body).then(result => {
             console.log('result',result)
             if (result.recordset.length > 0) {
                 res.json({
@@ -124,6 +123,7 @@ module.exports = {
                 })
             }
         }).catch(error => {
+            console.log('error::::::::::::::',error)
             res.json({
                 status: "500",
                 message: "Something went wrong",
