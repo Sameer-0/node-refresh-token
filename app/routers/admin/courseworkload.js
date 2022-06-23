@@ -30,8 +30,8 @@ router.post('/courseworkload/workload/create', validate('JsonValidator'), course
 router.post('/courseworkload/workload/delete',  courseworkload.delete)
 router.post('/courseworkload/workload/session-by-programid',  courseworkload.sessionByProgramId)
 router.post('/courseworkload/workload/fetching-courses',  courseworkload.courseBySessionIdAndProgramId)
-
-
+router.post('/courseworkload/workload/workload-by-programid',  courseworkload.workloadByProgramId)
+router.post('/courseworkload/workload/workload-by-programid-sessionid',  courseworkload.workloadByProgramIdSessionId)
 //Course preference
 router.get('/courseDayRoomPreference', preference.getPage)
 router.post('/courseDayRoomPreference/create', preference.create)
