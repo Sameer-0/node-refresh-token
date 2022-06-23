@@ -26,7 +26,7 @@ module.exports = class RoomTransactions {
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT DISTINCT TOP ${Number(rowcount)}  transaction_uuid, applicant_name, applicant_sap_id FROM [dbo].room_transactions`)
-        }).catch(error=>{
+        }).catch(error => {
             throw error
         })
     }
@@ -45,18 +45,18 @@ module.exports = class RoomTransactions {
                 INNER JOIN [dbo].organizations om  on rt.applied_for_org_id =  om.id
                 INNER JOIN [dbo].campuses camp ON rt.applied_for_campus_org_id = camp.id
                 WHERE rt.transaction_uuid = @transid`)
-        }).catch(error=>{
+        }).catch(error => {
             throw error
         })
     }
 
     static approveTransactionByUuId(transuuid) {
         return poolConnection.then(pool => {
-            let request  = pool.request()
-          return request.input('input_transaction_uuid', sql.UniqueIdentifier,  transuuid)
-           // .output('message', sql.VarChar(400))
-            .execute(`[dbo].room_transaction_approval`)
-        }).catch(error=>{
+            let request = pool.request()
+            return request.input('input_transaction_uuid', sql.UniqueIdentifier, transuuid)
+                // .output('message', sql.VarChar(400))
+                .execute(`[dbo].room_transaction_approval`)
+        }).catch(error => {
             throw error
         })
     }
@@ -67,7 +67,7 @@ module.exports = class RoomTransactions {
             return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT DISTINCT TOP ${Number(rowcount)} transaction_uuid, applicant_name, applicant_sap_id FROM [dbo].room_transactions 
                 WHERE  transaction_uuid LIKE @keyword OR applicant_name LIKE @keyword OR applicant_sap_id LIKE @keyword`)
-        }).catch(error=>{
+        }).catch(error => {
             throw error
         })
     }
@@ -78,6 +78,6 @@ module.exports = class RoomTransactions {
             let request = pool.request()
             return request.query(`SELECT COUNT(*) as count FROM [dbo].room_transactions`)
         })
-    }    
+    }
 
 }

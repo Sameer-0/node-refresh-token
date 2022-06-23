@@ -39,6 +39,6 @@ router.post('/rooms/approval', approval.ApproveRequest)
 
 ///rooms/requests
 router.get('/rooms/requests', roomRequest.getPage)
-router.post('/rooms/requests/search', validate('search'), roomRequest.search)
+router.post('/rooms/requests/search', roomRequest.search)
 router.post('/rooms/requests/pagination', validate('pagination'), roomRequest.pagination)
 module.exports = router

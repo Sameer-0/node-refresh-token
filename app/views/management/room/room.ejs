@@ -98,7 +98,7 @@
                         <td><%- room.capacity %></td>
                         <td><%- room.start_time %></td>
                         <td><%- room.end_time %></td>
-                        <td><%- room.is_basement ? 'Yes' : 'No' %></td>
+                        <td><%- room.is_basement %></td>
                         <td><%- room.handled_by %></td>
                         <!-- <td><%- room.campus %></td> -->
                         <td>
@@ -432,14 +432,31 @@
                 type: "POST",
                 url: "/management/rooms/search",
                 data: {
-                    keyword: keyword
+                    keyword: keyword,
+                    pageNo: 1
                 },
                 success: function (data) {
                     showAjaxTable(data.data)
                 },
-
             })
         }, 500));
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/management/rooms/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        showAjaxTable(data.data)
+                    }
+                })
+            })
 
 
         // Fetch Single Room

@@ -116,10 +116,8 @@ module.exports = {
             return;
         }
 
-        //here 10is rowcount
-        let rowcount = 10;
 
-        FacultyDbo.search(rowcount, req.body.keyword).then(result => {
+        FacultyDbo.search(req.body).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

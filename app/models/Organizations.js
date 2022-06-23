@@ -6,7 +6,7 @@ const {
 module.exports = class Organizations {
     constructor(orgId, orgAbbr, orgName, orgCompleteName, orgTypeId, parentId) {
         this.orgId = orgId;
-        this.orgAbbr = orgAbbr; 
+        this.orgAbbr = orgAbbr;
         this.orgName = orgName;
         this.orgCompleteName = orgCompleteName;
         this.orgTypeId = orgTypeId;
@@ -51,7 +51,7 @@ module.exports = class Organizations {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
-              //  .input('last_modified_by', sql.Int, userid)
+                //  .input('last_modified_by', sql.Int, userid)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_add_new_organizations]')
         })
@@ -62,7 +62,7 @@ module.exports = class Organizations {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
-            .input('last_modified_by', sql.Int, userId)
+                .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute('[dbo].[sp_update_organizations]')
         })
@@ -90,26 +90,28 @@ module.exports = class Organizations {
         })
     }
 
-    static searchOrg(rowcount, keyword) {
+    static searchOrg(body) {
+        console.log('body::::::::::::::::::',body)
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcount)} org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type,
+            return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT  org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type,
                 camp.campus_abbr
                 FROM [dbo].organizations org 
                 INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id
                 INNER JOIN [dbo].campuses camp ON camp.id = org.campus_lid
                 WHERE org.org_id LIKE @keyword OR org.org_abbr LIKE @keyword OR org.org_name LIKE @keyword OR org.org_complete_name LIKE @keyword
                 OR  ot.name LIKE @keyword OR camp.campus_abbr LIKE @keyword
-                ORDER BY org.id DESC`)
+                ORDER BY org.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
-    static  getChildByParentId (parentid) {
+    static getChildByParentId(parentid) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return  request.input('parentId', sql.Int ,parentid)
-            .query(`SELECT  org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type, org.campus_lid,
+            return request.input('parentId', sql.Int, parentid)
+                .query(`SELECT  org.id, org.org_id, org.org_abbr, org.org_name, org.org_complete_name, org.org_type_id , ot.name AS org_type, org.campus_lid,
             camp.campus_abbr
             FROM [dbo].organizations org 
             INNER JOIN [dbo].organization_types ot ON org.org_type_id = ot.id

@@ -102,7 +102,7 @@
         $('#RoomRequests').on('click','.view-room-request',function(){
             let id = $(this).attr("data-id")
             let tr = $(this).parent().parent()
-            console.log('id:::::::::',);
+            console.log('id:::::::::',id);
             let ApiObj = {
                 url: '/management/rooms/requests/roomInfo',
                 type: 'POST',
@@ -187,15 +187,33 @@
                 dataType:"JSON",
                 url: "/management/rooms/requests/search",
                 data: {
-                    keyword: keyword
+                    keyword: keyword,
+                    pageNo: 1
                 },
                 success: function (data) {
-                    console.log('data:::::::',data.data)
                     showAjaxTable(data.data)
                 },
                
             })
         }, 500));
+
+
+            //Search With Pagination
+            $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                $.ajax({
+                    type: "POST",
+                    url: "/management/rooms/requests/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        showAjaxTable(data.data)
+                    }
+                })
+            })
 
 
         //Pagination Here

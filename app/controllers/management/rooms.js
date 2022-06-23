@@ -103,10 +103,7 @@ module.exports = {
             });
             return;
         }
-
-
-        let rowCount = 10;
-        Rooms.searchRoom(rowCount, req.body.keyword).then(result => {
+        Rooms.searchRoom(req.body).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

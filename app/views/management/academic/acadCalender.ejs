@@ -9,28 +9,29 @@
     <div class="breadcrumbs-container">
         <ul class="breadcrumb">
             <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-                <%} }%>
+            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+            <%} }%>
         </ul>
     </div>
 
     <%- include("../partials/academicSubMenu") %>
     <div class="card table-card">
-          <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
                 <h5>Academic Calender List</h5>
             </div>
             <div>
                 <!-- <button class="btn btn-success ms-auto " data-bs-toggle="modal"
                 data-bs-target="#add-academicSession-modal"><i class="fas fa-plus"></i> Add New</button> -->
-        </div>
-                <button class="btn btn-danger ms-auto generate-academic-calender"><i class="fa-solid fa-rotate"></i> Generate Calender</button>
             </div>
+            <button class="btn btn-danger ms-auto generate-academic-calender"><i class="fa-solid fa-rotate"></i>
+                Generate Calender</button>
         </div>
-        
+    </div>
 
 
-        <div class="card">
+
+    <div class="card">
         <div class="card-body table-responsive">
             <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -154,15 +155,15 @@
 <%- include("../partials/footer") %>
 
 <script>
-   $(document).ready(function(){
+    $(document).ready(function () {
 
 
-    $(".generate-academic-calender").on('click',function(){
+        $(".generate-academic-calender").on('click', function () {
             let apiObj = {
-                type:"POST",
-                url:"/management/academic/calender/refresh",
+                type: "POST",
+                url: "/management/academic/calender/refresh",
                 data: {},
-                dataType:"JSON"
+                dataType: "JSON"
             }
             ajaxApi(apiObj).then(result => {
                 console.log('result ::::::::::::::::::::::', result)
@@ -174,8 +175,8 @@
         })
 
 
-     //Pagination Here
-     let pageCount = `<%- pageCount %>`
+        //Pagination Here
+        let pageCount = `<%- pageCount %>`
         console.log("Page Count=====>>>", pageCount)
         let pageNos = Math.ceil(Number(pageCount) / 10)
 
@@ -203,70 +204,70 @@
                     pageNo: num
                 },
                 success: function (data) {
-                    AjaxTable(data.data) 
+                    AjaxTable(data.data)
                 }
             })
         });
 
-
-
-
-
-
-     //search feature delay function is writter in script.js file which is located in public/js/script.js
-     $('#searchkeyword').on('input', delay(function (e) {
-        let keyword = $("#searchkeyword").val()
-        let ApiObj = {
-            type: "POST",
-            url: "/management/academic/calender/search",
-            data: {
-                keyword: $("#searchkeyword").val()
-            },
-            dataType: 'JSON'
-        }
-
-        ajaxApi(ApiObj).then(result => {
-            AjaxTable(result.data)
-        }).catch(error => {
-
-            let errors = error.responseJSON.message
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-            errors.map(er => {
-                errorHtml +=
-                    `<li>${er}</li>`
+        // SEARCH CALENDER TYPE
+        $('#searchkeyword').on('input', delay(function (e) {
+            let keyword = $("#searchkeyword").val()
+            $.ajax({
+                type: "POST",
+                url: "/management/academic/calender/search",
+                data: {
+                    keyword: keyword,
+                    pageNo: 1
+                },
+                success: function (data) {
+                    AjaxTable(data.data)
+                    console.log(data.data);
+                }
             })
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
+        }, 500));
+
+
+        //Search With Pagination
+        $(".pagination-search").on('click', '.pagination li', function () {
+            let keyword = $("#searchkeyword").val()
+            let pageNo = $(this).attr('data-lp')
+            $.ajax({
+                type: "POST",
+                url: "/management/academic/calender/search",
+                data: {
+                    keyword: keyword,
+                    pageNo: pageNo
+                },
+                success: function (data) {
+                    AjaxTable(data.data)
+                }
+            })
         })
-    }, 500));
 
-    function AjaxTable(acadCalenderList) {
-        let AjaxTable = `<table class="table custom_row" id="acadCalenderTable">
-<thead>
-    <th>Id</th>
-    <th>Date Str</th>
-    <th>Date</th>
-    <th>Day</th>
-    <th>Day Name</th>
-    <th>Week</th>
-    <th>ISO Week</th>
-    <th>Day of Week</th>
-    <th>Month</th>
-    <th>Month Name</th>
-    <th>Quarter</th>
-    <th>Year</th>
-    <th>Day of Year</th>
-    <!-- <th>Action</th> -->
-</thead>`;
+        function AjaxTable(acadCalenderList) {
+            let AjaxTable = `<table class="table custom_row" id="acadCalenderTable">
+            <thead>
+                <th>Id</th>
+                <th>Date Str</th>
+                <th>Date</th>
+                <th>Day</th>
+                <th>Day Name</th>
+                <th>Week</th>
+                <th>ISO Week</th>
+                <th>Day of Week</th>
+                <th>Month</th>
+                <th>Month Name</th>
+                <th>Quarter</th>
+                <th>Year</th>
+                <th>Day of Year</th>
+                <!-- <th>Action</th> -->
+            </thead>`;
 
-        if (acadCalenderList.length > 0) {
-            let count = 1;
-            for (calender of acadCalenderList) {
-                AjaxTable +=
-                    `<tr>
+            if (acadCalenderList.length > 0) {
+                let count = 1;
+                for (calender of acadCalenderList) {
+                    AjaxTable +=
+                        `<tr>
         <td>${count++}</td>
         <td>${calender.date_str}</td>
         <td>${calender.date}</td>
@@ -287,37 +288,37 @@
                 class="fas fa-trash-alt text-danger delete-acadCalender"></i>
         </td> -->
     </tr>`;
-            }
-        } else {
-            AjaxTable +=
-                ` <tr>
+                }
+            } else {
+                AjaxTable +=
+                    ` <tr>
                 <td colspan="12">No Data Found</td>
             </tr>`;
+            }
+            AjaxTable += `<tbody></table>`
+            $("#acadCalenderTable").html(AjaxTable);
         }
-        AjaxTable += `<tbody></table>`
-        $("#acadCalenderTable").html(AjaxTable);
-    }
 
 
 
-    function showError(errors) {
+        function showError(errors) {
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
-                title : errors.description,
+                title: errors.description,
                 message: errors.data,
                 type: 'alert-danger',
                 buttons: {
-                    positive:{
+                    positive: {
                         text: "Okay",
-                        action: function(){
+                        action: function () {
                             document.querySelector('.simple-alert').remove();
                         }
                     },
                     negative: {
                         text: "Cancel",
                         action: function () {
-                        alert('Negative')
+                            alert('Negative')
                         }
                     }
                 }
@@ -330,20 +331,20 @@
             console.log(errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
-                title : errors.description,
+                title: errors.description,
                 message: "",
                 type: 'alert-success',
                 buttons: {
-                    positive:{
+                    positive: {
                         text: "Okay",
-                        action: function(){
+                        action: function () {
                             document.querySelector('.simple-alert').remove();
                         }
                     },
                     negative: {
                         text: "Cancel",
                         action: function () {
-                        alert('Negative')
+                            alert('Negative')
                         }
                     }
                 }
@@ -351,6 +352,6 @@
             simpleAlert.alert(obj);
         }
 
-   })
+    })
 </script>
 <%- include("../partials/footerEnd") %>

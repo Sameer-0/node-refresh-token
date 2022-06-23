@@ -91,13 +91,14 @@ module.exports = class Campuses {
         })
     }
 
-    static searchCampus(rowcont, keyword) {
-        console.log('search keyword', keyword)
+    static searchCampus(body) {
+        console.log('body::::',body)
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.input('keyword', sql.NVarChar(100), '%' + keyword + '%')
-                .query(`SELECT TOP ${Number(rowcont)} id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
-            FROM [dbo].campuses WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword  ORDER BY id DESC`)
+            return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+            .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT  id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
+            FROM [dbo].campuses WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword  ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         }).catch(error => {
             throw error
         })

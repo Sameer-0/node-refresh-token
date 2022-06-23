@@ -3,7 +3,6 @@
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
 <!--HEADER END-->
-
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
 
@@ -200,35 +199,41 @@
 
 
     //search feature delay function is writter in script.js file which is located in public/js/script.js
-    $('#searchkeyword').on('input', delay(function (e) {
-        let keyword = $("#searchkeyword").val()
-        let ApiObj = {
-            type: "POST",
-            url: "/management/academic/session/search",
-            data: {
-                keyword: keyword
-            },
-            dataType: 'JSON'
-        }
+            // SEARCH PROGRAM TYPE
+            $('#searchkeyword').on('input', delay(function (e) {
+                let keyword = $("#searchkeyword").val()
+                $.ajax({
+                    type: "POST",
+                    url: "/management/academic/session/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: 1
+                    },
+                    success: function (result) {
+                        AjaxTable(result.data)
+                    }
+                })
+            }, 500));
 
-        ajaxApi(ApiObj).then(result => {
-             AjaxTable(result.data)
-        }).catch(error => {
 
-            let errors = error.responseJSON.message
-            console.log('Error:::::::::::', errors)
-            let errorHtml = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <h3>Error</h3>
-                    <ul>`
-            errors.map(er => {
-                errorHtml +=
-                    `<li>${er}</li>`
+        //Search With Pagination
+        $(".pagination-search").on('click','.pagination li',function(){
+                let keyword = $("#searchkeyword").val()
+                let pageNo = $(this).attr('data-lp')
+                console.log('PAGE NO.:::::::::::', $(this).attr('data-lp'))
+                console.log('keyword.:::::::::::', keyword)
+                $.ajax({
+                    type: "POST",
+                    url: "/management/academic/session/search",
+                    data: {
+                        keyword: keyword,
+                        pageNo: pageNo
+                    },
+                    success: function (data) {
+                        AjaxTable(data.data)
+                    }
+                })
             })
-            errorHtml +=
-                `</ul> <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div>`
-            $("#errorHtml").html(errorHtml)
-        })
-    }, 500));
 
 
 

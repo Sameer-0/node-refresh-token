@@ -26,7 +26,6 @@ module.exports = {
     },
 
     search: (req, res) => {
-
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.status(422).json({
@@ -36,8 +35,7 @@ module.exports = {
             return;
         }
 
-        let rowcount = 10;
-        AcadSession.search(rowcount, req.body.keyword).then(result => {
+        AcadSession.search(req.body).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
