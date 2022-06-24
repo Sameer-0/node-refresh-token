@@ -7,11 +7,11 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
     <div class="breadcrumbs-container">
-    
+
         <ul class="breadcrumb">
             <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-                <%} }%>
+            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+            <%} }%>
         </ul>
     </div>
 
@@ -37,7 +37,8 @@
             </div>
             <div>
                 <!-- <button class="btn btn-danger ms-auto generate-divisions-btn"><i class="fa-solid fa-pen"> </i> Change Division Name/Count</button> -->
-                 <button class="btn btn-danger ms-auto generate-divisions-btn"><i class="fa-solid fa-rotate"></i> Generate Division</button>
+                <button class="btn btn-danger ms-auto generate-divisions-btn"><i class="fa-solid fa-rotate"></i>
+                    Generate Division</button>
                 <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#open-program-modal"><i
                         class="fas fa-plus"></i></button>
                 <button class="btn ms-auto delete-campuses add-btn "><i class="fas fa-trash"></i></button>
@@ -46,13 +47,14 @@
             </div>
         </div>
 
-<div class="card-body table-responsive">
-        <div class="row">
-        <div class="col-md-3">
-                <select class="form-select select2" id="programName">
-                    <option>Select Program</option>
-                    <%for(let program of programList){%>
-                        <option value="<%-program.id%>" data-program-id="<%-program.program_id%>"><%-program.program_name%></option>
+        <div class="card-body table-responsive">
+            <div class="row">
+                <div class="col-md-3">
+                    <select class="form-select select2" id="programName">
+                        <option>Select Program</option>
+                        <%for(let program of programList){%>
+                        <option value="<%-program.id%>" data-program-id="<%-program.program_id%>">
+                            <%-program.program_name%></option>
                         <%}%>
                 </select>
         </div>
@@ -61,8 +63,8 @@
             <select class="form-select select2" id="moduleName">
                 <option>Select Module</option>
             <%for(let module of moduleList){%>
-                <option value="<%-module.id%>"><%-module.module_name%></option>
-                <%}%>
+                        <option value="<%-module.id%>"><%-module.module_name%></option>
+                        <%}%>
             </select>
         </div>
 
@@ -76,7 +78,11 @@
         </div>
             <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div> -->
+            <p class="mt-3"><span class="text-danger">Note:</span> In order to keep all Count for theory batch the same,
+                simply insert records in the first field and click on the checkbox. 
+                If the checkbox is unchecked, the records will be emptied.</p>
             <table class="table table-bordered custom_row" id="divisionTable">
+                
                 <thead>
                     <th>#</th>
                     <th>Program Name</th>
@@ -84,33 +90,39 @@
                     <th>Academic Session</th>
                     <th>Division</th>
                     <th>Student count</th>
-                    <th>Count for theory batch</th>
-                    <th>Count for practical batch</th>
-                    <th>Count for tutorial batch</th>
-                    <th>Count for workshop batch</th>
+                    <th>Count for theory batch <input type="checkbox" id="countForTheoryBatchCheck"></th>
+                    <th>Count for practical batch <input type="checkbox" id="countForPracticalBatchCheck"></th>
+                    <th>Count for tutorial batch <input type="checkbox" id="countForTutorialBatchCheck"></th>
+                    <th>Count for workshop batch <input type="checkbox" id="countForWorkshopBatchCheck"></th>
                     <th>Action</th>
                 </thead>
                 <tbody>
                     <%let count = 1;%>
-                    <% for(let division of divisionList) {%>
-                    <tr>
-                        <td><%- count++ %><input class="form-control rounded-0" type="hidden" name="division_id" value="<%-division.id%>"></td>
-                        <td>
-                            <%- division.program_name %>
-                        </td>
-                        <td>
-                            <%- division.module_name %>
-                        </td>
-                        <td><%- division.acad_session %></td>
-                        <td><%- division.division%></td>
-                        <td><%- division.division_count%></td>
-                        <td><input class="form-control rounded-0" name="count_for_theory_batch" value="<%-division.count_for_theory_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="count_for_practical_batch" value="<%-division.count_for_practical_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="count_for_tutorial_batch" value="<%-division.count_for_tutorial_batch%>"></td>
-                        <td><input class="form-control rounded-0" name="count_for_workshop_batch" value="<%-division.count_for_workshop_batch%>"></td>
-                        <td><a data-id="<%-division.id%>" class="text-danger delete-division"><span class="fa fa-trash"></span></a></td>
-                    </tr>
-                    <%}%>
+                        <% for(let division of divisionList) {%>
+                        <tr>
+                            <td><%- count++ %><input class="form-control rounded-0" type="hidden" name="division_id"
+                                    value="<%-division.id%>"></td>
+                            <td>
+                                <%- division.program_name %>
+                            </td>
+                            <td>
+                                <%- division.module_name %>
+                            </td>
+                            <td><%- division.acad_session %></td>
+                            <td><%- division.division%></td>
+                            <td><%- division.division_count%></td>
+                            <td><input class="form-control rounded-0" name="count_for_theory_batch"
+                                    value="<%-division.count_for_theory_batch%>"></td>
+                            <td><input class="form-control rounded-0" name="count_for_practical_batch"
+                                    value="<%-division.count_for_practical_batch%>"></td>
+                            <td><input class="form-control rounded-0" name="count_for_tutorial_batch"
+                                    value="<%-division.count_for_tutorial_batch%>"></td>
+                            <td><input class="form-control rounded-0" name="count_for_workshop_batch"
+                                    value="<%-division.count_for_workshop_batch%>"></td>
+                            <td><a data-id="<%-division.id%>" class="text-danger delete-division"><span
+                                        class="fa fa-trash"></span></a></td>
+                        </tr>
+                        <%}%>
                 </tbody>
             </table>
             <div class="d-flex justify-content-between">
@@ -121,8 +133,8 @@
                     <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Update </button>
                 </div>
             </div>
-</div>
-</div>
+        </div>
+    </div>
 
 
 </div>
@@ -135,9 +147,9 @@
         $('.select2').select2();
 
         //FILTER APIS
-        $("#programName").on('change',function(){
-            let programid =  $(this).val()
-            let program_id =  $("#programName option:selected").attr('data-program-id')
+        $("#programName").on('change', function () {
+            let programid = $(this).val()
+            let program_id = $("#programName option:selected").attr('data-program-id')
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/divisions/division-by-programid',
@@ -150,27 +162,27 @@
 
             ajaxApi(ApiObj).then(result => {
                 let moduleName = ``;
-                                        if (result.moduleList.length > 0) {
-                                            moduleName +=
-                                                `<option value="" disabled>Select Module</option>`;
-                                                result.moduleList.forEach(element => {
-                                                moduleName +=
-                                                    `<option value="${element.id}" >${element.module_name}</option>`;
-                                            });
-                                        } else {
-                                            moduleName +=
-                                                `<option value="">Module Not Found!</option>`;
-                                        }
-                                        $("#moduleName").html(moduleName)
+                if (result.moduleList.length > 0) {
+                    moduleName +=
+                        `<option value="" disabled>Select Module</option>`;
+                    result.moduleList.forEach(element => {
+                        moduleName +=
+                            `<option value="${element.id}" >${element.module_name}</option>`;
+                    });
+                } else {
+                    moduleName +=
+                        `<option value="">Module Not Found!</option>`;
+                }
+                $("#moduleName").html(moduleName)
                 AjaxtTable(result.division)
             }).catch(error => {
                 showError(error.responseJSON)
             })
         })
 
-        $("#moduleName").on('change',function(){
-            let moduleid =  $(this).val()
-            let programid =  $("#programName").val()
+        $("#moduleName").on('change', function () {
+            let moduleid = $(this).val()
+            let programid = $("#programName").val()
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/divisions/division-by-moduleid',
@@ -188,18 +200,22 @@
             })
         })
 
-            //SaveAll
-            $(".SaveAll").on('click',function(){
+        //SaveAll
+        $(".SaveAll").on('click', function () {
             console.log('SaveAll::::::::::>>>')
             let divElems = $('#divisionTable tbody tr');
             let divCount = divElems.length;
             let divJSON = [];
             divElems.each(function (index, elem) {
                 let id = $(elem).find(`input[name='division_id']`).val()
-                let count_for_theory_batch = $(elem).find(`input[name='count_for_theory_batch']`).val()
-                let count_for_practical_batch = $(elem).find(`input[name='count_for_practical_batch']`).val();
-                let count_for_tutorial_batch = $(elem).find(`input[name='count_for_tutorial_batch']`).val();
-                let count_for_workshop_batch = $(elem).find(`input[name='count_for_workshop_batch']`).val();
+                let count_for_theory_batch = $(elem).find(
+                    `input[name='count_for_theory_batch']`).val()
+                let count_for_practical_batch = $(elem).find(
+                    `input[name='count_for_practical_batch']`).val();
+                let count_for_tutorial_batch = $(elem).find(
+                    `input[name='count_for_tutorial_batch']`).val();
+                let count_for_workshop_batch = $(elem).find(
+                    `input[name='count_for_workshop_batch']`).val();
 
 
                 if (index < divCount - 1) {
@@ -208,7 +224,7 @@
                         count_for_theory_batch: count_for_theory_batch,
                         count_for_practical_batch: count_for_practical_batch,
                         count_for_tutorial_batch: count_for_tutorial_batch,
-                        count_for_workshop_batch:count_for_workshop_batch  
+                        count_for_workshop_batch: count_for_workshop_batch
                     }
                     divJSON.push(obj)
                 } else {
@@ -217,13 +233,13 @@
                         count_for_theory_batch: count_for_theory_batch,
                         count_for_practical_batch: count_for_practical_batch,
                         count_for_tutorial_batch: count_for_tutorial_batch,
-                        count_for_workshop_batch:count_for_workshop_batch  
+                        count_for_workshop_batch: count_for_workshop_batch
                     }
                     divJSON.push(obj)
                 }
             })
 
-            console.log('Json::::::::::::',divJSON)
+            console.log('Json::::::::::::', divJSON)
             let ApiObj = {
                 type: 'POST',
                 url: '/admin/divisions/update',
@@ -296,12 +312,12 @@
 
 
         //REFRESH
-        $(".generate-divisions-btn").on('click',function(){
+        $(".generate-divisions-btn").on('click', function () {
             let apiObj = {
-                type:"POST",
-                url:"/admin/divisions/generate-division",
+                type: "POST",
+                url: "/admin/divisions/generate-division",
                 data: {},
-                dataType:"JSON"
+                dataType: "JSON"
             }
             ajaxApi(apiObj).then(result => {
                 showSuccess(result)
@@ -331,7 +347,7 @@
 
 
         //DELETE DIVISION BATCH
-        $("#divisionTable").on('click','.delete-division',function(){
+        $("#divisionTable").on('click', '.delete-division', function () {
             let id = $(this).attr("data-id")
             let ApiObj = {
                 type: 'POST',
@@ -350,6 +366,141 @@
         })
 
 
+        // countForTheoryBatchCheck
+        $("#divisionTable").on('change', '#countForTheoryBatchCheck', function () {
+            if ($(this).is(":checked")) {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0 && $(
+                            `#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_theory_batch']`
+                            ).val() == '') {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_theory_batch']`)
+                            .css('border', '1px solid red')
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_theory_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_theory_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_theory_batch']`).val(
+                        intake).trigger('change')
+                })
+                console.log('True')
+            } else {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0) {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_theory_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_theory_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_theory_batch']`).val('')
+                        .trigger('change')
+                })
+                console.log('False')
+            }
+        })
+
+
+            // countForPracticalBatchCheck
+            $("#divisionTable").on('change', '#countForPracticalBatchCheck', function () {
+            if ($(this).is(":checked")) {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0 && $(
+                            `#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_practical_batch']`
+                            ).val() == '') {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_practical_batch']`)
+                            .css('border', '1px solid red')
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_practical_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_practical_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_practical_batch']`).val(
+                        intake).trigger('change')
+                })
+                console.log('True')
+            } else {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0) {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_practical_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_practical_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_practical_batch']`).val('')
+                        .trigger('change')
+                })
+                console.log('False')
+            }
+        })
+
+
+            // countForTutorialBatchCheck
+            $("#divisionTable").on('change', '#countForTutorialBatchCheck', function () {
+            if ($(this).is(":checked")) {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0 && $(
+                            `#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_tutorial_batch']`
+                            ).val() == '') {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_tutorial_batch']`)
+                            .css('border', '1px solid red')
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_tutorial_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_tutorial_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_tutorial_batch']`).val(
+                        intake).trigger('change')
+                })
+                console.log('True')
+            } else {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0) {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_tutorial_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_tutorial_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_tutorial_batch']`).val('')
+                        .trigger('change')
+                })
+                console.log('False')
+            }
+        })
+
+                    // countForTutorialBatchCheck
+                    $("#divisionTable").on('change', '#countForWorkshopBatchCheck', function () {
+            if ($(this).is(":checked")) {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0 && $(
+                            `#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_workshop_batch']`
+                            ).val() == '') {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_workshop_batch']`)
+                            .css('border', '1px solid red')
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_workshop_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_workshop_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_workshop_batch']`).val(
+                        intake).trigger('change')
+                })
+                console.log('True')
+            } else {
+                let tableRow = $('#divisionTable tbody tr');
+                tableRow.each(function (index, elem) {
+                    if (index == 0) {
+                        $(`#divisionTable tbody tr:nth-child(${index+1}) td input[name='count_for_workshop_batch']`)
+                            .attr('placeholder', 'This Field is Mandetory')
+                    }
+                    let intake = $(elem).find(`input[name='count_for_workshop_batch']`).val()
+                    $(`#divisionTable tbody tr td input[name='count_for_workshop_batch']`).val('')
+                        .trigger('change')
+                })
+                console.log('False')
+            }
+        })
+
+
         function AjaxtTable(divisionList) {
             let AjaxTable = `<table class="table table-bordered custom_row" id="divisionTable">
                 <thead>
@@ -359,10 +510,10 @@
                     <th>Academic Session</th>
                     <th>Division</th>
                     <th>Student count</th>
-                    <th>Count for theory batch</th>
-                    <th>Count for practical batch</th>
-                    <th>Count for tutorial batch</th>
-                    <th>Count for workshop batch</th>
+                    <th>Count for theory batch <input type="checkbox" id="countForTheoryBatchCheck"></th>
+                    <th>Count for practical batch <input type="checkbox" id="countForPracticalBatchCheck"></th>
+                    <th>Count for tutorial batch <input type="checkbox" id="countForTutorialBatchCheck"></th>
+                    <th>Count for workshop batch <input type="checkbox" id="countForWorkshopBatchCheck"></th>
                     <th>Action</th>
                 </thead>`;
             if (divisionList.length > 0) {
@@ -397,23 +548,23 @@
         }
 
         function showError(errors) {
-            console.log('error::::::::::',errors)
+            console.log('error::::::::::', errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
-                title : errors.description,
+                title: errors.description,
                 message: errors.data,
                 type: 'alert-danger',
                 buttons: {
-                    positive:{
+                    positive: {
                         text: "Okay",
-                        action: function(){
+                        action: function () {
                             document.querySelector('.simple-alert').remove();
                         }
                     },
                     negative: {
                         text: "Cancel",
                         action: function () {
-                        alert('Negative')
+                            alert('Negative')
                         }
                     }
                 }
@@ -423,23 +574,23 @@
 
 
         function showSuccess(errors) {
-            console.log('error::::::::::',errors)
+            console.log('error::::::::::', errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
-                title : errors.description,
+                title: errors.description,
                 message: errors.data,
-                type: 'alert-success', 
+                type: 'alert-success',
                 buttons: {
-                    positive:{
+                    positive: {
                         text: "Okay",
-                        action: function(){
+                        action: function () {
                             document.querySelector('.simple-alert').remove();
                         }
                     },
                     negative: {
                         text: "Cancel",
                         action: function () {
-                        alert('Negative')
+                            alert('Negative')
                         }
                     }
                 }
