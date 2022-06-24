@@ -7,9 +7,11 @@ const {
 
 const index =  require('../../controllers/admin/divisions/index')
 const batch = require('../../controllers/admin/divisions/batch')
+const validate = require('../../middlewares/validate')
+
 
 router.get('/divisions', index.getPage)
-router.post('/divisions/update', index.update)
+router.post('/divisions/update', validate('JsonValidator'), index.update)
 router.post('/divisions/search', index.search)
 router.post('/divisions/pagination', index.pagination)
 router.post('/divisions/change', index.changestatus)
