@@ -95,7 +95,7 @@
                     <th>Program Id</th>
                     <th>Program Code</th>
                     <th>Acad Session</th>
-                    <th>Module Type</th>
+                    <th>Module Type <input type="checkbox" id="moduleTypeCheck"></th>
                     <th>Intake <input type="checkbox" id="intakeCheck"></th>
                     <th>Student per division <input type="checkbox" id="studentPerDivisionCheck"></th>
                     <th>Lecture count per batch per week <input type="checkbox" id="lectureCountPerBatchPerWeekCheck"></th>
@@ -680,6 +680,34 @@
 
 
 
+                            //moduleTypeCheck
+                            $("#courseWorkloadTable").on('change','#moduleTypeCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`select[name='module_type_lid']`).val()
+                                            console.log('module_type_lid:::::::::::',intake)
+                                            $(`#courseWorkloadTable tbody tr td select[name='module_type_lid']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`select[name='module_type_lid']`).val()
+                                     $(`#courseWorkloadTable tbody tr td select[name='module_type_lid']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
 
                                 //  Intake  Check
                                 $("#courseWorkloadTable").on('change','#intakeCheck',function(){ 
@@ -915,15 +943,15 @@
                     <th>Program Id</th>
                     <th>Program Code</th>
                     <th>Acad Session</th>
-                    <th>Module Type</th>
+                    <th>Module Type <input type="checkbox" id="moduleTypeCheck"></th>
                     <th>Intake <input type="checkbox" id="intakeCheck"></th>
-                    <th>Student per division</th>
-                    <th>Lecture count per batch per week</th>
-                    <th>Practical count per batch per week</th>
-                    <th>Tutorial count_per batch per week</th>
-                    <th>Workshop count per batch per week</th>
-                    <th>Session Events per Semester</th>
-                    <th>Continuous</th>
+                    <th>Student per division <input type="checkbox" id="studentPerDivisionCheck"></th>
+                    <th>Lecture count per batch per week <input type="checkbox" id="lectureCountPerBatchPerWeekCheck"></th>
+                    <th>Practical count per batch per week <input type="checkbox" id="practicalCountPerBatchPerWeekCheck"></th>
+                    <th>Tutorial count_per batch per week <input type="checkbox" id="TutorialCountPerBatchPerWeekCheck"></th>
+                    <th>Workshop count per batch per week <input type="checkbox" id="WorkshopCountPerBatchPerWeekCheck"></th>
+                    <th>Session Events per Semester <input type="checkbox" id="SessionEventsPerSemesterCheck"></th>
+                    <th>Continuous <input type="checkbox" id="ContinuousCheck"></th>
                     <th>Action</th>
                 </thead>
                 <tbody>`;
