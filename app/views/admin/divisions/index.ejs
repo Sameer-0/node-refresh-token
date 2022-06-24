@@ -102,15 +102,15 @@
                         <tr>
                             <td><%- count++ %><input class="form-control rounded-0" type="hidden" name="division_id"
                                     value="<%-division.id%>"></td>
-                            <td>
+                            <td data-progarm-name="<%- division.program_name %>">
                                 <%- division.program_name %>
                             </td>
-                            <td>
+                            <td data-module-name="<%- division.module_name %>">
                                 <%- division.module_name %>
                             </td>
-                            <td><%- division.acad_session %></td>
-                            <td><%- division.division%></td>
-                            <td><%- division.division_count%></td>
+                            <td data-acad-session="<%- division.acad_session %>"><%- division.acad_session %></td>
+                            <td data-division="<%- division.division%>"><%- division.division%></td>
+                            <td data-division-count="<%- division.division_count%>"><%- division.division_count%></td>
                             <td><input class="form-control rounded-0" name="count_for_theory_batch"
                                     value="<%-division.count_for_theory_batch%>"></td>
                             <td><input class="form-control rounded-0" name="count_for_practical_batch"
@@ -130,14 +130,33 @@
                     <p>Total entries:<%- pageCount %></p>
                 </div>
                 <div>
+                    <button class="btn btn-danger preview-btn"><span class="fa fa-eye"></span> Preview </button>
                     <button class="btn btn-success SaveAll"><span class="fa fa-check"></span> Update </button>
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="open-priview-modal" tabindex="-1" aria-labelledby="open-priview-modal" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="open-priview-modal-Label">Preview Course workload</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body priview-table">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Download Excel</button> -->
+          <button type="button" class="btn btn-secondary"  onclick="tableToExcel('previewTable', 'Course Workload')" ><span class="fa fa-download"></span> Download Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <%- include("../partials/footer") %>
 
@@ -256,6 +275,80 @@
             }).catch(error => {
                 showError(error.responseJSON)
             })
+        })
+
+
+            //previewModal
+            $(".preview-btn").on('click', function(){
+            let divElems = $('#divisionTable tbody tr');
+            let divisionJSON = [];
+            divElems.each(function (index, elem) {
+                let program_name = $(elem).find(`td[data-progarm-name]`).attr(
+                    `data-progarm-name`);
+                let module_name = $(elem).find(`td[data-module-name]`).attr(
+                    `data-module-name`);
+                let acad_session = $(elem).find(`td[data-acad-session]`).attr(
+                    `data-acad-session`);
+                let division = $(elem).find(`td[data-division]`).attr(
+                    `data-division`);
+                    let division_count = $(elem).find(`td[data-division-count]`).attr(
+                    `data-division-count`);
+                let count_for_theory_batch = $(elem).find(
+                    `input[name='count_for_theory_batch']`).val()
+                let count_for_practical_batch = $(elem).find(
+                    `input[name='count_for_practical_batch']`).val();
+                let count_for_tutorial_batch = $(elem).find(
+                    `input[name='count_for_tutorial_batch']`).val();
+                let count_for_workshop_batch = $(elem).find(
+                    `input[name='count_for_workshop_batch']`).val();
+                    let obj = {
+                        program_name:program_name,
+                        module_name: module_name,
+                        acad_session: acad_session,
+                        division: division,
+                        division_count: division_count,
+                        count_for_theory_batch: count_for_theory_batch,
+                        count_for_practical_batch: count_for_practical_batch,
+                        count_for_tutorial_batch: count_for_tutorial_batch,
+                        count_for_workshop_batch: count_for_workshop_batch
+                    }
+                    divisionJSON.push(obj)
+                
+            })
+            let previewTable = `<table class="table custom_row table-bordered" id="previewTable" summary="Code page support in different versions of MS Windows." rules="groups" >
+                <thead>
+                    <th>#</th>
+                    <th>Program Name</th>
+                    <th>Module Name</th>
+                    <th>Academic Session</th>
+                    <th>Division</th>
+                    <th>Student count</th>
+                    <th>Count for theory batch</th>
+                    <th>Count for practical batch</th>
+                    <th>Count for tutorial batch</th>
+                    <th>Count for workshop batch</th>
+                </thead>`;
+                let count = 1;
+                divisionJSON.forEach(function(division){
+                    previewTable +=`<tr>
+                            <td>${count++}</td>
+                            <td>
+                                ${division.program_name}
+                            </td>
+                            <td>
+                                ${division.module_name}
+                            </td>
+                            <td>${division.acad_session}</td>
+                            <td>${division.division}</td>
+                            <td>${division.division_count}</td>
+                            <td>${division.count_for_theory_batch}</td>
+                            <td>${division.count_for_practical_batch}</td>
+                            <td>${division.count_for_tutorial_batch}</td>
+                            <td>${division.count_for_workshop_batch}</td>
+                        </tr>` 
+                })
+        $(".priview-table").html(previewTable)
+         $("#open-priview-modal").modal('show')
         })
 
 
@@ -601,4 +694,19 @@
 
     })
 </script>
+
+<!-- Download Excel Workbook client side -->
+<script type="text/javascript">
+    var tableToExcel = (function() {
+      var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+        , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+      return function(table, name) {
+        if (!table.nodeType) table = document.getElementById(table)
+        var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+        window.location.href = uri + base64(format(template, ctx))
+      }
+    })()
+    </script>
 <%- include("../partials/footerEnd") %>
