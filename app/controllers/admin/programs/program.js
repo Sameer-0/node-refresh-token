@@ -88,7 +88,7 @@ module.exports = {
     },
 
     findOne: (req, res) => {
-        Programs.findOne(req.body.id).then(result => {
+        Programs.findOne(req.body.id, res.locals.slug).then(result => {
             res.status(200).json({
                 status: 200,
                 message: "Success",

@@ -5,8 +5,8 @@ const {
 } = require('../../config/db')
 
 
-module.exports = class ProgramsDbo{
- 
+module.exports = class ProgramsDbo {
+
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} program_id, abbr, programName FROM [dbo].programs ORDER BY last_modified_by DESC`)
@@ -40,7 +40,7 @@ module.exports = class ProgramsDbo{
     static findOne(id) {
         return poolConnection.then(pool => {
             return pool.request().input('programId', sql.Int, id)
-                .query(`select id, program_id, program_name, program_type_lid, abbr, program_code, last_modified_by from [asmsoc-mum].programs WHERE id = @programId`)
+                .query(`select * from [dbo].programs where program_id WHERE program_id = @programId`)
         })
     }
 
@@ -53,6 +53,4 @@ module.exports = class ProgramsDbo{
                 .execute(`[${slug}].[sp_update_programs]`)
         })
     }
-
-
 }
