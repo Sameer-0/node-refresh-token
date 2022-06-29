@@ -44,10 +44,10 @@ module.exports = class Programs {
         })
     }
 
-    static findOne(id) {
+    static findOne(id, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('programId', sql.Int, id)
-                .query(`select id, program_id, program_name, program_type_lid, abbr, program_code, last_modified_by from [asmsoc-mum].programs WHERE id = @programId`)
+                .query(`select id, program_id, program_name, program_type_lid, abbr, program_code, last_modified_by from [${slug}].programs WHERE id = @programId`)
         })
     }
 
