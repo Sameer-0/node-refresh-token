@@ -15,8 +15,6 @@ module.exports = class CancellationReasons {
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr`)
-        }).catch(error => {
-            throw error
         })
     }
 
@@ -46,8 +44,6 @@ module.exports = class CancellationReasons {
             let request = pool.request()
             return request.input('Id', sql.Int, id)
                 .query(`SELECT  cr.id cancellationid, cr.type_of_cancellation, cr.reason_text, cr.sap_id FROM [dbo].cancellation_reasons cr where  id = @Id`)
-        }).catch(error => {
-            throw error
         })
     }
 

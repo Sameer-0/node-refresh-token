@@ -43,8 +43,6 @@ module.exports = class Campuses {
             request.input('campusName40Char', sql.NVarChar(40), body.campusName)
             request.input('campusDesc', sql.NVarChar(150), body.campusDesc)
             return request.query(`INSERT INTO [dbo].campuses (campus_id, campus_abbr, campus_name_40_char, campus_description) VALUES (@campusId, @campusAbbr, @campusName40Char, @campusDesc)`);
-        }).catch(error => {
-            throw error
         })
     }
 
@@ -64,8 +62,6 @@ module.exports = class Campuses {
             let request = pool.request();
             request.input('id', sql.Int, id)
             return request.query(`SELECT id, campus_id, campus_abbr, campus_name_40_char, campus_description FROM [dbo].campuses  WHERE id = @id`)
-        }).catch(error => {
-            throw error
         })
     }
 
@@ -99,8 +95,6 @@ module.exports = class Campuses {
             .input('pageNo', sql.Int, body.pageNo)
                 .query(`SELECT  id, campus_id, campus_abbr AS abbr, campus_name_40_char AS name, campus_description AS c_desc 
             FROM [dbo].campuses WHERE campus_id LIKE @keyword OR campus_abbr LIKE @keyword OR campus_name_40_char LIKE @keyword OR campus_description LIKE @keyword  ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
-        }).catch(error => {
-            throw error
         })
     }
 }

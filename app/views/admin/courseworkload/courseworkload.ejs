@@ -86,8 +86,7 @@
         </div>
 
         <div class="card-body table-responsive">
-          
-            
+           <caption><span class="text-danger">Note:</span> In order to keep all intake the same, simply insert records in the first field and click on the checkbox. If the checkbox is unchecked, the records will be emptied.</caption>
             <table class="table custom_row table-bordered" id="courseWorkloadTable">
                 <thead>
                     <th>Sr No.</th>
@@ -96,15 +95,15 @@
                     <th>Program Id</th>
                     <th>Program Code</th>
                     <th>Acad Session</th>
-                    <th>Module Type</th>
-                    <th>Intake <input type="checkbox"></th>
-                    <th>Student per division</th>
-                    <th>Lecture count per batch per week</th>
-                    <th>Practical count per batch per week</th>
-                    <th>Tutorial count_per batch per week</th>
-                    <th>Workshop count per batch per week</th>
-                    <th>Session Events per Semester</th>
-                    <th>Continuous</th>
+                    <th>Module Type <input type="checkbox" id="moduleTypeCheck"></th>
+                    <th>Intake <input type="checkbox" id="intakeCheck"></th>
+                    <th>Student per division <input type="checkbox" id="studentPerDivisionCheck"></th>
+                    <th>Lecture count per batch per week <input type="checkbox" id="lectureCountPerBatchPerWeekCheck"></th>
+                    <th>Practical count per batch per week <input type="checkbox" id="practicalCountPerBatchPerWeekCheck"></th>
+                    <th>Tutorial count_per batch per week <input type="checkbox" id="TutorialCountPerBatchPerWeekCheck"></th>
+                    <th>Workshop count per batch per week <input type="checkbox" id="WorkshopCountPerBatchPerWeekCheck"></th>
+                    <th>Session Events per Semester <input type="checkbox" id="SessionEventsPerSemesterCheck"></th>
+                    <th>Continuous <input type="checkbox" id="ContinuousCheck"></th>
                     <th>Action</th>
                 </thead>
                 <tbody>
@@ -131,7 +130,7 @@
                                 <%}%>
                             </select>
                             </td>
-                            <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%> ">
+                            <td><input type="number" class="form-control rounded-0" name="intake" value="<%-course.intake%>">
                         </td>
                         <td><input type="number" class="form-control rounded-0" name="student_per_division"
                                 value="<%-course.student_per_division%>"></td>
@@ -583,24 +582,6 @@
         }, 500));
 
      
-
-
-        // //search 
-        // $('.searchItemCourse').on('input', function () {
-        //     selectItems = $('.selectListCourse li')
-        //     var text = $('.searchItemCourse').val().toLowerCase();
-        //     for (let item of selectItems) {
-        //         if (item.textContent.toLowerCase().indexOf(text) > -1) {
-        //             $(item).removeClass("d-none");
-        //         } else {
-        //             $(item).addClass("d-none");
-        //         }
-        //     };
-        // })
-
-
-
-
         $(".selectListCourse").on('click', '.list-group-item', function () {
             // remove current element when added to right sidebar
             if ($(this).attr('data-clickable') == 'true') {
@@ -698,6 +679,261 @@
             })
 
 
+
+                            //moduleTypeCheck
+                            $("#courseWorkloadTable").on('change','#moduleTypeCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`select[name='module_type_lid']`).val()
+                                            console.log('module_type_lid:::::::::::',intake)
+                                            $(`#courseWorkloadTable tbody tr td select[name='module_type_lid']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td select[name='module_type_lid']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`select[name='module_type_lid']`).val()
+                                     $(`#courseWorkloadTable tbody tr td select[name='module_type_lid']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                                //  Intake  Check
+                                $("#courseWorkloadTable").on('change','#intakeCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='intake']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='intake']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='intake']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='intake']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                                //Student per division
+                                $("#courseWorkloadTable").on('change','#studentPerDivisionCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='student_per_division']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='student_per_division']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='student_per_division']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='student_per_division']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='student_per_division']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='student_per_division']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='student_per_division']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='student_per_division']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                                //lectureCountPerBatchPerWeekCheck
+                                $("#courseWorkloadTable").on('change','#lectureCountPerBatchPerWeekCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='lecture_count_per_batch']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='lecture_count_per_batch']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='lecture_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='lecture_count_per_batch']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='lecture_count_per_batch']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='lecture_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='lecture_count_per_batch']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='lecture_count_per_batch']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                                //practicalCountPerBatchPerWeekCheck
+                                $("#courseWorkloadTable").on('change','#practicalCountPerBatchPerWeekCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='practical_count_per_batch']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='practical_count_per_batch']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='practical_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='practical_count_per_batch']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='practical_count_per_batch']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='practical_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='practical_count_per_batch']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='practical_count_per_batch']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                                //TutorialCountPerBatchPerWeekCheck
+                                $("#courseWorkloadTable").on('change','#TutorialCountPerBatchPerWeekCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='tutorial_count_per_batch']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='tutorial_count_per_batch']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='tutorial_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='tutorial_count_per_batch']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='tutorial_count_per_batch']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='tutorial_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='tutorial_count_per_batch']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='tutorial_count_per_batch']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                                //WorkshopCountPerBatchPerWeekCheck
+
+                                $("#courseWorkloadTable").on('change','#WorkshopCountPerBatchPerWeekCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='workshop_count_per_batch']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='workshop_count_per_batch']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='workshop_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='workshop_count_per_batch']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='workshop_count_per_batch']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='workshop_count_per_batch']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='workshop_count_per_batch']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='workshop_count_per_batch']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                                //SessionEventsPerSemesterCheck
+                                $("#courseWorkloadTable").on('change','#SessionEventsPerSemesterCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='session_events_per_semester']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='session_events_per_semester']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='session_events_per_semester']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='session_events_per_semester']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='session_events_per_semester']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='session_events_per_semester']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='session_events_per_semester']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='session_events_per_semester']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
+                            //ContinuousCheck
+                            $("#courseWorkloadTable").on('change','#ContinuousCheck',function(){ 
+                                    if($(this).is(":checked")){
+                                        let tableRow = $('#courseWorkloadTable tbody tr');
+                                        tableRow.each(function (index, elem){
+                                            if(index == 0 && $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='continuous']`).val() == ''){
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='continuous']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='continuous']`).attr('placeholder','This Field is Mandetory')
+                                            }
+                                            let intake = $(elem).find(`input[name='continuous']`).val()
+                                            $(`#courseWorkloadTable tbody tr td input[name='continuous']`).val(intake).trigger('change')
+                                        })
+                                        console.log('True')
+                                    }else
+                                    {
+                                    let tableRow = $('#courseWorkloadTable tbody tr');
+                                     tableRow.each(function (index, elem){
+                                     if(index == 0){
+                                               // $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='intake']`).css('border','1px solid red')
+                                                $(`#courseWorkloadTable tbody tr:nth-child(${index+1}) td input[name='continuous']`).attr('placeholder','This Field is Mandetory')
+                                        }
+                                     let intake = $(elem).find(`input[name='continuous']`).val()
+                                     $(`#courseWorkloadTable tbody tr td input[name='continuous']`).val('').trigger('change')
+                                 })
+                                        console.log('False')
+                                    }
+                                })
+
         function AjaxtTable(workloadList) {
             let AjaxTable = `<table class="table custom_row table-bordered" id="courseWorkloadTable">
                 <thead>
@@ -707,15 +943,15 @@
                     <th>Program Id</th>
                     <th>Program Code</th>
                     <th>Acad Session</th>
-                    <th>Module Type</th>
-                    <th>Intake</th>
-                    <th>Student per division</th>
-                    <th>Lecture count per batch per week</th>
-                    <th>Practical count per batch per week</th>
-                    <th>Tutorial count_per batch per week</th>
-                    <th>Workshop count per batch per week</th>
-                    <th>Session Events per Semester</th>
-                    <th>Continuous</th>
+                    <th>Module Type <input type="checkbox" id="moduleTypeCheck"></th>
+                    <th>Intake <input type="checkbox" id="intakeCheck"></th>
+                    <th>Student per division <input type="checkbox" id="studentPerDivisionCheck"></th>
+                    <th>Lecture count per batch per week <input type="checkbox" id="lectureCountPerBatchPerWeekCheck"></th>
+                    <th>Practical count per batch per week <input type="checkbox" id="practicalCountPerBatchPerWeekCheck"></th>
+                    <th>Tutorial count_per batch per week <input type="checkbox" id="TutorialCountPerBatchPerWeekCheck"></th>
+                    <th>Workshop count per batch per week <input type="checkbox" id="WorkshopCountPerBatchPerWeekCheck"></th>
+                    <th>Session Events per Semester <input type="checkbox" id="SessionEventsPerSemesterCheck"></th>
+                    <th>Continuous <input type="checkbox" id="ContinuousCheck"></th>
                     <th>Action</th>
                 </thead>
                 <tbody>`;
