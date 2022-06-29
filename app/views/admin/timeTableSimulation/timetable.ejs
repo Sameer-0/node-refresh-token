@@ -344,12 +344,14 @@
 
         function dragStart(e) {
             e.preventDefault();
+
+            dragObj.relativeClientX = e.clientX - 31
    
             if(e.buttons != 1) {
                 return false;
             }
 
-            dragObj.initialClientX = e.clientX;
+            dragObj.initialClientX = dragObj.relativeClientX;
             dragObj.initialClientY = e.clientY;
             document.querySelectorAll('.room-slots').forEach(e => {e.style.outline = "none"})
             console.log('all room slot::>>', document.querySelectorAll('.room-slots'))
@@ -369,7 +371,7 @@
                 dragObj.targetElem.classList.add('active')
                 console.log('target time element::', dragObj.targetElem.querySelector('.start-time'))
 
-                dragObj.initialRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
+                dragObj.initialRoom = getCurrentRoom(document.elementsFromPoint(dragObj.relativeClientX, e.clientY));
                 console.log('roomslot:::::>>>>', dragObj.initialRoom)
                 dragObj.initialRoom.style.cssText = `outline: 3px solid #ff8400`;
 
@@ -384,7 +386,7 @@
                 targetProp.initialX = e.target.offsetLeft;
                 targetProp.initialY = e.target.offsetTop;
                 targetProp.initailBouding = dragObj.targetElem.getBoundingClientRect();
-                targetProp.initialClientX = e.clientX;
+                targetProp.initialClientX = dragObj.relativeClientX;
                 targetProp.initialCleintY = e.clientY;
                 dragObj.isDraggable = true;
 
@@ -406,6 +408,7 @@
 
         function onDrag(e) {
            
+            dragObj.relativeClientX = e.clientX - 31 
            
             if (!dragObj.isDraggable || !dragObj.isMouseDown) {
         
@@ -420,7 +423,7 @@
 
             console.log('CALLING ON DARG', dragObj.isDragging)
 
-            dragObj.currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
+            dragObj.currentRoom = getCurrentRoom(document.elementsFromPoint(dragObj.relativeClientX, e.clientY));
 
             if (dragObj.currentRoom != dragObj.initialRoom) {
                 dragObj.initialRoom.style.cssText += `outline: unset`;
@@ -429,38 +432,37 @@
             }
         
 
-            targetProp.movedX = e.clientX - targetProp.oldOffsetX - timetableProp.roomNoWidth;
-            targetProp.movedY = e.clientY - targetProp.initialCleintY;
+            targetProp.movedX = dragObj.relativeClientX - targetProp.oldOffsetX - timetableProp.roomNoWidth;
+            targetProp.movedY = e.clientY - targetProp.initialClientY;
            
 
             targetProp.movedX = targetProp.movedX > (timetableProp.totalSlots * timetableProp.pxPerSlot) - targetProp
                 .width ? (timetableProp.totalSlots * timetableProp.pxPerSlot) - targetProp.width : targetProp.movedX;
 
-            console.log('top position::', )
             dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot +'px';
             dragObj.targetElem.style.top =  `${targetProp.movedY}px`;
             
-            console.log('top position::>>', targetProp.movedY)
+            console.log('right position::', Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot)
+            
             //No break condition for room being placed at end
-            console.log('bnew width::', getComputedStyle(dragObj.targetElem).getPropertyValue('--eventNoBreakWidth'))
-        //   if((Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-        //         .pxPerSlot + (timetableProp.pxPerSlot * 12) + timetableProp.pxPerSlot) >= (1048))
-        //     {
+          if((Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
+                .pxPerSlot + (timetableProp.pxPerSlot * 12) + timetableProp.pxPerSlot) >= (targetProp.totalSlots * targetProp.pxPerSlot))
+            {
 
-        //         cssRoot.style.setProperty('--eventNoBreakWidth', `${(timetableProp.pxPerSlot * 12)}px`);
+                cssRoot.style.setProperty('--eventNoBreakWidth', `${(timetableProp.pxPerSlot * 12)}px`);
 
-        //         dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
+                dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
 
-        //         dragObj.targetElem.querySelector('.break').classList.add('d-none');
+                dragObj.targetElem.querySelector('.break').classList.add('d-none');
                 
-        //         dragObj.targetElem.style.left =  Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-        //         .pxPerSlot + 'px'
-        //     }
-        //     else{
-        //         dragObj.targetElem.querySelector('.break').classList.remove('d-none');
-        //         dragObj.targetElem.style.width = `var(--eventWidth)`
+                dragObj.targetElem.style.left =  Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
+                .pxPerSlot + 'px'
+            }
+            else{
+                dragObj.targetElem.querySelector('.break').classList.remove('d-none');
+                dragObj.targetElem.style.width = `var(--eventWidth)`
               
-        //     }
+            }
       
 
             console.log('>>>>>>>>>moving distance', Math.round(targetProp.movedX / timetableProp.pxPerSlot))
