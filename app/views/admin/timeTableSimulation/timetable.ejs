@@ -46,7 +46,9 @@
             word-break: break-word;
             height: 100%;
             /* overflow: hidden; */
-            padding: 5px;
+            padding-right: calc(var(--breakIntervalWidth) + 2px);
+            padding-left:  2px;
+            padding-top: 5px;
             font-size: 14px;
         }
 
@@ -79,15 +81,15 @@
 
         .end-time{
             position: absolute;
-            right: 0;
+            right: var(--breakIntervalWidth);
             bottom: 0;
             border-radius: 0!important;
             font-size: 0.75rem;
         }
 
-        .fa-arrow-right-arrow-left{
+        .fa-arrows-left-right{
             position: absolute;
-            right: calc(var(--breakIntervalWidth) );
+            right: calc(var(--breakIntervalWidth) + 78px - 7px);
             bottom: 0;
         }
 
@@ -286,6 +288,18 @@
         
         let eventJson = [{"id":1912,"program_lid":1,"acad_session_lid":18,"course_lid":86,"division":"B    ","batch":1,"room_lid":23,"slot_start_lid":91},{"id":1916,"program_lid":1,"acad_session_lid":18,"course_lid":85,"division":"C    ","batch":1,"room_lid":24,"slot_start_lid":91},{"id":1908,"program_lid":1,"acad_session_lid":18,"course_lid":84,"division":"A    ","batch":1,"room_lid":22,"slot_start_lid":91},{"id":1913,"program_lid":1,"acad_session_lid":18,"course_lid":88,"division":"B    ","batch":1,"room_lid":23,"slot_start_lid":104},{"id":1917,"program_lid":1,"acad_session_lid":18,"course_lid":86,"division":"C    ","batch":1,"room_lid":24,"slot_start_lid":104},{"id":1909,"program_lid":1,"acad_session_lid":18,"course_lid":85,"division":"A    ","batch":1,"room_lid":22,"slot_start_lid":104},{"id":1914,"program_lid":1,"acad_session_lid":18,"course_lid":85,"division":"B    ","batch":1,"room_lid":23,"slot_start_lid":122},{"id":1910,"program_lid":1,"acad_session_lid":18,"course_lid":87,"division":"A    ","batch":1,"room_lid":22,"slot_start_lid":122},{"id":1918,"program_lid":1,"acad_session_lid":18,"course_lid":87,"division":"C    ","batch":1,"room_lid":24,"slot_start_lid":122},{"id":1915,"program_lid":1,"acad_session_lid":18,"course_lid":84,"division":"B    ","batch":1,"room_lid":23,"slot_start_lid":135},{"id":1911,"program_lid":1,"acad_session_lid":18,"course_lid":88,"division":"A    ","batch":1,"room_lid":22,"slot_start_lid":135},{"id":1919,"program_lid":1,"acad_session_lid":18,"course_lid":88,"division":"C    ","batch":1,"room_lid":24,"slot_start_lid":135}]
         
+        
+        let targetProp = {};
+
+        let dragObj = {
+            initialClientX: null,
+            initialClientY: null,
+            isMouseDown: false,
+            targetElem: null,
+            isDraggable: false,
+            isDroppable: true,
+            isDragging: false
+        }
      
         // let roomList = document.querySelector(`.room[data-room-lid = "2"] .room-slots`);
         // let div = document.createElement('div');
@@ -311,7 +325,7 @@
                 roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center`)
                 roomSlotItem.setAttribute("data-event-lid",`${event.id}`)
                 roomSlotItem.innerHTML = `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type}) <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
-                                <i class="fa-solid fa-arrow-right-arrow-left"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> 
+                <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> 
                                 ${breakElement}
                                 `;
 
@@ -337,22 +351,14 @@
                               
 
 
-        let targetProp = {};
-
-        let dragObj = {
-            initialClientX: null,
-            initialClientY: null,
-            isMouseDown: false,
-            targetElem: null,
-            isDraggable: false,
-            isDroppable: true,
-            isDragging: false
-        }
 
         function dragStart(e) {
+           
+            dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left;
+            console.log('hello:::',  dragObj.tableLeftPosition)
             e.preventDefault();
 
-            dragObj.relativeClientX = e.clientX - 31
+            dragObj.relativeClientX = e.clientX -  dragObj.tableLeftPosition
    
             if(e.buttons != 1) {
                 return false;
@@ -361,12 +367,9 @@
             dragObj.initialClientX = dragObj.relativeClientX;
             dragObj.initialClientY = e.clientY;
             document.querySelectorAll('.room-slots').forEach(e => {e.style.outline = "none"})
-            console.log('all room slot::>>', document.querySelectorAll('.room-slots'))
-            
-            
+    
            
             if (e.target.classList.contains('event')) {
-                
                 
                 console.log("IS DRAGGABLE");
 
@@ -392,18 +395,19 @@
 
                 targetProp.initialX = e.target.offsetLeft;
                 targetProp.initialY = e.target.offsetTop;
-                targetProp.initailBouding = dragObj.targetElem.getBoundingClientRect();
+                targetProp.initialBounding = dragObj.targetElem.getBoundingClientRect();
                 targetProp.initialClientX = dragObj.relativeClientX;
-                targetProp.initialCleintY = e.clientY;
+                targetProp.initialClientY = e.clientY;
                 dragObj.isDraggable = true;
 
-                dragObj.startSlotIndex =  (Math.round((targetProp.initailBouding.left - timetableProp.roomNoWidth)/timetableProp.pxPerSlot)) ;
-                dragObj.endSlotIndex = (Math.round((targetProp.initailBouding.right - timetableProp.roomNoWidth)/timetableProp.pxPerSlot)) - 1;
+                dragObj.startSlotIndex =  (Math.round((targetProp.initialBounding.left - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot)) ;
+                dragObj.endSlotIndex = (Math.round((targetProp.initialBounding.right - dragObj.tableLeftPosition -  timetableProp.roomNoWidth - timetableProp.pxPerSlot)/timetableProp.pxPerSlot)) - 1;
+
 
                 dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex].start_time;
                 dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex].end_time;
-                console.log('props', targetProp.initailBouding)
-                console.log('indexss', dragObj.endSlotIndex)
+                console.log('start indexx', dragObj.startSlotIndex )
+                console.log('end indexx', dragObj.endSlotIndex)
                 // console.log('bounding:::',dragObj.endSlotIndex)  
 
             } else {
@@ -415,7 +419,7 @@
 
         function onDrag(e) {
            
-            dragObj.relativeClientX = e.clientX - 31 
+            dragObj.relativeClientX = e.clientX -  dragObj.tableLeftPosition
            
             if (!dragObj.isDraggable || !dragObj.isMouseDown) {
         
@@ -447,15 +451,16 @@
                 .width ? (timetableProp.totalSlots * timetableProp.pxPerSlot) - targetProp.width : targetProp.movedX;
 
             dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot +'px';
-            dragObj.targetElem.style.top =  `${targetProp.movedY}px`;
+            dragObj.targetElem.style.top =   `${targetProp.movedY}px`;
+
+            console.log('top position:::::', targetProp.movedY)
             
-            console.log('right position::', Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot)
-            
+        
             //No break condition for room being placed at end
           if((Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-                .pxPerSlot + (timetableProp.pxPerSlot * 12) + timetableProp.pxPerSlot) >= (targetProp.totalSlots * targetProp.pxPerSlot))
+                .pxPerSlot + (timetableProp.pxPerSlot * 12) + timetableProp.pxPerSlot) >= (timetableProp.totalSlots * timetableProp.pxPerSlot))
             {
-
+               
                 cssRoot.style.setProperty('--eventNoBreakWidth', `${(timetableProp.pxPerSlot * 12)}px`);
 
                 dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
@@ -464,6 +469,12 @@
                 
                 dragObj.targetElem.style.left =  Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
                 .pxPerSlot + 'px'
+
+                if(((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
+                .pxPerSlot + (timetableProp.pxPerSlot * 12))) > 0){
+                   
+                    dragObj.targetElem.querySelector('.break').classList.remove('d-none')
+                }
             }
             else{
                 dragObj.targetElem.querySelector('.break').classList.remove('d-none');
