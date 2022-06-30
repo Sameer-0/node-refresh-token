@@ -270,7 +270,7 @@ module.exports = {
           { header: "Academic Session", key: "acad_session", width: 25 }
         ];
 
-        FacultyWorkTimePreferences.downloadExcel(res.locals.slug).then(result => {
+       FacultyWorkTimePreferences.downloadExcel(res.locals.slug).then(result => {
             // Add Array Rows
             worksheet.addRows(result.recordset);
             // res is a Stream object

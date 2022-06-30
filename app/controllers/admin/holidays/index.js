@@ -13,6 +13,8 @@ const Settings = require('../../../models/Settings');
 const path = require("path");
 var soap = require("soap");
 const isJsonString = require('../../../utils/util');
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
 
 module.exports = {
 
@@ -217,6 +219,35 @@ module.exports = {
                     data: []
                 })
             }
+        })
+    },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`Holiday Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Calendar Year", key: "calendar_year", width: 10 },
+          { header: "Day", key: "dayname", width: 25 },
+          { header: "Holiday Date", key: "h_date", width: 25 },
+          { header: "Holiday Type", key: "holiday_type", width: 25 },
+          { header: "Reason", key: "reason", width: 25 }
+         
+        ];
+
+        Holidays.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "HolidayMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
         })
     }
 

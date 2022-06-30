@@ -12,6 +12,8 @@ const Settings = require('../../../models/Settings');
 const path = require("path");
 var soap = require("soap");
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
 
 
 module.exports = {
@@ -252,6 +254,47 @@ module.exports = {
       console.log(error)
       res.status(500).json(error.originalError.info.message)
     })
-  }
+  },
+
+  downloadMaster: async(req, res, next) => {
+    let worksheet = workbook.addWorksheet(`CourseWorkload Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+    worksheet.columns = [
+      { header: "Module Name", key: "module_name", width: 30 },
+      { header: "Module Id", key: "module_id", width: 25 },
+      { header: "Module Code", key: "module_code", width: 25 },
+      { header: "Program Name", key: "program_name", width: 30 },
+      { header: "Program Id", key: "program_id", width: 25 },
+      { header: "Program code", key: "program_code", width: 25 },
+      { header: "Acad Session", key: "acad_session", width: 25 },
+      { header: "Acad Year", key: "acad_year", width: 10 },
+      { header: "Intake", key: "intake", width: 25 },
+      { header: "Stduent Per Division", key: "student_per_division", width: 25 },
+      { header: "Lecture Count Per Batch", key: "lecture_count_per_batch", width: 10 },
+      { header: "Practical Count Per Batch", key: "practical_count_per_batch", width: 10 },
+      { header: "Tutorial Count Per Batch", key: "tutorial_count_per_batch", width: 10 },
+      { header: "Workshop Count Per Batch", key: "workshop_count_per_batch", width: 10 },
+      { header: "Continuous", key: "continuous", width: 10 },
+      { header: "Session Events Per Semester", key: "session_events_per_semester", width: 10 },
+      { header: "Module Type", key: "module_type", width: 25 }
+    ];
+
+    CourseWorkload.downloadExcel(res.locals.slug).then(result => {
+      console.log('result::::>>>>', result.recordset)
+        // Add Array Rows
+        worksheet.addRows(result.recordset);
+        // res is a Stream object
+        res.setHeader(
+          "Content-Type",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+        res.setHeader(
+          "Content-Disposition",
+          "attachment; filename=" + "CourseWorkloadMaster.xlsx"
+        );
+        return workbook.xlsx.write(res).then(function () {
+          res.status(200).end();
+        });
+    })
+}
 
 }

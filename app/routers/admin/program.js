@@ -21,6 +21,7 @@ router.post('/programs/search', validate('search'), program.search)
 router.post('/programs/findone', validate('search'), program.findOne)
 router.post('/programs/create', validate('JsonValidator'), program.create)
 router.post('/programs/delete', validate('delete'), program.delete)
+router.get('/programs/download', program.downloadMaster)
 
 
 

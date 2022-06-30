@@ -172,6 +172,35 @@ module.exports = {
             }
         })
 
+    },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`Programs Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Program Id", key: "program_id", width: 10 },
+          { header: "Program Name", key: "program_name", width: 30 },
+          { header: "Abbr", key: "abbr", width: 25 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Program Type", key: "program_type", width: 25 }
+        ];
+
+        Programs.downloadExcel(res.locals.slug).then(result => {
+            console.log('result::>>', result.recordset)
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "ProgramsMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
     }
 } 
 

@@ -197,4 +197,16 @@ module.exports = class DivisionBatches {
             WHERE p.id = @programId`)
         })
     }
+
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT p.program_name,p.program_id, p.program_code, icw.module_name ,icw.module_id, icw.module_code, div.division, db.batch,et.name as event_name, ads.acad_session, db.divison_count, db.batch_count, db.input_batch_count,
+            db.faculty_count from [${slug}].division_batches db
+             INNER JOIN [${slug}].divisions div on db.division_lid = div.id 
+            INNER JOIN [${slug}].initial_course_workload icw on div.course_lid = icw.id 
+            INNER JOIN [dbo].event_types et on db.event_type_lid = et.id
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id =  icw.acad_session_lid`)
+        })
+    }
 }
