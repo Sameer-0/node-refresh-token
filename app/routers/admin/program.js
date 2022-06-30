@@ -42,6 +42,7 @@ router.post('/programs/days/search', days.search)
 router.post('/programs/days/change', days.changeStatus)
 router.post('/programs/days/GetAll', days.getAll)
 router.post('/programs/days/refresh', days.refresh)
+router.get('/programs/days/download', days.downloadMaster)
 
 
 //PROGRAM SESSIONS
@@ -53,6 +54,7 @@ router.post('/programs/sessions/refresh', sessions.refresh)
 router.post('/programs/sessions/program-sessions', sessions.getSessionsByProgram)
 router.post('/programs/sessions/unlocked-program-sessions', sessions.getUnlockedSessionsByProgram)
 router.post('/programs/sessions/sessions-for-program', sessions.getSessions)
+router.get('/programs/sessions/download', sessions.downloadMaster)
 
 
 //PROGRAM SESSION TIME PREFERENCE

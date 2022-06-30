@@ -6,6 +6,8 @@ const {
 
 const ProgramDays = require('../../../models/ProgramDays')
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
 
 module.exports = {
 
@@ -140,5 +142,34 @@ module.exports = {
                 data:[]})
             }
         })
+    },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`ProgramDays Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Program Name", key: "program_name", width: 30 },
+          { header: "Program Id", key: "program_id", width: 25 },
+          { header: "Day", key: "day_name", width: 25 },
+          { header: "IsLecture", key: "is_lecture", width: 10 },
+          { header: "Program Type", key: "program_type", width: 20 }
+        ];
+
+        ProgramDays.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "ProgramDaysMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
     }
+	
 }

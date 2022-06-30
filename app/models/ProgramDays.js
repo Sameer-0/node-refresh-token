@@ -82,4 +82,15 @@ module.exports = class {
             WHERE ps.program_lid = @programId`)
         })
     }
+
+     static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT p.program_name, p.program_id, d.day_name, IIF(pd.is_lecture = 1 ,'Yes','No') as is_lecture, pt.name as program_type
+            FROM [${slug}].program_days pd
+            INNER JOIN [${slug}].programs p ON  pd.program_lid =  p.id  
+            INNER JOIN [${slug}].days d ON pd.day_lid = d.id
+            INNER JOIN [dbo].program_types pt ON pt.id = p.program_type_lid ORDER BY pd.id DESC`)
+        })
+    }
+
 }

@@ -16,6 +16,9 @@ const AcademicCalender = require('../../../models/AcademicCalender')
 const User = require('../../../models/User')
 const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
+
 
 
 module.exports = {
@@ -233,4 +236,67 @@ module.exports = {
             }
         })
     },
+
+   bookedRoomsDownloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`BookedRooms Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Room Number", key: "room_number", width: 20 },
+          { header: "Floor Number", key: "floor_number", width: 25 },
+          { header: "Capacity", key: "capacity", width: 25 },
+          { header: "Building Name", key: "building_name", width: 25 },
+          { header: "Start Time", key: "start_time", width: 25 },
+          { header: "End Time", key: "end_time", width: 25 },
+          { header: "Start Date", key: "start_date", width: 25 },
+          { header: "End Date", key: "end_date", width: 25 },
+          { header: "Room Type", key: "room_type", width: 25 }
+        ];
+
+        Rooms.BookedRoomdownloadExcel(res.locals.slug).then(result => {
+
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "BookedRoomsMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`Roombooking Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Transaction Type", key: "transaction_type", width: 25 },
+          { header: "Stage", key: "stage", width: 25 },
+          { header: "Org Name", key: "org_name", width: 30 },
+          { header: "Org Abbr", key: "org_abbr", width: 25 },
+          { header: "Campus Abbr", key: "campus_abbr", width: 25 },
+          { header: "Username", key: "username", width: 25 }
+        ];
+
+        Rooms.RoomTransactionsdownloadExcel(res.locals.slug).then(result => {
+            console.log('result', result.recordset)
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "RoombookingMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    }
 }
