@@ -22,8 +22,7 @@ router.post('/faculties/pagination', index.pagination)
 router.post('/faculties/findone', validate('single'), index.findOne)
 router.post('/faculties/update', validate('JsonValidator'), index.update)
 router.post('/faculties/delete', validate('delete'), index.delete)
-
-
+router.get('/faculties/download', index.downloadMaster)
 
 //Faculty Date Time
 router.get('/faculties/date-time', dateTimes.getPage)
@@ -34,6 +33,8 @@ router.post('/faculties/date-time/delete', validate('delete'), dateTimes.delete)
 router.post('/faculties/date-time/getslottime', dateTimes.getSlotsById)
 router.post('/faculties/date-time/findone', dateTimes.findOne)
 router.post('/faculties/date-time/update',validate('JsonValidator'), dateTimes.update)
+router.get('/faculties/date-time/download', dateTimes.downloadMaster)
+
 
 //Batch
 router.get('/faculties/batch', batch.getPage)
@@ -65,6 +66,7 @@ router.post('/faculties/works/findone', validate('single'), works.findOne)
 router.post('/faculties/works/change', works.changeStatus)
 router.post('/faculties/works/GetAll', works.getAll)
 router.post('/faculties/works/get-faculty-work-events', works.getFacultyWorks)
+router.get('/faculties/works/download', works.downloadMaster)
 
 //workpreferences
 router.get('/workpreferences', preferences.getPage)
