@@ -5,17 +5,12 @@ const {
 } = require('../../config/db')
 
 module.exports = class Programs {
-    constructor(program_id, program_name, program_type_lid, abbr) {
-        this.program_id = program_id;
-        this.program_name = program_name;
-        this.program_type_lid = program_type_lid;
-        this.abbr = abbr
-    }
-
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} p.id, p.program_id, RTRIM(LTRIM(p.program_name)) as program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY id DESC`)
+            let request = pool.request()
+            let stmt = `SELECT TOP ${Number(rowcount)} p.id, p.program_id, RTRIM(LTRIM(p.program_name)) as program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY p.id DESC`;
+            return request.query(stmt)
         })
     }
 
@@ -62,7 +57,6 @@ module.exports = class Programs {
     }
 
     static save(inputJSON, slug, userid) {
-        console.log('Programs::::::::::::', JSON.stringify(inputJSON))
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
@@ -82,10 +76,5 @@ module.exports = class Programs {
         })
     }
 
-    static fetchAll(rowcount, slug) {
-        return poolConnection.then(pool => {
-            return pool.request().query(`SELECT p.program_id, RTRIM(LTRIM(p.program_name)) as program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY p.id DESC`)
-        })
-    }
 
 }

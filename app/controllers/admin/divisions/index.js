@@ -16,12 +16,12 @@ module.exports = {
     getPage: (req, res) => {
         let slugName = res.locals.slug;
         Promise.all([Divisions.fetchAll(10000, slugName), Divisions.getCount(slugName), CourseWorkload.fetchAll(1000, slugName), Programs.fetchAll(10000, slugName)]).then(result => {
-            //console.log('Result::::::::',result[0].recordset)
+            console.log('PROGRAM Result::::::::',result[3].recordset)
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 moduleList: result[2].recordset,
-                programList: result[3].recordset,
+               programList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
             })
         })
@@ -188,6 +188,7 @@ module.exports = {
 
 
     divisionByProgramId: (req, res) => {
+        console.log('REQ::::',req.body)
         Promise.all([Divisions.divisionByProgramId(req.body.programid, res.locals.slug), CourseWorkload.getmoduleByProgramId(req.body.program_id, res.locals.slug)]).then(result => {
             console.log('result::::::::::', result[0])
             res.json({
@@ -244,5 +245,31 @@ module.exports = {
               res.status(200).end();
             });
         })
-    }
+    },
+
+    showEntries:(req, res, next)=>{
+        Divisions.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
+      }
 }
