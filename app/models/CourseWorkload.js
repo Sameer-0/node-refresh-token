@@ -223,4 +223,16 @@ module.exports = class {
             ORDER BY icw.id DESC`)
         })
     }
+
+
+    static getAllWithLimit(rowcount, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} icw.id, icw.module_name, icw.program_id, icw.module_id, intake, icw.student_per_division, icw.lecture_count_per_batch, icw.practical_count_per_batch, icw.tutorial_count_per_batch, icw.workshop_count_per_batch, icw.continuous, icw.session_events_per_semester, icw.acad_session_lid, icw.module_code, acads.acad_session, icw.module_type_lid, mt.name as module_type, p.program_code
+            FROM [${slug}].initial_course_workload icw
+            INNER JOIN [dbo].acad_sessions acads ON acads.id = icw.acad_session_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            LEFT JOIN [dbo].module_types mt ON mt.id = icw.module_type_lid
+            ORDER BY id DESC`)
+        })
+    }
 }

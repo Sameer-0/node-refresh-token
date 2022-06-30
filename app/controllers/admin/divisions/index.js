@@ -9,18 +9,19 @@ const Settings = require('../../../models/Settings')
 const CourseWorkload = require('../../../models/CourseWorkload')
 const Programs = require('../../../models/Programs')
 const isJsonString = require('../../../utils/util')
-
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
 
 module.exports = {
     getPage: (req, res) => {
         let slugName = res.locals.slug;
         Promise.all([Divisions.fetchAll(10000, slugName), Divisions.getCount(slugName), CourseWorkload.fetchAll(1000, slugName), Programs.fetchAll(10000, slugName)]).then(result => {
-            //console.log('Result::::::::',result[0].recordset)
+            console.log('PROGRAM Result::::::::',result[3].recordset)
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 moduleList: result[2].recordset,
-                programList: result[3].recordset,
+               programList: result[3].recordset,
                 breadcrumbs: req.breadcrumbs,
             })
         })
@@ -187,6 +188,7 @@ module.exports = {
 
 
     divisionByProgramId: (req, res) => {
+        console.log('REQ::::',req.body)
         Promise.all([Divisions.divisionByProgramId(req.body.programid, res.locals.slug), CourseWorkload.getmoduleByProgramId(req.body.program_id, res.locals.slug)]).then(result => {
             console.log('result::::::::::', result[0])
             res.json({
@@ -208,4 +210,66 @@ module.exports = {
             }
         })
     },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`Division Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Program Name", key: "program_name", width: 10 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Program ID", key: "program_id", width: 25 },
+          { header: "Module Name", key: "module_name", width: 25 },
+          { header: "Module Code", key: "module_code", width: 25 },
+          { header: "Module ID", key: "module_id", width: 25 },
+          { header: "Division", key: "division", width: 25 },
+          { header: "Academic Session", key: "acad_session", width: 25 },
+          { header: "Student Count", key: "student_count", width: 25 },
+          { header: "Count For Theory Batch", key: "count_for_theory_batch", width: 25 },
+          { header: "Count For Practical Batch", key: "count_for_practical_batch", width: 25 },
+          { header: "Count For Tutorial Batch", key: "count_for_tutorial_batch", width: 25 },
+          { header: "Count For Workshop Batch", key: "count_for_workshop_batch", width: 25 }
+        ];
+
+        Divisions.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "DivisionMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    },
+
+    showEntries:(req, res, next)=>{
+        Divisions.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
+      }
 }
