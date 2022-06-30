@@ -47,15 +47,30 @@
                 <h5 class="modal-title text-white" id="add-room-modal-title">BOOKED ROOMS</h5>
             </div>
             <div>
-
+                <a class="btn btn-danger" href="/admin/rooms/download"><i
+                    class="fas fa-download"></i> Download </a>
             </div>
         </div>
 
-        <div class="card-body table-responsive">
+        <div class="card-body">
             <input type="hidden" id="roomId" name="roomId">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entry</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                           <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                        type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                </div>
+            </div>
             <div class="table-responsive">
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div> -->
                 <table class="table " id="room-booked-table">
                     <thead>
                         <th>#</th>
@@ -241,6 +256,22 @@
     }
     })
     });
+
+
+        //CHANGE ENTRIES
+        $("#changeEntry").on('change',function(){
+                let rowcount = $(this).val()
+                $.ajax({
+                type: "POST",
+                url: "/admin/rooms/show-entries",
+                data: {
+                    rowcount: rowcount
+                },
+                success: function (data) {
+                    AjaxtTable(data.data) 
+                }
+            })
+        })
     
 
     function AjaxtTable(bookedRoomList){

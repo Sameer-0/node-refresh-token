@@ -22,6 +22,7 @@ router.post('/programs/findone', validate('search'), program.findOne)
 router.post('/programs/create', validate('JsonValidator'), program.create)
 router.post('/programs/delete', validate('delete'), program.delete)
 router.get('/programs/download', program.downloadMaster)
+router.post('/programs/show-entries', program.showEntries)
 
 
 
@@ -42,6 +43,8 @@ router.post('/programs/days/search', days.search)
 router.post('/programs/days/change', days.changeStatus)
 router.post('/programs/days/GetAll', days.getAll)
 router.post('/programs/days/refresh', days.refresh)
+router.get('/programs/days/download', days.downloadMaster)
+router.post('/programs/days/show-entries', days.showEntries)
 
 
 //PROGRAM SESSIONS
@@ -53,6 +56,9 @@ router.post('/programs/sessions/refresh', sessions.refresh)
 router.post('/programs/sessions/program-sessions', sessions.getSessionsByProgram)
 router.post('/programs/sessions/unlocked-program-sessions', sessions.getUnlockedSessionsByProgram)
 router.post('/programs/sessions/sessions-for-program', sessions.getSessions)
+router.get('/programs/sessions/download', sessions.downloadMaster)
+router.post('/programs/sessions/show-entries', sessions.showEntries)
+
 
 
 //PROGRAM SESSION TIME PREFERENCE
@@ -61,6 +67,7 @@ router.post('/program-session-time-preference/create', timePreference.create)
 router.post('/program-session-time-preference/findone', timePreference.findOne)
 router.post('/program-session-time-preference/update', timePreference.update)
 router.post('/program-session-time-preference/delete', timePreference.delete)
-
+router.post('/program-session-time-preference/search', timePreference.search)
+router.post('/program-session-time-preference/show-entries', timePreference.showEntries)
 
 module.exports = router;

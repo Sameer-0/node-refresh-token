@@ -59,17 +59,32 @@
                 <h5>PROGRAM LIST</h5>
             </div>
         
-            <div>
+            <div class="me-2">
+                <a class="btn btn-danger" href="/admin/programs/download"><i
+                    class="fas fa-download"></i> Download </a>
+
                 <button type="button" class="btn add-btn btn-sm" id="add-more-program" data-bs-toggle="modal"
                     data-bs-target="#open-program-modal"><i class="fas fa-plus"></i></button>
+
             </div>
           
         </div>
      
         <div class="card-body table-responsive">
-            <div class="table-searchbar-container">
-                <button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entries</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                           <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                        type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                </div>
+            </div>
 
             <table class="table custom_row table-bordered" id="programTable">
                 <thead>
@@ -480,6 +495,21 @@
                     $(item).addClass("d-none");
                 }
             };
+            })
+
+                //CHANGE ENTRIES
+            $("#changeEntry").on('change',function(){
+                    let rowcount = $(this).val()
+                    $.ajax({
+                    type: "POST",
+                    url: "/admin/programs/show-entries",
+                    data: {
+                        rowcount: rowcount
+                    },
+                    success: function (data) {
+                        AjaxtTable(data.data) 
+                    }
+                })
             })
 
 

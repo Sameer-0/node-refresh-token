@@ -19,5 +19,6 @@ router.post('/holidays/search', validate('search'), holidays.search)
 router.post('/holidays/pagination', holidays.pagination)
 router.post('/holidays/fetchformsap', holidays.fetchFromSAP)
 router.get('/holidays/download', holidays.downloadMaster)
+router.post('/holidays/show-entries',holidays.showEntries)
 
 module.exports = router

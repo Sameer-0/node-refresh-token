@@ -5,11 +5,11 @@ const {
 } = require('../../config/db')
 
 module.exports = class ProgramSessionTimings {
-  
 
-    static fetchAll(slug) {
+
+    static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT pst.id, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) AS start_time, CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) AS end_time FROM [${slug}].program_session_timings pst 
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} pst.id, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time FROM [${slug}].program_session_timings pst 
             INNER JOIN [${slug}].programs p ON p.id = pst.program_lid 
             INNER JOIN [dbo].acad_sessions ads on ads.id = pst.session_lid
             INNER JOIN [dbo].slot_interval_timings sit on sit.id = pst.start_time_lid
@@ -17,12 +17,14 @@ module.exports = class ProgramSessionTimings {
         })
     }
 
+
+
     static save(obj, slug, userId) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(obj))
-            .input('last_modified_by', sql.NVarChar(sql.MAX), userId)
-            .output('output_json', sql.NVarChar(sql.MAX))
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(obj))
+                .input('last_modified_by', sql.NVarChar(sql.MAX), userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].sp_insert_program_session_timings`)
         })
     }
@@ -40,7 +42,7 @@ module.exports = class ProgramSessionTimings {
         return poolConnection.then(pool => {
             let request = pool.request();
             // JSON.parse(ids).forEach(element => {
-                return request.query(`DELETE FROM [${slug}].[program_session_timings] WHERE id = ${id}`)
+            return request.query(`DELETE FROM [${slug}].[program_session_timings] WHERE id = ${id}`)
             // });
         })
     }
@@ -71,4 +73,37 @@ module.exports = class ProgramSessionTimings {
         })
     }
 
-} 
+    static search(body, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
+                .input('pageNo', sql.Int, body.pageNo)
+                .query(`SELECT pst.id, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time FROM [${slug}].program_session_timings pst 
+                INNER JOIN [${slug}].programs p ON p.id = pst.program_lid 
+                INNER JOIN [dbo].acad_sessions ads on ads.id = pst.session_lid
+                INNER JOIN [dbo].slot_interval_timings sit on sit.id = pst.start_time_lid
+                INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = pst.end_time_lid
+                WHERE program_name LIKE @keyword OR ads.acad_session LIKE @keyword OR sit.start_time LIKE @keyword OR sit2.end_time LIKE @keyword `)
+        })
+    }
+
+
+    static pagination(pageNo, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('pageNo', sql.Int, pageNo)
+                .query(`SELECT  pst.id, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time FROM [${slug}].program_session_timings pst 
+                INNER JOIN [${slug}].programs p ON p.id = pst.program_lid 
+                INNER JOIN [dbo].acad_sessions ads on ads.id = pst.session_lid
+                INNER JOIN [dbo].slot_interval_timings sit on sit.id = pst.start_time_lid
+                INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = pst.end_time_lid ORDER BY pst.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+        })
+    }
+
+
+    static getCount(slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.query(`select COUNT(*) as count from [${slug}].program_session_timings`)
+        })
+    }
+}

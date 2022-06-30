@@ -9,6 +9,8 @@ const ProgramTypes = require('../../../models/programType')
 const Settings = require('../../../models/Settings');
 const ProgramsDbo = require('../../../models/ProgramsDbo');
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
 
 module.exports = {
 
@@ -28,7 +30,6 @@ module.exports = {
     },
 
     search: (req, res) => {
-        let rowcount = 10; 
         Programs.search(req.body, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
@@ -200,6 +201,32 @@ module.exports = {
             return workbook.xlsx.write(res).then(function () {
               res.status(200).end();
             });
+        })
+    },
+
+    showEntries:(req, res, next)=>{
+        Programs.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
         })
     }
 } 
