@@ -91,15 +91,14 @@ module.exports = class schoolTiming {
             let stmt
 
             if (programLid && acadSessionLid) {
-                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
+                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CONVERT(NVARCHAR, st.start_time, 0) AS start_time, CONVERT(NVARCHAR, et.end_time, 0) AS end_time FROM [${slug}].school_timings sct 
                 INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
                 INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
                 WHERE sct.program_lid = @programLid AND sct.acad_session_lid = @acadSessionLid AND sct.day_lid = @dayLid`
             } else {
-                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CAST(FORMAT(CAST(st.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time, CAST(FORMAT(CAST(et.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time FROM [${slug}].school_timings sct 
+                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CONVERT(NVARCHAR ,st.start_time, 0) AS start_time, CONVERT(NVARCHAR, et.end_time, 0) AS end_time FROM [${slug}].school_timings sct 
                 INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
-                INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
-                WHERE sct.program_lid = 1 AND sct.acad_session_lid = 16 AND sct.day_lid = 1`
+                INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid`
             }
 
             return pool.request()

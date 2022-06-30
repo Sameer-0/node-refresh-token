@@ -55,66 +55,67 @@ module.exports = class TimeTable {
             let stmt;
 
             if(program_lid && acad_session_lid){
-
-                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
-                FROM [${slug}].event_bookings eb 
+                stmt= `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) as start_time , CONVERT(nvarchar, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id
+                FROM [${slug}].event_bookings eb
+				INNER JOIN [${slug}].events e ON e.id =  eb.event_lid
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
-                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
+                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid 
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
 				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
 				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
+                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
                 INNER JOIN [${slug}].days d 
-                ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.program_lid = @programLid AND eb.acad_session_lid = @sessionLid`
+                ON eb.day_lid = d.id WHERE d.id = @dayLid AND e.program_lid = @programLid AND e.acad_session_lid = @sessionLid`
             }
             else if(!program_lid && acad_session_lid){
-             
-                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
-                FROM [${slug}].event_bookings eb 
+                stmt= `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time , CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr AS event_type_abbr, et.name AS event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
+                FROM [${slug}].event_bookings eb
+                INNER JOIN [${slug}].events e ON e.id =  eb.event_lid
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
-                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
-				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
+                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid 
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
+                INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
+                INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
                 INNER JOIN [${slug}].days d  
-                ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.acad_session_lid = @sessionLid`
+                ON eb.day_lid = d.id WHERE d.id = @dayLid AND e.acad_session_lid = @sessionLid`
             }
             else if(program_lid && !acad_session_lid){
              
-                stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
+                stmt= `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(nvarchar, sit.start_time, 0) AS start_time , CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
                 FROM [${slug}].event_bookings eb
+				INNER JOIN [${slug}].events e ON e.id = eb.event_lid
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid 
-                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
+                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid 
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
+				INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
 				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
 				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
+                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
                 INNER JOIN [${slug}].days d  
-                ON eb.day_lid = d.id WHERE d.id = @dayLid AND eb.program_lid = @programLid`
+                ON eb.day_lid = d.id WHERE d.id = @dayLid AND e.program_lid = @programLid`
             }
             else{
-               
-                stmt = `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, eb.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
+                stmt = `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(nvarchar, sit.start_time, 0) AS start_time , CONVERT(nvarchar, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
                 FROM [${slug}].event_bookings eb
+                INNER JOIN [${slug}].events e ON e.id = eb.event_lid
                 LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
                 LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
-                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-				INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
-				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = eb.event_type_lid
+                INNER JOIN [${slug}].school_timings st ON st.id =  eb.school_timining_lid
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
+                INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
+                INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
+                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
                 INNER JOIN [${slug}].days d 
                 ON eb.day_lid = d.id WHERE d.id = @dayLid` 
             }

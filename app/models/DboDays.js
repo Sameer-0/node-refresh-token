@@ -15,7 +15,7 @@ module.exports = class DboDays {
 
     static fetchAll(rowcont) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcont)} id, day_name, day_of_week as status FROM [asmsoc-mum].[days]  ORDER BY id ASC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcont)} id, day_name, day_of_week as status FROM [dbo].[days]  ORDER BY id ASC`)
         })
     }
 

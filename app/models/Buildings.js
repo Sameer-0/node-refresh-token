@@ -69,8 +69,6 @@ module.exports = class Buildings {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
                 .query(`SELECT b.id AS building_id, b.building_name, b.building_number, b.total_floors, org_o.org_abbr AS owner, org_h.org_abbr handled_by, CONVERT(NVARCHAR, st.start_time, 100) AS start_time, CONVERT(NVARCHAR, et.end_time, 100) AS end_time, c.campus_abbr FROM dbo.buildings b INNER JOIN dbo.organizations org_o ON org_o.id = b.owner_id INNER JOIN dbo.organizations org_h ON org_h.id = b.handled_by INNER JOIN dbo.slot_interval_timings st ON st.id = b.start_time_id INNER JOIN dbo.slot_interval_timings et ON et.id = b.end_time_id INNER JOIN dbo.campuses c ON c.id = b.campus_lid  ORDER BY b.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
-        }).catch(error => {
-            throw error
         })
     }
 

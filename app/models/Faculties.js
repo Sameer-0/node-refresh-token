@@ -113,4 +113,14 @@ module.exports = class Faculties {
         })
     }
 
+
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT  f.faculty_id, f.faculty_name,  ft.name AS faculty_type
+            FROM [${slug}].faculties f 
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            ORDER BY f.id DESC`)
+        })
+    }
+
 }
