@@ -127,4 +127,18 @@ module.exports = class FacultyDateTimes {
             WHERE fdt.id = @id`)
         })
     }
+
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT  f.faculty_name, f.faculty_id, CONVERT(NVARCHAR, ac.date, 103) as start_date, CONVERT(NVARCHAR, ac1.date, 103) as end_date, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time, ft.name as faculty_type
+            FROM [${slug}].faculty_date_times fdt 
+            INNER JOIN [${slug}].[faculties] f ON fdt.faculty_lid =  f.id
+            INNER JOIN [dbo].[academic_calendar] ac ON fdt.start_date_id =  ac.id
+            INNER JOIN [dbo].[academic_calendar] ac1 ON fdt.end_date_id =  ac1.id
+            INNER JOIN [dbo].[slot_interval_timings] sit ON fdt.start_time_id = sit.id  
+            INNER JOIN [dbo].[slot_interval_timings] _sit ON fdt.end_time_id = _sit.id
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid           
+            ORDER BY fdt.id DESC`)
+        })
+    }
 }

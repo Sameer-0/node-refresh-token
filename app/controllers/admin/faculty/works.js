@@ -11,7 +11,8 @@ const CourseWorkload = require('../../../models/CourseWorkload')
 const Settings = require("../../../models/Settings");
 const Programs = require("../../../models/programs");
 const isJsonString = require('../../../utils/util')
-
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
 
 module.exports = {
     getPage: (req, res) => {
@@ -289,5 +290,42 @@ module.exports = {
             }
         })
     },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`Faculty Work Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Faculty ID", key: "faculty_id", width: 10 },
+          { header: "Faculty Name", key: "faculty_name", width: 25 },
+          { header: "Faculty Type", key: "faculty_type", width: 25 },
+          { header: "Program Name", key: "program_name", width: 30 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Module Name", key: "module_name", width: 30 },
+          { header: "Module Code", key: "module_code", width: 25 },
+          { header: "Module Id", key: "module_id", width: 25 },
+          { header: "Academic Session", key: "acad_session", width: 25 },
+          { header: "Lecture Per Week", key: "lecture_per_week", width: 25 },
+          { header: "Practical Per Week", key: "practical_per_week", width: 25 },
+          { header: "Tutorial Per Week", key: "tutorial_per_week", width: 25 },
+          { header: "Workshop Per Week", key: "workshop_per_week", width: 25 },
+          { header: "Batch Preference", key: "is_batch_preference_set_status", width: 10 }
+        ];
+
+        FacultyWorks.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "FacultyWorkMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    }
 
 }
