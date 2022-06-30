@@ -63,6 +63,7 @@ router.post('/program-session-time-preference/create', timePreference.create)
 router.post('/program-session-time-preference/findone', timePreference.findOne)
 router.post('/program-session-time-preference/update', timePreference.update)
 router.post('/program-session-time-preference/delete', timePreference.delete)
-
+router.post('/program-session-time-preference/search', timePreference.search)
+router.post('/program-session-time-preference/show-entries', timePreference.showEntries)
 
 module.exports = router;
