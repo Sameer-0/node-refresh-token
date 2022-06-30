@@ -9,6 +9,9 @@ const ProgramDays = require('../../../models/ProgramDays')
 const FacultyWorkTimePreferences = require('../../../models/FacultyWorkTimePreferences')
 const Settings = require("../../../models/Settings");
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -248,4 +251,40 @@ module.exports = {
             res.status(500).json(error.originalError.info.message)
         })
     },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`Faculty Preference Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Faculty ID", key: "faculty_id", width: 10 },
+          { header: "Faculty Name", key: "faculty_name", width: 25 },
+          { header: "Faculty Type", key: "faculty_type", width: 25 },
+          { header: "Start Time", key: "start_time", width: 25 },
+          { header: "End Time", key: "end_time", width: 25 },
+          { header: "Program Name", key: "program_name", width: 25 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Program ID", key: "program_id", width: 25 },
+          { header: "Day", key: "day", width: 25 },
+          { header: "Module Name", key: "module_name", width: 25 },
+          { header: "Module Code", key: "module_code", width: 25 },
+          { header: "Module ID", key: "module_id", width: 25 },
+          { header: "Academic Session", key: "acad_session", width: 25 }
+        ];
+
+        FacultyWorkTimePreferences.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "FacultPreferenceMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    }
 }
