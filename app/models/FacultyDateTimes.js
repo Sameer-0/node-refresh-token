@@ -67,7 +67,7 @@ module.exports = class FacultyDateTimes {
                 INNER JOIN [dbo].[slot_interval_timings] sit ON fdt.start_time_id = sit.id
                 INNER JOIN [dbo].[slot_interval_timings] _sit ON fdt.end_time_id = _sit.id
                 INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid 
-                WHERE fdt.id LIKE @keyword OR f.faculty_name LIKE @keyword OR  ac.date LIKE @keyword OR ac1.date LIKE @keyword           
+                WHERE fdt.id LIKE @keyword OR f.faculty_name LIKE @keyword OR  ac.date LIKE @keyword OR ac1.date LIKE @keyword OR ft.name LIKE @keyword          
                 ORDER BY fdt.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }

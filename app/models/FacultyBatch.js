@@ -58,7 +58,7 @@ module.exports = class FacultyBatch {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
             .input('pageNo', sql.Int, body.pageNo)
-                .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, 
+                .query(`SELECT  fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, 
                 f.faculty_id, db.batch, d.division,
                 icw.module_name, p.program_name, ads.acad_session, et.name as event_type
                  FROM [${slug}].faculty_batches fb
