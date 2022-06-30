@@ -41,6 +41,14 @@
 
                     <div class="row">
                         <div class="col-md-3">
+                            <label>Show Entry</label>
+                            <select class="form-select" id="changeEntry">
+                                <%for(let page of locals.page_filter){%>
+                                   <option value="<%-page%>"><%-page%></option>
+                                <%}%>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mt-4">
                                 <select class="form-select select2" id="programName">
                                     <option>Select Program</option>
                                     <%for(let program of programList){%>
@@ -49,7 +57,7 @@
                                 </select>
                         </div>
                 
-                        <div class="col-md-3">
+                        <div class="col-md-3  mt-4">
                             <select class="form-select select2" id="moduleName">
                                 <option>Select Module</option>
                             <%for(let module of moduleList){%>
@@ -57,12 +65,9 @@
                                 <%}%>
                             </select>
                         </div>
+            
                 
-                        <div class="col-md-3">
-                
-                        </div>
-                
-                        <div class="col-md-3">
+                        <div class="col-md-3  mt-4">
                             <input type="search" id="searchkeyword" placeholder="Enter keywords" class="form-control">
                         </div>
                         </div>
@@ -280,6 +285,22 @@ $("#moduleName").on('change',function(){
                 showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
+            })
+        })
+
+
+        //CHANGE ENTRIES
+        $("#changeEntry").on('change',function(){
+                let rowcount = $(this).val()
+                $.ajax({
+                type: "POST",
+                url: "/admin/divisions/batches/show-entries",
+                data: {
+                    rowcount: rowcount
+                },
+                success: function (data) {
+                    AjaxtTable(data.data) 
+                }
             })
         })
         
