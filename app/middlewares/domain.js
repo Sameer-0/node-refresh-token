@@ -48,6 +48,7 @@ module.exports = {
                     res.locals.campusIdSap = result.recordset[0].campus_id_str
                     res.locals.organizationIdSap = result.recordset[0].org_id
                     res.locals.acadmicYear = process.env.ACADEMIC_YEAR
+                    res.locals.page_filter = JSON.parse(process.env.PAGE_FILTER)
                     console.log('LOCALS:::::::', res.locals)
                     next();
                 })

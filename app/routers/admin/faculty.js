@@ -23,6 +23,9 @@ router.post('/faculties/findone', validate('single'), index.findOne)
 router.post('/faculties/update', validate('JsonValidator'), index.update)
 router.post('/faculties/delete', validate('delete'), index.delete)
 router.get('/faculties/download', index.downloadMaster)
+router.post('/faculties/show-entries', index.showEntries)
+
+
 
 //Faculty Date Time
 router.get('/faculties/date-time', dateTimes.getPage)
@@ -34,7 +37,7 @@ router.post('/faculties/date-time/getslottime', dateTimes.getSlotsById)
 router.post('/faculties/date-time/findone', dateTimes.findOne)
 router.post('/faculties/date-time/update',validate('JsonValidator'), dateTimes.update)
 router.get('/faculties/date-time/download', dateTimes.downloadMaster)
-
+router.post('/faculties/date-time/show-entries', dateTimes.showEntries)
 
 //Batch
 router.get('/faculties/batch', batch.getPage)
@@ -50,6 +53,11 @@ router.post('/faculties/batch/division-by-moduleid', batch.divisionByModuleId)
 router.post('/faculties/batch/batch-by-divisionid', batch.batchByDivisionId)
 router.post('/faculties/batch/find-batch-by-facultyid', batch.batchByFacultyIdAndBatchId)
 router.get('/faculties/batch/download', batch.downloadMaster)
+router.post('/faculties/batch/show-entries', batch.showEntries)
+
+
+
+
 //FACULTY ALLOCATION STATUS
 router.get('/faculties/allocation-status', allocation.getPage)
 
@@ -67,6 +75,8 @@ router.post('/faculties/works/change', works.changeStatus)
 router.post('/faculties/works/GetAll', works.getAll)
 router.post('/faculties/works/get-faculty-work-events', works.getFacultyWorks)
 router.get('/faculties/works/download', works.downloadMaster)
+router.post('/faculties/works/show-entries', works.showEntries)
+
 
 //workpreferences
 router.get('/workpreferences', preferences.getPage)
@@ -78,6 +88,9 @@ router.post('/faculties/workpreferences/delete', validate('delete'), preferences
 router.post('/faculties/workpreferences/faculty-slots-and-programs', validate('single'), preferences.getSlotsByIdAndPrograms)
 router.post('/faculties/workpreferences/module-by-program-session-id', preferences.moduleByprogramAndSessionId)
 router.get('/faculties/workpreferences/download', preferences.downloadMaster)
+router.post('/faculties/workpreferences/show-entries', preferences.showEntries)
+
+
 
 //Get Days by program id for faculty preference
 router.post('/faculties/workpreferences/session-day-by-program-id', preferences.sessionDayByProgramId)

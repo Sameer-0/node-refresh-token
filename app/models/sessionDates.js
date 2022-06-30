@@ -117,5 +117,18 @@ module.exports = class {
         })
     }
     
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT p.program_name, p.program_code, p.program_id, CONVERT(NVARCHAR, ac.date, 105) as startDate ,  CONVERT(NVARCHAR, ac1.date, 105) as endDate, IIF(st.name IS NULL,'NA', st.name) as session_type, acs.acad_session
+            FROM [${slug}].session_dates sd 
+            INNER JOIN [dbo].[academic_calendar] ac ON sd.start_date_id =  ac.id
+            INNER JOIN [dbo].[academic_calendar] ac1 ON sd.end_date_id =  ac1.id
+            LEFT JOIN [dbo].[session_types] st ON st.id = sd.session_type_lid
+            INNER JOIN [${slug}].[program_sessions] ps ON ps.id =  sd.program_session_lid
+            INNER JOIN [dbo].acad_sessions acs ON acs.id = sd.sap_acad_session_lid
+            INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
+            ORDER BY sd.id DESC`)
+        })
+    }
 
 }
