@@ -49,7 +49,7 @@ router.post('/faculties/batch/module-by-facultyid-programid-sessionid', batch.mo
 router.post('/faculties/batch/division-by-moduleid', batch.divisionByModuleId)
 router.post('/faculties/batch/batch-by-divisionid', batch.batchByDivisionId)
 router.post('/faculties/batch/find-batch-by-facultyid', batch.batchByFacultyIdAndBatchId)
-
+router.get('/faculties/batch/download', batch.downloadMaster)
 //FACULTY ALLOCATION STATUS
 router.get('/faculties/allocation-status', allocation.getPage)
 
@@ -77,7 +77,7 @@ router.post('/faculties/workpreferences/update', validate('JsonValidator'), pref
 router.post('/faculties/workpreferences/delete', validate('delete'), preferences.delete)
 router.post('/faculties/workpreferences/faculty-slots-and-programs', validate('single'), preferences.getSlotsByIdAndPrograms)
 router.post('/faculties/workpreferences/module-by-program-session-id', preferences.moduleByprogramAndSessionId)
-
+router.get('/faculties/workpreferences/download', preferences.downloadMaster)
 
 //Get Days by program id for faculty preference
 router.post('/faculties/workpreferences/session-day-by-program-id', preferences.sessionDayByProgramId)

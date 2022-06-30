@@ -18,16 +18,17 @@ module.exports = class FacultyWorkTimePreferences {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id, 
+            return pool.request().query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type,
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
-            f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.abbr as program_abbr, d.day_name, icw.module_name, ads.acad_session
+              RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
             FROM [${slug}].faculty_work_time_preferences fwtp
             INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
             INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
             INNER JOIN [dbo].slot_interval_timings sit ON fwtp.start_time_id = sit.id
             INNER JOIN [dbo].slot_interval_timings _sit ON fwtp.end_time_id = _sit.id
-            INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid 
+            INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
             INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
             INNER JOIN [${slug}].days d ON d.id = pd.day_lid
             INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
@@ -154,6 +155,27 @@ module.exports = class FacultyWorkTimePreferences {
                 INNER JOIN [${slug}].program_sessions ps ON ps.id = fw.program_session_lid
                 INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
                 WHERE fwtp.id = @Id`)
+        })
+    }
+
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
+              RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
+            FROM [${slug}].faculty_work_time_preferences fwtp
+            INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
+            INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
+            INNER JOIN [dbo].slot_interval_timings sit ON fwtp.start_time_id = sit.id
+            INNER JOIN [dbo].slot_interval_timings _sit ON fwtp.end_time_id = _sit.id
+            INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
+            INNER JOIN [${slug}].days d ON d.id = pd.day_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            ORDER BY fwtp.id DESC`)
         })
     }
 }
