@@ -9,7 +9,8 @@ const Settings = require('../../../models/Settings')
 const CourseWorkload = require('../../../models/CourseWorkload')
 const Programs = require('../../../models/Programs')
 const isJsonString = require('../../../utils/util')
-
+const excel = require("exceljs");
+let workbook = new excel.Workbook();
 
 module.exports = {
     getPage: (req, res) => {
@@ -208,4 +209,40 @@ module.exports = {
             }
         })
     },
+
+    downloadMaster: async(req, res, next) => {
+        let worksheet = workbook.addWorksheet(`Division Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        worksheet.columns = [
+          { header: "Program Name", key: "program_name", width: 10 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Program ID", key: "program_id", width: 25 },
+          { header: "Module Name", key: "module_name", width: 25 },
+          { header: "Module Code", key: "module_code", width: 25 },
+          { header: "Module ID", key: "module_id", width: 25 },
+          { header: "Division", key: "division", width: 25 },
+          { header: "Academic Session", key: "acad_session", width: 25 },
+          { header: "Student Count", key: "student_count", width: 25 },
+          { header: "Count For Theory Batch", key: "count_for_theory_batch", width: 25 },
+          { header: "Count For Practical Batch", key: "count_for_practical_batch", width: 25 },
+          { header: "Count For Tutorial Batch", key: "count_for_tutorial_batch", width: 25 },
+          { header: "Count For Workshop Batch", key: "count_for_workshop_batch", width: 25 }
+        ];
+
+        Divisions.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "DivisionMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    }
 }

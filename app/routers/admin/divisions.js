@@ -20,6 +20,7 @@ router.post('/divisions/generate-division', index.generateDivision)
 router.post('/divisions/delete', index.delete)
 router.post('/divisions/division-by-moduleid', index.divisionByModuleId)
 router.post('/divisions/division-by-programid', index.divisionByProgramId)
+router.get('/divisions/download', index.downloadMaster)
 //BATCHES
 router.get('/divisions/batches', batch.getPage)
 router.post('/divisions/batches/search', batch.search)
@@ -31,5 +32,5 @@ router.post('/divisions/batches/generate-batches-division', batch.generateBatch)
 router.post('/divisions/batches/delete', batch.delete)
 router.post('/divisions/batches/batch-by-moduleid', batch.divisionByModuleId)
 router.post('/divisions/batches/batch-by-programid', batch.batchByProgramId)
-
+router.get('/divisions/batches/download', batch.downloadMaster)
 module.exports = router
