@@ -74,7 +74,15 @@
 
 
         <div class="row my-2 ms-2 me-2">
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label>Show Entry</label>
+                <select class="form-select" id="changeEntry">
+                    <%for(let page of locals.page_filter){%>
+                       <option value="<%-page%>"><%-page%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="col-md-3 mt-4">
                 <select class="form-select form-control select2" id="programNameFilter">
                     <option selected>Select Program</option>
                     <%for(let prog of programList){%>
@@ -82,14 +90,12 @@
                     <%}%>
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4  mt-4">
                 <select class="form-select form-control select2" id="sessionNameFilter">
                 </select>
             </div>
-            <div class="col-md-2">
-               
-            </div>
-            <div class="col-md-3">
+
+            <div class="col-md-3  mt-4">
                 <input type="search" id="searchkeyword" placeholder="Enter keywords" class="form-control">
             </div>
 
@@ -944,6 +950,22 @@
                                     }
                                 })
 
+
+        //CHANGE ENTRIES
+        $("#changeEntry").on('change',function(){
+                let rowcount = $(this).val()
+                $.ajax({
+                type: "POST",
+                url: "/admin/courseworkload/workload/show-entries",
+                data: {
+                    rowcount: rowcount
+                },
+                success: function (data) {
+                    AjaxtTable(data.data) 
+                }
+            })
+        })
+
         function AjaxtTable(workloadList) {
             let AjaxTable = `<table class="table custom_row table-bordered" id="courseWorkloadTable">
                 <thead>
@@ -1005,6 +1027,9 @@
             AjaxTable += `<tbody></table>`
             $("#courseWorkloadTable").html(AjaxTable);
         }
+
+
+
 
 
 

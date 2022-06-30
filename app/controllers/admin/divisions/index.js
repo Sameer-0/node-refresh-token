@@ -16,7 +16,7 @@ module.exports = {
     getPage: (req, res) => {
         let slugName = res.locals.slug;
         Promise.all([Divisions.fetchAll(10000, slugName), Divisions.getCount(slugName), CourseWorkload.fetchAll(1000, slugName), Programs.fetchAll(10000, slugName)]).then(result => {
-            //console.log('Result::::::::',result[0].recordset)
+            console.log('Result::::::::',result[3].recordset)
             res.render('admin/divisions/index', {
                 divisionList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -188,6 +188,7 @@ module.exports = {
 
 
     divisionByProgramId: (req, res) => {
+        console.log('REQ::::',req.body)
         Promise.all([Divisions.divisionByProgramId(req.body.programid, res.locals.slug), CourseWorkload.getmoduleByProgramId(req.body.program_id, res.locals.slug)]).then(result => {
             console.log('result::::::::::', result[0])
             res.json({
