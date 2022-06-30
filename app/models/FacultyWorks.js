@@ -173,7 +173,7 @@ module.exports = class {
     static downloadExcel(slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type, p.program_name, p.program_code, icw.module_name, icw.module_code, icw.module_id, acs.acad_session, fw.lecture_per_week, IIF(fw.practical_per_week IS NULL,0,fw.practical_per_week) practical_per_week, IIF(fw.tutorial_per_week IS NULL,0, fw.tutorial_per_week) AS tutorial_per_week, IIF(fw.workshop_per_week IS NULL, 0, fw.workshop_per_week) AS workshop_per_week,  IIF(fw.is_batch_preference_set = 1 ,'Yes','No') as is_batch_preference_set_status   
-            FROM [asmsoc-mum].faculty_works fw 
+            FROM [${slug}].faculty_works fw 
             INNER JOIN [${slug}].[initial_course_workload] icw ON icw.id = fw.module_lid
             INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
             INNER JOIN [dbo].faculty_types ft ON ft.id =  f.faculty_type_lid
