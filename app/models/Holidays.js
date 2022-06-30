@@ -100,4 +100,10 @@ module.exports = class {
         })
     }
 
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT h.calendar_year, FORMAT(h.h_date, 'dddd') as dayname, CONVERT(NVARCHAR, h.h_date, 103) as h_date, h.reason, ht.name as holiday_type FROM [${slug}].holidays h LEFT JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid  ORDER BY h.id DESC`)
+        })
+    }
+
 }
