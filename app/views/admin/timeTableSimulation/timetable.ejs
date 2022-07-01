@@ -98,7 +98,21 @@
             height: 100%;
             width: var(--breakIntervalWidth);
             background-size: 3px;
-            background: repeating-linear-gradient(45deg, #e9ecef, #adb5bd 15px);
+            background: repeating-linear-gradient(45deg, #e9ecef, #adb5bd 15px);  
+        }
+
+        .fixed-break{
+            position: absolute;
+            height: 100%;
+            /* background-color: #006faa; */
+            width: var(--fixedBreakWidth);
+            background-size: 3px;
+            background: repeating-linear-gradient(135deg, #e9ecef, #adb5bd 15px);
+            font-size: 3.7rem;
+            line-height: 0.9;
+            text-align: center;
+            color: #7d7d7d;
+        
         }
 </style>
 <%- include("../partials/leftSidebar") %>
@@ -166,6 +180,7 @@
             </div>
             <div class="ms-auto me-2">
                 <button class="btn btn-primary pending-events-modal my-2" data-target="#pendingEventModal"><i class="fa-solid fa-list-ul"></i> Pending Events</button>
+                <a href="/admin/time-table-simulation/time-table/download" class="btn btn-danger"><span class="fa fa-download"></span>Download</a>
                 
             </div>
         </div>
@@ -929,6 +944,7 @@
         cssRoot.style.setProperty('--roomSlotWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot}px`);
         
         
+        
         let timeJson = JSON.parse(`<%- timeSlotList%>`);
         console.log('time slot list::', timeJson)
         // let timeJson = [{"id":91,"start_time":"07:30:00","end_time":"07:35:00","slot_name":"slot91"},{"id":92,"start_time":"07:35:00","end_time":"07:40:00","slot_name":"slot92"},{"id":93,"start_time":"07:40:00","end_time":"07:45:00","slot_name":"slot93"},{"id":94,"start_time":"07:45:00","end_time":"07:50:00","slot_name":"slot94"},{"id":95,"start_time":"07:50:00","end_time":"07:55:00","slot_name":"slot95"},{"id":96,"start_time":"07:55:00","end_time":"08:00:00","slot_name":"slot96"},{"id":97,"start_time":"08:00:00","end_time":"08:05:00","slot_name":"slot97"},{"id":98,"start_time":"08:05:00","end_time":"08:10:00","slot_name":"slot98"},{"id":99,"start_time":"08:10:00","end_time":"08:15:00","slot_name":"slot99"},{"id":100,"start_time":"08:15:00","end_time":"08:20:00","slot_name":"slot100"},{"id":101,"start_time":"08:20:00","end_time":"08:25:00","slot_name":"slot101"},{"id":102,"start_time":"08:25:00","end_time":"08:30:00","slot_name":"slot102"},{"id":103,"start_time":"08:30:00","end_time":"08:35:00","slot_name":"slot103"},{"id":104,"start_time":"08:35:00","end_time":"08:40:00","slot_name":"slot104"},{"id":105,"start_time":"08:40:00","end_time":"08:45:00","slot_name":"slot105"},{"id":106,"start_time":"08:45:00","end_time":"08:50:00","slot_name":"slot106"},{"id":107,"start_time":"08:50:00","end_time":"08:55:00","slot_name":"slot107"},{"id":108,"start_time":"08:55:00","end_time":"09:00:00","slot_name":"slot108"},{"id":109,"start_time":"09:00:00","end_time":"09:05:00","slot_name":"slot109"},{"id":110,"start_time":"09:05:00","end_time":"09:10:00","slot_name":"slot110"},{"id":111,"start_time":"09:10:00","end_time":"09:15:00","slot_name":"slot111"},{"id":112,"start_time":"09:15:00","end_time":"09:20:00","slot_name":"slot112"},{"id":113,"start_time":"09:20:00","end_time":"09:25:00","slot_name":"slot113"},{"id":114,"start_time":"09:25:00","end_time":"09:30:00","slot_name":"slot114"},{"id":115,"start_time":"09:30:00","end_time":"09:35:00","slot_name":"slot115"},{"id":116,"start_time":"09:35:00","end_time":"09:40:00","slot_name":"slot116"},{"id":117,"start_time":"09:40:00","end_time":"09:45:00","slot_name":"slot117"},{"id":118,"start_time":"09:45:00","end_time":"09:50:00","slot_name":"slot118"},{"id":119,"start_time":"09:50:00","end_time":"09:55:00","slot_name":"slot119"},{"id":120,"start_time":"09:55:00","end_time":"10:00:00","slot_name":"slot120"},{"id":121,"start_time":"10:00:00","end_time":"10:05:00","slot_name":"slot121"},{"id":122,"start_time":"10:05:00","end_time":"10:10:00","slot_name":"slot122"},{"id":123,"start_time":"10:10:00","end_time":"10:15:00","slot_name":"slot123"},{"id":124,"start_time":"10:15:00","end_time":"10:20:00","slot_name":"slot124"},{"id":125,"start_time":"10:20:00","end_time":"10:25:00","slot_name":"slot125"},{"id":126,"start_time":"10:25:00","end_time":"10:30:00","slot_name":"slot126"},{"id":127,"start_time":"10:30:00","end_time":"10:35:00","slot_name":"slot127"},{"id":128,"start_time":"10:35:00","end_time":"10:40:00","slot_name":"slot128"},{"id":129,"start_time":"10:40:00","end_time":"10:45:00","slot_name":"slot129"},{"id":130,"start_time":"10:45:00","end_time":"10:50:00","slot_name":"slot130"},{"id":131,"start_time":"10:50:00","end_time":"10:55:00","slot_name":"slot131"},{"id":132,"start_time":"10:55:00","end_time":"11:00:00","slot_name":"slot132"},{"id":133,"start_time":"11:00:00","end_time":"11:05:00","slot_name":"slot133"},{"id":134,"start_time":"11:05:00","end_time":"11:10:00","slot_name":"slot134"},{"id":135,"start_time":"11:10:00","end_time":"11:15:00","slot_name":"slot135"},{"id":136,"start_time":"11:15:00","end_time":"11:20:00","slot_name":"slot136"},{"id":137,"start_time":"11:20:00","end_time":"11:25:00","slot_name":"slot137"},{"id":138,"start_time":"11:25:00","end_time":"11:30:00","slot_name":"slot138"},{"id":139,"start_time":"11:30:00","end_time":"11:35:00","slot_name":"slot139"},{"id":140,"start_time":"11:35:00","end_time":"11:40:00","slot_name":"slot140"},{"id":141,"start_time":"11:40:00","end_time":"11:45:00","slot_name":"slot141"},{"id":142,"start_time":"11:45:00","end_time":"11:50:00","slot_name":"slot142"},{"id":143,"start_time":"11:50:00","end_time":"11:55:00","slot_name":"slot143"},{"id":144,"start_time":"11:55:00","end_time":"12:00:00","slot_name":"slot144"},{"id":145,"start_time":"12:00:00","end_time":"12:05:00","slot_name":"slot145"},{"id":146,"start_time":"12:05:00","end_time":"12:10:00","slot_name":"slot146"},{"id":147,"start_time":"12:10:00","end_time":"12:15:00","slot_name":"slot147"},{"id":148,"start_time":"12:15:00","end_time":"12:20:00","slot_name":"slot148"},{"id":149,"start_time":"12:20:00","end_time":"12:25:00","slot_name":"slot149"},{"id":150,"start_time":"12:25:00","end_time":"12:30:00","slot_name":"slot150"},{"id":151,"start_time":"12:30:00","end_time":"12:35:00","slot_name":"slot151"},{"id":152,"start_time":"12:35:00","end_time":"12:40:00","slot_name":"slot152"},{"id":153,"start_time":"12:40:00","end_time":"12:45:00","slot_name":"slot153"},{"id":154,"start_time":"12:45:00","end_time":"12:50:00","slot_name":"slot154"},{"id":155,"start_time":"12:50:00","end_time":"12:55:00","slot_name":"slot155"},{"id":156,"start_time":"12:55:00","end_time":"13:00:00","slot_name":"slot156"},{"id":157,"start_time":"13:00:00","end_time":"13:05:00","slot_name":"slot157"},{"id":158,"start_time":"13:05:00","end_time":"13:10:00","slot_name":"slot158"},{"id":159,"start_time":"13:10:00","end_time":"13:15:00","slot_name":"slot159"},{"id":160,"start_time":"13:15:00","end_time":"13:20:00","slot_name":"slot160"},{"id":161,"start_time":"13:20:00","end_time":"13:25:00","slot_name":"slot161"},{"id":162,"start_time":"13:25:00","end_time":"13:30:00","slot_name":"slot162"},{"id":163,"start_time":"13:30:00","end_time":"13:35:00","slot_name":"slot163"},{"id":164,"start_time":"13:35:00","end_time":"13:40:00","slot_name":"slot164"},{"id":165,"start_time":"13:40:00","end_time":"13:45:00","slot_name":"slot165"},{"id":166,"start_time":"13:45:00","end_time":"13:50:00","slot_name":"slot166"},{"id":167,"start_time":"13:50:00","end_time":"13:55:00","slot_name":"slot167"},{"id":168,"start_time":"13:55:00","end_time":"14:00:00","slot_name":"slot168"},{"id":169,"start_time":"14:00:00","end_time":"14:05:00","slot_name":"slot169"},{"id":170,"start_time":"14:05:00","end_time":"14:10:00","slot_name":"slot170"},{"id":171,"start_time":"14:10:00","end_time":"14:15:00","slot_name":"slot171"},{"id":172,"start_time":"14:15:00","end_time":"14:20:00","slot_name":"slot172"},{"id":173,"start_time":"14:20:00","end_time":"14:25:00","slot_name":"slot173"},{"id":174,"start_time":"14:25:00","end_time":"14:30:00","slot_name":"slot174"},{"id":175,"start_time":"14:30:00","end_time":"14:35:00","slot_name":"slot175"},{"id":176,"start_time":"14:35:00","end_time":"14:40:00","slot_name":"slot176"},{"id":177,"start_time":"14:40:00","end_time":"14:45:00","slot_name":"slot177"},{"id":178,"start_time":"14:45:00","end_time":"14:50:00","slot_name":"slot178"},{"id":179,"start_time":"14:50:00","end_time":"14:55:00","slot_name":"slot179"},{"id":180,"start_time":"14:55:00","end_time":"15:00:00","slot_name":"slot180"},{"id":181,"start_time":"15:00:00","end_time":"15:05:00","slot_name":"slot181"},{"id":182,"start_time":"15:05:00","end_time":"15:10:00","slot_name":"slot182"},{"id":183,"start_time":"15:10:00","end_time":"15:15:00","slot_name":"slot183"},{"id":184,"start_time":"15:15:00","end_time":"15:20:00","slot_name":"slot184"},{"id":185,"start_time":"15:20:00","end_time":"15:25:00","slot_name":"slot185"},{"id":186,"start_time":"15:25:00","end_time":"15:30:00","slot_name":"slot186"},{"id":187,"start_time":"15:30:00","end_time":"15:35:00","slot_name":"slot187"},{"id":188,"start_time":"15:35:00","end_time":"15:40:00","slot_name":"slot188"},{"id":189,"start_time":"15:40:00","end_time":"15:45:00","slot_name":"slot189"},{"id":190,"start_time":"15:45:00","end_time":"15:50:00","slot_name":"slot190"},{"id":191,"start_time":"15:50:00","end_time":"15:55:00","slot_name":"slot191"},{"id":192,"start_time":"15:55:00","end_time":"16:00:00","slot_name":"slot192"},{"id":193,"start_time":"16:00:00","end_time":"16:05:00","slot_name":"slot193"},{"id":194,"start_time":"16:05:00","end_time":"16:10:00","slot_name":"slot194"},{"id":195,"start_time":"16:10:00","end_time":"16:15:00","slot_name":"slot195"}]
@@ -954,81 +970,92 @@
         // console.log('room list::::::', roomList.append(div))
         let timeTablestartSlot = timeJson[0].id;
 
+
         function timeTableDisplay(eventListJson){
-
-           
-
+            let fixedBreadWidth ;
+            let roomSlot;
+            let eventStartSlot;
+            let eventLeftPosition;
+            let breakSlotStart = 115
 
             // console.log('jello',eventListJson)
             for( let event of eventListJson) {
 
                 if(!event.is_break){
 
-            let roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`)
+            roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`)
 
-            let eventStartSlot = event.start_slot;
-            let eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
+            eventStartSlot = event.start_slot;
+            eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
             // console.log('left position:::::>>', eventLeftPosition)
-            let breakElement =(eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) ? `` : `<div class="break" style="left: ${timetableProp.pxPerSlot * 12}px; top: 0; bottom:0; width:${timetableProp.pxPerSlot}px"></div>`
+            
+            let breakElement = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) || event.end_slot == breakSlotStart ? `` : `<div class="break" style="left: ${timetableProp.pxPerSlot * 12}px; top: 0; bottom:0; width:${timetableProp.pxPerSlot}px"></div>`
+                  
 
             let roomSlotItem = document.createElement('div');
             roomSlotItem.setAttribute("class","event room-slot-item")
             roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center`)
             roomSlotItem.setAttribute("data-event-lid",`${event.event_lid}`)
+            
             roomSlotItem.innerHTML = `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type}) <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
-            <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> 
-                            ${breakElement}
-                            `;
-
-            roomSlot.append(roomSlotItem)
+            <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> ${breakElement}`;
+   
+            roomSlot.append(roomSlotItem);
                 }
-            //     else{
+                else{
 
-            //         roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`);
-            //         eventStartSlot = event.start_slot;
-            //         eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot;
+                    roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`);
+                    eventStartSlot = event.start_slot;
+                    eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot;
 
-            //         let fixedBreak = document.createElement('div');
-            //         fixedBreak.setAttribute("class","fixed-break room-slot-item")
-            //         fixedBreak.setAttribute("style",`left: ${eventLeftPosition}px; top: 0;`)
-            //         fixedBreak.style.width = ''
-            //         // roomSlot.append(fixedBreak)
-            //     }
+
+                   
+                    let fixedBreak = document.createElement('div');
+                    fixedBreak.setAttribute("class","fixed-break room-slot-item")
+                    fixedBreak.setAttribute("style",`left: ${eventLeftPosition}px; top: 0;`)
+                    fixedBreak.innerText = 'BREAK';
+                    fixedBreadWidth = (event.end_slot - event.start_slot) * timetableProp.pxPerSlot + timetableProp.pxPerSlot;
+                    console.log('break width:::::', fixedBreadWidth)
+                    
+                    roomSlot.append(fixedBreak);
+                }
             }
 
+            
+            cssRoot.style.setProperty('--fixedBreakWidth', `${fixedBreadWidth}px`);
         }
 
         // fetch("/js/events.json").then(response => { return response.json();})
         // .then(data => {eventListJson = data;
         //          console.log('je;;o',eventListJson)
                 
-        //          for( let event of eventListJson) {
+                //  for( let event of eventListJson) {
 
-        //         let roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`)
+                // let roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`)
 
-        //         let eventStartSlot = event.slot_start_lid;
-        //         let eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
-        //         console.log('left position:::::>>', eventLeftPosition)
-        //         let breakElement =(eventLeftPosition + (timetableProp.pxPerSlot * 12) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) ? `` : `<div class="break" style="left: ${timetableProp.pxPerSlot * 12}px; top: 0; bottom:0; width:${timetableProp.pxPerSlot}px"></div>`
+                // let eventStartSlot = event.slot_start_lid;
+                // let eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
+                // console.log('left position:::::>>', eventLeftPosition)
+                // let breakElement =(eventLeftPosition + (timetableProp.pxPerSlot * 12) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) ? `` : `<div class="break" style="left: ${timetableProp.pxPerSlot * 12}px; top: 0; bottom:0; width:${timetableProp.pxPerSlot}px"></div>`
 
-        //         let roomSlotItem = document.createElement('div');
-        //         roomSlotItem.setAttribute("class","event room-slot-item")
-        //         roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center`)
-        //         roomSlotItem.setAttribute("data-event-lid",`${event.id}`)
-        //         roomSlotItem.innerHTML = `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type}) <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
-        //         <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> 
-        //                         ${breakElement}
-        //                         `;
+                // let roomSlotItem = document.createElement('div');
+                // roomSlotItem.setAttribute("class","event room-slot-item")
+                // roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center`)
+                // roomSlotItem.setAttribute("data-event-lid",`${event.id}`)
+                // roomSlotItem.innerHTML = `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type}) <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
+                // <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> 
+                //                 ${breakElement}
+                //                 `;
 
-        //         // let breakLeftPosition = eventLeftPosition + (timetableProp.pxPerSlot * 12);
-        //         // let breakItem = document.createElement('div');
-        //         // breakItem.setAttribute("class","break room-slot-item")
-        //         // breakItem.setAttribute("style",`left: ${breakLeftPosition}px; top: 0;`)
+                // // let breakLeftPosition = eventLeftPosition + (timetableProp.pxPerSlot * 12);
+                // // let breakItem = document.createElement('div');
+                // // breakItem.setAttribute("class","break room-slot-item")
+                // // breakItem.setAttribute("style",`left: ${breakLeftPosition}px; top: 0;`)
 
-        //         roomSlot.append(roomSlotItem)
+                // roomSlot.append(roomSlotItem)
 
-        //         }
-        //         });
+                // }
+                // });
 
 
                               
@@ -1230,26 +1257,26 @@
                 // console.log("INSIDE LOOP TO CHECK COLLISION")
                 let eRect = elem.getBoundingClientRect();
 
-                // if (elem.classList.contains('break')) {
+                if (elem.classList.contains('fixed-break')) {
 
-                //     console.log("INSIDE LOOP TO CHECK COLLISION BReaK")
+                    console.log("INSIDE LOOP TO CHECK COLLISION BReaK")
 
-                //     if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left && tRect.right <= eRect.right) || (tRect.right >= eRect.right && tRect.left < eRect.right)) {
+                    if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left && tRect.right <= eRect.right) || (tRect.right >= eRect.right && tRect.left < eRect.right)) {
                         
-                //         dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex].start_time;
-                //         dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex].end_time;
-                //         dragObj.isDroppable = false;
-                //         break;
-                //     }
+                        dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex].start_time;
+                        dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex].end_time;
+                        dragObj.isDroppable = false;
+                        break;
+                    }
 
-                // } else {
+                } else {
 
-                    // console.log("INSIDE LOOP TO CHECK EVENT")
-                    // console.log('tRect.left>> ', tRect.left)
-                    // console.log('eRect.left>> ', eRect.left)
+                    console.log("INSIDE LOOP TO CHECK EVENT")
+                    console.log('tRect.left>> ', tRect.left)
+                    console.log('eRect.left>> ', eRect.left)
 
-                    // console.log('tRect.right>> ', tRect.right)
-                    // console.log('eRect.right>> ', eRect.right)
+                    console.log('tRect.right>> ', tRect.right)
+                    console.log('eRect.right>> ', eRect.right)
 
 
                     // 390  394
@@ -1269,7 +1296,7 @@
                         break;
                     }
 
-                // }
+                }
             }
 
 
