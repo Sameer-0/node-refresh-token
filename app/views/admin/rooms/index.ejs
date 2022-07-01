@@ -97,7 +97,7 @@
                                 <td><%- list.start_date %></td>
                                 <td><%- list.end_date %></td>
                                 <td><%- list.building_name %></td>
-                                <!-- <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> -->
+                                <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td>
                             </tr>
                         <%}%>
                     </tbody>
@@ -120,7 +120,7 @@
 <!-- Modal -->
 <div class="modal fade" id="booking-cancel-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content rounded-0">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Booking Cancellation</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -128,33 +128,33 @@
         <div class="modal-body">
             <div class="mb-3">
                 <label class="form-label">Start Date</label>
-                <input class="form-control" id="room-id" type="date">
+                <input class="form-control rounded-0" id="room-id" type="date">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">End Date</label>
-                <input class="form-control" id="room-id" type="date">
+                <input class="form-control rounded-0" id="room-id" type="date">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Start Time</label>
-                <input class="form-control" id="room-id" type="datetime-local">
+                <input class="form-control rounded-0" id="room-id" type="datetime-local">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">End Time</label>
-                <input class="form-control" id="room-id" type="datetime-local">
+                <input class="form-control rounded-0" id="room-id" type="datetime-local">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Reason for cancellation</label>
                 <input class="form-control" id="room-id" type="hidden">
-                <textarea class="form-control" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
+                <textarea class="form-control rounded-0" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary confirm-btn">Confirm</button>
+          <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary confirm-btn rounded-0">Confirm</button>
         </div>
       </div>
     </div>
@@ -210,7 +210,8 @@
                 let pageNo = $(this).attr('data-lp')
                 console.log('PAGE NO.:::::::::::', $(this).attr('data-lp'))
                 console.log('keyword.:::::::::::', keyword)
-                $.ajax({ 
+                if(keyword){
+                    $.ajax({ 
                     type: "POST",
                     url: "/admin/rooms/search",
                     data: {
@@ -221,6 +222,7 @@
                          AjaxtTable(data.data)
                     }
                 })
+                }
             })
 
 
@@ -303,7 +305,7 @@
                                 <td>${room.start_date}</td>
                                 <td>${room.end_date}</td>
                                 <td>${room.building_name}</td>
-                                <!-- <td><a class="room-cancel-request" data-id="${room.id}" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> -->
+                                <td><a class="room-cancel-request" data-id="${room.id}" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> 
                             </tr>`
                     }
                 } else {

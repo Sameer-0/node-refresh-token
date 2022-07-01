@@ -291,7 +291,7 @@ console.log('hitting pending session::::::', programLid)
         return poolConnection.then(pool => {
         let request = pool.request()
           return  request.query(`SELECT  r.room_number, rt.name as room_type, d.day_name,  icw.module_name, icw.module_code, icw.module_id, p.program_name, p.program_code, p.program_id,
-          ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) as start_time , CONVERT(NVARCHAR, sit2.end_time, 0) as end_time,  et.name as event_type_name,  f.faculty_name, f.faculty_id, ft.name as faculty_type 
+          ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) as start_time , CONVERT(NVARCHAR, sit2.end_time, 0) as end_time,  et.name as event_type_name,  f.faculty_name, f.faculty_id, ft.name as faculty_type, e.division 
            FROM [${slug}].event_bookings eb
           INNER JOIN [${slug}].events e ON eb.event_lid = e.id
           INNER JOIN [${slug}].faculties f ON f.id = e.faculty_lid

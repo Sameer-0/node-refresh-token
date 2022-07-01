@@ -90,7 +90,7 @@ router.post('/faculties/workpreferences/module-by-program-session-id', preferenc
 router.get('/faculties/workpreferences/download', preferences.downloadMaster)
 router.post('/faculties/workpreferences/show-entries', preferences.showEntries)
 
-
+router.post('/faculties/workpreferences/programby-facultyid', validate('single'), preferences.getProgramFacultyId)
 
 //Get Days by program id for faculty preference
 router.post('/faculties/workpreferences/session-day-by-program-id', preferences.sessionDayByProgramId)

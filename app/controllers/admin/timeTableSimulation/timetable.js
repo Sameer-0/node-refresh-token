@@ -7,7 +7,7 @@ const SlotIntervalTiming = require('../../../models/SlotIntervalTimings')
 const Rooms = require('../../../models/Rooms');
 const Days = require('../../../models/Days');
 const isJsonString = require('../../../utils/util')
-
+const excel = require("exceljs");
 module.exports = {
 
     getPage: (req, res) => {
@@ -163,7 +163,6 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-
         let workbook = new excel.Workbook();
         let Allocatedworksheet = workbook.addWorksheet('Allocated Event');
         let UnAllocatedworksheet = workbook.addWorksheet('UnAllocated Event');
@@ -178,6 +177,7 @@ module.exports = {
           { header: "Module Name", key: "module_name", width: 25 },
           { header: "Module Code", key: "module_code", width: 25 },
           { header: "Module ID", key: "module_id", width: 25 },
+          { header: "Division", key: "division", width: 25 },
           { header: "Start Time", key: "start_time", width: 25 },
           { header: "End Time", key: "end_time", width: 25 },
           { header: "Event Name", key: "event_type_name", width: 25 },
