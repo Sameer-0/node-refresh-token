@@ -56,7 +56,7 @@ module.exports = class TimeTable {
 
             //SORT BY SLOT IS NECESSARY FOR PROPER DOM.
             if(program_lid && acad_session_lid){
-                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_booking_slots 
@@ -72,7 +72,7 @@ module.exports = class TimeTable {
                 ORDER BY t2.start_slot, t2.end_slot`
             }
             else if(!program_lid && acad_session_lid){
-                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_booking_slots 
@@ -89,7 +89,7 @@ module.exports = class TimeTable {
             }
             else if(program_lid && !acad_session_lid){
              
-                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break,MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break,MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_booking_slots 
@@ -105,7 +105,7 @@ module.exports = class TimeTable {
                 ORDER BY t2.start_slot, t2.end_slot`
             }
             else{
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_booking_slots 
