@@ -17,7 +17,7 @@ const User = require('../../../models/User')
 const Settings = require('../../../models/Settings')
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 
 
@@ -238,7 +238,8 @@ module.exports = {
     },
 
    bookedRoomsDownloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`BookedRooms Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+    let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('BookedRooms Master');
         worksheet.columns = [
           { header: "Room Number", key: "room_number", width: 20 },
           { header: "Floor Number", key: "floor_number", width: 25 },

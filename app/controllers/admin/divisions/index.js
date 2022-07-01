@@ -10,7 +10,7 @@ const CourseWorkload = require('../../../models/CourseWorkload')
 const Programs = require('../../../models/Programs')
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -212,7 +212,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Division Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Division Master');
         worksheet.columns = [
           { header: "Program Name", key: "program_name", width: 10 },
           { header: "Program Code", key: "program_code", width: 25 },

@@ -3,6 +3,7 @@ const AcademicYear = require('../../../models/AcademicYear');
 const AcademicCalender = require('../../../models/AcademicCalender');
 const ProgramSessions = require('../../../models/ProgramSessions');
 const SchoolTimings = require('../../../models/SchoolTiming');
+const SlotIntervalTiming = require('../../../models/SlotIntervalTimings')
 const Rooms = require('../../../models/Rooms');
 const Days = require('../../../models/Days');
 const isJsonString = require('../../../utils/util')
@@ -16,15 +17,17 @@ module.exports = {
                 Rooms.fetchBookedRooms(res.locals.organizationId),
                 Days.fetchActiveDay(res.locals.slug),
                 TimeTable.getPendingEventPrograms(res.locals.slug),
+                SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug)
             ])
             .then(result => {
-                console.log('pending programs list::::', result[3].recordset)
+                console.log('slot list::::', result[4].recordset)
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     programListJson: JSON.stringify(result[0].recordset),
                     roomList: JSON.stringify(result[1].recordset),
                     dayList: result[2].recordset,
                     pendingEventPrograms: JSON.stringify(result[3].recordset),
+                    timeSlotList: JSON.stringify(result[4].recordset),
 
                     breadcrumbs: req.breadcrumbs,
                     Url: req.originalUrl
@@ -53,13 +56,16 @@ module.exports = {
         Promise.all([
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid),
-            SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)
+            SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
+            
+
         ]).then(results => {
-            console.log('results::::::::::', results[0], results[1])
+            console.log('results::::::::::', results[3])
             res.status(200).send({
                 eventList: results[0].recordset,
                 allEventList: results[1].recordset,
-                slotList: results[2].recordset
+                slotList: results[2].recordset,
+                
             })
         })
     },

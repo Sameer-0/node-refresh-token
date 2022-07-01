@@ -54,70 +54,71 @@ module.exports = class TimeTable {
         return poolConnection.then(pool => {
             let stmt;
 
+            //SORT BY SLOT IS NECESSARY FOR PROPER DOM.
             if(program_lid && acad_session_lid){
-                stmt= `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) as start_time , CONVERT(nvarchar, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id
-                FROM [${slug}].event_bookings eb
-				INNER JOIN [${slug}].events e ON e.id =  eb.event_lid
-                LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
-                LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
-                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid 
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
-				INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
-				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                INNER JOIN [${slug}].days d 
-                ON eb.day_lid = d.id WHERE d.id = @dayLid AND e.program_lid = @programLid AND e.acad_session_lid = @sessionLid`
+                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
+                ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
+                FROM [${slug}].event_booking_slots 
+                WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
+                WHERE row_num = 1) t2
+                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = e.id
+                LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
+                LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
+                LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
+                WHERE (e.program_lid = @programLid and e.acad_session_lid = @sessionLid) OR t2.is_break = 1
+                ORDER BY t2.start_slot, t2.end_slot`
             }
             else if(!program_lid && acad_session_lid){
-                stmt= `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time , CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr AS event_type_abbr, et.name AS event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
-                FROM [${slug}].event_bookings eb
-                INNER JOIN [${slug}].events e ON e.id =  eb.event_lid
-                LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
-                LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
-                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid 
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
-                INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
-                INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-                INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                INNER JOIN [${slug}].days d  
-                ON eb.day_lid = d.id WHERE d.id = @dayLid AND e.acad_session_lid = @sessionLid`
+                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
+                ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
+                FROM [${slug}].event_booking_slots 
+                WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
+                WHERE row_num = 1) t2
+                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = e.id
+                LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
+                LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
+                LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
+                WHERE (e.acad_session_lid = @sessionLid) OR t2.is_break = 1
+                ORDER BY t2.start_slot, t2.end_slot`
             }
             else if(program_lid && !acad_session_lid){
              
-                stmt= `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(nvarchar, sit.start_time, 0) AS start_time , CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
-                FROM [${slug}].event_bookings eb
-				INNER JOIN [${slug}].events e ON e.id = eb.event_lid
-                LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
-                LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid 
-                INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid 
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
-				INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
-				INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-				INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                INNER JOIN [${slug}].days d  
-                ON eb.day_lid = d.id WHERE d.id = @dayLid AND e.program_lid = @programLid`
+                stmt= `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break,MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
+                ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
+                FROM [${slug}].event_booking_slots 
+                WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
+                WHERE row_num = 1) t2
+                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = e.id
+                LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
+                LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
+                LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
+                WHERE (e.program_lid = @programLid) OR t2.is_break = 1
+                ORDER BY t2.start_slot, t2.end_slot`
             }
             else{
-                stmt = `SELECT e.id, e.program_lid, e.acad_session_lid, e.course_lid, e.division, e.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CONVERT(nvarchar, sit.start_time, 0) AS start_time , CONVERT(nvarchar, sit2.end_time, 0) AS end_time, e.event_type_lid, et.abbr as event_type_abbr, et.name as event_type_name, fe.faculty_lid, f.faculty_name, f.faculty_id 
-                FROM [${slug}].event_bookings eb
-                INNER JOIN [${slug}].events e ON e.id = eb.event_lid
-                LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
-                LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
-                INNER JOIN [${slug}].school_timings st ON st.id =  eb.school_timining_lid
-                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
-                INNER JOIN [${slug}].programs p ON p.id = e.program_lid
-                INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
-                INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-                INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-                INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                INNER JOIN [${slug}].days d 
-                ON eb.day_lid = d.id WHERE d.id = @dayLid` 
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, e.division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
+                ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
+                FROM [${slug}].event_booking_slots 
+                WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
+                WHERE row_num = 1) t2
+                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = e.id
+                LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
+                LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
+                LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+                LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
+                ORDER BY t2.start_slot, t2.end_slot` 
+                
             }
       
             return pool.request() 
