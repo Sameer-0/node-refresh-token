@@ -10,7 +10,7 @@ const Settings = require('../../../models/Settings');
 const ProgramsDbo = require('../../../models/ProgramsDbo');
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 module.exports = {
 
@@ -176,7 +176,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Programs Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Programs Master');
         worksheet.columns = [
           { header: "Program Id", key: "program_id", width: 10 },
           { header: "Program Name", key: "program_name", width: 30 },

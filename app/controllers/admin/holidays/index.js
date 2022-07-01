@@ -14,7 +14,7 @@ const path = require("path");
 var soap = require("soap");
 const isJsonString = require('../../../utils/util');
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 module.exports = {
 
@@ -223,7 +223,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Holiday Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Holiday Master');
         worksheet.columns = [
           { header: "Calendar Year", key: "calendar_year", width: 10 },
           { header: "Day", key: "dayname", width: 25 },

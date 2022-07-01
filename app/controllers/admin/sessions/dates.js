@@ -13,7 +13,7 @@ const Settings = require('../../../models/Settings')
 const path = require("path");
 var soap = require("soap");
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -260,7 +260,9 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Session Date Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet =  workbook.addWorksheet(`Session Date Master`);
+        
         worksheet.columns = [
           { header: "Program Name", key: "program_name", width: 10 },
           { header: "Program Code", key: "program_code", width: 25 },
@@ -282,6 +284,7 @@ module.exports = {
               "Content-Disposition",
               "attachment; filename=" + "SessionDateMaster.xlsx"
             );
+           
             return workbook.xlsx.write(res).then(function () {
               res.status(200).end();
             });
