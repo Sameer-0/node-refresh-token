@@ -13,7 +13,7 @@ const path = require("path");
 var soap = require("soap");
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 
 module.exports = {
@@ -257,7 +257,8 @@ module.exports = {
   },
 
   downloadMaster: async(req, res, next) => {
-    let worksheet = workbook.addWorksheet(`CourseWorkload Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+    let workbook = new excel.Workbook();
+    let worksheet = workbook.addWorksheet('CourseWorkload Master');
     worksheet.columns = [
       { header: "Module Name", key: "module_name", width: 30 },
       { header: "Module Id", key: "module_id", width: 25 },

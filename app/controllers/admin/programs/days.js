@@ -7,7 +7,7 @@ const {
 const ProgramDays = require('../../../models/ProgramDays')
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 module.exports = {
 
@@ -145,7 +145,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`ProgramDays Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('ProgramDays Master');
         worksheet.columns = [
           { header: "Program Name", key: "program_name", width: 30 },
           { header: "Program Id", key: "program_id", width: 25 },
