@@ -60,6 +60,8 @@ router.post('/faculties/batch/show-entries', batch.showEntries)
 
 //FACULTY ALLOCATION STATUS
 router.get('/faculties/allocation-status', allocation.getPage)
+router.post('/faculties/allocation-status', allocation.checkfacultyStatus)
+
 
 //faculty works
 router.get('/faculties/works', works.getPage)

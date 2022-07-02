@@ -24,7 +24,7 @@ module.exports = class Divisions {
         })
     }
 
-
+  
     static fetchDivisionData(rowcount, slug){
         return poolConnection.then(pool => {
             return pool.request().query(`select 
