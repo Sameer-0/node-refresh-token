@@ -58,9 +58,6 @@ module.exports = class Rooms {
     }
 
 
-
-
-
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
@@ -164,7 +161,7 @@ module.exports = class Rooms {
 
     static bookedRooms(slug, rowCount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowCount)} r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowCount)} rtd.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
@@ -174,7 +171,8 @@ module.exports = class Rooms {
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id = rtd.start_time_id
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
             INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
-            INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id`)
+            INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
+            ORDER BY rtd.id DESC`)
         })
     }
 
@@ -197,7 +195,7 @@ module.exports = class Rooms {
     static bookedRoomsPagination(slug, pageNo) {
         return poolConnection.then(pool => {
             return pool.request()
-                .input('pageNo', sql.Int, pageNo).query(`SELECT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+                .input('pageNo', sql.Int, pageNo).query(`SELECT rtd.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
@@ -257,4 +255,34 @@ module.exports = class Rooms {
                 INNER JOIN [dbo].campuses c ON c.id = b.campus_lid ORDER BY r.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
+
+    static BookedRoomdownloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT DISTINCT r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date, rtype.name as room_type
+            FROM [${slug}].room_transactions rt INNER JOIN
+            room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
+            [${slug}].room_transaction_details rtd ON rtd.room_transaction_lid = rt.id
+            INNER JOIN [dbo].rooms r ON r.id =  rtd.room_lid
+            INNER JOIN [dbo].buildings b ON b.id = r.building_lid
+            INNER JOIN [dbo].slot_interval_timings sit ON sit.id = rtd.start_time_id
+            INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
+            INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
+            INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
+			INNER JOIN [dbo].room_types rtype ON rtype.id = r.room_type_id`)
+        })
+    }
+
+    static RoomTransactionsdownloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT rtt.name as transaction_type, rts.name as stage, org.org_name, org.org_abbr, camp.campus_abbr, u.username  
+            FROM [${slug}].room_transactions rt
+            INNER JOIN dbo.room_transaction_stages rts ON rt.stage_lid = rts.id
+            INNER JOIN [dbo].room_transaction_types rtt ON rtt.id = rt.transaction_type_lid
+            INNER JOIN [dbo].organizations org ON org.id = rt.org_lid
+            INNER JOIN [dbo].campuses camp ON camp.id = rt.campus_lid
+            INNER JOIN [${slug}].users u ON u.id = rt.user_lid  ORDER BY rt.id DESC`)
+        })
+    }
+    
 }

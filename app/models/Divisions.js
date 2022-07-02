@@ -155,4 +155,15 @@ module.exports = class Divisions {
         })
     }
 
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT p.program_name, p.program_code, p.program_id, icw.module_name, icw.module_code, icw.module_id, d.division,  ads.acad_session,d.division_count as student_count, IIF(d.count_for_theory_batch IS NULL , 0, d.count_for_theory_batch) AS count_for_theory_batch, IIF(d.count_for_practical_batch IS NULL , 0 , d.count_for_practical_batch) AS count_for_practical_batch, IIF(d.count_for_tutorial_batch IS NULL ,0, d.count_for_tutorial_batch) AS count_for_tutorial_batch, IIF(d.count_for_workshop_batch IS NULL ,0 , d.count_for_workshop_batch) AS count_for_workshop_batch
+            FROM [${slug}].divisions d 
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            ORDER BY d.division_num ASC`)
+        })
+    }
+
 }

@@ -10,6 +10,8 @@ const FacultyBatch = require('../../../models/FacultyBatch');
 const Settings = require("../../../models/Settings");
 const DivisionBatches = require('../../../models/DivisionBatches');
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
+
 
 module.exports = {
 
@@ -333,6 +335,70 @@ module.exports = {
                     data: []
                 })
             }
+        })
+    },
+
+    downloadMaster: async(req, res, next) => {
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Faculty Date Time Master');
+        worksheet.columns = [
+          { header: "Faculty ID", key: "faculty_id", width: 10 },
+          { header: "Faculty Name", key: "faculty_name", width: 25 },
+          { header: "Faculty Type", key: "faculty_type", width: 25 },
+          { header: "Division", key: "division", width: 25 },
+          { header: "Batch", key: "batch", width: 25 },
+          { header: "Event Type", key: "event_type", width: 25 },
+          { header: "Program Name", key: "program_name", width: 30 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Program ID", key: "program_id", width: 25 },
+          { header: "Module Name", key: "module_name", width: 25 },
+          { header: "Module Code", key: "module_code", width: 25 },
+          { header: "Module ID", key: "module_id", width: 25 },
+          { header: "Academic Session", key: "acad_session", width: 25 }
+        ];
+
+        FacultyBatch.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "FacultyDateTimeMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    },
+
+    showEntries:(req, res, next)=>{
+        console.log('REQ:::::::::', req.body)
+        FacultyBatch.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Work fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
         })
     }
 }

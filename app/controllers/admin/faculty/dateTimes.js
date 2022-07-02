@@ -8,6 +8,9 @@ const {
     validationResult
 } = require('express-validator');
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
+
+
 module.exports = {
     getPage: (req, res) => {
 
@@ -174,4 +177,61 @@ module.exports = {
             }
         })
     },
+
+    downloadMaster: async(req, res, next) => {
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Faculty Date Time Master');
+        worksheet.columns = [
+          { header: "Faculty ID", key: "faculty_id", width: 10 },
+          { header: "Faculty Name", key: "faculty_name", width: 25 },
+          { header: "Faculty Type", key: "faculty_type", width: 25 },
+          { header: "Start Date", key: "start_date", width: 25 },
+          { header: "End Date", key: "end_date", width: 25 },
+          { header: "Start Time", key: "start_time", width: 25 },
+          { header: "End Time", key: "end_time", width: 25 }
+        ];
+
+        FacultyDateTimes.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "FacultyDateTimeMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    },
+
+    showEntries:(req, res, next)=>{
+        FacultyDateTimes.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Work fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
+    }
 }

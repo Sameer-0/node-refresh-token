@@ -23,6 +23,8 @@
                 <h5>Faculty Works</h5>
             </div>
             <div>
+                <a class="btn btn-danger" href="/admin/faculties/works/download"><i
+                    class="fas fa-download"></i> Download </a>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#add-facultywork-modal">
                     <i class="fas fa-plus"></i></button>
@@ -32,11 +34,23 @@
             </div>
         </div>
        
-        <div class="card-body table-responsive">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
 
-            <table class="table custom_row table-bordered" id="facultyWorkTable">
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entry</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                           <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                        type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                </div>
+            </div>
+           <table class="table custom_row table-bordered" id="facultyWorkTable">
                 <thead>
                     <th>Sr.No</th>
                     <th>Faculty</th>
@@ -662,6 +676,22 @@ $(document).ready(function () {
                 showSuccess(result)
             }).catch(error => {
                 showError(error.responseJSON)
+            })
+        })
+
+
+        //CHANGE ENTRIES
+        $("#changeEntry").on('change',function(){
+                let rowcount = $(this).val()
+                $.ajax({
+                type: "POST",
+                url: "/admin/faculties/works/show-entries",
+                data: {
+                    rowcount: rowcount
+                },
+                success: function (data) {
+                    showAjaxTable(data.data) 
+                }
             })
         })
 

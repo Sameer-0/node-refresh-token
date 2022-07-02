@@ -13,6 +13,8 @@ const Settings = require('../../../models/Settings');
 const path = require("path");
 var soap = require("soap");
 const isJsonString = require('../../../utils/util');
+const excel = require("exceljs");
+
 
 module.exports = {
 
@@ -217,6 +219,62 @@ module.exports = {
                     data: []
                 })
             }
+        })
+    },
+
+    downloadMaster: async(req, res, next) => {
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Holiday Master');
+        worksheet.columns = [
+          { header: "Calendar Year", key: "calendar_year", width: 10 },
+          { header: "Day", key: "dayname", width: 25 },
+          { header: "Holiday Date", key: "h_date", width: 25 },
+          { header: "Holiday Type", key: "holiday_type", width: 25 },
+          { header: "Reason", key: "reason", width: 25 }
+         
+        ];
+
+        Holidays.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "HolidayMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    },
+
+    showEntries:(req, res, next)=>{
+        Holidays.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
         })
     }
 

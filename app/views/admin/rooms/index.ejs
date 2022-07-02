@@ -47,15 +47,30 @@
                 <h5 class="modal-title text-white" id="add-room-modal-title">BOOKED ROOMS</h5>
             </div>
             <div>
-
+                <a class="btn btn-danger" href="/admin/rooms/download"><i
+                    class="fas fa-download"></i> Download </a>
             </div>
         </div>
 
-        <div class="card-body table-responsive">
+        <div class="card-body">
             <input type="hidden" id="roomId" name="roomId">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entry</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                           <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                        type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                </div>
+            </div>
             <div class="table-responsive">
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div> -->
                 <table class="table " id="room-booked-table">
                     <thead>
                         <th>#</th>
@@ -82,7 +97,7 @@
                                 <td><%- list.start_date %></td>
                                 <td><%- list.end_date %></td>
                                 <td><%- list.building_name %></td>
-                                <!-- <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> -->
+                                <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td>
                             </tr>
                         <%}%>
                     </tbody>
@@ -105,7 +120,7 @@
 <!-- Modal -->
 <div class="modal fade" id="booking-cancel-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content rounded-0">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Booking Cancellation</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -113,33 +128,33 @@
         <div class="modal-body">
             <div class="mb-3">
                 <label class="form-label">Start Date</label>
-                <input class="form-control" id="room-id" type="date">
+                <input class="form-control rounded-0" id="room-id" type="date">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">End Date</label>
-                <input class="form-control" id="room-id" type="date">
+                <input class="form-control rounded-0" id="room-id" type="date">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Start Time</label>
-                <input class="form-control" id="room-id" type="datetime-local">
+                <input class="form-control rounded-0" id="room-id" type="datetime-local">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">End Time</label>
-                <input class="form-control" id="room-id" type="datetime-local">
+                <input class="form-control rounded-0" id="room-id" type="datetime-local">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Reason for cancellation</label>
                 <input class="form-control" id="room-id" type="hidden">
-                <textarea class="form-control" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
+                <textarea class="form-control rounded-0" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary confirm-btn">Confirm</button>
+          <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary confirm-btn rounded-0">Confirm</button>
         </div>
       </div>
     </div>
@@ -195,7 +210,8 @@
                 let pageNo = $(this).attr('data-lp')
                 console.log('PAGE NO.:::::::::::', $(this).attr('data-lp'))
                 console.log('keyword.:::::::::::', keyword)
-                $.ajax({ 
+                if(keyword){
+                    $.ajax({ 
                     type: "POST",
                     url: "/admin/rooms/search",
                     data: {
@@ -206,6 +222,7 @@
                          AjaxtTable(data.data)
                     }
                 })
+                }
             })
 
 
@@ -241,6 +258,22 @@
     }
     })
     });
+
+
+        //CHANGE ENTRIES
+        $("#changeEntry").on('change',function(){
+                let rowcount = $(this).val()
+                $.ajax({
+                type: "POST",
+                url: "/admin/rooms/show-entries",
+                data: {
+                    rowcount: rowcount
+                },
+                success: function (data) {
+                    AjaxtTable(data.data) 
+                }
+            })
+        })
     
 
     function AjaxtTable(bookedRoomList){
@@ -272,7 +305,7 @@
                                 <td>${room.start_date}</td>
                                 <td>${room.end_date}</td>
                                 <td>${room.building_name}</td>
-                                <!-- <td><a class="room-cancel-request" data-id="${room.id}" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> -->
+                                <td><a class="room-cancel-request" data-id="${room.id}" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> 
                             </tr>`
                     }
                 } else {

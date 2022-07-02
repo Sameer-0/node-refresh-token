@@ -10,13 +10,13 @@ const Settings = require('../../../models/Settings')
 const CourseWorkload = require('../../../models/CourseWorkload')
 const Programs = require('../../../models/Programs')
 const isJsonString = require('../../../utils/util')
+const excel = require("exceljs");
 
 
 module.exports = {
     getPage: (req, res) => {
         let slugName = res.locals.slug;
         Promise.all([DivisionBatches.fetchAll(1000, slugName), DivisionBatches.getCount(slugName), CourseWorkload.fetchAll(1000, slugName), Programs.fetchAll(10000, slugName)]).then(result => {
-            console.log('divisionBatchList', result[0].recordset)
             res.render('admin/divisions/batches', {
                 divisionBatchList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -200,4 +200,68 @@ module.exports = {
             }
         })
     },
+
+    downloadMaster: async(req, res, next) => {
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Division Batch Master');
+        worksheet.columns = [
+          { header: "Program Name", key: "program_name", width: 10 },
+          { header: "Program ID", key: "program_id", width: 25 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Module Name", key: "module_name", width: 25 },
+          { header: "Module Code", key: "module_code", width: 25 },
+          { header: "Module ID", key: "module_id", width: 25 },
+          { header: "Division", key: "division", width: 25 },
+          { header: "Batch", key: "batch", width: 25 },
+          { header: "Event", key: "event_name", width: 25 },
+          { header: "Academic Session", key: "acad_session", width: 25 },
+          { header: "Division Count", key: "divison_count", width: 25 },
+          { header: "Batch Count", key: "batch_count", width: 25 },
+          { header: "Input Batch Count", key: "input_batch_count", width: 25 },
+          { header: "Faculty Count", key: "faculty_count", width: 25 }
+        ];
+
+        DivisionBatches.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "DivisionBatchMaster.xlsx"
+            );
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    },
+
+    showEntries:(req, res, next)=>{
+        DivisionBatches.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
+      }
 }

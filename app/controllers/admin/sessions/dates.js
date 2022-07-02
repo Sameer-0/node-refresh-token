@@ -12,6 +12,8 @@ const isJsonString = require('../../../utils/util')
 const Settings = require('../../../models/Settings')
 const path = require("path");
 var soap = require("soap");
+const excel = require("exceljs");
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -254,8 +256,38 @@ module.exports = {
             res.status(500).json({status:500,
                 description:'Something went wrong try after some time.',
                 data:[]})
-        }
-               
-
+        }  
     },
+
+    downloadMaster: async(req, res, next) => {
+        let workbook = new excel.Workbook();
+        let worksheet =  workbook.addWorksheet(`Session Date Master`);
+        
+        worksheet.columns = [
+          { header: "Program Name", key: "program_name", width: 10 },
+          { header: "Program Code", key: "program_code", width: 25 },
+          { header: "Program ID", key: "program_id", width: 25 },
+          { header: "Start Date", key: "startDate", width: 25 },
+          { header: "End Date", key: "endDate", width: 25 },
+          { header: "Academic Session", key: "acad_session", width: 25 }
+        ];
+
+        SessionDates.downloadExcel(res.locals.slug).then(result => {
+            // Add Array Rows
+            worksheet.addRows(result.recordset);
+            // res is a Stream object
+            res.setHeader(
+              "Content-Type",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+              "Content-Disposition",
+              "attachment; filename=" + "SessionDateMaster.xlsx"
+            );
+           
+            return workbook.xlsx.write(res).then(function () {
+              res.status(200).end();
+            });
+        })
+    }
 }

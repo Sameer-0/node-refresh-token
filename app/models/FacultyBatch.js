@@ -58,7 +58,7 @@ module.exports = class FacultyBatch {
             let request = pool.request()
             return request.input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
             .input('pageNo', sql.Int, body.pageNo)
-                .query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, 
+                .query(`SELECT  fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, 
                 f.faculty_id, db.batch, d.division,
                 icw.module_name, p.program_name, ads.acad_session, et.name as event_type
                  FROM [${slug}].faculty_batches fb
@@ -179,4 +179,20 @@ module.exports = class FacultyBatch {
         })
     }
 
+    static downloadExcel(slug) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT f.faculty_id, f.faculty_name, ft.name AS faculty_type, d.division, db.batch, et.name as event_type,
+            p.program_name, p.program_code, p.program_id, icw.module_name, icw.module_code, icw.module_id,  ads.acad_session
+            FROM [${slug}].faculty_batches fb
+            INNER JOIN [${slug}].faculties f ON fb.faculty_lid =  f.id
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            INNER JOIN [${slug}].division_batches db ON db.id = fb.batch_lid
+            INNER JOIN [${slug}].divisions d ON d.id =  db.division_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid
+            ORDER BY fb.id DESC`)
+        })
+    }
 }

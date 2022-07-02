@@ -32,6 +32,9 @@ router.post('/courseworkload/workload/session-by-programid',  courseworkload.ses
 router.post('/courseworkload/workload/fetching-courses',  courseworkload.courseBySessionIdAndProgramId)
 router.post('/courseworkload/workload/workload-by-programid',  courseworkload.workloadByProgramId)
 router.post('/courseworkload/workload/workload-by-programid-sessionid',  courseworkload.workloadByProgramIdSessionId)
+router.get('/courseworkload/workload/download', courseworkload.downloadMaster)
+router.post('/courseworkload/workload/show-entries', courseworkload.showEntries)
+
 //Course preference
 router.get('/courseDayRoomPreference', preference.getPage)
 router.post('/courseDayRoomPreference/create', preference.create)

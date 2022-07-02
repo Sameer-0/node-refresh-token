@@ -23,14 +23,44 @@
                 <h5>Faculy Work Time Preference</h5>
             </div>
             <div>
+                <a class="btn btn-danger" href="/admin/faculties/workpreferences/download"><i
+                    class="fas fa-download"></i> Download </a>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-facultypreference-modal"><i class="fas fa-plus"></i>
                 </button>
             </div>
         </div>
 
         <div class="card-body table-responsive">
-            <div class="table-searchbar-container d-flex"><button type="button"><i class="fas fa-search"></i></button>
-                <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+
+            <div class="d-flex bd-highlight mb-3">
+                <div class="p-2 bd-highlight">
+                    <label>Show Entry</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                           <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div class="p-2 bd-highlight"> 
+                    <label>Select Faculty</label>
+                    <select class="form-select" id="FilterFacultyName">
+                        <option selected >Select Faculty</option>
+                        <%for(let faculty of facultyList){%>
+                            <option  data-faculty-name="<%- faculty.faculty_name %>"
+                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.faculty_lid%>"   value="<%- faculty.faculty_dbo_lid %>">
+                                <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                                %></option>
+                        <%}%>
+                    </select>
+                </div>
+
+                <div class="ms-auto p-2 bd-highlight">  <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div></div>
+              </div>
+
+              
+
+ 
 
             <table class="table custom_row table-bordered" id="facultyWorkTimePreference">
                 <thead>
@@ -70,7 +100,7 @@
             </table>
             <div class="d-flex justify-content-between">
                 <div>
-                    <p>Total entries:<%- pageCount %>
+                    <p>Total entries: <span id="totalCount"><%- pageCount %></span>
                     </p>
                 </div>
                 <div>
@@ -214,12 +244,11 @@
     <!--  -->
     <script>
         $(document).ready(function () {
-
     $('.select2').select2({
         dropdownParent: $('#add-facultypreference-modal')
     });
 
-    $('.select2').select2({dropdownParent: $('#add-facultypreference-modal')});
+   // $('.select2').select2({dropdownParent: $('#add-facultypreference-modal')});
     
         //search feature delay function is writter in script.js file which is located in public/js/script.js
         $('#searchkeyword').on('input', delay(function (e) {
@@ -228,7 +257,8 @@
                 type: "POST",
             url: "/admin/faculties/workpreferences/search",
             data: {
-                keyword: keyword
+                keyword: keyword,
+                pageNo:1
             },
             success: function (data) {
                 showAjaxTable(data.data)
@@ -567,6 +597,25 @@
         })
     })
 
+
+    // FILTER APIS
+    $("#FilterFacultyName").on('change',function(){
+            let faculty_lid = $('#FilterFacultyName').find('option:selected').attr('data-faculty-id');
+            let ApiObj = {
+            type: 'POST',
+            url: '/admin/faculties/workpreferences/programby-facultyid',
+            data: {
+                faculty_lid: faculty_lid
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            showAjaxTable(result.facultylist)
+        }).catch(error => {
+            showError(error.responseJSON)
+        })
+        })
+
     function facultySlotForEdit(facultyid, start_time_id, end_time_id){
             let ApiObj = {
             type: 'POST',
@@ -672,6 +721,23 @@
         })
     });
 
+
+
+        //CHANGE ENTRIES
+        $("#changeEntry").on('change',function(){
+                let rowcount = $(this).val()
+                $.ajax({
+                type: "POST",
+                url: "/admin/faculties/workpreferences/show-entries",
+                data: {
+                    rowcount: rowcount
+                },
+                success: function (data) {
+                    showAjaxTable(data.data) 
+                }
+            })
+        })
+
  
 
     function showAjaxTable(facultiesList) {
@@ -714,11 +780,12 @@
             } else {
                 AjaxTable +=
                     ` <tr>
-                         <td colspan="9">No Data Found</td>
+                         <td colspan="11">No Data Found</td>
                       </tr>`;
             }
             AjaxTable += `<tbody></table>`
             $("#facultyWorkTimePreference").html(AjaxTable);
+            $("#totalCount").html(facultiesList.length)
 
         }
 
