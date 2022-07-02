@@ -5,11 +5,11 @@
 <!-- MAIN-CONTENT -->
 <div class="main-content">
     <div class="breadcrumbs-container">
-    
+
         <ul class="breadcrumb">
             <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-                <%} }%>
+            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+            <%} }%>
         </ul>
     </div>
     <%- include("../partials/faculty-menu") %>
@@ -21,16 +21,27 @@
                 <h5>Faculty Allocation Status</h5>
             </div>
             <div>
-                <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-facultybatch-modal"><i
-                        class="fas fa-plus"></i></button>
+                <!-- <button class="btn add-btn ms-auto" data-bs-toggle="modal" data-bs-target="#add-facultybatch-modal"><i
+                        class="fas fa-plus"></i></button> -->
                 <!-- <button class="btn ms-auto delete-facultybatch add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-facultybatch add-btn "><img src="/icons/delete.png" alt=""
                         width="24px" height="32px"></button> -->
             </div>
         </div>
         <div class="card-body table-responsive">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            <div class="row">
+                <div class="col-md-4">
+                    <select class="form-select select2" id="facultyName">
+                        <option>Select faculty</option>
+                        <%for(let faculty of facultyList){%>
+                        <option value="<%-faculty.id%>"><%-faculty.faculty_name%> (<%-faculty.faculty_id%>)</option>
+                        <%}%>
+            </select>
+                </div>
+            </div>
+
+            <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div> -->
             <table class="table custom_row" id="facultyBatch">
                
             </table>
@@ -133,13 +144,28 @@
 
 <%- include("../partials/footer") %>
 
-<script src="/js/dashboardscript.js"></script>
-<script src="/js/leftsidebartoggle.js"></script>
-<script>
-
-$(document).ready(function(){
-
-    })
-
-</script>
-<%- include("../partials/footerEnd") %>
+                        <script src="/js/dashboardscript.js"></script>
+                        <script src="/js/leftsidebartoggle.js"></script>
+                        <script>
+                            $(document).ready(function () {
+                                $(".select2").select2()
+                                $("#facultyName").on('change', function () {
+                                    let faculty_id = $(this).val()
+                                    console.log('faculty_id:::::', faculty_id)
+                                    let ApiObj = {
+                                        url: '/admin//faculties/allocation-status',
+                                        type: 'POST',
+                                        data: {
+                                            faculty_id: faculty_id
+                                        },
+                                        dataType: 'JSON'
+                                    }
+                                    ajaxApi(ApiObj).then(result => {
+                                        console.log('Result::::::::::::',result)
+                                    }).catch(error => {
+                                        console.log('Error::::::::::::',error)
+                                    })
+                                })
+                            })
+                        </script>
+                        <%- include("../partials/footerEnd") %>
