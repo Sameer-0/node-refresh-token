@@ -123,4 +123,19 @@ module.exports = class Faculties {
         })
     }
 
+    static allocationStatus(slug, facultyId) {
+        return poolConnection.then(pool => {
+            return pool.request().input('facultyId', sql.Int, facultyId).query(`SELECT p.program_name, p.program_code, icw.module_name, icw.module_code, ads.acad_session,sit.start_time, _sit.end_time, d.day_name FROM [asmsoc-mum].events e
+INNER JOIN [${slug}].event_bookings eb ON eb.event_lid = e.id
+INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid
+INNER JOIN [dbo].slot_interval_timings sit ON sit.id =  st.slot_start_lid
+INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id = st.slot_end_lid
+INNER JOIN [${slug}].days d ON d.id =  eb.day_lid
+INNER JOIN [${slug}].programs p ON p.id =  e.program_lid
+INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+INNER JOIN [dbo].acad_sessions ads ON ads.id =  e.acad_session_lid
+WHERE e.faculty_lid = @facultyId`)
+        })
+    }
+
 }
