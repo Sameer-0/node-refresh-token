@@ -17,9 +17,13 @@ module.exports = {
     },
 
     checkfacultyStatus: (req, res, next) => {
-        res.status(200).json({
-            status: 200,
-            message: "success"
+        Faculties.allocationStatus(res.locals.slug, req.body.faculty_id).then(result => {
+            res.status(200).json({
+                status: 200,
+                message: "success",
+                facultyStatus: result.recordset
+            })
         })
+
     }
 }
