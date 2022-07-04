@@ -31,6 +31,5 @@ module.exports = {
                 facultyallocations: result[1].recordset
             })
         })
-
     }
 }
