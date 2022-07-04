@@ -288,8 +288,8 @@
                                         dataType: 'JSON'
                                     }
                                     ajaxApi(ApiObj).then(result => {
-                                        console.log('Result::::::::::::',result.facultyallocations)
-                                        timeTableDisplay(result.daysdata, result.facultyallocations)
+                                        console.log('Result::::::::::::',result)
+                                        timeTableDisplay(result.daysdata, result.bookedSlot, result.availableSlot)
                                     }).catch(error => {
                                         console.log('Error::::::::::::',error)
                                     })
@@ -348,7 +348,7 @@
         console.log('timeTablestartSlot::::::::::>',timeTablestartSlot)
         let fixedBreakSlotStart = 115
 
-        function timeTableDisplay(dayJson, allEventListJson){
+        function timeTableDisplay(dayJson, bookedSlot, availableSlot){
             let fixedBreadWidth ;
             let roomSlot;
             let eventStartSlot;
@@ -369,7 +369,7 @@
                 timeTableBox.innerHTML = dayHtml;
 
             console.log('Faculty Slot')
-            for( let event of allEventListJson) {
+            for( let event of bookedSlot) {
                 console.log('allEventListJson:::::::::::',event)
                 if(!event.is_break){
                     console.log('HERE TRUE')
@@ -385,7 +385,7 @@
                     
 
                 let roomSlotItem = document.createElement('div');
-                roomSlotItem.setAttribute("class",`event room-slot-item ${event.is_time_preffered  ?  'bg-danger' :  'bg-success'}`)
+                roomSlotItem.setAttribute("class",`event room-slot-item bg-danger`)
                 roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${(event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot}px;`)
                 roomSlotItem.setAttribute("data-event-lid",`${event.event_lid}`)
                 roomSlotItem.setAttribute("data-module-name",`${event.module_name}`)
@@ -422,6 +422,42 @@
                     roomSlot.append(fixedBreak);
                 }
             }
+
+            // for(let event of availableSlot){
+
+            // if(document.querySelector(`.event[data-event-lid="${event.event_lid}"]`)){
+            //     console.log('event-count');
+            // }
+            // else{
+            //     if(!event.is_break){
+            //         console.log('other events')
+            //         roomSlot = document.querySelector(`.room[day-lid = "${event.day_lid}"] .room-slots`)
+            //         eventStartSlot = event.start_slot;
+            //         eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
+            //         let occRoomWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
+            //         `${timetableProp.pxPerSlot * 12}` :
+            //         `${timetableProp.pxPerSlot * 13}`
+            //         let occupiedRoomSlotItem = document.createElement('div');
+            //         occupiedRoomSlotItem.setAttribute("class","occupied-event room-slot-item")
+            //         occupiedRoomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width: ${occRoomWidth}px`)
+            //         occupiedRoomSlotItem.setAttribute("data-event-lid",`${event.event_lid}`)
+            //         occupiedRoomSlotItem.setAttribute("data-module-name",`${event.module_name}`)
+            //         occupiedRoomSlotItem.setAttribute("data-module-lid",`${event.course_lid}`)
+            //         occupiedRoomSlotItem.setAttribute("data-division-name",`${event.division}`)
+            //         occupiedRoomSlotItem.setAttribute("data-batch-name",`${event.batch}`)
+            //         occupiedRoomSlotItem.setAttribute("data-event-type-lid",`${event.event_type_lid}`)
+            //         occupiedRoomSlotItem.setAttribute("data-session-name",`${event.acad_session}`)
+            //         occupiedRoomSlotItem.setAttribute("data-session-lid",`${event.acad_session_lid}`)
+            //         occupiedRoomSlotItem.setAttribute("data-program-name",`${event.program_name}`)
+            //         occupiedRoomSlotItem.setAttribute("data-program-lid",`${event.program_lid}`)
+            //         occupiedRoomSlotItem.setAttribute("data-start-time",`${event.start_slot}`)
+            //         occupiedRoomSlotItem.setAttribute("data-end-time",`${event.end_slot}`)
+            //         occupiedRoomSlotItem.setAttribute("data-faculty-lid",`${event.faculty_lid ? event.faculty_lid : ''}`)
+            //         occupiedRoomSlotItem.innerHTML = `AVAILABLE`;
+            //         roomSlot.append(occupiedRoomSlotItem);
+            //     }
+            // }
+            // }
             cssRoot.style.setProperty('--fixedBreakWidth', `${fixedBreadWidth}px`);
         }
                     
