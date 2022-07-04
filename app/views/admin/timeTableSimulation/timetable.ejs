@@ -28,7 +28,7 @@
             /* border-right: 1px solid; */
             border-bottom: 1px solid;
             text-align: center;
-            padding: 125px 0px;
+            padding: 75px 0px;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -40,7 +40,7 @@
 
         .room-slots {
             width: var(--roomSlotWidth);
-            min-height: 250px;
+            min-height: 150px;
             position: relative;
             background-size: var(--breakIntervalWidth);
             background-image:
@@ -48,8 +48,11 @@
         }
 
 
+
         .room {
             border: 1px solid black;
+            min-height: 150px;
+            max-height: 150px;
             
         }
 
@@ -73,6 +76,25 @@
             
         }
 
+        .pending-event{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            position: relative;
+            
+        }
+
+        .pen-element{
+            position: absolute;
+            width:169px; 
+            height:152px;
+            border-left:1px solid rgb(255, 86, 86); 
+            border-right:1px solid rgb(255, 86, 86);
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
     
        
 
@@ -131,10 +153,10 @@
             background-size: 3px;
             background: repeating-linear-gradient(251deg, #212121, #444141 12px);
             color: #fff;
-            font-size: 3rem;
+            font-size: 2.4rem;
             padding: 1px 18px;
             text-align: center;
-            line-height: 1.1;
+            line-height: 0.75;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -150,7 +172,7 @@
             background: repeating-linear-gradient(225deg, #9cceff, #fcfcfc 10px);
             height: 100%;
             text-align: center;
-            padding: 125px 0px;
+            padding: 75px 0px;
             font-weight: bold;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -160,7 +182,7 @@
             user-select: none;
         }
 </style>
-<%- include("../partials/leftSidebar") %>
+<%- include("../partials/leftSidebarTimeTable") %>
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
 <!--HEADER END-->
@@ -928,24 +950,6 @@
                                 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                
                                 //DISPLAYING TIMETABLE AND DRAG EVENTS
                                 
                                 let eventListJson;
@@ -991,6 +995,12 @@
             isDroppable: true,
             isDragging: false
         }
+        
+        // $(document).on('click', '.pending-event', function() {
+            
+        //     console.log('peee', this)
+        // })
+        
      
         // let roomList = document.querySelector(`.room[data-room-lid = "2"] .room-slots`);
         // let div = document.createElement('div');
@@ -998,6 +1008,14 @@
         // console.log('room list::::::', roomList.append(div))
         let timeTablestartSlot = timeJson[0].id;
         let fixedBreakSlotStart = 115
+
+        $('.pending-event').on('click', function(){
+            $('.pending-event').css('border','none')
+            $('.pending-event').removeAttr('data-selected')
+          
+            $(this).css('border', '1px solid red')
+            $(this).attr('data-selected','true')
+        })
 
         function timeTableDisplay(eventListJson, allEventListJson){
             let fixedBreadWidth ;
@@ -1164,10 +1182,33 @@
                 // }
                 // });
 
+        let penElem = document.createElement('div');
+        penElem.setAttribute('class', 'pen-element d-none');
+        document.body.append(penElem)
 
+        let isPenEventSelected;
+        $('.pending-event').each((index, element) => {
+            if( $(element).attr('data-selected')){
+                isPenEventSelected = true;
+            }
+            
+           
+        })
+
+        //select and unselect pending events
+        // let pendingEventList = document.querySelector('.pending-event');
+        // document.addEventListener('click', function(e){
+        // //    if(e.target.classList.contains('pending-event')){
+        //     console.log('pEE true:::', e.target.classList)
+        // //    }
+        // })
+
+        // $('.pending-event').on('click', function() {
+            
+        // })
                               
 
-                let fixedBreakBounding
+        let fixedBreakBounding
 
         function dragStart(e) {
 
@@ -1236,8 +1277,22 @@
     
 
             } else {
-                console.log('Not draggable')
-                dragObj.isDraggable = false;
+                if(true){
+                    console.log('pending events')
+                    document.addEventListener('click', function(e){
+         
+            
+                    let tarEle = document.elementsFromPoint(e.clientX, e.clientY);
+                    console.log('tar:::',document.elementsFromPoint(e.clientX, e.clientY));
+                    getCurrentRoom(tarEle)
+                    console.log('fff', getCurrentRoom(tarEle));
+                    
+                })
+                }else{
+
+                    console.log('Not draggable')
+                    dragObj.isDraggable = false;
+                }
             }
 
         }
@@ -1248,8 +1303,17 @@
             dragObj.relativeClientX = e.clientX -  dragObj.tableLeftPosition
            
             if (!dragObj.isDraggable || !dragObj.isMouseDown || dragObj.relativeClientX >= (timetableProp.totalSlots * timetableProp.pxPerSlot) + timetableProp.roomNoWidth || dragObj.relativeClientX <= timetableProp.roomNoWidth) {
-        
-                return false;
+                if(isPenEventSelected){
+                           
+                    penElem.setAttribute('style', `left: ${e.clientX}px; top:${e.clientY}px`);
+                    document.querySelector('.pen-element').classList.remove('d-none');
+                    
+                }else{
+                    return false;
+                }
+
+            
+               
             }
 
             else {
@@ -1285,9 +1349,10 @@
                     .width ? (timetableProp.totalSlots * timetableProp.pxPerSlot) - targetProp.width : targetProp.movedX;
 
                 dragObj.targetElem.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot +'px' : '0px'
-                dragObj.targetElem.style.top =   `${targetProp.movedY}px`;
+                dragObj.targetElem.style.top =   targetProp.movedY < 10 ? `${targetProp.movedY}px` : `${targetProp.movedY + window.pageYOffset}px`
             
-                console.log('left position:::::', Math.round(targetProp.movedX / timetableProp.pxPerSlot))
+                console.log('Window scroll drag top:::::', targetProp.movedY )
+                console.log('Window scroll:::::', window.pageYOffset )
                 
                 if((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right > fixedBreakBounding.left && tRect.right <= fixedBreakBounding.right) || (tRect.right >= fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) {
 
@@ -1507,6 +1572,7 @@
 
         }
 
+     
 
         function getCurrentRoom(elementList) {
             for (let elem of elementList) {
@@ -1517,58 +1583,56 @@
         }
 
 
-    
-
-                                function showError(errors) {
-                                    console.log('error::::::::::', errors)
-                                    let simpleAlert = new SimpleAlert();
-                                    let obj = {
-                                        title: errors.description,
-                                        message: errors.data,
-                                        type: 'alert-danger',
-                                        buttons: {
-                                            positive: {
-                                                text: "Okay",
-                                                action: function () {
-                                                    document.querySelector('.simple-alert').remove();
-                                                }
-                                            },
-                                            negative: {
-                                                text: "Cancel",
-                                                action: function () {
-                                                    alert('Negative')
-                                                }
-                                            }
-                                        }
-                                    }
-                                    simpleAlert.alert(obj);
-                                }
+        function showError(errors) {
+            console.log('error::::::::::', errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: errors.data,
+                type: 'alert-danger',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
 
 
-                                function showSuccess(errors) {
-                                    console.log('error::::::::::', errors)
-                                    let simpleAlert = new SimpleAlert();
-                                    let obj = {
-                                        title: errors.description,
-                                        message: errors.data,
-                                        type: 'alert-success',
-                                        buttons: {
-                                            positive: {
-                                                text: "Okay",
-                                                action: function () {
-                                                    document.querySelector('.simple-alert').remove();
-                                                }
-                                            },
-                                            negative: {
-                                                text: "Cancel",
-                                                action: function () {
-                                                    alert('Negative')
-                                                }
-                                            }
-                                        }
-                                    }
-                                    simpleAlert.alert(obj);
-                                }
+        function showSuccess(errors) {
+            console.log('error::::::::::', errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title: errors.description,
+                message: errors.data,
+                type: 'alert-success',
+                buttons: {
+                    positive: {
+                        text: "Okay",
+                        action: function () {
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                            alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+        }
 
                             // })
                         </script>
