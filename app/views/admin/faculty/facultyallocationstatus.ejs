@@ -15,15 +15,14 @@
             max-width: var(--roomNoWidth);
             background: #006faa;
             color: #fff;
-            /* border-right: 1px solid; */
             border-bottom: 1px solid;
             text-align: center;
-            padding: 125px 0px;
+            padding: 10px 0px;
         }
 
         .room-slots {
             width: var(--roomSlotWidth);
-            min-height: 250px;
+            min-height: 10px;
             position: relative;
             background-size: var(--breakIntervalWidth);
             background-image:
@@ -33,7 +32,7 @@
 
         .room {
             border: 1px solid black;
-            
+            line-height: 0px;
         }
 
         .event {
@@ -52,14 +51,14 @@
     
        
 
-        .event:nth-child(even) .start-time{
+        /* .event:nth-child(even) .start-time{
             background-color: #dc3545 !important;
       
         }
 
         .event:nth-child(even) .end-time{
             background: #dc3545 !important;
-        }
+        } */
        
 
         .start-time{
@@ -148,12 +147,16 @@
         <div class="card-body table-responsive">
             <div class="row">
                 <div class="col-md-4 mb-5">
-                    <select class="form-select select2" id="facultyName">
+            <select class="form-select select2" id="facultyName">
                         <option>Select faculty</option>
                         <%for(let faculty of facultyList){%>
                         <option value="<%-faculty.id%>"><%-faculty.faculty_name%> (<%-faculty.faculty_id%>)</option>
                         <%}%>
             </select>
+            <div class="form-check form-check-inline mt-3">
+                <input class="form-check-input" type="checkbox" id="showDetails">
+                <label class="form-check-label" for="showDetails">Show Details</label>
+            </div>
                 </div>
             </div>
 
@@ -273,6 +276,7 @@
                             $(document).ready(function () {
                                 $(".select2").select2()
                                 $("#facultyName").on('change', function () {
+                                    $("#showDetails").prop('checked',false)
                                     let faculty_id = $(this).val()
                                     console.log('faculty_id:::::', faculty_id)
                                     let ApiObj = {
@@ -290,15 +294,31 @@
                                         console.log('Error::::::::::::',error)
                                     })
                                 })
+
+
+                                //SHOW DETAILS IF CHECKED 
+                                $("#showDetails").on('click',function(){
+                                    if ($(this).is(':checked')) {
+                                        $(".slotStatusWithDetails").removeClass('d-none')
+                                        $(".slotStatusWithDetails").css('line-height','1.5')
+                                        $(".day-name").css('padding','100px 0px')
+                                        $(".slotStatusWithDetails").css('padding-top','15px')
+                                        console.log('CHECKED::::::::>>')
+                                    }else{
+                                        $(".slotStatusWithDetails").addClass('d-none')
+                                        console.log('UNCHECKED::::::::>>')
+                                        $(".slotStatusWithDetails").css('line-height','0')
+                                        $(".day-name").css('padding','10px 0px')
+                                    }
+                                })
+
                             })
 
                                 let  slugName = `<%-locals.slug %>`
                                 let  userId = `<%-locals.userId %>`
                                 console.log('slugName::::::::::::>>',slugName)
                                 console.log('userId::::::::::::>>',userId)
-                         
-
-
+                        
                                 //DISPLAYING TIMETABLE AND DRAG EVENTS
                                 let eventListJson;
                                 
@@ -309,7 +329,7 @@
         let timetableProp = {
             totalSlots: 116,
             pxPerSlot: 13,
-            roomNoWidth: 50,
+            roomNoWidth: 150,
             
         }
         cssRoot.style.setProperty('--timetableWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot + 50 }px`);
@@ -365,7 +385,7 @@
                     
 
                 let roomSlotItem = document.createElement('div');
-                roomSlotItem.setAttribute("class","event room-slot-item")
+                roomSlotItem.setAttribute("class",`event room-slot-item ${event.is_time_preffered  ?  'bg-danger' :  'bg-success'}`)
                 roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${(event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot}px;`)
                 roomSlotItem.setAttribute("data-event-lid",`${event.event_lid}`)
                 roomSlotItem.setAttribute("data-module-name",`${event.module_name}`)
@@ -380,8 +400,8 @@
                 roomSlotItem.setAttribute("data-start-time",`${event.start_slot}`)
                 roomSlotItem.setAttribute("data-end-time",`${event.end_slot}`)
                 roomSlotItem.setAttribute("data-faculty-lid",`${event.faculty_lid ? event.faculty_lid : ''}`)
-                roomSlotItem.innerHTML = `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type}) <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
-                <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> ${breakElement}`;
+                roomSlotItem.innerHTML = `<div class="slotStatusWithDetails d-none text-white">${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})</div> <span class="badge  start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
+                <i class="fa-solid fa-arrows-left-right text-white"></i><span class="badge  end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> ${breakElement}`;
                 console.log('roomSlotItem:::::',roomSlotItem)
                 roomSlot.append(roomSlotItem);
                 }
@@ -402,19 +422,9 @@
                     roomSlot.append(fixedBreak);
                 }
             }
-
-
-            
             cssRoot.style.setProperty('--fixedBreakWidth', `${fixedBreadWidth}px`);
         }
                     
-      
-
-
-
-
-    
-
                                 function showError(errors) {
                                     console.log('error::::::::::', errors)
                                     let simpleAlert = new SimpleAlert();
