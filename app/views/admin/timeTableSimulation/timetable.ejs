@@ -28,7 +28,7 @@
             /* border-right: 1px solid; */
             border-bottom: 1px solid;
             text-align: center;
-            padding: 75px 0px;
+            padding: 99px 0px;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -51,8 +51,8 @@
 
         .room {
             border: 1px solid black;
-            min-height: 150px;
-            max-height: 150px;
+            min-height: 200px;
+            max-height: 200px;
         }
 
         .event {
@@ -101,15 +101,14 @@
         }
     
        
-
-        .event:nth-child(even) .start-time{
+        /* .event:nth-child(even) .start-time{
             background-color: #dc3545 !important;
       
         }
 
         .event:nth-child(even) .end-time{
             background: #dc3545 !important;
-        }
+        } */
        
 
         .start-time{
@@ -157,18 +156,16 @@
             background-size: 3px;
             background: repeating-linear-gradient(251deg, #212121, #444141 12px);
             color: #fff;
-            font-size: 2.4rem;
-            padding: 1px 18px;
+            font-size: 1.1rem;
+            padding: 99px 8px;
             text-align: center;
-            line-height: 0.75;
+            line-height: 1;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -khtml-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            
-
         }
 
         .occupied-event{
@@ -176,7 +173,7 @@
             background: repeating-linear-gradient(225deg, #9cceff, #fcfcfc 10px);
             height: 100%;
             text-align: center;
-            padding: 75px 0px;
+            padding: 99px 0px;
             font-weight: bold;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -825,11 +822,26 @@
         })
 
 
-        //DISPLAYING TIMETABLE AND DRAG EVENTS
 
         let eventListJson;
         let roomJson = JSON.parse(`<%-roomList%>`)
+        let pendingEventListJson = JSON.parse(`<%- pendingEventList%>`)
 
+        //CREATING PENDING EVENT ELEMENTS FOR APPENDING
+        let pendingEventElement=``;
+        for(let pendingEvent of pendingEventListJson){
+            pendingEventElement += `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program_lid="${pendingEvent.program_lid}" data-session_lid="${pendingEvent.acad_session_lid}" data-module_lid="${pendingEvent.course_lid}">
+            <p>${pendingEvent.program_name}<br>
+                ${pendingEvent.acad_session} <br>
+                ${pendingEvent.module_name}<br>
+                ${pendingEvent.division}-${pendingEvent.batch}(${pendingEvent.event_type})
+            </p>
+          </div>`
+        }
+        let pendingEventContainer = document.querySelector('.pending-event-container');
+        pendingEventContainer.innerHTML = pendingEventElement;
+
+        
 
         let cssRoot = document.querySelector(':root');
         let styleRoot = getComputedStyle(cssRoot);
@@ -838,26 +850,20 @@
         document.addEventListener('mousemove', onDrag)
         document.addEventListener('mouseup', dragEnd)
 
-
         let timetableProp = {
             totalSlots: 116,
             pxPerSlot: 13,
             roomNoWidth: 50,
-
         }
+
         cssRoot.style.setProperty('--timetableWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot + 50 }px`);
         cssRoot.style.setProperty('--roomNoWidth', `${timetableProp.roomNoWidth}px`);
         cssRoot.style.setProperty('--breakIntervalWidth', `${timetableProp.pxPerSlot}px`);
         cssRoot.style.setProperty('--eventWidth', `${(timetableProp.pxPerSlot * 12) + timetableProp.pxPerSlot }px`);
         cssRoot.style.setProperty('--roomSlotWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot}px`);
 
-
-
         let timeJson = JSON.parse(`<%- timeSlotList%>`);
-        console.log('time slot list::', timeJson)
-
-
-
+ 
         let targetProp = {};
 
         let dragObj = {
@@ -870,23 +876,14 @@
             isDragging: false
         }
 
-        // $(document).on('click', '.pending-event', function() {
 
-        //     console.log('peee', this)
-        // })
-
-
-        // let roomList = document.querySelector(`.room[data-room-lid = "2"] .room-slots`);
-        // let div = document.createElement('div');
-        // div.innerHTML = "hello";
-        // console.log('room list::::::', roomList.append(div))
         let timeTablestartSlot = timeJson[0].id;
         let fixedBreakSlotStart = 115
         let isPenEventSelected;
 
         let penElem = document.createElement('div');
 
-        // SELECT AND UNSELECT PENDING EVENTS
+        // SELECT AND UNSELECT PENDING EVENTS WITH CREATING SHADOW OBJECT
         $('.pending-event').on('click', function (e) {
 
             if ($(this).hasClass('selected-pending-event')) {
@@ -900,7 +897,7 @@
 
             }
 
-            penElem.setAttribute('class', 'pen-element');
+            penElem.setAttribute('class', 'pen-element d-none');
             penElem.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)`
 
             penElem.style.top = e.clientY - 75 + 'px';
@@ -923,6 +920,7 @@
 
         })
 
+        //APPENDING PENDING ELEMENT IN TIME TABLE FUNCTION
         $(document).on('click', '.pen-element', function (e) {
          
             let currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
@@ -930,25 +928,25 @@
             console.log('current>>>>>>>>>>>>>> ', currentRoom)
 
             let eventElemt = document.createElement('div');
+            eventElemt.setAttribute('class', 'event room-slot-item')
 
-            eventElemt.innerHTML = 'HELLO NEW EVENT';
+            eventElemt.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)<span class="badge bg-info start-time">11:10AM</span>
+            <i class="fa-solid fa-arrows-left-right"></i>
+            <span class="badge bg-info end-time">12:10PM</span>
+            <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; display: block;"></div>`;
 
             eventElemt.style.position = 'absolute';
             eventElemt.style.width = '169px';
-            eventElemt.style.background = 'red';
             eventElemt.style.top = '0';
             eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 50 - 78 + 'px';
+
 
             currentRoom.append(eventElemt)
             penElem.remove();
 
         })
 
-        // let penElement = document.querySelector('.pen-element');
-        // penElement.addEventListener('click', function(e) {
-        //     e.target.classList.add('d-none');
-        // })
-
+        //DISPLAY TIMETABLE LOOP
         function timeTableDisplay(eventListJson, allEventListJson) {
             let fixedBreadWidth;
             let roomSlot;
@@ -1009,9 +1007,10 @@
                     roomSlotItem.setAttribute("data-start-time", `${event.start_slot}`)
                     roomSlotItem.setAttribute("data-end-time", `${event.end_slot}`)
                     roomSlotItem.setAttribute("data-faculty-lid", `${event.faculty_lid ? event.faculty_lid : ''}`)
+                    roomSlotItem.setAttribute("data-faculty-name", `${event.faculty_name ? event.faculty_name : ''}`)
 
                     roomSlotItem.innerHTML =
-                        `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type}) <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
+                        `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})<br><hr> ${event.faculty_name} <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
                 <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> ${breakElement}`;
 
                     roomSlot.append(roomSlotItem);
@@ -1089,6 +1088,7 @@
 
 
         let fixedBreakBounding
+        let previousScrollY = 0;
 
         function dragStart(e) {
 
@@ -1162,33 +1162,46 @@
 
 
             } else {
-                if (true) {
-                    console.log('pending events')
-                    document.addEventListener('click', function (e) {
+                // if (true) {
+                //     console.log('pending events')
+                //     document.addEventListener('click', function (e) {
 
 
-                        let tarEle = document.elementsFromPoint(e.clientX, e.clientY);
-                        //console.log('tar:::', document.elementsFromPoint(e.clientX, e.clientY));
-                        getCurrentRoom(tarEle)
-                        //console.log('fff', getCurrentRoom(tarEle));
+                //         let tarEle = document.elementsFromPoint(e.clientX, e.clientY);
+                //         //console.log('tar:::', document.elementsFromPoint(e.clientX, e.clientY));
+                //         getCurrentRoom(tarEle)
+                //         //console.log('fff', getCurrentRoom(tarEle));
 
-                    })
-                } else {
+                //     })
+                // } else {
 
                     console.log('Not draggable')
                     dragObj.isDraggable = false;
-                }
+                // }
             }
 
         }
 
         function onDrag(e) {
 
-            penElem.style.top = e.clientY - 75 + 'px';
-            penElem.style.left = e.clientX - 78 + 'px';
-
-
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
+            let errorFactor = e.clientX - 78 - dragObj.tableLeftPosition - dragObj.relativeClientX 
+          console.log( errorFactor )
+
+            if(document.querySelectorAll('.pending-event[data-selected]').length > 0 && getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY))){
+                penElem.classList.remove('d-none')
+                if(window.pageYOffset-previousScrollY >= 0){
+                penElem.style.top = e.clientY - 75 + window.pageYOffset +'px';
+            }else{
+                penElem.style.top = e.clientY - 75 -(previousScrollY - window.pageYOffset) +'px';
+            }
+            
+            
+            // console.log('left position::', dragObj.relativeClientX)
+            penElem.style.left = (Math.round((e.clientX - 78)/timetableProp.pxPerSlot)*timetableProp.pxPerSlot) + 'px';
+            previousScrollY = window.pageYOffset;
+
+            }
 
             if (!dragObj.isDraggable || !dragObj.isMouseDown || dragObj.relativeClientX >= (timetableProp.totalSlots *
                     timetableProp.pxPerSlot) + timetableProp.roomNoWidth || dragObj.relativeClientX <= timetableProp
@@ -1232,12 +1245,16 @@
                 dragObj.targetElem.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
                         .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
                     .pxPerSlot + 'px' : '0px'
-                dragObj.targetElem.style.top = targetProp.movedY < 10 ? `${targetProp.movedY}px` :
-                    `${targetProp.movedY + window.pageYOffset}px`
 
-                console.log('Window scroll drag top:::::', targetProp.movedY)
-                console.log('Window scroll:::::', window.pageYOffset)
 
+                if(window.pageYOffset-previousScrollY >= 0){
+                    dragObj.targetElem.style.top = targetProp.movedY + window.pageYOffset +'px';
+                }else{
+                    dragObj.targetElem.style.top = targetProp.movedY - (previousScrollY - window.pageYOffset) +'px';
+                }
+                // dragObj.targetElem.style.top = targetProp.movedY < 10 ? `${targetProp.movedY}px`: `${targetProp.movedY + window.pageYOffset}px`
+
+           
                 if ((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
                         fixedBreakBounding.left && tRect.right <= fixedBreakBounding.right) || (tRect.right >=
                         fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) {
@@ -1251,6 +1268,7 @@
 
                 } else {
                     dragObj.targetElem.querySelector('.break').style.display = "block"
+                    dragObj.targetElem.style.width = '169px';
                 }
 
                 //No break condition for room being placed at end
@@ -1306,12 +1324,7 @@
 
         function dragEnd(e) {
 
-            // dragObj.targetElem.querySelector('.start-time').classList.remove('bg-primary')
-            // dragObj.targetElem.querySelector('.end-time').classList.remove('bg-primary')
             dragObj.isMouseDown = false;
-            // console.log('dragObj.isDragging >>> ', dragObj.isDragging)
-            // console.log('dragObj.isMouseDown >>> ', dragObj.isMouseDown)
-
 
             if (!dragObj.isDraggable || !dragObj.targetElem || !dragObj.isDragging) {
 
@@ -1339,7 +1352,7 @@
 
                 if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event')) {
 
-                    console.log("INSIDE LOOP TO CHECK COLLISION BReaK")
+                    console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
 
                     if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left && tRect
                             .right <= eRect.right) || (tRect.right >= eRect.right && tRect.left < eRect.right)) {

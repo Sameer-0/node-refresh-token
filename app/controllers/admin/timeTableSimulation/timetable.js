@@ -17,10 +17,11 @@ module.exports = {
                 Rooms.fetchBookedRooms(res.locals.organizationId),
                 Days.fetchActiveDay(res.locals.slug),
                 TimeTable.getPendingEventPrograms(res.locals.slug),
-                SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug)
+                SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug),
+                TimeTable.getPendingEvents(res.locals.slug)
             ])
             .then(result => {
-                console.log('slot list::::', result[4].recordset)
+                console.log('pending event list list::::', result[5].recordset)
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     programListJson: JSON.stringify(result[0].recordset),
@@ -28,6 +29,7 @@ module.exports = {
                     dayList: result[2].recordset,
                     pendingEventPrograms: JSON.stringify(result[3].recordset),
                     timeSlotList: JSON.stringify(result[4].recordset),
+                    pendingEventList: JSON.stringify(result[5].recordset),
 
                     breadcrumbs: req.breadcrumbs,
                     Url: req.originalUrl
