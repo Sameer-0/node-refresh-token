@@ -68,7 +68,7 @@ module.exports = {
 
             })
         })
-    },
+    }, 
 
     getPendingEvents: (req, res, next) => {
         console.log('pending req', req.body)

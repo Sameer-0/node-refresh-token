@@ -78,6 +78,7 @@ router.post('/faculties/works/GetAll', works.getAll)
 router.post('/faculties/works/get-faculty-work-events', works.getFacultyWorks)
 router.get('/faculties/works/download', works.downloadMaster)
 router.post('/faculties/works/show-entries', works.showEntries)
+router.post('/faculties/works/allocation-faculties-for-lecture', works.allocationFaculties)
 
 
 //workpreferences

@@ -43,7 +43,7 @@ module.exports = class TimeTable {
                 LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
                 LEFT JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
 				LEFT JOIN [${slug}].faculties f on f.id = fe.faculty_lid
-                WHERE (e.program_lid = @programLid and e.acad_session_lid = @sessionLid)
+                WHERE (e.program_lid = @programLid and e.acad_session_lid = @sessionLid) OR is_break = 1
                 ORDER BY t2.start_slot, t2.end_slot`
             } else if (!program_lid && acad_session_lid) {
                 stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid,  RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
@@ -59,7 +59,7 @@ module.exports = class TimeTable {
                 LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
                 LEFT JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
 				LEFT JOIN [${slug}].faculties f on f.id = fe.faculty_lid
-                WHERE (e.acad_session_lid = @sessionLid) 
+                WHERE (e.acad_session_lid = @sessionLid OR is_break = 1) 
                 ORDER BY t2.start_slot, t2.end_slot`
             } else if (program_lid && !acad_session_lid) {
 
@@ -76,7 +76,7 @@ module.exports = class TimeTable {
                 LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
                 LEFT JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
 				LEFT JOIN [${slug}].faculties f on f.id = fe.faculty_lid
-                WHERE (e.program_lid = @programLid) 
+                WHERE (e.program_lid = @programLid OR is_break = 1) 
                 ORDER BY t2.start_slot, t2.end_slot`
             } else {
                 stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
@@ -112,7 +112,7 @@ module.exports = class TimeTable {
             let stmt;
 
                 stmt = `SELECT e.id, e.program_lid, p.program_id, p.program_name, e.acad_session_lid, ads.acad_session, e.course_lid, icw.module_code, icw.module_name, e.division_lid, e.division, e.batch_lid, e.batch, e.event_type_lid, et.name AS event_type, eb.day_lid, eb.room_lid
-                FROM [${slug}].events e
+                FROM [${slug}].tb_events e
                 LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = e.id
                 LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
                 LEFT JOIN acad_sessions ads ON ads.id = e.acad_session_lid
