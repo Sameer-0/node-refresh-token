@@ -280,7 +280,7 @@
                                     let faculty_id = $(this).val()
                                     console.log('faculty_id:::::', faculty_id)
                                     let ApiObj = {
-                                        url: '/admin//faculties/allocation-status',
+                                        url: '/admin/faculties/allocation-status',
                                         type: 'POST',
                                         data: {
                                             faculty_id: faculty_id
@@ -370,12 +370,14 @@
 
             console.log('Faculty Slot')
             for( let event of bookedSlot) {
-                console.log('allEventListJson:::::::::::',event)
+            console.log('allEventListJson:::::::::::',event)
                 if(!event.is_break){
-                    console.log('HERE TRUE')
+              
+               //let dyayay =  document.querySelector(`.room .day-name[day-lid = "${event.day_lid}"]`).classList.remove('bg-success')
 
                 roomSlot = document.querySelector(`.room[day-lid = "${event.day_lid}"] .room-slots`)
-
+              
+               
                 eventStartSlot = event.start_slot;
                 eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
 
@@ -423,41 +425,41 @@
                 }
             }
 
-            // for(let event of availableSlot){
+           // for(let event of availableSlot){
 
             // if(document.querySelector(`.event[data-event-lid="${event.event_lid}"]`)){
             //     console.log('event-count');
             // }
             // else{
-            //     if(!event.is_break){
-            //         console.log('other events')
-            //         roomSlot = document.querySelector(`.room[day-lid = "${event.day_lid}"] .room-slots`)
-            //         eventStartSlot = event.start_slot;
-            //         eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
-            //         let occRoomWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
-            //         `${timetableProp.pxPerSlot * 12}` :
-            //         `${timetableProp.pxPerSlot * 13}`
-            //         let occupiedRoomSlotItem = document.createElement('div');
-            //         occupiedRoomSlotItem.setAttribute("class","occupied-event room-slot-item")
-            //         occupiedRoomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width: ${occRoomWidth}px`)
-            //         occupiedRoomSlotItem.setAttribute("data-event-lid",`${event.event_lid}`)
-            //         occupiedRoomSlotItem.setAttribute("data-module-name",`${event.module_name}`)
-            //         occupiedRoomSlotItem.setAttribute("data-module-lid",`${event.course_lid}`)
-            //         occupiedRoomSlotItem.setAttribute("data-division-name",`${event.division}`)
-            //         occupiedRoomSlotItem.setAttribute("data-batch-name",`${event.batch}`)
-            //         occupiedRoomSlotItem.setAttribute("data-event-type-lid",`${event.event_type_lid}`)
-            //         occupiedRoomSlotItem.setAttribute("data-session-name",`${event.acad_session}`)
-            //         occupiedRoomSlotItem.setAttribute("data-session-lid",`${event.acad_session_lid}`)
-            //         occupiedRoomSlotItem.setAttribute("data-program-name",`${event.program_name}`)
-            //         occupiedRoomSlotItem.setAttribute("data-program-lid",`${event.program_lid}`)
-            //         occupiedRoomSlotItem.setAttribute("data-start-time",`${event.start_slot}`)
-            //         occupiedRoomSlotItem.setAttribute("data-end-time",`${event.end_slot}`)
-            //         occupiedRoomSlotItem.setAttribute("data-faculty-lid",`${event.faculty_lid ? event.faculty_lid : ''}`)
-            //         occupiedRoomSlotItem.innerHTML = `AVAILABLE`;
-            //         roomSlot.append(occupiedRoomSlotItem);
-            //     }
-            // }
-            // }
+                // if(!event.is_break){
+                //     console.log('other events')
+                //     roomSlot = document.querySelector(`.room[day-lid = "${event.day_lid}"] .room-slots`)
+                //     eventStartSlot = event.start_slot;
+                //     eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
+                //     let occRoomWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
+                //     `${timetableProp.pxPerSlot * 12}` :
+                //     `${timetableProp.pxPerSlot * 13}`
+                //     let occupiedRoomSlotItem = document.createElement('div');
+                //     occupiedRoomSlotItem.setAttribute("class","occupied-event room-slot-item")
+                //     occupiedRoomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width: ${occRoomWidth}px`)
+                //     occupiedRoomSlotItem.setAttribute("data-event-lid",`${event.event_lid}`)
+                //     occupiedRoomSlotItem.setAttribute("data-module-name",`${event.module_name}`)
+                //     occupiedRoomSlotItem.setAttribute("data-module-lid",`${event.course_lid}`)
+                //     occupiedRoomSlotItem.setAttribute("data-division-name",`${event.division}`)
+                //     occupiedRoomSlotItem.setAttribute("data-batch-name",`${event.batch}`)
+                //     occupiedRoomSlotItem.setAttribute("data-event-type-lid",`${event.event_type_lid}`)
+                //     occupiedRoomSlotItem.setAttribute("data-session-name",`${event.acad_session}`)
+                //     occupiedRoomSlotItem.setAttribute("data-session-lid",`${event.acad_session_lid}`)
+                //     occupiedRoomSlotItem.setAttribute("data-program-name",`${event.program_name}`)
+                //     occupiedRoomSlotItem.setAttribute("data-program-lid",`${event.program_lid}`)
+                //     occupiedRoomSlotItem.setAttribute("data-start-time",`${event.start_slot}`)
+                //     occupiedRoomSlotItem.setAttribute("data-end-time",`${event.end_slot}`)
+                //     occupiedRoomSlotItem.setAttribute("data-faculty-lid",`${event.faculty_lid ? event.faculty_lid : ''}`)
+                //     occupiedRoomSlotItem.innerHTML = `AVAILABLE`;
+                //     roomSlot.append(occupiedRoomSlotItem);
+                // }
+           // }
+            //}
             cssRoot.style.setProperty('--fixedBreakWidth', `${fixedBreadWidth}px`);
         }
                     
