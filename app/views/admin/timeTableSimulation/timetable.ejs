@@ -61,6 +61,7 @@
             background: #ffffff;
             word-break: break-word;
             height: 100%;
+            text-align: center;
             /* overflow: hidden; */
             padding-right: calc(var(--breakIntervalWidth) + 2px);
             padding-left:  2px;
@@ -247,8 +248,8 @@
                 <h5>Time Table</h5>
             </div>
             <div class="ms-auto me-2">
-                <button class="btn btn-primary pending-events-modal my-2" data-target="#pendingEventModal"><i class="fa-solid fa-list-ul"></i> Pending Events</button>
-                <a href="/admin/time-table-simulation/time-table/download" class="btn btn-danger"><span class="fa fa-download"></span>Download</a>
+                <!-- <button class="btn btn-primary pending-events-modal my-2" data-target="#pendingEventModal"><i class="fa-solid fa-list-ul"></i> Pending Events</button> -->
+                <a href="/admin/time-table-simulation/time-table/download" class="btn btn-primary"> <span class="fa fa-download"></span> Download</a>
                 
             </div>
         </div>
@@ -481,12 +482,12 @@
             $('#day').val("")
         })
 
-
+        let dayLid
         $("#day").on('change', function () {
 
             let programLid = $("#program-name").val();
             let acadSessionLid = $("#session-name").val();
-            let dayLid = $(this).val();
+            dayLid = $(this).val();
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/events',
@@ -649,11 +650,11 @@
                 })
         })
 
-
+ 
         //DROP EVENT SURAJ
         //$(document).on('click', '#drop-slot', function() 
         $("#slotModal").on('click', '#drop-slot', function () {
-            let eventLid = $(this).attr('data-lid');
+            let eventLid = $(this).attr('data-event-lid');
             socket.emit('drop-event-request', slugName, userId, eventLid);
             socket.on('drop-event-response', function (response) {
                 console.log('drop-event-response::::::::::::::::', response)
@@ -703,46 +704,19 @@
         //SCHEDULE EVENT
         $(document).on('click', '#schedule-slot', function () {
             let roomLid = $(this).attr("data-room-id");
-            let startTimeId = $(this).attr("data-start-time-id");
-            let endTimeId = $(this).attr("data-end-time-id");
-            let divisionName = $("#slotModal #pending-events option:selected")
-                .attr("data-division-name")
-            let moduleName = $("#slotModal #pending-events option:selected")
-                .text()
-            let batchName = $("#slotModal #pending-events option:selected")
-                .attr("data-batch-name")
-            let sessionName = $(
-                "#slotModal #session-name-modal  option:selected").text()
-            let programName = $(
-                "#slotModal #program-name-modal option:selected").text()
-            let startTimeText = $(this).attr("data-start-time")
-            let endTimeText = $(this).attr("data-end-time")
-            let roomNo = $(this).attr("data-room-no")
-            let dataLid = $(this).attr("data-lid")
-            let programLid = $("#slotModal #program-name-modal").val();
-            let sessionLid = $("#slotModal #session-name-modal").val();
-            let moduleLid = $("#slotModal #pending-events option:selected")
-                .attr("data-module-lid");
-            let divisionLid = $("#slotModal #pending-events option:selected")
-                .attr("data-division-lid");
-            let batchLid = $("#slotModal #pending-events option:selected").attr(
-                "data-batch-lid");
             let dayLid = $("#day").val();
-            let schoolTimeLid = $(this).attr("data-school-time-id");
-            let event_type_lid = $("#slotModal #pending-events option:selected").attr("data-event-type-lid");
+            let startSlotId = $(this).attr("data-start-slot-id");
+            let endSlotId = $(this).attr("data-end-slot-id");
+            let eventLid = $(this).attr("data-event-lid")
+            let facultyLid = $(this).attr("data-faculty-lid")
 
             let obj = [{
                 room_lid: roomLid,
-                start_time_id: startTimeId,
-                end_time_id: endTimeId,
+                start_time_id: startSlotId,
+                end_time_id: endSlotId,
                 program_lid: programLid,
-                acad_session_lid: sessionLid,
-                course_lid: moduleLid,
-                division_lid: divisionLid,
-                batch_lid: batchLid,
                 day_lid: dayLid,
-                school_time_lid: schoolTimeLid,
-                event_type_lid: event_type_lid
+                event_lid: eventLid
             }]
 
             console.log('JSON::::::::::::::::', obj)
@@ -821,16 +795,24 @@
             //     })
         })
 
+        //Click on event-element
+        $(document).on('click', '.event', function() {
+            console.log('this::', this)
 
+            $('#slotModal .modal-body').html($(this).text());
+            $('#slotModal .modal-footer').html(`<button type="button" class="btn btn-primary" id="drop-slot" data-event-lid="${$(this).attr("data-event-lid")}" data-start-slot="${$(this).attr("data-start-time")}" data-end-slot="${$(this).attr("data-end-time")}">Drop Slot</button>`)
+            $('#slotModal').modal('show');
+        })
 
         let eventListJson;
         let roomJson = JSON.parse(`<%-roomList%>`)
         let pendingEventListJson = JSON.parse(`<%- pendingEventList%>`)
 
-        //CREATING PENDING EVENT ELEMENTS FOR APPENDING
+        //CREATING PENDING EVENT ELEMENTS LIST
         let pendingEventElement=``;
         for(let pendingEvent of pendingEventListJson){
-            pendingEventElement += `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program_lid="${pendingEvent.program_lid}" data-session_lid="${pendingEvent.acad_session_lid}" data-module_lid="${pendingEvent.course_lid}">
+
+            pendingEventElement += `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program_lid="${pendingEvent.program_lid}" data-session_lid="${pendingEvent.acad_session_lid}" data-module_lid="${pendingEvent.course_lid}" data-event_type_lid="${pendingEvent.event_type_lid}" data-event_lid="${pendingEvent.id}" data-division_lid="${pendingEvent.division_lid}">
             <p>${pendingEvent.program_name}<br>
                 ${pendingEvent.acad_session} <br>
                 ${pendingEvent.module_name}<br>
@@ -840,8 +822,6 @@
         }
         let pendingEventContainer = document.querySelector('.pending-event-container');
         pendingEventContainer.innerHTML = pendingEventElement;
-
-        
 
         let cssRoot = document.querySelector(':root');
         let styleRoot = getComputedStyle(cssRoot);
@@ -924,70 +904,135 @@
         $(document).on('click', '.pen-element', function (e) {
             
             let currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
-            let currentRoomElems = currentRoom.querySelectorAll(`.room-slot-item:not(.active)`);
+            // console.log('current room::', currentRoom.parentNode.getAttribute('data-room-lid'))
+
+            //check for collision
             let tRect = penElem.getBoundingClientRect();
-            console.log('bounding box of swap shadow::>>', tRect)
+            let currentRoomElems = currentRoom.querySelectorAll(`.room-slot-item:not(.active)`);
+
+            console.log("check collision:::", tRect)
             for (let elem of currentRoomElems) {
 
+                // console.log("INSIDE LOOP TO CHECK COLLISION")
                 let eRect = elem.getBoundingClientRect();
 
-                if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event')) {
+                if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event') ||  elem.classList.contains('event')) {
 
-                    console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
+                    // console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
 
                     if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left && tRect
                             .right <= eRect.right) || (tRect.right >= eRect.right && tRect.left < eRect.right)) {
 
-                        dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
-                            .start_time;
-                        dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
-                            .end_time;
-                        dragObj.targetElem.querySelector('.break').style.display = 'block';
-                        dragObj.isDroppable = false;
+                        // dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
+                        //     .start_time;
+                        // dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
+                        //     .end_time;
+                        // dragObj.targetElem.querySelector('.break').style.display = 'block'
+                        // dragObj.isDroppable = false;
+                        return;
                         break;
                     }
 
-                } else {
-
-                    // 390  394
-
-                    if ((Math.abs(tRect.left - eRect.left) <= 4) && ((Math.abs(tRect.right - eRect.right) <= 4))) {
-                        // console.log("IS SWAP ELEMENET>>> ", true)
-                        dragObj.isDroppable = true;
-                        dragObj.swapElem = elem;
-                        break;
-
-                    } else if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left &&
-                            tRect.right <= eRect.right) || (tRect.right >= eRect.right && tRect.left < eRect.right)) {
-                        // console.log('Inside else Not droppable::')
-                        dragObj.isDroppable = false;
-                        dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
-                            .start_time;
-                        dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
-                            .end_time;
-                        break;
-                    }
-
-                }
+                } 
+                
+                   
             }
-            // let currentRoomElems = dragObj.currentRoom.querySelectorAll(`.room-slot-item:not(.active)`);
 
+
+
+            let programLid = $(document).find('.selected-pending-event').attr('data-program_lid')
+            let sessionLid = $(document).find('.selected-pending-event').attr('data-session_lid')
+            let moduleLid = $(document).find('.selected-pending-event').attr('data-module_lid')
+            let eventTypeLid = $(document).find('.selected-pending-event').attr('data-event_type_lid')
+            let eventLid = $(document).find('.selected-pending-event').attr('data-event_lid')
+            let divisionLid = $(document).find('.selected-pending-event').attr('data-division_lid')
+            let currentRoomLid = currentRoom.parentNode.getAttribute('data-room-lid');
+            let startSlotIndex = Math.abs(Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))/timetableProp.pxPerSlot))
+            let endSlotIndex = Math.abs(Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2) + (12*timetableProp.pxPerSlot))/timetableProp.pxPerSlot))
+            let startSLotId = timeJson[startSlotIndex].id;
+            let endSlotId = timeJson[endSlotIndex - 1].id;
+
+            console.log('current>>>>>>>>>>>>>> left:::',timeJson[startSlotIndex].id, timeJson[endSlotIndex - 1].id)
             
+            let ApiObj = {
+                        url: '/admin/faculties/works/get-faculty-work-events',
+                        type: 'POST',
+                        data: {
+                            programLid: programLid,
+                            sessionLid: sessionLid,
+                            moduleLid: moduleLid,
+                            eventTypeLid:eventTypeLid,
+                            divisionLid : divisionLid
+                        },
+                        dataType: 'JSON'
+                    }
 
-            // console.log('current>>>>>>>>>>>>>> ', currentRoom)
+            ajaxApi(ApiObj).then(result => {
+                    console.log('faculty available::>>>', result)
+                    let facultyList = ``;
+                    let otherFacultyDetail = `<h5>Other faculties for the selected lecture:</h5><ul>`;
+                    facultyList += `<select id="faculty-work-event-list" class="form-select my-4">`
+                    if (result.result.length > 0) {
+                        
+                        facultyList +=
+                            `<option disabled  selected value="">--Select Faculty--</option>`;
+                        
+                            for  (let faculty of result.result){
+
+                                facultyList +=
+                                `<option value="${faculty.faculty_lid}"> ${faculty.faculty_name} </option>`
+                            }
+
+                    } else {
+                        facultyList +=
+                            `<option value=""> No Faculty Found! </option>`
+                    }
+                    if (result.facultyAllocationDetails.length > 0) {
+                        
+                        
+                            for  (let otherFaculty of result.facultyAllocationDetails){
+
+                                otherFacultyDetail +=
+                                `<li> ${otherFaculty.faculty_name} : ${otherFaculty.lecture_count} Lectures Allocated </li>`
+                            }
+
+                    } else {
+                        otherFacultyDetail +=
+                        `<li> No Other Faculty Allocated </li>`
+                    }
+                    facultyList += `</select>`;
+                    otherFacultyDetail += `</ul>`
+                    $(document).find("#slotModal .modal-body").html(otherFacultyDetail + facultyList)
+                    // $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
+                    $('#slotModal .modal-footer').html(
+                        `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${startSLotId}" data-end-slot-id="${endSlotId}" data-room-id="${currentRoomLid}"  data-day-lid="${dayLid}" data-event-lid="${eventLid}" disabled="true">Schedule Slot</button>`
+                            );
+                    $('#slotModal').modal('show');
+                }).catch(error => {
+                    // showError(error.responseJSON)
+                    console.log('error', error);
+                })
+
+
+
+            $(document).on('change','#faculty-work-event-list', function() {
+                console.log('this value', $(this).val())
+                $(document).find('#schedule-slot').attr('data-faculty-lid', `${$(this).val()}`);
+                $(document).find('#schedule-slot').removeAttr('disabled');
+            })
 
             let eventElemt = document.createElement('div');
             eventElemt.setAttribute('class', 'event room-slot-item')
 
-            eventElemt.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)<span class="badge bg-info start-time">11:10AM</span>
+            eventElemt.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
             <i class="fa-solid fa-arrows-left-right"></i>
-            <span class="badge bg-info end-time">12:10PM</span>
+            <span class="badge bg-info end-time">${timeJson[endSlotIndex - 1].end_time}</span>
             <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; display: block;"></div>`;
 
             eventElemt.style.position = 'absolute';
             eventElemt.style.width = '169px';
             eventElemt.style.top = '0';
-            eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 50 - 78 + 'px';
+            eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 49 - 84.5 + (timetableProp.pxPerSlot/2) + 'px';
 
            
             
@@ -995,7 +1040,7 @@
             currentRoom.append(eventElemt)
             penElem.remove();
 
-        })
+        }) 
 
         //DISPLAY TIMETABLE LOOP
         function timeTableDisplay(eventListJson, allEventListJson) {
@@ -1360,12 +1405,12 @@
 
                 }
 
-                let leftSlotTime = Math.round(targetProp.movedX / timetableProp.pxPerSlot) >= 0 ? Math.round(targetProp
+                dragObj.leftSlotTime = Math.round(targetProp.movedX / timetableProp.pxPerSlot) >= 0 ? Math.round(targetProp
                     .movedX / timetableProp.pxPerSlot) : 0
 
                 // console.log('>>>>>>>>>moving distance', Math.round(targetProp.movedX / timetableProp.pxPerSlot))
-                dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[leftSlotTime].start_time;
-                dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[(leftSlotTime + 11)].end_time;
+                dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.leftSlotTime].start_time;
+                dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[(dragObj.leftSlotTime + 11)].end_time;
                 // dragObj.targetElem.querySelector('.start-time').css.background = "#0d6efd !important"
                 // dragObj.targetElem.querySelector('.end-time').css.background = "#0d6efd !important"
             }
@@ -1421,9 +1466,28 @@
                     // 390  394
 
                     if ((Math.abs(tRect.left - eRect.left) <= 4) && ((Math.abs(tRect.right - eRect.right) <= 4))) {
-                        // console.log("IS SWAP ELEMENET>>> ", true)
-                        dragObj.isDroppable = true;
+                        
                         dragObj.swapElem = elem;
+                        let obj = [{"event_booking_lid": dragObj.targetElem.getAttribute('data-event-lid') }, 
+                        {"event_booking_lid": dragObj.swapElem.getAttribute('data-event-lid')}]
+
+                        // socket.emit('swap-events-request', slugName, userId, JSON.stringify(obj));
+                        // socket.on('swap-events-response', function(response){
+                        //     console.log('swap-events-response::::::::::::::::', response)
+                        //     //Set Data Here after socket response
+                        //     if(response.status === 1){
+                        //         dragObj.isDroppable = true
+                        //      
+                        //     }
+                        //     else{
+                        //         dragObj.isDroppable = false
+                        //        
+                        //     }
+                        //     showSuccess(response)
+                        // });
+
+                        dragObj.isDroppable = true
+                        console.log("IS SWAP ELEMENET>>> ", dragObj.targetElem.getAttribute('data-event-lid'), dragObj.swapElem.getAttribute('data-event-lid'))
                         break;
 
                     } else if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left &&
@@ -1435,6 +1499,15 @@
                         dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
                             .end_time;
                         break;
+                    }
+                    else{
+                        $(document).find("#slotModal .modal-body").html(dragObj.targetElem.innerText)
+                            console.log('statrt slot index', timeJson[dragObj.leftSlotTime + 11].end_time)
+                        $('#slotModal .modal-footer').html(
+                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${timeJson[dragObj.leftSlotTime].id}" data-end-slot-id="${timeJson[dragObj.leftSlotTime + 11].id}" data-room-id="${dragObj.currentRoom.parentNode.getAttribute('data-room-lid')}"  data-day-lid="${dayLid}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" >Schedule Slot</button>`);
+
+                        $('#slotModal').modal('show');
+                        // dragObj.isDroppable = false;
                     }
 
                 }
@@ -1477,6 +1550,7 @@
             dragObj.clonedTarget.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
                     .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
                 .pxPerSlot + 'px' : '0px'
+            
             dragObj.clonedTarget.style.zIndex = 'unset';
 
             // console.log('imgnBoundingElems>>> ', imgnBoundingElems)

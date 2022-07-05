@@ -33,11 +33,24 @@ module.exports = class {
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [${slug}].faculty_works`)
+            return request.query(`SELECT COUNT(*) AS count FROM [${slug}].faculty_works`)
         })
     }
 
-
+    static getFacultiesAllocationDetails(obj, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('program_lid', sql.Int, obj.programLid)
+            .input('acad_session_lid', sql.Int, obj.sessionLid)
+            .input('course_lid', sql.Int, obj.moduleLid)
+            .input('division_lid', sql.Int, obj.divisionLid)
+            .query(`SELECT * FROM (SELECT t1.faculty_lid, count(t1.event_lid) AS lecture_count FROM (SELECT * FROM [${slug}].faculty_events fe
+                INNER JOIN [${slug}].tb_events te ON te.id = fe.event_lid
+                WHERE te.program_lid = @program_lid and te.acad_session_lid = @acad_session_lid and te.course_lid = @course_lid and te.division_lid = @division_lid) t1
+                group by t1.faculty_lid) t2
+                INNER JOIN [${slug}].faculties f ON f.id = t2.faculty_lid`)
+        })
+    }
 
 
     static search(body, slug) {
