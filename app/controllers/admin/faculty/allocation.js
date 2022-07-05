@@ -23,14 +23,15 @@ module.exports = {
 
     checkfacultyStatus: (req, res, next) => {
         console.log('BODY::::::>>',req.body)
-        Promise.all([Days.fetchAll(10, res.locals.slug),  Faculties.facultyBookedSlot(res.locals.slug, req.body.faculty_id), Faculties.facultyAvailableSlot(res.locals.slug, req.body.faculty_id)]).then(result => {
+        Promise.all([Days.fetchAll(10, res.locals.slug),  Faculties.facultyAvailableSlot(res.locals.slug, req.body.faculty_id), Faculties.facultyBookedSlot(res.locals.slug, req.body.faculty_id)]).then(result => {
             console.log('RESULT::::::::>>',result[1].recordset)
             res.status(200).json({
                 status: 200,
                 message: "success",
                 daysdata: result[0].recordset,
-                bookedSlot: result[1].recordset,
-                availableSlot: result[2].recordset
+                availableSlot: result[1].recordset,
+                bookedSlot: result[1].recordset
+                
             })
         })
     }
