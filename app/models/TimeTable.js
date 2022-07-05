@@ -22,32 +22,6 @@ module.exports = class TimeTable {
         })
     }
 
-    // static getAllEvents(slug, day_lid){
-
-    //     return poolConnection.then(pool => {
-    //         let stmt;
-
-    //         stmt= `SELECT eb.id, eb.program_lid, eb.acad_session_lid, eb.course_lid, eb.division, eb.batch, eb.day_lid, eb.room_lid, st.slot_start_lid, st.slot_end_lid, icw.module_name, p.program_name, ads.acad_session, CAST(FORMAT(CAST(sit.start_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as start_time , CAST(FORMAT(CAST(sit2.end_time AS DATETIME2),'hh:mm tt') AS NVARCHAR(50)) as end_time, fe.faculty_lid, f.faculty_name, f.faculty_id 
-    //             FROM [${slug}].event_bookings eb 
-    //             LEFT JOIN [${slug}].faculty_events fe ON fe.event_bookings_lid = eb.id
-    //             LEFT JOIN [${slug}].faculties f ON f.id = fe.faculty_lid
-    //             INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timing_lid 
-    //             INNER JOIN [${slug}].initial_course_workload icw ON icw.id = eb.course_lid
-    //             INNER JOIN [${slug}].programs p ON p.id = eb.program_lid
-    // 			INNER JOIN [dbo].acad_sessions ads ON ads.id = eb.acad_session_lid
-    // 			INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-    // 			INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-    //             INNER JOIN [${slug}].days d 
-    //             ON eb.day_lid = d.id WHERE d.id = @dayLid`
-
-    //             return pool.request() 
-    //             .input('dayLid', sql.Int, day_lid)
-    //             .input('programLid', sql.Int, program_lid)
-    //             .input('sessionLid', sql.Int, acad_session_lid)
-    //             .query(stmt);
-    //     })
-
-    // }
 
     static getEventsByProgramSessionDay(slug, day_lid, program_lid, acad_session_lid) {
 
@@ -56,64 +30,68 @@ module.exports = class TimeTable {
 
             //SORT BY SLOT IS NECESSARY FOR PROPER DOM.
             if (program_lid && acad_session_lid) {
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid,  RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, e.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid,  RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
                 WHERE row_num = 1) t2
-                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].tb_events e ON e.id = t2.event_lid 
                 LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
                 LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
                 LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
                 LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                LEFT JOIN [${slug}].faculties f on f.id = e.faculty_lid
-                WHERE (e.program_lid = @programLid and e.acad_session_lid = @sessionLid) OR t2.is_break = 1
+                LEFT JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
+				LEFT JOIN [${slug}].faculties f on f.id = fe.faculty_lid
+                WHERE (e.program_lid = @programLid and e.acad_session_lid = @sessionLid)
                 ORDER BY t2.start_slot, t2.end_slot`
             } else if (!program_lid && acad_session_lid) {
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid,  RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, e.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid,  RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
                 WHERE row_num = 1) t2
-                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].tb_events e ON e.id = t2.event_lid 
                 LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
                 LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
                 LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
                 LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                LEFT JOIN [${slug}].faculties f on f.id = e.faculty_lid
-                WHERE (e.acad_session_lid = @sessionLid) OR t2.is_break = 1
+                LEFT JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
+				LEFT JOIN [${slug}].faculties f on f.id = fe.faculty_lid
+                WHERE (e.acad_session_lid = @sessionLid) 
                 ORDER BY t2.start_slot, t2.end_slot`
             } else if (program_lid && !acad_session_lid) {
 
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid,  RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, e.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break,MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid,  RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type,fe.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break,MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
                 WHERE row_num = 1) t2
-                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].tb_events e ON e.id = t2.event_lid 
                 LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
                 LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
                 LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
                 LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                LEFT JOIN [${slug}].faculties f on f.id = e.faculty_lid
-                WHERE (e.program_lid = @programLid) OR t2.is_break = 1
+                LEFT JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
+				LEFT JOIN [${slug}].faculties f on f.id = fe.faculty_lid
+                WHERE (e.program_lid = @programLid) 
                 ORDER BY t2.start_slot, t2.end_slot`
             } else {
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, e.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
                 MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
                 ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)) t1
                 WHERE row_num = 1) t2
-                LEFT JOIN [${slug}].events e ON e.id = t2.event_lid 
+                LEFT JOIN [${slug}].tb_events e ON e.id = t2.event_lid 
                 LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
                 LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
                 LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
                 LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
-                LEFT JOIN [${slug}].faculties f on f.id = e.faculty_lid
+                LEFT JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
+				LEFT JOIN [${slug}].faculties f on f.id = fe.faculty_lid
                 ORDER BY t2.start_slot, t2.end_slot`
 
             }

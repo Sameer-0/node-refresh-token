@@ -109,6 +109,30 @@ module.exports = class schoolTiming {
         })
     }
 
+    static get(slug, dayLid, programLid, acadSessionLid) {
+
+        return poolConnection.then(pool => {
+            let stmt
+
+            if (programLid && acadSessionLid) {
+                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CONVERT(NVARCHAR, st.start_time, 0) AS start_time, CONVERT(NVARCHAR, et.end_time, 0) AS end_time FROM [${slug}].school_timings sct 
+                INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
+                INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid
+                WHERE sct.program_lid = @programLid AND sct.acad_session_lid = @acadSessionLid AND sct.day_lid = @dayLid`
+            } else {
+                stmt = `SELECT sct.id, sct.slot_start_lid, sct.slot_end_lid, CONVERT(NVARCHAR ,st.start_time, 0) AS start_time, CONVERT(NVARCHAR, et.end_time, 0) AS end_time FROM [${slug}].school_timings sct 
+                INNER JOIN slot_interval_timings st ON st.id = sct.slot_start_lid
+                INNER JOIN slot_interval_timings et ON et.id = sct.slot_end_lid`
+            }
+
+            return pool.request()
+                .input('programLid', sql.Int, programLid)
+                .input('acadSessionLid', sql.Int, acadSessionLid)
+                .input('dayLid', sql.Int, dayLid)
+                .query(stmt)
+        })
+    }
+
 
     static fetchAllBySettingName(slug) {
         return poolConnection.then(pool => {
