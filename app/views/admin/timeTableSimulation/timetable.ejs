@@ -94,10 +94,10 @@
         .pen-element{
             position: absolute;
             width:169px; 
-            height:152px;
+            height:200px;
             border-left:1px solid rgb(255, 86, 86); 
             border-right:1px solid rgb(255, 86, 86);
-            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            box-shadow: rgba(0, 0, 0, 0.30) 0px 5px 15px;
         }
     
        
@@ -901,7 +901,7 @@
             penElem.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)`
 
             penElem.style.top = e.clientY - 75 + 'px';
-            penElem.style.left = e.clientX - 78 + 'px';
+            penElem.style.left = e.clientX - 84.5 + 'px';
 
             document.body.append(penElem)
 
@@ -922,10 +922,59 @@
 
         //APPENDING PENDING ELEMENT IN TIME TABLE FUNCTION
         $(document).on('click', '.pen-element', function (e) {
-         
+            
             let currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
+            let currentRoomElems = currentRoom.querySelectorAll(`.room-slot-item:not(.active)`);
+            let tRect = penElem.getBoundingClientRect();
+            console.log('bounding box of swap shadow::>>', tRect)
+            for (let elem of currentRoomElems) {
 
-            console.log('current>>>>>>>>>>>>>> ', currentRoom)
+                let eRect = elem.getBoundingClientRect();
+
+                if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event')) {
+
+                    console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
+
+                    if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left && tRect
+                            .right <= eRect.right) || (tRect.right >= eRect.right && tRect.left < eRect.right)) {
+
+                        dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
+                            .start_time;
+                        dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
+                            .end_time;
+                        dragObj.targetElem.querySelector('.break').style.display = 'block';
+                        dragObj.isDroppable = false;
+                        break;
+                    }
+
+                } else {
+
+                    // 390  394
+
+                    if ((Math.abs(tRect.left - eRect.left) <= 4) && ((Math.abs(tRect.right - eRect.right) <= 4))) {
+                        // console.log("IS SWAP ELEMENET>>> ", true)
+                        dragObj.isDroppable = true;
+                        dragObj.swapElem = elem;
+                        break;
+
+                    } else if ((tRect.left >= eRect.left && tRect.left < eRect.right) || (tRect.right > eRect.left &&
+                            tRect.right <= eRect.right) || (tRect.right >= eRect.right && tRect.left < eRect.right)) {
+                        // console.log('Inside else Not droppable::')
+                        dragObj.isDroppable = false;
+                        dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
+                            .start_time;
+                        dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
+                            .end_time;
+                        break;
+                    }
+
+                }
+            }
+            // let currentRoomElems = dragObj.currentRoom.querySelectorAll(`.room-slot-item:not(.active)`);
+
+            
+
+            // console.log('current>>>>>>>>>>>>>> ', currentRoom)
 
             let eventElemt = document.createElement('div');
             eventElemt.setAttribute('class', 'event room-slot-item')
@@ -940,7 +989,9 @@
             eventElemt.style.top = '0';
             eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 50 - 78 + 'px';
 
-
+           
+            
+            
             currentRoom.append(eventElemt)
             penElem.remove();
 
@@ -968,7 +1019,6 @@
             let timeTableBox = document.querySelector('.timetable-container');
             timeTableBox.innerHTML = roomHtml;
 
-            // console.log('jello',eventListJson)
             for (let event of eventListJson) {
 
                 if (!event.is_break) {
@@ -1198,7 +1248,7 @@
             
             
             // console.log('left position::', dragObj.relativeClientX)
-            penElem.style.left = (Math.round((e.clientX - 78)/timetableProp.pxPerSlot)*timetableProp.pxPerSlot) + 'px';
+            penElem.style.left = (Math.round((e.clientX - 84.5)/timetableProp.pxPerSlot)*timetableProp.pxPerSlot) + (timetableProp.pxPerSlot/2) + 'px';
             previousScrollY = window.pageYOffset;
 
             }
@@ -1247,12 +1297,12 @@
                     .pxPerSlot + 'px' : '0px'
 
 
-                if(window.pageYOffset-previousScrollY >= 0){
-                    dragObj.targetElem.style.top = targetProp.movedY + window.pageYOffset +'px';
-                }else{
-                    dragObj.targetElem.style.top = targetProp.movedY - (previousScrollY - window.pageYOffset) +'px';
-                }
-                // dragObj.targetElem.style.top = targetProp.movedY < 10 ? `${targetProp.movedY}px`: `${targetProp.movedY + window.pageYOffset}px`
+                // if(window.pageYOffset-previousScrollY >= 0){
+                //     dragObj.targetElem.style.top = targetProp.movedY + window.pageYOffset +'px';
+                // }else{
+                //     dragObj.targetElem.style.top = targetProp.movedY - (previousScrollY - window.pageYOffset) +'px';
+                // }
+                dragObj.targetElem.style.top =  `${targetProp.movedY}px`
 
            
                 if ((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
