@@ -88,7 +88,7 @@
             height: 100%;
             width: var(--breakIntervalWidth);
             background-size: 3px;
-            background: repeating-linear-gradient(45deg, #e9ecef, #adb5bd 15px);  
+            background: #1ff704ab;
         }
 
         .fixed-break{
@@ -99,7 +99,7 @@
             background-size: 3px;
             background: repeating-linear-gradient(251deg, #212121, #444141 12px);
             color: #fff;
-            font-size: 3rem;
+            font-size: 13px;
             padding: 1px 18px;
             text-align: center;
             line-height: 1.1;
@@ -117,6 +117,9 @@
 
         .light-success{
             background: #1ff704ab;
+        }
+        .light-danger{
+            background: #ff4b12;
         }
 </style>
 <%- include("../partials/leftSidebar") %>
@@ -195,13 +198,13 @@
                                 //SHOW DETAILS IF CHECKED 
                                 $("#showDetails").on('click',function(){
                                     if ($(this).is(':checked')) {
-                                        $(".slotStatusWithDetails").removeClass('d-none')
-                                        $(".slotStatusWithDetails").css('line-height','1.5')
+                                        $(".slotStatusWithDetails .show-content").removeClass('d-none')
+                                        $(".slotStatusWithDetails").css('line-height','1.4')
                                         $(".day-name").css('padding','100px 0px')
                                         $(".slotStatusWithDetails").css('padding-top','15px')
                                         console.log('CHECKED::::::::>>')
                                     }else{
-                                        $(".slotStatusWithDetails").addClass('d-none')
+                                        $(".slotStatusWithDetails .show-content").addClass('d-none')
                                         console.log('UNCHECKED::::::::>>')
                                         $(".slotStatusWithDetails").css('line-height','0')
                                         $(".day-name").css('padding','10px 0px')
@@ -217,11 +220,11 @@
                                     });
 
                                     
-                                    $(document).on("mouseout",".room-slot-item",function() {
-                                        let elem =  $(this).find('.start-time')
-                                        $(this).find('.start-time').html('')
-                                        $(this).find('.end-time').html('')
-                                    });
+                                    // $(document).on("mouseout",".room-slot-item",function() {
+                                    //     let elem =  $(this).find('.start-time')
+                                    //     $(this).find('.start-time').html('')
+                                    //     $(this).find('.end-time').html('')
+                                    // });
 
                             })
 
@@ -267,7 +270,7 @@
             
         let slotHtml = `<div class="bg-danger text-light" style="margin-left:150px;display:inline-flex">`;
             showtime.forEach(item => {
-               slotHtml += `<span style="padding-right:115px">${item} </span>`  
+               slotHtml += `<span style="padding-right:125px">${item} </span>`  
             });
             slotHtml += `</div>`
             $(".timetable-slots").html(slotHtml)
@@ -302,9 +305,9 @@
                 let  roomSlotItem = document.createElement('div');
                 roomSlotItem.setAttribute("class",`event room-slot-item ${event.day_lid ? 'light-success':'bg-warning'}`)
                 roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${(event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot}px;`)
-               //<div class="slotStatusWithDetails d-none text-dark">${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})</div>
-                roomSlotItem.innerHTML = `<span class="badge text-dark start-time" data-start-time="${timeJson[eventStartSlot - timeTablestartSlot].start_time}" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 1].end_time}"></span>
-                <span class="badge  end-time text-dark" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 1].end_time}"></span>`;
+                roomSlotItem.innerHTML =`
+                <span class="badge text-dark start-time" data-start-time="${timeJson[eventStartSlot - timeTablestartSlot].start_time}" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}"></span>
+                <span class="badge  end-time text-dark" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}"></span> `;
                 //${timeJson[eventStartSlot - timeTablestartSlot].start_time}
                 //${timeJson[event.end_slot - timeTablestartSlot + 1].end_time}
                 roomSlot.append(roomSlotItem);
@@ -327,7 +330,7 @@
             }
 
                for( let event of bookedSlot) {
-              //  if(!event.is_break){
+                if(!event.is_break){
                 eventStartSlot = event.start_slot;
                 roomSlot = document.querySelector(`.room[day-lid ="${event.day_lid}"] .room-slots`)
                 eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
@@ -337,28 +340,34 @@
                     
 
                 let  roomSlotItem = document.createElement('div');
-                roomSlotItem.setAttribute("class",`event room-slot-item ${event.day_lid ? 'light-success':'bg-warning'}`)
+                roomSlotItem.setAttribute("class",`event room-slot-item text-white ${event.day_lid ? 'light-danger':'bg-warning'}`)
                 roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${(event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot}px;`)
-                roomSlotItem.innerHTML = `<div class="slotStatusWithDetails d-none text-dark">${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})</div> 
-                <span class="badge text-dark start-time" data-start-time="${timeJson[eventStartSlot - timeTablestartSlot].start_time}" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 1].end_time}">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
-                <span class="badge  end-time text-dark" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 1].end_time}">${timeJson[event.end_slot - timeTablestartSlot + 1].end_time}</span>`;
+                
+                roomSlotItem.innerHTML =
+                        `<div class="slotStatusWithDetails"><span class="show-content d-none">${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})<br><hr> ${event.faculty_name} </span>
+                    <span class="badge  start-time" >${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
+                <span class="badge  end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span></div> ${breakElement}`;
+                
+                // roomSlotItem.innerHTML = `<div class="slotStatusWithDetails d-none ">${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})</div> 
+                // <span class="badge  start-time" data-start-time="${timeJson[eventStartSlot - timeTablestartSlot].start_time}" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
+                // <span class="badge  end-time " data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}">${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}</span> ${breakElement}`;
                 roomSlot.append(roomSlotItem);
-                // }
-                // else {
-                //    console.log('HERE FALSE')
-                //     roomSlot = document.querySelector(`.room[day-lid = "${event.day_lid}"] .room-slots`)
-                //     eventStartSlot = event.start_slot;
-                //     eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot;
+                }
+                else {
+                   console.log('HERE FALSE')
+                    roomSlot = document.querySelector(`.room[day-lid = "${event.day_lid}"] .room-slots`)
+                    eventStartSlot = event.start_slot;
+                    eventLeftPosition =   (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot;
 
-                //     let fixedBreak = document.createElement('div');
-                //     fixedBreak.setAttribute("class","fixed-break room-slot-item")
-                //     fixedBreak.setAttribute("style",`left: ${eventLeftPosition}px; top: 0;`)
-                //     fixedBreak.setAttribute("data-break",`${event.is_break}`)
-                //     fixedBreak.innerText = 'BREAK';
-                //     fixedBreadWidth = (event.end_slot - event.start_slot) * timetableProp.pxPerSlot + timetableProp.pxPerSlot;
-                //     console.log('breakinterval count:::::', fixedBreadWidth)
-                //     roomSlot.append(fixedBreak);
-                // }
+                    let fixedBreak = document.createElement('div');
+                    fixedBreak.setAttribute("class","fixed-break room-slot-item")
+                    fixedBreak.setAttribute("style",`left: ${eventLeftPosition}px; top: 0;`)
+                    fixedBreak.setAttribute("data-break",`${event.is_break}`)
+                    fixedBreak.innerText = 'BREAK';
+                    fixedBreadWidth = (event.end_slot - event.start_slot) * timetableProp.pxPerSlot + timetableProp.pxPerSlot;
+                    console.log('breakinterval count:::::', fixedBreadWidth)
+                    roomSlot.append(fixedBreak);
+                }
             }
             cssRoot.style.setProperty('--fixedBreakWidth', `${fixedBreadWidth}px`);
         }
