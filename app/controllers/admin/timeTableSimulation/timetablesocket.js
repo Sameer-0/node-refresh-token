@@ -20,22 +20,59 @@ module.exports.respond = async socket => {
             allocate_events: JSON.parse(data)
         }
 
-        TimeTable.scheduleEvent(slug, userId, object).then(result => {
-            console.log('result::::::::', result)
-            socket.emit('schedule-event-response', JSON.parse(result.output.output_json))
-        }).catch(error => {
-            console.log("ERROR>>>>>>> ", error)
-            if (isJsonString.isJsonString(error.originalError.info.message)) {
-                //res.status(500).json(JSON.parse(error.originalError.info.message))
-                socket.emit('schedule-event-response', JSON.parse(error.originalError.info.message))
-            } else {
-                socket.emit('schedule-event-response', {
-                    status: 500,
-                    description: error.originalError.info.message,
-                    data: []
-                })
-            }
-        })
+        if(data[0].action_type == 'allocate'){
+            TimeTable.scheduleEvent(slug, userId, object).then(result => {
+                console.log('result::::::::', result)
+                socket.emit('schedule-event-response', JSON.parse(result.output.output_json))
+            }).catch(error => {
+                console.log("ERROR>>>>>>> ", error)
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    //res.status(500).json(JSON.parse(error.originalError.info.message))
+                    socket.emit('schedule-event-response', JSON.parse(error.originalError.info.message))
+                } else {
+                    socket.emit('schedule-event-response', {
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    })
+                }
+            })
+        }else if (data[0].action_type == 'drag'){
+            TimeTable.dragDropEvent(slug, userId, object).then(result => {
+                console.log('result::::::::', result)
+                socket.emit('schedule-event-response', JSON.parse(result.output.output_json))
+            }).catch(error => {
+                console.log("ERROR>>>>>>> ", error)
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    //res.status(500).json(JSON.parse(error.originalError.info.message))
+                    socket.emit('schedule-event-response', JSON.parse(error.originalError.info.message))
+                } else {
+                    socket.emit('schedule-event-response', {
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    })
+                }
+            })
+        }else if(data[0].action_type == 'swap'){
+
+            TimeTable.swapEvents(slug, userId, object).then(result => {
+                console.log('result::::::::', result)
+                socket.emit('swap-events-response', JSON.parse(result.output.output_json))
+            }).catch(error => {
+                console.log("ERROR>>>>>>> ", error)
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    socket.emit('swap-events-response', JSON.parse(error.originalError.info.message))
+                } else {
+                    socket.emit('swap-events-response', JSON.parse({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    }))
+                }
+            })
+        }
+        
     })
 
     //Drop Event
@@ -59,26 +96,26 @@ module.exports.respond = async socket => {
     })
 
     //Swap Event
-    socket.on('swap-events-request', async function (slug, userId, inputJSON) {
-        console.log('swap-events-request::::::::')
+    // socket.on('swap-events-request', async function (slug, userId, inputJSON) {
+    //     console.log('swap-events-request::::::::')
 
-        let object = {
-            swap_events: JSON.parse(inputJSON)
-        }
-        TimeTable.swapEvents(slug, userId, object).then(result => {
-            console.log('result::::::::', result)
-            socket.emit('swap-events-response', JSON.parse(result.output.output_json))
-        }).catch(error => {
-            console.log("ERROR>>>>>>> ", error)
-            if (isJsonString.isJsonString(error.originalError.info.message)) {
-                socket.emit('swap-events-response', JSON.parse(error.originalError.info.message))
-            } else {
-                socket.emit('swap-events-response', JSON.parse({
-                    status: 500,
-                    description: error.originalError.info.message,
-                    data: []
-                }))
-            }
-        })
-    })
+    //     let object = {
+    //         swap_events: JSON.parse(inputJSON)
+    //     }
+    //     TimeTable.swapEvents(slug, userId, object).then(result => {
+    //         console.log('result::::::::', result)
+    //         socket.emit('swap-events-response', JSON.parse(result.output.output_json))
+    //     }).catch(error => {
+    //         console.log("ERROR>>>>>>> ", error)
+    //         if (isJsonString.isJsonString(error.originalError.info.message)) {
+    //             socket.emit('swap-events-response', JSON.parse(error.originalError.info.message))
+    //         } else {
+    //             socket.emit('swap-events-response', JSON.parse({
+    //                 status: 500,
+    //                 description: error.originalError.info.message,
+    //                 data: []
+    //             }))
+    //         }
+    //     })
+    // })
 }
