@@ -125,7 +125,7 @@ module.exports = class Faculties {
 
     static facultyBookedSlot(slug, facultyId) {
         return poolConnection.then(pool => {
-            return pool.request().input('facultyId', sql.Int, facultyId).query(`SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
+            return pool.request().input('facultyId', sql.Int, facultyId).query(`SELECT f.faculty_name, t2.room_lid, t2.day_lid, t2.is_break, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.faculty_lid, e.event_type_lid, eb.id as event_booking_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type FROM (SELECT * FROM (SELECT room_lid, day_lid, event_lid, is_break, MIN(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS start_slot, 
             MAX(slot_lid) OVER(PARTITION BY room_lid, day_lid, event_lid, is_break, break_id) AS end_slot, 
             ROW_NUMBER() OVER(PARTITION BY room_lid, event_lid ORDER BY room_lid, slot_lid) AS row_num
             FROM [asmsoc-mum].event_bookings 
@@ -137,6 +137,7 @@ module.exports = class Faculties {
             LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
             LEFT JOIN [asmsoc-mum].initial_course_workload icw ON icw.id = e.course_lid
             LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
+            LEFT JOIN [asmsoc-mum].faculties f ON f.id =  e.faculty_lid
             WHERE (e.faculty_lid = @facultyId ) OR t2.is_break = 1 AND eb.event_lid IS NULL
             ORDER BY t2.start_slot, t2.end_slot`)
         })
