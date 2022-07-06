@@ -147,9 +147,10 @@
             </div>
         </div>
         <div class="card-body table-responsive">
-            <div class="row">
-                <div class="col-md-4 mb-5">
-            <select class="form-select select2" id="facultyName">
+            
+            <div class="d-flex justify-content-between mb-3">
+                <div>
+                            <select class="form-select select2" id="facultyName">
                         <option>Select faculty</option>
                         <%for(let faculty of facultyList){%>
                         <option value="<%-faculty.id%>"><%-faculty.faculty_name%> (<%-faculty.faculty_id%>)</option>
@@ -158,7 +159,21 @@
             <div class="form-check form-check-inline mt-3">
                 <input class="form-check-input" type="checkbox" id="showDetails">
                 <label class="form-check-label" for="showDetails">Show Details</label>
+                <div class="form-check-label" for="showTimeline">Time Line : <span id="showTimeline">00:00 - 00:00</span></div>
             </div>
+                </div>
+                <div>
+                    <table>
+                        <tr>
+                            <td>Booked Slot: </td>
+                            <td> <div style="height: 20px;width: 20px;background: #ff4b12;" class="ms-2"></div></td>
+                        </tr>
+                        <tr>
+                            <td>Available Slot: </td>
+                            <td> <div style="height: 20px;width: 20px;background: #1ff704ab;" class="ms-2"></div></td>
+                        </tr>
+                    </table>
+                    
                 </div>
             </div>
             <div class="timetable-slots" style="overflow-x: auto;"></div>
@@ -168,7 +183,6 @@
 </div>
 
 <%- include("../partials/footer") %>
-
                         <script src="/js/dashboardscript.js"></script>
                         <script src="/js/leftsidebartoggle.js"></script>
                          <script>
@@ -244,13 +258,24 @@
         console.log('time slot list::', timeJson)
         let timeTablestartSlot = timeJson[0].id;
         console.log('timeTablestartSlot::::::::::>',timeTablestartSlot)
-
+let targetProp = {};
         let timetableProp = {
             totalSlots: 116,
             pxPerSlot: 13,
             roomNoWidth: 150,
             
         }
+
+        let dragObj = {
+            initialClientX: null,
+            initialClientY: null,
+            isMouseDown: false,
+            targetElem: null,
+            isDraggable: false,
+            isDroppable: true,
+            isDragging: false
+        }
+
         cssRoot.style.setProperty('--timetableWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot + 50 }px`);
         cssRoot.style.setProperty('--roomNoWidth', `${timetableProp.roomNoWidth}px`);
         cssRoot.style.setProperty('--breakIntervalWidth', `${timetableProp.pxPerSlot}px`);
@@ -264,7 +289,6 @@
             let roomSlot;
             let eventStartSlot;
             let eventLeftPosition;
-
 
         let showtime = ["7:30","8:30","9:30","10:30","11:30","12:30","01:30","02:30","03:30","04:30","05:30","06:30","07:30"]
             
@@ -345,12 +369,9 @@
                 
                 roomSlotItem.innerHTML =
                         `<div class="slotStatusWithDetails"><span class="show-content d-none">${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})<br><hr> ${event.faculty_name} </span>
-                    <span class="badge  start-time" >${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
+                    <span class="badge  start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
                 <span class="badge  end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span></div> ${breakElement}`;
                 
-                // roomSlotItem.innerHTML = `<div class="slotStatusWithDetails d-none ">${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})</div> 
-                // <span class="badge  start-time" data-start-time="${timeJson[eventStartSlot - timeTablestartSlot].start_time}" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
-                // <span class="badge  end-time " data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}">${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}</span> ${breakElement}`;
                 roomSlot.append(roomSlotItem);
                 }
                 else {
@@ -372,7 +393,34 @@
             cssRoot.style.setProperty('--fixedBreakWidth', `${fixedBreadWidth}px`);
         }
 
-                                function showError(errors) {
+
+        document.querySelector('.timetable-container').addEventListener('mousemove', onDrag)
+         let fixedBreakBounding
+        function  onDrag(e){
+            
+   
+             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
+            let errorFactor = e.clientX - 78 - dragObj.tableLeftPosition - dragObj.relativeClientX 
+
+           
+
+              let tRect = e.target.getBoundingClientRect();
+               
+                console.log('MOUSE MOVE:::::::::::>>')
+                targetProp.movedX = dragObj.relativeClientX - targetProp.oldOffsetX - timetableProp.roomNoWidth;
+                targetProp.movedY = e.clientY - targetProp.initialClientY;
+
+                dragObj.leftSlotTime = Math.round(targetProp.movedX / timetableProp.pxPerSlot) >= 0 ? Math.round(targetProp
+                    .movedX / timetableProp.pxPerSlot) : 0
+
+                console.log('START TIME::::::::',timeJson[dragObj.leftSlotTime].start_time);
+                console.log('END TIME::::::::',timeJson[(dragObj.leftSlotTime + 11)].end_time);
+            
+                $("#showTimeline").html(`${timeJson[dragObj.leftSlotTime].start_time} - ${timeJson[(dragObj.leftSlotTime + 11)].end_time}`)
+                 
+        }
+         
+        function showError(errors) {
                                     console.log('error::::::::::', errors)
                                     let simpleAlert = new SimpleAlert();
                                     let obj = {
