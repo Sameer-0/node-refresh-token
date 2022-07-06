@@ -935,6 +935,7 @@
             </p>
           </div>`
         }
+        
         let pendingEventContainer = document.querySelector('.pending-event-container');
         pendingEventContainer.innerHTML = pendingEventElement;
 
@@ -1049,7 +1050,6 @@
                     }
 
                 } 
-                
                    
             }
 
@@ -1145,7 +1145,7 @@
             eventElemt.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
             <i class="fa-solid fa-arrows-left-right"></i>
             <span class="badge bg-info end-time">${timeJson[endSlotIndex - 1].end_time}</span>
-            <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; display: block;"></div>`;
+            <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
 
             eventElemt.style.position = 'absolute';
             eventElemt.style.width = '169px';
@@ -1153,8 +1153,6 @@
             eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 49 - 84.5 + (timetableProp.pxPerSlot/2) + 'px';
 
            
-            
-            
             currentRoom.append(eventElemt)
             penElem.remove();
 
@@ -1233,12 +1231,11 @@
                     eventStartSlot = event.start_slot;
                     eventLeftPosition = (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot;
 
-
-
                     let fixedBreak = document.createElement('div');
                     fixedBreak.setAttribute("class", "fixed-break room-slot-item")
                     fixedBreak.setAttribute("style", `left: ${eventLeftPosition}px; top: 0;`)
                     fixedBreak.setAttribute("data-break", `${event.is_break}`)
+                    fixedBreak.setAttribute("data-break-id", `${event.break_id}`)
                     fixedBreak.innerText = 'BREAK';
                     fixedBreadWidth = (event.end_slot - event.start_slot) * timetableProp.pxPerSlot + timetableProp
                         .pxPerSlot;
@@ -1301,13 +1298,13 @@
 
 
         let fixedBreakBounding
+        let fixedBreakTwoBounding
         let previousScrollY = 0;
 
         function dragStart(e) {
 
-
             dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left;
-            // console.log('hello:::',  dragObj.tableLeftPosition)
+            
             if (e.target.classList.contains('room-slots')) e.preventDefault();
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
@@ -1327,7 +1324,9 @@
             if (e.target.classList.contains('event')) {
 
                 fixedBreakBounding = document.querySelector('.fixed-break').getBoundingClientRect();
-                console.log('fixed break Trect::', fixedBreakBounding)
+                fixedBreakTwoBounding = document.querySelector('.fixed-break[data-break-id="2"]').getBoundingClientRect();
+
+                console.log('fixed break 2Trect::', document.querySelector('.fixed-break[data-break-id="2"]'))
                 console.log("IS DRAGGABLE");
 
                 dragObj.isMouseDown = true;
@@ -1399,7 +1398,8 @@
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
             let errorFactor = e.clientX - 78 - dragObj.tableLeftPosition - dragObj.relativeClientX 
-          console.log( errorFactor )
+          
+            console.log( errorFactor )
 
             if(document.querySelectorAll('.pending-event[data-selected]').length > 0 && getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY))){
                 penElem.classList.remove('d-none')
@@ -1438,11 +1438,9 @@
                 dragObj.currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
 
                 if (dragObj.currentRoom != dragObj.initialRoom) {
-
                     dragObj.initialRoom.style.cssText += `outline: unset`;
                     dragObj.currentRoom.style.cssText += `outline: 3px solid #ff8400`;
                     dragObj.initialRoom = dragObj.currentRoom;
-
                 }
 
 
@@ -1457,7 +1455,7 @@
 
                 dragObj.targetElem.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
                         .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-                    .pxPerSlot + 'px' : '0px'
+                    .pxPerSlot + 13 + 'px' : '0px'
 
 
                 // if(window.pageYOffset-previousScrollY >= 0){
@@ -1468,54 +1466,67 @@
                 dragObj.targetElem.style.top =  `${targetProp.movedY}px`
 
            
-                if ((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
+                if (((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
                         fixedBreakBounding.left && tRect.right <= fixedBreakBounding.right) || (tRect.right >=
-                        fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) {
+                        fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) || 
+                    ((tRect.left >= fixedBreakTwoBounding.left && tRect.left < fixedBreakTwoBounding.right) || (tRect.right >
+                    fixedBreakTwoBounding.left && tRect.right <= fixedBreakTwoBounding.right) || (tRect.right >=
+                    fixedBreakTwoBounding.right && tRect.left < fixedBreakTwoBounding.right))) {
 
-                    console.log("Target element>>>>> ", dragObj.targetElem)
+                  //SET IS BREAK KEY
+
+                  dragObj.isOverBreak = true;
 
                     cssRoot.style.setProperty('--eventNoBreakWidth', `${(timetableProp.pxPerSlot * 12)}px`);
-                    dragObj.targetElem.querySelector('.break').classList.add('d-none');
+                  
+                    let breakEle =  dragObj.targetElem.querySelector('.break')
+                    
+                    breakEle.classList.add('d-none');
                     dragObj.targetElem.style.width = '169px';
                     console.log('over the break:::::::::', dragObj.targetElem.style.width)
 
                 } else {
+
+                    dragObj.isOverBreak = false;
                     dragObj.targetElem.querySelector('.break').classList.remove('d-none');
                     dragObj.targetElem.style.width = '169px';
                 }
 
+
+                console.log('timetableProp.totalSlots * timetableProp.pxPerSlot>> ', timetableProp.totalSlots * timetableProp.pxPerSlot)
+                console.log('dragObj.targetElem.offsetRight>> ', dragObj.targetElem.offsetLeft)
+                console.log('dragObj.targetElem.offsetRight>> ', dragObj.targetElem.offsetLeft + 12 * 13 + 13)
+
                 //No break condition for room being placed at end
-                if ((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX / timetableProp
-                            .pxPerSlot) * timetableProp.pxPerSlot + (timetableProp.pxPerSlot * 12) + timetableProp
-                        .pxPerSlot) <
-                    1) {
-                    console.log('true:::::::::::::::>>>>>>>>>>', (fixedBreakSlotStart - timeTablestartSlot) *
-                        timetableProp.pxPerSlot)
+                if ((timetableProp.totalSlots * timetableProp.pxPerSlot) - (dragObj.targetElem.offsetLeft + 12 * 13)  < 2) {
+                   
+                    console.log('true:::::::::::::::>>>>>>>>>>', (fixedBreakSlotStart - timeTablestartSlot) * timetableProp.pxPerSlot)
 
 
                     dragObj.targetElem.querySelector('.break').classList.add('d-none');
 
-                    dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) *
-                        timetableProp.pxPerSlot + timetableProp.pxPerSlot + 'px'
-                    dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
+                   // dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot + timetableProp.pxPerSlot + 'px'
+                   dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
 
                     dragObj.targetElem.querySelector('.end-time').style.right = 0
                     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right = 'calc(78px - 7px)'
 
-                    if (((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX /
-                                timetableProp.pxPerSlot) * timetableProp
-                            .pxPerSlot + (timetableProp.pxPerSlot * 12))) > 0) {
+                    // if (((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX /
+                    //             timetableProp.pxPerSlot) * timetableProp
+                    //         .pxPerSlot + (timetableProp.pxPerSlot * 12))) > 0) {
 
-                        console.log('false:::::::::')
+                    //     console.log('false:::::::::')
 
-                        dragObj.targetElem.querySelector('.break').classList.remove('d-none')
-                        dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
-                        dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
-                            'calc(var(--breakIntervalWidth) + 78px - 7px)'
-                        // dragObj.targetElem.style.width = `var(--eventWidth)`;
-                    }
+                    //     dragObj.targetElem.querySelector('.break').classList.remove('d-none')
+                    //     dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
+                    //     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
+                    //         'calc(var(--breakIntervalWidth) + 78px - 7px)'
+                    //     // dragObj.targetElem.style.width = `var(--eventWidth)`;
+                    // }
                 } else {
-                    dragObj.targetElem.querySelector('.break').classList.remove('d-none');
+
+                    if (!dragObj.isOverBreak)
+                        dragObj.targetElem.querySelector('.break').classList.remove('d-none');
                     //dragObj.targetElem.style.width = `var(--eventWidth)`;
                     dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
                     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
@@ -1574,7 +1585,7 @@
                             .start_time;
                         dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
                             .end_time;
-                        dragObj.targetElem.querySelector('.break').style.display = 'block'
+                        dragObj.targetElem.querySelector('.break').classList.remove('d-none');
                         dragObj.isDroppable = false;
                         break;
                     }
