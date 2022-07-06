@@ -258,7 +258,9 @@
         console.log('time slot list::', timeJson)
         let timeTablestartSlot = timeJson[0].id;
         console.log('timeTablestartSlot::::::::::>',timeTablestartSlot)
-let targetProp = {};
+        
+        let targetProp = {};
+
         let timetableProp = {
             totalSlots: 116,
             pxPerSlot: 13,
@@ -398,25 +400,12 @@ let targetProp = {};
          let fixedBreakBounding
         function  onDrag(e){
             
-   
-             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
-            let errorFactor = e.clientX - 78 - dragObj.tableLeftPosition - dragObj.relativeClientX 
-
-           
-
-              let tRect = e.target.getBoundingClientRect();
-               
-                console.log('MOUSE MOVE:::::::::::>>')
-                targetProp.movedX = dragObj.relativeClientX - targetProp.oldOffsetX - timetableProp.roomNoWidth;
-                targetProp.movedY = e.clientY - targetProp.initialClientY;
-
-                dragObj.leftSlotTime = Math.round(targetProp.movedX / timetableProp.pxPerSlot) >= 0 ? Math.round(targetProp
-                    .movedX / timetableProp.pxPerSlot) : 0
-
-                console.log('START TIME::::::::',timeJson[dragObj.leftSlotTime].start_time);
-                console.log('END TIME::::::::',timeJson[(dragObj.leftSlotTime + 11)].end_time);
+            dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
+        
+             //$("#showTimeline").html(`${timeJson[dragObj.leftSlotTime].start_time} - ${timeJson[(dragObj.leftSlotTime + 11)].end_time}`)
             
-                $("#showTimeline").html(`${timeJson[dragObj.leftSlotTime].start_time} - ${timeJson[(dragObj.leftSlotTime + 11)].end_time}`)
+            
+                
                  
         }
          
