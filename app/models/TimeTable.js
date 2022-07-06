@@ -134,8 +134,11 @@ module.exports = class TimeTable {
 
             console.log('getPendingEventPrograms:::')
 
-            stmt = `SELECT DISTINCT program_lid, p.program_name, p.program_id FROM [${slug}].pending_events pe 
-				INNER JOIN [${slug}].programs p on p.id = pe.program_lid`
+            stmt = `SELECT t1.program_lid, p.program_name, p.program_id FROM
+            (SELECT DISTINCT(te.program_lid) FROM [${slug}].tb_events te 
+            LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = te.id
+            WHERE eb.id IS NULL) t1
+            INNER JOIN [${slug}].programs p ON p.id = t1.program_lid`
 
             return pool.request()
                 .query(stmt);
@@ -151,12 +154,33 @@ module.exports = class TimeTable {
 
             console.log('getPendingEventSessions:::')
 
-            stmt = `SELECT DISTINCT acad_session_lid, ads.acad_session FROM [${slug}].pending_events pe
-				INNER JOIN acad_sessions ads on ads.id = pe.acad_session_lid
-				WHERE program_lid = @programLid`
+            stmt = `SELECT t1.acad_session_lid, ads.acad_session FROM(SELECT DISTINCT(te.acad_session_lid) FROM [${slug}].tb_events te 
+            LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = te.id
+            WHERE eb.id IS NULL and te.program_lid = @programLid) t1
+            INNER JOIN acad_sessions ads ON ads.id = t1.acad_session_lid`
 
             return pool.request()
                 .input('programLid', sql.Int, programLid)
+                .query(stmt);
+
+        })
+    }
+
+    static getPendingEventModule(slug, programLid, sessionLid) {
+        console.log('hitting pending session::::::', programLid)
+        return poolConnection.then(pool => {
+            let stmt;
+
+            console.log('getPendingEventSessions:::')
+
+            stmt = `SELECT t1.course_lid, icw.module_name FROM (SELECT DISTINCT(te.course_lid) FROM [${slug}].tb_events te 
+            LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = te.id
+            WHERE eb.id IS NULL and te.program_lid = @programLid and te.acad_session_lid = @sessionLid) t1
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = t1.course_lid`
+
+            return pool.request()
+                .input('programLid', sql.Int, programLid)
+                .input('sessionLid', sql.Int, sessionLid)
                 .query(stmt);
 
         })
@@ -175,17 +199,7 @@ module.exports = class TimeTable {
     }
 
     static scheduleEvent(slug, userId, inputJSON) {
-        console.log('ALLOCATED EVENT:::::::::::::::>>', inputJSON)
-
-        console.log('inputJSON.eventLid>>> ', inputJSON.allocate_events[0].eventLid)
-        console.log('inputJSON.facultyLid>>> ', inputJSON.allocate_events[0].facultyLid)
-        console.log('inputJSON.dayLid>>> ', inputJSON.allocate_events[0].dayLid)
-        console.log('inputJSON.roomLid>>> ', inputJSON.allocate_events[0].roomLid)
-        console.log('inputJSON.startSlotLid>>> ', inputJSON.allocate_events[0].startSlotLid)
-        console.log('inputJSON.endSlotLid>>> ', inputJSON.allocate_events[0].endSlotLid)
-        console.log('userId>>> ', userId)
-
-
+  
         return poolConnection.then(pool => {
             return pool.request()
                 .input('event_lid', sql.Int, inputJSON.allocate_events[0].eventLid)
