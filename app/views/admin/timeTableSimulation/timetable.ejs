@@ -711,17 +711,18 @@
             let facultyLid = $(this).attr("data-faculty-lid")
 
             let obj = [{
-                room_lid: roomLid,
-                start_time_id: startSlotId,
-                end_time_id: endSlotId,
-                program_lid: programLid,
-                day_lid: dayLid,
-                event_lid: eventLid
+                roomLid: roomLid,
+                startSlotLid: startSlotId,
+                endSlotLid: endSlotId,
+                dayLid: dayLid,
+                eventLid: eventLid,
+                facultyLid: facultyLid
             }]
 
             console.log('JSON::::::::::::::::', obj)
-            //'/admin/time-table-simulation/time-table/schedule-event'
+
             socket.emit('schedule-event-request', slugName, userId, JSON.stringify(obj));
+
             socket.on('schedule-event-response', function (response) {
                 console.log('schedule-event-response::::::::::::::::', response)
                 if (response.status == 1 && response.data.length > 0) {
@@ -732,7 +733,7 @@
                     currentTd.attr('data-start-time-id', respobj.slot_start_lid)
                     currentTd.attr('data-end-time-id', respobj.slot_end_lid)
                     currentTd.attr('data-room-id', respobj.room_lid)
-                    currentTd.attr('data-room-no', respobj.room_number)
+                    currentTd.attr('data-room-no', respobj.room_number) 
                     currentTd.attr('data-lid', respobj.id)
                     currentTd.attr('data-module-name', respobj.module_name)
                     currentTd.attr('data-division-name', respobj.division)
@@ -952,7 +953,8 @@
             let startSLotId = timeJson[startSlotIndex].id;
             let endSlotId = timeJson[endSlotIndex - 1].id;
 
-            console.log('current>>>>>>>>>>>>>> left:::',timeJson[startSlotIndex].id, timeJson[endSlotIndex - 1].id)
+            console.log('current>>>>>>>>>>>>>> left:::', startSLotId, endSlotId);
+
             
             let ApiObj = {
                         url: '/admin/faculties/works/get-faculty-work-events',
@@ -961,8 +963,10 @@
                             programLid: programLid,
                             sessionLid: sessionLid,
                             moduleLid: moduleLid,
-                            eventTypeLid:eventTypeLid,
-                            divisionLid : divisionLid
+                            divisionLid: divisionLid,
+                            startSlotLid: startSLotId,
+                            endSlotLid: endSlotId,
+                            dayLid: dayLid
                         },
                         dataType: 'JSON'
                     }

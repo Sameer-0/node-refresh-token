@@ -165,23 +165,38 @@ module.exports = class TimeTable {
     static dropEvent(slug, userId, eventLid) {
 
         return poolConnection.then(pool => {
-
             return pool.request()
-                .input('event_booking_lid', sql.Int, eventLid)
+                .input('event_lid', sql.Int, eventLid)
                 .input('last_modified_by', sql.Int, userId)
+                .output('output_flag', sql.Int)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].sp_drop_events`);
-
         })
     }
 
     static scheduleEvent(slug, userId, inputJSON) {
-        console.log('ALLOCATED EVENT:::::::::::::::>>', JSON.stringify(inputJSON))
+        console.log('ALLOCATED EVENT:::::::::::::::>>', inputJSON)
+
+        console.log('inputJSON.eventLid>>> ', inputJSON.allocate_events[0].eventLid)
+        console.log('inputJSON.facultyLid>>> ', inputJSON.allocate_events[0].facultyLid)
+        console.log('inputJSON.dayLid>>> ', inputJSON.allocate_events[0].dayLid)
+        console.log('inputJSON.roomLid>>> ', inputJSON.allocate_events[0].roomLid)
+        console.log('inputJSON.startSlotLid>>> ', inputJSON.allocate_events[0].startSlotLid)
+        console.log('inputJSON.endSlotLid>>> ', inputJSON.allocate_events[0].endSlotLid)
+        console.log('userId>>> ', userId)
+
+
         return poolConnection.then(pool => {
             return pool.request()
-                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('event_lid', sql.Int, inputJSON.allocate_events[0].eventLid)
+                .input('faculty_lid', sql.Int, inputJSON.allocate_events[0].facultyLid)
+                .input('day_lid', sql.Int, inputJSON.allocate_events[0].dayLid)
+                .input('room_lid', sql.Int, inputJSON.allocate_events[0].roomLid)
+                .input('slot_start_lid', sql.Int, inputJSON.allocate_events[0].startSlotLid)
+                .input('slot_end_lid', sql.Int, inputJSON.allocate_events[0].endSlotLid)
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
+                .output('output_flag', sql.Int)
                 .execute(`[${slug}].sp_allocate_events`);
         })
     }
