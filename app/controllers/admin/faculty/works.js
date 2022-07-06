@@ -274,8 +274,14 @@ module.exports = {
     },
 
     getFacultyWorks: (req, res) => {
+
+        console.log('fetching faculties:>>>>>>>>>>> ', req.body)
+
         Promise.all([FacultyWorks.facultyWorkEvents(req.body, res.locals.slug), FacultyWorks.getFacultiesAllocationDetails(req.body, res.locals.slug)])
         .then(result => {
+
+            console.log('Result>>> ' , result[0].recordset)
+
             res.status(200).json({
                 result: result[0].recordset,
                 facultyAllocationDetails: result[1].recordset
