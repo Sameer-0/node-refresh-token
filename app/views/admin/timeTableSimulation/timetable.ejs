@@ -341,12 +341,123 @@
         let programListJson = JSON.parse(`<%- programListJson %>`);
         let pendingEventPrograms = JSON.parse(`<%- pendingEventPrograms%>`);
         let pendingEventProgramLi = JSON.parse(`<%- pendingEventPrograms%>`);
+
         var pendingEventProgramLids = pendingEventProgramLi.map(function (obj) {
             return obj.program_lid;
         });
 
         console.log('pending event programs::::::', pendingEventPrograms)
 
+        //PROGRAMS FOR PENDING EVENT LIST
+        let penProgramOption=`<option value="">--Select Program--</option>`;
+        for(let program of pendingEventPrograms){
+
+            penProgramOption += `<option value="${program.program_lid}">${program.program_name}</option>`
+        }
+        $(document).find('#programs-for-pending-event').html(penProgramOption)
+
+     
+
+        $(document).on('change', '#programs-for-pending-event', function () {
+
+            let programLid = $(this).val();
+            console.log('progranmlid:::::::::', programLid)
+
+            let ApiObj = {
+                url: '/admin/time-table-simulation/time-table/pending-events-sessions',
+                type: 'POST',
+                data: {
+                    programLid: programLid
+                },
+                dataType: 'JSON'
+            }
+            let sessionList = ``;
+            
+                ajaxApi(ApiObj).then(result => {
+                    console.log('pending sessionsss;;;', result)
+
+                    if (result.length > 0) {
+
+                        sessionList +=
+                            `<option disabled selected value="">--Select Session--</option>`;
+                        result.forEach(element => {
+                            sessionList +=
+                                `<option value="${element.acad_session_lid}"> ${element.acad_session} </option>`
+                        });
+
+                    } else {
+                        sessionList +=
+                            `<option value=""> No Session Found! </option>`
+                    }
+                    sessionList += `</select>`;
+                    $(document).find("#session-for-pending-event")
+                        .html(sessionList)
+                }).catch(error => {
+                    // showError(error.responseJSON)
+                    console.log('error', error);
+                })
+
+            $(document).find('.pending-event').addClass('d-none');
+            $(document).find(`.pending-event[data-program_lid="${programLid}"]`).removeClass('d-none');
+            console.log('penidng evnt', $(document).find(`.pending-event[data-program_lid="${programLid}"]`))
+            
+        })
+
+        $(document).on('change', '#session-for-pending-event', function () {
+
+            let sessionLid = $(this).val();
+            let programLid = $('#programs-for-pending-event').val();
+            console.log('progranmlid:::::::::', programLid)
+
+            let ApiObj = {
+                url: '/admin/time-table-simulation/time-table/pending-events-module',
+                type: 'POST',
+                data: {
+                    programLid: programLid,
+                    sessionLid: sessionLid
+                },
+                dataType: 'JSON'
+            }
+            let moduleList = ``;
+
+                ajaxApi(ApiObj).then(result => {
+                    console.log('pending sessionsss;;;', result)
+
+                    if (result.length > 0) {
+
+                        moduleList +=
+                            `<option disabled selected value="">--Select Session--</option>`;
+                        result.forEach(element => {
+                            moduleList +=
+                                `<option value="${element.course_lid}"> ${element.module_name} </option>`
+                        });
+
+                    } else {
+                        moduleList +=
+                            `<option value=""> No Module Found! </option>`
+                    }
+                 
+                    $(document).find("#module-for-pending-event")
+                        .html(moduleList)
+                }).catch(error => {
+                    // showError(error.responseJSON)
+                    console.log('error', error);
+                })
+
+            $(document).find('.pending-event').addClass('d-none');
+            $(document).find(`.pending-event[data-session_lid="${sessionLid}"][data-program_lid="${programLid}"]`).removeClass('d-none');
+
+            })
+
+        $(document).on('change', '#module-for-pending-event', function() {
+
+            let moduleLid = $(this).val();
+            let programLid = $('#programs-for-pending-event').val();
+            let sessionLid = $('#session-for-pending-event').val();
+
+            $(document).find('.pending-event').addClass('d-none');
+            $(document).find(`.pending-event[data-session_lid="${sessionLid}"][data-program_lid="${programLid}"][data-module_lid="${moduleLid}"]`).removeClass('d-none');
+        })
         //PENDING EVENT LIST   
         $('.pending-events-modal').on('click', function () {
             console.log('yello hello')
@@ -726,33 +837,34 @@
             socket.on('schedule-event-response', function (response) {
                 console.log('schedule-event-response::::::::::::::::', response)
                 if (response.status == 1 && response.data.length > 0) {
-                    let respobj = response.data[0]
-                    //Set Data Here after socket response
-                    //SET DATA CURRENT TD
-                    currentTd.attr('data-school-time-id', respobj.school_timing_lid)
-                    currentTd.attr('data-start-time-id', respobj.slot_start_lid)
-                    currentTd.attr('data-end-time-id', respobj.slot_end_lid)
-                    currentTd.attr('data-room-id', respobj.room_lid)
-                    currentTd.attr('data-room-no', respobj.room_number) 
-                    currentTd.attr('data-lid', respobj.id)
-                    currentTd.attr('data-module-name', respobj.module_name)
-                    currentTd.attr('data-division-name', respobj.division)
-                    currentTd.attr('data-batch-name', respobj.batch)
-                    currentTd.attr('data-session-name', respobj.acad_session)
-                    currentTd.attr('data-program-name', respobj.program_name)
-                    currentTd.attr('data-start-time', respobj.start_time)
-                    currentTd.attr('data-end-time', respobj.end_time)
-                    currentTd.attr('data-faculty-name', respobj.faculty_name)
-                    currentTd.attr('data-faculty-lid', respobj.faculty_lid)
-                    currentTd.attr('data-event-type-lid', respobj.event_type_lid)
-                    currentTd.attr('draggable', true)
-                    currentTd.addClass('draggableTd dragtargetTd')
-                    currentTd.html(
-                        `${respobj.module_name} - ${respobj.event_type_abbr}<br>${respobj.division} (${respobj.batch})<br>${respobj.acad_session}<br>${respobj.program_name}<br>${respobj.start_time} to ${respobj.end_time} <br> (Faculty ${respobj.faculty_name})`
-                    )
+                    // let respobj = response.data[0]
+                    // //Set Data Here after socket response
+                    // //SET DATA CURRENT TD
+                    // currentTd.attr('data-school-time-id', respobj.school_timing_lid)
+                    // currentTd.attr('data-start-time-id', respobj.slot_start_lid)
+                    // currentTd.attr('data-end-time-id', respobj.slot_end_lid)
+                    // currentTd.attr('data-room-id', respobj.room_lid)
+                    // currentTd.attr('data-room-no', respobj.room_number) 
+                    // currentTd.attr('data-lid', respobj.id)
+                    // currentTd.attr('data-module-name', respobj.module_name)
+                    // currentTd.attr('data-division-name', respobj.division)
+                    // currentTd.attr('data-batch-name', respobj.batch)
+                    // currentTd.attr('data-session-name', respobj.acad_session)
+                    // currentTd.attr('data-program-name', respobj.program_name)
+                    // currentTd.attr('data-start-time', respobj.start_time)
+                    // currentTd.attr('data-end-time', respobj.end_time)
+                    // currentTd.attr('data-faculty-name', respobj.faculty_name)
+                    // currentTd.attr('data-faculty-lid', respobj.faculty_lid)
+                    // currentTd.attr('data-event-type-lid', respobj.event_type_lid)
+                    // currentTd.attr('draggable', true)
+                    // currentTd.addClass('draggableTd dragtargetTd')
+                    // currentTd.html(
+                    //     `${respobj.module_name} - ${respobj.event_type_abbr}<br>${respobj.division} (${respobj.batch})<br>${respobj.acad_session}<br>${respobj.program_name}<br>${respobj.start_time} to ${respobj.end_time} <br> (Faculty ${respobj.faculty_name})`
+                    // )
+                    $(document).find('.selected-pending-event').remove();
                     $("#slotModal").modal('hide')
                 } else {
-                    //SHOW ERROR MESSAGE IF ANYTHING GOING WRONG OR SOCKET THOW ERROR
+                
                     showError(response)
                 }
             });
@@ -1508,7 +1620,7 @@
                         $(document).find("#slotModal .modal-body").html(dragObj.targetElem.innerText)
                             console.log('statrt slot index', timeJson[dragObj.leftSlotTime + 11].end_time)
                         $('#slotModal .modal-footer').html(
-                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${timeJson[dragObj.leftSlotTime].id}" data-end-slot-id="${timeJson[dragObj.leftSlotTime + 11].id}" data-room-id="${dragObj.currentRoom.parentNode.getAttribute('data-room-lid')}"  data-day-lid="${dayLid}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" >Schedule Slot</button>`);
+                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${timeJson[dragObj.leftSlotTime].id}" data-end-slot-id="${timeJson[dragObj.leftSlotTime + 11].id}" data-room-id="${dragObj.currentRoom.parentNode.getAttribute('data-room-lid')}"  data-day-lid="${dayLid}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" >Confirm Slot</button>`);
 
                         $('#slotModal').modal('show');
                         // dragObj.isDroppable = false;
