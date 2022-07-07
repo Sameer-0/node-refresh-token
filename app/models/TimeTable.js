@@ -187,7 +187,7 @@ module.exports = class TimeTable {
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_flag', sql.Int)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].sp_drop_events`);
+                .execute(`[${slug}].sp_drop_event`);
         })
     }
 
@@ -195,16 +195,16 @@ module.exports = class TimeTable {
   
         return poolConnection.then(pool => {
             return pool.request()
-                .input('event_lid', sql.Int, inputJSON.allocate_events[0].eventLid)
-                .input('faculty_lid', sql.Int, inputJSON.allocate_events[0].facultyLid)
-                .input('day_lid', sql.Int, inputJSON.allocate_events[0].dayLid)
-                .input('room_lid', sql.Int, inputJSON.allocate_events[0].roomLid)
-                .input('slot_start_lid', sql.Int, inputJSON.allocate_events[0].startSlotLid)
-                .input('slot_end_lid', sql.Int, inputJSON.allocate_events[0].endSlotLid)
+                .input('event_lid', sql.Int, inputJSON.eventLid)
+                .input('faculty_lid', sql.Int, inputJSON.facultyLid)
+                .input('day_lid', sql.Int, inputJSON.dayLid)
+                .input('room_lid', sql.Int, inputJSON.roomLid)
+                .input('slot_start_lid', sql.Int, inputJSON.startSlotLid)
+                .input('slot_end_lid', sql.Int, inputJSON.endSlotLid)
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .output('output_flag', sql.Int)
-                .execute(`[${slug}].sp_allocate_events`);
+                .execute(`[${slug}].sp_allocate_event`);
         })
     }
 
@@ -212,11 +212,11 @@ module.exports = class TimeTable {
   
         return poolConnection.then(pool => {
             return pool.request()
-                .input('event_lid', sql.Int, inputJSON.allocate_events[0].eventLid)
-                .input('day_lid', sql.Int, inputJSON.allocate_events[0].dayLid)
-                .input('room_lid', sql.Int, inputJSON.allocate_events[0].roomLid)
-                .input('slot_start_lid', sql.Int, inputJSON.allocate_events[0].startSlotLid)
-                .input('slot_end_lid', sql.Int, inputJSON.allocate_events[0].endSlotLid)
+                .input('event_lid', sql.Int, inputJSON.eventLid)
+                .input('day_lid', sql.Int, inputJSON.dayLid)
+                .input('room_lid', sql.Int, inputJSON.roomLid)
+                .input('slot_start_lid', sql.Int, inputJSON.startSlotLid)
+                .input('slot_end_lid', sql.Int, inputJSON.endSlotLid)
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .output('output_flag', sql.Int)
@@ -226,13 +226,15 @@ module.exports = class TimeTable {
 
 
     static swapEvents(slug, userId, inputJSON) {
-        console.log('swap JSON::::::::::', JSON.stringify(inputJSON))
+        console.log('swap JSON::::::::::', inputJSON)
         return poolConnection.then(pool => {
 
             return pool.request()
-                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
+                .input('event_lid1', sql.Int, inputJSON.targetEventLid)
+                .input('event_lid2', sql.Int, inputJSON.swapEventLid)
                 .input('last_modified_by', sql.Int, userId)
                 .output('output_json', sql.NVarChar(sql.MAX))
+                .output('output_flag', sql.Int)
                 .execute(`[${slug}].sp_swap_events`);
 
         })

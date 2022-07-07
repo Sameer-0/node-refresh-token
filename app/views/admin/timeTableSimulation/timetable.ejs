@@ -398,8 +398,8 @@
                 })
 
             $(document).find('.pending-event').addClass('d-none');
-            $(document).find(`.pending-event[data-program_lid="${programLid}"]`).removeClass('d-none');
-            console.log('penidng evnt', $(document).find(`.pending-event[data-program_lid="${programLid}"]`))
+            $(document).find(`.pending-event[data-program-lid="${programLid}"]`).removeClass('d-none');
+            console.log('penidng evnt', $(document).find(`.pending-event[data-program-lid="${programLid}"]`))
             
         })
 
@@ -445,7 +445,7 @@
                 })
 
             $(document).find('.pending-event').addClass('d-none');
-            $(document).find(`.pending-event[data-session_lid="${sessionLid}"][data-program_lid="${programLid}"]`).removeClass('d-none');
+            $(document).find(`.pending-event[data-session-lid="${sessionLid}"][data-program-lid="${programLid}"]`).removeClass('d-none');
 
             })
 
@@ -456,7 +456,7 @@
             let sessionLid = $('#session-for-pending-event').val();
 
             $(document).find('.pending-event').addClass('d-none');
-            $(document).find(`.pending-event[data-session_lid="${sessionLid}"][data-program_lid="${programLid}"][data-module_lid="${moduleLid}"]`).removeClass('d-none');
+            $(document).find(`.pending-event[data-session-lid="${sessionLid}"][data-program-lid="${programLid}"][data-module-lid="${moduleLid}"]`).removeClass('d-none');
         })
         //PENDING EVENT LIST   
         $('.pending-events-modal').on('click', function () {
@@ -762,50 +762,16 @@
         $("#slotModal").on('click', '#drop-slot', function () {
             let eventLid = $(this).attr('data-event-lid');
             socket.emit('drop-event-request', slugName, userId, eventLid);
-            socket.on('drop-event-response', function (response) {
-                console.log('drop-event-response::::::::::::::::', response)
-                //Set Data Here after socket response
-                currentTd.html("NA")
-                $("#slotModal").modal('hide');
-                //showSuccess(response)
-            });
-
-            // let ApiObj = {
-            //     url: '/admin/time-table-simulation/time-table/drop-event',
-            //     type: 'POST',
-            //     data: {
-            //         eventLid: eventLid,
-            //     },
-            //     dataType: 'JSON'
-            // }
-            // ajaxApi(ApiObj).then((result) => {
-            //         console.log('Response::::::::::::', result);
-            //         //currentTd.html('NA')// SET NA AFTER DROP
-            //         console.log('currentTd::::::::::', currentTd)
-            //         currentTd.html("NA")
-            //         //SET EMPTY CURRENT TD
-            //         // currentTd.attr('data-school-time-id', '')
-            //         // currentTd.attr('data-start-time-id', '')
-            //         // currentTd.attr('data-end-time-id', '')
-            //         // currentTd.attr('data-room-id', '')
-            //         // currentTd.attr('data-room-no', '')
-            //         // currentTd.attr('data-lid', '')
-            //         // currentTd.attr('data-module-name', '')
-            //         // currentTd.attr('data-division-name', '')
-            //         // currentTd.attr('data-batch-name', '')
-            //         // currentTd.attr('data-session-name', '')
-            //         // currentTd.attr('data-program-name', '')
-            //         // currentTd.attr('data-start-time', '')
-            //         // currentTd.attr('data-end-time', '')
-
-            //         $("#slotModal").modal('hide');
-            //         console.log('Successfully table reinitialize:::',
-            //             result);
-            //     })
-            //     .catch((error) => {
-            //         console.log('error', error);
-            //     })
         })
+
+        socket.on('drop-event-response', function (response) {
+            console.log('drop response>>> ', response)
+            if (response.status == 1) {
+                dragObj.targetElem.remove();
+                $("#slotModal").modal('hide');
+            }
+           
+        });
 
         //SCHEDULE EVENT
         $(document).on('click', '#schedule-slot', function () {
@@ -819,7 +785,7 @@
             let swapEventLid = $(this).attr("data-swap-event-lid");
             let actionType = $(this).attr('data-action-type');
 
-            let obj = [{
+            let obj = {
                 roomLid: roomLid,
                 startSlotLid: startSlotId,
                 endSlotLid: endSlotId,
@@ -830,43 +796,56 @@
                 targetEventLid: targetEventLid,
                 swapEventLid: swapEventLid,
 
-            }]
-
-
-            console.log('ACTION TYPE>>>> ', dragObj.actionType)
-
-            if(actionType == 'drag') {
-                appendDragElement(dragObj.currentRoomElems, dragObj.tRect);
-                dragObj.targetElem.remove();
-                dragObj.swapClone = null;
-                dragObj.swapElem = null;
-                dragObj.clonedTarget = null;
-            } 
-            else if(actionType == 'swap') {
-                appendDragElement(dragObj.currentRoomElems, dragObj.tRect);
-                appendSwapElement();
-
-                dragObj.targetElem.remove();
-                dragObj.swapClone = null;
-                dragObj.swapElem = null;
-                dragObj.clonedTarget = null;
             }
 
+            console.log('ACTION TYPE>>>> ', dragObj.actionType)
+            socket.emit('schedule-event-request', slugName, userId, obj);
 
-            // console.log('JSON::::::::::::::::', obj)
-
-            // socket.emit('schedule-event-request', slugName, userId, JSON.stringify(obj));
-
-            // socket.on('schedule-event-response', function (response) {
-            //     console.log('schedule-event-response::::::::::::::::', response)
-            //     if (response.status == 1 && response.data.length > 0) {
-            //         $(document).find('.selected-pending-event').remove();
-            //         $("#slotModal").modal('hide')
-            //     } else {
-            //         showError(response)
-            //     }
-            // });
         })
+
+        socket.on('schedule-event-response', function (response) {
+            console.log('schedule-event-response::::::::::::::::', response)
+
+            // console.log('response.data.status>> ', response.data.status)
+            // console.log('response.data.data.length>> ', response.data.data.length)
+            // console.log('response.data.actionType>> ', response.actionType)
+
+            if (response.data.status == 1 && response.data.data.length > 0) {
+                //$(document).find('.selected-pending-event').remove();
+
+                if(response.actionType == 'drag') {
+                    appendDragElement(dragObj.currentRoomElems, dragObj.tRect, response.data.data[0]);
+                    dragObj.targetElem.remove();
+                    dragObj.swapClone = null;
+                    dragObj.swapElem = null;
+                    dragObj.clonedTarget = null;
+                }
+                else if(response.actionType == 'allocate') {
+                    console.log('>>> ALLOCATED')
+
+                    $(document).find('.selected-pending-event').remove();
+
+
+                } else if (response.actionType == 'swap') {
+                    alert('SWAP')
+                    appendDragElement(dragObj.currentRoomElems, dragObj.tRect, response.data.data[0]);
+                    appendSwapElement(response.data.data);
+
+                    dragObj.targetElem.remove();
+                    dragObj.swapClone = null;
+                    dragObj.swapElem = null;
+                    dragObj.clonedTarget = null;
+                }
+
+                
+                
+                $("#slotModal").modal('hide')
+
+            } else {
+                showError(response)
+            }
+        });
+
 
         //Click on event-element
         $(document).on('click', '.event', function() {
@@ -887,9 +866,9 @@
 
         //CREATING PENDING EVENT ELEMENTS LIST
         let pendingEventElement=``;
-        for(let pendingEvent of pendingEventListJson){
+        for(let pendingEvent of pendingEventListJson) {
 
-            pendingEventElement += `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program_lid="${pendingEvent.program_lid}" data-session_lid="${pendingEvent.acad_session_lid}" data-module_lid="${pendingEvent.course_lid}" data-event_type_lid="${pendingEvent.event_type_lid}" data-event_lid="${pendingEvent.id}" data-division_lid="${pendingEvent.division_lid}">
+            pendingEventElement += `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${pendingEvent.program_lid}" data-session-lid="${pendingEvent.acad_session_lid}" data-module-lid="${pendingEvent.course_lid}" data-event-type-lid="${pendingEvent.event_type_lid}" data-event-lid="${pendingEvent.id}" data-division-lid="${pendingEvent.division_lid}">
             <p>${pendingEvent.program_name}<br>
                 ${pendingEvent.acad_session} <br>
                 ${pendingEvent.module_name}<br>
@@ -1001,24 +980,34 @@
                 let eRect = elem.getBoundingClientRect();
 
 
-
-                if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event') ||  elem.classList.contains('event')) {
+                if (elem.classList.contains('occupied-event') ||  elem.classList.contains('event')) {
 
                     // console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
-
-                    console.log(Math.abs(tRect.left - eRect.left))
-                    let leftCondition = ((tRect.left - eRect.left) > 4) && ((eRect.right - tRect.left) > 4);
-
-                    let rightCondition = (Math.abs(tRect.right - eRect.left) < 4) && (Math.abs(tRect.left - eRect.left) > 4);
-                    let centerCondition = (Math.abs(tRect.right - eRect.right) > 4) && (Math.abs(tRect.left - eRect.right) > 4);
-                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', leftCondition, centerCondition, rightCondition)
 
                     console.log('trect>>> ', tRect)
                     console.log('erect>>> ', eRect)
 
-
-
                     if (((tRect.left - 2) >= eRect.left && (tRect.left + 2) < eRect.right) || ((tRect.right - 2) > eRect.left && tRect.right  <= eRect.right) || (tRect.right  >= eRect.right && tRect.left < eRect.right)) {
+                        console.log('collison occured')
+                        // dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
+                        //     .start_time;
+                        // dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
+                        //     .end_time;
+                        // dragObj.targetElem.querySelector('.break').style.display = 'block'
+                        // dragObj.isDroppable = false;
+                        return;
+                        break;
+                    }
+
+                }
+                
+                
+                if (elem.classList.contains('fixed-break')) {
+                    // console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
+                    console.log('trect>>> ', tRect)
+                    console.log('erect>>> ', eRect)
+
+                    if (((tRect.left - 2) >= eRect.left && (tRect.left + 2) < eRect.right) || ((tRect.right - 15) > eRect.left && tRect.right  <= eRect.right) || (tRect.right  >= eRect.right && tRect.left < eRect.right)) {
                         console.log('collison occured')
                         // dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
                         //     .start_time;
@@ -1034,15 +1023,15 @@
                    
             }
 
-            let programLid = $(document).find('.selected-pending-event').attr('data-program_lid')
-            let sessionLid = $(document).find('.selected-pending-event').attr('data-session_lid')
-            let moduleLid = $(document).find('.selected-pending-event').attr('data-module_lid')
-            let eventTypeLid = $(document).find('.selected-pending-event').attr('data-event_type_lid')
-            let eventLid = $(document).find('.selected-pending-event').attr('data-event_lid')
-            let divisionLid = $(document).find('.selected-pending-event').attr('data-division_lid')
+            let programLid = $(document).find('.selected-pending-event').attr('data-program-lid')
+            let sessionLid = $(document).find('.selected-pending-event').attr('data-session-lid')
+            let moduleLid = $(document).find('.selected-pending-event').attr('data-module-lid')
+            let eventTypeLid = $(document).find('.selected-pending-event').attr('data-event-type-lid')
+            let eventLid = $(document).find('.selected-pending-event').attr('data-event-lid')
+            let divisionLid = $(document).find('.selected-pending-event').attr('data-division-lid')
             let currentRoomLid = currentRoom.parentNode.getAttribute('data-room-lid');
             let startSlotIndex = Math.abs(Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))/timetableProp.pxPerSlot))
-            let endSlotIndex = Math.abs(Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2) + (12*timetableProp.pxPerSlot))/timetableProp.pxPerSlot))
+            let endSlotIndex = Math.abs(Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2) + (12 * timetableProp.pxPerSlot))/timetableProp.pxPerSlot))
 
             let startSLotId = timeJson[startSlotIndex].id;
             let endSlotId = timeJson[endSlotIndex - 1].id;
@@ -1122,7 +1111,7 @@
 
             let eventElemt = document.createElement('div');
             eventElemt.setAttribute('class', 'event room-slot-item')
-            eventElemt.setAttribute('data-event-lid', `${$(document).find('.selected-pending-event').attr('data-event-lid')}`)
+            eventElemt.setAttribute('data-event-lid', `${eventLid}`)
             let pendingEventInnerContent = $(document).find('.selected-pending-event').text();
 
             eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
@@ -1130,15 +1119,81 @@
             <span class="badge bg-info end-time">${timeJson[endSlotIndex - 1].end_time}</span>
             <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
 
-            eventElemt.style.position = 'absolute';
-            eventElemt.style.width = '169px';
-            eventElemt.style.top = '0';
-            //eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2) + 'px';
-            eventElemt.style.left =  `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`
-            console.log('computed >>> ',  e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))
+            //==========================================
+
+            // let startSLotId = timeJson[startSlotIndex].id;
+            // let endSlotId = timeJson[endSlotIndex - 1].id;
+
+        
+
+            //let durationWidth = ((timeJson[dragObj.endSlotIndex + 1].id - timeJson[dragObj.startSlotIndex].id + 1) * timetableProp.pxPerSlot)
+
+
+           // $(dragObj.targetElem).find('.break').removeClass('d-none');
+           console.log('endSlotId>>>> ', endSlotId)
+
+           eventElemt.style.position = 'absolute';
+           eventElemt.style.top = '0';
+
+            if(endSlotId == (116 - 2) || endSlotId == (176 - 2)) {
+                
+                console.log('INSIDE IFF CONDITION')
+                $(eventElemt).find('.break').addClass('d-none');
+                eventElemt.style.width = 156 + 'px';
+                eventElemt.style.left =  `${(startSLotId - timeTablestartSlot + 1) * timetableProp.pxPerSlot}px`;
+
+                //$('#slotModal').on('')
+
+               setTimeout(function () {
+                    alert('CALLING SHOWN')
+                    document.querySelector('#schedule-slot').setAttribute('data-start-slot-id', `${startSLotId + 1}`);
+                    document.querySelector('#schedule-slot').setAttribute('data-end-slot-id', `${endSlotId + 1}`);
+                }, 800)
+
+               
+                //data-start-slot-id
+
+
+            } else {
+                console.log('INSIDE ELSE CONDITION')
+                eventElemt.style.width = 169 + 'px';
+                eventElemt.style.left =  `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`
+            }
+
+            
+
+            //============================================
+
 
            
-            currentRoom.append(eventElemt)
+   
+
+            console.log('startSLotId>>> ', startSLotId)
+
+            //eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2) + 'px';
+           
+            console.log('computed >>> ',  e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))
+
+            let imgnBoundingElems = [];
+
+            for (let elem of currentRoomElems) {
+
+                let eRect = elem.getBoundingClientRect();
+
+                if ((tRect.left >= eRect.right)) {
+                    imgnBoundingElems.push(elem);
+                }
+            }
+
+
+            if (imgnBoundingElems.length > 0) {
+                imgnBoundingElems[imgnBoundingElems.length - 1].insertAdjacentElement("afterend", eventElemt);
+            } else if (currentRoomElems.length > 0) {
+                currentRoomElems[0].insertAdjacentElement("beforebegin", eventElemt);
+            } else {
+                dragObj.currentRoom.append(dragObj.clonedTarget);
+            }
+
             penElem.remove();
 
         }) 
@@ -1588,7 +1643,7 @@
 
                 if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event')) {
 
-                    console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
+                    console.log("INSIDE LOOP TO CHECK COLLISION BREAK", dragObj.targetElem)
 
                     if ((dragObj.tRect.left >= eRect.left && dragObj.tRect.left < eRect.right) || (dragObj.tRect.right > eRect.left && dragObj.tRect
                             .right <= eRect.right) || (dragObj.tRect.right >= eRect.right && dragObj.tRect.left < eRect.right)) {
@@ -1605,8 +1660,11 @@
                 } else {
 
                     // SWAP CONDITION CHECK
-                    console.log('dragObj.tRect> ', dragObj.tRect);
-                    console.log('eRect> ', eRect);
+                    
+                    console.log('target element>>>> ',  dragObj.targetElem)
+                    console.log('elem>>>> ', elem)
+                    console.log('>>>>>>> swap tRect> ', dragObj.tRect);
+                    console.log('>>>>>>> swap eRect> ', eRect);
 
                     console.log('SWAP CONDITION>>> ', (Math.abs(dragObj.tRect.left - eRect.left) <= 4) && ((Math.abs(dragObj.tRect.right - eRect.right) <= 4)))
                     
@@ -1635,6 +1693,7 @@
                 }
             }
 
+            console.log('dragObj.isDroppable>>>> ', dragObj.isDroppable)
             console.log('ACTION TYPE>>>>>>>>>>>>>>> ', dragObj.actionType)
 
             if(dragObj.actionType == 'drag') {
@@ -1660,9 +1719,6 @@
                     `<button type="button" class="btn btn-success" id="schedule-slot" data-target-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-swap-event-lid="${dragObj.swapElem.getAttribute('data-event-lid')}" data-action-type="swap">Confirm Swap</button>`);  
             }
 
-            $('#slotModal').modal('show');
-
-
             if (!dragObj.isDroppable) {
 
                 let startTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-start-time'));
@@ -1684,24 +1740,8 @@
                 return false;
             }
 
+            $('#slotModal').modal('show');
 
-
-            // appendDragElement(currentRoomElems, tRect);
-
-            
-            // //SWAP EVENT LOGIC
-
-
-            // if (dragObj.swapElem && !(dragObj.swapElem == dragObj.targetElem)) {
-            //     appendSwapElement();
-            // }
-
-            //dragObj.targetElem.remove();
-
-
-            // dragObj.targetElem = null;
-            // dragObj.clonedTarget = null;
-            // dragObj.swapElem = null;
 
         }
 
@@ -1780,7 +1820,7 @@
 
         // })
 
-        function rollbackDrag(){
+        function rollbackDrag() {
 
             console.log('dragObj.clonedTarget>>> ',  dragObj.targetElem);
 
@@ -1789,15 +1829,14 @@
 
             $(dragObj.targetElem).css('left',`${dragObj.startSlotIndex * 13}px`);
             $(dragObj.targetElem).css('top',`0px`);
+            $(dragObj.targetElem).css('z-index',`unset`);
             $(dragObj.targetElem).find('.start-time').text(`${startTimeObj[0].start_time}`)
             $(dragObj.targetElem).find('.end-time').text(`${endTimeObj[0].end_time}`)
 
-        
-
             let durationWidth = ((timeJson[dragObj.endSlotIndex + 1].id - timeJson[dragObj.startSlotIndex].id + 1) * timetableProp.pxPerSlot)
 
-
             $(dragObj.targetElem).find('.break').removeClass('d-none');
+            $(dragObj.targetElem).removeClass('active');
 
             if(dragObj.targetElem.getAttribute('data-end-time') == (116 - 1) || dragObj.targetElem.getAttribute('data-end-time') == (176 - 1)) {
                 
@@ -1815,7 +1854,7 @@
 
     
 
-        function appendDragElement(currentRoomElems, tRect, startSlotLid, endSlotLid) {
+        function appendDragElement(currentRoomElems, tRect, data) {
 
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING appendDragElement")
 
@@ -1836,6 +1875,11 @@
                     .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp + timetableProp.pxPerSlot
                 .pxPerSlot + 'px' : '0px'
 
+            dragObj.clonedTarget.querySelector('.start-time').innerHTML = data.start_time;
+            dragObj.clonedTarget.querySelector('.end-time').innerHTML = data.end_time;
+            dragObj.clonedTarget.setAttribute('data-start-time', data.start_time_lid)
+            dragObj.clonedTarget.setAttribute('data-end-time', data.end_time_lid)
+
             dragObj.clonedTarget.style.zIndex = 'unset';
 
             if (imgnBoundingElems.length > 0) {
@@ -1845,12 +1889,15 @@
             } else {
                 dragObj.currentRoom.append(dragObj.clonedTarget);
             }
-
                 
-            }
+        }
 
         function appendSwapElement() {
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING APPEND SWAP ELEMENT")
+
+            console.log('dragObj.swapElem ID>>>>>>>>> ', dragObj.swapElem.getAttribute('data-event-lid'))
+
+            
 
             let swapClone = dragObj.swapElem.cloneNode(true);
             swapClone.classList.remove('active');

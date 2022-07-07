@@ -13,21 +13,18 @@ module.exports.respond = async socket => {
 
     //Schedule Event
     socket.on('schedule-event-request', async function (slug, userId, data) {
-        console.log('schedule-event-request::::::::')
-    
+        console.log('schedule-event-request >>> ', data)
 
-        let object = {
-            allocate_events: JSON.parse(data)
-        }
+        if (data.actionType == 'allocate') {
 
-        if(data[0].action_type == 'allocate'){
-            TimeTable.scheduleEvent(slug, userId, object).then(result => {
+            console.log('>>> ALLOCATE FIRED');
+
+            TimeTable.scheduleEvent(slug, userId, data).then(result => {
                 console.log('result::::::::', result)
-                socket.emit('schedule-event-response', JSON.parse(result.output.output_json))
+                socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'allocate'})
             }).catch(error => {
-                console.log("ERROR>>>>>>> ", error)
+                console.log("ERROR>>>>>>> ", error.originalError.info.message)
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
-                    //res.status(500).json(JSON.parse(error.originalError.info.message))
                     socket.emit('schedule-event-response', JSON.parse(error.originalError.info.message))
                 } else {
                     socket.emit('schedule-event-response', {
@@ -37,14 +34,20 @@ module.exports.respond = async socket => {
                     })
                 }
             })
-        }else if (data[0].action_type == 'drag'){
-            TimeTable.dragDropEvent(slug, userId, object).then(result => {
+        } else if (data.actionType == 'drag') {
+
+            console.log('>>> DRAG FIRED');
+
+            TimeTable.dragDropEvent(slug, userId, data).then(result => {
                 console.log('result::::::::', result)
-                socket.emit('schedule-event-response', JSON.parse(result.output.output_json))
+
+                socket.emit('schedule-event-response',  {data: JSON.parse(result.output.output_json), actionType:'drag'})
+
             }).catch(error => {
-                console.log("ERROR>>>>>>> ", error)
+
+                console.log("ERROR>>>>>>> ", error.originalError.info.message)
+
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
-                    //res.status(500).json(JSON.parse(error.originalError.info.message))
                     socket.emit('schedule-event-response', JSON.parse(error.originalError.info.message))
                 } else {
                     socket.emit('schedule-event-response', {
@@ -54,17 +57,20 @@ module.exports.respond = async socket => {
                     })
                 }
             })
-        }else if(data[0].action_type == 'swap'){
 
-            TimeTable.swapEvents(slug, userId, object).then(result => {
+        } else if (data.actionType == 'swap') {
+
+            TimeTable.swapEvents(slug, userId, data).then(result => {
                 console.log('result::::::::', result)
-                socket.emit('swap-events-response', JSON.parse(result.output.output_json))
+                socket.emit('schedule-event-response',  {data: JSON.parse(result.output.output_json), actionType:'swap'})
             }).catch(error => {
-                console.log("ERROR>>>>>>> ", error)
+
+                console.log("ERROR>>>>>>> ", error.originalError.info.message)
+
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
-                    socket.emit('swap-events-response', JSON.parse(error.originalError.info.message))
+                    socket.emit('schedule-event-response', JSON.parse(error.originalError.info.message))
                 } else {
-                    socket.emit('swap-events-response', JSON.parse({
+                    socket.emit('schedule-event-response', JSON.parse({
                         status: 500,
                         description: error.originalError.info.message,
                         data: []
@@ -72,7 +78,7 @@ module.exports.respond = async socket => {
                 }
             })
         }
-        
+
     })
 
     //Drop Event
