@@ -832,8 +832,24 @@
                     dragObj.clonedTarget = null;
                 }
                 else if(response.actionType == 'allocate') {
-                    console.log('>>> ALLOCATED')
-
+                    console.log('>>> ALLOCATED', response.data.data[0])
+                    let responseObj = response.data.data[0];
+                    let allocatedEleemnt = $(document).find(`.event[data-event-lid="${response.data.data[0].event_lid}"]`);
+                    allocatedEleemnt.attr({'data-event-lid':responseObj.event_lid,
+                                            'data-module-name':responseObj.module_name,
+                                            'data-module-lid':responseObj.course_lid,
+                                            'data-division-name':responseObj.division,
+                                            'data-batch-name':responseObj.batch,
+                                            'data-event-type':responseObj.event_type,
+                                            'data-session-name':responseObj.acad_session,
+                                            'data-session-lid':responseObj.acad_session_lid,
+                                            'data-program-name':responseObj.program_name,
+                                            'data-program-lid':responseObj.program_lid,
+                                            'data-start-time':responseObj.start_time_lid,
+                                            'data-end-time':responseObj.start_end_lid,
+                                            'data-faculty-lid':responseObj.faculty_lid,
+                                            'data-faculty-name':responseObj.faculty_name,
+                                        })
                     $(document).find('.selected-pending-event').remove();
 
 
@@ -934,7 +950,7 @@
         let penElem = document.createElement('div');
 
         // SELECT AND UNSELECT PENDING EVENTS WITH CREATING SHADOW OBJECT
-        $('.pending-event').on('click', function (e) {
+        $(document).on('click','.pending-event', function (e) {
 
             if ($(this).hasClass('selected-pending-event')) {
                 $(this).removeClass('selected-pending-event')
