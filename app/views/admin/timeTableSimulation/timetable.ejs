@@ -1892,13 +1892,17 @@
                 
         }
 
-        function appendSwapElement() {
+        function appendSwapElement(data) {
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING APPEND SWAP ELEMENT")
 
             console.log('dragObj.swapElem ID>>>>>>>>> ', dragObj.swapElem.getAttribute('data-event-lid'))
 
-            
+            let swapElemData = data.filter(elem => elem.event_lid == dragObj.swapElem.getAttribute('data-event-lid'));
+            let targetElemData = data.filter(elem => elem.event_lid != dragObj.swapElem.getAttribute('data-event-lid'));
 
+            console.log('swapElemData>> ', swapElemData)
+            console.log('targetElemData>> ', targetElemData)
+            
             let swapClone = dragObj.swapElem.cloneNode(true);
             swapClone.classList.remove('active');
             swapClone.style.left = targetProp.initialX + 'px';
@@ -1914,8 +1918,12 @@
                 dragObj.currentRoom.insertBefore(swapClone, dragObj.currentRoom.childNodes[targetProp.index + 1])
             }
 
-            swapClone.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex].start_time;
-            swapClone.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex].end_time;
+            swapClone.querySelector('.start-time').innerHTML = swapElemData[0].start_time;
+            swapClone.querySelector('.end-time').innerHTML = swapElemData[0].end_time;
+
+            dragObj.clonedTarget.querySelector('.start-time').innerHTML = targetElemData[0].start_time;
+            dragObj.clonedTarget.querySelector('.end-time').innerHTML = targetElemData[0].end_time;
+
             dragObj.swapElem.remove();
         }
 
