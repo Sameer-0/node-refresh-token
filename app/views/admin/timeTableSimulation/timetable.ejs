@@ -851,7 +851,7 @@
 
 
                 } else if (response.actionType == 'swap') {
-                    alert('SWAP')
+                   
                     appendDragElement(dragObj.currentRoomElems, dragObj.tRect, response.data.data[0]);
                     appendSwapElement(response.data.data);
 
@@ -1159,7 +1159,7 @@
            eventElemt.style.position = 'absolute';
            eventElemt.style.top = '0';
 
-            if(endSlotId == (116 - 2) || endSlotId == (176 - 2)) {
+            if(endSlotId == 114 || endSlotId == 174) {
                 
                 console.log('INSIDE IFF CONDITION')
                 $(eventElemt).find('.break').addClass('d-none');
@@ -1169,13 +1169,29 @@
                 //$('#slotModal').on('')
 
                setTimeout(function () {
-                    alert('CALLING SHOWN')
+                   //alert('CALLING SHOWN')
                     document.querySelector('#schedule-slot').setAttribute('data-start-slot-id', `${startSLotId + 1}`);
                     document.querySelector('#schedule-slot').setAttribute('data-end-slot-id', `${endSlotId + 1}`);
                 }, 800)
 
                
                 //data-start-slot-id
+
+
+            } else if (endSlotId == 115 || endSlotId == 175) {
+
+                console.log('INSIDE IFF CONDITION')
+                $(eventElemt).find('.break').addClass('d-none');
+                eventElemt.style.width = 156 + 'px';
+                eventElemt.style.left =  `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`;
+
+                //$('#slotModal').on('')
+
+               setTimeout(function () {
+                   // alert('CALLING SHOWN')
+                    document.querySelector('#schedule-slot').setAttribute('data-start-slot-id', `${startSLotId}`);
+                    document.querySelector('#schedule-slot').setAttribute('data-end-slot-id', `${endSlotId}`);
+                }, 800)
 
 
             } else {
