@@ -1892,8 +1892,9 @@
                 $(dragObj.targetElem).find('.break').addClass('d-none');
                 $(dragObj.targetElem).css('width', `${durationWidth}px`);
             } else {
-                //console.log('INSIDE ELSE CONDITION')
-                
+                console.log('INSIDE ELSE CONDITION', Math.round(12 * 13 + 13))
+
+                $(dragObj.targetElem).css('width', `${Math.round(12 * 13 + 13)}px`);
             }
  
         }
@@ -1926,8 +1927,15 @@
             dragObj.clonedTarget.querySelector('.end-time').innerHTML = data.end_time;
             dragObj.clonedTarget.setAttribute('data-start-time', data.start_time_lid)
             dragObj.clonedTarget.setAttribute('data-end-time', data.end_time_lid)
-
             dragObj.clonedTarget.style.zIndex = 'unset';
+
+
+            if(data.end_time_lid == (116 - 1) || data.end_time_lid == (176 - 1)) {
+                dragObj.clonedTarget.style.width = '156px';
+            } else {
+                dragObj.clonedTarget.style.width = '169px';
+            }
+
 
             if (imgnBoundingElems.length > 0) {
                 imgnBoundingElems[imgnBoundingElems.length - 1].insertAdjacentElement("afterend", dragObj.clonedTarget);
@@ -1947,8 +1955,8 @@
             let swapElemData = data.filter(elem => elem.event_lid == dragObj.swapElem.getAttribute('data-event-lid'));
             let targetElemData = data.filter(elem => elem.event_lid != dragObj.swapElem.getAttribute('data-event-lid'));
 
-            //console.log('swapElemData>> ', swapElemData)
-            //console.log('targetElemData>> ', targetElemData)
+            console.log('swapElemData>> ', swapElemData)
+            console.log('targetElemData>> ', targetElemData)
             
             let swapClone = dragObj.swapElem.cloneNode(true);
             swapClone.classList.remove('active');
@@ -1958,6 +1966,21 @@
             // if (swapClone.style.width == '169px') {
                 swapClone.querySelector('.break').classList.remove('d-none');
             // }
+
+            if(swapElemData[0].end_time_lid == (116 - 1) || swapElemData[0].end_time_lid == (176 - 1)) {
+                swapClone.style.width = '156px';
+            } else {
+                swapClone.style.width = '169px';
+            }
+
+            console.log('targetElemData.end_time_lid kapil>>>>>>', targetElemData.end_time_lid)
+
+            if(targetElemData[0].end_time_lid == (116 - 1) || targetElemData[0].end_time_lid == (176 - 1)) {
+                dragObj.clonedTarget.style.width = '156px';
+            } else {
+                dragObj.clonedTarget.style.width = '169px';
+            }
+
 
             if (dragObj.currentRoom !== dragObj.firstRoom) {
                 dragObj.firstRoom.insertBefore(swapClone, dragObj.firstRoom.childNodes[targetProp.index + 1])
