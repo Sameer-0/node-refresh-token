@@ -772,7 +772,7 @@
             console.log('drop response>>> ', response)
             if (response.status == 1) {
                 console.log('inside success drop', dragObj.targetElem)
-                let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${dragObj.targetElem.getAttribute('data-program-lid')}" data-session-lid="${dragObj.targetElem.getAttribute('data-session-lid')}" data-module-lid="${dragObj.targetElem.getAttribute('data-module-lid')}" data-event-type-lid="${dragObj.targetElem.getAttribute('data-event-type-lid')}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-division-lid="${dragObj.targetElem.getAttribute('data-division-lid')}">
+                let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${dragObj.targetElem.getAttribute('data-program-lid')}" data-session-lid="${dragObj.targetElem.getAttribute('data-session-lid')}" data-module-lid="${dragObj.targetElem.getAttribute('data-module-lid')}" data-event-type-lid="${dragObj.targetElem.getAttribute('data-event-type-lid')}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}">
                 <div class="d-flex justify-content-center align-items-center"><i class="fa-solid fa-circle-dot pending-list-bullet"></i></div>
                 <p class="flex-fill text-center">${dragObj.targetElem.getAttribute('data-program-name')}<br>
                 ${dragObj.targetElem.getAttribute('data-session-name')} <br>
@@ -839,8 +839,8 @@
                 else if(response.actionType == 'allocate') {
                     console.log('>>> ALLOCATED', response.data.data[0])
                     let responseObj = response.data.data[0];
-                    let allocatedEleemnt = $(document).find(`.event[data-event-lid="${response.data.data[0].event_lid}"]`);
-                    allocatedEleemnt.attr({'data-event-lid':responseObj.event_lid,
+                    let allocatedElement = $(document).find(`.event[data-event-lid="${response.data.data[0].event_lid}"]`);
+                    allocatedElement.attr({'data-event-lid':responseObj.event_lid,
                                             'data-module-name':responseObj.module_name,
                                             'data-module-lid':responseObj.course_lid,
                                             'data-division-name':responseObj.division,
