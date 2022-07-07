@@ -334,8 +334,8 @@
 
         let slugName = `<%-locals.slug %>`
         let userId = `<%-locals.userId %>`
-        console.log('slugName::::::::::::>>', slugName)
-        console.log('userId::::::::::::>>', userId)
+        //console.log('slugName::::::::::::>>', slugName)
+        //console.log('userId::::::::::::>>', userId)
         let currentTd;
         let roomList = JSON.parse(`<%- roomList %>`);
         let programListJson = JSON.parse(`<%- programListJson %>`);
@@ -346,7 +346,7 @@
             return obj.program_lid;
         });
 
-        console.log('pending event programs::::::', pendingEventPrograms)
+        //console.log('pending event programs::::::', pendingEventPrograms)
 
         //PROGRAMS FOR PENDING EVENT LIST
         let penProgramOption=`<option value="">--Select Program--</option>`;
@@ -361,7 +361,7 @@
         $(document).on('change', '#programs-for-pending-event', function () {
 
             let programLid = $(this).val();
-            console.log('progranmlid:::::::::', programLid)
+            //console.log('progranmlid:::::::::', programLid)
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/pending-events-sessions',
@@ -374,7 +374,7 @@
             let sessionList = ``;
             
                 ajaxApi(ApiObj).then(result => {
-                    console.log('pending sessionsss;;;', result)
+                    //console.log('pending sessionsss;;;', result)
 
                     if (result.length > 0) {
 
@@ -399,7 +399,7 @@
 
             $(document).find('.pending-event').addClass('d-none');
             $(document).find(`.pending-event[data-program-lid="${programLid}"]`).removeClass('d-none');
-            console.log('penidng evnt', $(document).find(`.pending-event[data-program-lid="${programLid}"]`))
+            //console.log('penidng evnt', $(document).find(`.pending-event[data-program-lid="${programLid}"]`))
             
         })
 
@@ -407,7 +407,7 @@
 
             let sessionLid = $(this).val();
             let programLid = $('#programs-for-pending-event').val();
-            console.log('progranmlid:::::::::', programLid)
+            //console.log('progranmlid:::::::::', programLid)
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/pending-events-module',
@@ -421,7 +421,7 @@
             let moduleList = ``;
 
                 ajaxApi(ApiObj).then(result => {
-                    console.log('pending sessionsss;;;', result)
+                    //console.log('pending sessionsss;;;', result)
 
                     if (result.length > 0) {
 
@@ -460,7 +460,7 @@
         })
         //PENDING EVENT LIST   
         $('.pending-events-modal').on('click', function () {
-            console.log('yello hello')
+           
 
             if ($("#day").val()) {
                 let programLid = $("#program-name").val();
@@ -478,7 +478,7 @@
 
                 ajaxApi(ApiObj).then(result => {
 
-                    console.log('result:::pending event>>>>>s', result)
+                    //console.log('result:::pending event>>>>>s', result)
 
                     let tableRow = ``;
                     let count = 1;
@@ -612,7 +612,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-                console.log('2nd:::>>>', result)
+               // console.log('2nd:::>>>', result)
                 timeTableDisplay(result.eventList, result.allEventList)
                 //  }, 2000)
                 //   $(this).attr('disabled','disabled');
@@ -624,7 +624,7 @@
         $(document).on('change', '#program-name-modal', function () {
 
             let programLid = $(this).val();
-            console.log('progranmlid:::::::::', programLid)
+            //console.log('progranmlid:::::::::', programLid)
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/pending-events-sessions',
@@ -644,7 +644,7 @@
                 $(document).find("#slotModal #session-name-modal").html(sessionList)
             } else {
                 ajaxApi(ApiObj).then(result => {
-                    console.log('pending sessionsss;;;', result)
+                    //console.log('pending sessionsss;;;', result)
 
                     if (result.length > 0) {
 
@@ -673,7 +673,6 @@
         $(document).on('change', '#program-name-for-faculty', function () {
 
             let programLid = $(this).val();
-            console.log('progranmlid:::::::::', programLid)
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/pending-events-sessions',
@@ -693,7 +692,6 @@
                 $(document).find("#slotModal #session-name-modal").html(sessionList)
             } else {
                 ajaxApi(ApiObj).then(result => {
-                    console.log('pending sessionsss;;;', result)
 
                     if (result.length > 0) {
 
@@ -737,7 +735,6 @@
             let pendingEventList;
             ajaxApi(ApiObj).then(result => {
                     if (result.length > 0) {
-                        console.log('Pending-event-list:::>>', result)
 
                         for (let pendingEvents of result) {
 
@@ -1364,7 +1361,9 @@
            
 
             dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left;
-            
+            dragObj.timetableRect = document.querySelector('.timetable-container').getBoundingClientRect();
+
+           
             if (e.target.classList.contains('room-slots')) e.preventDefault();
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
@@ -1500,9 +1499,12 @@
 
                 // let tRect = dragObj.targetElem.getBoundingClientRect();
 
-                console.log('CALLING ON DARG', dragObj.isDragging)
 
-                dragObj.currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
+                dragObj.currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY)) || dragObj.currentRoom;
+
+                // if(!dragObj.currentRoom) {
+                //     return false;
+                // }
 
                 if (dragObj.currentRoom != dragObj.initialRoom) {
                     dragObj.initialRoom.style.cssText += `outline: unset`;
@@ -1512,7 +1514,14 @@
 
 
                 targetProp.movedX = dragObj.relativeClientX - targetProp.oldOffsetX - timetableProp.roomNoWidth;
-                targetProp.movedY = e.clientY - targetProp.initialClientY;
+
+                console.log(tRect.top -  dragObj.timetableRect.top)
+                if(tRect.top -  dragObj.timetableRect.top < -20) {
+                    targetProp.movedY = 0;
+                } else {
+                    targetProp.movedY = e.clientY - targetProp.initialClientY;
+                }
+            
 
 
                 targetProp.movedX = targetProp.movedX > (timetableProp.totalSlots * timetableProp.pxPerSlot) -
@@ -1661,22 +1670,22 @@
 
                     // SWAP CONDITION CHECK
                     
-                    console.log('target element>>>> ',  dragObj.targetElem)
-                    console.log('elem>>>> ', elem)
-                    console.log('>>>>>>> swap tRect> ', dragObj.tRect);
-                    console.log('>>>>>>> swap eRect> ', eRect);
+                    // console.log('target element>>>> ',  dragObj.targetElem)
+                    // console.log('elem>>>> ', elem)
+                    // console.log('>>>>>>> swap tRect> ', dragObj.tRect);
+                    // console.log('>>>>>>> swap eRect> ', eRect);
 
-                    console.log('SWAP CONDITION>>> ', (Math.abs(dragObj.tRect.left - eRect.left) <= 4) && ((Math.abs(dragObj.tRect.right - eRect.right) <= 4)))
+                    // console.log('SWAP CONDITION>>> ', (Math.abs(dragObj.tRect.left - eRect.left) <= 4) && ((Math.abs(dragObj.tRect.right - eRect.right) <= 4)))
                     
                     if ((Math.abs(dragObj.tRect.left - eRect.left) <= 4) && ((Math.abs(dragObj.tRect.right - eRect.right) <= 4))) {
                         
                         dragObj.swapElem = elem;
-                        console.log('swapElem>>>>> ', dragObj.swapElem)
+                        //console.log('swapElem>>>>> ', dragObj.swapElem)
                         dragObj.actionType = 'swap';
                         dragObj.swapElemIndex = Array.from(dragObj.currentRoom.children).indexOf(elem);
                         
                         dragObj.isDroppable = true
-                        console.log("IS SWAP ELEMENET>>> ", dragObj.targetElem.getAttribute('data-event-lid'), dragObj.swapElem.getAttribute('data-event-lid'))
+                        //console.log("IS SWAP ELEMENET>>> ", dragObj.targetElem.getAttribute('data-event-lid'), dragObj.swapElem.getAttribute('data-event-lid'))
                         break;
 
                     } else if ((dragObj.tRect.left >= eRect.left && dragObj.tRect.left < eRect.right) || (dragObj.tRect.right > eRect.left &&
@@ -1693,18 +1702,18 @@
                 }
             }
 
-            console.log('dragObj.isDroppable>>>> ', dragObj.isDroppable)
-            console.log('ACTION TYPE>>>>>>>>>>>>>>> ', dragObj.actionType)
+            //console.log('dragObj.isDroppable>>>> ', dragObj.isDroppable)
+            //console.log('ACTION TYPE>>>>>>>>>>>>>>> ', dragObj.actionType)
 
             if(dragObj.actionType == 'drag') {
-                console.log(">>>> OPENING DARG MODAL")
+                //console.log(">>>> OPENING DARG MODAL")
 
                 $(document).find("#slotModal .modal-body").html(dragObj.targetElem.innerText)
                 // $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-drag')
 
                 $(document).find("#slotModal .modal-header #close-btn").attr('data-event-lid',`${dragObj.targetElem.getAttribute('data-event-lid')}`)
 
-                console.log('statrt slot index', timeJson[dragObj.leftSlotTime + 11].end_time)
+                //console.log('statrt slot index', timeJson[dragObj.leftSlotTime + 11].end_time)
 
                 $('#slotModal .modal-footer').html(
                     `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${timeJson[dragObj.leftSlotTime].id}" data-end-slot-id="${timeJson[dragObj.leftSlotTime + 11].id}" data-room-id="${dragObj.currentRoom.parentNode.getAttribute('data-room-lid')}"  data-day-lid="${dayLid}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-action-type="drag" >Confirm Slot</button>`);
@@ -1757,7 +1766,7 @@
         $('#close-btn').on('click', function () {
 
 
-            console.log("CLOSE BUTTON CLICKED", dragObj.actionType)
+            //console.log("CLOSE BUTTON CLICKED", dragObj.actionType)
 
             if(dragObj.actionType == 'drag' || dragObj.actionType == 'swap'){
                 rollbackDrag();
@@ -1769,7 +1778,7 @@
         });
         
         function showError(errors) {
-            console.log('error::::::::::', errors)
+            //console.log('error::::::::::', errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title: errors.description,
@@ -1794,7 +1803,7 @@
         }
 
         function showSuccess(errors) {
-            console.log('error::::::::::', errors)
+            //console.log('error::::::::::', errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title: errors.description,
@@ -1822,7 +1831,7 @@
 
         function rollbackDrag() {
 
-            console.log('dragObj.clonedTarget>>> ',  dragObj.targetElem);
+           // console.log('dragObj.clonedTarget>>> ',  dragObj.targetElem);
 
             let startTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-start-time'));
             let endTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-end-time'));
@@ -1840,12 +1849,12 @@
 
             if(dragObj.targetElem.getAttribute('data-end-time') == (116 - 1) || dragObj.targetElem.getAttribute('data-end-time') == (176 - 1)) {
                 
-                console.log('INSIDE IFF CONDITION')
+               // console.log('INSIDE IFF CONDITION')
 
                 $(dragObj.targetElem).find('.break').addClass('d-none');
                 $(dragObj.targetElem).css('width', `${durationWidth}px`);
             } else {
-                console.log('INSIDE ELSE CONDITION')
+                //console.log('INSIDE ELSE CONDITION')
                 
             }
  
@@ -1856,7 +1865,7 @@
 
         function appendDragElement(currentRoomElems, tRect, data) {
 
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING appendDragElement")
+            //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING appendDragElement")
 
             let imgnBoundingElems = [];
 
@@ -1893,15 +1902,15 @@
         }
 
         function appendSwapElement(data) {
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING APPEND SWAP ELEMENT")
+            //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING APPEND SWAP ELEMENT")
 
-            console.log('dragObj.swapElem ID>>>>>>>>> ', dragObj.swapElem.getAttribute('data-event-lid'))
+            //console.log('dragObj.swapElem ID>>>>>>>>> ', dragObj.swapElem.getAttribute('data-event-lid'))
 
             let swapElemData = data.filter(elem => elem.event_lid == dragObj.swapElem.getAttribute('data-event-lid'));
             let targetElemData = data.filter(elem => elem.event_lid != dragObj.swapElem.getAttribute('data-event-lid'));
 
-            console.log('swapElemData>> ', swapElemData)
-            console.log('targetElemData>> ', targetElemData)
+            //console.log('swapElemData>> ', swapElemData)
+            //console.log('targetElemData>> ', targetElemData)
             
             let swapClone = dragObj.swapElem.cloneNode(true);
             swapClone.classList.remove('active');
