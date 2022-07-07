@@ -86,6 +86,13 @@ module.exports = {
         })
     },
 
+    getPendingEventModule: (req, res, next) => {
+        console.log('pending req', req.body)
+        TimeTable.getPendingEventModule(res.locals.slug, req.body.programLid, req.body.sessionLid).then(result => {
+            console.log('pending event session list:::', result.recordset)
+            res.status(200).send(result.recordset)
+        })
+    },
 
     //Implemented in timetablesocket
     dropEvent: (req, res, next) => {
