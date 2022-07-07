@@ -35,4 +35,5 @@ router.post('/sessions/dates/search', dates.search)
 router.post('/sessions/dates/pagination', dates.pagination)
 router.post('/sessions/dates/fetch-from-sap', dates.fetchFromSAP)
 router.get('/sessions/dates/download', dates.downloadMaster)
+router.post('/sessions/dates/show-entries', dates.showEntries)
 module.exports = router;
