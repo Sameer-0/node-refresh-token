@@ -267,45 +267,45 @@ module.exports = class TimeTable {
     static AllocatedEventExcel(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT  r.room_number, rt.name as room_type, d.day_name,  icw.module_name, icw.module_code, icw.module_id, p.program_name, p.program_code, p.program_id,
-          ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) as start_time , CONVERT(NVARCHAR, sit2.end_time, 0) as end_time,  et.name as event_type_name,  f.faculty_name, f.faculty_id, ft.name as faculty_type, e.division 
-           FROM [${slug}].event_bookings eb
-          INNER JOIN [${slug}].events e ON eb.event_lid = e.id
-          INNER JOIN [${slug}].faculties f ON f.id = e.faculty_lid
-          INNER JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid 
-          INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
-          INNER JOIN [${slug}].programs p ON p.id = e.program_lid
-          INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
-          INNER JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-          INNER JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-          INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
-          INNER JOIN [${slug}].days d ON eb.day_lid = d.id
-          INNER JOIN [dbo].rooms r ON r.id = eb.room_lid
-          INNER JOIN [dbo].faculty_types ft ON ft.id =  f.faculty_type_lid
-          INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id`)
+            return request.query(`SELECT  r.room_number, CONVERT(NVARCHAR, sit.start_time, 0) as start_time, CONVERT(NVARCHAR, _sit.end_time, 0) as end_time, rt.name as room_type, d.day_name, icw.module_name, icw.module_code, icw.module_id, RTRIM(LTRIM(e.division)) AS division, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, et.abbr as event_type_name, f.faculty_id, f.faculty_name, ft.name as faculty_type FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot 
+            FROM [asmsoc-mum].event_bookings
+            WHERE  (active = 1 OR is_break = 1)
+            GROUP BY room_lid, day_lid, event_lid, is_break, break_id) t2
+            INNER JOIN [${slug}].tb_events e ON e.id = t2.event_lid
+            INNER JOIN [${slug}].programs p ON p.id = e.program_lid
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
+            INNER JOIN [dbo].event_types et ON et.id = e.event_type_lid
+            INNER JOIN [${slug}].faculty_events fe on fe.event_lid =  e.id
+            INNER JOIN [${slug}].faculties f on f.id = fe.faculty_lid
+            INNER JOIN [dbo].rooms r ON r.id = t2.room_lid
+            INNER JOIN [dbo].room_types rt ON rt.id =  r.room_type_id
+            INNER JOIN [${slug}].days d ON d.id =  t2.day_lid
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            INNER JOIN [dbo].slot_interval_timings sit ON sit.id =  t2.start_slot
+            INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  t2.end_slot
+            ORDER BY t2.start_slot, t2.end_slot`)
         })
     }
 
     static unAllocatedEventExcel(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT eb.id, d.day_name, p.program_name, p.program_code, p.program_id, ads.acad_session, icw.module_name, icw.module_code, icw.module_id, mt.name as module_type, e.division, e.batch, et.name as event_type,   CONVERT(NVARCHAR, sit.start_time, 0) AS start_time , CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time, r.room_number, rt.name as room_type,  f.faculty_name, f.faculty_id, ft.name as faculty_type
-          FROM [${slug}].events e
-          LEFT JOIN [${slug}].event_bookings eb ON eb.event_lid = e.id
-          LEFT JOIN [${slug}].faculties f ON f.id = e.faculty_lid
-          LEFT JOIN [${slug}].school_timings st ON st.id = eb.school_timining_lid
-          LEFT JOIN [${slug}].initial_course_workload icw ON icw.id = e.course_lid
-          LEFT JOIN [${slug}].programs p ON p.id = e.program_lid
-          LEFT JOIN [dbo].acad_sessions ads ON ads.id = e.acad_session_lid
-          LEFT JOIN [dbo].slot_interval_timings sit on sit.id = st.slot_start_lid
-          LEFT JOIN [dbo].slot_interval_timings sit2 on sit2.id = st.slot_end_lid
-          LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
-          LEFT JOIN rooms r ON r.id = eb.room_lid
-          LEFT JOIN room_types rt ON rt.id = r.room_type_id
-          LEFT JOIN [${slug}].days d ON eb.day_lid = d.id
-          INNER JOIN [dbo].faculty_types ft ON ft.id =  f.faculty_type_lid
-          INNER JOIN [dbo].module_types mt ON mt.id =  icw.module_type_lid
-          WHERE eb.event_lid IS NULL
+            return request.query(`SELECT  r.room_number, rt.name AS room_type, d.day_name, p.program_id, p.program_name, p.program_code, e.acad_session_lid, ads.acad_session,  icw.module_name, icw.module_code, icw.module_id, mt.name as module_type, e.division_lid, e.division,  e.batch,  et.name AS event_type, eb.room_lid, f.faculty_name, f.faculty_id, ft.name as faculty_type
+            FROM [asmsoc-mum].tb_events e
+            LEFT JOIN [asmsoc-mum].event_bookings eb ON eb.event_lid = e.id
+            LEFT JOIN [asmsoc-mum].programs p ON p.id = e.program_lid
+            LEFT JOIN acad_sessions ads ON ads.id = e.acad_session_lid
+            LEFT JOIN [asmsoc-mum].initial_course_workload icw ON icw.id = e.course_lid
+            LEFT JOIN [dbo].event_types et ON et.id = e.event_type_lid
+            LEFT JOIN [asmsoc-mum].days d ON d.id = eb.day_lid
+            LEFT JOIN [asmsoc-mum].faculty_events fe ON fe.event_lid =  e.id
+            LEFT JOIN [asmsoc-mum].faculties f ON f.id =  fe.faculty_lid
+            LEFT JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            INNER JOIN [dbo].module_types mt ON mt.id =  icw.module_type_lid
+            LEFT JOIN rooms r ON r.id = eb.room_lid
+            LEFT JOIN room_types rt ON rt.id = r.room_type_id
+            WHERE eb.id IS NULL
           `)
         })
     }
