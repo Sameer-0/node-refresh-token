@@ -3,10 +3,11 @@ const AcademicYear = require('../../../models/AcademicYear');
 const AcademicCalender = require('../../../models/AcademicCalender');
 const ProgramSessions = require('../../../models/ProgramSessions');
 const SchoolTimings = require('../../../models/SchoolTiming');
+const SlotIntervalTiming = require('../../../models/SlotIntervalTimings')
 const Rooms = require('../../../models/Rooms');
 const Days = require('../../../models/Days');
 const isJsonString = require('../../../utils/util')
-
+const excel = require("exceljs");
 module.exports = {
 
     getPage: (req, res) => {
@@ -16,15 +17,19 @@ module.exports = {
                 Rooms.fetchBookedRooms(res.locals.organizationId),
                 Days.fetchActiveDay(res.locals.slug),
                 TimeTable.getPendingEventPrograms(res.locals.slug),
+                SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug),
+                TimeTable.getPendingEvents(res.locals.slug)
             ])
             .then(result => {
-                console.log('pending programs list::::', result[3].recordset)
+                console.log('pending event list list::::', result[5].recordset)
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     programListJson: JSON.stringify(result[0].recordset),
                     roomList: JSON.stringify(result[1].recordset),
                     dayList: result[2].recordset,
                     pendingEventPrograms: JSON.stringify(result[3].recordset),
+                    timeSlotList: JSON.stringify(result[4].recordset),
+                    pendingEventList: JSON.stringify(result[5].recordset),
 
                     breadcrumbs: req.breadcrumbs,
                     Url: req.originalUrl
@@ -53,16 +58,17 @@ module.exports = {
         Promise.all([
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid),
-            SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)
+            SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
         ]).then(results => {
-            console.log('results::::::::::', results[0], results[1])
+            console.log('results::::::::::', results[3])
             res.status(200).send({
                 eventList: results[0].recordset,
                 allEventList: results[1].recordset,
-                slotList: results[2].recordset
+                slotList: results[2].recordset,
+
             })
         })
-    },
+    }, 
 
     getPendingEvents: (req, res, next) => {
         console.log('pending req', req.body)
@@ -80,6 +86,13 @@ module.exports = {
         })
     },
 
+    getPendingEventModule: (req, res, next) => {
+        console.log('pending req', req.body)
+        TimeTable.getPendingEventModule(res.locals.slug, req.body.programLid, req.body.sessionLid).then(result => {
+            console.log('pending event session list:::', result.recordset)
+            res.status(200).send(result.recordset)
+        })
+    },
 
     //Implemented in timetablesocket
     dropEvent: (req, res, next) => {
@@ -155,4 +168,182 @@ module.exports = {
             })
         })
     },
+
+    downloadMaster: async (req, res, next) => {
+        let workbook = new excel.Workbook();
+        let Allocatedworksheet = workbook.addWorksheet('Allocated Event');
+        let UnAllocatedworksheet = workbook.addWorksheet('UnAllocated Event');
+        Allocatedworksheet.columns = [{
+                header: "Room Number",
+                key: "room_number",
+                width: 10
+            },
+            {
+                header: "Room Type",
+                key: "room_type",
+                width: 10
+            },
+            {
+                header: "Day",
+                key: "day_name",
+                width: 25
+            },
+            {
+                header: "Program Name",
+                key: "program_name",
+                width: 25
+            },
+            {
+                header: "Program Code",
+                key: "program_code",
+                width: 25
+            },
+            {
+                header: "Program ID",
+                key: "program_id",
+                width: 25
+            },
+            {
+                header: "Academic Session",
+                key: "acad_session",
+                width: 25
+            },
+            {
+                header: "Module Name",
+                key: "module_name",
+                width: 25
+            },
+            {
+                header: "Module Code",
+                key: "module_code",
+                width: 25
+            },
+            {
+                header: "Module ID",
+                key: "module_id",
+                width: 25
+            },
+            {
+                header: "Division",
+                key: "division",
+                width: 25
+            },
+            {
+                header: "Start Time",
+                key: "start_time",
+                width: 25
+            },
+            {
+                header: "End Time",
+                key: "end_time",
+                width: 25
+            },
+            {
+                header: "Event Name",
+                key: "event_type_name",
+                width: 25
+            },
+            {
+                header: "Faculty ID",
+                key: "faculty_id",
+                width: 25
+            },
+            {
+                header: "Faculty Name",
+                key: "faculty_name",
+                width: 25
+            },
+            {
+                header: "Faculty Type",
+                key: "faculty_type",
+                width: 25
+            },
+        ];
+
+        UnAllocatedworksheet.columns = [{
+                header: "Program Name",
+                key: "program_name",
+                width: 25
+            },
+            {
+                header: "Program Code",
+                key: "program_code",
+                width: 25
+            },
+            {
+                header: "Program ID",
+                key: "program_id",
+                width: 25
+            },
+            {
+                header: "Academic Session",
+                key: "acad_session",
+                width: 25
+            },
+            {
+                header: "Module Name",
+                key: "module_name",
+                width: 25
+            },
+            {
+                header: "Module Code",
+                key: "module_code",
+                width: 25
+            },
+            {
+                header: "Module ID",
+                key: "module_id",
+                width: 25
+            },
+            {
+                header: "Module Type",
+                key: "module_type",
+                width: 25
+            },
+            {
+                header: "Division",
+                key: "division",
+                width: 25
+            },
+            {
+                header: "Event Type",
+                key: "event_type",
+                width: 25
+            },
+            {
+                header: "Faculty ID",
+                key: "faculty_id",
+                width: 25
+            },
+            {
+                header: "Faculty Name",
+                key: "faculty_name",
+                width: 25
+            },
+            {
+                header: "Faculty Type",
+                key: "faculty_type",
+                width: 25
+            },
+        ];
+
+        Promise.all([TimeTable.AllocatedEventExcel(res.locals.slug), TimeTable.unAllocatedEventExcel(res.locals.slug)]).then(result => {
+            // Add Array Rows
+            Allocatedworksheet.addRows(result[0].recordset);
+            UnAllocatedworksheet.addRows(result[1].recordset);
+            // res is a Stream object
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=" + `TimeTableMaster.xlsx`
+            );
+
+            return workbook.xlsx.write(res).then(function () {
+                res.status(200).end();
+            });
+        })
+    }
 }

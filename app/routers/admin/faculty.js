@@ -60,6 +60,8 @@ router.post('/faculties/batch/show-entries', batch.showEntries)
 
 //FACULTY ALLOCATION STATUS
 router.get('/faculties/allocation-status', allocation.getPage)
+router.post('/faculties/allocation-status', allocation.checkfacultyStatus)
+
 
 //faculty works
 router.get('/faculties/works', works.getPage)
@@ -76,6 +78,7 @@ router.post('/faculties/works/GetAll', works.getAll)
 router.post('/faculties/works/get-faculty-work-events', works.getFacultyWorks)
 router.get('/faculties/works/download', works.downloadMaster)
 router.post('/faculties/works/show-entries', works.showEntries)
+router.post('/faculties/works/allocation-faculties-for-lecture', works.allocationFaculties)
 
 
 //workpreferences
@@ -90,7 +93,7 @@ router.post('/faculties/workpreferences/module-by-program-session-id', preferenc
 router.get('/faculties/workpreferences/download', preferences.downloadMaster)
 router.post('/faculties/workpreferences/show-entries', preferences.showEntries)
 
-
+router.post('/faculties/workpreferences/programby-facultyid', validate('single'), preferences.getProgramFacultyId)
 
 //Get Days by program id for faculty preference
 router.post('/faculties/workpreferences/session-day-by-program-id', preferences.sessionDayByProgramId)

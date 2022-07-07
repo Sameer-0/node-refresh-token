@@ -1,4 +1,9 @@
 <%- include("../partials/head") %>
+<style>
+    .booked-room-lists{
+
+    }
+</style>
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
 <!--Notification icon-->
@@ -40,18 +45,18 @@
         </div> -->
     </div>
     
-    <div class="errorHtml"></div>
     <div class="card table-card">
         <div class="modal-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
             <div>
                 <h5 class="modal-title text-white" id="add-room-modal-title">BOOKED ROOMS</h5>
             </div>
             <div>
+                <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#roomCancelModal"><i
+                    class="fas fa-home"></i> Room change Request</a>
                 <a class="btn btn-danger" href="/admin/rooms/download"><i
                     class="fas fa-download"></i> Download </a>
             </div>
         </div>
-
         <div class="card-body">
             <input type="hidden" id="roomId" name="roomId">
             <div class="d-flex justify-content-between">
@@ -82,7 +87,7 @@
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Building Name</th>
-                        <!-- <th>Action</th> -->
+                        <th>Action</th>
                     </thead>
                     <tbody>
                         <%let rcount = 1;%>
@@ -97,7 +102,7 @@
                                 <td><%- list.start_date %></td>
                                 <td><%- list.end_date %></td>
                                 <td><%- list.building_name %></td>
-                                <!-- <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> -->
+                                <td><a class="room-cancel-request" data-id="<%-list.id %>" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel Room"><i class="fa-solid fa-xmark text-danger"></i></a></td>
                             </tr>
                         <%}%>
                     </tbody>
@@ -118,43 +123,88 @@
 </div>
 
 <!-- Modal -->
+<div class="modal fade" id="roomCancelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content rounded-0">
+      <div class="modal-header">
+        <h5 class="modal-title placeholder-glow" id="exampleModalLabel">ROOM CHANGE REQUEST</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group booked-room-lists">
+                        <% for(let room of bookedRoomList) {%>
+                            <a  class="list-group-item list-group-item-action border rounded-0 my-1" aria-current="true" data-building-name="<%- room.building_name %>" data-room-number="<%- room.room_number %>" data-start-time="<%- room.start_time %>" data-end-time="<%- room.end_time %>" data-start-date="<%- room.start_date %>" data-end-date="<%- room.end_date %>">
+                                <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1" ><%- room.building_name %></h5>
+                                <small>Room No: <%- room.room_number %></small>
+                                </div>
+                                <p class="mb-1">
+                                <small>Start Time: <%- room.start_time %></small>
+                                <small>End Time: <%- room.end_time %></small>
+                                 </p>
+                                <small>Start Date: <%- room.start_date %></small>
+                                <small>End Date: <%- room.end_date %></small> 
+                            </a>                               
+                        <%}%>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <table class="table rounded-0 edit-booking-table" >
+  <thead>
+    <tr>
+      <th>Room No.</th>
+      <th>Building Name</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Remark</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary rounded-0">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
 <div class="modal fade" id="booking-cancel-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content rounded-0">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Booking Cancellation</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="mb-3">
-                <label class="form-label">Start Date</label>
-                <input class="form-control" id="room-id" type="date">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">End Date</label>
-                <input class="form-control" id="room-id" type="date">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Start Time</label>
-                <input class="form-control" id="room-id" type="datetime-local">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">End Time</label>
-                <input class="form-control" id="room-id" type="datetime-local">
+               <p><span class="text-danger">Note:</span> If you want to cancel your room permanently then use this option after 
+                cancellation again if you wish to apply for the same room you need to apply for a room.</p>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Reason for cancellation</label>
                 <input class="form-control" id="room-id" type="hidden">
-                <textarea class="form-control" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
+                <textarea class="form-control rounded-0" id="cancel-reason" placeholder="Enter reason" rows="3"></textarea>
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary confirm-btn">Confirm</button>
+          <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary confirm-btn rounded-0">Confirm</button>
         </div>
       </div>
     </div>
@@ -165,6 +215,44 @@
     <script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"> </script>
     <script>
         $(document).ready(function () {
+
+
+            $(".booked-room-lists").on('click','.list-group-item-action',function(){
+                let buildingName = $(this).attr('data-building-name')
+                let roomNumber = $(this).attr('data-room-number')
+                let startTime  = $(this).attr('data-start-time')
+                let endTime  = $(this).attr('data-end-time')
+                let startDate =  $(this).attr('data-start-date')
+                let endtDate =  $(this).attr('data-end-date')
+                let obj = {
+                    buildingName: buildingName,
+                    roomNumber: roomNumber,
+                    startTime: startTime,
+                    endTime: endTime,
+                    startDate: startDate,
+                    endtDate: endtDate
+                }
+                $("#roomCancelModal .edit-booking-table tbody").append(`
+                <tr>
+                    <td>${roomNumber}</td>
+                    <td>${buildingName}</td>
+                    <td>${startTime}</td>
+                    <td>${endTime}</td>
+                    <td>${startDate}</td>
+                    <td>${endtDate}</td>
+                    <td><input type="time" class="form-control rounded-0"></td>
+                    <td><input type="time" class="form-control rounded-0"></td>
+                    <td><input type="date" class="form-control rounded-0"></td>
+                    <td><input type="date" class="form-control rounded-0"></td>
+                    <td><input type="text" class="form-control rounded-0"></td>
+                    <td><a class="remove-rooms"><span class="fa-solid fa-xmark text-danger"></span></a></td>
+                </tr>`)
+                $(this).remove()
+            })
+
+            $("#roomCancelModal .edit-booking-table").on('click','.remove-rooms',function(){
+                $(this).parent().parent().remove()
+            })
 
             $('[data-bs-toggle="tooltip"]').tooltip()
             $("#room-booked-table").on('click','.room-cancel-request',function(){
@@ -210,7 +298,8 @@
                 let pageNo = $(this).attr('data-lp')
                 console.log('PAGE NO.:::::::::::', $(this).attr('data-lp'))
                 console.log('keyword.:::::::::::', keyword)
-                $.ajax({ 
+                if(keyword){
+                    $.ajax({ 
                     type: "POST",
                     url: "/admin/rooms/search",
                     data: {
@@ -221,6 +310,7 @@
                          AjaxtTable(data.data)
                     }
                 })
+                }
             })
 
 
@@ -286,7 +376,7 @@
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Building Name</th>
-                        <!-- <th>Action</th> -->
+                        <th>Action</th>
                 </thead>
                 <tbody>`;
                 if (bookedRoomList.length > 0) {
@@ -303,7 +393,7 @@
                                 <td>${room.start_date}</td>
                                 <td>${room.end_date}</td>
                                 <td>${room.building_name}</td>
-                                <!-- <td><a class="room-cancel-request" data-id="${room.id}" data-bs-toggle="tooltip" data-bs-placement="top" title="Room Cancellation Request"><i class="fa-solid fa-xmark text-danger"></i></a></td> -->
+                                <td><a class="room-cancel-request" data-id="${room.id}" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel Room"><i class="fa-solid fa-xmark text-danger"></i></a></td>
                             </tr>`
                     }
                 } else {

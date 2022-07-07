@@ -56,7 +56,7 @@ app.use(
         store: new RedisStore({
             client: redisClient,
             ///ttl: 260
-            ttl: 460
+            ttl: 660
         }),
         saveUninitialized: false,
         genid: function (req) {

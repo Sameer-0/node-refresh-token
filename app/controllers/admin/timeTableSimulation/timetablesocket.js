@@ -29,11 +29,11 @@ module.exports.respond = async socket => {
                 //res.status(500).json(JSON.parse(error.originalError.info.message))
                 socket.emit('schedule-event-response', JSON.parse(error.originalError.info.message))
             } else {
-                socket.emit('schedule-event-response', JSON.parse({
+                socket.emit('schedule-event-response', {
                     status: 500,
                     description: error.originalError.info.message,
                     data: []
-                }))
+                })
             }
         })
     })

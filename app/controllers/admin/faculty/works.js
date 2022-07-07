@@ -12,7 +12,7 @@ const Settings = require("../../../models/Settings");
 const Programs = require("../../../models/programs");
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 module.exports = {
     getPage: (req, res) => {
@@ -274,25 +274,35 @@ module.exports = {
     },
 
     getFacultyWorks: (req, res) => {
-        FacultyWorks.facultyWorkEvents(req.body, res.locals.slug).then(result => {
+
+        console.log('fetching faculties:>>>>>>>>>>> ', req.body)
+
+        Promise.all([FacultyWorks.facultyWorkEvents(req.body, res.locals.slug), FacultyWorks.getFacultiesAllocationDetails(req.body, res.locals.slug)])
+        .then(result => {
+
+            console.log('Result>>> ' , result[0].recordset)
+
             res.status(200).json({
-                result: result.recordset
+                result: result[0].recordset,
+                facultyAllocationDetails: result[1].recordset
             })
         }).catch(error => {
-            if (isJsonString.isJsonString(error.originalError.info.message)) {
-                res.status(500).json(JSON.parse(error.originalError.info.message))
-            } else {
-                res.status(500).json({
-                    status: 500,
-                    description: error.originalError.info.message,
-                    data: []
-                })
-            }
+            // if (isJsonString.isJsonString(error.originalError.info.message)) {
+            //     res.status(500).json(JSON.parse(error.originalError.info.message))
+            // } else {
+            //     res.status(500).json({
+            //         status: 500,
+            //         description: error.originalError.info.message,
+            //         data: []
+            //     })
+            // }
+            console.log(error, 'errr')
         })
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Faculty Work Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Faculty Work Master');
         worksheet.columns = [
           { header: "Faculty ID", key: "faculty_id", width: 10 },
           { header: "Faculty Name", key: "faculty_name", width: 25 },
@@ -330,6 +340,32 @@ module.exports = {
 
     showEntries:(req, res, next)=>{
         FacultyWorks.fetchAll(req.body.rowcount, res.locals.slug).then(result => {
+            if (result.recordset.length > 0) {
+                res.json({
+                    status: "200",
+                    message: "Work fetched",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            } else {
+                res.json({
+                    status: "400",
+                    message: "No data found",
+                    data: result.recordset,
+                    length: result.recordset.length
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.json({
+                status: "500",
+                message: "Something went wrong",
+            })
+        })
+    },
+
+    allocationFaculties:(req, res, next)=>{
+        FacultyWorks.getFacultiesAllocationDetails(req.body.rowcount, res.locals.slug).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",

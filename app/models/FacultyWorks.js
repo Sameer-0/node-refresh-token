@@ -33,11 +33,24 @@ module.exports = class {
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-            return request.query(`SELECT COUNT(*) as count FROM [${slug}].faculty_works`)
+            return request.query(`SELECT COUNT(*) AS count FROM [${slug}].faculty_works`)
         })
     }
 
-
+    static getFacultiesAllocationDetails(obj, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request.input('program_lid', sql.Int, obj.programLid)
+            .input('acad_session_lid', sql.Int, obj.sessionLid)
+            .input('course_lid', sql.Int, obj.moduleLid)
+            .input('division_lid', sql.Int, obj.divisionLid)
+            .query(`SELECT * FROM (SELECT t1.faculty_lid, count(t1.event_lid) AS lecture_count FROM (SELECT fe.faculty_lid, fe.event_lid  FROM [${slug}].faculty_events fe
+                INNER JOIN [${slug}].tb_events te ON te.id = fe.event_lid
+                WHERE te.program_lid = @program_lid and te.acad_session_lid = @acad_session_lid and te.course_lid = @course_lid and te.division_lid = @division_lid) t1
+                group by t1.faculty_lid) t2
+                INNER JOIN [${slug}].faculties f ON f.id = t2.faculty_lid`)
+        })
+    }
 
 
     static search(body, slug) {
@@ -159,14 +172,15 @@ module.exports = class {
         console.log('slug', slug)
         return poolConnection.then(pool => {
             const request = pool.request();
-            request.input('programLid', sql.Int, body.programLid)
-                .input('sessionLid', sql.Int, body.sessionLid)
-                .input('moduleLid', sql.Int, body.moduleLid)
-                .input('eventTypeLid', sql.Int, body.eventTypeLid)
-            let stmt = `SELECT DISTINCT faculty_work_lid, f.faculty_name, f.id as faculty_lid from [${slug}].faculty_work_events fwe
-             INNER JOIN [${slug}].faculties f on f.id = fwe.faculty_lid
-             WHERE program_lid = @programLid AND acad_session_lid = @sessionLid AND module_lid = @moduleLid AND event_type_lid = @eventTypeLid AND status = 0 `
-            return request.query(stmt)
+            return request.input('program_lid', sql.Int, body.programLid)
+                .input('acad_session_lid', sql.Int, body.sessionLid)
+                .input('module_lid', sql.Int, body.moduleLid)
+                .input('day_lid', sql.Int, body.dayLid)
+                .input('start_slot_lid', sql.Int, body.startSlotLid)
+                .input('end_slot_lid', sql.Int, body.endSlotLid)
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_get_avail_faculties]`)
         })
     }
 

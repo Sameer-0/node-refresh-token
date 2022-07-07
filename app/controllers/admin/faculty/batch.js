@@ -11,7 +11,7 @@ const Settings = require("../../../models/Settings");
 const DivisionBatches = require('../../../models/DivisionBatches');
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 module.exports = {
 
@@ -339,7 +339,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Faculty Date Time Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Faculty Date Time Master');
         worksheet.columns = [
           { header: "Faculty ID", key: "faculty_id", width: 10 },
           { header: "Faculty Name", key: "faculty_name", width: 25 },

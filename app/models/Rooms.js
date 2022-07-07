@@ -58,9 +58,6 @@ module.exports = class Rooms {
     }
 
 
-
-
-
     static getCount() {
         return poolConnection.then(pool => {
             let request = pool.request()
@@ -155,16 +152,16 @@ module.exports = class Rooms {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('alloted_to', sql.Int, alloted_to)
-                .query(`SELECT r.id, r.room_number, r.room_type_id FROM (SELECT DISTINCT room_lid FROM room_slots WHERE alloted_to = @alloted_to) t1
-                INNER JOIN rooms r ON t1.room_lid = r.id
-                ORDER BY r.room_number`)
+                .query(`SELECT id, room_number, room_type_id FROM rooms WHERE id NOT IN (16, 29, 35)`)
+                
+				
         })
     }
 
 
     static bookedRooms(slug, rowCount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowCount)} r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowCount)} rtd.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 
@@ -174,7 +171,8 @@ module.exports = class Rooms {
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id = rtd.start_time_id
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
             INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
-            INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id`)
+            INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
+            ORDER BY rtd.id DESC`)
         })
     }
 
@@ -197,7 +195,7 @@ module.exports = class Rooms {
     static bookedRoomsPagination(slug, pageNo) {
         return poolConnection.then(pool => {
             return pool.request()
-                .input('pageNo', sql.Int, pageNo).query(`SELECT r.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+                .input('pageNo', sql.Int, pageNo).query(`SELECT rtd.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 

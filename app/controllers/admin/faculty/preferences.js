@@ -8,20 +8,22 @@ const FacultyWorks = require('../../../models/FacultyWorks')
 const ProgramDays = require('../../../models/ProgramDays')
 const FacultyWorkTimePreferences = require('../../../models/FacultyWorkTimePreferences')
 const Settings = require("../../../models/Settings");
+const Programs = require('../../../models/Programs')
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), SlotIntervalTimings.forFaculty(1000), FacultyWorkTimePreferences.getCount(res.locals.slug), FacultyWorkTimePreferences.facultyPrefList(res.locals.slug)]).then(result => {
+        Promise.all([FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), SlotIntervalTimings.forFaculty(1000), FacultyWorkTimePreferences.getCount(res.locals.slug), FacultyWorkTimePreferences.facultyPrefList(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
             res.render('admin/faculty/preference', {
                 facultyworktimepref: result[0].recordset,
                 slotIntervalTimings: result[1].recordset,
                 pageCount: result[2].recordset ? result[2].recordset[0].count : 0,
                 breadcrumbs: req.breadcrumbs,
-                facultyList: result[3].recordset
+                facultyList: result[3].recordset,
+                programList : result[4].recordset
             })
         })
     },
@@ -173,6 +175,9 @@ module.exports = {
         })
     },
 
+
+
+
     moduleByprogramAndSessionId: (req, res, next) => {
        FacultyWorkTimePreferences.moduleByprogramAndSessionId(req.body, res.locals.slug).then(result => {
             res.json({
@@ -253,7 +258,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Faculty Preference Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Faculty Preference Master');
         worksheet.columns = [
           { header: "Faculty ID", key: "faculty_id", width: 10 },
           { header: "Faculty Name", key: "faculty_name", width: 25 },
@@ -313,5 +319,28 @@ module.exports = {
                 message: "Something went wrong",
             })
         })
-    }
+    },
+
+    getProgramFacultyId: (req, res, next) => {
+        console.log('BODY:::::::::', req.body)
+        FacultyWorkTimePreferences.fetchByFacultyId(req.body.faculty_lid, res.locals.slug).then(result => {
+            console.log('result::::::::',result.recordset)
+            res.json({
+                status: 200,
+                message: "Success",
+                facultylist: result.recordset
+            })
+        }).catch(error => {
+            console.log(error)
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
 }

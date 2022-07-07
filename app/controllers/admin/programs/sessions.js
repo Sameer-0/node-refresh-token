@@ -8,7 +8,7 @@ const {
 const ProgramSessions = require('../../../models/ProgramSessions')
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 
 
 module.exports = {
@@ -158,7 +158,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`ProgramSessions Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('ProgramSessions Master');
         worksheet.columns = [
           { header: "Program Name", key: "program_name", width: 30 },
           { header: "Program Code", key: "program_code", width: 25 },

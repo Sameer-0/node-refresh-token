@@ -140,4 +140,11 @@ module.exports = class SlotIntervalTimings {
         })
     }
 
+    static slotTimesForSchoolTiming(slug){
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.query(`SELECT id, CONVERT(NVARCHAR, start_time, 0) AS start_time, CONVERT(NVARCHAR, end_time, 0) AS end_time, slot_name FROM slot_interval_timings WHERE id BETWEEN (SELECT MIN(slot_start_lid) FROM [${slug}].school_timings) AND (select  MAX(slot_end_lid) FROM [${slug}].school_timings)`)
+        })
+    }
+
 }

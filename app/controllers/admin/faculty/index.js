@@ -13,7 +13,7 @@ const FacultyTypes = require("../../../models/FacultyTypes");
 const Settings = require("../../../models/Settings");
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
-let workbook = new excel.Workbook();
+
 const {
     v4: uuidv4
 } = require('uuid');
@@ -167,7 +167,8 @@ module.exports = {
     },
 
     downloadMaster: async(req, res, next) => {
-        let worksheet = workbook.addWorksheet(`Faculty Master ${new Date().toLocaleTimeString().replaceAll(":","-")}`);
+        let workbook = new excel.Workbook();
+        let worksheet = workbook.addWorksheet('Faculty Master');
         worksheet.columns = [
           { header: "Faculty ID", key: "faculty_id", width: 10 },
           { header: "Faculty Name", key: "faculty_name", width: 25 },
