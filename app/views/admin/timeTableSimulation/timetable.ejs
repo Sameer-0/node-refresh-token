@@ -764,6 +764,17 @@
         socket.on('drop-event-response', function (response) {
             console.log('drop response>>> ', response)
             if (response.status == 1) {
+                console.log('inside success drop', dragObj.targetElem)
+                let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${dragObj.targetElem.getAttribute('data-program-lid')}" data-session-lid="${dragObj.targetElem.getAttribute('data-session-lid')}" data-module-lid="${dragObj.targetElem.getAttribute('data-module-lid')}" data-event-type-lid="${dragObj.targetElem.getAttribute('data-event-type-lid')}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-division-lid="${dragObj.targetElem.getAttribute('data-division-lid')}">
+                <p>${dragObj.targetElem.getAttribute('data-program-name')}<br>
+                ${dragObj.targetElem.getAttribute('data-session-name')} <br>
+                ${dragObj.targetElem.getAttribute('data-module-name')}<br>
+                ${dragObj.targetElem.getAttribute('data-division-name')}-${dragObj.targetElem.getAttribute('data-batch-name')}(${dragObj.targetElem.getAttribute('data-event-type-name')})
+                </p>
+                </div>`
+                console.log('pendingEventFromDrop>>>>', pendingEventFromDrop)
+                $(document).find('.pending-event-container').append(pendingEventFromDrop)
+                
                 dragObj.targetElem.remove();
                 $("#slotModal").modal('hide');
             }
@@ -818,8 +829,24 @@
                     dragObj.clonedTarget = null;
                 }
                 else if(response.actionType == 'allocate') {
-                    console.log('>>> ALLOCATED')
-
+                    console.log('>>> ALLOCATED', response.data.data[0])
+                    let responseObj = response.data.data[0];
+                    let allocatedEleemnt = $(document).find(`.event[data-event-lid="${response.data.data[0].event_lid}"]`);
+                    allocatedEleemnt.attr({'data-event-lid':responseObj.event_lid,
+                                            'data-module-name':responseObj.module_name,
+                                            'data-module-lid':responseObj.course_lid,
+                                            'data-division-name':responseObj.division,
+                                            'data-batch-name':responseObj.batch,
+                                            'data-event-type':responseObj.event_type,
+                                            'data-session-name':responseObj.acad_session,
+                                            'data-session-lid':responseObj.acad_session_lid,
+                                            'data-program-name':responseObj.program_name,
+                                            'data-program-lid':responseObj.program_lid,
+                                            'data-start-time':responseObj.start_time_lid,
+                                            'data-end-time':responseObj.start_end_lid,
+                                            'data-faculty-lid':responseObj.faculty_lid,
+                                            'data-faculty-name':responseObj.faculty_name,
+                                        })
                     $(document).find('.selected-pending-event').remove();
 
 
@@ -920,7 +947,7 @@
         let penElem = document.createElement('div');
 
         // SELECT AND UNSELECT PENDING EVENTS WITH CREATING SHADOW OBJECT
-        $('.pending-event').on('click', function (e) {
+        $(document).on('click','.pending-event', function (e) {
 
             if ($(this).hasClass('selected-pending-event')) {
                 $(this).removeClass('selected-pending-event')
@@ -1358,8 +1385,6 @@
 
         function dragStart(e) {
 
-           
-
             dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left;
             dragObj.timetableRect = document.querySelector('.timetable-container').getBoundingClientRect();
 
@@ -1459,7 +1484,6 @@
 
         }
 
-       
         function onDrag(e) {
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
