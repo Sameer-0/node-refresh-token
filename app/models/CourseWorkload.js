@@ -156,7 +156,7 @@ module.exports = class {
         })
     }
 
-    static sessionByProgramId(programid, slug) {
+    static sessionByProgramIdWSDL(programid, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('programId', sql.Int, programid)
                 .query(`SELECT DISTINCT sap_acad_session, sess_desc FROM [${slug}].course_work_wsdl where prog_objid = @programId`)
