@@ -168,8 +168,8 @@ module.exports = {
     })
   },
 
-  sessionByProgramId: (req, res) => {
-    CourseWorkload.sessionByProgramId(req.body.programId, res.locals.slug).then(result => {
+  sessionByProgramIdWSDL: (req, res) => {
+    CourseWorkload.sessionByProgramIdWSDL(req.body.programId, res.locals.slug).then(result => {
       if (result.recordset.length > 0) {
         res.json({
           status: "200",
