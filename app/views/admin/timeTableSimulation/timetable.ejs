@@ -767,6 +767,17 @@
         socket.on('drop-event-response', function (response) {
             console.log('drop response>>> ', response)
             if (response.status == 1) {
+                console.log('inside success drop', dragObj.targetElem)
+                let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${dragObj.targetElem.getAttribute('data-program-lid')}" data-session-lid="${dragObj.targetElem.getAttribute('data-session-lid')}" data-module-lid="${dragObj.targetElem.getAttribute('data-module-lid')}" data-event-type-lid="${dragObj.targetElem.getAttribute('data-event-type-lid')}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-division-lid="${dragObj.targetElem.getAttribute('data-division-lid')}">
+                <p>${dragObj.targetElem.getAttribute('data-program-name')}<br>
+                ${dragObj.targetElem.getAttribute('data-session-name')} <br>
+                ${dragObj.targetElem.getAttribute('data-module-name')}<br>
+                ${dragObj.targetElem.getAttribute('data-division-name')}-${dragObj.targetElem.getAttribute('data-batch-name')}(${dragObj.targetElem.getAttribute('data-event-type-name')})
+                </p>
+                </div>`
+                console.log('pendingEventFromDrop>>>>', pendingEventFromDrop)
+                $(document).find('.pending-event-container').append(pendingEventFromDrop)
+                
                 dragObj.targetElem.remove();
                 $("#slotModal").modal('hide');
             }
@@ -1361,8 +1372,6 @@
 
         function dragStart(e) {
 
-           
-
             dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left;
             
             if (e.target.classList.contains('room-slots')) e.preventDefault();
@@ -1460,7 +1469,6 @@
 
         }
 
-       
         function onDrag(e) {
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
