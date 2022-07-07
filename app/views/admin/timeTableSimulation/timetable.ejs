@@ -273,7 +273,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="slotModalLabel">Slot Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" id="close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             
@@ -621,8 +621,6 @@
             })
         })
 
-
-
         $(document).on('change', '#program-name-modal', function () {
 
             let programLid = $(this).val();
@@ -671,7 +669,6 @@
                 })
             }
         })
-
 
         $(document).on('change', '#program-name-for-faculty', function () {
 
@@ -722,7 +719,6 @@
             }
         })
 
-
         $(document).on('change', '#session-name-modal', function () {
 
             let programLid = $('#program-name-modal').val();
@@ -761,7 +757,6 @@
                 })
         })
 
- 
         //DROP EVENT SURAJ
         //$(document).on('click', '#drop-slot', function() 
         $("#slotModal").on('click', '#drop-slot', function () {
@@ -818,8 +813,11 @@
             let dayLid = $("#day").val();
             let startSlotId = $(this).attr("data-start-slot-id");
             let endSlotId = $(this).attr("data-end-slot-id");
-            let eventLid = $(this).attr("data-event-lid")
-            let facultyLid = $(this).attr("data-faculty-lid")
+            let eventLid = $(this).attr("data-event-lid");
+            let facultyLid = $(this).attr("data-faculty-lid");
+            let targetEventLid = $(this).attr("data-target-event-lid");
+            let swapEventLid = $(this).attr("data-swap-event-lid");
+            let actionType = $(this).attr('data-action-type');
 
             let obj = [{
                 roomLid: roomLid,
@@ -827,7 +825,11 @@
                 endSlotLid: endSlotId,
                 dayLid: dayLid,
                 eventLid: eventLid,
-                facultyLid: facultyLid
+                facultyLid: facultyLid,
+                actionType: actionType,
+                targetEventLid: targetEventLid,
+                swapEventLid: swapEventLid,
+
             }]
 
             console.log('JSON::::::::::::::::', obj)
@@ -933,6 +935,7 @@
             </p>
           </div>`
         }
+        
         let pendingEventContainer = document.querySelector('.pending-event-container');
         pendingEventContainer.innerHTML = pendingEventElement;
 
@@ -991,7 +994,7 @@
             }
 
             penElem.setAttribute('class', 'pen-element d-none');
-            penElem.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)`
+            penElem.innerHTML = `${$(document).find('.selected-pending-event').text()}`
 
             penElem.style.top = e.clientY - 75 + 'px';
             penElem.style.left = e.clientX - 84.5 + 'px';
@@ -1047,11 +1050,8 @@
                     }
 
                 } 
-                
                    
             }
-
-
 
             let programLid = $(document).find('.selected-pending-event').attr('data-program_lid')
             let sessionLid = $(document).find('.selected-pending-event').attr('data-session_lid')
@@ -1120,8 +1120,9 @@
                     otherFacultyDetail += `</ul>`
                     $(document).find("#slotModal .modal-body").html(otherFacultyDetail + facultyList)
                     // $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
+                    $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-allocate')
                     $('#slotModal .modal-footer').html(
-                        `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${startSLotId}" data-end-slot-id="${endSlotId}" data-room-id="${currentRoomLid}"  data-day-lid="${dayLid}" data-event-lid="${eventLid}" disabled="true">Schedule Slot</button>`
+                        `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${startSLotId}" data-end-slot-id="${endSlotId}" data-room-id="${currentRoomLid}"  data-day-lid="${dayLid}" data-event-lid="${eventLid}" disabled="true" data-action-type="allocate">Schedule Slot</button>`
                             );
                     $('#slotModal').modal('show');
                 }).catch(error => {
@@ -1139,11 +1140,13 @@
 
             let eventElemt = document.createElement('div');
             eventElemt.setAttribute('class', 'event room-slot-item')
+            eventElemt.setAttribute('data-event-lid', `${$(document).find('.selected-pending-event').attr('data-event-lid')}`)
+            let pendingEventInnerContent = $(document).find('.selected-pending-event').text();
 
-            eventElemt.innerHTML = `B.Com. (Hons.)-7401 - Semester III <br><hr> Business Law <br><hr> A - 1 (TH)<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
+            eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
             <i class="fa-solid fa-arrows-left-right"></i>
             <span class="badge bg-info end-time">${timeJson[endSlotIndex - 1].end_time}</span>
-            <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; display: block;"></div>`;
+            <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
 
             eventElemt.style.position = 'absolute';
             eventElemt.style.width = '169px';
@@ -1151,12 +1154,12 @@
             eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 49 - 84.5 + (timetableProp.pxPerSlot/2) + 'px';
 
            
-            
-            
             currentRoom.append(eventElemt)
             penElem.remove();
 
         }) 
+
+
 
         //DISPLAY TIMETABLE LOOP
         function timeTableDisplay(eventListJson, allEventListJson) {
@@ -1231,12 +1234,11 @@
                     eventStartSlot = event.start_slot;
                     eventLeftPosition = (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot;
 
-
-
                     let fixedBreak = document.createElement('div');
                     fixedBreak.setAttribute("class", "fixed-break room-slot-item")
                     fixedBreak.setAttribute("style", `left: ${eventLeftPosition}px; top: 0;`)
                     fixedBreak.setAttribute("data-break", `${event.is_break}`)
+                    fixedBreak.setAttribute("data-break-id", `${event.break_id}`)
                     fixedBreak.innerText = 'BREAK';
                     fixedBreadWidth = (event.end_slot - event.start_slot) * timetableProp.pxPerSlot + timetableProp
                         .pxPerSlot;
@@ -1299,13 +1301,13 @@
 
 
         let fixedBreakBounding
+        let fixedBreakTwoBounding
         let previousScrollY = 0;
 
         function dragStart(e) {
 
-
             dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left;
-            // console.log('hello:::',  dragObj.tableLeftPosition)
+            
             if (e.target.classList.contains('room-slots')) e.preventDefault();
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
@@ -1325,7 +1327,9 @@
             if (e.target.classList.contains('event')) {
 
                 fixedBreakBounding = document.querySelector('.fixed-break').getBoundingClientRect();
-                console.log('fixed break Trect::', fixedBreakBounding)
+                fixedBreakTwoBounding = document.querySelector('.fixed-break[data-break-id="2"]').getBoundingClientRect();
+
+                console.log('fixed break 2Trect::', document.querySelector('.fixed-break[data-break-id="2"]'))
                 console.log("IS DRAGGABLE");
 
                 dragObj.isMouseDown = true;
@@ -1336,7 +1340,7 @@
                 dragObj.targetElem.classList.add('active')
 
                 dragObj.initialRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
-                console.log('roomslot:::::>>>>', dragObj.initialRoom)
+                
                 dragObj.initialRoom.style.cssText = `outline: 3px solid #ff8400`;
 
                 e.target.style.zIndex = 100;
@@ -1353,8 +1357,8 @@
                 targetProp.initialClientX = dragObj.relativeClientX;
                 targetProp.initialClientY = e.clientY;
                 dragObj.isDraggable = true;
-
-
+                dragObj.intialXposition = targetProp.initialBounding.left - dragObj.tableLeftPosition - timetableProp.roomNoWidth;
+                console.log('initailXXposition:::::>>>>', dragObj.intialXposition)
 
                 dragObj.startSlotIndex = (Math.round((targetProp.initialBounding.left - dragObj.tableLeftPosition -
                     timetableProp.roomNoWidth) / timetableProp.pxPerSlot));
@@ -1393,11 +1397,13 @@
 
         }
 
+       
         function onDrag(e) {
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
             let errorFactor = e.clientX - 78 - dragObj.tableLeftPosition - dragObj.relativeClientX 
-          console.log( errorFactor )
+          
+            console.log( errorFactor )
 
             if(document.querySelectorAll('.pending-event[data-selected]').length > 0 && getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY))){
                 penElem.classList.remove('d-none')
@@ -1436,11 +1442,9 @@
                 dragObj.currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
 
                 if (dragObj.currentRoom != dragObj.initialRoom) {
-
                     dragObj.initialRoom.style.cssText += `outline: unset`;
                     dragObj.currentRoom.style.cssText += `outline: 3px solid #ff8400`;
                     dragObj.initialRoom = dragObj.currentRoom;
-
                 }
 
 
@@ -1455,7 +1459,7 @@
 
                 dragObj.targetElem.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
                         .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-                    .pxPerSlot + 'px' : '0px'
+                    .pxPerSlot + 13 + 'px' : '0px'
 
 
                 // if(window.pageYOffset-previousScrollY >= 0){
@@ -1466,54 +1470,67 @@
                 dragObj.targetElem.style.top =  `${targetProp.movedY}px`
 
            
-                if ((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
+                if (((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
                         fixedBreakBounding.left && tRect.right <= fixedBreakBounding.right) || (tRect.right >=
-                        fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) {
+                        fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) || 
+                    ((tRect.left >= fixedBreakTwoBounding.left && tRect.left < fixedBreakTwoBounding.right) || (tRect.right >
+                    fixedBreakTwoBounding.left && tRect.right <= fixedBreakTwoBounding.right) || (tRect.right >=
+                    fixedBreakTwoBounding.right && tRect.left < fixedBreakTwoBounding.right))) {
 
-                    console.log("Target element>>>>> ", dragObj.targetElem)
+                  //SET IS BREAK KEY
+
+                  dragObj.isOverBreak = true;
 
                     cssRoot.style.setProperty('--eventNoBreakWidth', `${(timetableProp.pxPerSlot * 12)}px`);
-                    dragObj.targetElem.querySelector('.break').style.display = "none"
+                  
+                    let breakEle =  dragObj.targetElem.querySelector('.break')
+                    
+                    breakEle.classList.add('d-none');
                     dragObj.targetElem.style.width = '156px';
                     console.log('over the break:::::::::', dragObj.targetElem.style.width)
 
                 } else {
-                    dragObj.targetElem.querySelector('.break').style.display = "block"
+
+                    dragObj.isOverBreak = false;
+                    dragObj.targetElem.querySelector('.break').classList.remove('d-none');
                     dragObj.targetElem.style.width = '169px';
                 }
 
+
+                console.log('timetableProp.totalSlots * timetableProp.pxPerSlot>> ', timetableProp.totalSlots * timetableProp.pxPerSlot)
+                console.log('dragObj.targetElem.offsetRight>> ', dragObj.targetElem.offsetLeft)
+                console.log('dragObj.targetElem.offsetRight>> ', dragObj.targetElem.offsetLeft + 12 * 13 + 13)
+
                 //No break condition for room being placed at end
-                if ((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX / timetableProp
-                            .pxPerSlot) * timetableProp.pxPerSlot + (timetableProp.pxPerSlot * 12) + timetableProp
-                        .pxPerSlot) <
-                    1) {
-                    console.log('true:::::::::::::::>>>>>>>>>>', (fixedBreakSlotStart - timeTablestartSlot) *
-                        timetableProp.pxPerSlot)
+                if ((timetableProp.totalSlots * timetableProp.pxPerSlot) - (dragObj.targetElem.offsetLeft + 12 * 13)  < 2) {
+                   
+                    console.log('true:::::::::::::::>>>>>>>>>>', (fixedBreakSlotStart - timeTablestartSlot) * timetableProp.pxPerSlot)
 
 
                     dragObj.targetElem.querySelector('.break').classList.add('d-none');
 
-                    dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) *
-                        timetableProp.pxPerSlot + timetableProp.pxPerSlot + 'px'
-                    dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
+                   // dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot + timetableProp.pxPerSlot + 'px'
+                   dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
 
                     dragObj.targetElem.querySelector('.end-time').style.right = 0
                     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right = 'calc(78px - 7px)'
 
-                    if (((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX /
-                                timetableProp.pxPerSlot) * timetableProp
-                            .pxPerSlot + (timetableProp.pxPerSlot * 12))) > 0) {
+                    // if (((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX /
+                    //             timetableProp.pxPerSlot) * timetableProp
+                    //         .pxPerSlot + (timetableProp.pxPerSlot * 12))) > 0) {
 
-                        console.log('false:::::::::')
+                    //     console.log('false:::::::::')
 
-                        dragObj.targetElem.querySelector('.break').classList.remove('d-none')
-                        dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
-                        dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
-                            'calc(var(--breakIntervalWidth) + 78px - 7px)'
-                        // dragObj.targetElem.style.width = `var(--eventWidth)`;
-                    }
+                    //     dragObj.targetElem.querySelector('.break').classList.remove('d-none')
+                    //     dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
+                    //     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
+                    //         'calc(var(--breakIntervalWidth) + 78px - 7px)'
+                    //     // dragObj.targetElem.style.width = `var(--eventWidth)`;
+                    // }
                 } else {
-                    dragObj.targetElem.querySelector('.break').classList.remove('d-none');
+
+                    if (!dragObj.isOverBreak)
+                        dragObj.targetElem.querySelector('.break').classList.remove('d-none');
                     //dragObj.targetElem.style.width = `var(--eventWidth)`;
                     dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
                     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
@@ -1572,20 +1589,27 @@
                             .start_time;
                         dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
                             .end_time;
-                        dragObj.targetElem.querySelector('.break').style.display = 'block'
+                        dragObj.targetElem.querySelector('.break').classList.remove('d-none');
                         dragObj.isDroppable = false;
                         break;
                     }
 
                 } else {
 
-                    // 390  394
+                    // SWAP EVENT API CALL
 
                     if ((Math.abs(tRect.left - eRect.left) <= 4) && ((Math.abs(tRect.right - eRect.right) <= 4))) {
                         
                         dragObj.swapElem = elem;
                         let obj = [{"event_booking_lid": dragObj.targetElem.getAttribute('data-event-lid') }, 
                         {"event_booking_lid": dragObj.swapElem.getAttribute('data-event-lid')}]
+
+                        $(document).find("#slotModal .modal-body").html(`<h4>Swap the Event</h4>`)
+                            
+                        $('#slotModal .modal-footer').html(
+                            `<button type="button" class="btn btn-success" id="schedule-slot" data-target-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-swap-event-lid="${dragObj.swapElem.getAttribute('data-event-lid')}" data-action-type="swap" >Confirm Swap</button>`);
+
+                        $('#slotModal').modal('show');
 
                         // socket.emit('swap-events-request', slugName, userId, JSON.stringify(obj));
                         // socket.on('swap-events-response', function(response){
@@ -1618,9 +1642,11 @@
                     }
                     else{
                         $(document).find("#slotModal .modal-body").html(dragObj.targetElem.innerText)
+                        $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-drag')
+                        $(document).find("#slotModal .modal-header #close-btn").attr('data-event-lid',`${dragObj.targetElem.getAttribute('data-event-lid')}`)
                             console.log('statrt slot index', timeJson[dragObj.leftSlotTime + 11].end_time)
                         $('#slotModal .modal-footer').html(
-                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${timeJson[dragObj.leftSlotTime].id}" data-end-slot-id="${timeJson[dragObj.leftSlotTime + 11].id}" data-room-id="${dragObj.currentRoom.parentNode.getAttribute('data-room-lid')}"  data-day-lid="${dayLid}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" >Confirm Slot</button>`);
+                            `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${timeJson[dragObj.leftSlotTime].id}" data-end-slot-id="${timeJson[dragObj.leftSlotTime + 11].id}" data-room-id="${dragObj.currentRoom.parentNode.getAttribute('data-room-lid')}"  data-day-lid="${dayLid}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-action-type="drag" >Confirm Slot</button>`);
 
                         $('#slotModal').modal('show');
                         // dragObj.isDroppable = false;
@@ -1664,7 +1690,7 @@
             dragObj.clonedTarget.classList.remove('active');
             dragObj.clonedTarget.style.top = 0;
             dragObj.clonedTarget.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-                    .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
+                    .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp + timetableProp.pxPerSlot
                 .pxPerSlot + 'px' : '0px'
             
             dragObj.clonedTarget.style.zIndex = 'unset';
@@ -1694,9 +1720,9 @@
 
 
                 console.log('swap width1::::::>>>>>>>>', swapClone.style)
-                if (swapClone.style.width == 'var(--eventNoBreakWidth)') {
+                // if (swapClone.style.width == '169px') {
                     swapClone.querySelector('.break').classList.remove('d-none');
-                }
+                // }
 
                 if (dragObj.currentRoom !== dragObj.firstRoom) {
                     dragObj.firstRoom.insertBefore(swapClone, dragObj.firstRoom.childNodes[targetProp.index + 1])
@@ -1722,7 +1748,6 @@
 
         }
 
-
         function getCurrentRoom(elementList) {
             for (let elem of elementList) {
                 if (elem.classList.contains('room-slots')) {
@@ -1731,7 +1756,20 @@
             }
         }
 
+        //Revert to old position on Modal close
+        $('#slotModal').on('hidden.bs.modal', function () {
+            if($(this).find('#close-btn').attr('data-close-type') == 'close-drag'){
+                let targetElement = $(document).find(`.event[data-event-lid="${$(this).find('#close-btn').attr('data-event-lid')}"]`);
+                $(targetElement).css('left',`${dragObj.intialXposition}px`)
 
+                $(targetElement).find('.start-time').text(`${timeJson[dragObj.startSlotIndex].start_time}`)
+                $(targetElement).find('.end-time').text(`${timeJson[dragObj.endSlotIndex].end_time}`)
+            }
+            else if($(this).find('#close-btn').attr('data-close-type') == 'close-allocate'){
+                $(document).find(`.event[data-event-lid="${$(document).find('.selected-pending-event').attr('data-event-lid')}"]`).remove();
+            }
+        });
+        
         function showError(errors) {
             console.log('error::::::::::', errors)
             let simpleAlert = new SimpleAlert();
@@ -1756,7 +1794,6 @@
             }
             simpleAlert.alert(obj);
         }
-
 
         function showSuccess(errors) {
             console.log('error::::::::::', errors)
