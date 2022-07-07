@@ -8,7 +8,7 @@ const {
 const index =  require('../../controllers/admin/timeTableSimulation/index')
 const allocation =  require('../../controllers/admin/timeTableSimulation/allocation')
 const timeTable =  require('../../controllers/admin/timeTableSimulation/timetable');
-const { Router } = require('express');
+
 
 //TIME TABLE SIMULATION 
 router.get('/time-table-simulation', index.getPage)
@@ -36,6 +36,7 @@ router.get('/time-table-simulation/time-table/download', timeTable.downloadMaste
 
 router.post('/time-table-simulation/allocate-faculties', timeTable.allocateFaculties) 
 router.post('/time-table-simulation/deallocate-faculties', timeTable.deallocateFaculties) 
+
 
 
 module.exports = router

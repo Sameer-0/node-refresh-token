@@ -6,7 +6,8 @@ const {
 } = require('express-validator');
 
 const index =  require('../../controllers/admin/rescheduling/index')
-router.get('/rescheduling', index.getPage)
 
+//RESCHEDULING EVENTS
+router.get('/rescheduling', index.getPage)
 
 module.exports = router

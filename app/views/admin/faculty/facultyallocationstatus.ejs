@@ -185,6 +185,7 @@
 <%- include("../partials/footer") %>
                         <script src="/js/dashboardscript.js"></script>
                         <script src="/js/leftsidebartoggle.js"></script>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
                          <script>
                             $(document).ready(function () {
                                 $(".select2").select2()
@@ -242,6 +243,24 @@
 
                             })
 
+
+                            function getTimeStops(start, end){
+                            var startTime = moment(start, 'HH:mm');
+                            var endTime = moment(end, 'HH:mm');
+                            
+                            if( endTime.isBefore(startTime) ){
+                                endTime.add(1, 'day');
+                            }
+
+                            var timeStops = [];
+
+                            while(startTime <= endTime){
+                                timeStops.push(new moment(startTime).format('LT'));
+                                startTime.add(60, 'minutes');
+                            }
+                            return timeStops;
+                            }
+
                                 let  slugName = `<%-locals.slug %>`
                                 let  userId = `<%-locals.userId %>`
                                 console.log('slugName::::::::::::>>',slugName)
@@ -285,6 +304,11 @@
         cssRoot.style.setProperty('--roomSlotWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot}px`);
         
         let fixedBreakSlotStart = 115
+        console.log('start_military_time LEN', timeJson.length);
+        console.log('start_military_time ', timeJson[0].start_military_time);
+        console.log('end_military_time ', timeJson[timeJson.length-1].end_military_time);
+        var timeStops = getTimeStops(timeJson[0].start_military_time, timeJson[timeJson.length-1].end_military_time);
+            console.log('timeStops ', timeStops);
 
         function timeTableDisplay(dayJson, bookedSlot, availableSlot){
             let fixedBreadWidth ;
@@ -292,10 +316,8 @@
             let eventStartSlot;
             let eventLeftPosition;
 
-        let showtime = ["7:30","8:30","9:30","10:30","11:30","12:30","01:30","02:30","03:30","04:30","05:30","06:30","07:30"]
-            
         let slotHtml = `<div class="bg-danger text-light" style="padding-left:160px;display:inline-flex">`;
-            showtime.forEach(item => {
+            timeStops.forEach(item => {
                slotHtml += `<span style="padding-right:125px">${item} </span>`  
             });
             slotHtml += `</div>`
@@ -398,15 +420,19 @@
 
         document.querySelector('.timetable-container').addEventListener('mousemove', onDrag)
          let fixedBreakBounding
-        function  onDrag(e){
-            
+        dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left
+        function  onDrag(e){  
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
-        
-             //$("#showTimeline").html(`${timeJson[dragObj.leftSlotTime].start_time} - ${timeJson[(dragObj.leftSlotTime + 11)].end_time}`)
-            
-            
-                
-                 
+            console.log('current podition::>>',  Math.round((e.clientX - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot))
+  
+            // Math.round((e.clientX - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot)
+            dragObj.leftSlotTime = Math.round((e.clientX - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot) < 0 ?
+             0 :
+             Math.round((e.clientX - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot)
+
+            console.log('STARt TIME:',timeJson[dragObj.leftSlotTime].start_time)
+            console.log('End TIME:',timeJson[(dragObj.leftSlotTime + 11)].end_time)
+            $("#showTimeline").html(`${timeJson[dragObj.leftSlotTime].start_time} - ${timeJson[(dragObj.leftSlotTime + 11)].end_time}`)
         }
          
         function showError(errors) {
