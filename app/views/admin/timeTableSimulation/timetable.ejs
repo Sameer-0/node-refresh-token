@@ -89,8 +89,14 @@
         }
 
         .selected-pending-event{
-            border: 2px solid red;
+            border: 2px solid #d53439;
+            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
         }
+
+        .selected-pending-event .pending-list-bullet{
+            color: #d53439;
+        }
+        
 
         .pen-element{
             position: absolute;
@@ -234,11 +240,11 @@
                     </select>
                 </div>
             </div>
-            <div class="my-3">
+            <!-- <div class="my-3">
                 <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
             </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -766,10 +772,11 @@
             if (response.status == 1) {
                 console.log('inside success drop', dragObj.targetElem)
                 let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${dragObj.targetElem.getAttribute('data-program-lid')}" data-session-lid="${dragObj.targetElem.getAttribute('data-session-lid')}" data-module-lid="${dragObj.targetElem.getAttribute('data-module-lid')}" data-event-type-lid="${dragObj.targetElem.getAttribute('data-event-type-lid')}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-division-lid="${dragObj.targetElem.getAttribute('data-division-lid')}">
-                <p>${dragObj.targetElem.getAttribute('data-program-name')}<br>
+                <div class="d-flex justify-content-center align-items-center"><i class="fa-solid fa-circle-dot pending-list-bullet"></i></div>
+                <p class="flex-fill text-center">${dragObj.targetElem.getAttribute('data-program-name')}<br>
                 ${dragObj.targetElem.getAttribute('data-session-name')} <br>
                 ${dragObj.targetElem.getAttribute('data-module-name')}<br>
-                ${dragObj.targetElem.getAttribute('data-division-name')}-${dragObj.targetElem.getAttribute('data-batch-name')}(${dragObj.targetElem.getAttribute('data-event-type-name')})
+                ${dragObj.targetElem.getAttribute('data-division-name')}-${dragObj.targetElem.getAttribute('data-batch-name')}(${dragObj.targetElem.getAttribute('data-event-type')})
                 </p>
                 </div>`
                 console.log('pendingEventFromDrop>>>>', pendingEventFromDrop)
@@ -893,7 +900,8 @@
         for(let pendingEvent of pendingEventListJson) {
 
             pendingEventElement += `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${pendingEvent.program_lid}" data-session-lid="${pendingEvent.acad_session_lid}" data-module-lid="${pendingEvent.course_lid}" data-event-type-lid="${pendingEvent.event_type_lid}" data-event-lid="${pendingEvent.id}" data-division-lid="${pendingEvent.division_lid}">
-            <p>${pendingEvent.program_name}<br>
+                <div class="d-flex justify-content-center align-items-center"><i class="fa-solid fa-circle-dot pending-list-bullet"></i></div>
+            <p class="text-center flex-fill">${pendingEvent.program_name}<br>
                 ${pendingEvent.acad_session} <br>
                 ${pendingEvent.module_name}<br>
                 ${pendingEvent.division}-${pendingEvent.batch}(${pendingEvent.event_type})
@@ -1341,10 +1349,16 @@
                         eventLeftPosition = (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
                         // console.log('left position:::::>>', eventLeftPosition)
 
-                        let occRoomWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp
-                                .totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
-                            `${timetableProp.pxPerSlot * 12}` :
-                            `${timetableProp.pxPerSlot * 13}`
+                        if(event.end_slot === (116 - 1) || event.end_slot === (176 - 1)) {
+                            occRoomWidth = (event.end_slot - event.start_slot + 1) * timetableProp.pxPerSlot;
+                        } else {
+                            occRoomWidth = (event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot;
+                        }
+
+                        // let occRoomWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp
+                        //         .totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
+                        //     `${timetableProp.pxPerSlot * 12}` :
+                        //     `${timetableProp.pxPerSlot * 13}`
 
 
                         let occupiedRoomSlotItem = document.createElement('div');
@@ -1746,7 +1760,7 @@
             } 
             else if(dragObj.actionType == 'swap') {
 
-                $(document).find("#slotModal .modal-body").html(`<h4>Swap the Event</h4>`)
+                $(document).find("#slotModal .modal-body").html(`<h4>Swap the Events</h4>`)
                             
                 $('#slotModal .modal-footer').html(
                     `<button type="button" class="btn btn-success" id="schedule-slot" data-target-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-swap-event-lid="${dragObj.swapElem.getAttribute('data-event-lid')}" data-action-type="swap">Confirm Swap</button>`);  
