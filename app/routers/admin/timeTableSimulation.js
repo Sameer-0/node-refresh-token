@@ -8,7 +8,7 @@ const {
 const index =  require('../../controllers/admin/timeTableSimulation/index')
 const allocation =  require('../../controllers/admin/timeTableSimulation/allocation')
 const timeTable =  require('../../controllers/admin/timeTableSimulation/timetable');
-const { Router } = require('express');
+const rescheduling =  require('../../controllers/admin/rescheduling/index')
 
 //TIME TABLE SIMULATION 
 router.get('/time-table-simulation', index.getPage)
@@ -38,4 +38,6 @@ router.post('/time-table-simulation/allocate-faculties', timeTable.allocateFacul
 router.post('/time-table-simulation/deallocate-faculties', timeTable.deallocateFaculties) 
 
 
+//RESCHEDULING EVENTS
+router.get('/time-table-simulation/rescheduling', rescheduling.getPage)
 module.exports = router

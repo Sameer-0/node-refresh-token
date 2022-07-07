@@ -1,4 +1,104 @@
 <%- include("../partials/head") %>
+<style>
+.inputGroup {
+  background-color: #fff;
+  display: block;
+  margin: 5px 0;
+  position: relative;
+}
+
+.inputGroup :hover{
+    background: #b1b3c297;
+}
+
+.inputGroup label {
+  padding: 12px 30px;
+  width: 100%;
+  display: block;
+  text-align: left;
+  color: #3C454C;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 200ms ease-in;
+  overflow: hidden;
+}
+.inputGroup label:before {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  content: "";
+  background-color: #5562eb;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale3d(1, 1, 1);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  z-index: -1;
+}
+.inputGroup label:after {
+  width: 32px;
+  height: 32px;
+  content: "";
+  border: 2px solid #D1D7DC;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
+  background-repeat: no-repeat;
+  background-position: 2px 3px;
+  border-radius: 50%;
+  z-index: 2;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 200ms ease-in;
+}
+.inputGroup input:checked ~ label {
+  color: #fff;
+}
+.inputGroup input:checked ~ label:before {
+  transform: translate(-50%, -50%) scale3d(56, 56, 1);
+  opacity: 1;
+}
+.inputGroup input:checked ~ label:after {
+  background-color: #54E0C7;
+  border-color: #54E0C7;
+}
+.inputGroup input {
+  width: 32px;
+  height: 32px;
+  order: 1;
+  z-index: 2;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  visibility: hidden;
+}
+
+body {
+  background-color: #D1D7DC;
+  font-family: "Fira Sans", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+code {
+  background-color: #9AA3AC;
+  padding: 0 8px;
+}
+</style>
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
@@ -14,19 +114,126 @@
         </ul>
     </div>
     <!--DASHBOARD CONTENT START-->
+    <div class="card table-card mb-1 timetable-filter-container">
+        <div class="card-body" id="timetable-filter">
+            <div class="row">
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name" class="d-flex justify-content-between">Select Program:</label>
 
-    <div class="card table-card">
-        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+                    <select name="program-name" id="program-name" class="form-select">
+                        <option selected disabled value>--Select Program--</option>
+                        <% if(programList.length>0){ %>
+                        <option value="">All Programs</option>
+                        <% } %>
+                        <% for(let program of programList){%>
+                        <option value="<%- program.id%>"><%-program.program_name%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name">Select Session:</label>
+                    <select name="session-name" id="session-name" class="form-select">
+                        <option selected disabled value>--Select Session--</option>
+                    </select>
+                </div>
+
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name">Select Day:</label>
+                    <select name="day" id="day" class="form-select" disabled>
+                        <option selected disabled value>--Select Day--</option>
+                        <% for(let day of dayList){%>
+                        <option value="<%- day.id%>"><%- day.day_name %></option>
+                        <%}%>
+                    </select>
+                </div>
+            </div>
+  
+        </div>
+    </div>
+
+    <div class="card  mt-3">
+        <div class="card-header  text-uppercase d-flex align-items-center justify-content-between">
             <div>
-                <h5>Time Table Rescheduling</h5>
+                <h5>Reschedule Events</h5>
             </div>
         </div>
 
         <div class="card-body">
-            <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
-            </div>
+            <div class="row">
+                <div class="col-md-5">
+                 <div class="card rounded-0">
+                   <div class="card-header">
+                   <div class="d-flex justify-content-between">
+                   <div>Date: 08/01/2022</div>
+                   <div>Time: 11:00 AM to 12:00 PM</div>
+                   </div>
+                   </div>
+                   <div class="card-body">
+                     <h6 class="card-title rounded-0">Program Name : Operations and Supply Chain Management</h6>
+                     <h6 class="card-title">Faculty Name : Rohit Kichloo</h6>
+                     <h6 class="card-title">Class Room : MUM0001701</h6>
+                     <h6 class="card-title">Division : A</h6>
+                     <h6 class="card-title">Session : Semester I</h6>
+                   </div>
+                 </div>
 
+                 <div class="card rounded-0 mt-2">
+                    <div class="card-header">
+                        Select Options
+                    </div>
+                    <div class="card-body" >
+                        <div class="inputGroup">
+                            <input id="radio1" name="radio" type="radio"/>
+                            <label for="radio1">Cancel</label>
+                        </div>
+                        <div class="inputGroup">
+                            <input id="radio2" name="radio" type="radio"/>
+                            <label for="radio2">Modify</label>
+                        </div>
+
+                        <div class="inputGroup">
+                            <input id="radio3" name="radio" type="radio"/>
+                            <label for="radio3">Reschedule</label>
+                        </div>
+
+                        <div class="inputGroup">
+                            <input id="radio4" name="radio" type="radio"/>
+                            <label for="radio4">Cancel w/o Report</label>
+                        </div>
+
+                        <div class="inputGroup">
+                            <input id="radio5" name="radio" type="radio"/>
+                            <label for="radio5">Regular</label>
+                        </div>
+                        
+                    </div>
+                  </div>
+
+
+                  <div class="card rounded-0 mt-2">
+                    <div class="card-header">
+                        Select Reason
+                    </div>
+                    <div class="card-body">
+                      <select class="form-select rounded-0 select2">
+                        <%for(let cancel of cancelationList){%>
+                        <option value="<%-cancel.cancellationid%>"><%- cancel.reason_text %></option>
+                        <%}%>
+                      </select>
+                      <textarea class="form-control rounded-0 mt-2" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    </div>
+                  
+                  </div>
+
+
+                  <div class="d-grid gap-2 mt-2">
+                    <button class="btn btn-primary rounded-0" type="button">Submit</button>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                <h1>Reschedule To</h1>
+                </div>
+                </div>
         </div>
     </div>
 </div>
@@ -41,7 +248,7 @@
 <script>
     $(document).ready(function () {
 
-
+$(".select2").select2()
 
     })
 </script>
