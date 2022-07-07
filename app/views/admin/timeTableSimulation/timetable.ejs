@@ -855,6 +855,9 @@
                                             'data-faculty-lid':responseObj.faculty_lid,
                                             'data-faculty-name':responseObj.faculty_name,
                                         })
+                   document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`).innerHTML += `<br><hr>${responseObj.faculty_name}`
+                 
+
                     $(document).find('.selected-pending-event').remove();
 
 
@@ -1145,7 +1148,8 @@
             let eventElemt = document.createElement('div');
             eventElemt.setAttribute('class', 'event room-slot-item')
             eventElemt.setAttribute('data-event-lid', `${eventLid}`)
-            let pendingEventInnerContent = $(document).find('.selected-pending-event').text();
+            let pendingEventInnerContent = $(document).find('.selected-pending-event p').html();
+            console.log('innercontent>>', pendingEventInnerContent)
 
             eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
             <i class="fa-solid fa-arrows-left-right"></i>
