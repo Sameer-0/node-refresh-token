@@ -1552,6 +1552,8 @@
 
             } else {
 
+                dragObj.actionType = 'drag'
+
 
                 let tRect = dragObj.targetElem.getBoundingClientRect();
 
@@ -1715,7 +1717,7 @@
 
                 if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event')) {
 
-                    console.log("INSIDE LOOP TO CHECK COLLISION BREAK", dragObj.targetElem)
+                    console.log("INSIDE LOOP TO CHECK COLLISION BREAK")
 
                     if ((dragObj.tRect.left >= eRect.left && dragObj.tRect.left < eRect.right) || (dragObj.tRect.right > eRect.left && dragObj.tRect
                             .right <= eRect.right) || (dragObj.tRect.right >= eRect.right && dragObj.tRect.left < eRect.right)) {
@@ -1765,8 +1767,28 @@
                 }
             }
 
-            //console.log('dragObj.isDroppable>>>> ', dragObj.isDroppable)
-            //console.log('ACTION TYPE>>>>>>>>>>>>>>> ', dragObj.actionType)
+
+           if (!dragObj.isDroppable) {
+
+                let startTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-start-time'));
+                let endTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-end-time'));
+
+                dragObj.targetElem.style.left = targetProp.initialX + 'px';
+                dragObj.targetElem.style.top = targetProp.initialY + 'px';
+                dragObj.targetElem.style.zIndex = 'unset';
+                dragObj.targetElem.classList.remove('active')
+
+                // dragObj.targetElem.querySelector('.start-time').innerHTML = startTimeObj[0].start_time;
+
+                // dragObj.targetElem.querySelector('.end-time').innerHTML = endTimeObj[0].end_time;
+
+                rollbackDrag();
+
+                // console.log('setting isDroppable true')
+                dragObj.isDroppable = true;
+                return false;
+            }
+
 
             if(dragObj.actionType == 'drag') {
                 //console.log(">>>> OPENING DARG MODAL")
@@ -1791,27 +1813,7 @@
                     `<button type="button" class="btn btn-success" id="schedule-slot" data-target-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-swap-event-lid="${dragObj.swapElem.getAttribute('data-event-lid')}" data-action-type="swap">Confirm Swap</button>`);  
             }
 
-            if (!dragObj.isDroppable) {
-
-                let startTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-start-time'));
-                let endTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-end-time'));
-
-                dragObj.targetElem.style.left = targetProp.initialX + 'px';
-                dragObj.targetElem.style.top = targetProp.initialY + 'px';
-                dragObj.targetElem.style.zIndex = 'unset';
-                dragObj.targetElem.classList.remove('active')
-
-                // dragObj.targetElem.querySelector('.start-time').innerHTML = startTimeObj[0].start_time;
-
-                // dragObj.targetElem.querySelector('.end-time').innerHTML = endTimeObj[0].end_time;
-
-                rollbackDrag();
-
-                // console.log('setting isDroppable true')
-                dragObj.isDroppable = true;
-                return false;
-            }
-
+        
             $('#slotModal').modal('show');
 
 
