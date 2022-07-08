@@ -29,6 +29,12 @@
                 linear-gradient(to right, grey 1px, transparent 1px)
         }
 
+        .timetable-slots{
+            width: var(--roomSlotWidth);
+            min-height: 10px;
+            position: relative;
+            left: 50px;
+        }
 
         .room {
             border: 1px solid black;
@@ -176,7 +182,7 @@
                     
                 </div>
             </div>
-            <div class="timetable-slots" style="overflow-x: auto;"></div>
+            <div class="timetable-slots" ></div>
              <div class="timetable-container" style="overflow-x: auto;"></div>
         </div>
     </div>
@@ -283,7 +289,7 @@
         let timetableProp = {
             totalSlots: 116,
             pxPerSlot: 13,
-            roomNoWidth: 150,
+            roomNoWidth: 50,
             
         }
 
@@ -316,9 +322,9 @@
             let eventStartSlot;
             let eventLeftPosition;
 
-        let slotHtml = `<div class="bg-danger text-light" style="padding-left:160px;display:inline-flex">`;
+        let slotHtml = `<div class="bg-danger text-light" style="display: inline-flex">`;
             timeStops.forEach(item => {
-               slotHtml += `<span style="padding-right:125px">${item} </span>`  
+               slotHtml += `<span style="padding-right:125px;font-size:10px;">${item} </span>`  
             });
             slotHtml += `</div>`
             $(".timetable-slots").html(slotHtml)
@@ -328,7 +334,7 @@
                 for( let day of dayJson ){
                     dayHtml +=`<div class="d-flex room" day-lid="${day.id}">
                     <div class="day-name" day-lid="${day.id}" >
-                        ${day.day_name}
+                        ${day.sort_name}
                     </div>
                    
                     <div class="room-slots">
@@ -422,6 +428,7 @@
          let fixedBreakBounding
         dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left
         function  onDrag(e){  
+
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
             console.log('current podition::>>',  Math.round((e.clientX - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot))
   
@@ -432,7 +439,13 @@
 
             console.log('STARt TIME:',timeJson[dragObj.leftSlotTime].start_time)
             console.log('End TIME:',timeJson[(dragObj.leftSlotTime + 11)].end_time)
+
+            let  isbreak =  document.querySelector(".fixed-break")
+          
+                console.log('isbreak:::::::::::',isbreak)
+   
             $("#showTimeline").html(`${timeJson[dragObj.leftSlotTime].start_time} - ${timeJson[(dragObj.leftSlotTime + 11)].end_time}`)
+           
         }
          
         function showError(errors) {
