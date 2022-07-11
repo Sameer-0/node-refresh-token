@@ -17,7 +17,7 @@ module.exports = {
                 Url: req.originalUrl
             })
         }).catch(error => {
-            console.log('error', error)
+            console.log('error:::::::::::>>>', error)
         })
     }
 }
