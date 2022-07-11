@@ -816,7 +816,8 @@
             let targetEventLid = $(this).attr("data-target-event-lid");
             let swapEventLid = $(this).attr("data-swap-event-lid");
             let actionType = $(this).attr('data-action-type');
-            let positionIndex = targetProp.finalPositionIndex
+            let positionIndex = targetProp.finalPositionIndex;
+            let initialPositionIndex = targetProp.index;
 
             let obj = {
                 roomLid: roomLid,
@@ -828,7 +829,8 @@
                 actionType: actionType,
                 targetEventLid: targetEventLid,
                 swapEventLid: swapEventLid,
-                positionIndex: positionIndex
+                positionIndex: positionIndex,
+                initialPositionIndex: initialPositionIndex
 
             }
 
@@ -849,7 +851,8 @@
                 //$(document).find('.selected-pending-event').remove();
 
                 if(response.actionType == 'drag') {
-                    appendDragElement(dragObj.currentRoomElems, dragObj.tRect, response.data.data[0]);
+                  
+                    appendDragElement(response.data.data[0]);
                     dragObj.targetElem.remove();
                     dragObj.swapClone = null;
                     dragObj.swapElem = null;
@@ -857,11 +860,9 @@
                 }
                 else if(response.actionType == 'allocate') {
                     console.log('>>> ALLOCATED', response)
-                    // socket.emit('pending-event-request', slugName);
 
                     let responseObj = response.data.data[0];
                     let eventElement = document.createElement('div');
-                    // let allocatedElement = $(document).find(`.event[data-event-lid="${response.data.data[0].event_lid}"]`);
                     eventElement.setAttribute('class', 'event room-slot-item');
                     eventElement.setAttribute('data-event-lid', responseObj.event_lid);
                     eventElement.setAttribute('data-module-name', responseObj.module_name);
@@ -883,30 +884,42 @@
 
                     eventElement.innerHTML = `${responseObj.program_name} ${responseObj.acad_session}<br><hr>${responseObj.module_name}<br><hr>${responseObj.division} - ${responseObj.batch} (${responseObj.event_type}) <br><hr> ${responseObj.faculty_name}<span class="badge bg-info start-time">${timeJson[responseObj.start_time_lid - timeTablestartSlot].start_time}</span> <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[responseObj.start_time_lid - timeTablestartSlot + 11].end_time}</span><div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
                 
-                //Remove Temporary element 
-                if(document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`)){
-                    console.log('old event removed::::')
-                    document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`).remove();
+                    //Remove Temporary element 
+                    if(document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`)){
+                        console.log('old event removed::::')
+                        document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`).remove();
+                    }
+
+                    //Append Actual element
+                    if(response.positionIndex > 0){
+                        console.log('new event appended::::')
+                    console.log('all elements:: ', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`))
+                        document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex-1].insertAdjacentElement("afterend", eventElement)
+                    }else{
+                        console.log('else new event appended::::', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[0])
+                        document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex].insertAdjacentElement("beforebegin", eventElement)
+                    }
+                    
+                    //Remove from pending list
+                    $(document).find('.selected-pending-event').remove();
+
+
                 }
-
-                //Append actual element
-                if(response.positionIndex > 0){
-                    console.log('new event appended::::')
-                   console.log('all elements:: ', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`))
-                    document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex-1].insertAdjacentElement("afterend", eventElement)
-                }else{
-                    console.log('else new event appended::::', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[0])
-                    document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex].insertAdjacentElement("beforebegin", eventElement)
-                }
-                 
-                //Remove from pending list
-                $(document).find('.selected-pending-event').remove();
-
-
-                } else if (response.actionType == 'swap') {
+                else if (response.actionType == 'swap') {
                    
-                    appendDragElement(dragObj.currentRoomElems, dragObj.tRect, response.data.data[0]);
-                    appendSwapElement(response.data.data);
+                    let tarId = parseInt(response.targetElemId)
+                    let targetElemData = response.data.data.filter(e => {
+                       return e.event_lid == tarId
+                    })
+                    let swapElemData = response.data.data.filter(e => {
+                       return e.event_lid != tarId
+                    })
+                   
+                    console.log('swap elemt data::>>', swapElemData)
+                    console.log('target elemt data::>>', targetElemData)
+
+                    appendDragElement(targetElemData[0]);
+                    appendSwapElement(targetElemData[0], swapElemData[0], response.initialPositionIndex);
 
                     dragObj.targetElem.remove();
                     dragObj.swapClone = null;
@@ -914,7 +927,6 @@
                     dragObj.clonedTarget = null;
                 }
 
-                
                 
                 $("#slotModal").modal('hide')
 
@@ -1051,7 +1063,7 @@
            dragObj.actionType = 'allocate';
           
 
-            console.log("check collision:::", tRect)
+            console.log("check collision:::", tRect, currentRoomElems)
             for (let elem of currentRoomElems) {
 
                 // console.log("INSIDE LOOP TO CHECK COLLISION")
@@ -1966,9 +1978,11 @@
  
         }
 
-        function appendDragElement(currentRoomElems, tRect, data) {
+        function appendDragElement(data) {
 
-            //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING appendDragElement")
+            dragObj.targetElem =  document.querySelector(`.event[data-event-lid="${data.event_lid}"]`);
+            tRect = document.querySelector(`.event[data-event-lid="${data.event_lid}"]`).getBoundingClientRect();
+            currentRoomElems = document.querySelectorAll(`.room[data-room-lid='${data.room_lid}'] .room-slots .room-slot-item:not(.active)`);
 
             let imgnBoundingElems = [];
 
@@ -1980,12 +1994,13 @@
                     imgnBoundingElems.push(elem);
                 }
             }
+            
             dragObj.clonedTarget = dragObj.targetElem.cloneNode(true);
             dragObj.clonedTarget.classList.remove('active');
             dragObj.clonedTarget.style.top = 0;
-            dragObj.clonedTarget.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-                    .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp + timetableProp.pxPerSlot
-                .pxPerSlot + 'px' : '0px'
+            dragObj.clonedTarget.style.left = ((data.start_time_lid - timeTablestartSlot) * timetableProp.pxPerSlot) >= 0 
+            ? ((data.start_time_lid - timeTablestartSlot) * timetableProp.pxPerSlot) + 'px' 
+            : '0px'
 
             dragObj.clonedTarget.querySelector('.start-time').innerHTML = data.start_time;
             dragObj.clonedTarget.querySelector('.end-time').innerHTML = data.end_time;
@@ -2005,57 +2020,56 @@
             } else if (currentRoomElems.length > 0) {
                 currentRoomElems[0].insertAdjacentElement("beforebegin", dragObj.clonedTarget);
             } else {
-                dragObj.currentRoom.append(dragObj.clonedTarget);
+                console.log('condition when no room-slot-items are present in room-slot, which will never occur')
+                // dragObj.currentRoom.append(dragObj.clonedTarget);
             }
                 
         }
 
-        function appendSwapElement(data) {
+        function appendSwapElement(targetElemData, swapElemData, initialPositionIndex) {
             //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING APPEND SWAP ELEMENT")
-
-            //console.log('dragObj.swapElem ID>>>>>>>>> ', dragObj.swapElem.getAttribute('data-event-lid'))
-
-            let swapElemData = data.filter(elem => elem.event_lid == dragObj.swapElem.getAttribute('data-event-lid'));
-            let targetElemData = data.filter(elem => elem.event_lid != dragObj.swapElem.getAttribute('data-event-lid'));
 
             console.log('swapElemData>> ', swapElemData)
             console.log('targetElemData>> ', targetElemData)
             
+            dragObj.swapElem = document.querySelector(`.event[data-event-lid ="${swapElemData.event_lid}"]`)
             let swapClone = dragObj.swapElem.cloneNode(true);
             swapClone.classList.remove('active');
-            swapClone.style.left = targetProp.initialX + 'px';
+            swapClone.style.left = ((swapElemData.start_time_lid - timeTablestartSlot) * timetableProp.pxPerSlot) + 'px';
             swapClone.style.zIndex = 'unset';
             swapClone.style.top = 0;
             // if (swapClone.style.width == '169px') {
                 swapClone.querySelector('.break').classList.remove('d-none');
             // }
 
-            if(swapElemData[0].end_time_lid == (116 - 1) || swapElemData[0].end_time_lid == (176 - 1)) {
+            if(swapElemData.end_time_lid == (116 - 1) || swapElemData.end_time_lid == (176 - 1)) {
                 swapClone.style.width = '156px';
             } else {
                 swapClone.style.width = '169px';
             }
 
-            console.log('targetElemData.end_time_lid kapil>>>>>>', targetElemData.end_time_lid)
+            console.log('targetElemData.end_time_lid >>>>>>', targetElemData.end_time_lid)
 
-            if(targetElemData[0].end_time_lid == (116 - 1) || targetElemData[0].end_time_lid == (176 - 1)) {
+            if(targetElemData.end_time_lid == (116 - 1) || targetElemData.end_time_lid == (176 - 1)) {
                 dragObj.clonedTarget.style.width = '156px';
             } else {
                 dragObj.clonedTarget.style.width = '169px';
             }
 
-
+            dragObj.currentRoom = document.querySelector(`.room[data-room-lid="${targetElemData.room_lid}"] .room-slots`);
+            dragObj.firstRoom = document.querySelector(`.room[data-room-lid="${swapElemData.room_lid}"] .room-slots`)
+            targetProp.index = initialPositionIndex;
             if (dragObj.currentRoom !== dragObj.firstRoom) {
                 dragObj.firstRoom.insertBefore(swapClone, dragObj.firstRoom.childNodes[targetProp.index + 1])
             } else {
                 dragObj.currentRoom.insertBefore(swapClone, dragObj.currentRoom.childNodes[targetProp.index + 1])
             }
 
-            swapClone.querySelector('.start-time').innerHTML = swapElemData[0].start_time;
-            swapClone.querySelector('.end-time').innerHTML = swapElemData[0].end_time;
+            swapClone.querySelector('.start-time').innerHTML = swapElemData.start_time;
+            swapClone.querySelector('.end-time').innerHTML = swapElemData.end_time;
 
-            dragObj.clonedTarget.querySelector('.start-time').innerHTML = targetElemData[0].start_time;
-            dragObj.clonedTarget.querySelector('.end-time').innerHTML = targetElemData[0].end_time;
+            dragObj.clonedTarget.querySelector('.start-time').innerHTML = targetElemData.start_time;
+            dragObj.clonedTarget.querySelector('.end-time').innerHTML = targetElemData.end_time;
 
             dragObj.swapElem.remove();
         }

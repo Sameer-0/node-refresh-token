@@ -44,7 +44,11 @@ module.exports.respond = async socket => {
             TimeTable.dragDropEvent(slug, userId, data).then(result => {
                 console.log('result::::::::', result)
 
-                socket.emit('schedule-event-response',  {data: JSON.parse(result.output.output_json), actionType:'drag'})
+                 //SHOW CHANGES FOR ALL THE CONNECTED CLIENT EXCEPT CURRENT
+                 socket.broadcast.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'drag'})
+                 //SHOW CHANGES FOR CURRENT USER ONLY
+                 socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'drag'})
+                // socket.emit('schedule-event-response',  {data: JSON.parse(result.output.output_json), actionType:'drag'})
 
             }).catch(error => {
 
@@ -67,9 +71,9 @@ module.exports.respond = async socket => {
                 console.log('result::::::::', result)
 
                 //SHOW CHANGES FOR ALL THE CONNECTED CLIENT EXCEPT CURRENT
-                socket.broadcast.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'swap'})
+                socket.broadcast.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'swap', targetElemId:data.targetEventLid, initialPositionIndex:data.initialPositionIndex})
                 //SHOW CHANGES FOR CURRENT USER ONLY
-                socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'swap'})
+                socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'swap', targetElemId:data.targetEventLid, initialPositionIndex:data.initialPositionIndex})
             }).catch(error => {
 
                 console.log("ERROR>>>>>>> ", error.originalError.info.message)
