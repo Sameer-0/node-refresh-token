@@ -36,6 +36,11 @@
             left: 50px;
         }
 
+        .timetable-slots span{
+            width: 156px;
+            font-size:10px;
+        }
+
         .room {
             border: 1px solid black;
             line-height: 0px;
@@ -322,9 +327,9 @@
             let eventStartSlot;
             let eventLeftPosition;
 
-        let slotHtml = `<div class="bg-danger text-light" style="display: inline-flex">`;
+        let slotHtml = `<div class="bg-danger text-light" style="display: flex">`;
             timeStops.forEach(item => {
-               slotHtml += `<span style="padding-right:125px;font-size:10px;">${item} </span>`  
+               slotHtml += `<span>${item} </span>`  
             });
             slotHtml += `</div>`
             $(".timetable-slots").html(slotHtml)
@@ -428,7 +433,6 @@
          let fixedBreakBounding
         dragObj.tableLeftPosition = document.querySelector('.timetable-container').getBoundingClientRect().left
         function  onDrag(e){  
-
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
             console.log('current podition::>>',  Math.round((e.clientX - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot))
   
@@ -437,13 +441,10 @@
              0 :
              Math.round((e.clientX - dragObj.tableLeftPosition - timetableProp.roomNoWidth)/timetableProp.pxPerSlot)
 
-            console.log('STARt TIME:',timeJson[dragObj.leftSlotTime].start_time)
-            console.log('End TIME:',timeJson[(dragObj.leftSlotTime + 11)].end_time)
+             console.log('dragObj::::::::',dragObj.tableLeftPosition, timetableProp.roomNoWidth)
+            // console.log('STARt TIME:',timeJson[dragObj.leftSlotTime].start_time)
+            // console.log('End TIME:',timeJson[(dragObj.leftSlotTime + 11)].end_time)
 
-            let  isbreak =  document.querySelector(".fixed-break")
-          
-                console.log('isbreak:::::::::::',isbreak)
-   
             $("#showTimeline").html(`${timeJson[dragObj.leftSlotTime].start_time} - ${timeJson[(dragObj.leftSlotTime + 11)].end_time}`)
            
         }
