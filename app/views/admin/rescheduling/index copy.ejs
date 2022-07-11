@@ -1,447 +1,421 @@
 <%- include("../partials/head") %>
-<style>
-.inputGroup {
-  background-color: #fff;
-  display: block;
-  margin: 5px 0;
-  position: relative;
-}
+  <%- include("../partials/leftSidebar") %>
+    <%- include("../partials/header") %>
+      <%- include("../partials/loader") %>
 
-.inputGroup :hover{
-    background: #b1b3c297;
-}
-
-.inputGroup label {
-  padding: 12px 30px;
-  width: 100%;
-  display: block;
-  text-align: left;
-  color: #3C454C;
-  cursor: pointer;
-  position: relative;
-  z-index: 2;
-  transition: color 200ms ease-in;
-  overflow: hidden;
-  background: #3c454c15;
-}
-
-.inputGroup label:before {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  content: "";
-  background-color: #5562eb;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale3d(1, 1, 1);
-  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0;
-  z-index: -1;
-}
-.inputGroup label:after {
-  width: 32px;
-  height: 32px;
-  content: "";
-  border: 2px solid #D1D7DC;
-  background-color: #fff;
-  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
-  background-repeat: no-repeat;
-  background-position: 2px 3px;
-  border-radius: 50%;
-  z-index: 2;
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  transition: all 200ms ease-in;
-}
-.inputGroup input:checked ~ label {
-  color: #fff;
-}
-.inputGroup input:checked ~ label:before {
-  transform: translate(-50%, -50%) scale3d(100, 100, 1);
-  opacity: 1;
-}
-.inputGroup input:checked ~ label:after {
-  background-color: #54E0C7;
-  border-color: #54E0C7;
-}
-.inputGroup input {
-  width: 32px;
-  height: 32px;
-  order: 1;
-  z-index: 2;
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  visibility: hidden;
-}
-
-body {
-  background-color: #D1D7DC;
-  font-family: "Fira Sans", sans-serif;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: inherit;
-}
-
-html {
-  box-sizing: border-box;
-}
-
-code {
-  background-color: #9AA3AC;
-  padding: 0 8px;
-}
-</style>
-<%- include("../partials/leftSidebar") %>
-<%- include("../partials/header") %>
-<!--Notificaion icon-->
-<!--HEADER END-->
-<div class="main-content">
-  <div class="breadcrumbs-container">
-    
-    <ul class="breadcrumb">
-        <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-            <%} }%>
-    </ul>
-</div>
-
- <!--DASHBOARD CONTENT START-->
- <div class="card table-card mb-1 timetable-filter-container">
-  <div class="card-body" id="timetable-filter">
-      <div class="row">
-          <div class="input-groups col-md-4 col-sm-12">
-              <label for="program-name" class="d-flex justify-content-between">Select Program:</label>
-
-              <select name="program-name" id="program-name" class="form-select">
-                  <option selected disabled value>--Select Program--</option>
-                  <% if(programList.length>0){ %>
-                  <option value="">All Programs</option>
-                  <% } %>
-                  <% for(let program of programList){%>
-                  <option value="<%- program.id%>"><%-program.programName%></option>
-                  <%}%>
-              </select>
+        <div class="col-12 dashboardContent">
+          <!--DASHBOARD CONTENT START-->
+          <div class="card">
+            <div class="card-header">
+              <h1 class="f-20">Time Sheet for Whole Semester</h1>
+            </div>
+            <div class="card-body">
+              <div id='calendar'></div>
+            </div>
           </div>
 
-          <div class="input-groups col-md-4 col-sm-12">
-              <label for="program-name">Select Session:</label>
-              <select name="session-name" id="session-name" class="form-select">
-                  <option selected disabled value>--Select Session--</option>
-              </select>
+          <!--DASHBOARD CONTENT END-->
+          <!-- Modal Reschedule Event-->
+          <div class="modal fade full-screen-modal" id="editSimulatedModalData" tabindex="-1" role="dialog"
+            aria-labelledby="editSimulatedModalDataTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header bg-info">
+                  <h5 class="modal-title text-white" id="editSimulatedModalDataTitle">Reschedule Event</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body px-3">
+                  <div class="row">
+                    <div class="col-lg-6 border-right">
+                      <h5 class="text-center">Current</h5>
+                      <hr />
+                      <ul class="list-unstyled" id="resModalData">
+                        <li><strong>Current Date:</strong> <span class="current-date"></span></li>
+                        <li><strong>Program Name:</strong> <span id="editProgramName"></span></li>
+                        <li><strong>Class Room:</strong> <span class="class-room"></span></li>
+                        <li><strong>Class Timing:</strong> <span class="class-timing"></span></li>
+                      </ul>
+
+                      <div class="radio-buttons-group" id="flag-radio-group">
+                        <% for (let flag of rescheduleFlag) { %>
+                          <div class="custom-control custom-radio" data-flag="<%- flag.name %>">
+                            <input type="radio" id="<%- flag.name %>" name="scheduleType" value="<%- flag.id %>"
+                              class="custom-control-input" data-sap-flag="<%- flag.denotedBy %>">
+                            <label class="custom-control-label cursor-pointer" for="<%- flag.name %>">
+                              <%- flag.name %>
+                            </label>
+                          </div>
+                          <% } %>
+                      </div>
+
+                      <div id="rescheduleWrapper" class="mt-3 d-none">
+                        <select class="form-control mb-3 dropped-slot">
+                        </select>
+                        <select class="slotPicker form-control mb-3 dropped-faculty" disabled>
+                          <option value selected disabled>--Select Faculty--</option>
+                        </select>
+                      </div>
+
+                      <hr />
+                      <label>Select Reason <strong class="text-danger">*</strong></label>
+                      <select id="dropReason" class="form-control mb-3 modal-selct2">
+                        <option value disabled selected>Select Reason</option>
+                        <% for(let reason of cancellationReasons) {%>
+                          <option value="<%- reason.sapId %>">
+                            <%- reason.reasonText %>
+                          </option>
+                          <% } %>
+                      </select>
+                      <textarea id="cancellationDesc" class="form-control mb-3"></textarea>
+
+                    </div>
+                    <div class="col-lg-6 blur" id="reschedule-to-wrapper">
+                      <h5 class="text-center">Reschedule To</h5>
+                      <hr />
+
+                      <div id="replace-faculty-wrapper" class="d-none">
+                        <div class="custom-control custom-switch">
+                          <input type="checkbox" class="custom-control-input cursor-pointer"
+                            id="replace-faculty-checkbox">
+                          <label class="custom-control-label cursor-pointer" for="replace-faculty-checkbox">Replace
+                            faculty for a date range</label>
+                        </div>
+                        <hr />
+                      </div>
+
+                      <div id="cancel-wrapper" class="d-none">
+
+                        <div class="custom-control custom-radio">
+                          <input type="radio" id="cancel-e" name="cancel-type" class="custom-control-input" value="cae">
+                          <label class="custom-control-label cursor-pointer" for="cancel-e">
+                            Cancel Against Extra Class
+                          </label>
+                        </div>
+
+                        <div class="custom-control custom-radio">
+                          <input type="radio" id="cancel-bulk" name="cancel-type" class="custom-control-input"
+                            value="bulk">
+                          <label class="custom-control-label cursor-pointer" for="cancel-bulk">
+                            Bulk Cancel
+                          </label>
+                        </div>
+
+                        <div class="custom-control custom-checkbox d-none">
+                          <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
+                          <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
+                            Cancel without report
+                          </label>
+                        </div>
+                        <hr />
+
+                        <div class="d-none cancel-against-e">
+                          <select class="form-control mb-3 modal-selct2 extra-lecture" disabled>
+                            <option value selected disabled>--Select Extra Lecture--</option>
+                          </select>
+                        </div>
+
+                      </div>
+
+                      <div id="bulk-modify" class="d-none">
+                        <div class="mb-3">
+                          <label>From Date: <strong class="text-danger">*</strong></label>
+                          <input type="date" min="<%- dateRange.minDate %>" max="<%- dateRange.maxDate %>"
+                            id="modify-from-date" class="form-control" />
+                          <!-- <select id="modify-from-date" class="form-control modal-selct2">
+                            <option selected disabled value>--Select Date--</option>
+                            <% for (let date of semesterDates) { %>
+                              <option value="<%- date.dateString %>">
+                                <%- date.dateString %>
+                              </option>
+                              <% } %>
+                          </select> -->
+                        </div>
+                        <div class="mb-3">
+                          <label>To Date: <strong class="text-danger">*</strong></label>
+                          <input type="date" min="" max="<%- dateRange.maxDate %>" id="modify-to-date"
+                            class="form-control" />
+                          <!-- <select id="modify-to-date" class="form-control modal-selct2" disabled>
+                            <option selected disabled value>--Select Date--</option>
+                            <% for (let date of semesterDates) { %>
+                              <option value="<%- date.dateString %>">
+                                <%- date.dateString %>
+                              </option>
+                              <% } %>
+                          </select> -->
+                        </div>
+                        <div class="mb-3">
+                          <label>Faculty: <strong class="text-danger">*</strong></label>
+                          <select id="replace-faculty-dropdown" class="form-control" disabled>
+                            <option disabled selected value>--Select Faculty--</option>
+                          </select>
+                        </div>
+
+                        <div class="mb-3">
+                          <button class="btn btn-md btn-dark d-none" id="fetch-bulk-cancel">Fetch lectures</button>
+                        </div>
+
+                      </div>
+
+                      <div id="normal-modify" class="d-none">
+                        <div class="mb-3">
+                          <label>To Date: <strong class="text-danger">*</strong></label>
+                          <select id="reschedule-date-dropdown" class="form-control modal-selct2" disabled>
+                            <option selected disabled value>--Select Date--</option>
+                            <% for (let date of semesterDates) { %>
+                              <option value="<%- date.dateString %>">
+                                <%- date.dateString %>
+                              </option>
+                              <% } %>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label>Faculty: <strong class="text-danger">*</strong></label>
+                          <select id="reschedule-faculty-dropdown" class="form-control" disabled>
+                            <option disabled selected value>--Select Faculty--</option>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label>Select Time Slot: <strong class="text-danger">*</strong></label>
+                          <select id="reschedule-slot-dropdown" class="form-control" disabled>
+                            <option disabled selected value>--Select Time--</option>
+                          </select>
+                        </div>
+                        <div class="mb-3">
+                          <label>Select Room: <strong class="text-danger">*</strong></label>
+                          <select id="reschedule-room-dropdown" class="form-control modal-selct2" disabled>
+                            <option disabled selected value>--Select Room--</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card col-12 d-none p-0" id="bulk-lecture-list-card">
+                      <div class="card-header cursor-pointer" data-toggle="collapse" data-target="#bulk-lecture-list">
+                        <h5> View Lectures</h5>
+                      </div>
+
+                      <div id="bulk-lecture-list" class="collapse show">
+                        <div class="card-body">
+                          <div class="lec-details">
+                            <ul>
+                              <li>SAP Event Id: <span class="event-id"></span></li>
+                              <li>Event Abbr: <span class="event-abbr"></span></li>
+                              <li>Existing Faculty: <span class="old-faculty"></span></li>
+                              <li>New Faculty: <span class="new-faculty"></span></li>
+                            </ul>
+                          </div>
+                          <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Date</th>
+                                  <th>Time</th>
+                                  <th>New Date</th>
+                                  <th>New Time</th>
+                                  <th>Room</th>
+                                  <th>New Room</th>
+                                  <th>Status</th>
+                                  <th>Remark</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card col-12 d-none p-0" id="cancel-lecture-list-card">
+                      <div class="card-header cursor-pointer" data-toggle="collapse" data-target="#cancel-lecture-list">
+                        <h5> View Lectures</h5>
+                      </div>
+
+                      <div id="cancel-lecture-list" class="collapse show">
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            <table class="table table-bordered table-striped call-datatable">
+                              <thead>
+                                <tr>
+                                  <th>#</th>
+                                  <th>Event Id</th>
+                                  <th>Event Name</th>
+                                  <th>Faculty Name</th>
+                                  <th>Faculty Id</th>
+                                  <th>Date</th>
+                                  <th>Time</th>
+                                  <th>Room</th>
+                                  <th>Status</th>
+                                  <th>Remark</th>
+                                  <th>Cancel <input id="cancel-all" type="checkbox" checked="checcked" />
+                                    <label>All</label>
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer text-center">
+                  <button class="btn btn-sm btn-success m-auto" id="scheduleEventedSlot">Submit</button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="input-groups col-md-4 col-sm-12">
-              <label for="program-name">Select Day:</label>
-              <select name="day" id="day" class="form-select" disabled>
-                  <option selected disabled value>--Select Day--</option>
-                  <% for(let day of dayList){%>
-                  <option value="<%- day.id%>"><%- day.day_name %></option>
-                  <%}%>
-              </select>
-          </div>
-      </div>
-  </div>
-</div>
+          <!-- Modal Reschedule Slot-->
+          <div class="modal fade" id="extraClassModal" tabindex="-1" role="dialog"
+            aria-labelledby="extraClassModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header bg-info">
+                  <h5 class="modal-title text-white" id="extraClassModalTitle">Extra Class</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <div class="custom-control custom-radio custom-control-inline">
+                      <input id="cancelled-extra-class" type="radio" name="extra-class"
+                        class="custom-control-input cursor-pointer" value="EC" data-sap-flag="E">
+                      <label class="custom-control-label cursor-pointer" for="cancelled-extra-class">Against Cancelled
+                        Lecture</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                      <input id="new-extra-class" type="radio" name="extra-class"
+                        class="custom-control-input cursor-pointer" value="EN" data-sap-flag="E">
+                      <label class="custom-control-label cursor-pointer" for="new-extra-class">New Lecture</label>
+                    </div>
+                  </div>
 
-<div class="card  mt-3">
-  <div class="card-header  text-uppercase d-flex align-items-center justify-content-between">
-      <div>
-          <h5>Reschedule Events</h5>
-      </div>
-  </div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-5">
-    
-        <!-- <ul class="list-unstyled" id="resModalData">
-          <li><strong>Current Date:</strong> <span class="current-date"></span></li>
-          <li><strong>Program Name:</strong> <span id="editProgramName"></span></li>
-          <li><strong>Class Room:</strong> <span class="class-room"></span></li>
-          <li><strong>Class Timing:</strong> <span class="class-timing"></span></li>
-        </ul> -->
+                  <hr />
+                  <ul class="list-unstyled" id="extraModalData">
+                    <li><strong>Class Room:</strong> <span class="class-room"></span></li>
+                    <li><strong>Class Timing:</strong> <span class="class-timing"></span></li>
+                  </ul>
+                  <hr />
 
-        <div class="alert alert-primary rounded-0" role="alert">
-          Current Infromation
-         </div>
+                  <div id="ec-wrapper" class="d-none">
+                    <select class="form-control mb-3 ec-modal-select2" id="selectDroppedSlot" disabled>
+                      <option value selected disabled>--Select Cancelled Lecture--</option>
+                    </select>
+                  </div>
 
-        <div class="card rounded-0">
-          <div class="card-header">
-          <div class="d-flex justify-content-between">
-          <div>Date: 08/01/2022</div>
-          <div>Time: 11:00 AM to 12:00 PM</div>
+                  <div id="en-wrapper" class="d-none">
+                    <select class="slotPicker form-control mb-3 ec-modal-select2" id="select-new-ec-program">
+                      <option value selected disabled>--Select Program--</option>
+                      <% for (let program of programList) { %>
+                        <option value="<%- program.program_id %>" data-program-name="<%- program.programName %>">
+                          <%- program.programName %>/<%- program.program_id %>
+                        </option>
+                        <% } %>
+                    </select>
+
+                    <select class="slotPicker form-control mb-3 ec-modal-select2" id="select-new-ec-session" disabled>
+                      <option value selected disabled>--Select Acad Session--</option>
+                    </select>
+
+                    <select class="slotPicker form-control mb-3 ec-modal-select2" id="select-new-ec-div" disabled>
+                      <option value selected disabled>--Select Division--</option>
+                    </select>
+
+                    <select class="slotPicker form-control mb-3 ec-modal-select2" id="select-new-ec-lecture" disabled>
+                      <option value selected disabled>--Select Lecture--</option>
+                    </select>
+
+                    <select class="slotPicker form-control mb-3 ec-modal-select2" id="select-new-ec-faculty" disabled>
+                      <option value selected disabled>--Select Faculty--</option>
+                    </select>
+                  </div>
+
+                  <hr />
+                  <label>Select Reason <strong class="text-danger">*</strong></label>
+                  <select id="ec-drop-reason" class="form-control mb-3 ec-modal-select2">
+                    <option value disabled selected>Select Reason</option>
+                    <% for(let reason of cancellationReasons) {%>
+                      <option value="<%- reason.sapId %>">
+                        <%- reason.reasonText %>
+                      </option>
+                      <% } %>
+                  </select>
+                  <textarea id="ec-cancellation-desc" class="form-control mb-3"></textarea>
+                  <div class="col-12 text-center">
+                    <hr />
+                    <button class="btn btn-sm btn-success" id="scheduleExtraClass">Submit</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          </div>
-          <div class="card-body">
-            <h6 class="card-title rounded-0">Program Name : Operations and Supply Chain Management</h6>
-            <h6 class="card-title">Faculty Name : Rohit Kichloo</h6>
-           <div class="d-flex justify-content-between">
-             <div><h6 class="card-title">Class Room : MUM0001701</h6></div>
-             <div><h6 class="card-title">Division : A</h6></div>
-             <div><h6 class="card-title">Session : Semester I</h6></div>
+
+
+          <div class="modal fade" id="bulkChangeTimeModal" tabindex="-1" role="dialog"
+            aria-labelledby="bulkChangeTimeModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header bg-info">
+                  <h5 class="modal-title text-white" id="bulkChangeTimeModalTitle">Change Time</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3 old-details">
+                    <ul>
+                      <li><strong>Date:</strong> <span class="date"></span></li>
+                      <li><strong>Time:</strong> <span class="time"></span></li>
+                      <li><strong>Room:</strong> <span class="room"></span></li>
+                    </ul>
+                    <hr />
+                  </div>
+
+                  <div class="mb-3">
+                    <label>To Date: <strong class="text-danger">*</strong></label>
+                    <select class="form-control bulkChangeTimeModal-selct2 to-date">
+                      <option selected disabled value>--Select Date--</option>
+                      <% for (let date of semesterDates) { %>
+                        <option value="<%- date.dateString %>">
+                          <%- date.dateString %>/<%- date.dateNameString %>
+                              <%- date.status ? '/Holiday' : '' %>
+                        </option>
+                        <% } %>
+                    </select>
+                  </div>
+
+                  <div class="mb-3">
+                    <label>Select Time Slot: <strong class="text-danger">*</strong></label>
+                    <select class="form-control to-time">
+                      <option disabled selected value>--Select Time--</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label>Select Room: <strong class="text-danger">*</strong></label>
+                    <select class="form-control bulkChangeTimeModal-selct2 to-room">
+                      <option disabled selected value>--Select Room--</option>
+                    </select>
+                  </div>
+                  <button class="btn btn-md btn-dark change mx-auto d-block">Confirm</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
 
-        <div class="card rounded-0 mt-2">
-          <div class="card-header">
-              Select Options
-          </div>
-          <div class="card-body" >
-            <%for(let rFlag of rescheduleFlag){%>
-              <div class="inputGroup">
-                <input id="<%- rFlag.name %>" name="scheduleType" value="<%- rFlag.id %>" class="custom-control-input" data-sap-flag="<%- rFlag.denotedBy %>" type="radio"/>
-                <label for="<%-rFlag.name%>"><%-rFlag.name%></label>
-            </div>
-            <%}%>
-          </div>
-        </div>
-
-        <div id="rescheduleWrapper" class="mt-3 d-none">
-          <select class="form-control mb-3 dropped-slot">
-          </select>
-          <select class="slotPicker form-control mb-3 dropped-faculty" disabled>
-            <option value selected disabled>--Select Faculty--</option>
-          </select>
-        </div>
-
-        <div class="card rounded-0 mt-2">
-          <div class="card-header">
-            <label>Select Reason <strong class="text-danger">*</strong></label>
-          </div>
-          <div class="card-body">
-            <select id="dropReason" class="form-control mb-3 rounded-0 select2">
-              <option value disabled selected>Select Reason</option>
-              <% for(let reason of cancellationReasons) {%>
-                <option value="<%- reason.sap_id %>">
-                  <%- reason.reason_text %>
-                </option>
-                <% } %>
-            </select>
-            <textarea id="cancellationDesc" class="form-control mt-3 rounded-0"></textarea>
-          </div>                 
-        </div>
-        <div class="d-grid gap-2 mt-2">
-          <button class="btn btn-primary rounded-0" id="scheduleEventedSlot" type="button">Submit</button>
-        </div>
-      </div>
-      <div class="col-md-7 blur" id="reschedule-to-wrapper">
-        <div class="alert alert-primary rounded-0" role="alert">
-          Reschedule To
-         </div>
-    
-
-        <div id="replace-faculty-wrapper" class="d-none">
-          <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input cursor-pointer"
-              id="replace-faculty-checkbox">
-            <label class="custom-control-label cursor-pointer" for="replace-faculty-checkbox">Replace
-              faculty for a date range</label>
-          </div>
-          <hr />
-        </div>
-
-        <div id="cancel-wrapper" class="d-none">
-
-          <div class="inputGroup">
-            <input type="radio" id="cancel-e" name="cancel-type"  value="cae">
-            <label class="custom-control-label cursor-pointer" for="cancel-e">
-              Cancel Against Extra Class
-            </label>
-          </div>
-
-          <div class="inputGroup">
-            <input type="radio" id="cancel-bulk" name="cancel-type" 
-              value="bulk">
-            <label class="custom-control-label cursor-pointer" for="cancel-bulk">
-              Bulk Cancel
-            </label>
-          </div>
-
-          <div class="custom-control custom-checkbox d-none">
-            <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
-            <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
-              Cancel without report
-            </label>
-          </div>
-          <hr />
-
-          <div class="d-none cancel-against-e">
-            <select class="form-control mb-3 modal-selct2 extra-lecture" disabled>
-              <option value selected disabled>--Select Extra Lecture--</option>
-            </select>
-          </div>
-
-        </div>
-
-        <div id="bulk-modify" class="d-none">
-          <div class="mb-3">
-            <label>From Date: <strong class="text-danger">*</strong></label>
-            <input type="date" min="<%- dateRange.minDate %>" max="<%- dateRange.maxDate %>"
-              id="modify-from-date" class="form-control rounded-0" />
-            <!-- <select id="modify-from-date" class="form-control modal-selct2">
-              <option selected disabled value>--Select Date--</option>
-              <% for (let date of semesterDates) { %>
-                <option value="<%- date.dateString %>">
-                  <%- date.dateString %>
-                </option>
-                <% } %>
-            </select> -->
-          </div>
-          <div class="mb-3">
-            <label>To Date: <strong class="text-danger">*</strong></label>
-            <input type="date" min="" max="<%- dateRange.maxDate %>" id="modify-to-date"
-              class="form-control rounded-0" />
-            <!-- <select id="modify-to-date" class="form-control modal-selct2" disabled>
-              <option selected disabled value>--Select Date--</option>
-              <% for (let date of semesterDates) { %>
-                <option value="<%- date.dateString %>">
-                  <%- date.dateString %>
-                </option>
-                <% } %>
-            </select> -->
-          </div>
-          <div class="mb-3">
-            <label>Faculty: <strong class="text-danger">*</strong></label>
-            <select id="replace-faculty-dropdown" class="form-control" disabled>
-              <option disabled selected value>--Select Faculty--</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <button class="btn btn-md btn-dark d-none" id="fetch-bulk-cancel">Fetch lectures</button>
-          </div>
-
-        </div>
-
-        <div id="normal-modify" class="d-none">
-          <div class="mb-3">
-            <label>To Date: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-date-dropdown" class="form-control modal-selct2" disabled>
-              <option selected disabled value>--Select Date--</option>
-              <% for (let date of semesterDates) { %>
-                <option value="<%- date.dateString %>">
-                  <%- date.dateString %>
-                </option>
-                <% } %>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Faculty: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-faculty-dropdown" class="form-control" disabled>
-              <option disabled selected value>--Select Faculty--</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Select Time Slot: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-slot-dropdown" class="form-control" disabled>
-              <option disabled selected value>--Select Time--</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Select Room: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-room-dropdown" class="form-control modal-selct2" disabled>
-              <option disabled selected value>--Select Room--</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="card col-12 d-none p-0" id="bulk-lecture-list-card">
-        <div class="card-header cursor-pointer" data-toggle="collapse" data-target="#bulk-lecture-list">
-          <h5> View Lectures</h5>
-        </div>
-
-        <div id="bulk-lecture-list" class="collapse show">
-          <div class="card-body">
-            <div class="lec-details">
-              <ul>
-                <li>SAP Event Id: <span class="event-id"></span></li>
-                <li>Event Abbr: <span class="event-abbr"></span></li>
-                <li>Existing Faculty: <span class="old-faculty"></span></li>
-                <li>New Faculty: <span class="new-faculty"></span></li>
-              </ul>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>New Date</th>
-                    <th>New Time</th>
-                    <th>Room</th>
-                    <th>New Room</th>
-                    <th>Status</th>
-                    <th>Remark</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card col-12 d-none p-0" id="cancel-lecture-list-card">
-        <div class="card-header cursor-pointer" data-toggle="collapse" data-target="#cancel-lecture-list">
-          <h5> View Lectures</h5>
-        </div>
-
-        <div id="cancel-lecture-list" class="collapse show">
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped call-datatable">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Event Id</th>
-                    <th>Event Name</th>
-                    <th>Faculty Name</th>
-                    <th>Faculty Id</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Room</th>
-                    <th>Status</th>
-                    <th>Remark</th>
-                    <th>Cancel <input id="cancel-all" type="checkbox" checked="checcked" />
-                      <label>All</label>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-  </div>
-</div>
-
-
-<%- include("../partials/footer") %>
+        <%- include("../partials/footer") %>
           <script>
             $(document).ready(function () {
               //SOCKET IO
-
-              $(".select2").select2()
 
               let socketRoom = `<%- locals.username %>`
               console.log('socketRoom==========>>', socketRoom)
@@ -1009,7 +983,7 @@ code {
                   success: data => {
                     console.log('Success: ', data)
 
-                   // $('.call-datatable').DataTable().destroy();
+                    $('.call-datatable').DataTable().destroy();
 
                     let bulkLectureTableStr = '';
 
@@ -2446,7 +2420,7 @@ code {
                   //CALL DATATABLE END
                 }
               }
-            //  callDatatable();
+              callDatatable();
 
               $('#cancel-all').on('change', function () {
                 let isChecked = $(this).is(':checked')

@@ -1,0 +1,381 @@
+<%- include("../partials/head") %>
+<style>
+.inputGroup {
+  background-color: #fff;
+  display: block;
+  margin: 5px 0;
+  position: relative;
+}
+
+.inputGroup :hover{
+    background: #b1b3c297;
+}
+
+.inputGroup label {
+  padding: 12px 30px;
+  width: 100%;
+  display: block;
+  text-align: left;
+  color: #3C454C;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 200ms ease-in;
+  overflow: hidden;
+  background: #3c454c15;
+}
+
+.inputGroup label:before {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  content: "";
+  background-color: #5562eb;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale3d(1, 1, 1);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  z-index: -1;
+}
+.inputGroup label:after {
+  width: 32px;
+  height: 32px;
+  content: "";
+  border: 2px solid #D1D7DC;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
+  background-repeat: no-repeat;
+  background-position: 2px 3px;
+  border-radius: 50%;
+  z-index: 2;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition: all 200ms ease-in;
+}
+.inputGroup input:checked ~ label {
+  color: #fff;
+}
+.inputGroup input:checked ~ label:before {
+  transform: translate(-50%, -50%) scale3d(100, 100, 1);
+  opacity: 1;
+}
+.inputGroup input:checked ~ label:after {
+  background-color: #54E0C7;
+  border-color: #54E0C7;
+}
+.inputGroup input {
+  width: 32px;
+  height: 32px;
+  order: 1;
+  z-index: 2;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  visibility: hidden;
+}
+
+body {
+  background-color: #D1D7DC;
+  font-family: "Fira Sans", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+code {
+  background-color: #9AA3AC;
+  padding: 0 8px;
+}
+</style>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+    </div>
+    <!--DASHBOARD CONTENT START-->
+    <div class="card table-card mb-1 timetable-filter-container">
+        <div class="card-body" id="timetable-filter">
+            <div class="row">
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name" class="d-flex justify-content-between">Select Program:</label>
+
+                    <select name="program-name" id="program-name" class="form-select">
+                        <option selected disabled value>--Select Program--</option>
+                        <% if(programList.length>0){ %>
+                        <option value="">All Programs</option>
+                        <% } %>
+                        <% for(let program of programList){%>
+                        <option value="<%- program.id%>"><%-program.program_name%></option>
+                        <%}%>
+                    </select>
+                </div>
+
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name">Select Session:</label>
+                    <select name="session-name" id="session-name" class="form-select">
+                        <option selected disabled value>--Select Session--</option>
+                    </select>
+                </div>
+
+                <div class="input-groups col-md-4 col-sm-12">
+                    <label for="program-name">Select Day:</label>
+                    <select name="day" id="day" class="form-select" disabled>
+                        <option selected disabled value>--Select Day--</option>
+                        <% for(let day of dayList){%>
+                        <option value="<%- day.id%>"><%- day.day_name %></option>
+                        <%}%>
+                    </select>
+                </div>
+            </div>
+  
+        </div>
+    </div>
+
+    <div class="card  mt-3">
+        <div class="card-header  text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Reschedule Events</h5>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-5">
+                  <div class="alert alert-primary rounded-0" role="alert">
+                   Current Infromation
+                  </div>
+                 <div class="card rounded-0">
+                   <div class="card-header">
+                   <div class="d-flex justify-content-between">
+                   <div>Date: 08/01/2022</div>
+                   <div>Time: 11:00 AM to 12:00 PM</div>
+                   </div>
+                   </div>
+                   <div class="card-body">
+                     <h6 class="card-title rounded-0">Program Name : Operations and Supply Chain Management</h6>
+                     <h6 class="card-title">Faculty Name : Rohit Kichloo</h6>
+                    <div class="d-flex justify-content-between">
+                      <div><h6 class="card-title">Class Room : MUM0001701</h6></div>
+                      <div><h6 class="card-title">Division : A</h6></div>
+                      <div><h6 class="card-title">Session : Semester I</h6></div>
+                     </div>
+                   </div>
+                 </div>
+
+                 <div class="card rounded-0 mt-2">
+                    <div class="card-header">
+                        Select Options
+                    </div>
+                    <div class="card-body" >
+                      <%for(let rFlag of rescheduleFlags){%>
+                        <div class="inputGroup">
+                          <input id="<%-rFlag.id%>" name="rescheduleEvent" value="<%-rFlag.id%>" data-denoted-by="<%-rFlag.denoted_by%>" type="radio"/>
+                          <label for="<%-rFlag.id%>"><%-rFlag.name%></label>
+                      </div>
+                      <%}%>
+                    </div>
+                  </div>
+
+                  <div class="card rounded-0 mt-2">
+                    <div class="card-header">
+                        Select Reason
+                    </div>
+                    <div class="card-body">
+                      <select class="form-select rounded-0 select2">
+                        <%for(let cancel of cancelationList){%>
+                        <option value="<%-cancel.cancellationid%>"><%- cancel.reason_text %></option>
+                        <%}%>
+                      </select>
+                      <textarea class="form-control rounded-0 mt-2" id="exampleFormControlTextarea1" rows="3"></textarea>
+                    </div>                 
+                  </div>
+
+
+                  <div class="d-grid gap-2 mt-2">
+                    <button class="btn btn-primary rounded-0" type="button">Submit</button>
+                  </div>
+                </div>
+                <div class="col-md-7">
+                <div class="alert alert-primary rounded-0" role="alert">
+                  Reschedule To
+                 </div>
+
+                 <div class="rescheduleEventWrapper">
+                  <div class="card rounded-0 cancelEvent d-none">
+                    <div class="card-header">
+                      Cancel
+                    </div>
+                    <div class="card-body">
+                      <div class="inputGroup">
+                        <input id="cancel1" name="cancelEvent" value="" type="radio"/>
+                        <label for="cancel1">Cancel Against Extra Class</label>
+                      </div>
+  
+                      <div class="inputGroup">
+                        <input id="cancel2" name="cancelEvent" value="" type="radio"/>
+                        <label for="cancel2">Bulk Cancel</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card rounded-0 modifyEvent d-none">
+                    <div class="card-header">
+                      Modify
+                    </div>
+                    <div class="card-body">
+                      <div class="inputGroup">
+                        <input id="cancel1" name="cancelEvent" value="" type="radio"/>
+                        <label for="cancel1">Cancel Against Extra Class</label>
+                      </div>
+  
+                      <div class="inputGroup">
+                        <input id="cancel2" name="cancelEvent" value="" type="radio"/>
+                        <label for="cancel2">Bulk Cancel</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card rounded-0 rescheduleEvent d-none">
+                    <div class="card-header">
+                      Reschedule
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">To Date:</label>
+                        <select class="form-select rounded-0" aria-label="Default select example">
+                          <option selected>Select Date</option>
+                          <%for(let cal of acadCalender){%>
+                          <option value="<%-cal.id%>"><%-cal.date_str%></option>
+                          <%}%>
+                        </select>
+                      </div>
+
+                      <label for="exampleFormControlInput1" class="form-label">Faculty:</label>
+                      <select class="form-select rounded-0" aria-label="Default select example">
+                        <option selected>Faculties</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                      </select>
+
+                      <label for="exampleFormControlInput1" class="form-label mt-2">Select Time Slot:</label>
+                      <select class="form-select rounded-0" aria-label="Default select example">
+                        <option selected>Select Time</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                      </select>
+
+                      <label for="exampleFormControlInput1" class="form-label mt-2">Select Room:</label>
+                      <select class="form-select rounded-0" aria-label="Default select example">
+                        <option selected>Select Room</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="card rounded-0 regularEvent d-none">
+                    <div class="card-header">
+                      Regular
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">From Date:</label>
+                        <input type="date" class="form-control rounded-0" id="exampleFormControlInput1" >
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">To Date:</label>
+                        <input type="date" class="form-control rounded-0" id="exampleFormControlInput1" >
+                      </div>
+                      <label for="exampleFormControlInput1" class="form-label">Faculty:</label>
+                      <select class="form-select rounded-0" aria-label="Default select example">
+                        <option selected>Faculties</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                      </select>
+                    </div>
+                  </div>
+
+                 </div>
+                </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<%- include("../partials/footer") %>
+<script src="https://cdn.rawgit.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js">
+</script>
+
+<script>
+    $(document).ready(function () {
+    
+      $(".select2").select2()
+
+      $("input[name=rescheduleEvent]").on('change',function(){
+     
+     let  rescheduleType =  $(this).val()
+     console.log('CLICK::::::::::::::::::::>>',rescheduleType)
+      if(rescheduleType == 1){
+        $(".rescheduleEventWrapper .cancelEvent").removeClass('d-none')
+        $(".rescheduleEventWrapper .modifyEvent").addClass('d-none')
+        $(".rescheduleEventWrapper .regularEvent").addClass("d-none")
+        $(".rescheduleEventWrapper .rescheduleEvent").addClass('d-none')
+      }else if(rescheduleType == 2){
+        $(".rescheduleEventWrapper .modifyEvent").removeClass('d-none')
+        $(".rescheduleEventWrapper .cancelEvent").addClass('d-none')
+        $(".rescheduleEventWrapper .regularEvent").addBack("d-none")
+        $(".rescheduleEventWrapper .rescheduleEvent").addClass('d-none')
+      }else if(rescheduleType == 3){
+      $(".rescheduleEventWrapper .rescheduleEvent").removeClass('d-none')
+      $(".rescheduleEventWrapper .cancelEvent").addClass('d-none')
+        $(".rescheduleEventWrapper .regularEvent").addClass("d-none")
+        $(".rescheduleEventWrapper .modifyEvent").addClass('d-none')
+      }
+      else if(rescheduleType == 6){
+        $(".rescheduleEventWrapper .regularEvent").removeClass("d-none")
+        $(".rescheduleEventWrapper .modifyEvent").addClass('d-none')
+        $(".rescheduleEventWrapper .cancelEvent").addClass('d-none')
+        $(".rescheduleEventWrapper .rescheduleEvent").addClass('d-none')
+      }else{
+        $(".rescheduleEventWrapper .cancelEvent").addClass('d-none')
+        $(".rescheduleEventWrapper .regularEvent").addClass("d-none")
+        $(".rescheduleEventWrapper .modifyEvent").addClass('d-none')
+        $(".rescheduleEventWrapper .rescheduleEvent").addClass('d-none')
+      }
+      
+     
+      })
+
+    })
+</script>
+<%- include("../partials/footerEnd") %>
