@@ -250,11 +250,15 @@
     </div>
 
     <div class="card table-card">
-        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+        <div class="card-header table-card-header d-flex align-items-center justify-content-between">
             <div>
-                <h5>Time Table</h5>
+                <h5>TIME TABLE</h5>
             </div>
             <div class="ms-auto me-2">
+                <!-- <button class="btn btn-primary pending-events-modal my-2" data-target="#pendingEventModal"><i class="fa-solid fa-list-ul"></i> Pending Events</button> -->
+                <a href="/admin/faculties/allocation-status" class="btn btn-light" target="_blank"><i class="fa-solid fa-chalkboard-user"></i> Faculty Status</a>
+            </div>
+            <div class="me-2">
                 <!-- <button class="btn btn-primary pending-events-modal my-2" data-target="#pendingEventModal"><i class="fa-solid fa-list-ul"></i> Pending Events</button> -->
                 <a href="/admin/time-table-simulation/time-table/download" class="btn btn-primary"> <span class="fa fa-download"></span> Download</a>
                 
@@ -406,7 +410,6 @@
 
             $(document).find('.pending-event').addClass('d-none');
             $(document).find(`.pending-event[data-program-lid="${programLid}"]`).removeClass('d-none');
-            //console.log('penidng evnt', $(document).find(`.pending-event[data-program-lid="${programLid}"]`))
             
         })
 
@@ -761,30 +764,43 @@
                 })
         })
 
+   
+    
+        // socket.on('pending-event-response', function (response) {
+        //     console.log('drop response>>> ', response)
+        //     if (response.status == 1) {
+        //         console.log('pending event list socket response::>>', response)
+        //     }})
+
+
         //DROP EVENT SURAJ
         //$(document).on('click', '#drop-slot', function() 
         $("#slotModal").on('click', '#drop-slot', function () {
             let eventLid = $(this).attr('data-event-lid');
             socket.emit('drop-event-request', slugName, userId, eventLid);
+            // socket.emit('pending-event-request', slugName);
         })
 
+        
+
         socket.on('drop-event-response', function (response) {
-            console.log('drop response>>> ', response)
+            console.log('drop response>>> ', response.status)
             if (response.status == 1) {
                 console.log('inside success drop', dragObj.targetElem)
-                let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${dragObj.targetElem.getAttribute('data-program-lid')}" data-session-lid="${dragObj.targetElem.getAttribute('data-session-lid')}" data-module-lid="${dragObj.targetElem.getAttribute('data-module-lid')}" data-event-type-lid="${dragObj.targetElem.getAttribute('data-event-type-lid')}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}">
+                let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${response.data[0].program_lid}" data-session-lid="${response.data[0].acad_session_lid}" data-module-lid="${response.data[0].course_lid}" data-event-type-lid="${response.data[0].event_type_lid}" data-event-lid="${response.data[0].event_lid}">
                 <div class="d-flex justify-content-center align-items-center"><i class="fa-solid fa-circle-dot pending-list-bullet"></i></div>
-                <p class="flex-fill text-center">${dragObj.targetElem.getAttribute('data-program-name')}<br>
-                ${dragObj.targetElem.getAttribute('data-session-name')} <br>
-                ${dragObj.targetElem.getAttribute('data-module-name')}<br>
-                ${dragObj.targetElem.getAttribute('data-division-name')}-${dragObj.targetElem.getAttribute('data-batch-name')} (${dragObj.targetElem.getAttribute('data-event-type')})
+                <p class="flex-fill text-center">${response.data[0].program_name}<br>
+                ${response.data[0].acad_session} <br>
+                ${response.data[0].module_name} <br>
+                ${response.data[0].division}-${response.data[0].batch} (${response.data[0].event_type})
                 </p>
                 </div>`
                 console.log('pendingEventFromDrop>>>>', pendingEventFromDrop)
                 $(document).find('.pending-event-container').append(pendingEventFromDrop)
-                
-                dragObj.targetElem.remove();
+                $(document).find(`.event[data-event-lid="${response.data[0].event_lid}"]`).remove();
+             
                 $("#slotModal").modal('hide');
+                // showSuccess(response)
             }
            
         });
@@ -800,6 +816,7 @@
             let targetEventLid = $(this).attr("data-target-event-lid");
             let swapEventLid = $(this).attr("data-swap-event-lid");
             let actionType = $(this).attr('data-action-type');
+            let positionIndex = targetProp.finalPositionIndex
 
             let obj = {
                 roomLid: roomLid,
@@ -811,11 +828,13 @@
                 actionType: actionType,
                 targetEventLid: targetEventLid,
                 swapEventLid: swapEventLid,
+                positionIndex: positionIndex
 
             }
 
             console.log('ACTION TYPE>>>> ', dragObj.actionType)
             socket.emit('schedule-event-request', slugName, userId, obj);
+
 
         })
 
@@ -837,28 +856,51 @@
                     dragObj.clonedTarget = null;
                 }
                 else if(response.actionType == 'allocate') {
-                    console.log('>>> ALLOCATED', response.data.data[0])
-                    let responseObj = response.data.data[0];
-                    let allocatedElement = $(document).find(`.event[data-event-lid="${response.data.data[0].event_lid}"]`);
-                    allocatedElement.attr({'data-event-lid':responseObj.event_lid,
-                                            'data-module-name':responseObj.module_name,
-                                            'data-module-lid':responseObj.course_lid,
-                                            'data-division-name':responseObj.division,
-                                            'data-batch-name':responseObj.batch,
-                                            'data-event-type':responseObj.event_type,
-                                            'data-session-name':responseObj.acad_session,
-                                            'data-session-lid':responseObj.acad_session_lid,
-                                            'data-program-name':responseObj.program_name,
-                                            'data-program-lid':responseObj.program_lid,
-                                            'data-start-time':responseObj.start_time_lid,
-                                            'data-end-time':responseObj.start_end_lid,
-                                            'data-faculty-lid':responseObj.faculty_lid,
-                                            'data-faculty-name':responseObj.faculty_name,
-                                        })
-                   document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`).innerHTML += `<br><hr>${responseObj.faculty_name}`
-                 
+                    console.log('>>> ALLOCATED', response)
+                    // socket.emit('pending-event-request', slugName);
 
-                    $(document).find('.selected-pending-event').remove();
+                    let responseObj = response.data.data[0];
+                    let eventElement = document.createElement('div');
+                    // let allocatedElement = $(document).find(`.event[data-event-lid="${response.data.data[0].event_lid}"]`);
+                    eventElement.setAttribute('class', 'event room-slot-item');
+                    eventElement.setAttribute('data-event-lid', responseObj.event_lid);
+                    eventElement.setAttribute('data-module-name', responseObj.module_name);
+                    eventElement.setAttribute('data-module-lid', responseObj.course_lid);
+                    eventElement.setAttribute('data-division-name', responseObj.division);
+                    eventElement.setAttribute('data-batch-name', responseObj.batch);
+                    eventElement.setAttribute('data-event-type', responseObj.event_type);
+                    eventElement.setAttribute('data-session-name', responseObj.acad_session);
+                    eventElement.setAttribute('data-session-lid', responseObj.acad_session_lid);
+                    eventElement.setAttribute('data-program-name', responseObj.program_name);
+                    eventElement.setAttribute('data-program-lid', responseObj.program_lid);
+                    eventElement.setAttribute('data-start-time', responseObj.start_time_lid);
+                    eventElement.setAttribute('data-end-time', responseObj.end_time_lid);
+                    eventElement.setAttribute('data-faculty-lid', responseObj.faculty_lid);
+                    eventElement.setAttribute('data-faculty-name', responseObj.faculty_name);
+                    eventElement.style.position = 'absolute'
+                    eventElement.style.width = 'var(--eventWidth)'
+                    eventElement.style.left = `${(responseObj.start_time_lid - timeTablestartSlot) * timetableProp.pxPerSlot}px`
+
+                    eventElement.innerHTML = `${responseObj.program_name} ${responseObj.acad_session}<br><hr>${responseObj.module_name}<br><hr>${responseObj.division} - ${responseObj.batch} (${responseObj.event_type}) <br><hr> ${responseObj.faculty_name}<span class="badge bg-info start-time">${timeJson[responseObj.start_time_lid - timeTablestartSlot].start_time}</span> <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[responseObj.start_time_lid - timeTablestartSlot + 11].end_time}</span><div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
+                
+                //Remove Temporary element 
+                if(document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`)){
+                    console.log('old event removed::::')
+                    document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`).remove();
+                }
+
+                //Append actual element
+                if(response.positionIndex > 0){
+                    console.log('new event appended::::')
+                   console.log('all elements:: ', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`))
+                    document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex-1].insertAdjacentElement("afterend", eventElement)
+                }else{
+                    console.log('else new event appended::::', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[0])
+                    document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex].insertAdjacentElement("beforebegin", eventElement)
+                }
+                 
+                //Remove from pending list
+                $(document).find('.selected-pending-event').remove();
 
 
                 } else if (response.actionType == 'swap') {
@@ -1213,13 +1255,9 @@
                 eventElemt.style.left =  `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`
             }
 
-            
 
             //============================================
 
-
-           
-   
 
             console.log('startSLotId>>> ', startSLotId)
 
@@ -1240,10 +1278,15 @@
 
 
             if (imgnBoundingElems.length > 0) {
+                //APPEND ACCORDING TO THE POSITION OF THE OTHER ELEMENT
+                targetProp.finalPositionIndex = imgnBoundingElems.length;
                 imgnBoundingElems[imgnBoundingElems.length - 1].insertAdjacentElement("afterend", eventElemt);
             } else if (currentRoomElems.length > 0) {
+                //APPEND AT FIRST POSITION
+                targetProp.finalPositionIndex = 0;
                 currentRoomElems[0].insertAdjacentElement("beforebegin", eventElemt);
             } else {
+                //APPEND IN EMPTY ROOM CONDITION
                 dragObj.currentRoom.append(dragObj.clonedTarget);
             }
 
@@ -1477,6 +1520,8 @@
                 dragObj.isDraggable = true;
                 dragObj.intialXposition = Math.round(targetProp.initialBounding.left - dragObj.tableLeftPosition - timetableProp.roomNoWidth)
 
+                console.log('target propx::', targetProp.index)
+
 
 
                 dragObj.startSlotIndex = (Math.round((targetProp.initialBounding.left - dragObj.tableLeftPosition -
@@ -1703,7 +1748,6 @@
             dragObj.tRect = dragObj.targetElem.getBoundingClientRect();
             dragObj.currentRoomElems = dragObj.currentRoom.querySelectorAll(`.room-slot-item:not(.active)`);
 
-            // console.log("all curent room items:::", currentRoomElems)
             for (let elem of dragObj.currentRoomElems) {
 
                 // console.log("INSIDE LOOP TO CHECK COLLISION")
@@ -1920,9 +1964,6 @@
  
         }
 
-
-    
-
         function appendDragElement(currentRoomElems, tRect, data) {
 
             //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING appendDragElement")
@@ -1946,17 +1987,16 @@
 
             dragObj.clonedTarget.querySelector('.start-time').innerHTML = data.start_time;
             dragObj.clonedTarget.querySelector('.end-time').innerHTML = data.end_time;
-            dragObj.clonedTarget.setAttribute('data-start-time', data.start_time_lid)
-            dragObj.clonedTarget.setAttribute('data-end-time', data.end_time_lid)
+            dragObj.clonedTarget.setAttribute('data-start-time', data.start_time_lid);
+            dragObj.clonedTarget.setAttribute('data-end-time', data.end_time_lid);
             dragObj.clonedTarget.style.zIndex = 'unset';
-
+            
 
             if(data.end_time_lid == (116 - 1) || data.end_time_lid == (176 - 1)) {
                 dragObj.clonedTarget.style.width = '156px';
             } else {
                 dragObj.clonedTarget.style.width = '169px';
             }
-
 
             if (imgnBoundingElems.length > 0) {
                 imgnBoundingElems[imgnBoundingElems.length - 1].insertAdjacentElement("afterend", dragObj.clonedTarget);
