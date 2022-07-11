@@ -5,7 +5,6 @@ const RescheduleFlags = require('../../../models/RescheduleFlags')
 const AcademicCalender = require('../../../models/AcademicCalender')
 const Simulation = require('../../../models/Simulation')
 module.exports = {
-<<<<<<< HEAD
   // getPage: (req, res) => {
   //     Promise.all([ProgramSessions.getLockedProgram(res.locals.slug), Days.fetchActiveDay(res.locals.slug), CancellationReasons.fetchAll(100), RescheduleFlags.fetchAll(), AcademicCalender.fetchAll(1000)]).then(result => {
   //         res.render('admin/rescheduling/index', {
