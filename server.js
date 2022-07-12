@@ -129,7 +129,7 @@ setRouter(app)
 
 
 app.use(function (req, res) {
-    res.status(404).render('404')
+    res.status(404).redirect('/user/login')
 })
 
 
