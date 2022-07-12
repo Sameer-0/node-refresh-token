@@ -172,6 +172,7 @@ module.exports = class Rooms {
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
             INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
             INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
+            WHERE rtd.active  = 1
             ORDER BY rtd.id DESC`)
         })
     }
@@ -187,7 +188,8 @@ module.exports = class Rooms {
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id = rtd.start_time_id
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
             INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
-            INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id`)
+            INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
+            WHERE rtd.active  = 1`)
         })
     }
 
