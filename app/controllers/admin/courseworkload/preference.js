@@ -20,7 +20,6 @@ module.exports = {
 
     getPage: (req, res) => {
         Promise.all([Days.fetchAll(10, res.locals.slug), CourseDayRoomPreferences.icwForPreference(res.locals.slug), RoomTransactions.roomsForCoursePreferences(res.locals.slug), Programs.fetchAll(100, res.locals.slug), AcadSession.sessionForCoursePreferences(res.locals.slug), CourseWorkload.fetchAll(1000,res.locals.slug), Divisions.getAll(res.locals.slug)]).then(result => {
-          console.log('result::::::::::',result[1].recordset)
             res.render('admin/courseworkload/preference', {
                 dayList: result[0].recordset,
                 icwList: result[1].recordset,
@@ -60,7 +59,6 @@ module.exports = {
     search: (req, res) => {
         let rowcount = 10;
         CourseDayRoomPreferences.search(req.body.keyword, res.locals.slug).then(result => {
-
             if (result.recordset.length > 0) {
                 res.json({
                     status: "200",
@@ -129,7 +127,6 @@ module.exports = {
     },
 
     acadSessionList: (req, res) => {
-        console.log('PROGRAMS::::::::::::', req.body.array)
         Promise.all([CourseDayRoomPreferences.getAcadSessionList(JSON.parse(req.body.array), res.locals.slug), CourseDayRoomPreferences.getDayName(req.body.program_lid, res.locals.slug)])
             .then(result => {
                 res.json({
