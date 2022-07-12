@@ -135,7 +135,7 @@
             <div class="col-md-3">
                 <div class="list-group booked-room-lists">
                         <% for(let room of bookedRoomList) {%>
-                            <a  class="list-group-item list-group-item-action border rounded-0 my-1" aria-current="true" data-building-name="<%- room.building_name %>" data-room-number="<%- room.room_number %>" data-start-time="<%- room.start_time %>" data-end-time="<%- room.end_time %>" data-start-date="<%- room.start_date %>" data-end-date="<%- room.end_date %>">
+                            <a  class="list-group-item list-group-item-action border rounded-0 my-1" aria-current="true" data-room-lid="<%-room.room_lid%>" data-building-name="<%- room.building_name %>" data-room-number="<%- room.room_number %>" data-start-time="<%- room.start_time %>" data-end-time="<%- room.end_time %>" data-start-date="<%- room.start_date %>" data-end-date="<%- room.end_date %>">
                                 <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1" ><%- room.building_name %></h5>
                                 <small>Room No: <%- room.room_number %></small>
@@ -224,6 +224,7 @@
                 let endTime  = $(this).attr('data-end-time')
                 let startDate =  $(this).attr('data-start-date')
                 let endtDate =  $(this).attr('data-end-date')
+                let roomlid = $(this).attr('data-room-lid')
                 let obj = {
                     buildingName: buildingName,
                     roomNumber: roomNumber,
@@ -232,6 +233,13 @@
                     startDate: startDate,
                     endtDate: endtDate
                 }
+
+                roomSlotByRoomId(roomlid).then(result=>{
+                    console.log('ROOM SLOT:::::::::::',result.data. roomslot)
+
+                })
+
+
                 $("#roomCancelModal .edit-booking-table tbody").append(`
                 <tr>
                     <td>${roomNumber}</td>
@@ -362,6 +370,35 @@
                 }
             })
         })
+
+
+        //Get Room Slot Time For Specific Room
+        function roomSlotByRoomId(roomLid){
+            console.log('Room Lid Fun:::::::::::>>', roomLid)
+            return new Promise((resolve, reject) =>{
+                $.ajax({
+                type: "POST",
+                url: "/admin/rooms/booking/room-slot-by-room-id",
+                data: {
+                    roomLid: roomLid
+                },
+                success: function (data) {
+                 //   console.log('data::::::::::',data.roomslot)
+                    // return data.roomslot;
+                    resolve({
+                        status:"success",
+                        data:data
+                    })
+                },
+                error: function(data){
+                    resolve({
+                        status:"failed",
+                        err: error
+                    })
+                }
+            })
+            })
+        }
     
 
     function AjaxtTable(bookedRoomList){
