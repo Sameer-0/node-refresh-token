@@ -622,7 +622,7 @@
             }
 
             ajaxApi(ApiObj).then(result => {
-               // console.log('2nd:::>>>', result)
+               console.log('Event List Result::>>', result)
                 timeTableDisplay(result.eventList, result.allEventList)
                 //  }, 2000)
                 //   $(this).attr('disabled','disabled');
@@ -865,6 +865,7 @@
                     let eventElement = document.createElement('div');
                     eventElement.setAttribute('class', 'event room-slot-item');
                     eventElement.setAttribute('data-event-lid', responseObj.event_lid);
+                    eventElement.setAttribute('data-room-lid', responseObj.room_lid);
                     eventElement.setAttribute('data-module-name', responseObj.module_name);
                     eventElement.setAttribute('data-module-lid', responseObj.course_lid);
                     eventElement.setAttribute('data-division-name', responseObj.division);
@@ -885,9 +886,9 @@
                     eventElement.innerHTML = `${responseObj.program_name} ${responseObj.acad_session}<br><hr>${responseObj.module_name}<br><hr>${responseObj.division} - ${responseObj.batch} (${responseObj.event_type}) <br><hr> ${responseObj.faculty_name}<span class="badge bg-info start-time">${timeJson[responseObj.start_time_lid - timeTablestartSlot].start_time}</span> <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[responseObj.start_time_lid - timeTablestartSlot + 11].end_time}</span><div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
                 
                     //Remove Temporary element 
-                    if(document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`)){
+                    if(document.querySelector(`.event[data-event-lid="${responseObj.event_lid}"]`)){
                         console.log('old event removed::::')
-                        document.querySelector(`.event[data-event-lid="${response.data.data[0].event_lid}"]`).remove();
+                        document.querySelector(`.event[data-event-lid="${responseObj.event_lid}"]`).remove();
                     }
 
                     //Append Actual element
@@ -901,7 +902,8 @@
                     }
                     
                     //Remove from pending list
-                    $(document).find('.selected-pending-event').remove();
+                    // $(document).find('.selected-pending-event').remove();
+                    document.querySelector(`.pending-event-container .pending-event[data-event-lid="${responseObj.event_lid}"]`).remove();
 
 
                 }
@@ -1264,7 +1266,7 @@
             } else {
                 console.log('INSIDE ELSE CONDITION')
                 eventElemt.style.width = 169 + 'px';
-                eventElemt.style.left =  `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`
+                eventElemt.style.left = `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`
             }
 
 
@@ -1364,8 +1366,6 @@
                     // `${(event.end_slot - event.start_slot + 1) * timetableProp.pxPerSlot}px;` :
                     // `${(event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot}px;` 
 
-                    console.log(eventWidth)
-
 
                     let roomSlotItem = document.createElement('div');
                     roomSlotItem.setAttribute("class", "event room-slot-item")
@@ -1373,6 +1373,7 @@
                         `left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${eventWidth}px;`
                         )
                     roomSlotItem.setAttribute("data-event-lid", `${event.event_lid}`)
+                    roomSlotItem.setAttribute("data-room-lid", `${event.room_lid}`)
                     roomSlotItem.setAttribute("data-module-name", `${event.module_name}`)
                     roomSlotItem.setAttribute("data-module-lid", `${event.course_lid}`)
                     roomSlotItem.setAttribute("data-division-name", `${event.division}`)
@@ -2006,6 +2007,7 @@
             dragObj.clonedTarget.querySelector('.end-time').innerHTML = data.end_time;
             dragObj.clonedTarget.setAttribute('data-start-time', data.start_time_lid);
             dragObj.clonedTarget.setAttribute('data-end-time', data.end_time_lid);
+            dragObj.clonedTarget.setAttribute('data-room-lid', data.room_lid);
             dragObj.clonedTarget.style.zIndex = 'unset';
             
 
@@ -2038,6 +2040,9 @@
             swapClone.style.left = ((swapElemData.start_time_lid - timeTablestartSlot) * timetableProp.pxPerSlot) + 'px';
             swapClone.style.zIndex = 'unset';
             swapClone.style.top = 0;
+            swapClone.setAttribute('data-start-time', swapElemData.start_time_lid);
+            swapClone.setAttribute('data-end-time', swapElemData.end_time_lid);
+            swapClone.setAttribute('data-room-lid', swapElemData.room_lid);
             // if (swapClone.style.width == '169px') {
                 swapClone.querySelector('.break').classList.remove('d-none');
             // }
@@ -2073,8 +2078,6 @@
 
             dragObj.swapElem.remove();
         }
-
-
 
     </script>
 <%- include("../partials/footerEnd") %>
