@@ -38,6 +38,7 @@ module.exports = class FacultyWorkTimePreferences {
     }
 
 
+
     static getCount(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
@@ -179,7 +180,7 @@ module.exports = class FacultyWorkTimePreferences {
         })
     }
 
-    static fetchByFacultyId(facultyid, slug){
+    static fetchByFacultyId(facultyid, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('facultyId', sql.Int, facultyid).query(`SELECT  f.faculty_id, f.faculty_name, ft.name as faculty_type,
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
@@ -197,6 +198,61 @@ module.exports = class FacultyWorkTimePreferences {
             INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
             INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
             WHERE f.faculty_id = @facultyId
+            ORDER BY fwtp.id DESC`)
+        })
+    }
+
+
+    static byProgramId(programid, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('programid', sql.Int, programid).query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
+              RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, d.day_name, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
+            FROM [${slug}].faculty_work_time_preferences fwtp
+            INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
+            INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
+            INNER JOIN [dbo].slot_interval_timings sit ON fwtp.start_time_id = sit.id
+            INNER JOIN [dbo].slot_interval_timings _sit ON fwtp.end_time_id = _sit.id
+            INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
+            INNER JOIN [${slug}].days d ON d.id = pd.day_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            WHERE pd.program_lid = @programid
+            ORDER BY fwtp.id DESC`)
+        })
+    }
+
+    static distinctSession(programid, slug) {
+        return poolConnection.then(pool => {
+            return pool.request().input('programid', sql.Int, programid).query(`SELECT DISTINCT  acad_session_lid, acad_session FROM  [${slug}].program_sessions ps
+            INNER JOIN [dbo].acad_sessions ads ON ps.acad_session_lid =  ads.id
+            WHERE ps.program_lid = @programid`)
+        })
+    }
+
+    static findByProgramSessionId(body, slug) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('programid', sql.Int, body.program_lid)
+            .input('sessionLid', sql.Int, body.session_lid).query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
+              RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, d.day_name, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
+            FROM [${slug}].faculty_work_time_preferences fwtp
+            INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
+            INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
+            INNER JOIN [dbo].slot_interval_timings sit ON fwtp.start_time_id = sit.id
+            INNER JOIN [dbo].slot_interval_timings _sit ON fwtp.end_time_id = _sit.id
+            INNER JOIN [${slug}].faculties f ON f.id = fw.faculty_lid
+            INNER JOIN [dbo].faculty_types ft ON ft.id = f.faculty_type_lid
+            INNER JOIN [${slug}].programs p ON p.id =  pd.program_lid
+            INNER JOIN [${slug}].days d ON d.id = pd.day_lid
+            INNER JOIN [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
+            INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+            WHERE pd.program_lid = @programid AND icw.acad_session_lid = @sessionLid
             ORDER BY fwtp.id DESC`)
         })
     }
