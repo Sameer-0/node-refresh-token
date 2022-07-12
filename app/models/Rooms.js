@@ -161,7 +161,7 @@ module.exports = class Rooms {
 
     static bookedRooms(slug, rowCount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowCount)} rtd.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
+            return pool.request().query(`SELECT DISTINCT TOP ${Number(rowCount)} r.id as room_lid, rtd.id, r.room_number,r.floor_number, r.capacity, b.building_name, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR,  _sit.end_time, 0) AS  end_time, CONVERT(NVARCHAR, cal.date, 105) as start_date, CONVERT(NVARCHAR, _cal.date, 105) as end_date
             FROM [${slug}].room_transactions rt INNER JOIN
             room_transaction_stages rts ON rts.id = rt.stage_lid AND rts.name = 'accepted' INNER JOIN 

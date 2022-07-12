@@ -47,4 +47,15 @@ module.exports = class RoomTransactionDetails {
                 .execute(`[${slug}].[sp_delete_room_transaction]`)
         })
     }
+
+    static updateRequest(slug, inputJson, userId) {
+        console.log(JSON.stringify(inputJson))
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .input('last_modified_by', sql.Int, userId)
+                .execute(`[${slug}].[sp_update_room_transaction_details]`)
+        })
+    }
 }

@@ -21,7 +21,7 @@ router.post('/rooms/delete', validate('delete'), room.delete)
 router.post('/rooms/delete-room-detail', validate('delete'), details.delete)
 router.get('/rooms/download', room.bookedRoomsDownloadMaster)
 router.post('/rooms/show-entries', room.showEntries)
-
+router.post('/rooms/update-request', validate('JsonValidator'), room.updateRequest)
 
 //Room booking
 router.get('/rooms/booking', booking.getBookingPage)
