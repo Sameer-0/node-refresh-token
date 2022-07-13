@@ -35,10 +35,8 @@ module.exports = class Simulation {
     }
 
     static programList(slug){
-        // `SELECT e.program_id, p.programName FROM (SELECT DISTINCT program_id FROM [${slug}].faculty_timetable WHERE active = 1) e
-        // INNER JOIN [${slug}].programName p ON p.programId = e.program_id`
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT e.program_id, p.program_name as programName FROM (SELECT DISTINCT program_id FROM [asmsoc_quality].[dbo].faculty_timetable WHERE active = 1) e INNER JOIN [${slug}].programs p ON p.program_id = e.program_id`)
+            return pool.request().query(`SELECT e.program_id, p.program_name as programName FROM (SELECT DISTINCT program_id FROM [${slug}].faculty_timetable WHERE active = 1) e INNER JOIN [${slug}].programs p ON p.program_id = e.program_id`)
         })
     }
 
@@ -51,6 +49,41 @@ module.exports = class Simulation {
     static userProgramId(slug, username){
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT programId FROM [${slug}].users WHERE username = '${username}'`)
+        })
+    }
+
+    static facultyLecture(slug, body){
+        return poolConnection.then(pool => {
+            let lecStmt;
+            if (!body.facultyId) {
+              lecStmt = `SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC;`
+            } else {
+              lecStmt = `SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC;`
+            }
+            let request = pool.request()
+            return request
+            .input('fromDate', sql.NVarChar(20), body.fromDate)
+            .input('toDate',  sql.NVarChar(20), body.toDate)
+            .input('facultyId', sql.Int, body.facultyId)
+            //.input('pageNo', sql.Int, body.pageNo)
+            .query(lecStmt)
+        })
+    }
+
+    static facultyLectureCount(slug, body){
+        return poolConnection.then(pool => {
+            let lecStmt;
+            if (!body.facultyId) {
+              lecStmt = `SELECT COUNT(*) as count FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND (sap_flag <> 'E' OR is_new_ec <> 1);`
+            } else {
+              lecStmt = `SELECT COUNT(*) as count FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1);`
+            }
+            let request = pool.request()
+            return request
+            .input('fromDate', sql.NVarChar(20), body.fromDate)
+            .input('toDate',  sql.NVarChar(20), body.toDate)
+            .input('facultyId', sql.Int, body.facultyId)
+            .query(lecStmt)
         })
     }
 }

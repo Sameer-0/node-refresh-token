@@ -395,48 +395,56 @@ code {
           </div>
         </div>
       </div>
+    </div>
+  </div>
+  </div>
+<!-- TABLE -->
+<div class="card col-12  p-0 mt-3" id="cancel-lecture-list-card">
+  <div class="card-header cursor-pointer" data-toggle="collapse" data-target="#cancel-lecture-list">
+    <h5> View Lectures</h5>
+  </div>
 
-      <div class="card col-12 d-none p-0" id="cancel-lecture-list-card">
-        <div class="card-header cursor-pointer" data-toggle="collapse" data-target="#cancel-lecture-list">
-          <h5> View Lectures</h5>
-        </div>
-
-        <div id="cancel-lecture-list" class="collapse show">
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped call-datatable">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Event Id</th>
-                    <th>Event Name</th>
-                    <th>Faculty Name</th>
-                    <th>Faculty Id</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Room</th>
-                    <th>Status</th>
-                    <th>Remark</th>
-                    <th>Cancel <input id="cancel-all" type="checkbox" checked="checcked" />
-                      <label>All</label>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-            </div>
+  <div id="cancel-lecture-list" class="collapse show">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped call-datatable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Event Id</th>
+              <th>Event Name</th>
+              <th>Faculty Name</th>
+              <th>Faculty Id</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Room</th>
+              <th>Status</th>
+              <th>Remark</th>
+              <th>Cancel <input id="cancel-all" type="checkbox" checked="checcked" />
+                <label>All</label>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-between">
+          <div>
+              <p>Total entries: <span id="pageCount"></span> </p>
           </div>
-        </div>
+          <div>
+              <p id="pagination" class="pagination-search"></p>
+          </div>
+      </div>
       </div>
     </div>
-
   </div>
-  </div>
+</div>
 </div>
 
 
 <%- include("../partials/footer") %>
+<script src="/socket.io/socket.io.js"></script>
           <script>
             $(document).ready(function () {
               //SOCKET IO
@@ -446,9 +454,9 @@ code {
               let socketRoom = `<%- locals.username %>`
               console.log('socketRoom==========>>', socketRoom)
 
-              var socket = io.connect(`http://<%- slug %>.localhost:3000/`);
+              let socket = io();
               socket.on('connect', () => {
-                console.log(socket.connected)
+                  console.log('Socket Connection::::::::::::>>', socket.connected)
               });
               socket.emit('join', 'Timetable rescheduling module')
 
@@ -997,20 +1005,24 @@ code {
               })
 
               $('#fetch-bulk-cancel').on('click', function () {
-                $.ajax({
-                  type: 'POST',
-                  url: '/simulation/reschedule/fetch-bulk-cancel/',
-                  dataType: "JSON",
-                  data: {
-                    fromDate: convertDate(rescheduleObj.dateRangeFrom, '-'),
-                    toDate: convertDate(rescheduleObj.dateRangeTo, '-'),
-                    facultyId: $('#replace-faculty-dropdown').val(),
-                  },
-                  success: data => {
-                    console.log('Success: ', data)
+                let fromDate = convertDate(rescheduleObj.dateRangeFrom, '-')
+                let toDate = convertDate(rescheduleObj.dateRangeTo, '-')
+                let facultyId = $('#replace-faculty-dropdown').val()
 
-                   // $('.call-datatable').DataTable().destroy();
+                let ApiObj = {
+                type: 'POST',
+                url: '/admin/rescheduling/fetch-bulk-cancel/',
+                data: {
+                    fromDate: fromDate,
+                    toDate: toDate,
+                    facultyId: facultyId,
+                    pageNo: 1
+                },
+                dataType: 'JSON'
+            }
 
+              ajaxApi(ApiObj).then(data => {
+                console.log('Success: ', data)
                     let bulkLectureTableStr = '';
 
                     let count = 0;
@@ -1033,23 +1045,29 @@ code {
                           </tr>
                           `
                       }
+                      $("#pageCount").html(data.dataLength)
+                      let pagedata = {length: data.dataLength, fromDate: fromDate, toDate: toDate, facultyId: facultyId}
+                      Pagination(pagedata)
                     } else {
                       bulkLectureTableStr = `<tr><td colspan="11">No lecture found for the given date range.</td></tr>`
                     }
-
-
                     $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
                     $('#cancel-lecture-list-card').removeClass('d-none')
+                  
+              }).catch(error => {
+                //  showError(error.responseJSON)
+              })
 
-                    callDatatable()
 
 
 
-                  },
-                  error: err => {
-                    console.log('Error: ', err)
-                  }
-                })
+
+
+
+
+
+
+
               })
 
               //bulk reschedule
@@ -1086,7 +1104,7 @@ code {
                 if ($(`#modify-from-date`).val() && (rescheduleObj.reschFlag == 'M' || rescheduleObj.reschFlag == 'Y')) {
                   $.ajax({
                     type: 'POST',
-                    url: '/simulation/reschedule/get-replacing-faculties/',
+                    url: '/admin/rescheduling/get-replacing-faculties/',
                     dataType: "JSON",
                     data: {
                       fromDate: rescheduleObj.dateRangeFrom,
@@ -1175,9 +1193,6 @@ code {
                   })
 
                 }
-
-
-
                 $('#replace-faculty-dropdown').attr('disabled', false)
 
                 console.log('RESOBJ:::>>>> ', rescheduleObj)
@@ -2457,6 +2472,45 @@ code {
                   $('.is-bulk-cancel').prop('checked', false)
                 }
               })
+
+
+//Pagination Here
+  function Pagination(data){
+    console.log("Page Count=====>>>", data.length)
+    let pageNos = Math.ceil(Number(data.length) / 10)
+    console.log("Page Numbers", pageNos)
+    $('#pagination').bootpag({
+    total: pageNos,
+    page: 1,
+    maxVisible: 10,
+    leaps: true,
+    firstLastUse: true,
+    first: '←',
+    last: '→',
+    wrapClass: 'pagination',
+    activeClass: 'active',
+    disabledClass: 'disabled',
+    nextClass: 'next',
+    prevClass: 'prev',
+    lastClass: 'last',
+    firstClass: 'first'
+    }).on("page", function (event, num) {
+    $.ajax({
+    type: "POST",
+    url: "/admin/rescheduling/fetch-bulk-cancel-pagination",
+    data: {
+      fromDate: data.fromDate,
+      toDate: data.toDate,
+      facultyId: data.facultyId,
+      pageNo: num
+    },
+    success: function (data) {
+      console.log('PAGINATED DATA:::::::::::::::::',data.lectureList)
+    //AjaxtTable(data.data)
+    }
+    })
+    });
+  }
 
             })
           </script>
