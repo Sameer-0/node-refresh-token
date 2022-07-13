@@ -9,7 +9,7 @@ const Simulation = require('../../../models/Simulation')
 module.exports = {
   getPage: (req, res) => {
     let slug = res.locals.slug;
-    Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Simulation.programList(slug), Days.fetchActiveDay(res.locals.slug), ]).then(result => {
+    Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Simulation.programList(slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {
       console.log('result[3].recordset', result[2].recordset)
       res.render('admin/rescheduling/index', {
         dateRange: result[0].recordset[0],
@@ -19,6 +19,7 @@ module.exports = {
         slotData: result[4].recordset,
         programList: result[5].recordset,
         dayList: result[6].recordset,
+        pageCount: result[7].recordset[0].count,
         breadcrumbs: req.breadcrumbs,
         Url: req.originalUrl
       })
@@ -504,12 +505,7 @@ module.exports = {
   getLectures: async (req, res, next) => {
 
     console.log('>>>>>>>>GET LECTURES<<<<<<<<<')
-    let db = req.app.locals.db.request();
-
-    db.query(`SELECT DISTINCT Stuff((SELECT N'-' + part FROM fn_SplitString1(event_name, '-') WHERE id = 1 FOR XML PATH(''), TYPE).value('text()[1]','nvarchar(max)'),1,1,N'') AS event_name, event_abbr, sap_event_id, module_id, acad_year, event_type, unique_id_for_sap FROM faculty_timetable  WHERE active = 1 AND program_id = '${req.body.programId}' AND acad_session = '${req.body.acadSession}' AND div = '${req.body.division}'`).then(result => {
-
-      console.log(`SELECT DISTINCT Stuff((SELECT N'-' + part FROM fn_SplitString1(event_name, '-') WHERE id = 1 FOR XML PATH(''), TYPE).value('text()[1]','nvarchar(max)'),1,1,N'') AS event_name, event_abbr, sap_event_id, module_id, acad_year, event_type, unique_id_for_sap FROM faculty_timetable  WHERE active = 1 AND program_id = '${req.body.programId}' AND acad_session = '${req.body.acadSession}' AND div = '${req.body.division}'`)
-
+    Simulation.getLectures(res.locals.slug, req.body).then(result => {
       res.json({
         status: 200,
         lectureList: result.recordset
@@ -518,20 +514,10 @@ module.exports = {
   },
 
   getExtraClassFaculties: async (req, res, next) => {
-
     console.log('>>>>>>>>EXTRA CLASS FACULTIES<<<<<<<<<')
-    let request = req.app.locals.db.request();
-
-    let facultyStmt = ` SELECT fw.* FROM (SELECT id, facultyId, facultyName FROM [${res.locals.slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = '${req.body.dateStr}' AND slot_name = '${req.body.slotName}' AND program_id = '${req.body.programId}' AND module_id = '${req.body.moduleId}') f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`;
-
-    console.log(facultyStmt)
-
-
-    Promise.all([request.query(facultyStmt)]).then(result => {
-
+    Promise.all([Simulation.extraClassFaculties(res.locals.slug, req.body)]).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
       console.log(result)
-
       res.json({
         status: 200,
         facultyList: result[0].recordset
@@ -540,52 +526,13 @@ module.exports = {
 
   },
 
-  getReplacingFaculties: async (req, res, next) => {
-
-    console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
-    let request = req.app.locals.db.request();
-
-    console.log(req.body)
-
-    let facultyStmt = `SELECT facultyId, facultyName, type FROM [${res.locals.slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}`
-
-    console.log(facultyStmt)
-
-    let lectureListStmt = `SELECT * FROM faculty_timetable WHERE sap_event_id = '${req.body.sapEventId}' AND active = 1 AND faculty_id = '${req.body.fromFacultyId}' AND program_id = '${req.body.programId}' AND module_id = '${req.body.moduleId}' AND div = '${req.body.division}' AND (CONVERT(DATE, date_str, 103) BETWEEN '${req.body.fromDate}' AND '${req.body.toDate}') ORDER BY CONVERT(DATE, date_str, 103), slot_no`
-
-    console.log(lectureListStmt)
-
-
-    Promise.all([request.query(facultyStmt), request.query(lectureListStmt)]).then(result => {
-
-      console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result[1].recordset)
-
-      res.json({
-        status: 200,
-        facultyList: result[0].recordset,
-        lectureList: result[1].recordset
-      })
-    })
-
-  },
 
   getNewExtraLectures: async (req, res, next) => {
-
-    console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
-    let request = req.app.locals.db.request();
-
+    console.log('>>>>>>>getNewExtraLectures<<<<<<<<<')
     console.log(req.body)
-
-    let newEcLectureStmt = `SELECT * FROM faculty_timetable WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND sap_event_id = '${req.body.sapEventId}' AND program_id = '${req.body.programId}' AND module_id = '${req.body.moduleId}' AND div = '${req.body.division}' AND faculty_id = '${req.body.facultyId}'`
-
-    console.log(newEcLectureStmt)
-
-    Promise.all([request.query(newEcLectureStmt)]).then(result => {
-
+    Promise.all([Simulation.newExtraLecture(res.locals.slug, req.body)]).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
       console.log(result[0].recordset)
-
       res.json({
         status: 200,
         lectureList: result[0].recordset
@@ -593,25 +540,14 @@ module.exports = {
     }).catch(err => {
       console.log(err)
     })
-
   },
 
   facultiesDateRange: async (req, res, next) => {
-
     console.log('>>>>>>>get faculties date range<<<<<<<<<')
-    let request = req.app.locals.db.request();
-
     console.log(req.body)
-
-    let facultyListStmt = `SELECT DISTINCT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, '${req.body.fromDate}', 103) AND CONVERT(DATE, '${req.body.toDate}', 103)`
-
-    console.log(facultyListStmt)
-
-    Promise.all([request.query(facultyListStmt)]).then(result => {
-
+    Promise.all([Simulation.facultyDateRange(res.locals.slug, req.body)]).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
       console.log(result[0].recordset)
-
       res.json({
         status: 200,
         facultyList: result[0].recordset
@@ -619,16 +555,13 @@ module.exports = {
     }).catch(err => {
       console.log(err)
     })
-
   },
 
   fetchBulkCancel: async (req, res, next) => {
-    console.log('>>>>>>>get faculties date range<<<<<<<<<')
-    console.log(req.body)
-
-    Promise.all([Simulation.facultyLecture(res.locals.slug, req.body), 
-      Simulation.facultyLectureCount(res.locals.slug, req.body)]).then(result => {
-      console.log('result LENGTH:::::::::::::>>', result[1].recordset[0].count)
+    console.log('>>>>>>>fetchBulkCancel<<<<<<<<<')
+    Promise.all([Simulation.facultyLecture(res.locals.slug, req.body),
+      Simulation.facultyLectureCount(res.locals.slug)
+    ]).then(result => {
       res.json({
         status: 200,
         lectureList: result[0].recordset,
@@ -639,21 +572,46 @@ module.exports = {
     })
   },
 
-  fetchBulkCancelPagination:async (req, res, next) => {
-    console.log('>>>>>>>get faculties date range<<<<<<<<<')
+  fetchBulkCancelPagination: async (req, res, next) => {
+    console.log('>>>>>>>fetchBulkCancelPagination<<<<<<<<<')
     console.log(req.body)
-
-    Promise.all([Simulation.facultyLecture(res.locals.slug, req.body), 
-      Simulation.facultyLectureCount(res.locals.slug, req.body)]).then(result => {
-      console.log('result LENGTH:::::::::::::>>', result[1].recordset[0].count)
+    Simulation.facultyLecture(res.locals.slug, req.body).then(result => {
       res.json({
         status: 200,
-        lectureList: result[0].recordset,
-        dataLength: result[1].recordset[0].count
+        lectureList: result.recordset
       })
     }).catch(err => {
       console.log(err)
     })
   },
 
+  showEntries: async (req, res, next) => {
+    console.log('>>>>>>>showEntries<<<<<<<<<')
+    Simulation.facultyLectureLimit(res.locals.slug, req.body).then(result => {
+      res.json({
+        status: 200,
+        lectureList: result.recordset,
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
+  getReplacingFaculties: async (req, res, next) => {
+    console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
+    console.log(req.body)
+    let lectureListStmt =
+      console.log(lectureListStmt)
+    Promise.all([Simulation.facultyByModuleProgramId(res.locals.slug, req.body),
+      Simulation.facultyByModuleProgramSapDivisionId(res.locals.slug, req.body)
+    ]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log(result[1].recordset)
+      res.json({
+        status: 200,
+        facultyList: result[0].recordset,
+        lectureList: result[1].recordset
+      })
+    })
+  },
 }
