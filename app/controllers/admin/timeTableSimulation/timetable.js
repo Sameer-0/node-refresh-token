@@ -25,6 +25,7 @@ module.exports = {
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     programListJson: JSON.stringify(result[0].recordset),
+                    roomListStr: result[1].recordset,
                     roomList: JSON.stringify(result[1].recordset),
                     dayList: result[2].recordset,
                     pendingEventPrograms: JSON.stringify(result[3].recordset),

@@ -241,11 +241,25 @@
                     </select>
                 </div>
             </div>
-            <!-- <div class="my-3">
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+
+            <div class="mt-3 row">
+                <div class="col-md-4 col-sm-12">
+                    <select name="room-name" id="room-name" class="form-select" disabled>
+                        
+                        <option selected disabled value>--Select Room--</option>
+                    
+                        <% for(let room of roomListStr){%>
+                            <option value="<%- room.id%>"> <%- room.room_number%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div class="col-md-4 col-sm-12 border d-none option-container">
+
+                </div>
+                <div class="ms-auto col-md-4 col-sm-12"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
+                </div>
             </div>
-            </div> -->
         </div>
     </div>
 
@@ -335,6 +349,39 @@
     <script>
         $(document).ready(function () {
 
+            $('#room-name').on('change', function (){
+                $('.option-container').removeClass('d-none');
+                $('.option-container').append(`<span class="span-filter" data-room-lid="${$('#room-name option:selected').val()}">${$('#room-name option:selected').text()}<i class="fa-solid fa-xmark ms-auto ps-2 room-span-remove"></i></span>`);
+
+                filterRoom()
+
+            })
+
+            $(document).on('click','.room-span-remove', function(){
+                $(this).parent().remove();
+                filterRoom()
+            })
+
+            function filterRoom(){
+
+                $(document).find('.room[data-room-lid]').addClass('d-none')
+                $(document).find('.span-filter').each(function (index, spanElement) {
+
+                    $(document).find('.room[data-room-lid]').each(function (index, RoomElement) {
+
+                        if($(spanElement).attr('data-room-lid') == $(RoomElement).attr('data-room-lid')){
+                            $(RoomElement).removeClass('d-none');
+                        }
+                    })
+
+                })
+
+                if( $(document).find('.span-filter').length < 1){
+                    console.log('remove d-none from room', $(document).find('.room[data-room-lid]').removeClass('d-none'))
+                    $(document).find('.room[data-room-lid]').removeClass('d-none')
+                }
+            }
+        
 
         let socket = io();
         socket.on('connect', () => {
@@ -525,24 +572,26 @@
 
         // SEARCH
         $('#searchkeyword').on('input', function () {
+            console.log('hello searching')
 
             let searchStr = $(this).val().toLowerCase()
 
-            if (searchStr.length > 1) {
-                $('tr[data-room-no]').addClass('d-none')
-                $('tr[data-room-no]').each(function (iTr, thisTr) {
-                    $(thisTr).find('td:not(:first-child)').each(function (iTd, thisTd) {
-                        if ($(thisTd).html().toLowerCase().includes(searchStr)) {
-                            $(thisTd).addClass('bg-info').parent().removeClass('d-none')
+            if (searchStr.length > 0) {
+                console.log('hello searching inside', $(document).find('.room'))
+                $(document).find('.room[data-room-no]').addClass('d-none')
+                $(document).find('.room[data-room-no]').each(function (index, element) {
+                    $(element).find('.event').each(function (index, element) {
+                        if ($(element).text().toLowerCase().includes(searchStr)) {
+                            $(element).addClass('event-info').parent().parent().removeClass('d-none')
                         } else {
-                            $(thisTd).removeClass('bg-info')
+                            $(element).removeClass('event-info')
                         }
                     })
 
                 })
             } else {
-                $('tr[data-room-no]').removeClass('d-none')
-                $('tr[data-room-no] td').removeClass('bg-info')
+                $('.room[data-room-no]').removeClass('d-none')
+                $('.room[data-room-no] .event').removeClass('event-info')
             }
         })
 
@@ -624,6 +673,7 @@
             ajaxApi(ApiObj).then(result => {
                console.log('Event List Result::>>', result)
                 timeTableDisplay(result.eventList, result.allEventList)
+                $('#room-name').removeAttr('disabled');
                 //  }, 2000)
                 //   $(this).attr('disabled','disabled');
             }).catch(error => {
@@ -1318,7 +1368,7 @@
             let roomHtml = ``;
             for (let room of roomJson) {
 
-                roomHtml += `<div class="d-flex room" data-room-lid="${room.id}">
+                roomHtml += `<div class="d-flex room" data-room-lid="${room.id}" data-room-no="${room.room_number}">
                     <div class="room-no" data-room-lid="${room.id}" data-room-type-lid="${room.room_type_id}">
                         ${room.room_number}
                     </div>
