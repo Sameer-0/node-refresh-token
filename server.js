@@ -55,8 +55,7 @@ app.use(
     session({
         store: new RedisStore({
             client: redisClient,
-            ///ttl: 260
-            ttl: 660
+            ttl: 260
         }),
         saveUninitialized: false,
         genid: function (req) {
@@ -67,7 +66,7 @@ app.use(
         name: 'token',
         cookie: {
             secure: false,
-            maxAge: 2000 * 60 * 60,
+            maxAge: 24 * 60 * 60 * 1000,  //24 hours
             httpOnly: false,
             sameSite: false,
             path: '/'

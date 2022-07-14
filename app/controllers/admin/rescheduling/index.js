@@ -4,13 +4,13 @@ const CancellationReasons = require('../../../models/CancellationReasons')
 const RescheduleFlags = require('../../../models/RescheduleFlags')
 const AcademicCalender = require('../../../models/AcademicCalender')
 const Simulation = require('../../../models/Simulation')
-
+const Programs = require('../../../models/Programs')
 
 module.exports = {
   getPage: (req, res) => {
     let slug = res.locals.slug;
-    Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Simulation.programList(slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {
-      console.log('result[3].recordset', result[2].recordset)
+    Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {
+      console.log('result[3].recordset', result[5].recordset)
       res.render('admin/rescheduling/index', {
         dateRange: result[0].recordset[0],
         semesterDates: result[1].recordset,
@@ -614,4 +614,22 @@ module.exports = {
       })
     })
   },
+
+  findByProgramId: (req, res, next) => {
+    Promise.all([Simulation.findByFacultyTimeTableByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
+     // console.log(result[0].recordset)
+      res.status(200).json({
+        status: 200,
+        message: "success",
+        lectureList: result[0].recordset,
+        sessionList:[]
+      })
+    }).catch(error => {
+      console.log(error)
+      res.json({
+        status: "500",
+        message: "Something went wrong",
+      })
+    })
+  }
 }

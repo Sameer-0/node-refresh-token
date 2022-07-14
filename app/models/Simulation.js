@@ -35,7 +35,7 @@ module.exports = class Simulation {
 
     static programList(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT e.program_id, p.program_name as programName FROM (SELECT DISTINCT program_id FROM [${slug}].faculty_timetable WHERE active = 1) e INNER JOIN [${slug}].programs p ON p.program_id = e.program_id`)
+            return pool.request().query(`SELECT DISTINCT p.id, p.program_id, p.program_name as programName from [${slug}].faculty_timetable ft INNER JOIN [${slug}].programs p ON p.id = ft.program_lid WHERE ft.active = 1`)
         })
     }
 
@@ -167,6 +167,15 @@ module.exports = class Simulation {
                 .input('programId', sql.NVarChar(20), body.programId)
                 .input('division', sql.NVarChar(20), body.division)
                 .query(`SELECT DISTINCT Stuff((SELECT N'-' + part FROM fn_SplitString1(event_name, '-') WHERE id = 1 FOR XML PATH(''), TYPE).value('text()[1]','nvarchar(max)'),1,1,N'') AS event_name, event_abbr, sap_event_id, module_id, acad_year, event_type, unique_id_for_sap FROM [${slug}].faculty_timetable  WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession AND div = @division`)
+        })
+    }
+
+    static findByFacultyTimeTableByProgramId(program_lid, slug){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.NVarChar(20), program_lid)
+                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND program_lid = @program_lid AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
         })
     }
 }

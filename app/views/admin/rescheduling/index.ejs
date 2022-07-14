@@ -124,7 +124,7 @@ code {
               <select name="ProgramFilter" id="ProgramFilter" class="form-select">
                   <option selected disabled value>--Select Program--</option>
                   <% for(let program of programList){%>
-                  <option value="<%- program.program_id%>"><%-program.programName%></option>
+                  <option value="<%- program.id%>"><%-program.program_name%></option>
                   <%}%>
               </select>
           </div>
@@ -2510,27 +2510,28 @@ code {
 
   //FILTER API
     $("#ProgramFilter").on('change',function(){
-      let program_id = $(this).val()
-      console.log('ProgramFilter program_id::::::::::',program_id)
+      let program_lid = $(this).val()
+      console.log('ProgramFilter program_id::::::::::',program_lid)
       let ApiObj = {
                 type: 'POST',
-                url: '/admin/rescheduling/',
+                url: '/admin/rescheduling/findby-programid',
                 data: {
-                  program_id: program_id
+                  program_lid: program_lid
                 },
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                console.log('api returnssss:', result.result)
+                console.log('api returnssss:', result)
                 let sessionList = `<option value="">Select Session Name</option>`;
-                if (result.result.length > 0) {
-                    result.result.forEach(element => {
+                if (result.sessionList.length > 0) {
+                    result.sessionList.forEach(element => {
                         sessionList +=`<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
                     });
                 } else {
                     sessionList += `<option value="">No Session Found!</option>`;
                 }
                 $("#SessionFilter").html(sessionList)
+                AjaxTable(result.lectureList)
                 
             }).catch(error => {
                 showError(error.responseJSON)

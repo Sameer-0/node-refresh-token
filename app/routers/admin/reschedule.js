@@ -15,4 +15,5 @@ router.post('/rescheduling/fetch-bulk-cancel-pagination', index.fetchBulkCancelP
 router.post('/rescheduling/show-entries', index.showEntries)
 router.post('/rescheduling/fetch-faculties-date-range', index.facultiesDateRange)
 router.post('/rescheduling/get-extra-class-faculties', index.getExtraClassFaculties)
+router.post('/rescheduling/findby-programid', index.findByProgramId)
 module.exports = router
