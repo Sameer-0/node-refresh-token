@@ -27,6 +27,13 @@ module.exports = {
         })
     },
 
+    getUniqueDiv: (req, res, next) => {
+        console.log('req body for div', req.body)
+        Divisions.getUniqueDiv(res.locals.slug, req.body.programLid, req.body.sessionLid).then(result => {
+            console.log('Unique division list:::', result.recordset)
+            res.status(200).send(result.recordset)
+        })
+    },
 
 
     getAll: (req, res) => {

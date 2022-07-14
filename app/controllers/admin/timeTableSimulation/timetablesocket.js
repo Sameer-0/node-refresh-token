@@ -17,7 +17,7 @@ module.exports.respond = async socket => {
 
         if (data.actionType == 'allocate') {
 
-            console.log('>>> ALLOCATE FIRED');
+            console.log('>>> ALLOCATE FIRED'); 
 
             TimeTable.scheduleEvent(slug, userId, data).then(result => {
                 console.log('result::::::::', result)

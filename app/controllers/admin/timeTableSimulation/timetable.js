@@ -95,6 +95,35 @@ module.exports = {
         })
     },
 
+    getDivAllocation: (req, res, next) => {
+        console.log('division wise allocation', req.body)
+        TimeTable.getDivAllocation(res.locals.slug, req.body.programLid, req.body.sessionLid, req.body.divisionName).then(result => {
+          //  console.log('division allocation list:::', result.recordset)
+            res.status(200).json({status:200, result: result.recordset})
+        })
+    },
+
+    getDivAllocationPage: (req, res, next) => {
+        console.log('pending req', req.body)
+        Promise.all([
+            ProgramSessions.getLockedProgram(res.locals.slug),
+            
+            Days.fetchAll(10, res.locals.slug),
+            SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug),
+           
+        ]).then(result => {
+            res.render('admin/timeTableSimulation/divisionallocationstatus', {
+                programList: result[0].recordset,
+                programListJson: JSON.stringify(result[0].recordset),
+                dayList: JSON.stringify(result[1].recordset),
+                timeSlotList:JSON.stringify(result[2].recordset),
+                breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
+            })
+        })
+    },
+
+
     //Implemented in timetablesocket
     dropEvent: (req, res, next) => {
         console.log(req.body);
