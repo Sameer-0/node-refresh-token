@@ -95,7 +95,7 @@ module.exports = class Simulation {
         })
     }
 
-    static facultyByModuleProgramId(slug, body){
+    static facultyByModuleProgramId(slug, body) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -105,7 +105,7 @@ module.exports = class Simulation {
         })
     }
 
-    static facultyByModuleProgramSapDivisionId(slug, body){
+    static facultyByModuleProgramSapDivisionId(slug, body) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -120,7 +120,7 @@ module.exports = class Simulation {
         })
     }
 
-    static facultyDateRange(slug, body){
+    static facultyDateRange(slug, body) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -130,7 +130,7 @@ module.exports = class Simulation {
         })
     }
 
-    static newExtraLecture(slug, body){
+    static newExtraLecture(slug, body) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -143,8 +143,8 @@ module.exports = class Simulation {
         })
     }
 
-    static extraClassFaculties(slug, body){
-        console.log('extraClassFaculties Body:::::::::>>>',body)
+    static extraClassFaculties(slug, body) {
+        console.log('extraClassFaculties Body:::::::::>>>', body)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -158,8 +158,8 @@ module.exports = class Simulation {
     }
 
 
-    static getLectures(slug, body){
-        console.log('getLectures Body:::::::::>>>',body)
+    static getLectures(slug, body) {
+        console.log('getLectures Body:::::::::>>>', body)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -170,12 +170,62 @@ module.exports = class Simulation {
         })
     }
 
-    static findByFacultyTimeTableByProgramId(program_lid, slug){
+    static findByFacultyTimeTableByProgramId(program_lid, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
                 .input('program_lid', sql.NVarChar(20), program_lid)
                 .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND program_lid = @program_lid AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+        })
+    }
+
+    static findByFacultyTimeTableByProgramSession(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.NVarChar(20), body.program_lid)
+                .input('acad_session', sql.NVarChar(20), body.acad_session)
+                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+        })
+    }
+
+    static semesterByProgramId(program_lid, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.Int, program_lid)
+                .query(`SELECT DISTINCT acad_session FROM [${slug}].faculty_timetable WHERE program_lid = @program_lid`)
+        })
+    }
+
+    static divisionByProgramSessionId(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.NVarChar(20), body.program_lid)
+                .input('acad_session', sql.NVarChar(20), body.acad_session)
+                .query(`SELECT DISTINCT div FROM [${slug}].faculty_timetable WHERE program_lid = @program_lid AND acad_session = @acad_session`)
+        })
+    }
+
+    static findBySchelDivisionByProgramSession(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.NVarChar(20), body.program_lid)
+                .input('acad_session', sql.NVarChar(20), body.acad_session)
+                .input('division', sql.NVarChar(20), body.division)
+                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND div = @division AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+        })
+    }
+
+    static divisionByProgramAcadSession(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('programId', sql.NVarChar(20), body.programId)
+                .input('acadSession', sql.NVarChar(20), body.acadSession)
+                .query(`SELECT DISTINCT div FROM faculty_timetable WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession  ORDER BY div`)
         })
     }
 }
