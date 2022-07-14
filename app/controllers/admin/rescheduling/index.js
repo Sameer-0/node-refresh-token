@@ -10,7 +10,6 @@ module.exports = {
   getPage: (req, res) => {
     let slug = res.locals.slug;
     Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {
-      console.log('result[3].recordset', result[5].recordset)
       res.render('admin/rescheduling/index', {
         dateRange: result[0].recordset[0],
         semesterDates: result[1].recordset,
@@ -27,7 +26,6 @@ module.exports = {
   },
 
   startSimulation: function (req, res, next) {
-
     console.log('Clicked-------->')
     let request = req.app.locals.db.request()
 
@@ -477,7 +475,6 @@ module.exports = {
   },
 
   getAcadSessions: async (req, res, next) => {
-
     console.log('>>>>>>>>GET ACAD SESSIONS<<<<<<<<<')
     let db = req.app.locals.db.request();
 
@@ -490,11 +487,8 @@ module.exports = {
   },
 
   getDivisions: async (req, res, next) => {
-
     console.log('>>>>>>>>GET DIVISIONS<<<<<<<<<')
-    let db = req.app.locals.db.request();
-
-    db.query(`SELECT DISTINCT div FROM faculty_timetable WHERE active = 1 AND program_id = '${req.body.programId}' AND acad_session = '${req.body.acadSession}'  ORDER BY div`).then(result => {
+    Simulation.divisionByProgramAcadSession(req.body, res.locals.slug).then(result => {
       res.json({
         status: 200,
         divisionList: result.recordset
@@ -503,7 +497,6 @@ module.exports = {
   },
 
   getLectures: async (req, res, next) => {
-
     console.log('>>>>>>>>GET LECTURES<<<<<<<<<')
     Simulation.getLectures(res.locals.slug, req.body).then(result => {
       res.json({
@@ -616,13 +609,14 @@ module.exports = {
   },
 
   findByProgramId: (req, res, next) => {
-    Promise.all([Simulation.findByFacultyTimeTableByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
-     // console.log(result[0].recordset)
+    console.log('>>>>>>>>>>>>>>findByProgramId<<<<<<<<<<<<', req.body.program_lid)
+    Promise.all([Simulation.findByFacultyTimeTableByProgramId(req.body.program_lid, res.locals.slug), Simulation.semesterByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
+      // console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
         message: "success",
         lectureList: result[0].recordset,
-        sessionList:[]
+        sessionList: result[1].recordset
       })
     }).catch(error => {
       console.log(error)
@@ -631,5 +625,43 @@ module.exports = {
         message: "Something went wrong",
       })
     })
-  }
+  },
+
+  findByDivisionByProgramSession: (req, res, next) => {
+    console.log('>>>>>>>>>>>>>>findByDivisionByProgramSession<<<<<<<<<<<<', req.body)
+    Promise.all([Simulation.findByFacultyTimeTableByProgramSession(req.body, res.locals.slug), Simulation.divisionByProgramSessionId(req.body, res.locals.slug)]).then(result => {
+      // console.log(result[0].recordset)
+      res.status(200).json({
+        status: 200,
+        message: "success",
+        lectureList: result[0].recordset,
+        divisionList: result[1].recordset
+      })
+    }).catch(error => {
+      console.log(error)
+      res.json({
+        status: "500",
+        message: "Something went wrong",
+      })
+    })
+  },
+
+  findBySchelDivisionByProgramSession: (req, res, next) => {
+    console.log('>>>>>>>>>>>>>>findByDivisionByProgramSession<<<<<<<<<<<<', req.body)
+    Promise.all([Simulation.findBySchelDivisionByProgramSession(req.body, res.locals.slug), Simulation.divisionByProgramSessionId(req.body, res.locals.slug)]).then(result => {
+      // console.log(result[0].recordset)
+      res.status(200).json({
+        status: 200,
+        message: "success",
+        lectureList: result[0].recordset,
+        divisionList: result[1].recordset
+      })
+    }).catch(error => {
+      console.log(error)
+      res.json({
+        status: "500",
+        message: "Something went wrong",
+      })
+    })
+  },
 }

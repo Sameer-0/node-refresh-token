@@ -16,4 +16,6 @@ router.post('/rescheduling/show-entries', index.showEntries)
 router.post('/rescheduling/fetch-faculties-date-range', index.facultiesDateRange)
 router.post('/rescheduling/get-extra-class-faculties', index.getExtraClassFaculties)
 router.post('/rescheduling/findby-programid', index.findByProgramId)
+router.post('/rescheduling/find-division-by-programid-acadsession', index.findByDivisionByProgramSession)
+router.post('/find-by-div-program-session', index.findBySchelDivisionByProgramSession)
 module.exports = router
