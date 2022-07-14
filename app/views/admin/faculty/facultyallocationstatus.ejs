@@ -38,7 +38,7 @@
 
         .timetable-slots span{
             width: 156px;
-            font-size:10px;
+            font-size:14px;
         }
 
         .room {
@@ -127,10 +127,10 @@
         }
 
         .light-success{
-            background: #1ff704ab;
+            background:#60cc0acf;
         }
         .light-danger{
-            background: #ff4b12;
+            background: #CC0700;
         }
 </style>
 <%- include("../partials/leftSidebar") %>
@@ -177,11 +177,11 @@
                     <table>
                         <tr>
                             <td>Booked Slot: </td>
-                            <td> <div style="height: 20px;width: 20px;background: #ff4b12;" class="ms-2"></div></td>
+                            <td> <div style="height: 20px;width: 20px;background: #CC0700;" class="ms-2"></div></td>
                         </tr>
                         <tr>
                             <td>Available Slot: </td>
-                            <td> <div style="height: 20px;width: 20px;background: #1ff704ab;" class="ms-2"></div></td>
+                            <td> <div style="height: 20px;width: 20px;background: #60CC0A;" class="ms-2"></div></td>
                         </tr>
                     </table>
                     
@@ -327,7 +327,7 @@
             let eventStartSlot;
             let eventLeftPosition;
 
-        let slotHtml = `<div class="bg-danger text-light" style="display: flex">`;
+        let slotHtml = `<div class="text-light" style="display: flex;background:#CC0700">`;
             timeStops.forEach(item => {
                slotHtml += `<span>${item} </span>`  
             });
@@ -365,8 +365,8 @@
                 roomSlotItem.setAttribute("class",`event room-slot-item ${event.day_lid ? 'light-success':'bg-warning'}`)
                 roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${(event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot}px;`)
                 roomSlotItem.innerHTML =`
-                <span class="badge text-dark start-time" data-start-time="${timeJson[eventStartSlot - timeTablestartSlot].start_time}" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}"></span>
-                <span class="badge  end-time text-dark" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}"></span> `;
+                <span class="badge text-light start-time" data-start-time="${timeJson[eventStartSlot - timeTablestartSlot].start_time}" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}"></span>
+                <span class="badge  end-time text-light" data-end-time="${timeJson[event.end_slot - timeTablestartSlot + 11].end_time}"></span> `;
                 //${timeJson[eventStartSlot - timeTablestartSlot].start_time}
                 //${timeJson[event.end_slot - timeTablestartSlot + 1].end_time}
                 roomSlot.append(roomSlotItem);
