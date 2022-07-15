@@ -270,12 +270,9 @@ module.exports = {
         }
      
         RoomTransactionDetails.updateRequest(res.locals.slug, object, res.locals.userId).then(result => {
-            //IF ROOM APPLILICED ACCESSFULLY THEN NEED TO UPDATE SETTING TABLE DATA
-            if (req.body.settingName) {
-                Settings.updateByName(res.locals.slug, req.body.settingName)
-            }
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            console.log('error::::::::::>>',error)
             if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message))
             }
