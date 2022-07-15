@@ -137,13 +137,10 @@ code {
           </div>
 
           <div class="input-groups col-md-4 col-sm-12">
-              <label for="program-name">Select Day:</label>
-              <select name="day" id="day" class="form-select" disabled>
-                  <option selected disabled value>--Select Day--</option>
-                  <% for(let day of dayList){%>
-                  <option value="<%- day.id%>"><%- day.day_name %></option>
-                  <%}%>
-              </select>
+              <label for="DivisionFilter">Select Division:</label>
+              <select name="DivisionFilter" id="DivisionFilter" class="form-select">
+                <option selected disabled value>--Select Division--</option>
+            </select>
           </div>
       </div>
   </div>
@@ -2525,14 +2522,78 @@ code {
                 let sessionList = `<option value="">Select Session Name</option>`;
                 if (result.sessionList.length > 0) {
                     result.sessionList.forEach(element => {
-                        sessionList +=`<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
+                        sessionList +=`<option value="${element.acad_session}">${element.acad_session}</option>`;
                     });
                 } else {
                     sessionList += `<option value="">No Session Found!</option>`;
                 }
                 $("#SessionFilter").html(sessionList)
                 AjaxTable(result.lectureList)
-                
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
+
+//SEMESTER API
+    $("#SessionFilter").on('change',function(){
+      let program_lid = $("#ProgramFilter").val()
+      let acad_session = $("#SessionFilter").val()
+      console.log('ProgramFilter program_id::::::::::',program_lid)
+      let ApiObj = {
+                type: 'POST',
+                url: '/admin/rescheduling/find-division-by-programid-acadsession',
+                data: {
+                  program_lid: program_lid,
+                  acad_session: acad_session
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('api returnssss:', result)
+                let divisionList = `<option value="">Select Division</option>`;
+                if (result.divisionList.length > 0) {
+                    result.divisionList.forEach(element => {
+                      divisionList +=`<option value="${element.div}">${element.div}</option>`;
+                    });
+                } else {
+                  divisionList += `<option value="">No Session Found!</option>`;
+                }
+                $("#DivisionFilter").html(divisionList)
+                AjaxTable(result.lectureList)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
+
+
+    //DIVISION API
+    $("#DivisionFilter").on('change',function(){
+      let program_lid = $("#ProgramFilter").val()
+      let acad_session = $("#SessionFilter").val()
+      let division = $("#DivisionFilter").val()
+      console.log('ProgramFilter program_id::::::::::',program_lid)
+      let ApiObj = {
+                type: 'POST',
+                url: '/admin/rescheduling/find-by-div-program-session',
+                data: {
+                  program_lid: program_lid,
+                  acad_session: acad_session,
+                  division: division
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('api returnssss:', result)
+                let divisionList = `<option value="">Select Division</option>`;
+                if (result.divisionList.length > 0) {
+                    result.divisionList.forEach(element => {
+                      divisionList +=`<option value="${element.div}">${element.div}</option>`;
+                    });
+                } else {
+                  divisionList += `<option value="">No Session Found!</option>`;
+                }
+                $("#DivisionFilter").html(divisionList)
+                AjaxTable(result.lectureList)
             }).catch(error => {
                 showError(error.responseJSON)
             })
