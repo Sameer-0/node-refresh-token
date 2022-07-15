@@ -193,7 +193,7 @@ code {
           <div class="card-body" >
             <%for(let rFlag of rescheduleFlag){%>
               <div class="inputGroup">
-                <input id="<%- rFlag.name %>" name="scheduleType" value="<%- rFlag.id %>" class="custom-control-input" data-sap-flag="<%- rFlag.denotedBy %>" type="radio"/>
+                <input id="<%- rFlag.name %>" name="scheduleType" value="<%-rFlag.id%>" class="custom-control-input" data-sap-flag="<%-rFlag.denotedBy%>" type="radio"/>
                 <label for="<%-rFlag.name%>"><%-rFlag.name%></label>
             </div>
             <%}%>
@@ -939,7 +939,7 @@ code {
 
                   $.ajax({
                     type: 'POST',
-                    url: '/simulation/reschedule/get-new-extra-lectures/',
+                    url: '/admin/rescheduling/get-new-extra-lectures/',
                     dataType: "JSON",
                     data: {
                       facultyId: rescheduleObj.fromFacultyId,
@@ -1253,21 +1253,14 @@ code {
               })
 
               $('#bulkChangeTimeModal .change').on('click', function () {
-
-
                 currenBulkTr.attr('data-new-room', $('#bulkChangeTimeModal .to-room').val())
                 currenBulkTr.attr('data-new-date', $('#bulkChangeTimeModal .to-date').val())
                 currenBulkTr.attr('data-new-slot', $('#bulkChangeTimeModal .to-time').val())
-
                 currenBulkTr.find('.new-time').text($('#bulkChangeTimeModal .to-time option:selected').text())
                 currenBulkTr.find('.new-date').text($('#bulkChangeTimeModal .to-date').val())
                 currenBulkTr.find('.new-room').text($('#bulkChangeTimeModal .to-room').val())
                 currenBulkTr.find('.remark').html(`<i class="fas fa-exclamation-triangle text-info"></i>`)
-
-
                 $('#bulkChangeTimeModal').modal('hide')
-
-
               })
 
 
@@ -1475,10 +1468,10 @@ code {
                       if (isConfirmed) {
                         console.log('>>>>>>>>>>>>>>>> Rescheduling')
                         $('.loaderBody').removeClass('d-none')
-                        socket.emit('rescheduleEventedSlot', {
-                          slugName: "<%- slug %>",
-                          resObj: rescheduleObj
-                        })
+                        // socket.emit('rescheduleEventedSlot', {
+                        //   slugName: "<%- slug %>",
+                        //   resObj: rescheduleObj
+                        // })
                       }
                     }
 
@@ -1492,11 +1485,11 @@ code {
                     if (isConfirmed) {
                       console.log('>>>>>>>>>>>>>>>> Cancelling the event')
                       $('.loaderBody').removeClass('d-none')
-                      socket.emit('cancelEventedSlot', {
-                        socketRoom: socketRoom,
-                        slugName: "<%- slug %>",
-                        resObj: rescheduleObj
-                      })
+                      // socket.emit('cancelEventedSlot', {
+                      //   socketRoom: socketRoom,
+                      //   slugName: "<%- slug %>",
+                      //   resObj: rescheduleObj
+                      // })
                     }
                   }
                 } else if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'cae') {
@@ -1507,10 +1500,10 @@ code {
                     if (isConfirmed) {
                       console.log('>>>>>>>>>>>>>>>> Cancelling the event')
                       $('.loaderBody').removeClass('d-none')
-                      socket.emit('cancelEventedSlotCae', {
-                        slugName: "<%- slug %>",
-                        resObj: rescheduleObj
-                      })
+                      // socket.emit('cancelEventedSlotCae', {
+                      //   slugName: "<%- slug %>",
+                      //   resObj: rescheduleObj
+                      // })
                     }
                   }
                 } else if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'bulk') {
@@ -1532,11 +1525,11 @@ code {
                       console.log(resJson)
 
                       $('.loaderBody').removeClass('d-none')
-                      socket.emit('cancelEventedSlotBulk', {
-                        slugName: "<%- slug %>",
-                        transJson: JSON.stringify(resJson),
-                        resObj: rescheduleObj
-                      })
+                      // socket.emit('cancelEventedSlotBulk', {
+                      //   slugName: "<%- slug %>",
+                      //   transJson: JSON.stringify(resJson),
+                      //   resObj: rescheduleObj
+                      // })
                     }
                   }
                 } else if (rescheduleObj.reschFlag === 'Z' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() != 'bulk') {
@@ -1544,10 +1537,10 @@ code {
                   if (isConfirmed) {
                     console.log('>>>>>>>>>>>>>>>> Cancelling the event without report')
                     $('.loaderBody').removeClass('d-none')
-                    socket.emit('cancelEventedSlot', {
-                      slugName: "<%- slug %>",
-                      resObj: rescheduleObj
-                    })
+                    // socket.emit('cancelEventedSlot', {
+                    //   slugName: "<%- slug %>",
+                    //   resObj: rescheduleObj
+                    // })
                   }
                 } else if (rescheduleObj.reschFlag === 'Z' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'bulk') {
                   if (!isValidBulkCancel()) {
@@ -1567,11 +1560,11 @@ code {
                       console.log(resJson)
 
                       $('.loaderBody').removeClass('d-none')
-                      socket.emit('cancelEventedSlotBulk', {
-                        slugName: "<%- slug %>",
-                        transJson: JSON.stringify(resJson),
-                        resObj: rescheduleObj
-                      })
+                      // socket.emit('cancelEventedSlotBulk', {
+                      //   slugName: "<%- slug %>",
+                      //   transJson: JSON.stringify(resJson),
+                      //   resObj: rescheduleObj
+                      // })
                     }
                   }
                 } else if (rescheduleObj.reschFlag === 'M' && !rescheduleObj.bulkModify) {
@@ -1589,10 +1582,10 @@ code {
                       if (isConfirmed) {
                         console.log('>>>>>>>>>>>>>>>> Modifying the event')
                         $('.loaderBody').removeClass('d-none')
-                        socket.emit('modifyEventedSlot', {
-                          slugName: "<%- slug %>",
-                          resObj: rescheduleObj
-                        })
+                        // socket.emit('modifyEventedSlot', {
+                        //   slugName: "<%- slug %>",
+                        //   resObj: rescheduleObj
+                        // })
                       }
                     }
                   }
@@ -1622,11 +1615,11 @@ code {
 
 
                       $('.loaderBody').removeClass('d-none')
-                      socket.emit('bulkModifyEventedSlot', {
-                        transJson: JSON.stringify(resJson),
-                        slugName: "<%- slug %>",
-                        resObj: rescheduleObj
-                      })
+                      // socket.emit('bulkModifyEventedSlot', {
+                      //   transJson: JSON.stringify(resJson),
+                      //   slugName: "<%- slug %>",
+                      //   resObj: rescheduleObj
+                      // })
 
                     }
                   }
@@ -1657,11 +1650,11 @@ code {
 
                       $('.loaderBody').removeClass('d-none')
 
-                      socket.emit('changeTimetable', {
-                        transJson: JSON.stringify(resJson),
-                        slugName: "<%- slug %>",
-                        resObj: rescheduleObj
-                      })
+                      // socket.emit('changeTimetable', {
+                      //   transJson: JSON.stringify(resJson),
+                      //   slugName: "<%- slug %>",
+                      //   resObj: rescheduleObj
+                      // })
 
                     }
                   }
@@ -1717,7 +1710,7 @@ code {
 
                   $.ajax({
                     type: 'GET',
-                    url: '/simulation/reschedule/get-cancelled-lectures',
+                    url: '/admin/rescheduling/get-cancelled-lectures',
                     dataType: "json",
                     success: function (data) {
 
@@ -2451,9 +2444,9 @@ code {
                 type: "POST",
                 url: "/admin/rescheduling/show-entries",
                 data: {
-                  fromDate: fromDate,
-                  toDate: toDate,
-                  facultyId: facultyId,
+                  // fromDate: fromDate ,
+                  // toDate: toDate,
+                  // facultyId: facultyId,
                   rowcount: rowcount
                 },
                 success: function (data) {
@@ -2584,17 +2577,9 @@ code {
             }
             ajaxApi(ApiObj).then(result => {
                 console.log('api returnssss:', result)
-                let divisionList = `<option value="">Select Division</option>`;
-                if (result.divisionList.length > 0) {
-                    result.divisionList.forEach(element => {
-                      divisionList +=`<option value="${element.div}">${element.div}</option>`;
-                    });
-                } else {
-                  divisionList += `<option value="">No Session Found!</option>`;
-                }
-                $("#DivisionFilter").html(divisionList)
                 AjaxTable(result.lectureList)
             }).catch(error => {
+              console.log('error::::::::::::::::',error)
                 showError(error.responseJSON)
             })
     })
