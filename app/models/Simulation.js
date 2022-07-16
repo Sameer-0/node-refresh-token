@@ -20,7 +20,7 @@ module.exports = class Simulation {
 
     static rescheduleFlag(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT id, name, denoted_by as denotedBy FROM [dbo].reschedule_flags WHERE active = 1`)
+            return pool.request().query(`SELECT id, name, LTRIM(RTRIM(denoted_by)) as denotedBy FROM [dbo].reschedule_flags WHERE active = 1`)
         })
     }
 
@@ -79,18 +79,22 @@ module.exports = class Simulation {
 
     static facultyLectureLimit(slug, body) {
         return poolConnection.then(pool => {
-            let lecStmt;
-            if (!body.facultyId) {
-                lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC;`
-            } else {
-                lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC;`
-            }
+
+            // if (!body.facultyId) {
+            //     lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC;`
+            // } else if(!body.fromDate && !body.toDate){
+            //     lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC;`
+            // }else{
+               
+            // }
+
+            let lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].faculty_timetable WHERE active = 1 ORDER BY id ASC;`
             let request = pool.request()
             return request
-                .input('fromDate', sql.NVarChar(20), body.fromDate)
-                .input('toDate', sql.NVarChar(20), body.toDate)
-                .input('facultyId', sql.Int, body.facultyId)
-                .input('pageNo', sql.Int, body.pageNo)
+                // .input('fromDate', sql.NVarChar(20), body.fromDate)
+                // .input('toDate', sql.NVarChar(20), body.toDate)
+                // .input('facultyId', sql.Int, body.facultyId)
+                //.input('pageNo', sql.Int, body.pageNo)
                 .query(lecStmt)
         })
     }
@@ -226,6 +230,15 @@ module.exports = class Simulation {
                 .input('programId', sql.NVarChar(20), body.programId)
                 .input('acadSession', sql.NVarChar(20), body.acadSession)
                 .query(`SELECT DISTINCT div FROM faculty_timetable WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession  ORDER BY div`)
+        })
+    }
+
+    static CancelledLectures(slug){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+
+            return request.query(`WITH cte AS (SELECT *, ROW_NUMBER() OVER(PARTITION BY unx_lid ORDER BY id DESC) AS row_num FROM reschedule_transaction WHERE trans_status = 'success')
+                SELECT id, transaction_id, z_flag, event_name, event_type, program_id, module_id, division, acad_session, faculty_id, date_str, room_no, acad_year, slot_name, (SELECT sapStartTime FROM [${slug}].school_timing WHERE active = 'Y' AND dayId = 1 AND slotName = slot_name) AS start_time, (SELECT sapEndTime FROM [${slug}].school_timing WHERE active = 'Y' AND dayId = 1 AND slotName = slot_name) AS end_time, reason_id, sap_event_id, unx_lid FROM cte WHERE row_num = 1 AND z_flag = 'C'`)
         })
     }
 }

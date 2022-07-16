@@ -296,11 +296,33 @@
             })
 
             $(".confirm-btn").on('click',function(){
-               let id =  $("#room-id").val()
+               let room_tran_details_lid =  $("#room-id").val()
                let reason =  $("#cancel-reason").val()
+               let inputJSSON = []
+
                if(reason.length > 5){
+
+                let obj= {
+                    room_tran_details_lid: room_tran_details_lid,
+                    reason: reason
+                }
+
+                inputJSSON.push(obj)
+
                 console.log('CALL APIHere')
-                  
+                let ApiObj = {
+                type: 'POST',
+                url: '/admin/rooms/cancel-request',
+                data: {
+                    inputJSON: JSON.stringify(inputJSSON)
+                },
+                dataType: 'JSON'
+            }
+                ajaxApi(ApiObj).then(result => {
+                    showSuccess(result)
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
                }else{
                 $("#booking-cancel-modal #cancel-reason").css('border','2px solid #ff0000')
                }

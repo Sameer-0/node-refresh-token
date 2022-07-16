@@ -18,20 +18,20 @@ const queue = new Bull('rescheduling-queue');
 
 
 
-const databaseConfig = require('../../../config/databaseConfig');
+const {poolConnection} = require('../../../../config/db');
 require('dotenv').config();
 
 
 module.exports.respond = async socket => {
 
-    let db = await new sql.ConnectionPool(databaseConfig.dbconfig).connect()
+    let db = await poolConnection;
     db.on('error', err => {
         console.log(err)
     })
 
     //On Client Join
     socket.on('join', function (data) {
-        console.log(data);
+        console.log('RESCHEDULE SOCKET INIT:::::::::::>>>',data);
     });
 
     //On Drop Slot
@@ -385,7 +385,7 @@ module.exports.respond = async socket => {
 
 
         //insert into reschedule transactiopn table
-        let stmt = `INSERT INTO reschedule_transaction (transaction_id, z_flag, sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, division, acad_session, faculty_id, date_str, day, room_no, room_uid, slot_name, acad_year, reason_id, reason_detail, trans_status, trans_detail, unique_id_for_sap, uuid, event_id, unx_lid, is_new_ec, is_adjusted_cancel)
+        let stmt = `INSERT INTO [${data.slugName}].reschedule_transaction (transaction_id, z_flag, sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, division, acad_session, faculty_id, date_str, day, room_no, room_uid, slot_name, acad_year, reason_id, reason_detail, trans_status, trans_detail, unique_id_for_sap, uuid, event_id, unx_lid, is_new_ec, is_adjusted_cancel)
 	SELECT '${transactionId}', '${resObj.reschFlag}', sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, div, acad_session, faculty_id, date_str, day_str, room_no, room_uid, slot_name, acad_year, ${Number(resObj.reasonId)}, '${resObj.reasonDetail}', 'initiated', '', unique_id_for_sap, uuid, event_id, unx_lid, is_new_ec, is_adjusted_cancel FROM faculty_timetable WHERE date_str = '${resObj.fromDate}' AND room_uid = '${resObj.fromRoom}' AND slot_name = '${resObj.fromSlot}' AND active = 1`
         console.log('stmt==>> ', stmt)
 
@@ -413,7 +413,6 @@ module.exports.respond = async socket => {
                 let resultLastTrans = await request.query(stmtLastTrans)
                 let recordset = resultLastTrans.recordset[0];
                 //condition if empty array return here
-
                 if (!recordset) {
                     let insertStmt = `INSERT INTO reschedule_transaction (transaction_id, z_flag, sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, division, acad_session, faculty_id, date_str, room_no, room_uid, slot_name, acad_year, reason_id, reason_detail, trans_status, trans_detail) VALUES ('${sapResult.TransId}', '${sapResult.Zflag}', '${sapResult.ZBuseve}', (SELECT TOP 1 event_name FROM faculty_timetable WHERE sap_event_id = '${sapResult.ZBuseve}' AND faculty_id = '${sapResult.ZfacultyId}'), (SELECT TOP 1 event_abbr FROM faculty_timetable WHERE sap_event_id = '${sapResult.ZBuseve}' AND faculty_id = '${sapResult.ZfacultyId}'), 'TH', '${sapResult.ZPrgstd}', (SELECT programCode FROM [asmsoc-mum].programName WHERE programId = '${sapResult.ZPrgstd}'), '${sapResult.ZModule}', '', '', '', '${sapResult.ZfacultyId}', '${moment(sapResult.Zdate, "YYYY-MM-DD").format("DD/MM/YYYY")}', '', '${sapResult.ZroomId}', (SELECT slotName FROM [asmsoc-mum].school_timing WHERE sapStartTime = '${moment(sapResult.ZtimeFrom, 'HH:mm:ss').format('hh:mm:ss A')}' AND sapEndTime = '${moment(sapResult.ZtimeTo, 'HH:mm:ss').format('hh:mm:ss A')}' AND dayId = 1), '${sapResult.Zyear}', ${Number(sapResult.ReasonId)}, '${sapResult.ReasonDetail}', '${sapResult.Status}', '${sapResult.StatusRemark}')`
 
@@ -442,22 +441,15 @@ module.exports.respond = async socket => {
                 }
 
                 let insertStmt = `INSERT INTO reschedule_transaction (transaction_id, z_flag, sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, division, acad_session, faculty_id, date_str, room_no, room_uid, slot_name, acad_year, reason_id, reason_detail, trans_status, trans_detail, unique_id_for_sap, uuid, day, event_id, unx_lid, is_new_ec, is_adjusted_cancel) VALUES ('${recordset.transaction_id}', '${sapResult.Zflag}', '${sapResult.ZBuseve}', '${recordset.event_name}', '${recordset.event_abbr}', '${recordset.event_type}', '${sapResult.ZPrgstd}', '${recordset.program_code}', '${sapResult.ZModule}', '${recordset.module_code}', '${recordset.division}', '${recordset.acad_session}', '${sapResult.ZfacultyId}', '${moment(sapResult.Zdate, "YYYY-MM-DD").format("DD/MM/YYYY")}', '${recordset.room_no}', '${sapResult.ZroomId}', (SELECT slotName FROM [asmsoc-mum].school_timing WHERE sapStartTime = '${moment(sapResult.ZtimeFrom, 'HH:mm:ss').format('hh:mm:ss A')}' AND sapEndTime = '${moment(sapResult.ZtimeTo, 'HH:mm:ss').format('hh:mm:ss A')}' AND dayId = 1), '${sapResult.Zyear}', ${Number(sapResult.ReasonId)}, '${sapResult.ReasonDetail}', '${sapResult.Status}', '${sapResult.StatusRemark}', ${recordset.unique_id_for_sap}, '${recordset.uuid}', '${recordset.day}', '${recordset.event_id}', ${recordset.unx_lid}, ${Number(recordset.is_new_ec)}, ${Number(recordset.is_adjusted_cancel)})`
-
-
                 console.log('insertStmt:===>>> ', insertStmt)
-
                 await request.query(insertStmt).then(result => {
                     console.log('>>>>>>>>Inserted into reschedule_transaction<<<<<<<<', result)
                 }).catch(err => {
                     throw err;
                 })
-
                 //update faculty_timetable
-
                 if (sapResult.Status == 'success') {
-
                     let updateFtStmt = `UPDATE faculty_timetable SET active = 0, sap_flag = '${sapResult.Zflag}' WHERE date_str = '${moment(sapResult.Zdate, "YYYY-MM-DD").format("DD/MM/YYYY")}' AND room_uid = '${sapResult.ZroomId}' AND slot_name = (SELECT slotName FROM [asmsoc-mum].school_timing WHERE sapStartTime = '${moment(sapResult.ZtimeFrom, 'HH:mm:ss').format('hh:mm:ss A')}' AND sapEndTime = '${moment(sapResult.ZtimeTo, 'HH:mm:ss').format('hh:mm:ss A')}' AND dayId = 1) AND active = 1`
-
                     console.log('updateFtStmt: ', updateFtStmt)
 
                     await request.query(updateFtStmt).then(result => {
@@ -465,7 +457,6 @@ module.exports.respond = async socket => {
                     }).catch(err => {
                         throw err;
                     })
-
                     global.io.emit("droppedEventedSlot", {
                         socketUser: socketUser,
                         status: sapResult.Status,
@@ -477,8 +468,6 @@ module.exports.respond = async socket => {
                         roomNo: sapResult.ZroomId,
                         inputDate: resObj.fromDate
                     })
-
-
                 } else {
                     console.log('Rescheduling failed')
                     global.io.emit("droppedEventedSlot", {
@@ -493,10 +482,7 @@ module.exports.respond = async socket => {
                         inputDate: resObj.fromDate
                     })
                 }
-
-
                 resolve(sapResult);
-
             })
         })
 
