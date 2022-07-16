@@ -120,6 +120,7 @@
                     <th>Workshop count per batch per week <input type="checkbox" id="WorkshopCountPerBatchPerWeekCheck"></th>
                     <th>Session Events per Semester <input type="checkbox" id="SessionEventsPerSemesterCheck"></th>
                     <th>Continuous <input type="checkbox" id="ContinuousCheck"></th>
+                    <th>Module Event Abbr</th>
                     <th>Action</th>
                 </thead>
                 <tbody>
@@ -162,7 +163,9 @@
                                 value="<%-course.session_events_per_semester%>"></td>
                         <td><input type="number" class="form-control rounded-0" name="continuous"
                                 value="<%-course.continuous%>"></td>
-                                <td><a class="delete-course-workload" data-id="<%-course.id%>"><span class="fa fa-trash"></span></a></td>
+                        <td><input type="text" class="form-control rounded-0" name="module_event_abbr"
+                                    value="<%-course.module_event_abbr%>"></td>
+                        <td><a class="delete-course-workload" data-id="<%-course.id%>"><span class="fa fa-trash"></span></a></td>
                     </tr>
                     <% } %>
                 </tbody>
@@ -381,6 +384,7 @@
                     <th>Tutorial count_per batch per week</th>
                     <th>Workshop count per batch per week</th>
                     <th>Session Events per Semester</th>
+                    <th>Module Event Abbr</th>
                     <th>Continuous</th>
                 </thead>`;
                 let count = 1;
@@ -400,6 +404,7 @@
                             <td>${course.tutorial_count_per_batch}</td>
                             <td>${course.workshop_count_per_batch}</td>
                             <td>${course.session_events_per_semester}</td>
+                            <td>${course.module_event_abbr}</td>
                             <td>${course.continuous}</td>
                             </tr>` 
                 })
@@ -516,6 +521,8 @@
                 let module_id = $(elem).find(`td[data-module-id]`).attr(`data-module-id`);
                 let acad_session_lid = $(elem).find(`td[data-acad-session-lid]`).attr(
                     `data-acad-session-lid`);
+                    let module_event_abbr = $(elem).find(
+                    `input[name='module_event_abbr']`).val();
 
                 console.log('module_name:::::::::::::::>>>>>', module_name, program_id,
                     module_id, acad_session_lid)
@@ -536,7 +543,8 @@
                         module_name: module_name,
                         program_id: program_id,
                         module_id: module_id,
-                        acad_session_lid: acad_session_lid
+                        acad_session_lid: acad_session_lid,
+                        module_event_abbr: module_event_abbr
                     }
                     courseJSON.push(obj)
                 } else {
@@ -555,7 +563,8 @@
                         module_name: module_name,
                         program_id: program_id,
                         module_id: module_id,
-                        acad_session_lid: acad_session_lid
+                        acad_session_lid: acad_session_lid,
+                        module_event_abbr: module_event_abbr
                     }
                     courseJSON.push(obj)
                 }
@@ -985,6 +994,7 @@
                     <th>Workshop count per batch per week <input type="checkbox" id="WorkshopCountPerBatchPerWeekCheck"></th>
                     <th>Session Events per Semester <input type="checkbox" id="SessionEventsPerSemesterCheck"></th>
                     <th>Continuous <input type="checkbox" id="ContinuousCheck"></th>
+                    <th>Module Event Abbr</th>
                     <th>Action</th>
                 </thead>
                 <tbody>`;
@@ -1018,6 +1028,8 @@
                             <td><input type="number" class="form-control rounded-0" name="workshop_count_per_batch" value="${course.workshop_count_per_batch}"></td>
                             <td><input type="number" class="form-control rounded-0" name="session_events_per_semester" value="${course.session_events_per_semester}"></td>
                             <td><input type="number" class="form-control rounded-0" name="continuous" value="${course.continuous}"></td>
+                            <td><input type="text" class="form-control rounded-0" name="module_event_abbr"
+                                    value="${course.module_event_abbr}"></td>
                             <td><a class="delete-course-workload" data-id="${course.id}"><span class="fa fa-trash"></span></a></td>
                             </tr>`
                 }
