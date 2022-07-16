@@ -1,0 +1,681 @@
+<%- include("../partials/head") %>
+<link rel="stylesheet" href="/css/calendar_core.min.css">
+<link rel="stylesheet" href="/css/calendar_daygrid.min.css">
+<style>
+    hr{
+       margin:  0 !important;
+   }
+
+   .timetable-container {
+       width: var(--timetableWidth);
+       background: #e6e6e6;
+       /* border: 2px solid;    */
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       
+   }
+
+   .room-no {
+       min-width: var(--roomNoWidth);
+       max-width: var(--roomNoWidth);
+       background: #006faa;
+       color: #fff;
+       /* border-right: 1px solid; */
+       border-bottom: 1px solid;
+       text-align: center;
+       padding: 99px 0px;
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       
+   }
+
+   .room-slots {
+       width: var(--roomSlotWidth);
+       min-height: 150px;
+       position: relative;
+       background-size: var(--breakIntervalWidth);
+       background-image:
+           linear-gradient(to right, grey 1px, transparent 1px)
+   }
+
+
+
+   .room {
+       border: 1px solid black;
+       min-height: 200px;
+       max-height: 200px;
+   }
+
+   .event {
+       position: absolute;
+        /* width: var(--eventWidth); */
+       background: #ffffff;
+       word-break: break-word;
+       height: 100%;
+       text-align: center;
+       /* overflow: hidden; */
+       padding-right: calc(var(--breakIntervalWidth) + 2px);
+       padding-left:  2px;
+       padding-top: 5px;
+       font-size: 14px;
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       
+   }
+
+   .pending-event{
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       position: relative;
+       margin: 2px auto;
+       border-radius: 0.25rem;
+       
+   }
+
+   .selected-pending-event{
+       border: 2px solid #d53439;
+       box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+   }
+
+   .selected-pending-event .pending-list-bullet{
+       color: #d53439;
+   }
+   
+
+   .pen-element{
+       position: absolute;
+       width:169px; 
+       height:200px;
+       border-left:1px solid rgb(255, 86, 86); 
+       border-right:1px solid rgb(255, 86, 86);
+       box-shadow: rgba(0, 0, 0, 0.30) 0px 5px 15px;
+   }
+
+  
+   /* .event:nth-child(even) .start-time{
+       background-color: #dc3545 !important;
+ 
+   }
+
+   .event:nth-child(even) .end-time{
+       background: #dc3545 !important;
+   } */
+  
+
+   .start-time{
+       position: absolute;
+       left: 0;
+       bottom: 0;
+       border-radius: 0!important;
+       font-size: 0.75rem;
+   }
+
+   .end-time{
+       position: absolute;
+       right: var(--breakIntervalWidth);
+       bottom: 0;
+       border-radius: 0!important;
+       font-size: 0.75rem;
+   }
+
+   .fa-arrows-left-right{
+       position: absolute;
+       right: calc(var(--breakIntervalWidth) + 78px - 7px);
+       bottom: 0;
+   }
+
+   .break {
+       position: absolute;
+       height: 100%;
+       width: var(--breakIntervalWidth);
+       background-size: 3px;
+       background: repeating-linear-gradient(45deg, #e9ecef, #adb5bd 15px);
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;  
+       
+   }
+
+   .fixed-break{
+       position: absolute;
+       height: 100%;
+       /* background-color: #006faa; */
+       width: var(--fixedBreakWidth);
+       background-size: 3px;
+       background: repeating-linear-gradient(251deg, #212121, #444141 12px);
+       color: #fff;
+       font-size: 1.1rem;
+       padding: 99px 8px;
+       text-align: center;
+       line-height: 1;
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+   }
+
+   .occupied-event{
+       position: absolute;
+       background: repeating-linear-gradient(225deg, #9cceff, #fcfcfc 10px);
+       height: 100%;
+       text-align: center;
+       padding: 99px 0px;
+       font-weight: bold;
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+   }
+</style>
+<%- include("../partials/leftSidebar") %>
+<%- include("../partials/header") %>
+<!--Notificaion icon-->
+<!--HEADER END-->
+
+<div class="main-content">
+      <!--DASHBOARD CONTENT START-->
+      <div class="breadcrumbs-container">
+    
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                <%} }%>
+        </ul>
+     </div>
+ 
+
+    <!--DASHBOARD CONTENT START-->
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+            <div>
+                <h5>Time Sheet for Whole Semester</h5>
+            </div>
+            <div>
+                <button class="btn btn-danger ms-auto refresh_event_type"><i class="fa-solid fa-rotate"></i> Refresh</button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div id='calendar'></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="timetable-details" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="timetable-detailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="timetable-detailsLabel">Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="timetable-container">
+       
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--DASHBOARD CONTENT END-->
+
+
+
+
+    <%- include("../partials/footer") %>
+    <script src="/js/calendar_core.min.js"></script>
+	<script src="/js/calendar_daygrid.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            //Calendar Utils Functions
+            function getMonth() {
+                let date = calendar.state.currentDate
+                let monthInt = date.getMonth();
+                return monthInt
+              }
+
+
+                function convertDate(cDate, splitChar) {
+
+                if (splitChar == '/') {
+                //31/08/2021
+                let arr = cDate.split('/');
+                return `${arr[2]}-${arr[1]}-${arr[0]}`
+                }
+                else if (splitChar == '-') {
+                //2021-11-06
+                let arr = cDate.split('-');
+                return `${arr[2]}/${arr[1]}/${arr[0]}`
+                }
+                }
+ 
+
+              //INITIALIZE calendar
+              let calendar;
+              if ($('#calendar').length >= 1) {
+                var calendarEl = document.getElementById('calendar');
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                  plugins: ['dayGrid'],
+                  validRange: {
+                    start: '<%- academicDate.start_date %>',
+                    end: '<%- academicDate.end_date %>'
+                  }
+                });
+                calendar.render();
+              }
+
+
+              $('.fc-next-button, .fc-prev-button, .fc-today-button').click(function () {
+                console.log('CHECK DAYS::::::::::::>>>>')
+                $.ajax({
+                  type: 'POST',
+                  url: '/admin/timesheet/check-days-lecture',
+                  dataType: "json",
+                  data: {
+                    monthInt: getMonth() + 1
+                  },
+                  success: data => {
+                    console.log('on success: ', data)
+                    let dateList = data.dateList
+                    for (let date of dateList) {
+                      $(`#calendar td .fc-day[data-date='${date.dateStr}']`).append(
+                        '<i class="status fas fa-check-square"></i>')
+                    }
+                  },
+                  error: err => {
+                    console.log('on error: ', err)
+                  }
+                })
+
+                showTimesheetModal()
+                //console.log('The month is ====>>> ', getMonth() + 1)
+              })
+
+              function showTimesheetModal() {
+                $('.fc-day, .fc-day-top, .fc-past, .fc-future').click(function () {
+
+                  let thisDate = $(this).data('date').trim();
+
+                  console.log('selected date: ', $(this).data('date'))
+
+                  $.ajax({
+                    type: 'POST',
+                    url: '/admin/timesheet/getSimulatedData',
+                    dataType: "json",
+                    data: {
+                      selectedDate: thisDate
+                    },
+
+                    success: function (data) {
+
+                        console.log('details ::>>', data)
+                    //     console.log('data::::::::::::::::::',data)
+                    // //   if (data.cause == "permission denied") {
+                    // //     window.location = data.reqUrl
+                    // //     return
+                    // //   }
+
+                    //   console.log('data.date====>>>>> ', thisDate)
+                    //   console.log('data.date====>>>>> ', convertDate(thisDate, '-'))
+
+
+                    //   $("#simulatedDataModal").attr("data-modalDate", convertDate(thisDate, '-'))
+                    //   $("#simulatedDataModalTitle").html(convertDate(thisDate, '-'))
+
+                    //   let detailsData = data.data || [];
+
+                    //   console.log('data ====>>>>> ', detailsData)
+                    //   let uTds = $(`#simulatedDataModal tbody td:not(:first-child)`);
+
+                    //   uTds.html('');
+                    //   uTds.attr('data-uuid', '');
+                    //   uTds.attr('data-facultyId', '');
+                    //   uTds.attr('data-acad-session', '');
+                    //   uTds.attr('data-acad-year', '');
+                    //   uTds.attr('data-div', '');
+                    //   uTds.attr('data-programId', '');
+                    //   uTds.attr('data-start-time', '');
+                    //   uTds.attr('data-end-time', '');
+                    //   uTds.attr('data-uniqueIdForSap', '');
+                    //   uTds.attr('data-sapFlag', '');
+                    //   uTds.attr('data-sapEventId', '');
+                    //   uTds.attr('data-eventType', '');
+                    //   uTds.attr('data-eventName', '');
+                    //   uTds.attr('data-moduleId', '');
+                    //   uTds.attr('data-is-adjusted', '');
+                    //   uTds.attr('data-is-new-ec', '');
+
+
+                    //   for (let lec of detailsData) {
+
+                    //     let uTd = $(`td[data-utd="slot${lec.slotno}-${lec.room_uid}"]`);
+                    //     uTd.html(`${lec.eventName} ${lec.sapFlag ? `<span class="sap-flag-pill">${lec.sapFlag}</span>` : ''}`)
+                    //     uTd.attr('data-uuid', lec.uuid);
+                    //     uTd.attr('data-facultyId', lec.facultyId);
+                    //     uTd.attr('data-acad-session', lec.bookedAcadSession);
+                    //     uTd.attr('data-acad-year', lec.bookedAcadYear);
+                    //     uTd.attr('data-div', lec.bookedDiv);
+
+                    //     // console.log('userProgramId==>>> ', userProgramId)
+                    //     console.log('lec.bookedProgramId==>>> ', lec.bookedProgramId)
+                    //     // if(userProgramId == lec.bookedProgramId){
+
+                    //     //  uTd.addClass('program-color');
+                    //     // }else{
+                    //     //   uTd.attr('data-programId', lec.bookedProgramId);
+                    //     // }
+                    //     uTd.attr('data-programId', lec.bookedProgramId);
+                    //     uTd.attr('data-start-time', lec.starttime);
+                    //     uTd.attr('data-end-time', lec.endtime);
+                    //     uTd.attr('data-uniqueIdForSap', lec.uniqueIdForSAP);
+                    //     uTd.attr('data-sapFlag', lec.sapFlag);
+                    //     uTd.attr('data-sapEventId', lec.sapEventId);
+                    //     uTd.attr('data-eventType', lec.eventType);
+                    //     uTd.attr('data-eventName', lec.eventName);
+                    //     uTd.attr('data-moduleId', lec.eventId.split('-')[0].trim());
+                    //     uTd.attr('data-is-adjusted', Number(lec.is_adjusted_cancel));
+                    //     uTd.attr('data-is-new-ec', Number(lec.is_new_ec));
+                    //   }
+
+                    //   ; (async () => {
+                        timeTableDisplay(data.data);
+
+                        $('#timetable-details').modal('show');
+
+                    //     let scheduleLogic = await new Promise(resolve => {
+                    //       $(`#simulatedDataModal table tbody td:not(:first-child)`).click(function () {
+
+                    //         //[data-programid='${userProgramId}']
+
+                    //         // console.log('userProgramId=====>>>> ', userProgramId)
+
+                    //         let $this = $(this)
+                    //         let tdIdx = $(this).index() + 1
+                    //         let slotFor = $this.attr('data-eventname')
+
+
+                    //         inputDate = $("#simulatedDataModalTitle").text().trim()
+                    //         slotName = $this.attr("data-slot")
+                    //         roomNo = $this.parent().attr("data-room")
+                    //         uuid = $this.attr("data-uuid")
+
+                    //         console.log(rescheduleObj)
+
+                    //         if (slotFor) {
+
+                    //           rescheduleObj.fromDate = inputDate
+                    //           rescheduleObj.fromRoom = roomNo
+                    //           rescheduleObj.fromSlot = $this.attr('data-slot')
+                    //           rescheduleObj.fromSlotUuid = $this.attr('data-uuid')
+                    //           rescheduleObj.fromFacultyId = $this.attr('data-facultyid')
+                    //           rescheduleObj.acadSession = $this.attr('data-acad-session')
+                    //           rescheduleObj.acadYear = $this.attr('data-acad-year')
+                    //           rescheduleObj.division = $this.attr('data-div')
+                    //           rescheduleObj.programId = $this.attr('data-programid')
+                    //           rescheduleObj.fromStartTime = $this.attr('data-start-time')
+                    //           rescheduleObj.fromEndTime = $this.attr('data-end-time')
+                    //           rescheduleObj.uniqueIdForSap = $this.attr('data-uniqueidforsap')
+                    //           rescheduleObj.sapFlag = $this.attr('data-sapflag')
+                    //           rescheduleObj.sapEventId = $this.attr('data-sapeventid')
+                    //           rescheduleObj.eventType = $this.attr('data-eventtype')
+                    //           rescheduleObj.eventName = $this.attr('data-eventname')
+                    //           rescheduleObj.moduleId = $this.attr('data-moduleid')
+                    //           rescheduleObj.isAdjusted = $this.attr('data-is-adjusted')
+                    //           rescheduleObj.isNewEc = $this.attr('data-is-new-ec')
+
+                    //           console.log('rescheduleObj.isAdjusted: ', rescheduleObj.isAdjusted)
+
+                    //           $('#resModalData .current-date').text(inputDate)
+                    //           $('#resModalData .class-room').text($this.closest('tr').attr(
+                    //             'data-room'))
+                    //           $('#resModalData .class-timing').text($(
+                    //             `#timetable-head tr th:nth-child(${tdIdx})`).text().trim())
+
+
+                    //           $("#flag-radio-group .custom-radio[data-flag='Extra Class']")
+                    //             .addClass("d-none")
+                    //           $('#editSimulatedModalData #editProgramName').html(slotFor)
+                    //           $('#editSimulatedModalData').modal('show')
+
+
+                    //         } else {
+
+                    //           $('#extraModalData .class-room').text($this.closest('tr').attr(
+                    //             'data-room'))
+                    //           $('#extraModalData .class-timing').text($(
+                    //             `#timetable-head tr th:nth-child(${tdIdx})`).text().trim())
+
+                    //           //EXTRA CLASS LOGIC
+                    //           rescheduleObj.toDate = inputDate
+                    //           rescheduleObj.toRoom = roomNo
+                    //           rescheduleObj.toSlot = slotName
+                    //           rescheduleObj.toStartTime = slotTime[slotName].sapStartTime
+                    //           rescheduleObj.toEndTime = slotTime[slotName].sapEndTime
+                    //           rescheduleObj.toSlotUuid = $this.attr('data-uuid')
+                    //           rescheduleObj.fromDate = ""
+                    //           rescheduleObj.fromRoom = ""
+                    //           rescheduleObj.fromSlot = ""
+                    //           rescheduleObj.fromSlotUuid = ""
+                    //           rescheduleObj.fromFacultyId = ""
+                    //           rescheduleObj.acadSession = ""
+                    //           rescheduleObj.acadYear = ""
+                    //           rescheduleObj.division = ""
+                    //           rescheduleObj.programId = ""
+                    //           rescheduleObj.fromStartTime = ""
+                    //           rescheduleObj.fromEndTime = ""
+                    //           rescheduleObj.uniqueIdForSap = ""
+                    //           rescheduleObj.sapFlag = "E"
+                    //           rescheduleObj.sapEventId = ""
+                    //           rescheduleObj.eventType = ""
+                    //           rescheduleObj.eventName = ""
+                    //           rescheduleObj.moduleId = ""
+                    //           $("#extraClassModal").modal('show');
+                    //           console.log('Extra Class OBJ: ', rescheduleObj)
+                    //         }
+                    //       })
+                    //     })
+
+
+                    //   })()
+                    }
+                  })
+                })
+              }
+              showTimesheetModal()
+              
+            let roomJson = JSON.parse(`<%-roomList%>`) 
+            let timeJson = JSON.parse(`<%- timeSlotList%>`);
+            let cssRoot = document.querySelector(':root');
+            let timeTablestartSlot = timeJson[0].id;
+            let fixedBreakSlotStart = 115
+            let fixedBreakSlotStart2 = 175
+            let styleRoot = getComputedStyle(cssRoot);
+            let timetableProp = {
+                totalSlots: 116,
+                pxPerSlot: 13,
+                roomNoWidth: 50,
+            }
+            console.log('timejason::', timeJson)
+
+            cssRoot.style.setProperty('--timetableWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot + 50 }px`);
+            cssRoot.style.setProperty('--roomNoWidth', `${timetableProp.roomNoWidth}px`);
+            cssRoot.style.setProperty('--breakIntervalWidth', `${timetableProp.pxPerSlot}px`);
+            cssRoot.style.setProperty('--eventWidth', `${(timetableProp.pxPerSlot * 12) + timetableProp.pxPerSlot }px`);
+            cssRoot.style.setProperty('--roomSlotWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot}px`);
+
+
+              function timeTableDisplay(eventListJson) {
+            let fixedBreadWidth;
+            let roomSlot;
+            let eventStartSlot;
+            let eventLeftPosition;
+            let roomHtml = ``;
+            for (let room of roomJson) {
+
+                roomHtml += `<div class="d-flex room" data-room-lid="${room.id}" data-room-no="${room.room_number}">
+                    <div class="room-no" data-room-lid="${room.id}" data-room-type-lid="${room.room_type_id}">
+                        ${room.room_number}
+                    </div>
+                    <div class="room-slots">
+
+                    </div>
+                    </div>`
+            }
+
+            let timeTableBox = document.querySelector('.timetable-container');
+            timeTableBox.innerHTML = roomHtml;
+
+            let eventWidth;
+
+            for (let event of eventListJson) {
+
+                if (!event.is_break) {
+
+                    roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`)
+
+                    eventStartSlot = event.start_time_lid;
+                    eventLeftPosition = (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
+
+                    let breakElement = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp
+                            .totalSlots * timetableProp.pxPerSlot)) || event.end_time_lid == fixedBreakSlotStart ?
+                        `<div class="break d-none" style="left: ${timetableProp.pxPerSlot * 12}px; top: 0; bottom:0; width:${timetableProp.pxPerSlot}px"></div>` :
+                        `<div class="break" style="left: ${timetableProp.pxPerSlot * 12}px; top: 0; bottom:0; width:${timetableProp.pxPerSlot}px"></div>`
+
+                   
+
+                    if(event.end_time_lid === (116 - 1) || event.end_time_lid === (176 - 1) || event.end_time_lid === (207 - 1)) {
+                        eventWidth = (event.end_time_lid - event.start_time_lid + 1) * timetableProp.pxPerSlot;
+                    } else {
+                        eventWidth = (event.end_time_lid - event.start_time_lid + 2) * timetableProp.pxPerSlot;
+                    }
+                   // eventWidth = 169;
+
+                    //  eventWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) || event.end_time_lid == fixedBreakSlotStart ?
+                    // `${(event.end_time_lid - event.start_time_lid + 1) * timetableProp.pxPerSlot}px;` :
+                    // `${(event.end_time_lid - event.start_time_lid + 2) * timetableProp.pxPerSlot}px;` 
+
+
+                    let roomSlotItem = document.createElement('div');
+                    roomSlotItem.setAttribute("class", "event room-slot-item")
+                    roomSlotItem.setAttribute("style",
+                        `left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${eventWidth}px;`
+                        )
+                    roomSlotItem.setAttribute("data-event-lid", `${event.event_lid}`)
+                    roomSlotItem.setAttribute("data-room-lid", `${event.room_lid}`)
+                    roomSlotItem.setAttribute("data-module-name", `${event.module_name}`)
+                    roomSlotItem.setAttribute("data-module-lid", `${event.course_lid}`)
+                    roomSlotItem.setAttribute("data-division-name", `${event.division}`)
+                    roomSlotItem.setAttribute("data-batch-name", `${event.batch}`)
+                    roomSlotItem.setAttribute("data-event-type-lid", `${event.event_type_lid}`)
+                    roomSlotItem.setAttribute("data-session-name", `${event.acad_session}`)
+                    roomSlotItem.setAttribute("data-session-lid", `${event.acad_session_lid}`)
+                    roomSlotItem.setAttribute("data-program-name", `${event.program_name}`)
+                    roomSlotItem.setAttribute("data-program-lid", `${event.program_lid}`)
+                    roomSlotItem.setAttribute("data-start-time", `${event.start_time_lid}`)
+                    roomSlotItem.setAttribute("data-end-time", `${event.end_time_lid}`)
+                    roomSlotItem.setAttribute("data-faculty-lid", `${event.faculty_lid ? event.faculty_lid : ''}`)
+                    roomSlotItem.setAttribute("data-faculty-name", `${event.faculty_name ? event.faculty_name : ''}`)
+
+                    roomSlotItem.innerHTML =
+                        `${event.program_name} - ${event.acad_session} <br><hr> ${event.module_name} <br><hr> ${event.division} - ${event.batch} (${event.event_type})<br><hr> ${event.faculty_name} <span class="badge bg-info start-time">${timeJson[eventStartSlot - timeTablestartSlot].start_time}</span>
+                <i class="fa-solid fa-arrows-left-right"></i><span class="badge bg-info end-time">${timeJson[eventStartSlot - timeTablestartSlot + 11].end_time}</span> ${breakElement}`;
+
+                    roomSlot.append(roomSlotItem);
+                } else {
+
+                    roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`);
+                    eventLeftPosition = (event.start_time_lid - timeTablestartSlot) * timetableProp.pxPerSlot;
+
+                    let fixedBreak = document.createElement('div');
+                    fixedBreak.setAttribute("class", "fixed-break room-slot-item")
+                    fixedBreak.setAttribute("style", `left: ${eventLeftPosition}px; top: 0;`)
+                    fixedBreak.setAttribute("data-break", `${event.is_break}`)
+                    fixedBreak.setAttribute("data-break-id", `${event.break_id}`)
+                    fixedBreak.innerText = 'BREAK';
+                    fixedBreadWidth = (event.end_time_lid - event.start_time_lid) * timetableProp.pxPerSlot + timetableProp
+                        .pxPerSlot;
+
+                    roomSlot.append(fixedBreak);
+                }
+            }
+
+            // for (let event of allEventListJson) {
+
+            //     if (document.querySelector(`.event[data-event-lid="${event.event_lid}"]`)) {
+            //         console.log('event-count');
+            //     } else {
+            //         if (!event.is_break) {
+
+            //             roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`)
+
+            //             eventStartSlot = event.start_time_lid;
+            //             eventLeftPosition = (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
+
+            //             if(event.end_time_lid === (116 - 1) || event.end_time_lid === (176 - 1)) {
+            //                 occRoomWidth = (event.end_time_lid - event.start_time_lid + 1) * timetableProp.pxPerSlot;
+            //             } else {
+            //                 occRoomWidth = (event.end_time_lid - event.start_time_lid + 2) * timetableProp.pxPerSlot;
+            //             }
+
+
+            //             let occupiedRoomSlotItem = document.createElement('div');
+            //             occupiedRoomSlotItem.setAttribute("class", "occupied-event room-slot-item")
+            //             occupiedRoomSlotItem.setAttribute("style", `left: ${eventLeftPosition}px ;top: 0; text-align:center; width: ${occRoomWidth}px`)
+            //             occupiedRoomSlotItem.setAttribute("data-event-lid", `${event.event_lid}`)
+            //             occupiedRoomSlotItem.setAttribute("data-module-name", `${event.module_name}`)
+            //             occupiedRoomSlotItem.setAttribute("data-module-lid", `${event.course_lid}`)
+            //             occupiedRoomSlotItem.setAttribute("data-division-name", `${event.division}`)
+            //             occupiedRoomSlotItem.setAttribute("data-batch-name", `${event.batch}`)
+            //             occupiedRoomSlotItem.setAttribute("data-event-type-lid", `${event.event_type_lid}`)
+            //             occupiedRoomSlotItem.setAttribute("data-session-name", `${event.acad_session}`)
+            //             occupiedRoomSlotItem.setAttribute("data-session-lid", `${event.acad_session_lid}`)
+            //             occupiedRoomSlotItem.setAttribute("data-program-name", `${event.program_name}`)
+            //             occupiedRoomSlotItem.setAttribute("data-program-lid", `${event.program_lid}`)
+            //             occupiedRoomSlotItem.setAttribute("data-start-time", `${event.start_time_lid}`)
+            //             occupiedRoomSlotItem.setAttribute("data-end-time", `${event.end_time_lid}`)
+            //             occupiedRoomSlotItem.setAttribute("data-faculty-lid",
+            //                 `${event.faculty_lid ? event.faculty_lid : ''}`)
+
+            //             occupiedRoomSlotItem.innerHTML = `OCCUPIED`;
+
+            //             roomSlot.append(occupiedRoomSlotItem);
+            //         }
+            //     }
+            // }
+
+
+            cssRoot.style.setProperty('--fixedBreakWidth', `${fixedBreadWidth}px`);
+        }
+
+        
+        })
+    </script>
+    <%- include("../partials/footerEnd") %>
