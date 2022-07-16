@@ -353,10 +353,27 @@
     <script>
         $(document).ready(function () {
 
+            //ROOM FILTER
             $('#room-name').on('change', function (){
-                $('.option-container').removeClass('d-none');
-                $('.option-container').append(`<span class="span-filter" data-room-lid="${$('#room-name option:selected').val()}">${$('#room-name option:selected').text()}<i class="fa-solid fa-xmark ms-auto ps-2 room-span-remove"></i></span>`);
 
+                let spanAppendCheck = true;
+                let spanFilterList = $(document).find('.span-filter');
+                $('.option-container').removeClass('d-none');
+                if(spanFilterList.length > 0){
+            
+                    spanFilterList.each((index, element) => {
+                        if($(element).attr('data-room-lid') == $(this).val()){
+
+                            spanAppendCheck = false
+                
+                        }
+                    })
+                }
+
+                if(spanAppendCheck){
+                    $('.option-container').append(`<span class="span-filter" data-room-lid="${$('#room-name option:selected').val()}">${$('#room-name option:selected').text()}<i class="fa-solid fa-xmark ms-auto ps-2 room-span-remove"></i></span>`);
+                }
+                
                 filterRoom()
 
             })
@@ -381,7 +398,7 @@
                 })
 
                 if( $(document).find('.span-filter').length < 1){
-                    console.log('remove d-none from room', $(document).find('.room[data-room-lid]').removeClass('d-none'))
+                    
                     $(document).find('.room[data-room-lid]').removeClass('d-none')
                 }
             }
@@ -389,15 +406,14 @@
 
         let socket = io();
         socket.on('connect', () => {
-            console.log('Socket Connection::::::::::::>>', socket.connected)
+            console.log('Socket Connected::::::::::::>>', socket.connected)
         });
 
         socket.emit('join', 'Timetable rescheduling module')
 
         let slugName = `<%-locals.slug %>`
         let userId = `<%-locals.userId %>`
-        //console.log('slugName::::::::::::>>', slugName)
-        //console.log('userId::::::::::::>>', userId)
+
         let currentTd;
         let roomList = JSON.parse(`<%- roomList %>`);
         let programListJson = JSON.parse(`<%- programListJson %>`);
@@ -408,9 +424,9 @@
             return obj.program_lid;
         });
 
-        //console.log('pending event programs::::::', pendingEventPrograms)
+        
 
-        //PROGRAMS FOR PENDING EVENT LIST
+        //PENDING EVENT LIST FILTER
         let penProgramOption=`<option value="">--Select Program--</option>`;
         for(let program of pendingEventPrograms){
 
@@ -418,12 +434,10 @@
         }
         $(document).find('#programs-for-pending-event').html(penProgramOption)
 
-     
 
         $(document).on('change', '#programs-for-pending-event', function () {
 
             let programLid = $(this).val();
-            //console.log('progranmlid:::::::::', programLid)
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/pending-events-sessions',
@@ -436,7 +450,6 @@
             let sessionList = ``;
             
                 ajaxApi(ApiObj).then(result => {
-                    //console.log('pending sessionsss;;;', result)
 
                     if (result.length > 0) {
 
@@ -468,7 +481,6 @@
 
             let sessionLid = $(this).val();
             let programLid = $('#programs-for-pending-event').val();
-            //console.log('progranmlid:::::::::', programLid)
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/pending-events-module',
@@ -482,7 +494,6 @@
             let moduleList = ``;
 
                 ajaxApi(ApiObj).then(result => {
-                    //console.log('pending sessionsss;;;', result)
 
                     if (result.length > 0) {
 
@@ -519,6 +530,8 @@
             $(document).find('.pending-event').addClass('d-none');
             $(document).find(`.pending-event[data-session-lid="${sessionLid}"][data-program-lid="${programLid}"][data-module-lid="${moduleLid}"]`).removeClass('d-none');
         })
+        //PENDING EVENT FILTER END//
+
         //PENDING EVENT LIST   
         $('.pending-events-modal').on('click', function () {
            
@@ -538,8 +551,6 @@
                 }
 
                 ajaxApi(ApiObj).then(result => {
-
-                    //console.log('result:::pending event>>>>>s', result)
 
                     let tableRow = ``;
                     let count = 1;
@@ -576,12 +587,10 @@
 
         // SEARCH
         $('#searchkeyword').on('input', function () {
-            console.log('hello searching')
 
             let searchStr = $(this).val().toLowerCase()
 
             if (searchStr.length > 0) {
-                console.log('hello searching inside', $(document).find('.room'))
                 $(document).find('.room[data-room-no]').addClass('d-none')
                 $(document).find('.room[data-room-no]').each(function (index, element) {
                     $(element).find('.event').each(function (index, element) {
@@ -597,10 +606,12 @@
                 $('.room[data-room-no]').removeClass('d-none')
                 $('.room[data-room-no] .event').removeClass('event-info')
             }
+
+            filterRoom()
+
         })
 
         //DRAG EVENT
-        // initDrag()
 
         //Getting session List Ajax
         $("#program-name").on('change', function () {
@@ -678,17 +689,17 @@
                console.log('Event List Result::>>', result)
                 timeTableDisplay(result.eventList, result.allEventList)
                 $('#room-name').removeAttr('disabled');
-                //  }, 2000)
-                //   $(this).attr('disabled','disabled');
+                filterRoom()
+           
             }).catch(error => {
                 // showError(error.responseJSON)
+                console.log('Event list error::>>', error)
             })
         })
 
         $(document).on('change', '#program-name-modal', function () {
 
             let programLid = $(this).val();
-            //console.log('progranmlid:::::::::', programLid)
 
             let ApiObj = {
                 url: '/admin/time-table-simulation/time-table/pending-events-sessions',
@@ -708,7 +719,6 @@
                 $(document).find("#slotModal #session-name-modal").html(sessionList)
             } else {
                 ajaxApi(ApiObj).then(result => {
-                    //console.log('pending sessionsss;;;', result)
 
                     if (result.length > 0) {
 
@@ -729,7 +739,7 @@
                         .html(sessionList)
                 }).catch(error => {
                     // showError(error.responseJSON)
-                    console.log('error', error);
+                    console.log('On change program error', error);
                 })
             }
         })
@@ -776,7 +786,7 @@
                         .html(sessionList)
                 }).catch(error => {
                     // showError(error.responseJSON)
-                    console.log('error', error);
+                    console.log('On change session error', error);
                 })
             }
         })
@@ -809,7 +819,7 @@
                         pendingEventList =
                             `<option> No Pending Events </option>`
                     }
-                    console.log('pendingevents:::', pendingEventList)
+                    console.log('Pending event list:::', pendingEventList)
                     $(document).find('#pending-events').html(
                         pendingEventList);
                 })
@@ -818,8 +828,6 @@
                 })
         })
 
-   
-    
         // socket.on('pending-event-response', function (response) {
         //     console.log('drop response>>> ', response)
         //     if (response.status == 1) {
@@ -838,9 +846,9 @@
         
 
         socket.on('drop-event-response', function (response) {
-            console.log('drop response>>> ', response.status)
+          
             if (response.status == 1) {
-                console.log('inside success drop', dragObj.targetElem)
+                console.log('Drop successful')
                 let pendingEventFromDrop = `<div class="d-flex w-100 justify-content-between list-group-item list-group-item-action pending-event" data-program-lid="${response.data[0].program_lid}" data-session-lid="${response.data[0].acad_session_lid}" data-module-lid="${response.data[0].course_lid}" data-event-type-lid="${response.data[0].event_type_lid}" data-event-lid="${response.data[0].event_lid}">
                 <div class="d-flex justify-content-center align-items-center"><i class="fa-solid fa-circle-dot pending-list-bullet"></i></div>
                 <p class="flex-fill text-center">${response.data[0].program_name}<br>
@@ -849,12 +857,14 @@
                 ${response.data[0].division}-${response.data[0].batch} (${response.data[0].event_type})
                 </p>
                 </div>`
-                console.log('pendingEventFromDrop>>>>', pendingEventFromDrop)
+              
                 $(document).find('.pending-event-container').append(pendingEventFromDrop)
                 $(document).find(`.event[data-event-lid="${response.data[0].event_lid}"]`).remove();
              
                 $("#slotModal").modal('hide');
                 // showSuccess(response)
+            }else{
+                console.log('Drop unsuccessful')
             }
            
         });
@@ -897,15 +907,10 @@
         socket.on('schedule-event-response', function (response) {
             console.log('schedule-event-response::::::::::::::::', response)
 
-            // console.log('response.data.status>> ', response.data.status)
-            // console.log('response.data.data.length>> ', response.data.data.length)
-            // console.log('response.data.actionType>> ', response.actionType)
-
             if (response.data.status == 1 && response.data.data.length > 0) {
-                //$(document).find('.selected-pending-event').remove();
 
                 if(response.actionType == 'drag') {
-                  
+                    console.log('>>> Drag and drop')
                     appendDragElement(response.data.data[0]);
                     dragObj.targetElem.remove();
                     dragObj.swapClone = null;
@@ -913,7 +918,7 @@
                     dragObj.clonedTarget = null;
                 }
                 else if(response.actionType == 'allocate') {
-                    console.log('>>> ALLOCATED', response)
+                    console.log('>>> ALLOCATED')
 
                     let responseObj = response.data.data[0];
                     let eventElement = document.createElement('div');
@@ -941,28 +946,23 @@
                 
                     //Remove Temporary element 
                     if(document.querySelector(`.event[data-event-lid="${responseObj.event_lid}"]`)){
-                        console.log('old event removed::::')
                         document.querySelector(`.event[data-event-lid="${responseObj.event_lid}"]`).remove();
                     }
 
                     //Append Actual element
                     if(response.positionIndex > 0){
-                        console.log('new event appended::::')
-                    console.log('all elements:: ', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`))
                         document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex-1].insertAdjacentElement("afterend", eventElement)
                     }else{
-                        console.log('else new event appended::::', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[0])
                         document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex].insertAdjacentElement("beforebegin", eventElement)
                     }
                     
                     //Remove from pending list
-                    // $(document).find('.selected-pending-event').remove();
                     document.querySelector(`.pending-event-container .pending-event[data-event-lid="${responseObj.event_lid}"]`).remove();
 
 
                 }
                 else if (response.actionType == 'swap') {
-                   
+                    console.log('>>> Swap')
                     let tarId = parseInt(response.targetElemId)
                     let targetElemData = response.data.data.filter(e => {
                        return e.event_lid == tarId
@@ -970,9 +970,6 @@
                     let swapElemData = response.data.data.filter(e => {
                        return e.event_lid != tarId
                     })
-                   
-                    console.log('swap elemt data::>>', swapElemData)
-                    console.log('target elemt data::>>', targetElemData)
 
                     appendDragElement(targetElemData[0]);
                     appendSwapElement(targetElemData[0], swapElemData[0], response.initialPositionIndex);
@@ -993,7 +990,6 @@
 
         //Click on event-element
         $(document).on('click', '.event', function() {
-            console.log('this::', this)
 
             if(dragObj.actionType !== 'clicked') {
                 return false;
@@ -1046,7 +1042,6 @@
 
         let timeJson = JSON.parse(`<%- timeSlotList%>`);
         
-        console.log('timeJson', timeJson)
         let targetProp = {};
 
         let dragObj = {
@@ -1108,7 +1103,6 @@
         $(document).on('click', '.pen-element', function (e) {
             
             let currentRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
-            // console.log('current room::', currentRoom.parentNode.getAttribute('data-room-lid'))
 
             //check for collision
             let tRect = penElem.getBoundingClientRect();
@@ -1118,28 +1112,22 @@
            dragObj.actionType = 'allocate';
           
 
-            console.log("check collision:::", tRect, currentRoomElems)
+            
             for (let elem of currentRoomElems) {
 
-                // console.log("INSIDE LOOP TO CHECK COLLISION")
+                console.log("check collision:::")
                 let eRect = elem.getBoundingClientRect();
 
 
                 if (elem.classList.contains('occupied-event') ||  elem.classList.contains('event')) {
 
-                    // console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
-
-                    console.log('trect>>> ', tRect)
-                    console.log('erect>>> ', eRect)
+                    // console.log('trect>>> ', tRect)
+                    // console.log('erect>>> ', eRect)
 
                     if (((tRect.left - 2) >= eRect.left && (tRect.left + 2) < eRect.right) || ((tRect.right - 2) > eRect.left && tRect.right  <= eRect.right) || (tRect.right  >= eRect.right && tRect.left < eRect.right)) {
-                        console.log('collison occured')
-                        // dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
-                        //     .start_time;
-                        // dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
-                        //     .end_time;
-                        // dragObj.targetElem.querySelector('.break').style.display = 'block'
-                        // dragObj.isDroppable = false;
+                        
+                        console.log('collision occurred with event')
+
                         return;
                         break;
                     }
@@ -1148,18 +1136,14 @@
                 
                 
                 if (elem.classList.contains('fixed-break')) {
-                    // console.log("INSIDE LOOP TO CHECK COLLISION BReaK", dragObj.targetElem)
-                    console.log('trect>>> ', tRect)
-                    console.log('erect>>> ', eRect)
+
+                    // console.log('trect>>> ', tRect)
+                    // console.log('erect>>> ', eRect)
 
                     if (((tRect.left - 2) >= eRect.left && (tRect.left + 2) < eRect.right) || ((tRect.right - 15) > eRect.left && tRect.right  <= eRect.right) || (tRect.right  >= eRect.right && tRect.left < eRect.right)) {
-                        console.log('collison occured')
-                        // dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
-                        //     .start_time;
-                        // dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
-                        //     .end_time;
-                        // dragObj.targetElem.querySelector('.break').style.display = 'block'
-                        // dragObj.isDroppable = false;
+                        
+                        console.log('collision occurred with fixed break')
+
                         return;
                         break;
                     }
@@ -1181,7 +1165,7 @@
             let startSLotId = timeJson[startSlotIndex].id;
             let endSlotId = timeJson[endSlotIndex - 1].id;
 
-            console.log('current>>>>>>>>>>>>>> left:::', startSLotId, endSlotId);
+            // console.log('current>>>>>>>>>>>>>> left:::', startSLotId, endSlotId);
 
             
             let ApiObj = {
@@ -1200,7 +1184,7 @@
                     }
 
             ajaxApi(ApiObj).then(result => {
-                    console.log('faculty available::>>>', result)
+                    console.log('Faculty available::>>>')
                     let facultyList = ``;
                     let otherFacultyDetail = `<h5>Other faculties for the selected lecture:</h5><ul>`;
                     facultyList += `<select id="faculty-work-event-list" class="form-select my-4">`
@@ -1243,7 +1227,7 @@
                     $('#slotModal').modal('show');
                 }).catch(error => {
                     // showError(error.responseJSON)
-                    console.log('error', error);
+                    console.log('Faculty Availability error', error);
                 })
 
 
@@ -1258,7 +1242,6 @@
             eventElemt.setAttribute('class', 'event room-slot-item')
             eventElemt.setAttribute('data-event-lid', `${eventLid}`)
             let pendingEventInnerContent = $(document).find('.selected-pending-event p').html();
-            console.log('innercontent>>', pendingEventInnerContent)
 
             eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
             <i class="fa-solid fa-arrows-left-right"></i>
@@ -1276,7 +1259,6 @@
 
 
            // $(dragObj.targetElem).find('.break').removeClass('d-none');
-           console.log('endSlotId>>>> ', endSlotId)
 
            eventElemt.style.position = 'absolute';
            eventElemt.style.top = '0';
@@ -1288,7 +1270,6 @@
                 eventElemt.style.width = 156 + 'px';
                 eventElemt.style.left =  `${(startSLotId - timeTablestartSlot + 1) * timetableProp.pxPerSlot}px`;
 
-                //$('#slotModal').on('')
 
                setTimeout(function () {
                    //alert('CALLING SHOWN')
@@ -1297,7 +1278,6 @@
                 }, 800)
 
                
-                //data-start-slot-id
 
 
             } else if (endSlotId == 115 || endSlotId == 175) {
@@ -1325,12 +1305,6 @@
 
             //============================================
 
-
-            console.log('startSLotId>>> ', startSLotId)
-
-            //eventElemt.style.left = e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2) + 'px';
-           
-            console.log('computed >>> ',  e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))
 
             let imgnBoundingElems = [];
 
@@ -1385,8 +1359,6 @@
             let timeTableBox = document.querySelector('.timetable-container');
             timeTableBox.innerHTML = roomHtml;
 
-            console.log('fixedBreakSlotStart>>> ', fixedBreakSlotStart)
-
             let eventWidth;
 
             for (let event of eventListJson) {
@@ -1397,7 +1369,6 @@
 
                     eventStartSlot = event.start_slot;
                     eventLeftPosition = (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
-                    // console.log('left position:::::>>', eventLeftPosition)
 
                     let breakElement = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp
                             .totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
@@ -1406,14 +1377,12 @@
 
                    
 
-                    if(event.end_slot === (116 - 1) || event.end_slot === (176 - 1)) {
+                    if(event.end_slot === (116 - 1) || event.end_slot === (176 - 1) || event.end_slot === (207 - 1)) {
                         eventWidth = (event.end_slot - event.start_slot + 1) * timetableProp.pxPerSlot;
                     } else {
                         eventWidth = (event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot;
                     }
                    // eventWidth = 169;
-
-                    // console.log('event width: ', eventWidth)
 
                     //  eventWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp.totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
                     // `${(event.end_slot - event.start_slot + 1) * timetableProp.pxPerSlot}px;` :
@@ -1459,7 +1428,6 @@
                     fixedBreak.innerText = 'BREAK';
                     fixedBreadWidth = (event.end_slot - event.start_slot) * timetableProp.pxPerSlot + timetableProp
                         .pxPerSlot;
-                    console.log('breakinterval count:::::', fixedBreadWidth)
 
                     roomSlot.append(fixedBreak);
                 }
@@ -1472,12 +1440,10 @@
                 } else {
                     if (!event.is_break) {
 
-                        console.log('other events')
                         roomSlot = document.querySelector(`.room[data-room-lid = "${event.room_lid}"] .room-slots`)
 
                         eventStartSlot = event.start_slot;
                         eventLeftPosition = (eventStartSlot - timeTablestartSlot) * timetableProp.pxPerSlot
-                        // console.log('left position:::::>>', eventLeftPosition)
 
                         if(event.end_slot === (116 - 1) || event.end_slot === (176 - 1)) {
                             occRoomWidth = (event.end_slot - event.start_slot + 1) * timetableProp.pxPerSlot;
@@ -1485,17 +1451,10 @@
                             occRoomWidth = (event.end_slot - event.start_slot + 2) * timetableProp.pxPerSlot;
                         }
 
-                        // let occRoomWidth = (eventLeftPosition + (timetableProp.pxPerSlot * 13) >= (timetableProp
-                        //         .totalSlots * timetableProp.pxPerSlot)) || event.end_slot == fixedBreakSlotStart ?
-                        //     `${timetableProp.pxPerSlot * 12}` :
-                        //     `${timetableProp.pxPerSlot * 13}`
-
 
                         let occupiedRoomSlotItem = document.createElement('div');
                         occupiedRoomSlotItem.setAttribute("class", "occupied-event room-slot-item")
-                        occupiedRoomSlotItem.setAttribute("style",
-                            `left: ${eventLeftPosition}px ;top: 0; text-align:center; width: ${occRoomWidth}px`)
-                        // occupiedRoomSlotItem.setAttribute("style",`width: ${occRoomWidth}px`)
+                        occupiedRoomSlotItem.setAttribute("style", `left: ${eventLeftPosition}px ;top: 0; text-align:center; width: ${occRoomWidth}px`)
                         occupiedRoomSlotItem.setAttribute("data-event-lid", `${event.event_lid}`)
                         occupiedRoomSlotItem.setAttribute("data-module-name", `${event.module_name}`)
                         occupiedRoomSlotItem.setAttribute("data-module-lid", `${event.course_lid}`)
@@ -1556,14 +1515,12 @@
                 fixedBreakBounding = document.querySelector('.fixed-break').getBoundingClientRect();
                 fixedBreakTwoBounding = document.querySelector('.fixed-break[data-break-id="2"]').getBoundingClientRect();
 
-                console.log('fixed break 2Trect::', document.querySelector('.fixed-break[data-break-id="2"]'))
                 console.log("IS DRAGGABLE");
 
                 dragObj.isMouseDown = true;
 
                 dragObj.targetElem = e.target;
                 dragObj.firstRoom = dragObj.targetElem.parentElement
-                // console.log('initial room::',  dragObj.firstRoom)
                 dragObj.targetElem.classList.add('active')
 
                 dragObj.initialRoom = getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY));
@@ -1586,10 +1543,6 @@
                 dragObj.isDraggable = true;
                 dragObj.intialXposition = Math.round(targetProp.initialBounding.left - dragObj.tableLeftPosition - timetableProp.roomNoWidth)
 
-                console.log('target propx::', targetProp.index)
-
-
-
                 dragObj.startSlotIndex = (Math.round((targetProp.initialBounding.left - dragObj.tableLeftPosition -
                     timetableProp.roomNoWidth) / timetableProp.pxPerSlot));
 
@@ -1601,9 +1554,6 @@
                     dragObj.endSlotIndex = (Math.round((targetProp.initialBounding.right - dragObj.tableLeftPosition -
                         timetableProp.roomNoWidth - timetableProp.pxPerSlot) / timetableProp.pxPerSlot)) - 1;
                 }
-
-                console.log('end time slot index ::', dragObj.endSlotIndex)
-               // console.log('end time slot index ::', dragObj.targetElem.style.width)
 
                 dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex].start_time;
                 dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex + 1].end_time;
@@ -1634,19 +1584,22 @@
 
             dragObj.relativeClientX = e.clientX - dragObj.tableLeftPosition
             let errorFactor = e.clientX - 78 - dragObj.tableLeftPosition - dragObj.relativeClientX 
-          
-            console.log( errorFactor )
 
             if(document.querySelectorAll('.pending-event[data-selected]').length > 0 && getCurrentRoom(document.elementsFromPoint(e.clientX, e.clientY))){
+               
+
                 penElem.classList.remove('d-none')
+                if(e.clientX < (dragObj.tableLeftPosition + 50 + 75)){
+                    penElem.classList.add('d-none')
+                }
+
                 if(window.pageYOffset-previousScrollY >= 0){
-                penElem.style.top = e.clientY - 75 + window.pageYOffset +'px';
-            }else{
-                penElem.style.top = e.clientY - 75 -(previousScrollY - window.pageYOffset) +'px';
-            }
+                    penElem.style.top = e.clientY - 75 + window.pageYOffset +'px';
+                }else{
+                    penElem.style.top = e.clientY - 75 -(previousScrollY - window.pageYOffset) +'px';
+                }
             
-            
-            // console.log('left position::', dragObj.relativeClientX)
+
             penElem.style.left = (Math.round((e.clientX - 84.5)/timetableProp.pxPerSlot)*timetableProp.pxPerSlot) + (timetableProp.pxPerSlot/2) + 'px';
             previousScrollY = window.pageYOffset;
 
@@ -1687,24 +1640,23 @@
 
                 targetProp.movedX = dragObj.relativeClientX - targetProp.oldOffsetX - timetableProp.roomNoWidth;
 
-                console.log(tRect.top -  dragObj.timetableRect.top)
                 if(tRect.top -  dragObj.timetableRect.top < -20) {
                     targetProp.movedY = 0;
                 } else {
                     targetProp.movedY = e.clientY - targetProp.initialClientY;
                 }
             
+                targetProp.endErrorCorrection = 13;
+                console.log('moved X::', targetProp.movedX)
+                console.log('target width::', targetProp.width)
 
+                targetProp.movedX = targetProp.movedX > (timetableProp.totalSlots * timetableProp.pxPerSlot) - targetProp.width + targetProp.endErrorCorrection
+                    ? (timetableProp.totalSlots * timetableProp.pxPerSlot) - 156
+                    : targetProp.movedX;
 
-                targetProp.movedX = targetProp.movedX > (timetableProp.totalSlots * timetableProp.pxPerSlot) -
-                    targetProp
-                    .width ? (timetableProp.totalSlots * timetableProp.pxPerSlot) - targetProp.width : targetProp
-                    .movedX;
-
-                dragObj.targetElem.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-                        .pxPerSlot) >= 0 ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp
-                    .pxPerSlot + 'px' : '0px'
-
+                dragObj.targetElem.style.left = (Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot) >= 0 
+                    ? Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot + 'px'
+                    : '0px'
 
                 // if(window.pageYOffset-previousScrollY >= 0){
                 //     dragObj.targetElem.style.top = targetProp.movedY + window.pageYOffset +'px';
@@ -1731,7 +1683,7 @@
                     
                     breakEle.classList.add('d-none');
                     dragObj.targetElem.style.width = '156px';
-                    console.log('over the break:::::::::', dragObj.targetElem.style.width)
+                    // console.log('over the break:::::::::', dragObj.targetElem.style.width)
 
                 } else {
 
@@ -1740,20 +1692,17 @@
                     dragObj.targetElem.style.width = '169px';
                 }
 
+                console.log('total length>>', (timetableProp.totalSlots * timetableProp.pxPerSlot))
+                console.log('target element left position>>', (targetProp.movedX ))
 
-                console.log('timetableProp.totalSlots * timetableProp.pxPerSlot>> ', timetableProp.totalSlots * timetableProp.pxPerSlot)
-                console.log('dragObj.targetElem.offsetRight>> ', dragObj.targetElem.offsetLeft)
-                console.log('dragObj.targetElem.offsetRight>> ', dragObj.targetElem.offsetLeft + 12 * 13 + 13)
 
                 //No break condition for room being placed at end
-                if ((timetableProp.totalSlots * timetableProp.pxPerSlot) - (dragObj.targetElem.offsetLeft + 12 * 13)  < 2) {
-                   
-                    console.log('true:::::::::::::::>>>>>>>>>>', (fixedBreakSlotStart - timeTablestartSlot) * timetableProp.pxPerSlot)
+                if ((timetableProp.totalSlots * timetableProp.pxPerSlot) - (dragObj.targetElem.offsetLeft + 13 * 13)  < 2) {
 
-
+                    console.log('element at end::>>')
                     dragObj.targetElem.querySelector('.break').classList.add('d-none');
 
-                   // dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot + timetableProp.pxPerSlot + 'px'
+                   dragObj.targetElem.style.left = Math.round(targetProp.movedX / timetableProp.pxPerSlot) * timetableProp.pxPerSlot + 'px'
                    dragObj.targetElem.style.width = `var(--eventNoBreakWidth)`
 
                     dragObj.targetElem.querySelector('.end-time').style.right = 0
@@ -1785,7 +1734,6 @@
                 dragObj.leftSlotTime = Math.round(targetProp.movedX / timetableProp.pxPerSlot) >= 0 ? Math.round(targetProp
                     .movedX / timetableProp.pxPerSlot) : 0
 
-                // console.log('>>>>>>>>>moving distance', Math.round(targetProp.movedX / timetableProp.pxPerSlot))
                 dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.leftSlotTime].start_time;
                 dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[(dragObj.leftSlotTime + 11)].end_time;
                 // dragObj.targetElem.querySelector('.start-time').css.background = "#0d6efd !important"
@@ -1807,9 +1755,6 @@
             dragObj.isMouseDown = false;
             dragObj.isDragging = false;
 
-            // console.log('drag end start >> dragObj>>> ', dragObj)
-            // console.log('target prop>>> ', targetProp)
-
 
             //CHECK FOR OVERLAPPING ELEMENTS AND SET ISDROPPABLE
 
@@ -1818,7 +1763,6 @@
 
             for (let elem of dragObj.currentRoomElems) {
 
-                // console.log("INSIDE LOOP TO CHECK COLLISION")
                 let eRect = elem.getBoundingClientRect();
 
                 if (elem.classList.contains('fixed-break') || elem.classList.contains('occupied-event')) {
@@ -1828,6 +1772,7 @@
                     if ((dragObj.tRect.left >= eRect.left && dragObj.tRect.left < eRect.right) || (dragObj.tRect.right > eRect.left && dragObj.tRect
                             .right <= eRect.right) || (dragObj.tRect.right >= eRect.right && dragObj.tRect.left < eRect.right)) {
 
+                        console.log("COLLISION OCCURRED")
                         dragObj.targetElem.querySelector('.start-time').innerHTML = timeJson[dragObj.startSlotIndex]
                             .start_time;
                         dragObj.targetElem.querySelector('.end-time').innerHTML = timeJson[dragObj.endSlotIndex]
@@ -1841,27 +1786,20 @@
 
                     // SWAP CONDITION CHECK
                     
-                    // console.log('target element>>>> ',  dragObj.targetElem)
-                    // console.log('elem>>>> ', elem)
-                    // console.log('>>>>>>> swap tRect> ', dragObj.tRect);
-                    // console.log('>>>>>>> swap eRect> ', eRect);
-
-                    // console.log('SWAP CONDITION>>> ', (Math.abs(dragObj.tRect.left - eRect.left) <= 4) && ((Math.abs(dragObj.tRect.right - eRect.right) <= 4)))
-                    
                     if ((Math.abs(dragObj.tRect.left - eRect.left) <= 4) && ((Math.abs(dragObj.tRect.right - eRect.right) <= 4))) {
                         
                         dragObj.swapElem = elem;
-                        //console.log('swapElem>>>>> ', dragObj.swapElem)
+
                         dragObj.actionType = 'swap';
                         dragObj.swapElemIndex = Array.from(dragObj.currentRoom.children).indexOf(elem);
                         
                         dragObj.isDroppable = true
-                        //console.log("IS SWAP ELEMENET>>> ", dragObj.targetElem.getAttribute('data-event-lid'), dragObj.swapElem.getAttribute('data-event-lid'))
+   
                         break;
 
                     } else if ((dragObj.tRect.left >= eRect.left && dragObj.tRect.left < eRect.right) || (dragObj.tRect.right > eRect.left &&
                     dragObj.tRect.right <= eRect.right) || (dragObj.tRect.right >= eRect.right && dragObj.tRect.left < eRect.right)) {
-                        // console.log('Inside else Not droppable::')
+                        console.log("COLLISION OCCURRED WITH EVENT")
                         dragObj.isDroppable = false;
                         break;
                     }
@@ -1890,21 +1828,18 @@
 
                 rollbackDrag();
 
-                // console.log('setting isDroppable true')
                 dragObj.isDroppable = true;
                 return false;
             }
 
 
             if(dragObj.actionType == 'drag') {
-                //console.log(">>>> OPENING DARG MODAL")
+
 
                 $(document).find("#slotModal .modal-body").html(dragObj.targetElem.innerText)
                 // $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-drag')
 
                 $(document).find("#slotModal .modal-header #close-btn").attr('data-event-lid',`${dragObj.targetElem.getAttribute('data-event-lid')}`)
-
-                //console.log('statrt slot index', timeJson[dragObj.leftSlotTime + 11].end_time)
 
                 $('#slotModal .modal-footer').html(
                     `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${timeJson[dragObj.leftSlotTime].id}" data-end-slot-id="${timeJson[dragObj.leftSlotTime + 11].id}" data-room-id="${dragObj.currentRoom.parentNode.getAttribute('data-room-lid')}"  data-day-lid="${dayLid}" data-event-lid="${dragObj.targetElem.getAttribute('data-event-lid')}" data-action-type="drag" >Confirm Slot</button>`);
@@ -1936,20 +1871,18 @@
         //Revert to old position on Modal close
         $('#close-btn').on('click', function () {
 
-
-            //console.log("CLOSE BUTTON CLICKED", dragObj.actionType)
-
             if(dragObj.actionType == 'drag' || dragObj.actionType == 'swap'){
                 rollbackDrag();
             }
 
             else if(dragObj.actionType == 'allocate') {
                 $(document).find(`.event[data-event-lid="${$(document).find('.selected-pending-event').attr('data-event-lid')}"]`).remove();
+                $(document).find('.selected-pending-event').removeClass('selected-pending-event');
             }
         });
         
         function showError(errors) {
-            //console.log('error::::::::::', errors)
+
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title: errors.description,
@@ -1974,7 +1907,7 @@
         }
 
         function showSuccess(errors) {
-            //console.log('error::::::::::', errors)
+
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title: errors.description,
@@ -1998,11 +1931,8 @@
             simpleAlert.alert(obj);
         }
 
-       
 
         function rollbackDrag() {
-
-           // console.log('dragObj.clonedTarget>>> ',  dragObj.targetElem);
 
             let startTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-start-time'));
             let endTimeObj =  timeJson.filter(elem => elem.id == dragObj.targetElem.getAttribute('data-end-time'));
@@ -2020,12 +1950,10 @@
 
             if(dragObj.targetElem.getAttribute('data-end-time') == (116 - 1) || dragObj.targetElem.getAttribute('data-end-time') == (176 - 1)) {
                 
-               // console.log('INSIDE IFF CONDITION')
-
                 $(dragObj.targetElem).find('.break').addClass('d-none');
                 $(dragObj.targetElem).css('width', `${durationWidth}px`);
             } else {
-                console.log('INSIDE ELSE CONDITION', Math.round(12 * 13 + 13))
+                // console.log('INSIDE ELSE CONDITION', Math.round(12 * 13 + 13))
 
                 $(dragObj.targetElem).css('width', `${Math.round(12 * 13 + 13)}px`);
             }
@@ -2064,7 +1992,7 @@
             dragObj.clonedTarget.style.zIndex = 'unset';
             
 
-            if(data.end_time_lid == (116 - 1) || data.end_time_lid == (176 - 1)) {
+            if(data.end_time_lid == (116 - 1) || data.end_time_lid == (176 - 1) || data.end_time_lid == (207 - 1)) {
                 dragObj.clonedTarget.style.width = '156px';
             } else {
                 dragObj.clonedTarget.style.width = '169px';
@@ -2082,7 +2010,7 @@
         }
 
         function appendSwapElement(targetElemData, swapElemData, initialPositionIndex) {
-            //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> CALLING APPEND SWAP ELEMENT")
+
 
             console.log('swapElemData>> ', swapElemData)
             console.log('targetElemData>> ', targetElemData)
@@ -2106,7 +2034,6 @@
                 swapClone.style.width = '169px';
             }
 
-            console.log('targetElemData.end_time_lid >>>>>>', targetElemData.end_time_lid)
 
             if(targetElemData.end_time_lid == (116 - 1) || targetElemData.end_time_lid == (176 - 1)) {
                 dragObj.clonedTarget.style.width = '156px';
