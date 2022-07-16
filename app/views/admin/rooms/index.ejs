@@ -298,13 +298,23 @@
             $(".confirm-btn").on('click',function(){
                let room_tran_details_lid =  $("#room-id").val()
                let reason =  $("#cancel-reason").val()
+               let inputJSSON = []
+
                if(reason.length > 5){
+
+                let obj= {
+                    room_tran_details_lid: room_tran_details_lid,
+                    reason: reason
+                }
+
+                inputJSSON.push(obj)
+
                 console.log('CALL APIHere')
                 let ApiObj = {
                 type: 'POST',
-                url: '/admin/rooms/book',
+                url: '/admin/rooms/cancel-request',
                 data: {
-                    inputJSON: JSON.stringify(roomJson)
+                    inputJSON: JSON.stringify(inputJSSON)
                 },
                 dataType: 'JSON'
             }

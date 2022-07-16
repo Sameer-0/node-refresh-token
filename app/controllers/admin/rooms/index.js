@@ -238,6 +238,7 @@ module.exports = {
     },
 
     showEntries:(req, res, next)=>{
+        console.log(':::::::::::::::::::showEntries:::::::::::::::::::::')
         Rooms.bookedRooms(res.locals.slug, req.body.rowcount).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
@@ -265,6 +266,8 @@ module.exports = {
 
       updateRequest: (req, res) => {
 
+        console.log(':::::::::::::::::::updateRequest::::::::::::::::::::')
+
         let object = {
             update_room_transactions_details: JSON.parse(req.body.inputJSON)
         }
@@ -283,4 +286,27 @@ module.exports = {
             }
         })
     },
+
+    cancelRequest: (req, res) => {
+
+        console.log(':::::::::::::cancelRequest:::::::::::::::')
+
+        let object = {
+            trans_cancellation_reasons: JSON.parse(req.body.inputJSON)
+        }
+     
+        RoomTransactionDetails.cancelRequest(res.locals.slug, object, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            console.log('error::::::::::>>',error)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    }
 }
