@@ -7,6 +7,8 @@ const Simulation = require('../../../models/Simulation')
 const Programs = require('../../../models/Programs')
 
 module.exports = {
+
+  //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
     Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {

@@ -8,13 +8,13 @@ module.exports = class Simulation {
 
     static dateRange(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, dateString, 103)), 23) AS minDate, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, dateString, 103))), 23) AS maxDate FROM [${slug}].timesheet07042020`)
+            return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, date_str, 103)), 23) AS minDate, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, date_str, 103))), 23) AS maxDate FROM [${slug}].timesheet`)
         })
     }
 
     static semesterDates(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT dateString, dateNameString, status FROM [${slug}].timesheet07042020`)
+            return pool.request().query(`SELECT date_str as dateString, day_name as dateNameString, active FROM [${slug}].timesheet`)
         })
     }
 
@@ -35,7 +35,7 @@ module.exports = class Simulation {
 
     static programList(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT p.id, p.program_id, p.program_name as programName from [${slug}].faculty_timetable ft INNER JOIN [${slug}].programs p ON p.id = ft.program_lid WHERE ft.active = 1`)
+            return pool.request().query(`SELECT DISTINCT p.id, p.program_id, p.program_name as programName from [${slug}].timesheet ft INNER JOIN [${slug}].programs p ON p.id = ft.program_lid WHERE ft.active = 1`)
         })
     }
 
@@ -55,9 +55,9 @@ module.exports = class Simulation {
         return poolConnection.then(pool => {
             let lecStmt;
             if (!body.facultyId) {
-                lecStmt = `SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`
+                lecStmt = `SELECT * FROM [slug].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`
             } else {
-                lecStmt = `SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`
+                lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`
             }
             let request = pool.request()
             return request
@@ -73,7 +73,7 @@ module.exports = class Simulation {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
-                .query(`SELECT COUNT(*) as count FROM [${slug}].faculty_timetable WHERE active = 1 AND (sap_flag <> 'E' OR is_new_ec <> 1)`)
+                .query(`SELECT COUNT(*) as count FROM [${slug}].timesheet WHERE active = 1 AND (sap_flag <> 'E' OR is_new_ec <> 1)`)
         })
     }
 
@@ -88,7 +88,7 @@ module.exports = class Simulation {
                
             // }
 
-            let lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].faculty_timetable WHERE active = 1 ORDER BY id ASC;`
+            let lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].timesheet WHERE active = 1 ORDER BY id ASC;`
             let request = pool.request()
             return request
                 // .input('fromDate', sql.NVarChar(20), body.fromDate)
@@ -120,7 +120,7 @@ module.exports = class Simulation {
                 .input('division', sql.NVarChar(20), body.division)
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .input('toDate', sql.NVarChar(20), body.toDate)
-                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE sap_event_id = @sapEventId AND active = 1 AND faculty_id = @fromFacultyId AND program_id = @programId AND module_id = @moduleId AND div = @division AND (CONVERT(DATE, date_str, 103) BETWEEN @fromDate AND @toDate) ORDER BY CONVERT(DATE, date_str, 103), slot_no`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE sap_event_id = @sapEventId AND active = 1 AND faculty_id = @fromFacultyId AND program_id = @programId AND module_id = @moduleId AND division = @division AND (CONVERT(DATE, date_str, 103) BETWEEN @fromDate AND @toDate) ORDER BY CONVERT(DATE, date_str, 103), slot_no`)
         })
     }
 
@@ -130,7 +130,7 @@ module.exports = class Simulation {
             return request
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .input('toDate', sql.NVarChar(20), body.toDate)
-                .query(`SELECT DISTINCT faculty_id, faculty_name FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103)`)
+                .query(`SELECT DISTINCT faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103)`)
         })
     }
 
@@ -143,7 +143,7 @@ module.exports = class Simulation {
                 .input('moduleId', sql.NVarChar(20), body.moduleId)
                 .input('division', sql.NVarChar(20), body.division)
                 .input('facultyId', sql.NVarChar(20), body.facultyId)
-                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND sap_event_id = @sapEventId AND program_id = @programId AND module_id = @moduleId AND div = @division AND faculty_id = @facultyId`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND sap_event_id = @sapEventId AND program_id = @programId AND module_id = @moduleId AND division = @division AND faculty_id = @facultyId`)
         })
     }
 
@@ -170,7 +170,7 @@ module.exports = class Simulation {
                 .input('acadSession', sql.NVarChar(20), body.acadSession)
                 .input('programId', sql.NVarChar(20), body.programId)
                 .input('division', sql.NVarChar(20), body.division)
-                .query(`SELECT DISTINCT Stuff((SELECT N'-' + part FROM fn_SplitString1(event_name, '-') WHERE id = 1 FOR XML PATH(''), TYPE).value('text()[1]','nvarchar(max)'),1,1,N'') AS event_name, event_abbr, sap_event_id, module_id, acad_year, event_type, unique_id_for_sap FROM [${slug}].faculty_timetable  WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession AND div = @division`)
+                .query(`SELECT DISTINCT Stuff((SELECT N'-' + part FROM fn_SplitString1(event_name, '-') WHERE id = 1 FOR XML PATH(''), TYPE).value('text()[1]','nvarchar(max)'),1,1,N'') AS event_name, event_abbr, sap_event_id, module_id, acad_year, event_type, unique_id_for_sap FROM [${slug}].faculty_timetable  WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession AND division = @division`)
         })
     }
 
@@ -179,7 +179,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('program_lid', sql.NVarChar(20), program_lid)
-                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND program_lid = @program_lid AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
         })
     }
 
@@ -189,7 +189,7 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.NVarChar(20), body.acad_session)
-                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
         })
     }
 
@@ -198,7 +198,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('program_lid', sql.Int, program_lid)
-                .query(`SELECT DISTINCT acad_session FROM [${slug}].faculty_timetable WHERE program_lid = @program_lid`)
+                .query(`SELECT DISTINCT acad_session FROM [${slug}].timesheet WHERE program_lid = @program_lid`)
         })
     }
 
@@ -208,7 +208,7 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.NVarChar(20), body.acad_session)
-                .query(`SELECT DISTINCT div FROM [${slug}].faculty_timetable WHERE program_lid = @program_lid AND acad_session = @acad_session`)
+                .query(`SELECT DISTINCT division as div FROM [${slug}].timesheet WHERE program_lid = @program_lid AND acad_session = @acad_session`)
         })
     }
 
@@ -219,7 +219,7 @@ module.exports = class Simulation {
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.NVarChar(20), body.acad_session)
                 .input('division', sql.NVarChar(20), body.division)
-                .query(`SELECT * FROM [${slug}].faculty_timetable WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND div = @division AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND division = @division AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
         })
     }
 
@@ -229,7 +229,7 @@ module.exports = class Simulation {
             return request
                 .input('programId', sql.NVarChar(20), body.programId)
                 .input('acadSession', sql.NVarChar(20), body.acadSession)
-                .query(`SELECT DISTINCT div FROM faculty_timetable WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession  ORDER BY div`)
+                .query(`SELECT DISTINCT division as div FROM [${slug}].timesheet WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession  ORDER BY division`)
         })
     }
 

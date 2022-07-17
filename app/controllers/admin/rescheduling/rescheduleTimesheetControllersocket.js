@@ -18,7 +18,12 @@ const queue = new Bull('rescheduling-queue');
 
 
 
-const {poolConnection} = require('../../../../config/db');
+const {
+    sql,
+    poolConnection,
+    execPreparedStmt
+} = require('../../../../config/db')
+
 require('dotenv').config();
 
 
