@@ -7,6 +7,7 @@ const path = require('path');
 
 const setRouter = require("./router")
 const timetablesocket = require("./app/controllers/admin/timeTableSimulation/timetablesocket");
+const rescheduleTimesheetControllersocket = require("./app/controllers/admin/rescheduling/rescheduleTimesheetControllersocket");
 const {
     verifySubdomain
 } = require('./app/middlewares/domain')
@@ -181,10 +182,12 @@ if (process.env.APP_ENV === 'PRODUCTION') {
     global.io = require("socket.io")(server);
     //SOCKET CONNECTION
     global.io.on("connection", timetablesocket.respond);
+    global.io.on("connection",rescheduleTimesheetControllersocket.respond)
 } else {
     const server = http.createServer(app).listen(process.env.APP_PORT);
     //socket initialization
     global.io = require("socket.io")(server);
     //SOCKET CONNECTION
     global.io.on("connection", timetablesocket.respond);
+    global.io.on("connection",rescheduleTimesheetControllersocket.respond)
 }

@@ -450,28 +450,15 @@ module.exports = {
   },
 
   getCancelledLectures: async (req, res, next) => {
-
     console.log('>>>>>>>>MODIFY<<<<<<<<<')
-    let request = req.app.locals.db.request();
-
-
-    let facultyStmt = `WITH cte AS (SELECT *, ROW_NUMBER() OVER(PARTITION BY unx_lid ORDER BY id DESC) AS row_num FROM reschedule_transaction WHERE trans_status = 'success')
-    SELECT id, transaction_id, z_flag, event_name, event_type, program_id, module_id, division, acad_session, faculty_id, date_str, room_no, acad_year, slot_name, (SELECT sapStartTime FROM [${res.locals.slug}].school_timing WHERE active = 'Y' AND dayId = 1 AND slotName = slot_name) AS start_time, (SELECT sapEndTime FROM [${res.locals.slug}].school_timing WHERE active = 'Y' AND dayId = 1 AND slotName = slot_name) AS end_time, reason_id, sap_event_id, unx_lid FROM cte WHERE row_num = 1 AND z_flag = 'C'`;
-
-    console.log('facultyStmt: ', facultyStmt)
-    //console.log('roomStmt: ', roomStmt)
-
-    Promise.all([request.query(facultyStmt)]).then(result => {
-
+    Simulation.CancelledLectures(res.locals.slug).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result[0].recordset)
-
+      console.log(result.recordset)
       res.json({
         status: 200,
-        lectureList: result[0].recordset
+        lectureList: result.recordset
       })
     })
-
   },
 
   getAcadSessions: async (req, res, next) => {
@@ -523,12 +510,12 @@ module.exports = {
   getNewExtraLectures: async (req, res, next) => {
     console.log('>>>>>>>getNewExtraLectures<<<<<<<<<')
     console.log(req.body)
-    Promise.all([Simulation.newExtraLecture(res.locals.slug, req.body)]).then(result => {
+    Simulation.newExtraLecture(res.locals.slug, req.body).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result[0].recordset)
+      console.log(result.recordset)
       res.json({
         status: 200,
-        lectureList: result[0].recordset
+        lectureList: result.recordset
       })
     }).catch(err => {
       console.log(err)
@@ -579,7 +566,7 @@ module.exports = {
   },
 
   showEntries: async (req, res, next) => {
-    console.log('>>>>>>>showEntries<<<<<<<<<')
+    console.log('>>>>>>>showEntries<<<<<<<<<',req.body)
     Simulation.facultyLectureLimit(res.locals.slug, req.body).then(result => {
       res.json({
         status: 200,
@@ -648,13 +635,12 @@ module.exports = {
 
   findBySchelDivisionByProgramSession: (req, res, next) => {
     console.log('>>>>>>>>>>>>>>findByDivisionByProgramSession<<<<<<<<<<<<', req.body)
-    Promise.all([Simulation.findBySchelDivisionByProgramSession(req.body, res.locals.slug), Simulation.divisionByProgramSessionId(req.body, res.locals.slug)]).then(result => {
+   Simulation.findBySchelDivisionByProgramSession(req.body, res.locals.slug).then(result => {
       // console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
         message: "success",
-        lectureList: result[0].recordset,
-        divisionList: result[1].recordset
+        lectureList: result.recordset,
       })
     }).catch(error => {
       console.log(error)
