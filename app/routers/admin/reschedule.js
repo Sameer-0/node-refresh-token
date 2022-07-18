@@ -20,4 +20,9 @@ router.post('/rescheduling/find-division-by-programid-acadsession', index.findBy
 router.post('/rescheduling/find-by-div-program-session', index.findBySchelDivisionByProgramSession)
 router.post('/rescheduling/get-new-extra-lectures/', index.getNewExtraLectures)
 router.post('/rescheduling/get-cancelled-lectures', index.getCancelledLectures)
+router.post('/rescheduling/get-faculties', index.getResFaculties)
+router.post('/rescheduling/get-slots', index.getResSlots)
+router.post('/rescheduling/get-faculties-rooms-modify', index.getResFacultiesRooms)
+router.post('/reschedule/get-rooms', index.getResRooms)
+
 module.exports = router

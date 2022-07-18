@@ -320,7 +320,7 @@ code {
         <div id="normal-modify" class="d-none">
           <div class="mb-3">
             <label>To Date: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-date-dropdown" class="form-control modal-selct2" disabled>
+            <select id="reschedule-date-dropdown" class="form-control select2" disabled>
               <option selected disabled value>--Select Date--</option>
               <% for (let date of semesterDates) { %>
                 <option value="<%- date.dateString %>">
@@ -343,7 +343,7 @@ code {
           </div>
           <div class="mb-3">
             <label>Select Room: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-room-dropdown" class="form-control modal-selct2" disabled>
+            <select id="reschedule-room-dropdown" class="form-control select2" disabled>
               <option disabled selected value>--Select Room--</option>
             </select>
           </div>
@@ -457,6 +457,7 @@ code {
               //SOCKET IO
 
               $(".select2").select2()
+              //$(".modal-selct2").select2()
 
               let socketRoom = `<%- locals.username %>`
               console.log('socketRoom==========>>', socketRoom)
@@ -539,6 +540,8 @@ code {
 
                 let rescheduleType = $(this).val();
 
+                console.log('rescheduleType::::::::::',rescheduleType)
+
                 rescheduleObj.toDate = '';
                 rescheduleObj.toSlot = '';
                 rescheduleObj.toStartTime = '';
@@ -554,8 +557,10 @@ code {
                 console.log('Changed Obj: ', rescheduleObj)
 
                 if (rescheduleType == 3 && isBlurred) {
+                  console.log('REMOVE DISABLED ATTR FROM DATE:::::::::::::::>>>')
                   getFacultiesForModule();
                   $('#reschedule-date-dropdown').attr('disabled', false);
+                  console.log('DROP DOWN:::::::::::>>',$('#reschedule-date-dropdown'))
                   $('#reschedule-to-wrapper').removeClass('blur');
                   isBlurred = false;
                 } else if (rescheduleType == 2) {
@@ -565,7 +570,8 @@ code {
                   rescheduleObj.toStartTime = rescheduleObj.fromStartTime
                   rescheduleObj.toEndTime = rescheduleObj.fromEndTime
                   console.log('modified Obj: ', rescheduleObj)
-                  getFacultiesRoomsForModify()
+                  getFacultiesRoomsForModify(rescheduleObj.toDate)
+                  console.log('getFacultiesRoomsForModify:::::::::::::::')
                   $('#reschedule-to-wrapper').removeClass('blur');
                   $('#reschedule-date-dropdown').val(rescheduleObj.fromDate).change();
                   //$('#reschedule-slot-dropdown').val(rescheduleObj.fromSlot).change();
@@ -961,7 +967,10 @@ code {
 
               $(`#reschedule-date-dropdown`).on('change', function () {
                 rescheduleObj.toDate = $(this).val();
+                console.log('reschedule-date-dropdown:::::::::::::',rescheduleObj.toDate)
                 $('#reschedule-faculty-dropdown').attr('disabled', false)
+
+                getFacultiesRoomsForModify(rescheduleObj.toDate)
               })
 
 
@@ -969,13 +978,14 @@ code {
               $(`#reschedule-faculty-dropdown`).on('change', function () {
                 rescheduleObj.toFacultyId = $(this).val();
 
+                console.log('reschedule-faculty-dropdown::::::::::::::::>>>')
                 if (rescheduleObj.reschFlag !== 'R') {
                   return false;
                 }
 
                 $.ajax({
                   type: 'POST',
-                  url: '/simulation/reschedule/get-slots/',
+                  url: '/admin/rescheduling/get-slots',
                   dataType: "JSON",
                   data: {
                     facultyId: $(this).val(),
@@ -987,7 +997,7 @@ code {
 
                     for (let slot of data.slotList) {
                       slotStr +=
-                        `<option value="${slot.slotName}" data-sap-start-time="${slot.sapStartTime}" data-sap-end-time="${slot.sapEndTime}">${slot.starttime} - ${slot.endtime}</option>`
+                        `<option value="${slot.id}" data-sap-start-time="${slot.sap_start_time}" data-sap-end-time="${slot.sap_end_time}">${slot.start_time} - ${slot.end_time}</option>`
                     }
 
                     $('#reschedule-slot-dropdown').html(slotStr).attr('disabled', false)
@@ -1000,6 +1010,8 @@ code {
 
 
               $(`#reschedule-slot-dropdown`).on('change', function () {
+
+                console.log('reschedule-slot-dropdown::::::::::::::::::>>>>',rescheduleObj)
 
                 if (rescheduleObj.reschFlag !== 'R') {
                   return false;
@@ -1880,9 +1892,10 @@ code {
 
               //get faculty for modulen and render
               function getFacultiesForModule() {
+                console.log('getFacultiesForModule rescheduleObj', rescheduleObj)
                 $.ajax({
                   type: 'POST',
-                  url: '/simulation/reschedule/get-faculties/',
+                  url: '/admin/rescheduling/get-faculties/',
                   dataType: "JSON",
                   data: {
                     moduleId: rescheduleObj.moduleId,
@@ -1906,17 +1919,20 @@ code {
                 })
               }
 
-              function getFacultiesRoomsForModify() {
+
+              function getFacultiesRoomsForModify(todate) {
+
+                console.log('getFacultiesRoomsForModify TO DATE:::::::::::::>>>',todate)
                 $.ajax({
                   type: 'POST',
-                  url: '/simulation/reschedule/get-faculties-rooms-modify/',
+                  url: '/admin/rescheduling/get-faculties-rooms-modify/',
                   dataType: "JSON",
                   data: {
-                    moduleId: rescheduleObj.moduleId,
-                    programId: rescheduleObj.programId,
-                    dateStr: rescheduleObj.fromDate,
-                    slotName: rescheduleObj.fromSlot,
-                    roomNo: rescheduleObj.fromRoom
+                    // moduleId: rescheduleObj.moduleId,
+                    // programId: rescheduleObj.programId,
+                    dateStr: todate,
+                    // slotName: rescheduleObj.fromSlot,
+                    // roomNo: rescheduleObj.fromRoom
                   },
                   success: data => {
                     console.log('Success: ', data)
@@ -1925,7 +1941,7 @@ code {
 
                     for (let faculty of data.facultyList) {
                       facultyListStr +=
-                        `<option value="${faculty.facultyId}">${faculty.facultyName}/${faculty.facultyId}</option>`
+                        `<option value="${faculty.faculty_id}">${faculty.faculty_name}/${faculty.faculty_id}</option>`
                     }
 
                     for (let room of data.roomList) {

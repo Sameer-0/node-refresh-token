@@ -14,7 +14,7 @@ module.exports = class Simulation {
 
     static semesterDates(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT date_str as dateString, day_name as dateNameString, active FROM [${slug}].timesheet`)
+            return pool.request().query(`SELECT DISTINCT date_str as dateString, day_name as dateNameString, active FROM [${slug}].timesheet`)
         })
     }
 
@@ -85,7 +85,7 @@ module.exports = class Simulation {
             // } else if(!body.fromDate && !body.toDate){
             //     lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].faculty_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC;`
             // }else{
-               
+
             // }
 
             let lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].timesheet WHERE active = 1 ORDER BY id ASC;`
@@ -233,12 +233,68 @@ module.exports = class Simulation {
         })
     }
 
-    static CancelledLectures(slug){
+    static CancelledLectures(slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
-
             return request.query(`WITH cte AS (SELECT *, ROW_NUMBER() OVER(PARTITION BY unx_lid ORDER BY id DESC) AS row_num FROM reschedule_transaction WHERE trans_status = 'success')
                 SELECT id, transaction_id, z_flag, event_name, event_type, program_id, module_id, division, acad_session, faculty_id, date_str, room_no, acad_year, slot_name, (SELECT sapStartTime FROM [${slug}].school_timing WHERE active = 'Y' AND dayId = 1 AND slotName = slot_name) AS start_time, (SELECT sapEndTime FROM [${slug}].school_timing WHERE active = 'Y' AND dayId = 1 AND slotName = slot_name) AS end_time, reason_id, sap_event_id, unx_lid FROM cte WHERE row_num = 1 AND z_flag = 'C'`)
+        })
+    }
+
+    static getResFaculties(slug, body) {
+        return poolConnection.then(pool => {
+            // SELECT facultyId, facultyName FROM [asmsoc_quality].[asmsoc-mum].faculty_work WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}
+
+            let request = pool.request()
+            return request
+                .input('moduleId', sql.NVarChar(20), body.moduleId)
+                .input('programId', sql.NVarChar(20), body.programId)
+                .query(`SELECT f.faculty_id as facultyId,  f.faculty_name as facultyName FROM [${slug}].faculty_works fw
+                INNER JOIN [${slug}].program_sessions ps
+                ON ps.id =  fw.program_session_lid
+                INNER JOIN [${slug}].faculties f
+                ON f.id =  fw.faculty_lid
+                where fw.module_lid = @moduleId and ps.program_lid = @programId`)
+        })
+    }
+
+
+    static getResSlots(slug, body) {
+        return poolConnection.then(pool => {
+            // SELECT DISTINCT slotName, starttime, endtime, sapStartTime, sapEndTime FROM [${res.locals.slug}].school_timing WHERE slotName NOT IN (SELECT DISTINCT slot_name FROM faculty_timetable WHERE active = 1 AND faculty_id = '${req.body.facultyId}' AND date_str = '${req.body.dateStr}')
+            let request = pool.request()
+            return request
+                .input('facultyId', sql.NVarChar(20), body.facultyId)
+                .input('dateStr', sql.NVarChar(20), body.dateStr)
+                .query(`select start_time,  end_time,  sap_start_time  from [${slug}].timesheet WHERE faculty_id = @facultyId  AND date_str = @dateStr`)
+        })
+    }
+
+    static uniqueFacultyByDate(slug, date_str){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('dateStr', sql.NVarChar(20), date_str)
+                .query(`select DISTINCT faculty_id, faculty_name, faculty_lid from [${slug}].timesheet WHERE date_str = @dateStr`)
+        })
+    }
+
+    static timeSheetRoomByDate(slug, date_str){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('dateStr', sql.NVarChar(20), date_str)
+                .query(`select * from [${slug}].timesheet WHERE date_str = @dateStr`)
+        })
+    }
+
+
+    static getResRooms(slug, date_str){
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('dateStr', sql.NVarChar(20), date_str)
+                .query(`select DISTINCT room_no from [${slug}].timesheet WHERE date_str = @dateStr`)
         })
     }
 }
