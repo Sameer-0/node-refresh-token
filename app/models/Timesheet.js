@@ -10,7 +10,7 @@ module.exports = class TimeSheet {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('monthInt', sql.Int, monthInt)
-                .query(`SELECT CONVERT(NVARCHAR, CONVERT(DATE, date_str, 103), 23) AS dateStr FROM [${slug}].faculty_timetable WHERE active = 1 AND date_str IN (SELECT date_str FROM [${slug}].timesheet WHERE month_int = @monthInt)
+                .query(`SELECT CONVERT(NVARCHAR, CONVERT(DATE, date_str, 103), 23) AS dateStr FROM [${slug}].timesheet WHERE active = 1 AND date_str IN (SELECT date_str FROM [${slug}].timesheet WHERE month_int = @monthInt)
             GROUP BY date_str`)
         })
     }
