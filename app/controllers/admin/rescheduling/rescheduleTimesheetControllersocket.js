@@ -1,4 +1,3 @@
-const sql = require('mssql')
 const sanitizer = require('sanitize')();
 const soap = require('soap');
 const path = require('path');
