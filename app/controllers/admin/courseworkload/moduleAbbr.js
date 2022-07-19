@@ -17,8 +17,6 @@ const excel = require("exceljs");
 
 
 module.exports = {
-
-
     getPage: (req, res) => {
         Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
             res.render('admin/courseworkload/abbr_update', {

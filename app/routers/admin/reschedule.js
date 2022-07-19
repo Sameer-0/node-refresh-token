@@ -23,6 +23,6 @@ router.post('/rescheduling/get-cancelled-lectures', index.getCancelledLectures)
 router.post('/rescheduling/get-faculties', index.getResFaculties)
 router.post('/rescheduling/get-slots', index.getResSlots)
 router.post('/rescheduling/get-faculties-rooms-modify', index.getResFacultiesRooms)
-router.post('/reschedule/get-rooms', index.getResRooms)
-
+router.post('/rescheduling/get-rooms', index.getResRooms)
+router.post('/rescheduling/get-divisionby-program-session-module', index.getDivisionByProgramSessionModule)
 module.exports = router

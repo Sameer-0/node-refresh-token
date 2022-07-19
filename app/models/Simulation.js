@@ -51,19 +51,23 @@ module.exports = class Simulation {
         })
     }
 
-    static facultyLecture(slug, body) {
+
+    static LectureByDateRange(slug, body) {
+        console.log('body:::::::::',body)
         return poolConnection.then(pool => {
-            let lecStmt;
-            if (!body.facultyId) {
-                lecStmt = `SELECT * FROM [slug].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`
-            } else {
-                lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND faculty_id = @facultyId AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`
-            }
+            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`;
+           
+            console.log('lecStmt:::::::::::::',lecStmt)
+
             let request = pool.request()
             return request
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .input('toDate', sql.NVarChar(20), body.toDate)
                 .input('facultyId', sql.Int, body.facultyId)
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('division_lid', sql.Int, body.division_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
                 .input('pageNo', sql.Int, body.pageNo)
                 .query(lecStmt)
         })
@@ -110,17 +114,24 @@ module.exports = class Simulation {
     }
 
     static facultyByModuleProgramSapDivisionId(slug, body) {
+        console.log('facilty_lis:::', body)
         return poolConnection.then(pool => {
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND (sap_flag <> 'E' OR is_new_ec <> 1)`;
+           
+            console.log('lecStmt:::::::::::::',lecStmt)
+
             let request = pool.request()
             return request
-                .input('sapEventId', sql.NVarChar(20), body.sapEventId)
-                .input('fromFacultyId', sql.NVarChar(20), body.fromFacultyId)
-                .input('programId', sql.NVarChar(20), body.programId)
-                .input('moduleId', sql.NVarChar(20), body.moduleId)
-                .input('division', sql.NVarChar(20), body.division)
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .input('toDate', sql.NVarChar(20), body.toDate)
-                .query(`SELECT * FROM [${slug}].timesheet WHERE sap_event_id = @sapEventId AND active = 1 AND faculty_id = @fromFacultyId AND program_id = @programId AND module_id = @moduleId AND division = @division AND (CONVERT(DATE, date_str, 103) BETWEEN @fromDate AND @toDate) ORDER BY CONVERT(DATE, date_str, 103), slot_no`)
+                .input('facultyId', sql.Int, body.facultyId)
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('division_lid', sql.Int, body.division_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
+                .input('facultyLid', sql.Int, body.facultyLid)
+                // .input('pageNo', sql.Int, body.pageNo)
+                .query(lecStmt)
         })
     }
 
@@ -198,7 +209,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('program_lid', sql.Int, program_lid)
-                .query(`SELECT DISTINCT acad_session FROM [${slug}].timesheet WHERE program_lid = @program_lid`)
+                .query(`SELECT DISTINCT acad_session_lid, acad_session FROM [${slug}].timesheet WHERE program_lid = @program_lid`)
         })
     }
 
@@ -207,8 +218,8 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
-                .input('acad_session', sql.NVarChar(20), body.acad_session)
-                .query(`SELECT DISTINCT division as div FROM [${slug}].timesheet WHERE program_lid = @program_lid AND acad_session = @acad_session`)
+                .input('acad_session', sql.Int, body.acad_session)
+                .query(`SELECT DISTINCT division as div FROM [${slug}].timesheet WHERE program_lid = @program_lid AND acad_session_lid = @acad_session`)
         })
     }
 
@@ -222,6 +233,8 @@ module.exports = class Simulation {
                 .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND division = @division AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
         })
     }
+
+
 
     static divisionByProgramAcadSession(body, slug) {
         return poolConnection.then(pool => {
@@ -270,7 +283,7 @@ module.exports = class Simulation {
         })
     }
 
-    static uniqueFacultyByDate(slug, date_str){
+    static uniqueFacultyByDate(slug, date_str) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -279,7 +292,7 @@ module.exports = class Simulation {
         })
     }
 
-    static timeSheetRoomByDate(slug, date_str){
+    static timeSheetRoomByDate(slug, date_str) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -289,12 +302,33 @@ module.exports = class Simulation {
     }
 
 
-    static getResRooms(slug, date_str){
+    static getResRooms(slug, date_str) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
                 .input('dateStr', sql.NVarChar(20), date_str)
                 .query(`select DISTINCT room_no from [${slug}].timesheet WHERE date_str = @dateStr`)
+        })
+    }
+
+    static findModuleByProgramSession(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('acad_session', sql.Int, body.acad_session)
+                .query(`SELECT DISTINCT module_lid, module_name from [${slug}].timesheet where program_lid = @program_lid and acad_session_lid = @acad_session`)
+        })
+    }
+
+    static getDivisionByProgramSessionModule(body, slug) {
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .query(`SELECT DISTINCT division_lid,division from [${slug}].timesheet where program_lid = @program_lid and acad_session_lid = @acad_session_lid and module_lid = @module_lid`)
         })
     }
 }
