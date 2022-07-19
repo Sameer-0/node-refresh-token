@@ -203,6 +203,7 @@ module.exports = {
         let workbook = new excel.Workbook();
         let Allocatedworksheet = workbook.addWorksheet('Allocated Event');
         let UnAllocatedworksheet = workbook.addWorksheet('UnAllocated Event');
+        let timeTablePivotedworksheet = workbook.addWorksheet('Time Table Pivoted');
         Allocatedworksheet.columns = [{
                 header: "Room Number",
                 key: "room_number",
@@ -357,10 +358,69 @@ module.exports = {
             },
         ];
 
-        Promise.all([TimeTable.AllocatedEventExcel(res.locals.slug), TimeTable.unAllocatedEventExcel(res.locals.slug)]).then(result => {
+        timeTablePivotedworksheet.columns = [
+            {
+                header: "Program Name",
+                key: "program_name",
+                width: 25
+            },
+            {
+                header: "Academic Session",
+                key: "acad_session",
+                width: 25
+            },
+            {
+                header: "Division",
+                key: "division",
+                width: 25
+            },
+            {
+                header: "Start Time",
+                key: "start_time",
+                width: 25
+            },
+            {
+                header: "End Time",
+                key: "end_time",
+                width: 25
+            },
+            {
+                header: "Monday",
+                key: "Monday",
+                width: 25
+            },
+            {
+                header: "Tuesday",
+                key: "Tuesday",
+                width: 25
+            },
+            {
+                header: "Wednesday",
+                key: "Wednesday",
+                width: 25
+            },
+            {
+                header: "Thursday",
+                key: "Thursday",
+                width: 25
+            },
+            {
+                header: "Friday",
+                key: "Friday",
+                width: 25
+            },
+            {
+                header: "Saturday",
+                key: "Saturday",
+                width: 25
+            }
+        ]
+
+        Promise.all([TimeTable.AllocatedEventExcel(res.locals.slug), TimeTable.unAllocatedEventExcel(res.locals.slug), TimeTable.timeTablePivotedExcel(res.locals.slug)]).then(result => {
             // Add Array Rows
             Allocatedworksheet.addRows(result[0].recordset);
             UnAllocatedworksheet.addRows(result[1].recordset);
+            timeTablePivotedworksheet.addRows(result[2].recordset);
             // res is a Stream object
             res.setHeader(
                 "Content-Type",
