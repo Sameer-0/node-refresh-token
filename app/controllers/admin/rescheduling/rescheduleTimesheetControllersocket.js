@@ -1,4 +1,3 @@
-const sql = require('mssql')
 const sanitizer = require('sanitize')();
 const soap = require('soap');
 const path = require('path');
@@ -18,7 +17,12 @@ const queue = new Bull('rescheduling-queue');
 
 
 
-const {poolConnection} = require('../../../../config/db');
+const {
+    sql,
+    poolConnection,
+    execPreparedStmt
+} = require('../../../../config/db')
+
 require('dotenv').config();
 
 

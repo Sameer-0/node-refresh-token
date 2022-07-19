@@ -235,4 +235,16 @@ module.exports = class {
             ORDER BY id DESC`)
         })
     }
+
+        //object, res.locals.slug, res.locals.userId
+        static updateAbbr(inputJson, slug, userId) {
+            console.log('JSON::::::::::::::::::>>', JSON.stringify(inputJson))
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                    .input('last_modified_by', sql.Int, userId)
+                    .output('output_json', sql.NVarChar(sql.MAX))
+                    .execute(`[${slug}].[sp_update_module_event_abbr]`)
+            })
+        }
 }
