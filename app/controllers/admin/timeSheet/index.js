@@ -2,19 +2,21 @@ const AcademicYear = require('../../../models/AcademicYear')
 const Timesheet = require('../../../models/Timesheet')
 const Rooms = require('../../../models/Rooms');
 const SlotIntervalTiming = require('../../../models/SlotIntervalTimings')
+const SchoolTimings = require('../../../models/SchoolTiming');
 module.exports = {
 
     getPage: (req, res, next) => {
-        Promise.all([AcademicYear.fetchAll(),  Rooms.fetchBookedRooms(res.locals.organizationId), SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug),]).then(result => {
+        Promise.all([AcademicYear.fetchAll(),  Rooms.fetchBookedRooms(res.locals.organizationId), SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug), SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)]).then(result => {
             res.render('admin/timesheet/index.ejs', {
                 academicDate: result[0].recordset[0],
                 roomList: JSON.stringify(result[1].recordset),
                 timeSlotList: JSON.stringify(result[2].recordset),
+                slotList: JSON.stringify(result[3].recordset),
                 breadcrumbs: req.breadcrumbs,
                 Url: req.originalUrl
             })
         })
-    }, 
+    },  
 
 
     checkDaysLecture: async (req, res, next) => {
