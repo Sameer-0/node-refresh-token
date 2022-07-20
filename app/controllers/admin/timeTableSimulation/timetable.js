@@ -375,12 +375,12 @@ module.exports = {
                 width: 25
             },
             {
-                header: "Start Date",
+                header: "Start Time",
                 key: "start_time",
                 width: 25
             },
             {
-                header: "End Date",
+                header: "End Time",
                 key: "end_time",
                 width: 25
             },
