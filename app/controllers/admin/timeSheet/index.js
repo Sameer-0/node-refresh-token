@@ -11,6 +11,7 @@ module.exports = {
             res.render('admin/timesheet/index.ejs', {
                 academicDate: result[0].recordset[0],
                 roomList: JSON.stringify(result[1].recordset),
+                roomListStr: result[1].recordset,
                 timeSlotList: JSON.stringify(result[2].recordset),
                 slotList: JSON.stringify(result[3].recordset),
                 breadcrumbs: req.breadcrumbs,

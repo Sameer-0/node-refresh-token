@@ -230,7 +230,31 @@
           <h5 class="modal-title" id="timetable-detailsLabel">Timetable Sheet <span class="timetable-date"></span> <i class="fa-solid fa-calendar-day"></i></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body time-sheet-modal">
+            <div class="card table-card mb-1 timetable-filter-container"> 
+                <div class="card-body" id="timetable-filter">
+                    
+                    <div class="row">
+                        <div class="col-md-4 col-sm-12">
+                            <select name="room-name" id="room-name" class="form-select">
+                                
+                                <option selected disabled value>--Select Room--</option>
+                            
+                                <% for(let room of roomListStr){%>
+                                    <option value="<%- room.id%>"> <%- room.room_number%></option>
+                                <%}%>
+                            </select>
+                        </div>
+                        <div class="col-md-4 col-sm-12 border d-none option-container">
+        
+                        </div>
+                        <div class="ms-auto table-searchbar-container col-md-4 col-sm-12"><button type="button"><i class="fas fa-search"></i> </button><input
+                            type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
             <div class="table-responsive timetable-container" >
                 
             </div>
@@ -238,7 +262,7 @@
        
       </div>
     </div>
-  </div>
+</div> 
 <!--DASHBOARD CONTENT END-->
 
 
@@ -250,6 +274,81 @@
     <script>
         $(document).ready(function () {
 
+            //ROOM FILTER
+            $('#room-name').on('change', function (){
+
+            let spanAppendCheck = true;
+            let spanFilterList = $(document).find('.span-filter');
+            $('.option-container').removeClass('d-none');
+            if(spanFilterList.length > 0){
+
+                spanFilterList.each((index, element) => {
+                    if($(element).attr('data-room-lid') == $(this).val()){
+
+                        spanAppendCheck = false
+
+                    }
+                })
+            }
+
+            if(spanAppendCheck){
+                $('.option-container').append(`<span class="span-filter" data-room-lid="${$('#room-name option:selected').val()}">${$('#room-name option:selected').text()}<i class="fa-solid fa-xmark ms-auto ps-2 room-span-remove"></i></span>`);
+            }
+
+            filterRoom()
+
+            })
+
+            $(document).on('click','.room-span-remove', function(){
+            $(this).parent().remove();
+            filterRoom()
+            })
+
+            function filterRoom(){
+
+            $(document).find('.room[data-room-lid]').addClass('d-none')
+            $(document).find('.span-filter').each(function (index, spanElement) {
+
+                $(document).find('.room[data-room-lid]').each(function (index, RoomElement) {
+
+                    if($(spanElement).attr('data-room-lid') == $(RoomElement).attr('data-room-lid')){
+                        $(RoomElement).removeClass('d-none');
+                    }
+                })
+
+            })
+
+            if( $(document).find('.span-filter').length < 1){
+                
+                $(document).find('.room[data-room-lid]').removeClass('d-none')
+            }
+            }
+            
+            // SEARCH
+        $('#searchkeyword').on('input', function () {
+
+        let searchStr = $(this).val().toLowerCase()
+
+        if (searchStr.length > 0) {
+            $(document).find('.room[data-room-no]').addClass('d-none')
+            $(document).find('.room[data-room-no]').each(function (index, element) {
+                $(element).find('.event').each(function (index, element) {
+                    if ($(element).text().toLowerCase().includes(searchStr)) {
+                        $(element).addClass('event-info').parent().parent().removeClass('d-none')
+                    } else {
+                        $(element).removeClass('event-info')
+                    }
+                })
+
+            })
+        } else {
+            $('.room[data-room-no]').removeClass('d-none')
+            $('.room[data-room-no] .event').removeClass('event-info')
+        }
+
+        filterRoom()
+
+        })
             //Calendar Utils Functions
             function getMonth() {
                 let date = calendar.state.currentDate
