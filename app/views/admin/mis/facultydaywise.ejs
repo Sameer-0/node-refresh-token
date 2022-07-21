@@ -90,16 +90,21 @@ tfoot > tr  {
                                     let faculty_lid =  $(this).val()
                                     console.log('faculty_lid::::::::::::',faculty_lid)
 
-                                    $.ajax({
-                                        type: "POST",
-                                        url: "/admin/mis/simulation-chart/faculty-day-wise",
-                                        data: {
-                                            faculty_lid: faculty_lid
-                                        },
-                                        success: function (data) {
-                                            AjaxtTable(data.data)
-                                        }
-                                    })
+                            let ApiObj = {
+                                type: 'POST',
+                                url: "/admin/mis/simulation-chart/faculty-day-wise",
+                                data: {
+                                    faculty_lid: faculty_lid
+                                },
+                                dataType: 'JSON'
+                            }
+
+                            ajaxApi(ApiObj).then(result => {
+
+                                AjaxtTable(result.data)
+                            }).catch(error => {
+                                showError(error.responseJSON)
+                            })
 
                                 })
 
