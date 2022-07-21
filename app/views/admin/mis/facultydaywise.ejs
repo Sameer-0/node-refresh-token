@@ -2,38 +2,44 @@
 <style>
     table {
         width: 100%;
-  text-align: left;
-  position: relative;
-  border-collapse: collapse; 
-  background-color: #f6f6f6;
-}/* Spacing */
-td, th {
-  border: 1px solid #999;
-  padding: 20px;
-}
-th {
-  background: brown;
-  color: white;
-  border-radius: 0;
-  position: sticky;
-  top: 0;
-  padding: 10px;
-  
-}
+        text-align: left;
+        position: relative;
+        border-collapse: collapse;
+        background-color: #f6f6f6;
+    }
 
-.brown{
-  background: brown;
-  color: white;
-}
-.primary{
-  background-color: #000000
-}
+    /* Spacing */
+    td,
+    th {
+        border: 1px solid #999;
+        padding: 20px;
+    }
 
-tfoot > tr  {
-  background: black;
-  color: white;
-}
-/* tbody > tr:hover {
+    th {
+        background: brown;
+        color: white;
+        border-radius: 0;
+        position: sticky;
+        top: 0;
+        padding: 10px;
+
+    }
+
+    .brown {
+        background: brown;
+        color: white;
+    }
+
+    .primary {
+        background-color: #000000
+    }
+
+    tfoot>tr {
+        background: black;
+        color: white;
+    }
+
+    /* tbody > tr:hover {
   background-color: #ffc107;
 } */
 </style>
@@ -62,13 +68,13 @@ tfoot > tr  {
             </div>
         </div>
         <div class="card-body table-responsive">
-        <div class="col-md-4 mb-4">
-            <label>Select Faculty:</label>
-            <select class="form-select select2 mt-1" id="facultyName">
-                <option>Select faculty</option>
-                <%for(let faculty of facultyList){%>
-                <option value="<%-faculty.id%>"><%-faculty.faculty_name%> (<%-faculty.faculty_id%>)</option>
-                <%}%>
+            <div class="col-md-4 mb-4">
+                <label>Select Faculty:</label>
+                <select class="form-select select2 mt-1" id="facultyName">
+                    <option>Select faculty</option>
+                    <%for(let faculty of facultyList){%>
+                    <option value="<%-faculty.id%>"><%-faculty.faculty_name%> (<%-faculty.faculty_id%>)</option>
+                    <%}%>
         </select>
         </div>
         <div id="faculty-day-table"></div>
@@ -77,41 +83,40 @@ tfoot > tr  {
 </div>
 
 <%- include("../partials/footer") %>
-                        <script src="/js/dashboardscript.js"></script>
-                        <script src="/js/leftsidebartoggle.js"></script>
-                        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
-                         <script>
-                            $(document).ready(function () {
-                                $(".select2").select2()
+                    <script src="/js/dashboardscript.js"></script>
+                    <script src="/js/leftsidebartoggle.js"></script>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
+                    <script>
+                        $(document).ready(function () {
+                            $(".select2").select2()
 
 
-                                $("#facultyName").on('change',function(){
+                            $("#facultyName").on('change', function () {
 
-                                    let faculty_lid =  $(this).val()
-                                    console.log('faculty_lid::::::::::::',faculty_lid)
+                                let faculty_lid = $(this).val()
+                                console.log('faculty_lid::::::::::::', faculty_lid)
 
-                            let ApiObj = {
-                                type: 'POST',
-                                url: "/admin/mis/simulation-chart/faculty-day-wise",
-                                data: {
-                                    faculty_lid: faculty_lid
-                                },
-                                dataType: 'JSON'
-                            }
+                                let ApiObj = {
+                                    type: 'POST',
+                                    url: "/admin/mis/simulation-chart/faculty-day-wise",
+                                    data: {
+                                        faculty_lid: faculty_lid
+                                    },
+                                    dataType: 'JSON'
+                                }
 
-                            ajaxApi(ApiObj).then(result => {
+                                ajaxApi(ApiObj).then(result => {
 
-                                AjaxtTable(result.data)
-                            }).catch(error => {
-                                showError(error.responseJSON)
-                            })
-
+                                    AjaxtTable(result.data)
+                                }).catch(error => {
+                                    showError(error.responseJSON)
                                 })
 
+                            })
 
-                                function AjaxtTable(dataSet){
-                                    console.log('dataSet::::::::::::::',dataSet);
-let table =    `<table>
+
+                            function AjaxtTable(dataSet) {
+                                let table = `<table>
                 <!-- <caption>A summary of top sites with both paid and free course</caption> -->
                 <thead>
                   <tr>
@@ -125,9 +130,9 @@ let table =    `<table>
                 </thead>
                 <tbody>`
 
-                    if(dataSet.length > 0){
-                        dataSet.forEach(element => {
-                        table += `<tr>
+                                if (dataSet.length > 0) {
+                                    dataSet.forEach(element => {
+                                        table += `<tr>
                             <td>${element.Monday}</td>
                             <td>${element.Tuesday}</td>
                             <td>${element.Wednesday}</td>
@@ -135,68 +140,68 @@ let table =    `<table>
                             <td>${element.Friday}</td>
                             <td>${element.Saturday}</td>
                         </tr>`;
-              });
-                    }else{
-                    table += `<tr><td colspan="6">No Data Found</td></tr>`;      
-                    }
-
-
-
-              table += `</tbody> </table>`;
-              $("#faculty-day-table").html(table)
+                                    });
+                                } else {
+                                    table += `<tr><td colspan="6">No Data Found</td></tr>`;
                                 }
-                
-     
-                                function showError(errors) {
-                                    console.log('error::::::::::', errors)
-                                    let simpleAlert = new SimpleAlert();
-                                    let obj = {
-                                        title: errors.description,
-                                        message: errors.data,
-                                        type: 'alert-danger',
-                                        buttons: {
-                                            positive: {
-                                                text: "Okay",
-                                                action: function () {
-                                                    document.querySelector('.simple-alert').remove();
-                                                }
-                                            },
-                                            negative: {
-                                                text: "Cancel",
-                                                action: function () {
-                                                    alert('Negative')
-                                                }
+
+
+
+                                table += `</tbody> </table>`;
+                                $("#faculty-day-table").html(table)
+                            }
+
+
+                            function showError(errors) {
+                                console.log('error::::::::::', errors)
+                                let simpleAlert = new SimpleAlert();
+                                let obj = {
+                                    title: errors.description,
+                                    message: errors.data,
+                                    type: 'alert-danger',
+                                    buttons: {
+                                        positive: {
+                                            text: "Okay",
+                                            action: function () {
+                                                document.querySelector('.simple-alert').remove();
+                                            }
+                                        },
+                                        negative: {
+                                            text: "Cancel",
+                                            action: function () {
+                                                alert('Negative')
                                             }
                                         }
                                     }
-                                    simpleAlert.alert(obj);
                                 }
+                                simpleAlert.alert(obj);
+                            }
 
 
-                                function showSuccess(errors) {
-                                    console.log('error::::::::::', errors)
-                                    let simpleAlert = new SimpleAlert();
-                                    let obj = {
-                                        title: errors.description,
-                                        message: errors.data,
-                                        type: 'alert-success',
-                                        buttons: {
-                                            positive: {
-                                                text: "Okay",
-                                                action: function () {
-                                                    document.querySelector('.simple-alert').remove();
-                                                }
-                                            },
-                                            negative: {
-                                                text: "Cancel",
-                                                action: function () {
-                                                    alert('Negative')
-                                                }
+                            function showSuccess(errors) {
+                                console.log('error::::::::::', errors)
+                                let simpleAlert = new SimpleAlert();
+                                let obj = {
+                                    title: errors.description,
+                                    message: errors.data,
+                                    type: 'alert-success',
+                                    buttons: {
+                                        positive: {
+                                            text: "Okay",
+                                            action: function () {
+                                                document.querySelector('.simple-alert').remove();
+                                            }
+                                        },
+                                        negative: {
+                                            text: "Cancel",
+                                            action: function () {
+                                                alert('Negative')
                                             }
                                         }
                                     }
-                                    simpleAlert.alert(obj);
                                 }
+                                simpleAlert.alert(obj);
+                            }
                         })
-                        </script>
-                        <%- include("../partials/footerEnd") %>
+                    </script>
+                    <%- include("../partials/footerEnd") %>
