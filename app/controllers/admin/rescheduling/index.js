@@ -393,18 +393,15 @@ module.exports = {
   },
 
   getResFacultiesRooms: async (req, res, next) => {
-
     console.log('>>>>>>>>MODIFY<<<<<<<<<')
-
     console.log('REQ:::::::::', req.body)
     // let facultyStmt = ` SELECT fw.* FROM (SELECT facultyId, facultyName FROM [${res.locals.slug}].faculty_work WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = '${req.body.dateStr}' AND slot_name = '${req.body.slotName}' AND program_id = '${req.body.programId}' AND module_id = '${req.body.moduleId}' AND room_no <> '${req.body.roomNo}') f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`;
     // let roomStmt = `SELECT DISTINCT room_no FROM (SELECT rs.room_no, rs.slot_name FROM [${res.locals.slug}].all_room_slots rs LEFT JOIN (SELECT DISTINCT room_no, slot_name FROM faculty_timetable WHERE date_str = '${req.body.dateStr}' AND active = 1) ft ON ft.room_no = rs.room_no AND ft.slot_name = rs.slot_name WHERE ft.slot_name IS NULL) rooms WHERE slot_name = '${req.body.slotName}' OR room_no = '${req.body.roomNo}'`;
-    Promise.all([Simulation.uniqueFacultyByDate(res.locals.slug, req.body.dateStr), Simulation.timeSheetRoomByDate(res.locals.slug, req.body.dateStr)]).then(result => {
-      console.log('After promise>>>>>>>>>>>>>>>>>>')
+    Simulation.uniqueFacultyByDate(res.locals.slug, req.body).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>',result.recordset)
       res.json({
         status: 200,
-        facultyList: result[0].recordset,
-        roomList: result[1].recordset
+        facultyList: result.recordset
       })
     })
 

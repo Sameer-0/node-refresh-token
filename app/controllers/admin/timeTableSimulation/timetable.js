@@ -6,6 +6,7 @@ const SchoolTimings = require('../../../models/SchoolTiming');
 const SlotIntervalTiming = require('../../../models/SlotIntervalTimings')
 const Rooms = require('../../../models/Rooms');
 const Days = require('../../../models/Days');
+const Mis = require('../../../models/Mis');
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
 module.exports = {
@@ -204,6 +205,9 @@ module.exports = {
         let Allocatedworksheet = workbook.addWorksheet('Allocated Event');
         let UnAllocatedworksheet = workbook.addWorksheet('UnAllocated Event');
         let timeTablePivotedworksheet = workbook.addWorksheet('Time Table Pivoted');
+        let facultyDayWiseWorksheet = workbook.addWorksheet('Faculty Day Wise');
+
+
         Allocatedworksheet.columns = [{
                 header: "Room Number",
                 key: "room_number",
@@ -416,11 +420,57 @@ module.exports = {
             }
         ]
 
-        Promise.all([TimeTable.AllocatedEventExcel(res.locals.slug), TimeTable.unAllocatedEventExcel(res.locals.slug), TimeTable.timeTablePivotedExcel(res.locals.slug)]).then(result => {
+        facultyDayWiseWorksheet.columns = [
+            {
+                header: "Faculty Id",
+                key: "faculty_id",
+                width: 25
+            },
+            {
+                header: "Faculty Name",
+                key: "faculty_name",
+                width: 25
+            },
+            {
+                header: "Monday",
+                key: "Monday",
+                width: 25
+            },
+            {
+                header: "Tuesday",
+                key: "Tuesday",
+                width: 25
+            },
+            {
+                header: "Wednesday",
+                key: "Wednesday",
+                width: 25
+            },
+            {
+                header: "Thursday",
+                key: "Thursday",
+                width: 25
+            },
+            {
+                header: "Friday",
+                key: "Friday",
+                width: 25
+            },
+            {
+                header: "Saturday",
+                key: "Saturday",
+                width: 25
+            }
+        ]
+
+        //facultyDayWise
+        Promise.all([TimeTable.AllocatedEventExcel(res.locals.slug), TimeTable.unAllocatedEventExcel(res.locals.slug), TimeTable.timeTablePivotedExcel(res.locals.slug), Mis.facultyDayWise(res.locals.slug, 0)]).then(result => {
             // Add Array Rows
+            console.log('result[3].recordset::::::::::::',result[3].recordset)
             Allocatedworksheet.addRows(result[0].recordset);
             UnAllocatedworksheet.addRows(result[1].recordset);
             timeTablePivotedworksheet.addRows(result[2].recordset);
+            facultyDayWiseWorksheet.addRows(result[3].recordset)
             // res is a Stream object
             res.setHeader(
                 "Content-Type",
