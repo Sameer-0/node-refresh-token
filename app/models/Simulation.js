@@ -283,12 +283,15 @@ module.exports = class Simulation {
         })
     }
 
-    static uniqueFacultyByDate(slug, date_str) {
+    static uniqueFacultyByDate(slug, body) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
-                .input('dateStr', sql.NVarChar(20), date_str)
-                .query(`select DISTINCT faculty_id, faculty_name, faculty_lid from [${slug}].timesheet WHERE date_str = @dateStr`)
+                .input('toDate', sql.NVarChar(20), body.toDate)
+                .input('fromDate', sql.NVarChar(20), body.fromDate)
+                .query(`select DISTINCT faculty_id, faculty_name, faculty_lid 
+                from [asmsoc-mum].timesheet WHERE 
+                CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103)`)
         })
     }
 

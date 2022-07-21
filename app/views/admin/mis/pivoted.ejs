@@ -54,8 +54,7 @@ tfoot > tr  {
     <!--DASHBOARD CONTENT START-->
     <div class="row my-3 gx-3 gy-3 row1-data">
 
-
-        <div class="col-xl-2 col-lg-4 col-md-6">
+<div class="col-xl-2 col-lg-4 col-md-6">
             <a href="/admin/faculties/date-time">
                 <div class="card row1-data-card text-center">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
@@ -79,7 +78,7 @@ tfoot > tr  {
         </div>
 
         <div class="col-xl-2 col-lg-4 col-md-6">
-            <a href="/admin/simulation-chart/pivoted">
+            <a  href="/admin/mis/simulation-chart/pivoted">
                 <div class="card row1-data-card text-center">
                     <div class="card-body d-flex flex-column align-items-center justify-content-center">
                         <img src="/icon_imgs/bar-chart.png" alt="">
@@ -89,7 +88,44 @@ tfoot > tr  {
             </a>
         </div>
     </div>
-    
+
+    <div class="card table-card">
+        <div class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+                <h5>Division Wise Faculty</h5>
+
+        </div>
+
+        <div class="card-body">
+           
+        <table>
+  <!-- <caption>A summary of top sites with both paid and free course</caption> -->
+  <thead>
+    <tr>
+      <th scope="col">Start Time - End Time</th>
+      <th scope="col">Monday</th>
+      <th scope="col">Tuesday</th>
+      <th scope="col">Wednesday</th>
+      <th scope="col">Thursday</th>
+      <th scope="col">Friday</th>
+      <th scope="col">Saturday</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%for(let fdt of timetableSheet){%>
+    <tr>
+      <td><%-fdt.start_time%> - <%-fdt.start_time%></td>
+      <td class="<%- fdt.Monday == 'NA' ? '' : 'brown'%>"><%-fdt.Monday%></td>
+      <td class="<%- fdt.Tuesday == 'NA' ? '' : 'brown'%>"><%-fdt.Tuesday%></td>
+      <td class="<%- fdt.Wednesday == 'NA' ? '' : 'brown'%>"><%-fdt.Wednesday%></td>
+      <td class="<%- fdt.Thursday == 'NA' ? '' : 'brown'%>"><%-fdt.Thursday%></td>
+      <td class="<%- fdt.Friday == 'NA' ? '' : 'brown'%>"><%-fdt.Friday%></td>
+      <td class="<%- fdt.Saturday == 'NA' ? '' : 'brown'%>"><%-fdt.Saturday%></td>
+    </tr>
+    <%}%>
+  </tbody>
+</table>
+        </div>
+    </div>
 </div>
 
       <!-- <table>
@@ -150,68 +186,6 @@ tfoot > tr  {
    
 
 
-        //Delete Faculty API
-        $("#facultyTable").on('click','.delete-faculty',function(){
-            let id = $(this).attr("data-faculty-id");
-            let ApiObj = {
-                type: 'POST',
-                url: '/admin/faculties/delete',
-                data: {
-                    id: id
-                },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
-                showSuccess(result)
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-        })
-
-
-        //
-        function GetFacultySlots(data){
-            //{faculty_id:$(this).attr("data-faculty-id"), faculty_lid: $(this).attr("data-faculty-lid")}
-            console.log('12121',data.faculty_id)
-            console.log('12111',data.faculty_lid)
-            console.log('count', data.count)
-            let ApiObj = {
-                type: 'GET',
-                url: '/admin/faculties/getslotsbyid',
-                data: {
-                    faculty_lid: data.faculty_lid
-                },
-                dataType: 'JSON'
-            }
-
-            ajaxApi(ApiObj).then(result => {
-                console.log('sucess:::::::::', result)
-                let selectslot = ``;
-                result.result.forEach(function(item){
-                    selectslot += `<option value="${item.id}">${item.start_time}</option>`
-                })
-                //$(`.SlotStartTime${data.count}`).html(selectslot)
-            }).catch(error => {
-               // showError(error.responseJSON)
-            })
-        }
-
-        //CHANGE ENTRIES
-        $("#changeEntry").on('change',function(){
-                let rowcount = $(this).val()
-                $.ajax({
-                type: "POST",
-                url: "/admin/faculties/show-entries",
-                data: {
-                    rowcount: rowcount
-                },
-                success: function (data) {
-                    showAjaxTable(data.data) 
-                }
-            })
-        })
 
 
         function showSuccess(errors) {

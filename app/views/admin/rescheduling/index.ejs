@@ -324,7 +324,7 @@ code {
 
         <div id="normal-modify" class="d-none">
           <div class="mb-3">
-            <label>To Date: <strong class="text-danger">*</strong></label>
+            <label>From Date: <strong class="text-danger">*</strong></label>
             <select id="reschedule-date-dropdown" class="form-control select2" disabled>
               <option selected disabled value>--Select Date--</option>
               <% for (let date of semesterDates) { %>
@@ -334,6 +334,20 @@ code {
                 <% } %>
             </select>
           </div>
+
+          <div class="mb-3">
+            <label>To Date: <strong class="text-danger">*</strong></label>
+            <select id="reschedule-to-date-dropdown" class="form-control select2" >
+              <option selected  value>--Select Date--</option>
+              <% for (let fdate of semesterDates) { %>
+                <option value="<%- fdate.dateString %>">
+                  <%- fdate.dateString %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+
+
           <div class="mb-3">
             <label>Faculty: <strong class="text-danger">*</strong></label>
             <select id="reschedule-faculty-dropdown" class="form-control" disabled>
@@ -341,6 +355,10 @@ code {
             </select>
           </div>
           <div class="mb-3">
+            <button class="btn btn-md btn-dark" id="fetch-bulk-cancel">Fetch lectures</button>
+          </div>
+
+          <!-- <div class="mb-3">
             <label>Select Time Slot: <strong class="text-danger">*</strong></label>
             <select id="reschedule-slot-dropdown" class="form-control" disabled>
               <option disabled selected value>--Select Time--</option>
@@ -351,7 +369,7 @@ code {
             <select id="reschedule-room-dropdown" class="form-control select2" disabled>
               <option disabled selected value>--Select Room--</option>
             </select>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -1014,11 +1032,19 @@ code {
               })
 
               $(`#reschedule-date-dropdown`).on('change', function () {
-                rescheduleObj.toDate = $(this).val();
-                console.log('reschedule-date-dropdown:::::::::::::',rescheduleObj.toDate)
+                rescheduleObj.fromDate = $(this).val();
+                console.log('reschedule-date-dropdown:::::::::::::',rescheduleObj.fromDate)
                 $('#reschedule-faculty-dropdown').attr('disabled', false)
+                $('#reschedule-to-date-dropdown').attr('disabled', false)
+               // getFacultiesRoomsForModify(rescheduleObj.toDate)
+              })
 
-                getFacultiesRoomsForModify(rescheduleObj.toDate)
+              $(`#reschedule-to-date-dropdown`).on('change', function () {
+                rescheduleObj.toDate = $(this).val();
+                console.log('reschedule-from-date-dropdown fromDate:::::::::::::',rescheduleObj.fromDate)
+                console.log('reschedule-to-date-dropdown toDate:::::::::::::',rescheduleObj.toDate)
+
+                getFacultiesRoomsForModify(rescheduleObj.toDate, rescheduleObj.fromDate)
               })
 
               $(`#reschedule-faculty-dropdown`).on('change', function () {
@@ -1991,9 +2017,9 @@ code {
               }
 
 
-              function getFacultiesRoomsForModify(todate) {
+              function getFacultiesRoomsForModify(todate, fromDate) {
 
-                console.log('getFacultiesRoomsForModify TO DATE:::::::::::::>>>',todate)
+                console.log('getFacultiesRoomsForModify TO DATE:::::::::::::>>>',todate, fromDate)
                 $.ajax({
                   type: 'POST',
                   url: '/admin/rescheduling/get-faculties-rooms-modify/',
@@ -2001,28 +2027,30 @@ code {
                   data: {
                     // moduleId: rescheduleObj.moduleId,
                     // programId: rescheduleObj.programId,
-                    dateStr: todate,
+                    toDate: todate,
+                    fromDate: fromDate
                     // slotName: rescheduleObj.fromSlot,
                     // roomNo: rescheduleObj.fromRoom
                   },
                   success: data => {
                     console.log('Success: ', data)
                     let facultyListStr = `<option selected disabled value>--Select Faculty--</option>`
-                    let roomStr = `<option selected disabled value>--Select Room--</option>`
+                    //let roomStr = `<option selected disabled value>--Select Room--</option>`
 
                     for (let faculty of data.facultyList) {
                       facultyListStr +=
                         `<option value="${faculty.faculty_id}">${faculty.faculty_name}/${faculty.faculty_id}</option>`
                     }
 
-                    for (let room of data.roomList) {
-                      roomStr += `<option value="${room.room_no}">${room.room_no}</option>`
-                    }
+                    // for (let room of data.roomList) {
+                    //   roomStr += `<option value="${room.room_no}">${room.room_no}</option>`
+                    // }
 
-                    $('#reschedule-slot-dropdown').html(
-                      `<option value="${rescheduleObj.fromSlot}">${rescheduleObj.fromStartTime} - ${rescheduleObj.fromEndTime}</option>`
-                    )
-                    $('#reschedule-room-dropdown').html(roomStr).attr('disabled', false)
+                    // $('#reschedule-slot-dropdown').html(
+                    //   `<option value="${rescheduleObj.fromSlot}">${rescheduleObj.fromStartTime} - ${rescheduleObj.fromEndTime}</option>`
+                    // )
+                    //$('#reschedule-room-dropdown').html(roomStr).attr('disabled', false)
+                    $("#reschedule-faculty-dropdown").attr('disabled', false)
                     $('#reschedule-faculty-dropdown').html(facultyListStr)
 
                   },
