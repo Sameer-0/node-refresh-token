@@ -26,7 +26,7 @@ module.exports = {
 
     download:(req, res, next)=>{
 
-        console.log('result:::::::::::::::::', req)
+        console.log('result:::::::::::::::::', req.body)
         let workbook = new excel.Workbook();
         let facultyDayWiseWorksheet = workbook.addWorksheet('Faculty Day Wise');
         facultyDayWiseWorksheet.columns = [
