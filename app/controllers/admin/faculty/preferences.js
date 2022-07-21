@@ -12,8 +12,6 @@ const Programs = require('../../../models/Programs')
 const isJsonString = require('../../../utils/util')
 const excel = require("exceljs");
 
-
-
 module.exports = {
     getPage: (req, res) => {
         Promise.all([FacultyWorkTimePreferences.fetchAll(10, res.locals.slug), SlotIntervalTimings.forFaculty(1000), FacultyWorkTimePreferences.getCount(res.locals.slug), FacultyWorkTimePreferences.facultyPrefList(res.locals.slug), Programs.fetchAll(100, res.locals.slug)]).then(result => {
@@ -245,7 +243,9 @@ module.exports = {
      },
 
      findOne: (req, res) => {
+        console.log('req body time preference::', req )
         FacultyWorkTimePreferences.findOne(req.body.id, res.locals.slug).then(result => {
+            console.log('result:: time preference::', result)
             res.json({
                 status: 200,
                 message: "Success",
@@ -343,4 +343,49 @@ module.exports = {
             }
         })
     },
+
+    findByProgramId:  (req, res, next) => {
+        Promise.all([FacultyWorkTimePreferences.byProgramId(req.body.program_lid, res.locals.slug), FacultyWorkTimePreferences.distinctSession(req.body.program_lid, res.locals.slug)]).then(result => {
+            res.json({
+                status: 200,
+                message: "Success",
+                programlist: result[0].recordset,
+                sessionlist: result[1].recordset
+            })
+        }).catch(error => {
+            console.log(error)
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    },
+
+    findByProgramSessionId:  (req, res, next) => {
+        console.log('req.body:::::::::::::',req.body)
+        FacultyWorkTimePreferences.findByProgramSessionId(req.body, res.locals.slug).then(result => {
+            console.log('result::::::::::::',result)
+            res.json({
+                status: 200,
+                message: "Success",
+                data: result.recordset,
+            })
+        }).catch(error => {
+            console.log(error)
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            } else {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                })
+            }
+        })
+    }
 }

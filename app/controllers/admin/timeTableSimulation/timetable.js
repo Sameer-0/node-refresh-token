@@ -25,6 +25,7 @@ module.exports = {
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     programListJson: JSON.stringify(result[0].recordset),
+                    roomListStr: result[1].recordset,
                     roomList: JSON.stringify(result[1].recordset),
                     dayList: result[2].recordset,
                     pendingEventPrograms: JSON.stringify(result[3].recordset),
@@ -93,6 +94,35 @@ module.exports = {
             res.status(200).send(result.recordset)
         })
     },
+
+    getDivAllocation: (req, res, next) => {
+        console.log('division wise allocation', req.body)
+        TimeTable.getDivAllocation(res.locals.slug, req.body.programLid, req.body.sessionLid, req.body.divisionName).then(result => {
+          //  console.log('division allocation list:::', result.recordset)
+            res.status(200).json({status:200, result: result.recordset})
+        })
+    },
+
+    getDivAllocationPage: (req, res, next) => {
+        console.log('pending req', req.body)
+        Promise.all([
+            ProgramSessions.getLockedProgram(res.locals.slug),
+            
+            Days.fetchAll(10, res.locals.slug),
+            SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug),
+           
+        ]).then(result => {
+            res.render('admin/timeTableSimulation/divisionallocationstatus', {
+                programList: result[0].recordset,
+                programListJson: JSON.stringify(result[0].recordset),
+                dayList: JSON.stringify(result[1].recordset),
+                timeSlotList:JSON.stringify(result[2].recordset),
+                breadcrumbs: req.breadcrumbs,
+                Url: req.originalUrl
+            })
+        })
+    },
+
 
     //Implemented in timetablesocket
     dropEvent: (req, res, next) => {
@@ -173,6 +203,7 @@ module.exports = {
         let workbook = new excel.Workbook();
         let Allocatedworksheet = workbook.addWorksheet('Allocated Event');
         let UnAllocatedworksheet = workbook.addWorksheet('UnAllocated Event');
+        let timeTablePivotedworksheet = workbook.addWorksheet('Time Table Pivoted');
         Allocatedworksheet.columns = [{
                 header: "Room Number",
                 key: "room_number",
@@ -327,10 +358,69 @@ module.exports = {
             },
         ];
 
-        Promise.all([TimeTable.AllocatedEventExcel(res.locals.slug), TimeTable.unAllocatedEventExcel(res.locals.slug)]).then(result => {
+        timeTablePivotedworksheet.columns = [
+            {
+                header: "Program Name",
+                key: "program_name",
+                width: 25
+            },
+            {
+                header: "Academic Session",
+                key: "acad_session",
+                width: 25
+            },
+            {
+                header: "Division",
+                key: "division",
+                width: 25
+            },
+            {
+                header: "Start Time",
+                key: "start_time",
+                width: 25
+            },
+            {
+                header: "End Time",
+                key: "end_time",
+                width: 25
+            },
+            {
+                header: "Monday",
+                key: "Monday",
+                width: 25
+            },
+            {
+                header: "Tuesday",
+                key: "Tuesday",
+                width: 25
+            },
+            {
+                header: "Wednesday",
+                key: "Wednesday",
+                width: 25
+            },
+            {
+                header: "Thursday",
+                key: "Thursday",
+                width: 25
+            },
+            {
+                header: "Friday",
+                key: "Friday",
+                width: 25
+            },
+            {
+                header: "Saturday",
+                key: "Saturday",
+                width: 25
+            }
+        ]
+
+        Promise.all([TimeTable.AllocatedEventExcel(res.locals.slug), TimeTable.unAllocatedEventExcel(res.locals.slug), TimeTable.timeTablePivotedExcel(res.locals.slug)]).then(result => {
             // Add Array Rows
             Allocatedworksheet.addRows(result[0].recordset);
             UnAllocatedworksheet.addRows(result[1].recordset);
+            timeTablePivotedworksheet.addRows(result[2].recordset);
             // res is a Stream object
             res.setHeader(
                 "Content-Type",

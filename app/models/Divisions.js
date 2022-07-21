@@ -24,6 +24,17 @@ module.exports = class Divisions {
         })
     }
 
+    static getUniqueDiv(slug, programLid, sessionLid) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('programLid', sql.Int, programLid)
+            .input('sessionLid', sql.Int, sessionLid).query(`SELECT DISTINCT(d.division) FROM (SELECT icw.id AS course_lid, icw.program_id, icw.acad_session_lid, p.id as program_lid, p.program_name FROM [${slug}].initial_course_workload icw 
+            INNER JOIN [${slug}].programs p ON p.program_id = icw.program_id
+            Where p.id = @programLid and icw.acad_session_lid = @sessionLid) t1 
+            INNER JOIN [${slug}].divisions d ON d.course_lid = t1.course_lid`)
+        })
+    }
+
   
     static fetchDivisionData(rowcount, slug){
         return poolConnection.then(pool => {

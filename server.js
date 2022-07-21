@@ -7,6 +7,7 @@ const path = require('path');
 
 const setRouter = require("./router")
 const timetablesocket = require("./app/controllers/admin/timeTableSimulation/timetablesocket");
+const rescheduleTimesheetControllersocket = require("./app/controllers/admin/rescheduling/rescheduleTimesheetControllersocket");
 const {
     verifySubdomain
 } = require('./app/middlewares/domain')
@@ -55,8 +56,7 @@ app.use(
     session({
         store: new RedisStore({
             client: redisClient,
-            ///ttl: 260
-            ttl: 660
+            ttl: 260
         }),
         saveUninitialized: false,
         genid: function (req) {
@@ -67,7 +67,7 @@ app.use(
         name: 'token',
         cookie: {
             secure: false,
-            maxAge: 2000 * 60 * 60,
+            maxAge: 24 * 60 * 60 * 1000,  //24 hours
             httpOnly: false,
             sameSite: false,
             path: '/'
@@ -129,7 +129,7 @@ setRouter(app)
 
 
 app.use(function (req, res) {
-    res.status(404).render('404')
+    res.status(404).redirect('/user/login')
 })
 
 
@@ -182,10 +182,12 @@ if (process.env.APP_ENV === 'PRODUCTION') {
     global.io = require("socket.io")(server);
     //SOCKET CONNECTION
     global.io.on("connection", timetablesocket.respond);
+    global.io.on("connection",rescheduleTimesheetControllersocket.respond)
 } else {
     const server = http.createServer(app).listen(process.env.APP_PORT);
     //socket initialization
     global.io = require("socket.io")(server);
     //SOCKET CONNECTION
     global.io.on("connection", timetablesocket.respond);
+    global.io.on("connection",rescheduleTimesheetControllersocket.respond)
 }

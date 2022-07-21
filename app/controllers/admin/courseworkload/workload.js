@@ -21,7 +21,7 @@ module.exports = {
 
   getPage: (req, res) => {
     Promise.all([CourseWorkload.getAll(res.locals.slug), CourseWorkload.getCount(res.locals.slug), AcadYear.fetchAll(), Programs.fetchAll(100, res.locals.slug), AcadSession.fetchAll(1000), ModuleType.fetchAll(1000, res.locals.slug)]).then(result => {
-      console.log('result::::::::::::::', result[3].recordset)
+      console.log('result::::::::::::::', result[0].recordset)
       res.render('admin/courseworkload/courseworkload', {
         courseWorkloadList: result[0].recordset,
         pageCount: result[1].recordset[0].count,
@@ -107,7 +107,7 @@ module.exports = {
       update_initial_course_workload: JSON.parse(req.body.inputJSON)
     }
 
-    console.log('userid', res.locals.userId, req.body.settingName)
+    console.log('COURSE WORKLOAD INPUT JSON:::::::::::::::::>>>>', object)
     CourseWorkload.update(object, res.locals.slug, res.locals.userId).then(result => {
       // console.log('result:::::::::::>>>', result)
 

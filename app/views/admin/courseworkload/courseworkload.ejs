@@ -61,11 +61,13 @@
                 type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
             </div> -->
             <div class="ms-2">
+                <a href="/admin/courseworkload/workload/module-abbr" class="btn btn-danger">Update Module Abbr</a>
                 <a class="btn btn-danger" href="/admin/courseworkload/workload/download"><i
                     class="fas fa-download"></i> Download </a>
                 <button type="button" class="btn add-btn ms-auto" data-bs-toggle="modal"
                     data-bs-target="#open-course-modal">
                     <i class="fas fa-plus"></i></button>
+                
                 <!-- <button class="btn ms-auto select-delete-holidays add-btn "><i class="fas fa-trash"></i></button>
                 <button class="btn ms-auto bulk-delete-holiday add-btn "><img src="/icons/delete.png" alt=""
                         width="26px" height="32px"></button> -->
@@ -162,7 +164,7 @@
                                 value="<%-course.session_events_per_semester%>"></td>
                         <td><input type="number" class="form-control rounded-0" name="continuous"
                                 value="<%-course.continuous%>"></td>
-                                <td><a class="delete-course-workload" data-id="<%-course.id%>"><span class="fa fa-trash"></span></a></td>
+                        <td><a class="delete-course-workload" data-id="<%-course.id%>"><span class="fa fa-trash"></span></a></td>
                     </tr>
                     <% } %>
                 </tbody>
@@ -381,6 +383,7 @@
                     <th>Tutorial count_per batch per week</th>
                     <th>Workshop count per batch per week</th>
                     <th>Session Events per Semester</th>
+                    <th>Module Event Abbr</th>
                     <th>Continuous</th>
                 </thead>`;
                 let count = 1;
@@ -400,6 +403,7 @@
                             <td>${course.tutorial_count_per_batch}</td>
                             <td>${course.workshop_count_per_batch}</td>
                             <td>${course.session_events_per_semester}</td>
+                            <td>${course.module_event_abbr}</td>
                             <td>${course.continuous}</td>
                             </tr>` 
                 })
@@ -466,7 +470,7 @@
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                console.log('result:::::::::::::',result.data)
+                console.log('result:::::::::::::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',result.data)
 
                 let courseList = ``;
 
@@ -516,6 +520,8 @@
                 let module_id = $(elem).find(`td[data-module-id]`).attr(`data-module-id`);
                 let acad_session_lid = $(elem).find(`td[data-acad-session-lid]`).attr(
                     `data-acad-session-lid`);
+                    let module_event_abbr = $(elem).find(
+                    `input[name='module_event_abbr']`).val();
 
                 console.log('module_name:::::::::::::::>>>>>', module_name, program_id,
                     module_id, acad_session_lid)
@@ -536,7 +542,8 @@
                         module_name: module_name,
                         program_id: program_id,
                         module_id: module_id,
-                        acad_session_lid: acad_session_lid
+                        acad_session_lid: acad_session_lid,
+                        module_event_abbr: module_event_abbr
                     }
                     courseJSON.push(obj)
                 } else {
@@ -555,7 +562,8 @@
                         module_name: module_name,
                         program_id: program_id,
                         module_id: module_id,
-                        acad_session_lid: acad_session_lid
+                        acad_session_lid: acad_session_lid,
+                        module_event_abbr: module_event_abbr
                     }
                     courseJSON.push(obj)
                 }

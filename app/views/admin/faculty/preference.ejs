@@ -42,15 +42,22 @@
                     </select>
                 </div>
                 <div class="p-2 bd-highlight"> 
-                    <label>Select Faculty</label>
-                    <select class="form-select" id="FilterFacultyName">
-                        <option selected >Select Faculty</option>
-                        <%for(let faculty of facultyList){%>
-                            <option  data-faculty-name="<%- faculty.faculty_name %>"
-                                data-faculty-id="<%- faculty.faculty_id%>" data-faculty-lid="<%- faculty.faculty_lid%>"   value="<%- faculty.faculty_dbo_lid %>">
-                                <%- faculty.faculty_name %> (<%- faculty.faculty_id%>)
+                    <label>Select Program</label>
+                    <select class="form-select select2" id="FilterProgramName">
+                        <option selected disabled>Select Program</option>
+                        <%for(let program of programList){%>
+                            <option  data-program-id="<%- program.program_id%>"   value="<%- program.id %>">
+                                <%- program.program_name %> (<%- program.program_id%>)
                                 %></option>
                         <%}%>
+                    </select>
+                </div>
+
+                <div class="p-2 bd-highlight"> 
+                    <label>Select Session</label>
+                    <select class="form-select select2" id="FilterSessionName">
+                        <option selected disabled>Select Session</option>
+                       
                     </select>
                 </div>
 
@@ -248,7 +255,8 @@
         dropdownParent: $('#add-facultypreference-modal')
     });
 
-   // $('.select2').select2({dropdownParent: $('#add-facultypreference-modal')});
+    $('#FilterProgramName').select2();
+    $('#FilterSessionName').select2();
     
         //search feature delay function is writter in script.js file which is located in public/js/script.js
         $('#searchkeyword').on('input', delay(function (e) {
@@ -575,7 +583,7 @@
     })
 
     //EDIT
-    $("#facultyWorkTimePreference").on('click','.edit-preference',function(){
+    $(document).on('click','.edit-preference',function(){
         let id = $(this).attr("data-id")
         console.log('ID:::::::::::::::',id)
         let ApiObj = {
@@ -599,21 +607,60 @@
 
 
     // FILTER APIS
-    $("#FilterFacultyName").on('change',function(){
-            let faculty_lid = $('#FilterFacultyName').find('option:selected').attr('data-faculty-id');
+    $("#FilterProgramName").on('change',function(){
+            let program_lid = $(this).val()
             let ApiObj = {
             type: 'POST',
-            url: '/admin/faculties/workpreferences/programby-facultyid',
+            url: '/admin/faculties/workpreferences/findby-programid',
             data: {
-                faculty_lid: faculty_lid
+                program_lid: program_lid
             },
             dataType: 'JSON'
         }
         ajaxApi(ApiObj).then(result => {
-            showAjaxTable(result.facultylist)
+            console.log('sessionlist::::::::::::::::::',result.sessionlist)
+
+            let sessionName = ``;
+                if (result.sessionlist.length > 0) {
+                    sessionName += `<option value="">Select Session</option>`;
+                    result.sessionlist.forEach(element => {
+                        sessionName +=`<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
+                    });
+                } else {
+                    sessionName += `<option value="">No Session Found!</option>`;
+                }
+                $("#FilterSessionName").html(sessionName).trigger('change')
+
+            showAjaxTable(result.programlist)
         }).catch(error => {
             showError(error.responseJSON)
         })
+        })
+
+
+            // FILTER APIS
+    $("#FilterSessionName").on('change',function(){
+            let program_lid = $("#FilterProgramName").val()
+            let session_lid = $(this).val()
+        if(session_lid){
+            let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/faculties/workpreferences/findby-program-session',
+                    data: {
+                        program_lid: program_lid,
+                        session_lid: session_lid
+                    },
+                    dataType: 'JSON'
+                }
+                ajaxApi(ApiObj).then(result => {
+                    console.log('DATA:::::::::::::', result)
+                    showAjaxTable(result.data)
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+        }
+
+
         })
 
     function facultySlotForEdit(facultyid, start_time_id, end_time_id){
@@ -772,10 +819,12 @@
                         <td>${list.day_name}</td>
                         <td>${list.start_time}</td>
                         <td>${list.end_time}</td>
-                        <td><a><i class="fa fa-edit"></i></a>
+                        <td>
+                            <a class="edit-preference" data-id="${list.id}"><i class="fa fa-edit"></i></a>
                             <a class="delete-faculty-preference" data-id="${list.id}"><i class="fa fa-trash text-danger"></i></a>
-                            </td>
+                        </td>
                     </tr>`
+                    console.log('AjaxTable', AjaxTable)
                 }
             } else {
                 AjaxTable +=
@@ -788,7 +837,7 @@
             $("#totalCount").html(facultiesList.length)
 
         }
-
+        
 
     function showError(errors) {
             console.log(errors);

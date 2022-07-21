@@ -5,6 +5,7 @@ const {
 } = require('express-validator');
 
 const RoomTransactions = require('../../../models/RoomTransactions')
+const RoomTransactionDetails = require('../../../models/RoomTransactionDetails')
 const RoomTransactionTypes = require('../../../models/RoomTransactionTypes')
 const RoomTransactionStage = require('../../../models/RoomTransactionStages')
 const Organizations = require('../../../models/Organizations')
@@ -21,11 +22,12 @@ const excel = require("exceljs");
 module.exports = {
     getPage: (req, res) => {
         console.log('ROOM INDEX:::::::::::>')
-        Promise.all([Rooms.bookedRooms(res.locals.slug, 10), Rooms.bookedRoomsCount(res.locals.slug)]).then(result => {
+        Promise.all([Rooms.bookedRooms(res.locals.slug, 10), Rooms.bookedRoomsCount(res.locals.slug), AcademicCalender.fetchAll(1000)]).then(result => {
             res.render('admin/rooms/index', {
                 bookedRoomList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
                 totalentries: result[1].recordset[0] ? result[1].recordset[0].count : 0,
+                academicCalender: JSON.stringify(result[2].recordset),
                 breadcrumbs: req.breadcrumbs,
             })
         }) 
@@ -236,6 +238,7 @@ module.exports = {
     },
 
     showEntries:(req, res, next)=>{
+        console.log(':::::::::::::::::::showEntries:::::::::::::::::::::')
         Rooms.bookedRooms(res.locals.slug, req.body.rowcount).then(result => {
             if (result.recordset.length > 0) {
                 res.json({
@@ -259,5 +262,51 @@ module.exports = {
                 message: "Something went wrong",
             })
         })
-      }
+      },
+
+      updateRequest: (req, res) => {
+
+        console.log(':::::::::::::::::::updateRequest::::::::::::::::::::')
+
+        let object = {
+            update_room_transactions_details: JSON.parse(req.body.inputJSON)
+        }
+     
+        RoomTransactionDetails.updateRequest(res.locals.slug, object, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            console.log('error::::::::::>>',error)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    },
+
+    cancelRequest: (req, res) => {
+
+        console.log(':::::::::::::cancelRequest:::::::::::::::')
+
+        let object = {
+            trans_cancellation_reasons: JSON.parse(req.body.inputJSON)
+        }
+     
+        RoomTransactionDetails.cancelRequest(res.locals.slug, object, res.locals.userId).then(result => {
+            res.status(200).json(JSON.parse(result.output.output_json))
+        }).catch(error => {
+            console.log('error::::::::::>>',error)
+            if(isJsonString.isJsonString(error.originalError.info.message)){
+                res.status(500).json(JSON.parse(error.originalError.info.message))
+            }
+            else{
+                res.status(500).json({status:500,
+                description:error.originalError.info.message,
+                data:[]})
+            }
+        })
+    }
 }

@@ -22,6 +22,7 @@ router.post('/divisions/division-by-moduleid', index.divisionByModuleId)
 router.post('/divisions/division-by-programid', index.divisionByProgramId)
 router.get('/divisions/download', index.downloadMaster)
 router.post('/divisions/show-entries', index.showEntries)
+router.post('/divisions/program-session-div', index.getUniqueDiv)
 
 //BATCHES
 router.get('/divisions/batches', batch.getPage)

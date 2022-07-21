@@ -17,11 +17,14 @@ module.exports.respond = async socket => {
 
         if (data.actionType == 'allocate') {
 
-            console.log('>>> ALLOCATE FIRED');
+            console.log('>>> ALLOCATE FIRED'); 
 
             TimeTable.scheduleEvent(slug, userId, data).then(result => {
                 console.log('result::::::::', result)
-                socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'allocate'})
+            //SHOW CHANGES FOR ALL THE CONNECTED CLIENT EXCEPT CURRENT
+            socket.broadcast.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'allocate', positionIndex:data.positionIndex})
+            //SHOW CHANGES FOR CURRENT USER ONLY
+            socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'allocate', positionIndex:data.positionIndex})
             }).catch(error => {
                 console.log("ERROR>>>>>>> ", error.originalError.info.message)
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
@@ -41,7 +44,11 @@ module.exports.respond = async socket => {
             TimeTable.dragDropEvent(slug, userId, data).then(result => {
                 console.log('result::::::::', result)
 
-                socket.emit('schedule-event-response',  {data: JSON.parse(result.output.output_json), actionType:'drag'})
+                 //SHOW CHANGES FOR ALL THE CONNECTED CLIENT EXCEPT CURRENT
+                 socket.broadcast.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'drag'})
+                 //SHOW CHANGES FOR CURRENT USER ONLY
+                 socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'drag'})
+                // socket.emit('schedule-event-response',  {data: JSON.parse(result.output.output_json), actionType:'drag'})
 
             }).catch(error => {
 
@@ -62,7 +69,11 @@ module.exports.respond = async socket => {
 
             TimeTable.swapEvents(slug, userId, data).then(result => {
                 console.log('result::::::::', result)
-                socket.emit('schedule-event-response',  {data: JSON.parse(result.output.output_json), actionType:'swap'})
+
+                //SHOW CHANGES FOR ALL THE CONNECTED CLIENT EXCEPT CURRENT
+                socket.broadcast.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'swap', targetElemId:data.targetEventLid, initialPositionIndex:data.initialPositionIndex})
+                //SHOW CHANGES FOR CURRENT USER ONLY
+                socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'swap', targetElemId:data.targetEventLid, initialPositionIndex:data.initialPositionIndex})
             }).catch(error => {
 
                 console.log("ERROR>>>>>>> ", error.originalError.info.message)
@@ -86,6 +97,9 @@ module.exports.respond = async socket => {
         console.log('drop-event-request::::::::')
         TimeTable.dropEvent(slug, userId, eventid).then(result => {
             console.log('result::::::::', result)
+            //SHOW CHANGES FOR ALL THE CONNECTED CLIENT EXCEPT CURRENT
+            socket.broadcast.emit('drop-event-response', JSON.parse(result.output.output_json))
+            //SHOW CHANGES FOR CURRENT USER ONLY
             socket.emit('drop-event-response', JSON.parse(result.output.output_json))
         }).catch(error => {
             console.log("ERROR>>>>>>> ", error)
@@ -100,6 +114,28 @@ module.exports.respond = async socket => {
             }
         })
     })
+
+
+
+    //PENDING EVENTS
+    // socket.on('pending-event-request', async function (slug) {
+    //     console.log('pending-event-request::::::::')
+    //     TimeTable.getPendingEvents(slug).then(result => {
+    //         console.log('Pending event list:::', result)
+    //         socket.emit('pending-event-response', result)
+    //     }).catch(error => {
+    //         console.log("ERROR>>>>>>> ", error)
+    //         if (isJsonString.isJsonString(error.originalError.info.message)) {
+    //             socket.emit('pending-event-response', JSON.parse(error.originalError.info.message))
+    //         } else {
+    //             socket.emit('pending-event-response', JSON.parse({
+    //                 status: 500,
+    //                 description: error.originalError.info.message,
+    //                 data: []
+    //             }))
+    //         }
+    //     })
+    // })
 
     //Swap Event
     // socket.on('swap-events-request', async function (slug, userId, inputJSON) {
