@@ -16,14 +16,15 @@ function AdminRoute(app) {
     const roomtransacton = require('./rooms');
     const faculty = require('../../routers/admin/faculty');
     const weeklyConstraint = require('../../routers/admin/weeklyConstraint');
-    
+
     const timeTableSimulation = require('../../routers/admin/timeTableSimulation');
     const schooltimings = require('../../routers/admin/schooltimings');
     const reschedule = require('../../routers/admin/reschedule');
     const timesheet = require('../../routers/admin/timesheet');
-    
+    const simulationChart = require('../../routers/admin/simulationChart')
+
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
-    app.use('/admin/', isLoggedIn, checkPermission, days); 
+    app.use('/admin/', isLoggedIn, checkPermission, days);
     app.use('/admin/', isLoggedIn, checkPermission, program);
     app.use('/admin/', isLoggedIn, checkPermission, sessions);
     app.use('/admin/', isLoggedIn, checkPermission, events);
@@ -37,6 +38,7 @@ function AdminRoute(app) {
     app.use('/admin/', isLoggedIn, checkPermission, schooltimings);
     app.use('/admin/', isLoggedIn, checkPermission, reschedule);
     app.use('/admin/', isLoggedIn, checkPermission, timesheet);
+    app.use('/admin/', isLoggedIn, checkPermission, simulationChart)
 
 }
 
