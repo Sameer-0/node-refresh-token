@@ -65,6 +65,7 @@
                 <h5>FACULTY-DAY-WISE</h5>
             </div>
             <div>
+                <a class="btn btn-danger download-current-report  disabled"  >Download Currunt </a>
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -72,6 +73,7 @@
                 <label>Select Faculty:</label>
                 <select class="form-select select2 mt-1" id="facultyName">
                     <option>Select faculty</option>
+                    <option value="0">Download All</option>
                     <%for(let faculty of facultyList){%>
                     <option value="<%-faculty.id%>"><%-faculty.faculty_name%> (<%-faculty.faculty_id%>)</option>
                     <%}%>
@@ -92,11 +94,13 @@
 
 
                             $("#facultyName").on('change', function () {
-
                                 let faculty_lid = $(this).val()
-                                console.log('faculty_lid::::::::::::', faculty_lid)
-
-                                let ApiObj = {
+                               
+                                if(faculty_lid > 0){
+                                    $(".download-current-report").attr('data-faculty-id',faculty_lid)
+                                    $(".download-current-report").removeClass('disabled')
+                                    $(".download-current-report").html('Download Current')
+                                    let ApiObj = {
                                     type: 'POST',
                                     url: "/admin/mis/simulation-chart/faculty-day-wise",
                                     data: {
@@ -104,18 +108,30 @@
                                     },
                                     dataType: 'JSON'
                                 }
-
                                 ajaxApi(ApiObj).then(result => {
-
                                     AjaxtTable(result.data)
                                 }).catch(error => {
                                     showError(error.responseJSON)
                                 })
+                                }
+                                else{
+                                    console.log('IN ELSE CONDITION::::::::')
+                                    $(".download-current-report").attr('data-faculty-id',faculty_lid)
+                                    $(".download-current-report").removeClass('disabled')
+                                    $(".download-current-report").html('Download ALL')
+                                }
 
                             })
 
+                            $(".download-current-report").on('click',function(){
+                                let faculty_lid = $(this).attr('data-faculty-id')
+                                console.log('faculty_id::::::::::::::::::>>>>', faculty_lid)
+                                let from = window.localion = window.localion.href+`/admin/mis/simulation-chart/faculty-day-wise/download?id${faculty_lid}`
+                               console.log('from::::::::::::',from)
+                            })
 
-                            function AjaxtTable(dataSet) {
+
+                function AjaxtTable(dataSet) {
                                 let table = `<table>
                 <!-- <caption>A summary of top sites with both paid and free course</caption> -->
                 <thead>
@@ -142,6 +158,7 @@
                         </tr>`;
                                     });
                                 } else {
+                                    $(".download-current-report").addClass('disabled')
                                     table += `<tr><td colspan="6">No Data Found</td></tr>`;
                                 }
 
