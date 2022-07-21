@@ -13,4 +13,4 @@ router.get('/timesheet', index.getPage)
 router.post('/timesheet/check-days-lecture', index.checkDaysLecture)
 router.post('/timesheet/getSimulatedData',  index.getSimulatedData)
 
-module.exports = router;
+module.exports = router;  
