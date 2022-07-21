@@ -243,7 +243,9 @@ module.exports = {
      },
 
      findOne: (req, res) => {
+        console.log('req body time preference::', req )
         FacultyWorkTimePreferences.findOne(req.body.id, res.locals.slug).then(result => {
+            console.log('result:: time preference::', result)
             res.json({
                 status: 200,
                 message: "Success",

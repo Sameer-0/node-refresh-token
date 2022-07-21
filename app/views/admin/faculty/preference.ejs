@@ -583,7 +583,7 @@
     })
 
     //EDIT
-    $("#facultyWorkTimePreference").on('click','.edit-preference',function(){
+    $(document).on('click','.edit-preference',function(){
         let id = $(this).attr("data-id")
         console.log('ID:::::::::::::::',id)
         let ApiObj = {
@@ -819,10 +819,12 @@
                         <td>${list.day_name}</td>
                         <td>${list.start_time}</td>
                         <td>${list.end_time}</td>
-                        <td><a><i class="fa fa-edit"></i></a>
+                        <td>
+                            <a class="edit-preference" data-id="${list.id}"><i class="fa fa-edit"></i></a>
                             <a class="delete-faculty-preference" data-id="${list.id}"><i class="fa fa-trash text-danger"></i></a>
-                            </td>
+                        </td>
                     </tr>`
+                    console.log('AjaxTable', AjaxTable)
                 }
             } else {
                 AjaxTable +=
@@ -835,7 +837,7 @@
             $("#totalCount").html(facultiesList.length)
 
         }
-
+        
 
     function showError(errors) {
             console.log(errors);
