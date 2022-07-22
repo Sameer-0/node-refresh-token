@@ -904,6 +904,8 @@ code {
                 let module_lid = $("#ModuleFilter").val()
                 let acad_session_lid = $("#SessionFilter").val()
 
+                rescheduleObj.dateRangeTo = convertDate($('#modify-to-date').val(), '-')
+
                 if ($(`#modify-from-date`).val() && (rescheduleObj.reschFlag == 'M' || rescheduleObj.reschFlag == 'Y')) {
                   $.ajax({
                     type: 'POST',
@@ -1024,6 +1026,8 @@ code {
 
               $(`#faculty-dropdown`).on('change', function () {
 
+                console.log('CLICK ON REGULAR : : : : : : : : : : : : : : : : : : : : : : : : : : :  : : : > >',rescheduleObj)
+
                 if (rescheduleObj.reschFlag == 'M' || rescheduleObj.reschFlag == 'Y') {
                   rescheduleObj.toFacultyId = $(this).val();
                   $('#bulk-lecture-list-card .new-faculty').text($(this).find('option:selected').text().split('-')[0]
@@ -1035,12 +1039,12 @@ code {
 
                   $(".loaderBody").removeClass('d-none');
 
-                  // socket.emit('facultyAvailabilityCheck', {
-                  //   startDate: rescheduleObj.dateRangeFrom,
-                  //   endDate: rescheduleObj.dateRangeTo,
-                  //   facultyId: rescheduleObj.toFacultyId,
-                  //   facultyType: $(this).find('option:selected').attr('data-faculty-type')
-                  // })
+                  socket.emit('facultyAvailabilityCheck', {
+                    startDate: rescheduleObj.dateRangeFrom,
+                    endDate: rescheduleObj.dateRangeTo,
+                    facultyId: rescheduleObj.toFacultyId,
+                    facultyType: $(this).find('option:selected').attr('data-faculty-type')
+                  })
                 }
 
               })
