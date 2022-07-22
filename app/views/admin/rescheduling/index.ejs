@@ -136,19 +136,19 @@ code {
               </select>
           </div>
 
-        <div class="input-groups col-md-3 col-sm-12">
-              <label for="DivisionFilter">Select Division<span class="text-danger fw-bold fs-5">*</span>:</label>
-              <select name="DivisionFilter" id="DivisionFilter" class="form-select">
-                <option selected disabled value>--Select Division--</option>
-            </select>
-        </div>
-
           <div class="input-groups col-md-3 col-sm-12">
             <label for="ModuleFilter">Select Module<span class="text-danger fw-bold fs-5">*</span>:</label>
             <select name="ModuleFilter" id="ModuleFilter" class="form-select">
                 <option selected disabled value>--Select Session--</option>
             </select>
         </div>
+
+        <div class="input-groups col-md-3 col-sm-12">
+              <label for="DivisionFilter">Select Division<span class="text-danger fw-bold fs-5">*</span>:</label>
+              <select name="DivisionFilter" id="DivisionFilter" class="form-select">
+                <option selected disabled value>--Select Division--</option>
+            </select>
+          </div>
       </div>
   </div>
 </div>
@@ -2400,55 +2400,6 @@ code {
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-              let divisionList = `<option value="">Select Division</option>`;
-                if (result.divisionList.length > 0) {
-                    result.divisionList.forEach(element => {
-                      divisionList +=`<option value="${element.division_lid}">${element.division}</option>`;
-                    });
-
-                } else {
-                  divisionList += `<option value="">No Session Found!</option>`;
-                }
-                $("#DivisionFilter").html(divisionList)
-                //AjaxTable(result.lectureList)
-            }).catch(error => {
-                showError(error.responseJSON)
-            })
-    })
-
-    $("#DivisionFilter").on('change',function(){
-      let program_lid = $("#ProgramFilter").val()
-      let acad_session_lid = $("#SessionFilter").val()
-      let division_lid = $("#DivisionFilter").val()
-     // let module_lid = $("#ModuleFilter").val()
-      $(".schedule-type").attr('disabled',true)
-      $(".schedule-type").removeAttr('checked')
-      console.log('ModuleFilter::::::::::',program_lid,acad_session_lid, division_lid)
-      let ApiObj = {
-                type: 'POST',
-                url: '/admin/rescheduling/get-divisionby-program-session-module',
-                data: {
-                  program_lid: program_lid,
-                  acad_session_lid: acad_session_lid,
-                  division_lid: division_lid
-                },
-                dataType: 'JSON'
-            }
-            ajaxApi(ApiObj).then(result => {
-                console.log('api returnssss:', result)
-                // let divisionList = `<option value="">Select Division</option>`;
-                // if (result.divisionList.length > 0) {
-                //     result.divisionList.forEach(element => {
-                //       divisionList +=`<option value="${element.division_lid}">${element.division}</option>`;
-                //     });
-
-                // } else {
-                //   divisionList += `<option value="">No Session Found!</option>`;
-                // }
-                // $("#DivisionFilter").html(divisionList)
-
-                // MODULE FILTER
-                
                 let moduleList = `<option value="">Select Module</option>`;
                 if (result.moduleList.length > 0) {
                     result.moduleList.forEach(element => {
@@ -2458,6 +2409,41 @@ code {
                   moduleList += `<option value="">No Session Found!</option>`;
                 }
                 $("#ModuleFilter").html(moduleList)
+                //AjaxTable(result.lectureList)
+            }).catch(error => {
+                showError(error.responseJSON)
+            })
+    })
+
+    $("#ModuleFilter").on('change',function(){
+      let program_lid = $("#ProgramFilter").val()
+      let acad_session_lid = $("#SessionFilter").val()
+      let module_lid = $("#ModuleFilter").val()
+      $(".schedule-type").attr('disabled',true)
+      $(".schedule-type").removeAttr('checked')
+      console.log('ModuleFilter::::::::::',program_lid,acad_session_lid, module_lid)
+      let ApiObj = {
+                type: 'POST',
+                url: '/admin/rescheduling/get-divisionby-program-session-module',
+                data: {
+                  program_lid: program_lid,
+                  acad_session_lid: acad_session_lid,
+                  module_lid: module_lid
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('api returnssss:', result)
+                let divisionList = `<option value="">Select Division</option>`;
+                if (result.divisionList.length > 0) {
+                    result.divisionList.forEach(element => {
+                      divisionList +=`<option value="${element.division_lid}">${element.division}</option>`;
+                    });
+
+                } else {
+                  divisionList += `<option value="">No Session Found!</option>`;
+                }
+                $("#DivisionFilter").html(divisionList)
             }).catch(error => {
               console.log('error::::::::::::::::',error)
                 showError(error.responseJSON)
