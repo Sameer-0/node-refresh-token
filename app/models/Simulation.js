@@ -231,7 +231,7 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.Int, body.acad_session)
-                .query(`SELECT DISTINCT division_lid, division FROM [${slug}].timesheet WHERE program_lid = @program_lid AND acad_session_lid = @acad_session`)
+                .query(`SELECT DISTINCT division as div FROM [${slug}].timesheet WHERE program_lid = @program_lid AND acad_session_lid = @acad_session`)
         })
     }
 
@@ -342,8 +342,8 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.Int, body.program_lid)
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
-                .input('division_lid', sql.Int, body.division_lid)
-                .query(`SELECT DISTINCT module_lid, module_name from [${slug}].timesheet where program_lid = @program_lid and acad_session_lid = @acad_session_lid and division_lid = @division_lid`)
+                .input('module_lid', sql.Int, body.module_lid)
+                .query(`SELECT DISTINCT division_lid,division from [${slug}].timesheet where program_lid = @program_lid and acad_session_lid = @acad_session_lid and module_lid = @module_lid`)
         })
     }
 }
