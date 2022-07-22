@@ -528,52 +528,37 @@ code {
 
             ajaxApi(ApiObj).then(result => {
                     console.log('Available Room::>>>', result)
-                    // let facultyList = ``;
-                    // let otherFacultyDetail = `<h5>Other faculties for the selected lecture:</h5><ul>`;
-                    // facultyList += `<select id="faculty-work-event-list" class="form-select my-4">`
-                    // if (result.result.length > 0) {
-                        
-                    //     facultyList +=
-                    //         `<option disabled  selected value="">--Select Faculty--</option>`;
-                        
-                    //         for  (let faculty of result.result){
+                    let roomList = ``;
+                    roomList += `<select id="available-room-list" class="form-select my-4">`
+                   
 
-                    //             facultyList +=
-                    //             `<option value="${faculty.faculty_lid}"> ${faculty.faculty_name} </option>`
-                    //         }
-
-                    // } else {
-                    //     facultyList +=
-                    //         `<option value=""> No Faculty Found! </option>`
-                    // }
-                    // if (result.facultyAllocationDetails.length > 0) {
+                    if (result.availableRoom.length > 0) {
                         
+                      roomList +=
+                            `<option disabled  selected value="">--Select Room--</option>`;
                         
-                    //         for  (let otherFaculty of result.facultyAllocationDetails){
+                            for  (let room of result.availableRoom){
 
-                    //             otherFacultyDetail +=
-                    //             `<li> ${otherFaculty.faculty_name} : ${otherFaculty.lecture_count} Lectures Allocated </li>`
-                    //         }
+                              roomList +=
+                                `<option value="${room.room_lid}"> ${room.room_number} </option>`
+                            }
 
-                    // } else {
-                    //     otherFacultyDetail +=
-                    //     `<li> No Other Faculty Allocated </li>`
-                    // }
-                    // facultyList += `</select>`;
-                    // otherFacultyDetail += `</ul>`
-                    // $(document).find("#slotModal .modal-body").html(otherFacultyDetail + facultyList)
-                    // // $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
-                    // $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-allocate')
-                    // $('#slotModal .modal-footer').html(
-                    //     `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${startSLotId}" data-end-slot-id="${endSlotId}" data-room-id="${currentRoomLid}"  data-day-lid="${dayLid}" data-event-lid="${eventLid}" disabled="true" data-action-type="allocate">Schedule Slot</button>`
-                    //         );
-                    // $('#slotModal').modal('show');
+                    } else {
+                      roomList +=
+                            `<option value=""> No Room Available For That Duration! </option>`
+                    }
+                   
+                    roomList += `</select>`;
+                    
+                    $(document).find("#rescheduleModal .modal-body").html(otherFacultyDetail + facultyList)
+                    
+                    $('#rescheduleModal').modal('show');
                 }).catch(error => {
                     // showError(error.responseJSON)
                     console.log('Faculty Availability error', error);
                 })
 
-                $('#rescheduleModal').modal('show');
+                // $('#rescheduleModal').modal('show');
               })
 
               //RESCHEDULE LOGIC
