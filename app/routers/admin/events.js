@@ -7,10 +7,12 @@ const {
 
 
 const events =  require('../../controllers/admin/events/index')
+const eventCreation =  require('../../controllers/admin/events/eventCreation')
 const types =  require('../../controllers/admin/events/types')
 const validate = require('../../middlewares/validate')
 
 
+router.get('/events/send-to-sap', eventCreation.getPage)
 router.get('/events', events.getPage)
 
 //EVENT TPES

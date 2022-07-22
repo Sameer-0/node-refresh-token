@@ -18,7 +18,9 @@ const queue = new Bull('rescheduling-queue');
 
 
 
-const {poolConnection} = require('../../../../config/db');
+const {
+    poolConnection
+} = require('../../../../config/db');
 require('dotenv').config();
 
 
@@ -31,7 +33,7 @@ module.exports.respond = async socket => {
 
     //On Client Join
     socket.on('join', function (data) {
-        console.log('RESCHEDULE SOCKET INIT:::::::::::>>>',data);
+        console.log('RESCHEDULE SOCKET INIT:::::::::::>>>', data);
     });
 
     //On Drop Slot
@@ -313,7 +315,7 @@ module.exports.respond = async socket => {
         //     task: "cancelEventedSlot",
         //     reschData: data
         // });
-        
+
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>> cancelEventedSlot <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
         let request = await db.request();
 
@@ -1551,7 +1553,7 @@ module.exports.respond = async socket => {
         //     task: "changeTimetable",
         //     reschData: data
         // });
-        
+
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>> changeTimetable <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
         let request = await db.request();
@@ -2110,7 +2112,7 @@ module.exports.respond = async socket => {
                 console.log('Result-======>>>> ', result.EtReturn.item)
 
                 let sapResult = await result.EtReturn.item[0]
-                console.log('sapResult Suraj::::::::::::::::::::::::::>>>>>>',sapResult)
+                console.log('sapResult Suraj::::::::::::::::::::::::::>>>>>>', sapResult)
 
                 let stmtLastTrans = `SELECT TOP 1 * FROM reschedule_transaction WHERE transaction_id = '${transactionId}'`;
 
@@ -2182,7 +2184,9 @@ module.exports.respond = async socket => {
                     })
 
                     console.log('>>>>>> CALLING sendToLms FUNCTION')
-                    sendToLms({ data: sapResult });
+                    sendToLms({
+                        data: sapResult
+                    });
 
 
                     console.log('========================>>>>EMITTED<<<<====================================')
@@ -2212,11 +2216,6 @@ module.exports.respond = async socket => {
 
         })
     })
-
-
-
-
-
 
 
     socket.on("dropAndModify", async function (data) {
@@ -2409,293 +2408,94 @@ module.exports.respond = async socket => {
                 targetBookedDiv: data.bookeddiv,
             })
         })
-
-
-
-
     })
 
-    socket.on('sapEvent', async function (slug) {
-        console.log("Message: socket called generating sap events");
-
-        var eventDetails = [];
-        var eventHeaders = [];
-        var eventSchedules = [];
-        let request = await db.request();
-
-        request.query(`[${slug}].generateEventDetailJSON`,
-            async function (err, results) {
-                if (err) {
-                    console.log(err);
-                    throw err;
-                } else {
-                    let recordDetailSet = await results.recordset;
-
-                    for (let i in recordDetailSet) {
-                        // console.log('schJson => ', recordDetailSet[i].id);
-                        var etdt = {
-                            UniqueId: recordDetailSet[i].UniqueId,
-                            EventDate: recordDetailSet[i].EventDate,
-                            FromTime: recordDetailSet[i].FromTime,
-                            ToTime: recordDetailSet[i].ToTime,
-                            InstrType: recordDetailSet[i].InstrType,
-                            FacultyId: recordDetailSet[i].FacultyId,
-                            Room: recordDetailSet[i].Room,
-                        };
-                        eventDetails.push(etdt);
-                    }
-                    console.log("eventDetails => ", eventDetails.length);
-
-                    request.query(`[${slug}].generateEventScheduleJSON`,
-                        async function (err, results) {
-                            if (err) {
-                                console.log(err);
-                                throw err;
-                            } else {
-                                let recordScheduleSet = await results.recordset;
-
-                                for (let i in recordScheduleSet) {
-                                    // console.log('schJson => ', recordDetailSet[i].id);
-                                    var etsd = {
-                                        UniqueId: recordScheduleSet[i].UniqueId,
-                                        FromTime: recordScheduleSet[i].FromTime,
-                                        ToTime: recordScheduleSet[i].ToTime,
-                                        InstrType: recordScheduleSet[i].InstrType,
-                                        FacultyId: recordScheduleSet[i].FacultyId,
-                                        Room: recordScheduleSet[i].Room,
-                                        Monday: recordScheduleSet[i].Monday,
-                                        Tuesday: recordScheduleSet[i].Tuesday,
-                                        Wednesday: recordScheduleSet[i].Wednesday,
-                                        Thursday: recordScheduleSet[i].Thursday,
-                                        Friday: recordScheduleSet[i].Friday,
-                                        Saturday: recordScheduleSet[i].Saturday,
-                                        Sunday: recordScheduleSet[i].Sunday,
-                                    };
-                                    eventSchedules.push(etsd);
-                                }
-                                console.log("eventSchedules => ", eventSchedules.length);
-
-                                request.query(`[${slug}].generateEventHeaderJSON`,
-                                    async function (err, results) {
-                                        if (err) {
-                                            console.log(err);
-                                            throw err;
-                                        } else {
-                                            let recordHeaderSet = await results.recordset;
-
-                                            for (let i in recordHeaderSet) {
-                                                // console.log('schJson => ', recordDetailSet[i].id);
-                                                var ethd = {
-                                                    UniqueId: recordHeaderSet[i].UniqueId,
-                                                    ModuleId: recordHeaderSet[i].ModuleId,
-                                                    AcadYear: recordHeaderSet[i].AcadYear,
-                                                    AcadSession: recordHeaderSet[i].AcadSession,
-                                                    EventId: recordHeaderSet[i].EventId,
-                                                    EventType: recordHeaderSet[i].EventType,
-                                                    EventAbbr: recordHeaderSet[i].EventAbbr,
-                                                    EventName: recordHeaderSet[i].EventName,
-                                                    EventDesc: recordHeaderSet[i].EventDesc,
-                                                    LocationId: recordHeaderSet[i].LocationId,
-                                                    FromDate: recordHeaderSet[i].FromDate,
-                                                    ToDate: recordHeaderSet[i].ToDate,
-                                                };
-                                                eventHeaders.push(ethd);
-                                            }
-                                            console.log("eventHeaders => ", eventHeaders.length);
-
-                                            //var wsdlUrl = "zevent_create_sp_bin_seh_14012020.wsdl";
-                                            var wsdlUrl = path.join(
-                                                process.env.WSDL_PATH,
-                                                "zevent_create_sp_bin_sqh_20220401_2.wsdl"
-                                            );
-                                            console.log("filePath--->", wsdlUrl);
-                                            soap.createClient(
-                                                wsdlUrl,
-                                                async function (err, soapClient) {
-                                                    if (err) {
-                                                        throw err;
-                                                    } else {
-                                                        //  console.log('wsdl--->',array);
-
-                                                        await soapClient.ZeventCreateSp({
-                                                            ItEventDetail: {
-                                                                item: eventDetails
-                                                            },
-                                                            ItEventHeader: {
-                                                                item: eventHeaders
-                                                            },
-                                                            ItEventSchedule: {
-                                                                item: eventSchedules,
-                                                            },
-                                                        },
-                                                            async function (err, result) {
-                                                                if (err) {
-                                                                    throw err;
-                                                                } else {
-                                                                    let output = await result;
-
-                                                                    writeFile(`D:/infralog/course_wsdl.txt`, JSON.stringify(output), err => {
-                                                                        if (err) throw err;
-                                                                    })
-                                                              
-                                                                    let etReturn = output.EtReturn.item;
+    socket.on('create-sap-events', async function (slug) {
+        console.log("Message: socket called creating sap events");
 
 
-                                                                    (async function syncLoopWithFunc() {
-                                                                        for (let k in etReturn) {
-                                                                            console.log('EventId-->', etReturn[k].EventId);
-                                                                            if (etReturn[k].EventId == "00000000") {
-                                                                                console.log(
-                                                                                    "Remark-->",
-                                                                                    etReturn[k].Remark
-                                                                                );
-                                                                                if (
-                                                                                    etReturn[k].Rdate == "0000-00-00" &&
-                                                                                    etReturn[k].FromTime == "00:00:00" &&
-                                                                                    etReturn[k].ToTime == "00:00:00" &&
-                                                                                    etReturn[k].RoomNo == null &&
-                                                                                    etReturn[k].FacultyId == null
-                                                                                ) {
-                                                                                    console.log('If Everything is null-->');
-                                                                                    await new Promise(function (resolve) {
+        let eventDetails = await poolConnection.then(pool => {
+            return pool.request()
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[asmsoc-mum].sp_generate_event_details`)
+        })
+        eventDetails = JSON.parse(eventDetails.output.output_json).data
 
-                                                                                        console.log('etReturn[k].Remarktype: ', etReturn[k].Remarktype)
+        let eventHeaders = await poolConnection.then(pool => {
+            return pool.request()
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[asmsoc-mum].sp_generate_event_header`)
+        })
+        eventHeaders = JSON.parse(eventHeaders.output.output_json).data
 
-                                                                                        request.query(`update [${slug}].draftTimeTable set remark = '${etReturn[k].Remark.split("'").join("''")}', sapFlag = 'F', remarkType = '${etReturn[k].Remarktype}' where uniqueIDForSAP = '${etReturn[k].UniqueId}' and status = 2`,
-                                                                                            async function (err, results) {
-                                                                                                if (err) {
-                                                                                                    console.log(err);
-                                                                                                    throw err;
-                                                                                                } else {
-                                                                                                    let resultSet = await results;
-                                                                                                    console.log(
-                                                                                                        "resultSet-->",
-                                                                                                        resultSet
-                                                                                                    );
-                                                                                                    console.log(
-                                                                                                        "UniqueId-->",
-                                                                                                        etReturn[k].UniqueId
-                                                                                                    );
-                                                                                                    return resolve(resultSet);
-                                                                                                }
-                                                                                            }
-                                                                                        );
-                                                                                    });
-                                                                                } else {
-                                                                                    await new Promise(function (resolve) {
-                                                                                        request.query(`select top 1 slotName from [${slug}].school_timing where sapStartTime = '${moment(etReturn[k].FromTime, "h:mm:ss").format("hh:mm:ss A")}' and sapEndTime = '${moment(etReturn[k].ToTime, "h:mm:ss").format("hh:mm:ss A")}' and active = 'Y'`,
-                                                                                            async function (err, results) {
-                                                                                                if (err) {
-                                                                                                    console.log(err);
-                                                                                                    throw err;
-                                                                                                } else {
-                                                                                                    let timingSet = await results.recordset;
-                                                                                                    console.log('else Everything is not null timingSet-->' + timingSet);
-                                                                                                    for (let i in timingSet) {
-                                                                                                        console.log(
-                                                                                                            "resultSet-->",
-                                                                                                            timingSet[i].slotName
-                                                                                                        );
-                                                                                                        console.log(
-                                                                                                            "Rdate-->",
-                                                                                                            moment(
-                                                                                                                etReturn[k].Rdate
-                                                                                                            ).format("DD/MM/YYYY")
-                                                                                                        );
-                                                                                                        request.query(`update [${slug}].draftTimeTable set remark = '${etReturn[k].Remark.split("'").join("''")}', sapFlag = 'F', remarkType = '${etReturn[k].Remarktype}' where uniqueIDForSAP = '${etReturn[k].UniqueId}' and dateString = '${moment(etReturn[k].Rdate).format("DD/MM/YYYY")}' and slotname = '${timingSet[i].slotName}' and roomno = '${etReturn[k].RoomNo}' and facultyId = '${etReturn[k].FacultyId}' and status = 2`,
-                                                                                                            async function (
-                                                                                                                err,
-                                                                                                                results
-                                                                                                            ) {
-                                                                                                                if (err) {
-                                                                                                                    console.log(err);
-                                                                                                                    throw err;
-                                                                                                                } else {
-                                                                                                                    let resultSet = await results;
-                                                                                                                    console.log(
-                                                                                                                        "resultSet-->",
-                                                                                                                        resultSet
-                                                                                                                    );
-                                                                                                                    console.log(
-                                                                                                                        "UniqueId-->",
-                                                                                                                        etReturn[k].UniqueId
-                                                                                                                    );
-                                                                                                                    return resolve(
-                                                                                                                        resultSet
-                                                                                                                    );
-                                                                                                                }
-                                                                                                            }
-                                                                                                        );
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        );
-                                                                                    });
-                                                                                }
-                                                                            } else {
-                                                                                console.log(
-                                                                                    "UniqueIdBefore-->",
-                                                                                    etReturn[k].UniqueId
-                                                                                );
-                                                                                await new Promise(function (resolve) {
-                                                                                    request.query(`update [${slug}].draftTimeTable set sapEventId = '${etReturn[k].EventId}', sapFlag = 'S', remark = '${etReturn[k].Remark}', remarkType = '${etReturn[k].Remarktype}' where uniqueIDForSAP = '${etReturn[k].UniqueId}' and status = 2`,
-                                                                                        async function (err, results) {
-                                                                                            if (err) {
-                                                                                                console.log(err);
-                                                                                                throw err;
-                                                                                            } else {
-                                                                                                let resultSet = await results;
-                                                                                                console.log(
-                                                                                                    "resultSet-->",
-                                                                                                    resultSet
-                                                                                                );
-                                                                                                console.log(
-                                                                                                    "UniqueId-->",
-                                                                                                    etReturn[k].UniqueId
-                                                                                                );
-                                                                                                return resolve(resultSet);
-                                                                                            }
-                                                                                        }
-                                                                                    );
-                                                                                });
-                                                                                console.log("success-->");
-                                                                            }
-                                                                        }
-                                                                        await new Promise(function (resolve) {
-                                                                            console.log("final json update start");
-                                                                            request.query(`[${slug}].updateSapEventIds`,
-                                                                                async function (err, results) {
-                                                                                    if (err) {
-                                                                                        console.log(err);
-                                                                                        throw err;
-                                                                                    } else {
-                                                                                        let updateResultSet = await results;
-                                                                                        console.log(
-                                                                                            "final json update successfull: " +
-                                                                                            updateResultSet
-                                                                                        );
-                                                                                        return resolve(updateResultSet);
-                                                                                    }
-                                                                                }
-                                                                            );
-                                                                        });
-                                                                    })();
-                                                                    socket.emit('sapEventData', output);
-                                                                }
-                                                            }
-                                                        );
-                                                    }
-                                                }
-                                            );
-                                        }
-                                    }
-                                );
-                            }
-                        }
-                    );
-                }
+        let eventSchedules = await poolConnection.then(pool => {
+            return pool.request()
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[asmsoc-mum].sp_generate_event_schedules`)
+        })
+        eventSchedules = JSON.parse(eventSchedules.output.output_json).data
+
+
+        console.log('Event details >>>> ', eventDetails.length)
+        console.log('eventHeaders >>>> ', eventHeaders.length)
+        console.log('eventSchedules >>>> ', eventSchedules.length)
+
+        return false;
+
+        // let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sqh_20220401_2.wsdl");
+
+
+        // let soapClient = await new Promise((resolve, reject) => {
+        //     soap.createClient(wsdlUrl, async function (err, soapClient) {
+        //         if (err) throw err;
+        //         let client = await soapClient;
+        //         resolve(client)
+        //     })
+        // });
+
+
+        await soapClient.ZeventCreateSp({
+                ItEventDetail: {
+                    item: eventDetails
+                },
+                ItEventHeader: {
+                    item: eventHeaders
+                },
+                ItEventSchedule: {
+                    item: eventSchedules,
+                },
+            },
+            async function (err, result) {
+
+                if (err) throw err;
+
+                let etReturn = await result.EtReturn.item;
+
+                writeFile(`D:/infralog/quality/course_wsdl.txt`, JSON.stringify(result), err => {
+                    if (err) throw err;
+                })
+
+
+                let procRes = await poolConnection.then(pool => {
+                    return pool.request()
+                        .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(etReturn))
+                        .output('output_flag', sql.Bit)
+                        .output('output_json', sql.NVarChar(sql.MAX))
+                        .execute(`[asmsoc-mum].sp_update_created_events`)
+                })
+
+                console.log('procRes>>> ', procRes)
+
+                socket.emit('create-sap-events', {
+                    status: 200,
+                    message: 'Event creation completed.'
+                });
+
             }
-        );
+        )
     })
 
 
@@ -2956,7 +2756,9 @@ async function scheduleExtraClassNew(data) {
                     })
 
                     console.log('>>>>>> CALLING sendToLms FUNCTION')
-                    sendToLms({ name: "Kapil" });
+                    sendToLms({
+                        name: "Kapil"
+                    });
 
                     console.log('========================>>>>EMITTED<<<<====================================')
 
@@ -4550,29 +4352,21 @@ let rescheduleTimeTable = async (jobData) => {
 
     if (jobData.task === 'scheduleExtraClassNew') {
         return await scheduleExtraClassNew(jobData.reschData);
-    }
-    else if (jobData.task === 'scheduleExtraClass') {
+    } else if (jobData.task === 'scheduleExtraClass') {
         return await scheduleExtraClass(jobData.reschData)
-    }
-    else if (jobData.task === 'changeTimetable') {
+    } else if (jobData.task === 'changeTimetable') {
         return await changeTimetable(jobData.reschData)
-    }
-    else if (jobData.task === 'bulkModifyEventedSlot') {
+    } else if (jobData.task === 'bulkModifyEventedSlot') {
         return await bulkModifyEventedSlot(jobData.reschData)
-    }
-    else if (jobData.task === 'modifyEventedSlot') {
+    } else if (jobData.task === 'modifyEventedSlot') {
         return await modifyEventedSlot(jobData.reschData)
-    }
-    else if (jobData.task === 'cancelEventedSlotBulk') {
+    } else if (jobData.task === 'cancelEventedSlotBulk') {
         return await cancelEventedSlotBulk(jobData.reschData)
-    }
-    else if (jobData.task === 'cancelEventedSlotCae') {
+    } else if (jobData.task === 'cancelEventedSlotCae') {
         return await cancelEventedSlotCae(jobData.reschData)
-    }
-    else if (jobData.task === 'cancelEventedSlot') {
+    } else if (jobData.task === 'cancelEventedSlot') {
         return await cancelEventedSlot(jobData.reschData)
-    }
-    else if (jobData.task === 'rescheduleEventedSlot') {
+    } else if (jobData.task === 'rescheduleEventedSlot') {
         return await rescheduleEventedSlot(jobData.reschData)
     }
 }
@@ -4593,42 +4387,42 @@ queue.on('completed', (job, result) => {
 
 function sendToLms(data) {
     let obj = {
-            TransId: data.TransId,
-            ZBuseve: data.ZBuseve,
-            Zdate: data.Zdate,
-            ZtimeFrom: moment(data.ZtimeFrom).format("hh:mm:ss A"),
-            ZtimeTo: moment(data.ZtimeTo).format("hh:mm:ss A"),
-            Zflag: data.Zflag,
-            ZroomId: data.ZroomId,
-            OldZroomId: data.OldZroomId,
-            Zyear: data.Zyear,
-            ZOrg: data.ZOrg,
-            ZPrgstd: data.ZPrgstd,
-            ZSess: data.ZSess,
-            ZModule: data.ZModule,
-            ZEvetyp: data.ZEvetyp,
-            ZfacultyId: data.ZfacultyId,
-            OldZfacultyId: data.OldZfacultyId,
-            ReasonId: data.ReasonId,
-            OldZdate: data.OldZdate,
-            OldZtimeFrom: data.OldZtimeFrom,
-            OldZtimeTo: data.OldZtimeTo,
-            Remark: data.Remark,
-            ZfacId: data.ZfacId,
-            ReasonDetail: data.ReasonDetail,
-            Status: data.Status,
-            StatusRemark: data.StatusRemark
+        TransId: data.TransId,
+        ZBuseve: data.ZBuseve,
+        Zdate: data.Zdate,
+        ZtimeFrom: moment(data.ZtimeFrom).format("hh:mm:ss A"),
+        ZtimeTo: moment(data.ZtimeTo).format("hh:mm:ss A"),
+        Zflag: data.Zflag,
+        ZroomId: data.ZroomId,
+        OldZroomId: data.OldZroomId,
+        Zyear: data.Zyear,
+        ZOrg: data.ZOrg,
+        ZPrgstd: data.ZPrgstd,
+        ZSess: data.ZSess,
+        ZModule: data.ZModule,
+        ZEvetyp: data.ZEvetyp,
+        ZfacultyId: data.ZfacultyId,
+        OldZfacultyId: data.OldZfacultyId,
+        ReasonId: data.ReasonId,
+        OldZdate: data.OldZdate,
+        OldZtimeFrom: data.OldZtimeFrom,
+        OldZtimeTo: data.OldZtimeTo,
+        Remark: data.Remark,
+        ZfacId: data.ZfacId,
+        ReasonDetail: data.ReasonDetail,
+        Status: data.Status,
+        StatusRemark: data.StatusRemark
     }
-   
+
     console.log('>>>>>>>>>>>>>>>>>>>>>>>> SENDING DATA TO LMS <<<<<<<<<<<<<<<<<<<<<<<')
-    axios.post('https://uat-portal.svkm.ac.in:8080/usermgmtcrud/sendCancledLecture',{
-        data:obj
-    },{
-        headers: {
-        'Content-Type': 'application/json',
-        "Access-Control-Allow-Origin": "*",
-        }
-      })
+    axios.post('https://uat-portal.svkm.ac.in:8080/usermgmtcrud/sendCancledLecture', {
+            data: obj
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": "*",
+            }
+        })
         .then(function (response) {
             console.log(response.data);
         })
