@@ -146,13 +146,12 @@
         $('.select2').select2();
 
 
-        $("#courseWorkloadAbbrTable").on('input','.module_event_abbr',function(e){
+        $("#courseWorkloadAbbrTable").on('keypress','.module_event_abbr',function(e){
             let limit = 30
-            console.log('VALUES:::::::::::', $(this).val().slice(0,30))
+            console.log('VALUES:::::::::::', $(this).val().length)
             if($(this).val().length >= limit){ 
                 $(this).css('border-color','red')
-                $(this).val($(this).val().slice(0,30))
-               // e.preventDefault()
+                e.preventDefault()
                // showSuccess({status:0,message:'', description:"Abbr Length must not be greater than 30"})
             }else{
                 $(this).css('border-color','')
