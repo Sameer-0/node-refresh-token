@@ -116,7 +116,7 @@
                         <td><%-course.program_id%></td>
                         <td><%-course.program_code%></td>
                         <td><%-course.acad_session%></td>
-                        <td><input type="text" class="form-control rounded-0 module_event_abbr" name="module_event_abbr"
+                        <td><input type="search" class="form-control rounded-0 module_event_abbr" name="module_event_abbr"
                                     value="<%-course.module_event_abbr%>"></td>
                     </tr>
                     <% } %>
@@ -146,13 +146,14 @@
         $('.select2').select2();
 
 
-        $("#courseWorkloadAbbrTable").on('keydown','.module_event_abbr',function(){
+        $("#courseWorkloadAbbrTable").on('keydown','.module_event_abbr',function(e){
 
             let values =  $(this).val();
-            console.log('VALUES:::::::::::', values)
-            if(values.length >= 26){
+            console.log('VALUES:::::::::::', values.length)
+            if(values.length == 26){
                 $(this).css('border-color','red')
-                showSuccess({status:0,message:'', description:"Abbr Length must not be greater than 26"})
+                e.preventDefault()
+               // showSuccess({status:0,message:'', description:"Abbr Length must not be greater than 26"})
             }else{
                 $(this).css('border-color','')
                 $(this).text(`<span>ABBR MUST BE 26 CHAR</span>`)
@@ -385,7 +386,7 @@
                             <td>${course.program_id}</td>
                             <td>${course.program_code}</td>
                             <td>${course.acad_session}</td>
-                            <td><input type="text" class="form-control rounded-0 module_event_abbr" name="module_event_abbr"
+                            <td><input type="search" class="form-control rounded-0 module_event_abbr" name="module_event_abbr"
                                     value="${course.module_event_abbr}"></td>
                             </tr>`
                 }
