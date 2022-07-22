@@ -19,7 +19,7 @@ module.exports = class AcademicYear {
                 .input('endDate', sql.Date, body.endDate)
                 .input('acadYear', sql.Char(4), body.acadYear)
                 .query(`INSERT INTO  [dbo].academic_year (start_date, end_date, input_acad_year) VALUES(@startDate ,@endDate, @acadYear)`)
-        }).catch(error => {
+        }).catch(error => { 
             throw error
         })
     }
