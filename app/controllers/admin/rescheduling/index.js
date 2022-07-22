@@ -497,11 +497,14 @@ module.exports = {
 
   fetchLectureByDateRangeFaculty: async (req, res, next) => {
     console.log('>>>>>>>fetchBulkCancel<<<<<<<<<')
-    Promise.all([Simulation.LectureByDateRange(res.locals.slug, req.body),
+    let actionType = req.body.actionType;
+
+      Promise.all([Simulation.LectureByDateRange(res.locals.slug, req.body),
       Simulation.facultyLectureCount(res.locals.slug)
     ]).then(result => {
       res.json({
         status: 200,
+        actionType: actionType,
         lectureList: result[0].recordset,
         dataLength: result[1].recordset[0].count
       })
@@ -509,6 +512,22 @@ module.exports = {
       console.log(err)
     })
   },
+
+  fetchAvailableRoomAndFaculty: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<')
+
+      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimelid, req.body.endTimelid)
+    ]).then(result => {
+      res.json({
+        status: 200,
+        availableRoom: result[0].recordset,
+      
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
 
   fetchBulkCancelPagination: async (req, res, next) => {
     console.log('>>>>>>>fetchBulkCancelPagination<<<<<<<<<')

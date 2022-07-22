@@ -51,6 +51,17 @@ module.exports = class Simulation {
         })
     }
 
+    static getAvailableRoomForTimeRange(slug, dayLid, startSlot, endSlot) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('dayLid', sql.Int, dayLid)
+            .input('startSlot', sql.Int, startSlot)
+            .input('endSlot', sql.Int, endSlot)
+            .query(`SELECT DISTINCT eb.room_lid, r.room_number  FROM [${slug}].event_bookings  eb
+            INNER JOIN rooms r ON r.id = eb.room_lid
+            WHERE day_lid = @dayLid AND slot_lid BETWEEN @startSlot and @endSlot AND event_lid IS NULL`)
+        })
+    }
 
     static LectureByDateRange(slug, body) {
         console.log('body:::::::::',body)
