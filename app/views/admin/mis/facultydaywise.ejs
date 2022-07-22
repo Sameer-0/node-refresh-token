@@ -100,6 +100,7 @@
                                     $(".download-current-report").attr('data-faculty-id',faculty_lid)
                                     $(".download-current-report").removeClass('disabled')
                                     $(".download-current-report").html('Download Current')
+                                     $(".download-current-report").attr('href',`/admin/mis/simulation-chart/faculty-day-wise/download/${faculty_lid}`)
                                     let ApiObj = {
                                     type: 'POST',
                                     url: "/admin/mis/simulation-chart/faculty-day-wise",
@@ -117,18 +118,14 @@
                                 else{
                                     console.log('IN ELSE CONDITION::::::::')
                                     $(".download-current-report").attr('data-faculty-id',faculty_lid)
+                                     $(".download-current-report").attr('href',`/admin/mis/simulation-chart/faculty-day-wise/download/${faculty_lid}`)
                                     $(".download-current-report").removeClass('disabled')
                                     $(".download-current-report").html('Download ALL')
                                 }
 
                             })
 
-                            $(".download-current-report").on('click',function(){
-                                let faculty_lid = $(this).attr('data-faculty-id')
-                                console.log('faculty_id::::::::::::::::::>>>>', window.location.href)
-                                 window.location.href+`/admin/mis/simulation-chart/faculty-day-wise/download/${faculty_lid}`
-                              
-                            })
+                          
 
 
                 function AjaxtTable(dataSet) {
@@ -136,6 +133,7 @@
                 <!-- <caption>A summary of top sites with both paid and free course</caption> -->
                 <thead>
                   <tr>
+                     <th scope="col">Time</th>
                     <th scope="col">Monday</th>
                     <th scope="col">Tuesday</th>
                     <th scope="col">Wednesday</th>
@@ -149,6 +147,7 @@
                                 if (dataSet.length > 0) {
                                     dataSet.forEach(element => {
                                         table += `<tr>
+                            <td>${element.timing}</td>
                             <td>${element.Monday}</td>
                             <td>${element.Tuesday}</td>
                             <td>${element.Wednesday}</td>
