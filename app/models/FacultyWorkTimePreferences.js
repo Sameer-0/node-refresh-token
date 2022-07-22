@@ -18,7 +18,7 @@ module.exports = class FacultyWorkTimePreferences {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} fwtp.id, f.faculty_id, f.faculty_name, ft.name as faculty_type,
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
               RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, d.day_name, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
@@ -161,7 +161,7 @@ module.exports = class FacultyWorkTimePreferences {
 
     static downloadExcel(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            return pool.request().query(`SELECT fwtp.id, f.faculty_id, f.faculty_name, ft.name as faculty_type,
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
               RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
@@ -182,7 +182,7 @@ module.exports = class FacultyWorkTimePreferences {
 
     static fetchByFacultyId(facultyid, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('facultyId', sql.Int, facultyid).query(`SELECT  f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            return pool.request().input('facultyId', sql.Int, facultyid).query(`SELECT  fwtp.id, f.faculty_id, f.faculty_name, ft.name as faculty_type,
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
               RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, d.day_name, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
@@ -205,7 +205,7 @@ module.exports = class FacultyWorkTimePreferences {
 
     static byProgramId(programid, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('programid', sql.Int, programid).query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            return pool.request().input('programid', sql.Int, programid).query(`SELECT fwtp.id, f.faculty_id, f.faculty_name, ft.name as faculty_type,
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
               RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, d.day_name, icw.module_name, icw.module_code, icw.module_id, ads.acad_session
@@ -237,7 +237,7 @@ module.exports = class FacultyWorkTimePreferences {
         return poolConnection.then(pool => {
             return pool.request()
             .input('programid', sql.Int, body.program_lid)
-            .input('sessionLid', sql.Int, body.session_lid).query(`SELECT f.faculty_id, f.faculty_name, ft.name as faculty_type,
+            .input('sessionLid', sql.Int, body.session_lid).query(`SELECT fwtp.id, f.faculty_id, f.faculty_name, ft.name as faculty_type,
             CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
             CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
               RTRIM(LTRIM(p.program_name)) AS program_name, p.program_code,p.program_id, d.day_name as day, d.day_name, icw.module_name, icw.module_code, icw.module_id, ads.acad_session

@@ -8,7 +8,7 @@ const validate = require('../../middlewares/validate')
 const courseworkload = require('../../controllers/admin/courseworkload/workload')
 const preference = require('../../controllers/admin/courseworkload/preference')
 const index = require('../../controllers/admin/courseworkload/index')
-
+const moduleAbbr = require('../../controllers/admin/courseworkload/moduleAbbr')
 router.get('/courseworkload', index.getPage)
 router.post('/courseworkload', index.fetchFromSAP)
 // router.post('/courseworkload', courseworkload.fetchFromSAP)
@@ -50,4 +50,8 @@ router.post('/courseDayRoomPreference/find-module-by-programid-semesterid',  pre
 router.post('/courseDayRoomPreference/find-division-by-moduleid',  preference.findDivisionByModuleId)
 router.post('/courseDayRoomPreference/filter-records',  preference.filterPreference)
 router.post('/courseDayRoomPreference/occupiedroomdays', preference.occupiedRoomDays)
+
+//MODULE ABBR UPDATE
+router.get('/courseworkload/workload/module-abbr',moduleAbbr.getPage)
+router.post('/courseworkload/workload/module-abbr/update', validate('JsonValidator'), moduleAbbr.update)
 module.exports = router

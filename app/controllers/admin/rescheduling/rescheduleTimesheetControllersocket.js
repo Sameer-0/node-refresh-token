@@ -1,4 +1,3 @@
-const sql = require('mssql')
 const sanitizer = require('sanitize')();
 const soap = require('soap');
 const path = require('path');
@@ -705,17 +704,21 @@ module.exports.respond = async socket => {
         //     reschData: data
         // });
 
-
+        console.log('>>>>>>>>>>>>>> BULK CANCEL<<<<<<<<<<<<<<<', data)
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>> cancelEventedSlotBulk <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
         let request = await db.request();
         let socketUser = data.socketUser;
         console.log('socketUser>>>>> ', socketUser)
 
-        console.log('>>>>>>>>>>>>>> BULK CANCEL<<<<<<<<<<<<<<<')
+    
 
         let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220401_2.wsdl");
 
+        // poolConnection.then(pool=>{
+        //     pool.request().execute()
+        // }).then(rusult=>{
 
+        // })
         let soapClient = await new Promise((resolve, reject) => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
                 if (err) throw err;

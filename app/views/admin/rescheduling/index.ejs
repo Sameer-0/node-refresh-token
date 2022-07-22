@@ -75,7 +75,7 @@
   z-index: 2;
   position: absolute;
   right: 30px;
-  top: 50%;
+  top: 50%; 
   transform: translateY(-50%);
   cursor: pointer;
   visibility: hidden;
@@ -119,8 +119,8 @@ code {
  <div class="card table-card mb-1 timetable-filter-container">
   <div class="card-body" id="timetable-filter">
       <div class="row">
-          <div class="input-groups col-md-4 col-sm-12">
-              <label for="ProgramFilter" class="d-flex justify-content-between">Select Program:</label>
+        <div class="input-groups col-md-3 col-sm-12">
+              <label for="ProgramFilter">Select Program<span class="text-danger fw-bold fs-5">*</span>:</label>
               <select name="ProgramFilter" id="ProgramFilter" class="form-select">
                   <option selected disabled value>--Select Program--</option>
                   <% for(let program of programList){%>
@@ -129,15 +129,22 @@ code {
               </select>
           </div>
 
-          <div class="input-groups col-md-4 col-sm-12">
-              <label for="SessionFilter">Select Session:</label>
+          <div class="input-groups col-md-3 col-sm-12">
+              <label for="SessionFilter">Select Session<span class="text-danger fw-bold fs-5">*</span>:</label>
               <select name="SessionFilter" id="SessionFilter" class="form-select">
                   <option selected disabled value>--Select Session--</option>
               </select>
           </div>
 
-          <div class="input-groups col-md-4 col-sm-12">
-              <label for="DivisionFilter">Select Division:</label>
+          <div class="input-groups col-md-3 col-sm-12">
+            <label for="ModuleFilter">Select Module<span class="text-danger fw-bold fs-5">*</span>:</label>
+            <select name="ModuleFilter" id="ModuleFilter" class="form-select">
+                <option selected disabled value>--Select Session--</option>
+            </select>
+        </div>
+
+        <div class="input-groups col-md-3 col-sm-12">
+              <label for="DivisionFilter">Select Division<span class="text-danger fw-bold fs-5">*</span>:</label>
               <select name="DivisionFilter" id="DivisionFilter" class="form-select">
                 <option selected disabled value>--Select Division--</option>
             </select>
@@ -167,7 +174,7 @@ code {
           Current Infromation
          </div>
 
-        <div class="card rounded-0">
+        <!-- <div class="card rounded-0">
           <div class="card-header">
           <div class="d-flex justify-content-between">
           <div>Date: 08/01/2022</div>
@@ -183,7 +190,7 @@ code {
              <div><h6 class="card-title">Session : Semester I</h6></div>
             </div>
           </div>
-        </div>
+        </div> -->
 
 
         <div class="card rounded-0 mt-2">
@@ -193,7 +200,7 @@ code {
           <div class="card-body" >
             <%for(let rFlag of rescheduleFlag){%>
               <div class="inputGroup">
-                <input id="<%- rFlag.name %>" name="scheduleType" value="<%-rFlag.id%>" class="custom-control-input" data-sap-flag="<%-rFlag.denotedBy%>" type="radio"/>
+                <input id="<%- rFlag.name %>" name="scheduleType" value="<%-rFlag.id%>" class="custom-control-input schedule-type" data-sap-flag="<%-rFlag.denotedBy%>" type="radio" disabled/>
                 <label for="<%-rFlag.name%>"><%-rFlag.name%></label>
             </div>
             <%}%>
@@ -224,9 +231,7 @@ code {
             <textarea id="cancellationDesc" class="form-control mt-3 rounded-0"></textarea>
           </div>                 
         </div>
-        <div class="d-grid gap-2 mt-2">
-          <button class="btn btn-primary rounded-0" id="scheduleEventedSlot" type="button">Submit</button>
-        </div>
+      
       </div>
       <div class="col-md-7 blur" id="reschedule-to-wrapper">
         <div class="alert alert-primary rounded-0" role="alert">
@@ -257,7 +262,7 @@ code {
             <input type="radio" id="cancel-bulk" name="cancel-type" 
               value="bulk">
             <label class="custom-control-label cursor-pointer" for="cancel-bulk">
-              Bulk Cancel
+              Cancel
             </label>
           </div>
 
@@ -306,7 +311,7 @@ code {
           </div>
           <div class="mb-3">
             <label>Faculty: <strong class="text-danger">*</strong></label>
-            <select id="replace-faculty-dropdown" class="form-control" disabled>
+            <select id="faculty-dropdown" class="form-control" disabled>
               <option disabled selected value>--Select Faculty--</option>
             </select>
           </div>
@@ -319,8 +324,8 @@ code {
 
         <div id="normal-modify" class="d-none">
           <div class="mb-3">
-            <label>To Date: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-date-dropdown" class="form-control modal-selct2" disabled>
+            <label>From Date: <strong class="text-danger">*</strong></label>
+            <select id="reschedule-date-dropdown" class="form-control select2" disabled>
               <option selected disabled value>--Select Date--</option>
               <% for (let date of semesterDates) { %>
                 <option value="<%- date.dateString %>">
@@ -329,6 +334,20 @@ code {
                 <% } %>
             </select>
           </div>
+
+          <div class="mb-3">
+            <label>To Date: <strong class="text-danger">*</strong></label>
+            <select id="reschedule-to-date-dropdown" class="form-control select2" >
+              <option selected  value>--Select Date--</option>
+              <% for (let fdate of semesterDates) { %>
+                <option value="<%- fdate.dateString %>">
+                  <%- fdate.dateString %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+
+
           <div class="mb-3">
             <label>Faculty: <strong class="text-danger">*</strong></label>
             <select id="reschedule-faculty-dropdown" class="form-control" disabled>
@@ -336,6 +355,10 @@ code {
             </select>
           </div>
           <div class="mb-3">
+            <button class="btn btn-md btn-dark" id="fetch-bulk-cancel">Fetch lectures</button>
+          </div>
+
+          <!-- <div class="mb-3">
             <label>Select Time Slot: <strong class="text-danger">*</strong></label>
             <select id="reschedule-slot-dropdown" class="form-control" disabled>
               <option disabled selected value>--Select Time--</option>
@@ -343,10 +366,10 @@ code {
           </div>
           <div class="mb-3">
             <label>Select Room: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-room-dropdown" class="form-control modal-selct2" disabled>
+            <select id="reschedule-room-dropdown" class="form-control select2" disabled>
               <option disabled selected value>--Select Room--</option>
             </select>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -401,14 +424,14 @@ code {
     <div class="card-body">
       <div class="table-responsive">
         <div class="d-flex justify-content-between">
-          <div>
+          <!-- <div>
               <label>Show Entry</label>
               <select class="form-select" id="changeEntry">
                   <%for(let page of locals.page_filter){%>
                      <option value="<%-page%>"><%-page%></option>
                   <%}%>
               </select>
-          </div>
+          </div> -->
           <div>
               <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                   type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -427,7 +450,8 @@ code {
               <th>Room</th>
               <th>Status</th>
               <th>Remark</th>
-              <th>Cancel <input id="cancel-all" type="checkbox" checked="checcked" />
+              <th>Action</th>
+              <th>Cancel <input id="cancel-all" type="checkbox" checked="checked" />
                 <label>All</label>
               </th>
             </tr>
@@ -435,14 +459,11 @@ code {
           <tbody>
           </tbody>
         </table>
-        <div class="d-flex justify-content-between">
-          <div>
-              <p>Total entries: <%-pageCount%> </p>
-          </div>
-          <div>
-              <p id="pagination" class="pagination-search"></p>
-          </div>
-      </div>
+
+        <div class="d-grid gap-2 mt-2 w-50 mx-auto">
+          <button class="btn btn-primary rounded-0" id="scheduleEventedSlot" type="button">Submit</button>
+        </div>
+       
       </div>
     </div>
   </div>
@@ -457,6 +478,7 @@ code {
               //SOCKET IO
 
               $(".select2").select2()
+              //$(".modal-selct2").select2()
 
               let socketRoom = `<%- locals.username %>`
               console.log('socketRoom==========>>', socketRoom)
@@ -502,329 +524,11 @@ code {
                 dateRangeTo: ''
               }
 
-              let slotTime = {
-                "slot1": {
-                  starttime: '07:30 AM',
-                  endtime: '08:30 AM',
-                  sapStartTime: '07:30:01 AM',
-                  sapEndTime: '08:30:00 AM'
-                },
-                "slot2": {
-                  starttime: '08:30 AM',
-                  endtime: '09:30 AM',
-                  sapStartTime: '08:30:01 AM',
-                  sapEndTime: '09:30:00 AM'
-                },
-                "slot3": {
-                  starttime: '10:00 AM',
-                  endtime: '11:00 AM',
-                  sapStartTime: '10:00:01 AM',
-                  sapEndTime: '11:00:00 AM'
-                },
-                "slot4": {
-                  starttime: '11:00 AM',
-                  endtime: '12:00 PM',
-                  sapStartTime: '11:00:01 AM',
-                  sapEndTime: '12:00:00 PM'
-                },
-                "slot5": {
-                  starttime: '12:30 PM',
-                  endtime: '01:30 PM',
-                  sapStartTime: '12:30:01 PM',
-                  sapEndTime: '01:30:00 PM'
-                },
-                "slot6": {
-                  starttime: '01:30 PM',
-                  endtime: '02:30 PM',
-                  sapStartTime: '01:30:01 PM',
-                  sapEndTime: '02:30:00 PM'
-                },
-                "slot7": {
-                  starttime: '03:00 PM',
-                  endtime: '04:00 PM',
-                  sapStartTime: '03:00:01 PM',
-                  sapEndTime: '04:00:00 PM'
-                },
-                "slot8": {
-                  starttime: '04:00 PM',
-                  endtime: '05:00 PM',
-                  sapStartTime: '04:00:01 PM',
-                  sapEndTime: '05:00:00 PM'
-                },
-                "slot9": {
-                  starttime: '05:00 PM',
-                  endtime: '06:00 PM',
-                  sapStartTime: '05:00:01 PM',
-                  sapEndTime: '06:00:00 PM'
-                }
-              }
 
-
-              let userProgramId = `<%- locals.userId %>`
-
-
-              //Search Filter start
-
-              $('#search-filter').on('input', function () {
-
-                let searchStr = $(this).val().toLowerCase()
-
-                if (searchStr.length > 1) {
-                  $('tr[data-room]').addClass('d-none')
-                  $('tr[data-room]').each(function (iTr, thisTr) {
-                    $(thisTr).find('td:not(:first-child)').each(function (iTd, thisTd) {
-                      if ($(thisTd).html().toLowerCase().includes(searchStr)) {
-                        $(thisTd).addClass('bg-info').parent().removeClass('d-none')
-                      } else {
-                        $(thisTd).removeClass('bg-info')
-                      }
-                    })
-
-                  })
-                } else {
-                  $('tr[data-room]').removeClass('d-none')
-                  $('tr[data-room] td').removeClass('bg-info')
-                }
-              })
-              //Search Filter end
-
-
-
-              //INITIALIZE calendar
-              let calendar;
-              if ($('#calendar').length >= 1) {
-                var calendarEl = document.getElementById('calendar');
-                calendar = new FullCalendar.Calendar(calendarEl, {
-                  plugins: ['dayGrid'],
-                  validRange: {
-                    start: '<%- dateRange.minDate %>',
-                    end: '<%- dateRange.maxDate %>'
-                  }
-                });
-                calendar.render();
-              }
-
-              $('.fc-next-button, .fc-prev-button, .fc-today-button').click(function () {
-                $.ajax({
-                  type: 'POST',
-                  url: '/simulation/check-days-lecture/',
-                  dataType: "json",
-                  data: {
-                    monthInt: getMonth() + 1
-                  },
-                  success: data => {
-                    console.log('on success: ', data)
-                    let dateList = data.dateList
-
-                    for (let date of dateList) {
-                      $(`#calendar td .fc-day[data-date='${date.dateStr}']`).append(
-                        '<i class="status fas fa-check-square"></i>')
-                    }
-
-
-                  },
-                  error: err => {
-                    console.log('on error: ', err)
-                  }
-                })
-
-
-                showTimesheetModal()
-                //console.log('The month is ====>>> ', getMonth() + 1)
-              })
-
-              function showTimesheetModal() {
-                $('.fc-day, .fc-day-top, .fc-past, .fc-future').click(function () {
-
-
-                  let thisDate = $(this).data('date').trim();
-
-                  console.log('selected date: ', $(this).data('date'))
-
-                  $.ajax({
-                    type: 'POST',
-                    url: '/simulation/getSimulatedData/',
-                    dataType: "json",
-                    data: {
-                      selectedDate: thisDate
-                    },
-
-                    success: function (data) {
-                      if (data.cause == "permission denied") {
-                        window.location = data.reqUrl
-                        return
-                      }
-
-                      console.log('data.date====>>>>> ', thisDate)
-                      console.log('data.date====>>>>> ', convertDate(thisDate, '-'))
-
-
-                      $("#simulatedDataModal").attr("data-modalDate", convertDate(thisDate, '-'))
-                      $("#simulatedDataModalTitle").html(convertDate(thisDate, '-'))
-
-                      let detailsData = data.data || [];
-
-                      console.log('data ====>>>>> ', detailsData)
-                      let uTds = $(`#simulatedDataModal tbody td:not(:first-child)`);
-
-                      uTds.html('');
-                      uTds.attr('data-uuid', '');
-                      uTds.attr('data-facultyId', '');
-                      uTds.attr('data-acad-session', '');
-                      uTds.attr('data-acad-year', '');
-                      uTds.attr('data-div', '');
-                      uTds.attr('data-programId', '');
-                      uTds.attr('data-start-time', '');
-                      uTds.attr('data-end-time', '');
-                      uTds.attr('data-uniqueIdForSap', '');
-                      uTds.attr('data-sapFlag', '');
-                      uTds.attr('data-sapEventId', '');
-                      uTds.attr('data-eventType', '');
-                      uTds.attr('data-eventName', '');
-                      uTds.attr('data-moduleId', '');
-                      uTds.attr('data-is-adjusted', '');
-                      uTds.attr('data-is-new-ec', '');
-
-
-                      for (let lec of detailsData) {
-
-                        let uTd = $(`td[data-utd="slot${lec.slotno}-${lec.room_uid}"]`);
-                        uTd.html(`${lec.eventName} ${lec.sapFlag ? `<span class="sap-flag-pill">${lec.sapFlag}</span>` : ''}`)
-                        uTd.attr('data-uuid', lec.uuid);
-                        uTd.attr('data-facultyId', lec.facultyId);
-                        uTd.attr('data-acad-session', lec.bookedAcadSession);
-                        uTd.attr('data-acad-year', lec.bookedAcadYear);
-                        uTd.attr('data-div', lec.bookedDiv);
-
-                        console.log('userProgramId==>>> ', userProgramId)
-                        console.log('lec.bookedProgramId==>>> ', lec.bookedProgramId)
-                        if(userProgramId == lec.bookedProgramId){
-                          //uTd.attr('data-programId', lec.bookedProgramId);
-                         uTd.addClass('program-color');
-                        }else{
-                          uTd.attr('data-programId', lec.bookedProgramId);
-                        }
-                        //uTd.attr('data-programId', lec.bookedProgramId);
-                        uTd.attr('data-start-time', lec.starttime);
-                        uTd.attr('data-end-time', lec.endtime);
-                        uTd.attr('data-uniqueIdForSap', lec.uniqueIdForSAP);
-                        uTd.attr('data-sapFlag', lec.sapFlag);
-                        uTd.attr('data-sapEventId', lec.sapEventId);
-                        uTd.attr('data-eventType', lec.eventType);
-                        uTd.attr('data-eventName', lec.eventName);
-                        uTd.attr('data-moduleId', lec.eventId.split('-')[0].trim());
-                        uTd.attr('data-is-adjusted', Number(lec.is_adjusted_cancel));
-                        uTd.attr('data-is-new-ec', Number(lec.is_new_ec));
-                      }
-
-                      ; (async () => {
-
-                        $('#simulatedDataModal').modal('show');
-
-                        let scheduleLogic = await new Promise(resolve => {
-                          $(`#simulatedDataModal table tbody td:not(:first-child)`).click(function () {
-
-                            //[data-programid='${userProgramId}']
-
-                            console.log('userProgramId=====>>>> ', userProgramId)
-
-                            let $this = $(this)
-                            let tdIdx = $(this).index() + 1
-                            let slotFor = $this.attr('data-eventname')
-
-
-                            inputDate = $("#simulatedDataModalTitle").text().trim()
-                            slotName = $this.attr("data-slot")
-                            roomNo = $this.parent().attr("data-room")
-                            uuid = $this.attr("data-uuid")
-
-                            console.log(rescheduleObj)
-
-                            if (slotFor) {
-
-                              rescheduleObj.fromDate = inputDate
-                              rescheduleObj.fromRoom = roomNo
-                              rescheduleObj.fromSlot = $this.attr('data-slot')
-                              rescheduleObj.fromSlotUuid = $this.attr('data-uuid')
-                              rescheduleObj.fromFacultyId = $this.attr('data-facultyid')
-                              rescheduleObj.acadSession = $this.attr('data-acad-session')
-                              rescheduleObj.acadYear = $this.attr('data-acad-year')
-                              rescheduleObj.division = $this.attr('data-div')
-                              rescheduleObj.programId = $this.attr('data-programid')
-                              rescheduleObj.fromStartTime = $this.attr('data-start-time')
-                              rescheduleObj.fromEndTime = $this.attr('data-end-time')
-                              rescheduleObj.uniqueIdForSap = $this.attr('data-uniqueidforsap')
-                              rescheduleObj.sapFlag = $this.attr('data-sapflag')
-                              rescheduleObj.sapEventId = $this.attr('data-sapeventid')
-                              rescheduleObj.eventType = $this.attr('data-eventtype')
-                              rescheduleObj.eventName = $this.attr('data-eventname')
-                              rescheduleObj.moduleId = $this.attr('data-moduleid')
-                              rescheduleObj.isAdjusted = $this.attr('data-is-adjusted')
-                              rescheduleObj.isNewEc = $this.attr('data-is-new-ec')
-
-                              console.log('rescheduleObj.isAdjusted: ', rescheduleObj.isAdjusted)
-
-                              $('#resModalData .current-date').text(inputDate)
-                              $('#resModalData .class-room').text($this.closest('tr').attr(
-                                'data-room'))
-                              $('#resModalData .class-timing').text($(
-                                `#timetable-head tr th:nth-child(${tdIdx})`).text().trim())
-
-
-                              $("#flag-radio-group .custom-radio[data-flag='Extra Class']")
-                                .addClass("d-none")
-                              $('#editSimulatedModalData #editProgramName').html(slotFor)
-                              $('#editSimulatedModalData').modal('show')
-
-
-                            } else {
-
-                              $('#extraModalData .class-room').text($this.closest('tr').attr(
-                                'data-room'))
-                              $('#extraModalData .class-timing').text($(
-                                `#timetable-head tr th:nth-child(${tdIdx})`).text().trim())
-
-                              //EXTRA CLASS LOGIC
-                              rescheduleObj.toDate = inputDate
-                              rescheduleObj.toRoom = roomNo
-                              rescheduleObj.toSlot = slotName
-                              rescheduleObj.toStartTime = slotTime[slotName].sapStartTime
-                              rescheduleObj.toEndTime = slotTime[slotName].sapEndTime
-                              rescheduleObj.toSlotUuid = $this.attr('data-uuid')
-                              rescheduleObj.fromDate = ""
-                              rescheduleObj.fromRoom = ""
-                              rescheduleObj.fromSlot = ""
-                              rescheduleObj.fromSlotUuid = ""
-                              rescheduleObj.fromFacultyId = ""
-                              rescheduleObj.acadSession = ""
-                              rescheduleObj.acadYear = ""
-                              rescheduleObj.division = ""
-                              rescheduleObj.programId = ""
-                              rescheduleObj.fromStartTime = ""
-                              rescheduleObj.fromEndTime = ""
-                              rescheduleObj.uniqueIdForSap = ""
-                              rescheduleObj.sapFlag = "E"
-                              rescheduleObj.sapEventId = ""
-                              rescheduleObj.eventType = ""
-                              rescheduleObj.eventName = ""
-                              rescheduleObj.moduleId = ""
-                              $("#extraClassModal").modal('show');
-                              console.log('Extra Class OBJ: ', rescheduleObj)
-                            }
-                          })
-                        })
-
-
-                      })()
-                    }
-                  })
-                })
-              }
-              showTimesheetModal()
 
 
               //RESCHEDULE LOGIC
-              $(`input[name='scheduleType']`).on('change', function () {
+              $(`.schedule-type`).on('change', function () {
                 console.log('Changed: ', $(this).val())
                 $('#reschedule-to-wrapper').addClass('blur');
                 $('#reschedule-date-dropdown').val('').change()
@@ -845,7 +549,7 @@ code {
                 $('#bulk-lecture-list-card').addClass('d-none')
                 $('#cancel-lecture-list-card').addClass('d-none')
                 $('#fetch-bulk-cancel').addClass('d-none');
-                $('#replace-faculty-dropdown').attr('disabled', true)
+                $('#faculty-dropdown').attr('disabled', true)
 
                 $('#cancel-wrapper .cancel-against-e').addClass('d-none')
                 $('#cancel-wrapper .cancel-against-e .extra-lecture').val('');
@@ -856,6 +560,8 @@ code {
                 let isBlurred = true;
 
                 let rescheduleType = $(this).val();
+
+                console.log('rescheduleType::::::::::',rescheduleType)
 
                 rescheduleObj.toDate = '';
                 rescheduleObj.toSlot = '';
@@ -872,21 +578,31 @@ code {
                 console.log('Changed Obj: ', rescheduleObj)
 
                 if (rescheduleType == 3 && isBlurred) {
+                  console.log('REMOVE DISABLED ATTR FROM DATE:::::::::::::::>>>')
                   getFacultiesForModule();
                   $('#reschedule-date-dropdown').attr('disabled', false);
+                  console.log('DROP DOWN:::::::::::>>',$('#reschedule-date-dropdown'))
                   $('#reschedule-to-wrapper').removeClass('blur');
                   isBlurred = false;
                 } else if (rescheduleType == 2) {
-                  $('#replace-faculty-wrapper').removeClass('d-none')
-                  rescheduleObj.toDate = rescheduleObj.fromDate
-                  rescheduleObj.toSlot = rescheduleObj.fromSlot
-                  rescheduleObj.toStartTime = rescheduleObj.fromStartTime
-                  rescheduleObj.toEndTime = rescheduleObj.fromEndTime
-                  console.log('modified Obj: ', rescheduleObj)
-                  getFacultiesRoomsForModify()
-                  $('#reschedule-to-wrapper').removeClass('blur');
-                  $('#reschedule-date-dropdown').val(rescheduleObj.fromDate).change();
+                  // $('#replace-faculty-wrapper').removeClass('d-none')
+                  // rescheduleObj.toDate = rescheduleObj.fromDate
+                  // rescheduleObj.toSlot = rescheduleObj.fromSlot
+                  // rescheduleObj.toStartTime = rescheduleObj.fromStartTime
+                  // rescheduleObj.toEndTime = rescheduleObj.fromEndTime
+                  // console.log('modified Obj: ', rescheduleObj)
+                  // getFacultiesRoomsForModify(rescheduleObj.toDate)
+                  // console.log('getFacultiesRoomsForModify:::::::::::::::')
+                  // $('#reschedule-to-wrapper').removeClass('blur');
+                  // $('#reschedule-date-dropdown').val(rescheduleObj.fromDate).change();
                   //$('#reschedule-slot-dropdown').val(rescheduleObj.fromSlot).change();
+
+                  $('#modify-from-date').attr('disabled', false);
+                  $('#bulk-modify').removeClass('d-none');
+                  $('#normal-modify').addClass('d-none');
+                  $('#cancel-wrapper .cancel-against-e').addClass('d-none');
+                  // $('#bulk-cancel-without-report').parent().removeClass('d-none'); normal-modify
+                  $('#fetch-bulk-cancel').removeClass('d-none');
                 } else if (rescheduleType == 5) {
                   $('#dropReason').val(12).change().attr('disabled', true);
                   $('#cancellationDesc').val('').attr('disabled', true);
@@ -1012,27 +728,35 @@ code {
               })
 
               $('#fetch-bulk-cancel').on('click', function () {
-                let fromDate = convertDate(rescheduleObj.dateRangeFrom, '-')
-                let toDate = convertDate(rescheduleObj.dateRangeTo, '-')
-                let facultyId = $('#replace-faculty-dropdown').val()
+                let fromDate = convertDate($('#modify-from-date').val(), '-')
+                let toDate = convertDate($('#modify-to-date').val(), '-')
+                let facultyLid = $('#faculty-dropdown').val()
+                let program_lid = $("#ProgramFilter").val()
+                let division_lid = $("#DivisionFilter").val()
+                let module_lid = $("#ModuleFilter").val()
+                let acad_session_lid = $("#SessionFilter").val()
 
                 let ApiObj = {
                 type: 'POST',
-                url: '/admin/rescheduling/fetch-bulk-cancel/',
+                url: '/admin/rescheduling/fetch-lecture-by-date-range-faculty',
                 data: {
                     fromDate: fromDate,
                     toDate: toDate,
-                    facultyId: facultyId,
+                    facultyLid: facultyLid,
+                    program_lid: program_lid,
+                    division_lid: division_lid,
+                    module_lid: module_lid,
+                    acad_session_lid: acad_session_lid,
                     pageNo: 1
                 },
                 dataType: 'JSON'
-            }
+                }
 
-              ajaxApi(ApiObj).then(data => {
-                AjaxTable(data.lectureList)                  
-              }).catch(error => {
-                //  showError(error.responseJSON)
-              })
+                ajaxApi(ApiObj).then(data => {
+                  AjaxTable(data.lectureList)                  
+                }).catch(error => {
+                  //  showError(error.responseJSON)
+                })
               })
 
               //bulk reschedule
@@ -1063,64 +787,85 @@ code {
                 modifyToDate.attr('disabled', false)
               })
 
+
+
               $(`#modify-to-date`).on('change', function () {
-                rescheduleObj.dateRangeTo = $(this).val();
+        
+                let fromDate = convertDate($('#modify-from-date').val(), '-')
+                let toDate = convertDate($('#modify-to-date').val(), '-')
+               
+                let program_lid = $("#ProgramFilter").val()
+                let division_lid = $("#DivisionFilter").val()
+                let module_lid = $("#ModuleFilter").val()
+                let acad_session_lid = $("#SessionFilter").val()
 
                 if ($(`#modify-from-date`).val() && (rescheduleObj.reschFlag == 'M' || rescheduleObj.reschFlag == 'Y')) {
                   $.ajax({
                     type: 'POST',
-                    url: '/admin/rescheduling/get-replacing-faculties/',
+                    url: '/admin/rescheduling/get-replacing-faculties',
                     dataType: "JSON",
                     data: {
-                      fromDate: rescheduleObj.dateRangeFrom,
-                      toDate: rescheduleObj.dateRangeTo,
-                      moduleId: rescheduleObj.moduleId,
-                      programId: rescheduleObj.programId,
-                      sapEventId: rescheduleObj.sapEventId,
-                      fromFacultyId: rescheduleObj.fromFacultyId,
-                      division: rescheduleObj.division,
-                      sapEventId: rescheduleObj.sapEventId,
-                    },
+                      fromDate: fromDate,
+                      toDate: toDate,
+                      program_lid: program_lid,
+                      division_lid: division_lid,
+                      module_lid: module_lid,
+                      acad_session_lid: acad_session_lid,
+                      pageNo: 1
+                  },
                     success: data => {
                       console.log('Success: ', data)
                       let facultyListStr = `<option disabled selected value>--Select Faculty--</option>`
 
-                      for (let faculty of data.facultyList) {
-                        facultyListStr +=
-                          `<option value="${faculty.facultyId}" data-faculty-type="${faculty.type}">${faculty.facultyName} - ${faculty.facultyId}</option>`
-                      }
-
-                      let bulkLectureTableStr = ``;
-                      let count = 0;
-
-                      if (data.lectureList.length > 0) {
-                        for (let lecture of data.lectureList) {
-                          bulkLectureTableStr += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}" data-new-date="${lecture.date_str}"  data-new-room="${lecture.room_no}" data-new-slot="${lecture.slot_name}">
-                          <td>${++count}</td>
-                          <td class="date">${lecture.date_str}</td>
-                          <td class="time">${lecture.start_time}-${lecture.end_time}</td>
-                          <td class="new-date">${lecture.date_str}</td>
-                          <td class="new-time">${lecture.start_time}-${lecture.end_time}</td>
-                          <td class="room">${lecture.room_no}</td>
-                          <td class="new-room">${lecture.room_no}</td>
-                          <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-                          <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-                          <td><button class="btn btn-sm btn-dark change-time">Change Time</button></td>
-                          </tr>
-                          `
+                      if (data.facultyList.length > 0) {
+                        for (let faculty of data.facultyList) {
+                          facultyListStr +=
+                            `<option value="${faculty.faculty_id}">${faculty.faculty_name} - ${faculty.faculty_id}</option>`
                         }
-
-                        $('#bulk-lecture-list .lec-details .event-id').text(data.lectureList[0].sap_event_id)
-                        $('#bulk-lecture-list .lec-details .event-abbr').text(data.lectureList[0].event_abbr)
-                        $('#bulk-lecture-list .lec-details .old-faculty').text(data.lectureList[0].faculty_name)
-                      } else {
-                        bulkLectureTableStr = `<tr><td colspan="10">No lecture found for the given date range.</td></tr>`
+                      }else{
+                        facultyListStr +=
+                            `<option value="">No Lecture And Faculty is allocated for the requested division and duration</option>`
                       }
 
+                      $('#faculty-dropdown').html(facultyListStr).attr('disabled', false)
+                      // let facultyListStr = `<option disabled selected value>--Select Faculty--</option>`
 
-                      $('#bulk-lecture-list-card table tbody').html(bulkLectureTableStr)
-                      $('#bulk-lecture-list-card').removeClass('d-none')
-                      $('#replace-faculty-dropdown').html(facultyListStr).attr('disabled', false)
+                      // for (let faculty of data.facultyList) {
+                      //   facultyListStr +=
+                      //     `<option value="${faculty.facultyId}" data-faculty-type="${faculty.type}">${faculty.facultyName} - ${faculty.facultyId}</option>`
+                      // }
+
+                      // let bulkLectureTableStr = ``;
+                      // let count = 0;
+
+                      // if (data.lectureList.length > 0) {
+                      //   for (let lecture of data.lectureList) {
+                      //     bulkLectureTableStr += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}" data-new-date="${lecture.date_str}"  data-new-room="${lecture.room_no}" data-new-slot="${lecture.slot_name}">
+                      //     <td>${++count}</td>
+                      //     <td class="date">${lecture.date_str}</td>
+                      //     <td class="time">${lecture.start_time}-${lecture.end_time}</td>
+                      //     <td class="new-date">${lecture.date_str}</td>
+                      //     <td class="new-time">${lecture.start_time}-${lecture.end_time}</td>
+                      //     <td class="room">${lecture.room_no}</td>
+                      //     <td class="new-room">${lecture.room_no}</td>
+                      //     <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
+                      //     <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
+                      //     <td><button class="btn btn-sm btn-dark change-time">Change Time</button></td>
+                      //     </tr>
+                      //     `
+                      //   }
+
+                      //   // $('#bulk-lecture-list .lec-details .event-id').text(data.lectureList[0].sap_event_id)
+                      //   // $('#bulk-lecture-list .lec-details .event-abbr').text(data.lectureList[0].event_abbr)
+                      //   // $('#bulk-lecture-list .lec-details .old-faculty').text(data.lectureList[0].faculty_name)
+                      // } else {
+                      //   bulkLectureTableStr = `<tr><td colspan="10">No lecture found for the given date range.</td></tr>`
+                      // }
+
+
+                      // $('#bulk-lecture-list-card table tbody').html(bulkLectureTableStr)
+                      // $('#bulk-lecture-list-card').removeClass('d-none')
+                      // $('#faculty-dropdown').html(facultyListStr).attr('disabled', false)
                     },
                     error: err => {
                       console.log('Error: ', err)
@@ -1128,13 +873,19 @@ code {
                   })
                 } else {
 
+                  console.log('this is cancel api :::>>')
                   $.ajax({
                     type: 'POST',
-                    url: '/admin/rescheduling/fetch-faculties-date-range',
+                    url: '/admin/rescheduling/get-replacing-faculties',
                     dataType: "JSON",
                     data: {
-                      fromDate: convertDate(rescheduleObj.dateRangeFrom, '-'),
-                      toDate: convertDate(rescheduleObj.dateRangeTo, '-'),
+                      fromDate: fromDate,
+                      toDate: toDate,
+                      program_lid: program_lid,
+                      division_lid: division_lid,
+                      module_lid: module_lid,
+                      acad_session_lid: acad_session_lid,
+                      pageNo: 1
                     },
                     success: data => {
                       console.log('Success: ', data)
@@ -1145,9 +896,12 @@ code {
                           facultyListStr +=
                             `<option value="${faculty.faculty_id}">${faculty.faculty_name} - ${faculty.faculty_id}</option>`
                         }
+                      }else{
+                        facultyListStr +=
+                            `<option value="">No Lecture And Faculty is allocated for the requested division and duration</option>`
                       }
 
-                      $('#replace-faculty-dropdown').html(facultyListStr).attr('disabled', false)
+                      $('#faculty-dropdown').html(facultyListStr).attr('disabled', false)
                       // $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
                       // $('#cancel-lecture-list-card').removeClass('d-none')
 
@@ -1158,12 +912,12 @@ code {
                   })
 
                 }
-                $('#replace-faculty-dropdown').attr('disabled', false)
+                $('#faculty-dropdown').attr('disabled', false)
 
                 console.log('RESOBJ:::>>>> ', rescheduleObj)
               })
 
-              $(`#replace-faculty-dropdown`).on('change', function () {
+              $(`#faculty-dropdown`).on('change', function () {
 
                 if (rescheduleObj.reschFlag == 'M' || rescheduleObj.reschFlag == 'Y') {
                   rescheduleObj.toFacultyId = $(this).val();
@@ -1278,22 +1032,32 @@ code {
               })
 
               $(`#reschedule-date-dropdown`).on('change', function () {
-                rescheduleObj.toDate = $(this).val();
+                rescheduleObj.fromDate = $(this).val();
+                console.log('reschedule-date-dropdown:::::::::::::',rescheduleObj.fromDate)
                 $('#reschedule-faculty-dropdown').attr('disabled', false)
+                $('#reschedule-to-date-dropdown').attr('disabled', false)
+               // getFacultiesRoomsForModify(rescheduleObj.toDate)
               })
 
+              $(`#reschedule-to-date-dropdown`).on('change', function () {
+                rescheduleObj.toDate = $(this).val();
+                console.log('reschedule-from-date-dropdown fromDate:::::::::::::',rescheduleObj.fromDate)
+                console.log('reschedule-to-date-dropdown toDate:::::::::::::',rescheduleObj.toDate)
 
+                getFacultiesRoomsForModify(rescheduleObj.toDate, rescheduleObj.fromDate)
+              })
 
               $(`#reschedule-faculty-dropdown`).on('change', function () {
                 rescheduleObj.toFacultyId = $(this).val();
 
+                console.log('reschedule-faculty-dropdown::::::::::::::::>>>')
                 if (rescheduleObj.reschFlag !== 'R') {
                   return false;
                 }
 
                 $.ajax({
                   type: 'POST',
-                  url: '/simulation/reschedule/get-slots/',
+                  url: '/admin/rescheduling/get-slots',
                   dataType: "JSON",
                   data: {
                     facultyId: $(this).val(),
@@ -1305,7 +1069,7 @@ code {
 
                     for (let slot of data.slotList) {
                       slotStr +=
-                        `<option value="${slot.slotName}" data-sap-start-time="${slot.sapStartTime}" data-sap-end-time="${slot.sapEndTime}">${slot.starttime} - ${slot.endtime}</option>`
+                        `<option value="${slot.id}" data-sap-start-time="${slot.sap_start_time}" data-sap-end-time="${slot.sap_end_time}">${slot.start_time} - ${slot.end_time}</option>`
                     }
 
                     $('#reschedule-slot-dropdown').html(slotStr).attr('disabled', false)
@@ -1318,6 +1082,8 @@ code {
 
 
               $(`#reschedule-slot-dropdown`).on('change', function () {
+
+                console.log('reschedule-slot-dropdown::::::::::::::::::>>>>',rescheduleObj)
 
                 if (rescheduleObj.reschFlag !== 'R') {
                   return false;
@@ -1346,7 +1112,7 @@ code {
                     $('#reschedule-room-dropdown').html(roomStr).attr('disabled', false)
                   },
                   error: err => {
-                    console.log('Error: ', err)
+                    console.log('Error RESCHEDULE: ', err)
                   }
                 })
               })
@@ -1447,13 +1213,22 @@ code {
                 // }, 100)
 
               })
-
+              let rescheduleData = {
+                ids:[],
+                sapFlagId:'',
+                sapFlag:'',
+                reasonID:'',
+                reasonText:''
+              }
+              
 
               $("#scheduleEventedSlot").click(function () {
 
                 console.log('Obj >>>> ', rescheduleObj)
 
                 if (rescheduleObj.reschFlag === 'R') {
+
+                  console.log('CLICK Reschedule:::::::::>>')
 
                   if (rescheduleObj.fromSlot === rescheduleObj.toSlot && rescheduleObj.fromDate === rescheduleObj
                     .toDate) {
@@ -1497,6 +1272,7 @@ code {
                     alert('Please fill all the mandatory fields.')
                   } else {
                     let isConfirmed = confirm('Do you really want to cancel the event?')
+                    
                     if (isConfirmed) {
                       console.log('>>>>>>>>>>>>>>>> Cancelling the event')
                       $('.loaderBody').removeClass('d-none')
@@ -1504,6 +1280,7 @@ code {
                       //   slugName: "<%- slug %>",
                       //   resObj: rescheduleObj
                       // })
+
                     }
                   }
                 } else if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'bulk') {
@@ -1511,6 +1288,23 @@ code {
                     alert('Please fill all the mandatory fields and make sure that there are lectures available to be cancelled.')
                   } else {
                     let isConfirmed = confirm('Do you really want to cancel all the marked events?')
+                    let timeSheetIdJson = [];
+                    $('.call-datatable tbody tr').each((index, element) => {
+                      timeSheetIdJson.push($(element).attr('data-lid'))
+                    })
+                    console.log('data id array::', timeSheetIdJson)
+                    rescheduleData.ids = timeSheetIdJson;
+                    $('.schedule-type').each((index, element) => {
+                      if($(element).is(":checked")){
+                        rescheduleData.sapFlagId = $(element).val();
+                        rescheduleData.sapFlag = $(element).attr('data-sap-flag')
+                      }
+                    })
+                    rescheduleData.reasonID = $('#dropReason').val();
+                    rescheduleData.reasonText = $('#cancellationDesc').val();
+                    
+
+                    console.log('json obj for calcellation',rescheduleData )
                     if (isConfirmed) {
                       console.log('>>>>>>>>>>>>>>>> Cancelling the events')
 
@@ -1527,8 +1321,7 @@ code {
                       $('.loaderBody').removeClass('d-none')
                       // socket.emit('cancelEventedSlotBulk', {
                       //   slugName: "<%- slug %>",
-                      //   transJson: JSON.stringify(resJson),
-                      //   resObj: rescheduleObj
+                      //   transJson: JSON.stringify(rescheduleData)
                       // })
                     }
                   }
@@ -2196,9 +1989,10 @@ code {
 
               //get faculty for modulen and render
               function getFacultiesForModule() {
+                console.log('getFacultiesForModule rescheduleObj', rescheduleObj)
                 $.ajax({
                   type: 'POST',
-                  url: '/simulation/reschedule/get-faculties/',
+                  url: '/admin/rescheduling/get-faculties/',
                   dataType: "JSON",
                   data: {
                     moduleId: rescheduleObj.moduleId,
@@ -2222,36 +2016,41 @@ code {
                 })
               }
 
-              function getFacultiesRoomsForModify() {
+
+              function getFacultiesRoomsForModify(todate, fromDate) {
+
+                console.log('getFacultiesRoomsForModify TO DATE:::::::::::::>>>',todate, fromDate)
                 $.ajax({
                   type: 'POST',
-                  url: '/simulation/reschedule/get-faculties-rooms-modify/',
+                  url: '/admin/rescheduling/get-faculties-rooms-modify/',
                   dataType: "JSON",
                   data: {
-                    moduleId: rescheduleObj.moduleId,
-                    programId: rescheduleObj.programId,
-                    dateStr: rescheduleObj.fromDate,
-                    slotName: rescheduleObj.fromSlot,
-                    roomNo: rescheduleObj.fromRoom
+                    // moduleId: rescheduleObj.moduleId,
+                    // programId: rescheduleObj.programId,
+                    toDate: todate,
+                    fromDate: fromDate
+                    // slotName: rescheduleObj.fromSlot,
+                    // roomNo: rescheduleObj.fromRoom
                   },
                   success: data => {
                     console.log('Success: ', data)
                     let facultyListStr = `<option selected disabled value>--Select Faculty--</option>`
-                    let roomStr = `<option selected disabled value>--Select Room--</option>`
+                    //let roomStr = `<option selected disabled value>--Select Room--</option>`
 
                     for (let faculty of data.facultyList) {
                       facultyListStr +=
-                        `<option value="${faculty.facultyId}">${faculty.facultyName}/${faculty.facultyId}</option>`
+                        `<option value="${faculty.faculty_id}">${faculty.faculty_name}/${faculty.faculty_id}</option>`
                     }
 
-                    for (let room of data.roomList) {
-                      roomStr += `<option value="${room.room_no}">${room.room_no}</option>`
-                    }
+                    // for (let room of data.roomList) {
+                    //   roomStr += `<option value="${room.room_no}">${room.room_no}</option>`
+                    // }
 
-                    $('#reschedule-slot-dropdown').html(
-                      `<option value="${rescheduleObj.fromSlot}">${rescheduleObj.fromStartTime} - ${rescheduleObj.fromEndTime}</option>`
-                    )
-                    $('#reschedule-room-dropdown').html(roomStr).attr('disabled', false)
+                    // $('#reschedule-slot-dropdown').html(
+                    //   `<option value="${rescheduleObj.fromSlot}">${rescheduleObj.fromStartTime} - ${rescheduleObj.fromEndTime}</option>`
+                    // )
+                    //$('#reschedule-room-dropdown').html(roomStr).attr('disabled', false)
+                    $("#reschedule-faculty-dropdown").attr('disabled', false)
                     $('#reschedule-faculty-dropdown').html(facultyListStr)
 
                   },
@@ -2307,7 +2106,7 @@ code {
 
               let isValidBulkModify = function () {
                 if (rescheduleObj.reschFlag == 'M' && rescheduleObj.bulkModify && $('#dropReason').val() && rescheduleObj
-                  .dateRangeFrom && rescheduleObj.dateRangeTo && $('#replace-faculty-dropdown').val()) {
+                  .dateRangeFrom && rescheduleObj.dateRangeTo && $('#faculty-dropdown').val()) {
                   return true;
                 } else {
                   return false
@@ -2316,7 +2115,7 @@ code {
 
               let isChangeTimetable = function () {
                 if (rescheduleObj.reschFlag == 'Y' && $('#dropReason').val() && rescheduleObj
-                  .dateRangeFrom && rescheduleObj.dateRangeTo && $('#replace-faculty-dropdown').val()) {
+                  .dateRangeFrom && rescheduleObj.dateRangeTo && $('#faculty-dropdown').val()) {
                   return true;
                 } else {
                   return false
@@ -2437,7 +2236,7 @@ code {
         $("#changeEntry").on('change',function(){
                 let fromDate = convertDate(rescheduleObj.dateRangeFrom, '-')
                 let toDate = convertDate(rescheduleObj.dateRangeTo, '-')
-                let facultyId = $('#replace-faculty-dropdown').val()
+                let facultyId = $('#faculty-dropdown').val()
                 let rowcount = $(this).val()
                 console.log('CHANGE ENTRY:::::::::::::>>>','fromDate:',fromDate,'toDate:',toDate,'facultyId:',facultyId)
                 $.ajax({
@@ -2485,7 +2284,7 @@ code {
     data: {
       fromDate: convertDate(rescheduleObj.dateRangeFrom, '-'),
       toDate: convertDate(rescheduleObj.dateRangeTo, '-'),
-      facultyId: $('#replace-faculty-dropdown').val(),
+      facultyId: $('#faculty-dropdown').val(),
       pageNo: num
     },
     success: function (data) {
@@ -2501,6 +2300,8 @@ code {
   //FILTER API
     $("#ProgramFilter").on('change',function(){
       let program_lid = $(this).val()
+      $(".schedule-type").attr('disabled',true)
+      $(".schedule-type").removeAttr('checked')
       console.log('ProgramFilter program_id::::::::::',program_lid)
       let ApiObj = {
                 type: 'POST',
@@ -2515,13 +2316,13 @@ code {
                 let sessionList = `<option value="">Select Session Name</option>`;
                 if (result.sessionList.length > 0) {
                     result.sessionList.forEach(element => {
-                        sessionList +=`<option value="${element.acad_session}">${element.acad_session}</option>`;
+                        sessionList +=`<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
                     });
                 } else {
                     sessionList += `<option value="">No Session Found!</option>`;
                 }
                 $("#SessionFilter").html(sessionList)
-                AjaxTable(result.lectureList)
+                //AjaxTable(result.lectureList)
             }).catch(error => {
                 showError(error.responseJSON)
             })
@@ -2531,7 +2332,9 @@ code {
     $("#SessionFilter").on('change',function(){
       let program_lid = $("#ProgramFilter").val()
       let acad_session = $("#SessionFilter").val()
-      console.log('ProgramFilter program_id::::::::::',program_lid)
+      $(".schedule-type").attr('disabled',true)
+      $(".schedule-type").removeAttr('checked')
+      console.log('ProgramFilter program_id::::::::::',program_lid, acad_session)
       let ApiObj = {
                 type: 'POST',
                 url: '/admin/rescheduling/find-division-by-programid-acadsession',
@@ -2542,50 +2345,94 @@ code {
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                console.log('api returnssss:', result)
-                let divisionList = `<option value="">Select Division</option>`;
-                if (result.divisionList.length > 0) {
-                    result.divisionList.forEach(element => {
-                      divisionList +=`<option value="${element.div}">${element.div}</option>`;
+                let moduleList = `<option value="">Select Module</option>`;
+                if (result.moduleList.length > 0) {
+                    result.moduleList.forEach(element => {
+                      moduleList +=`<option value="${element.module_lid}">${element.module_name}</option>`;
                     });
                 } else {
-                  divisionList += `<option value="">No Session Found!</option>`;
+                  moduleList += `<option value="">No Session Found!</option>`;
                 }
-                $("#DivisionFilter").html(divisionList)
-                AjaxTable(result.lectureList)
+                $("#ModuleFilter").html(moduleList)
+                //AjaxTable(result.lectureList)
             }).catch(error => {
                 showError(error.responseJSON)
             })
     })
 
-
-    //DIVISION API
-    $("#DivisionFilter").on('change',function(){
+    $("#ModuleFilter").on('change',function(){
       let program_lid = $("#ProgramFilter").val()
-      let acad_session = $("#SessionFilter").val()
-      let division = $("#DivisionFilter").val()
-      console.log('ProgramFilter program_id::::::::::',program_lid)
+      let acad_session_lid = $("#SessionFilter").val()
+      let module_lid = $("#ModuleFilter").val()
+      $(".schedule-type").attr('disabled',true)
+      $(".schedule-type").removeAttr('checked')
+      console.log('ModuleFilter::::::::::',program_lid,acad_session_lid, module_lid)
       let ApiObj = {
                 type: 'POST',
-                url: '/admin/rescheduling/find-by-div-program-session',
+                url: '/admin/rescheduling/get-divisionby-program-session-module',
                 data: {
                   program_lid: program_lid,
-                  acad_session: acad_session,
-                  division: division
+                  acad_session_lid: acad_session_lid,
+                  module_lid: module_lid
                 },
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
                 console.log('api returnssss:', result)
-                AjaxTable(result.lectureList)
+                let divisionList = `<option value="">Select Division</option>`;
+                if (result.divisionList.length > 0) {
+                    result.divisionList.forEach(element => {
+                      divisionList +=`<option value="${element.division_lid}">${element.division}</option>`;
+                    });
+
+                } else {
+                  divisionList += `<option value="">No Session Found!</option>`;
+                }
+                $("#DivisionFilter").html(divisionList)
             }).catch(error => {
               console.log('error::::::::::::::::',error)
                 showError(error.responseJSON)
             })
     })
 
+    //   $(".schedule-type").attr('disabled',false)
+
+    console.log('DivisionFilter:::::::::::::::',typeof($("#DivisionFilter").val()))
+    
+
+    $("#DivisionFilter").on('change',function(){
+      $(".schedule-type").attr('disabled',false)
+    })
+
+    
+
+
+    //DIVISION API
+    // $("#DivisionFilter").on('change',function(){
+    //   let program_lid = $("#ProgramFilter").val()
+    //   let acad_session = $("#SessionFilter").val()
+    //   let division = $("#DivisionFilter").val()
+    //   console.log('ProgramFilter program_id::::::::::',program_lid)
+    //   let ApiObj = {
+    //             type: 'POST',
+    //             url: '/admin/rescheduling/find-by-div-program-session',
+    //             data: {
+    //               program_lid: program_lid,
+    //               acad_session: acad_session,
+    //               division: division
+    //             },
+    //             dataType: 'JSON'
+    //         }
+    //         ajaxApi(ApiObj).then(result => {
+    //             console.log('api returnssss:', result)
+    //         }).catch(error => {
+    //           console.log('error::::::::::::::::',error)
+    //             showError(error.responseJSON)
+    //         })
+    // })
+
   function AjaxTable(lectureList){
-    console.log('AJAX TABLE Success: ', lectureList)
+
                     let bulkLectureTableStr = '';
                     let count = 0;
                     if (lectureList.length > 0) {
@@ -2601,6 +2448,7 @@ code {
                           <td class="room">${lecture.room_no}</td>
                           <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
                           <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
+                          <td><i class="fa-solid fa-square-pen"></i></td>
                           <td>
                             <input type='checkbox' class='is-bulk-cancel' style="width: 25px; height: 25px;" checked="checked"/>
                           </td>

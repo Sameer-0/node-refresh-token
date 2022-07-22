@@ -152,7 +152,7 @@ module.exports = class Rooms {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('alloted_to', sql.Int, alloted_to)
-                .query(`SELECT id, room_number, room_type_id FROM rooms WHERE id NOT IN (16, 29, 35)`)
+                .query(`SELECT id, room_number, room_type_id FROM rooms WHERE id NOT IN (16, 29, 35) ORDER BY room_number`)
                 
 				
         })

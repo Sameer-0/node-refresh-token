@@ -980,7 +980,7 @@
                     dragObj.clonedTarget = null;
                 }
 
-                $("#slotModal").modal('hide')
+            $("#slotModal").modal('hide')
 
             } else {
                 showError(response)
@@ -1140,9 +1140,9 @@
                     // console.log('trect>>> ', tRect)
                     // console.log('erect>>> ', eRect)
 
-                    if (((tRect.left - 2) >= eRect.left && (tRect.left + 2) < eRect.right) || ((tRect.right - 15) > eRect.left && tRect.right  <= eRect.right) || (tRect.right  >= eRect.right && tRect.left < eRect.right)) {
+                    if (((tRect.left - 2) >= eRect.left && (tRect.left + 5) < eRect.right) || ((tRect.right - 15) > eRect.left && tRect.right  <= eRect.right) || (tRect.right)  >= (eRect.right) && (tRect.left + 5) < (eRect.right)) {
                         
-                        console.log('collision occurred with fixed break')
+                        console.log('collision occurred with fixed break', ((tRect.left - 2) >= eRect.left && (tRect.left + 5) < eRect.right))
 
                         return;
                         break;
@@ -1159,9 +1159,11 @@
             let eventLid = $(document).find('.selected-pending-event').attr('data-event-lid')
             let divisionLid = $(document).find('.selected-pending-event').attr('data-division-lid')
             let currentRoomLid = currentRoom.parentNode.getAttribute('data-room-lid');
-            let startSlotIndex = Math.abs(Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))/timetableProp.pxPerSlot))
+            let startSlotIndex = Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))/timetableProp.pxPerSlot) > 0 
+            ? Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))/timetableProp.pxPerSlot)
+            : 0
             let endSlotIndex = Math.abs(Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2) + (12 * timetableProp.pxPerSlot))/timetableProp.pxPerSlot))
-
+            console.log('startSlotIndex::>>', Math.round((e.clientX - dragObj.tableLeftPosition - 50 - 84.5 + (timetableProp.pxPerSlot/2))/timetableProp.pxPerSlot))
             let startSLotId = timeJson[startSlotIndex].id;
             let endSlotId = timeJson[endSlotIndex - 1].id;
 
@@ -1243,10 +1245,10 @@
             eventElemt.setAttribute('data-event-lid', `${eventLid}`)
             let pendingEventInnerContent = $(document).find('.selected-pending-event p').html();
 
-            eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
-            <i class="fa-solid fa-arrows-left-right"></i>
-            <span class="badge bg-info end-time">${timeJson[endSlotIndex - 1].end_time}</span>
-            <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
+            // eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[startSlotIndex].start_time}</span>
+            // <i class="fa-solid fa-arrows-left-right"></i>
+            // <span class="badge bg-info end-time">${timeJson[endSlotIndex - 1].end_time}</span>
+            // <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
 
             //==========================================
 
@@ -1263,10 +1265,10 @@
            eventElemt.style.position = 'absolute';
            eventElemt.style.top = '0';
 
-            if(endSlotId == 114 || endSlotId == 174) {
+            if(endSlotId == 114 || endSlotId == 174 || endSlotId == 205) {
                 
-                console.log('INSIDE IFF CONDITION')
-                $(eventElemt).find('.break').addClass('d-none');
+                console.log('INSIDE IFF CONDITION 1')
+               
                 eventElemt.style.width = 156 + 'px';
                 eventElemt.style.left =  `${(startSLotId - timeTablestartSlot + 1) * timetableProp.pxPerSlot}px`;
 
@@ -1277,29 +1279,42 @@
                     document.querySelector('#schedule-slot').setAttribute('data-end-slot-id', `${endSlotId + 1}`);
                 }, 800)
 
-               
+                eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[ startSLotId + 1- timeTablestartSlot].start_time}</span>
+                <i class="fa-solid fa-arrows-left-right"></i>
+                <span class="badge bg-info end-time">${timeJson[endSlotId + 1- timeTablestartSlot].end_time}</span>
+                <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
 
+                $(eventElemt).find('.break').addClass('d-none');
 
-            } else if (endSlotId == 115 || endSlotId == 175) {
+            } else if (endSlotId == 115 || endSlotId == 175 || endSlotId == 206) {
 
-                console.log('INSIDE IFF CONDITION')
+                console.log('INSIDE IFF CONDITION 2')
                 $(eventElemt).find('.break').addClass('d-none');
                 eventElemt.style.width = 156 + 'px';
                 eventElemt.style.left =  `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`;
 
-                //$('#slotModal').on('')
-
                setTimeout(function () {
-                   // alert('CALLING SHOWN')
+                  
                     document.querySelector('#schedule-slot').setAttribute('data-start-slot-id', `${startSLotId}`);
                     document.querySelector('#schedule-slot').setAttribute('data-end-slot-id', `${endSlotId}`);
                 }, 800)
+
+                eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[ startSLotId - timeTablestartSlot].start_time}</span>
+                <i class="fa-solid fa-arrows-left-right"></i>
+                <span class="badge bg-info end-time">${timeJson[endSlotId - timeTablestartSlot].end_time}</span>
+                <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
+                $(eventElemt).find('.break').addClass('d-none');
 
 
             } else {
                 console.log('INSIDE ELSE CONDITION')
                 eventElemt.style.width = 169 + 'px';
                 eventElemt.style.left = `${(startSLotId - timeTablestartSlot) * timetableProp.pxPerSlot}px`
+                 eventElemt.innerHTML = `${pendingEventInnerContent}<span class="badge bg-info start-time">${timeJson[ startSLotId - timeTablestartSlot].start_time}</span>
+                <i class="fa-solid fa-arrows-left-right"></i>
+                <span class="badge bg-info end-time">${timeJson[endSlotId - timeTablestartSlot].end_time}</span>
+                <div class="break" style="left: 156px; top: 0px; bottom: 0px; width: 13px; "></div>`;
+                $(eventElemt).find('.break').addClass('d-none');
             }
 
 
@@ -1590,7 +1605,11 @@
 
                 penElem.classList.remove('d-none')
                 if(e.clientX < (dragObj.tableLeftPosition + 50 + 75)){
-                    penElem.classList.add('d-none')
+                    // penElem.classList.add('d-none')
+                    penElem.style.left = dragObj.tableLeftPosition + 50 + 'px'
+                }
+                else{
+                    penElem.style.left = (Math.round((e.clientX - 84.5)/timetableProp.pxPerSlot)*timetableProp.pxPerSlot) + (timetableProp.pxPerSlot/2) + 'px';
                 }
 
                 if(window.pageYOffset-previousScrollY >= 0){
@@ -1600,7 +1619,7 @@
                 }
             
 
-            penElem.style.left = (Math.round((e.clientX - 84.5)/timetableProp.pxPerSlot)*timetableProp.pxPerSlot) + (timetableProp.pxPerSlot/2) + 'px';
+  
             previousScrollY = window.pageYOffset;
 
             }
@@ -1708,18 +1727,16 @@
                     dragObj.targetElem.querySelector('.end-time').style.right = 0
                     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right = 'calc(78px - 7px)'
 
-                    // if (((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX /
-                    //             timetableProp.pxPerSlot) * timetableProp
-                    //         .pxPerSlot + (timetableProp.pxPerSlot * 12))) > 0) {
+                    if (((timetableProp.totalSlots * timetableProp.pxPerSlot) - (Math.round(targetProp.movedX /
+                                timetableProp.pxPerSlot) * timetableProp
+                            .pxPerSlot + (timetableProp.pxPerSlot * 12))) > 0) {
 
-                    //     console.log('false:::::::::')
-
-                    //     dragObj.targetElem.querySelector('.break').classList.remove('d-none')
-                    //     dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
-                    //     dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
-                    //         'calc(var(--breakIntervalWidth) + 78px - 7px)'
-                    //     // dragObj.targetElem.style.width = `var(--eventWidth)`;
-                    // }
+                        dragObj.targetElem.querySelector('.break').classList.remove('d-none')
+                        dragObj.targetElem.querySelector('.end-time').style.right = `var(--breakIntervalWidth)`
+                        dragObj.targetElem.querySelector('.fa-arrows-left-right').style.right =
+                            'calc(var(--breakIntervalWidth) + 78px - 7px)'
+                        // dragObj.targetElem.style.width = `var(--eventWidth)`;
+                    }
                 } else {
 
                     if (!dragObj.isOverBreak)
@@ -1948,7 +1965,7 @@
             $(dragObj.targetElem).find('.break').removeClass('d-none');
             $(dragObj.targetElem).removeClass('active');
 
-            if(dragObj.targetElem.getAttribute('data-end-time') == (116 - 1) || dragObj.targetElem.getAttribute('data-end-time') == (176 - 1)) {
+            if(dragObj.targetElem.getAttribute('data-end-time') == (116 - 1) || dragObj.targetElem.getAttribute('data-end-time') == (176 - 1) || dragObj.targetElem.getAttribute('data-end-time') == (207-1) ) {
                 
                 $(dragObj.targetElem).find('.break').addClass('d-none');
                 $(dragObj.targetElem).css('width', `${durationWidth}px`);

@@ -10,34 +10,6 @@ module.exports.respond = async socket => {
         console.log(data);
     });
 
-    // socket.on('schedule-event', async function (data) {
-    //     console.log('data:::::::::::::>>>',data)
-    //     let request = await db.request();
-    //     let sqlstmt = 'SELECT id, roomno, slot, slotAllotedFor, day, active, flag  FROM [' + slug + '].initial_pending_table ORDER BY id DESC'
-    //     request.query(sqlstmt, async function (err, result) {
-    //         if (err) {
-    //             console.log(err)
-    //         } else {
-    //             let fetchedResult = await result.recordset
-    //             socket.emit('drawerData', fetchedResult)
-    //         }
-    //     })
-    // })
-
-    //ON DRAWER OPEN
-    socket.on('drawerOpen', async function (slug) {
-        // let request = await db.request();
-        // let sqlstmt = 'SELECT id, roomno, slot, slotAllotedFor, day, active, flag  FROM [' + slug + '].initial_pending_table ORDER BY id DESC'
-        // request.query(sqlstmt, async function (err, result) {
-        //     if (err) {
-        //         console.log(err)
-        //     } else {
-        //         let fetchedResult = await result.recordset
-        //         socket.emit('drawerData', fetchedResult)
-        //     }
-        // })
-    })
-
 
 
    
@@ -235,9 +207,6 @@ module.exports.respond = async socket => {
 
             })
         })
-
-
-
 
     })
 

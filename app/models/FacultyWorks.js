@@ -169,7 +169,7 @@ module.exports = class {
     }
 
     static facultyWorkEvents(body, slug) {
-        console.log('slug', slug)
+        console.log('procedure', slug)
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('program_lid', sql.Int, body.programLid)

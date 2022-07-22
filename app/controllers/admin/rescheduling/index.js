@@ -7,6 +7,8 @@ const Simulation = require('../../../models/Simulation')
 const Programs = require('../../../models/Programs')
 
 module.exports = {
+
+  //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
     Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {
@@ -358,92 +360,48 @@ module.exports = {
   },
 
   getResFaculties: async (req, res, next) => {
-    let request = req.app.locals.db.request();
-
-    let stmt = `SELECT facultyId, facultyName FROM [${res.locals.slug}].faculty_work WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}`;
-
-    console.log('facultyStmt: ', stmt)
-
-    let result = await request.query(stmt);
-    let facultyList = result.recordset;
-
-    console.log(facultyList)
-
-    res.json({
-      status: 200,
-      facultyList: facultyList
+    Simulation.getResFaculties(res.locals.slug, req.body).then(result => {
+      res.json({
+        status: 200,
+        facultyList: result.recordset
+      })
     })
-
   },
 
   getResSlots: async (req, res, next) => {
-    let request = req.app.locals.db.request();
-
-    console.log('req.body.facultyId: ', req.body.facultyId)
-    console.log('req.body.dateStr: ', req.body.dateStr)
-
-    let stmt = `SELECT DISTINCT slotName, starttime, endtime, sapStartTime, sapEndTime FROM [${res.locals.slug}].school_timing WHERE slotName NOT IN (SELECT DISTINCT slot_name FROM faculty_timetable WHERE active = 1 AND faculty_id = '${req.body.facultyId}' AND date_str = '${req.body.dateStr}')`;
-
-    console.log('slotStmt: ', stmt)
-
-    let result = await request.query(stmt);
-    let slotList = result.recordset;
-
-    console.log(slotList)
-
-    res.json({
-      status: 200,
-      slotList: slotList
+    console.log(':::::::::::::::::::::::::::getResSlots::::::::::::::::::::::', req.body)
+    Simulation.getResSlots(res.locals.slug, req.body).then(result => {
+      console.log('RESPONSE:::::::::::::', result.recordset)
+      res.json({
+        status: 200,
+        slotList: result.recordset
+      })
     })
-
   },
 
   getResRooms: async (req, res, next) => {
-    let request = req.app.locals.db.request();
-
-    let stmt = `SELECT DISTINCT room_no FROM (SELECT rs.room_no, rs.slot_name FROM [${res.locals.slug}].all_room_slots rs
-      LEFT JOIN (SELECT DISTINCT room_no, slot_name FROM faculty_timetable WHERE date_str = '${req.body.dateStr}' AND active = 1) ft
-      ON ft.room_no = rs.room_no AND ft.slot_name = rs.slot_name WHERE ft.slot_name IS NULL) rooms 
-      WHERE slot_name = '${req.body.slotName}'`;
-
-    console.log('roomStmt: ', stmt)
-
-
-    let result = await request.query(stmt);
-    let roomList = result.recordset;
-
-    console.log(roomList)
-
-    res.json({
-      status: 200,
-      roomList: roomList
+    // let stmt = `SELECT DISTINCT room_no FROM (SELECT rs.room_no, rs.slot_name FROM [${res.locals.slug}].all_room_slots rs
+    //   LEFT JOIN (SELECT DISTINCT room_no, slot_name FROM faculty_timetable WHERE date_str = '${req.body.dateStr}' AND active = 1) ft
+    //   ON ft.room_no = rs.room_no AND ft.slot_name = rs.slot_name WHERE ft.slot_name IS NULL) rooms 
+    //   WHERE slot_name = '${req.body.slotName}'`;
+    Simulation.getResRooms(res.locals.slug, req.body.dateStr).then(result => {
+      res.json({
+        status: 200,
+        roomList: result.recordset
+      })
     })
-
   },
 
   getResFacultiesRooms: async (req, res, next) => {
-
     console.log('>>>>>>>>MODIFY<<<<<<<<<')
-    let request = req.app.locals.db.request();
-
-
-    let facultyStmt = ` SELECT fw.* FROM (SELECT facultyId, facultyName FROM [${res.locals.slug}].faculty_work WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = '${req.body.dateStr}' AND slot_name = '${req.body.slotName}' AND program_id = '${req.body.programId}' AND module_id = '${req.body.moduleId}' AND room_no <> '${req.body.roomNo}') f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`;
-
-    let roomStmt = `SELECT DISTINCT room_no FROM (SELECT rs.room_no, rs.slot_name FROM [${res.locals.slug}].all_room_slots rs LEFT JOIN (SELECT DISTINCT room_no, slot_name FROM faculty_timetable WHERE date_str = '${req.body.dateStr}' AND active = 1) ft ON ft.room_no = rs.room_no AND ft.slot_name = rs.slot_name WHERE ft.slot_name IS NULL) rooms WHERE slot_name = '${req.body.slotName}' OR room_no = '${req.body.roomNo}'`;
-
-
-    console.log('facultyStmt: ', facultyStmt)
-    console.log('roomStmt: ', roomStmt)
-
-    Promise.all([request.query(facultyStmt), request.query(roomStmt)]).then(result => {
-
-      console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result)
-
+    console.log('REQ:::::::::', req.body)
+    // let facultyStmt = ` SELECT fw.* FROM (SELECT facultyId, facultyName FROM [${res.locals.slug}].faculty_work WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = '${req.body.dateStr}' AND slot_name = '${req.body.slotName}' AND program_id = '${req.body.programId}' AND module_id = '${req.body.moduleId}' AND room_no <> '${req.body.roomNo}') f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`;
+    // let roomStmt = `SELECT DISTINCT room_no FROM (SELECT rs.room_no, rs.slot_name FROM [${res.locals.slug}].all_room_slots rs LEFT JOIN (SELECT DISTINCT room_no, slot_name FROM faculty_timetable WHERE date_str = '${req.body.dateStr}' AND active = 1) ft ON ft.room_no = rs.room_no AND ft.slot_name = rs.slot_name WHERE ft.slot_name IS NULL) rooms WHERE slot_name = '${req.body.slotName}' OR room_no = '${req.body.roomNo}'`;
+    Simulation.uniqueFacultyByDate(res.locals.slug, req.body).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>',result.recordset)
       res.json({
         status: 200,
-        facultyList: result[0].recordset,
-        roomList: result[1].recordset
+        facultyList: result.recordset
       })
     })
 
@@ -537,9 +495,9 @@ module.exports = {
     })
   },
 
-  fetchBulkCancel: async (req, res, next) => {
+  fetchLectureByDateRangeFaculty: async (req, res, next) => {
     console.log('>>>>>>>fetchBulkCancel<<<<<<<<<')
-    Promise.all([Simulation.facultyLecture(res.locals.slug, req.body),
+    Promise.all([Simulation.LectureByDateRange(res.locals.slug, req.body),
       Simulation.facultyLectureCount(res.locals.slug)
     ]).then(result => {
       res.json({
@@ -555,7 +513,7 @@ module.exports = {
   fetchBulkCancelPagination: async (req, res, next) => {
     console.log('>>>>>>>fetchBulkCancelPagination<<<<<<<<<')
     console.log(req.body)
-    Simulation.facultyLecture(res.locals.slug, req.body).then(result => {
+    Simulation.LectureByDateRange(res.locals.slug, req.body).then(result => {
       res.json({
         status: 200,
         lectureList: result.recordset
@@ -566,7 +524,7 @@ module.exports = {
   },
 
   showEntries: async (req, res, next) => {
-    console.log('>>>>>>>showEntries<<<<<<<<<',req.body)
+    console.log('>>>>>>>showEntries<<<<<<<<<', req.body)
     Simulation.facultyLectureLimit(res.locals.slug, req.body).then(result => {
       res.json({
         status: 200,
@@ -580,17 +538,15 @@ module.exports = {
   getReplacingFaculties: async (req, res, next) => {
     console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
     console.log(req.body)
-    let lectureListStmt =
-      console.log(lectureListStmt)
-    Promise.all([Simulation.facultyByModuleProgramId(res.locals.slug, req.body),
+    Promise.all([
       Simulation.facultyByModuleProgramSapDivisionId(res.locals.slug, req.body)
     ]).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result[1].recordset)
+      console.log(result[0].recordset)
       res.json({
         status: 200,
         facultyList: result[0].recordset,
-        lectureList: result[1].recordset
+    
       })
     })
   },
@@ -616,12 +572,12 @@ module.exports = {
 
   findByDivisionByProgramSession: (req, res, next) => {
     console.log('>>>>>>>>>>>>>>findByDivisionByProgramSession<<<<<<<<<<<<', req.body)
-    Promise.all([Simulation.findByFacultyTimeTableByProgramSession(req.body, res.locals.slug), Simulation.divisionByProgramSessionId(req.body, res.locals.slug)]).then(result => {
+    Promise.all([Simulation.findModuleByProgramSession(req.body, res.locals.slug), Simulation.divisionByProgramSessionId(req.body, res.locals.slug)]).then(result => {
       // console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
         message: "success",
-        lectureList: result[0].recordset,
+        moduleList: result[0].recordset,
         divisionList: result[1].recordset
       })
     }).catch(error => {
@@ -635,7 +591,7 @@ module.exports = {
 
   findBySchelDivisionByProgramSession: (req, res, next) => {
     console.log('>>>>>>>>>>>>>>findByDivisionByProgramSession<<<<<<<<<<<<', req.body)
-   Simulation.findBySchelDivisionByProgramSession(req.body, res.locals.slug).then(result => {
+    Simulation.findBySchelDivisionByProgramSession(req.body, res.locals.slug).then(result => {
       // console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
@@ -650,4 +606,22 @@ module.exports = {
       })
     })
   },
+
+  getDivisionByProgramSessionModule: (req, res, next) => {
+    console.log('>>>>>>>>>>>>>>getDivisionByProgramSessionModule<<<<<<<<<<<<', req.body)
+    Simulation.getDivisionByProgramSessionModule(req.body, res.locals.slug).then(result => {
+      // console.log(result[0].recordset)
+      res.status(200).json({
+        status: 200,
+        message: "success",
+        divisionList: result.recordset,
+      })
+    }).catch(error => {
+      console.log(error)
+      res.json({
+        status: "500",
+        message: "Something went wrong",
+      })
+    })
+  }
 }
