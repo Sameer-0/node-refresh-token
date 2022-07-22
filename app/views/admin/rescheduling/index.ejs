@@ -422,48 +422,13 @@ code {
 
   <div id="cancel-lecture-list" class="collapse show">
     <div class="card-body">
-      <div class="table-responsive">
-        <div class="d-flex justify-content-between">
-          <!-- <div>
-              <label>Show Entry</label>
-              <select class="form-select" id="changeEntry">
-                  <%for(let page of locals.page_filter){%>
-                     <option value="<%-page%>"><%-page%></option>
-                  <%}%>
-              </select>
-          </div> -->
-          <div>
-              <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                  type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-          </div>
-      </div>
-        <table class="table table-bordered table-striped lecture-datatable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Event Id</th>
-              <th>Event Name</th>
-              <th>Faculty Name</th>
-              <th>Faculty Id</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Room</th>
-              <th>Status</th>
-              <th>Remark</th>
-              <th>Action</th>
-              <th>Cancel <input id="cancel-all" type="checkbox" checked="checked" />
-                <label>All</label>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-
-        <div class="d-grid gap-2 mt-2 w-50 mx-auto">
-          <button class="btn btn-primary rounded-0" id="scheduleEventedSlot" type="button">Submit</button>
-        </div>
+      <div class="table-responsive lecture-datatable-container">
        
+        
+       
+      </div>
+      <div class="d-grid gap-2 mt-2 w-50 mx-auto">
+        <button class="btn btn-primary rounded-0" id="scheduleEventedSlot" type="button">Submit</button>
       </div>
     </div>
   </div>
@@ -2526,9 +2491,9 @@ code {
         let bulkLectureTableStr = '';
         let count = 0;
         if (lectureList.length > 0) {
-
-          if(actionType == 'cancel'){
-            let table = `  <table class="table table-bordered table-striped lecture-datatable">
+      console.log('cancel data', actionType )
+          if(actionType == 'Cancel'){
+            let tableHtml = `  <table class="table table-bordered table-striped lecture-datatable">
           <thead>
             <tr>
               <th>#</th>
@@ -2551,7 +2516,7 @@ code {
           `
         
           for (let lecture of lectureList) {
-            table += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
+            tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
               <td>${++count}</td>
               <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
               <td>${lecture.event_name}</td>
@@ -2570,13 +2535,59 @@ code {
               `
           }
 
-          table += `</tbody></table>`
-          
+          tableHtml += `</tbody></table>`
+          $(document).find('.lecture-datatable-container').html(tableHtml)
+        }
+        else if(actionType == 'Modify'){
+          let tableHtml = `  <table class="table table-bordered table-striped lecture-datatable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Event Id</th>
+              <th>Event Name</th>
+              <th>Faculty Name</th>
+              <th>Faculty Id</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Room</th>
+              <th>Status</th>
+              <th>Remark</th>
+              <th>Action</th>
+              <th>Cancel <input id="cancel-all" type="checkbox" checked="checked" />
+                <label>All</label>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          `
+        
+          for (let lecture of lectureList) {
+            tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
+              <td>${++count}</td>
+              <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
+              <td>${lecture.event_name}</td>
+              <td>${lecture.faculty_name}</td>
+              <td>${lecture.faculty_id}</td>
+              <td class="date" data-day-lid="${lecture.day_lid}">${lecture.date_str}</td>
+              <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
+              <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
+              <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
+              <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
+              <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
+              <td>
+                <input type='checkbox' class='is-bulk-cancel' style="width: 25px; height: 25px;" checked="checked"/>
+              </td>
+              </tr>
+              `
+          }
+
+          tableHtml += `</tbody></table>`
+          $(document).find('.lecture-datatable-container').html(tableHtml)
         }
         } else {
           bulkLectureTableStr = `<tr><td colspan="11">No lecture found for the given date range.</td></tr>`
         }
-        $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
+        // $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
         $('#cancel-lecture-list-card').removeClass('d-none')
   }
 
