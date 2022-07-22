@@ -466,7 +466,7 @@ module.exports = {
 
 
   getNewExtraLectures: async (req, res, next) => {
-    console.log('>>>>>>>getNewExtraLectures<<<<<<<<<')
+    console.log('>>>>>>>getNewExtraLectures<<<<<<<<<', req.body)
     console.log(req.body)
     Simulation.newExtraLecture(res.locals.slug, req.body).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
