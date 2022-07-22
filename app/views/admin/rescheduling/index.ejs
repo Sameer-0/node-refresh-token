@@ -694,7 +694,7 @@ code {
 
                         console.log('Cancel Against Extra Class::::::::::::::::::::::>>>>>>>',obj)
                         console.log('Cancel Against Extra Class cancelType::::::::::::::::::::::>>>>>>>',cancelType)
-                       // let actionType = $(document).find('.schedule-type:checked').attr('id');
+                       let actionType = $(document).find('.schedule-type:checked').attr('id');
                        // console.log('Cancel Against Extra Class actionType::::::::::::::::::::::>>>>>>>',actionType)
                   $('#bulk-modify').addClass('d-none')
                   $(`#modify-from-date`).val('').change()
@@ -721,7 +721,7 @@ code {
                       let lectureList = data.lectureList;
                       console.log('lectureList: ', lectureList)
 
-                      AjaxTable(lectureList, cancelType)
+                      AjaxTable(lectureList, actionType)
                       // let ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
                       // for (let lecture of lectureList) {
                       //   ajaxData +=
@@ -2568,53 +2568,6 @@ code {
               `
           }
 
-          tableHtml += `</tbody></table>`
-          $(document).find('.lecture-datatable-container').html(tableHtml)
-        }else if(actionType == 'cae'){
-          console.log('CANCEL AGAIN EXTRA CLASS TABLE ::::::::::::::')
-          let tableHtml = `  <table class="table table-bordered table-striped lecture-datatable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Event Id</th>
-              <th>Event Name</th>
-              <th>Faculty Name</th>
-              <th>New Faculty Name</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Room</th>
-              <th>New Room</th>
-              <th>Status</th>
-              <th>Remark</th>
-              <th>Action</th>
-              <th>Select <input id="select-all" type="checkbox" checked="checked" />
-                <label>All</label>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-          `
-        
-          for (let lecture of lectureList) {
-            tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
-              <td>${++count}</td>
-              <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
-              <td>${lecture.event_name}</td>
-              <td>${lecture.faculty_name}</td>
-              <td class='new-faculty-name'></td>
-              <td class="date" data-day-lid="${lecture.day_lid}">${lecture.date_str}</td>
-              <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
-              <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
-              <td class="new-room"></td>
-              <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-              <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-              <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
-              <td>
-                <input type='checkbox' class='is-select' style="width: 25px; height: 25px;" checked="checked"/>
-              </td>
-              </tr>
-              `
-          }
           tableHtml += `</tbody></table>`
           $(document).find('.lecture-datatable-container').html(tableHtml)
         }
