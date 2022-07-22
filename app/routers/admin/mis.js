@@ -14,7 +14,7 @@ router.get('/mis/simulation-chart', index.getPage)
 router.get('/mis/simulation-chart/pivoted', pivoted.getPage) 
 router.get('/mis/simulation-chart/faculty-day-wise', facultydaywise.getPage) 
 router.post('/mis/simulation-chart/faculty-day-wise', facultydaywise.facultyDayWise) 
-router.get('/mis/simulation-chart/faculty-day-wise/download', facultydaywise.download) 
+router.get('/mis/simulation-chart/faculty-day-wise/download/:faculty', facultydaywise.download) 
 router.get('/mis/simulation-chart/room-wise-allocation', roomwiseallocation.getPage) 
 router.post('/mis/simulation-chart/room-wise-allocation', roomwiseallocation.getRoomAllocation) 
 module.exports = router;

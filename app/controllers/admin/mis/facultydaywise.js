@@ -26,7 +26,7 @@ module.exports = {
 
     download:(req, res, next)=>{
 
-        console.log('result:::::::::::::::::', req)
+        console.log('result:::::::::::::::::', req.params.faculty)
         let workbook = new excel.Workbook();
         let facultyDayWiseWorksheet = workbook.addWorksheet('Faculty Day Wise');
         facultyDayWiseWorksheet.columns = [
@@ -38,6 +38,11 @@ module.exports = {
             {
                 header: "Faculty Name",
                 key: "faculty_name",
+                width: 25
+            },
+            {
+                header: "Time",
+                key: "timing",
                 width: 25
             },
             {
@@ -72,10 +77,7 @@ module.exports = {
             }
         ]
 
-        Mis.facultyDayWise(res.locals.slug, req.body.faculty_lid).then(result => {
-
-         
-
+        Mis.facultyDayWise(res.locals.slug, req.params.faculty).then(result => {
             facultyDayWiseWorksheet.addRows(result.recordset)
                         // res is a Stream object
                         res.setHeader(
@@ -84,7 +86,7 @@ module.exports = {
                         );
                          res.setHeader(
                             "Content-Disposition",
-                            "attachment; filename=" + `TimeTableMaster.xlsx`
+                            "attachment; filename=" + `facultydaywise.xlsx`
                         );
             
                         return workbook.xlsx.write(res).then(function () {
