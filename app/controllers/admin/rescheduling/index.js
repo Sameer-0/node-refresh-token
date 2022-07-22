@@ -591,12 +591,13 @@ module.exports = {
 
   findByDivisionByProgramSession: (req, res, next) => {
     console.log('>>>>>>>>>>>>>>findByDivisionByProgramSession<<<<<<<<<<<<', req.body)
-    Simulation.divisionByProgramSessionId(req.body, res.locals.slug).then(result => {
+    Promise.all([Simulation.findModuleByProgramSession(req.body, res.locals.slug), Simulation.divisionByProgramSessionId(req.body, res.locals.slug)]).then(result => {
       // console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
         message: "success",
-        divisionList: result.recordset
+        moduleList: result[0].recordset,
+        divisionList: result[1].recordset
       })
     }).catch(error => {
       console.log(error)
@@ -632,7 +633,7 @@ module.exports = {
       res.status(200).json({
         status: 200,
         message: "success",
-        moduleList: result.recordset,
+        divisionList: result.recordset,
       })
     }).catch(error => {
       console.log(error)
