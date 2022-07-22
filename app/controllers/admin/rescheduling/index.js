@@ -497,11 +497,14 @@ module.exports = {
 
   fetchLectureByDateRangeFaculty: async (req, res, next) => {
     console.log('>>>>>>>fetchBulkCancel<<<<<<<<<')
-    Promise.all([Simulation.LectureByDateRange(res.locals.slug, req.body),
+    let actionType = req.body.actionType;
+
+      Promise.all([Simulation.LectureByDateRange(res.locals.slug, req.body),
       Simulation.facultyLectureCount(res.locals.slug)
     ]).then(result => {
       res.json({
         status: 200,
+        actionType: actionType,
         lectureList: result[0].recordset,
         dataLength: result[1].recordset[0].count
       })

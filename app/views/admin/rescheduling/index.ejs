@@ -437,7 +437,7 @@ code {
                   type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
           </div>
       </div>
-        <table class="table table-bordered table-striped call-datatable">
+        <table class="table table-bordered table-striped lecture-datatable">
           <thead>
             <tr>
               <th>#</th>
@@ -468,6 +468,25 @@ code {
     </div>
   </div>
 </div>
+</div>
+
+ <!-- Modal -->
+ <div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Details</h5>
+        <button type="button" class="btn-close" id="close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+      </div>
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+        <button type="button" class="btn btn-primary" id="drop-slot">Submit</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
@@ -524,8 +543,73 @@ code {
                 dateRangeTo: ''
               }
 
+              $(document).on('click', '.reschedule-edit', function() {
 
+                let rowLid = $(this).attr('data-lid');
+                let dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
+                let startTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
+                let endTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
 
+                let ApiObj = {
+                        url: '/admin/rescheduling/fetch-available-room-by-day-time-range',
+                        type: 'POST',
+                        data: {
+                            startTimelid: startTimelid,
+                            endTimelid: endTimelid,
+                            dayLid: dayLid
+                        },
+                        dataType: 'JSON'
+                    }
+
+            // ajaxApi(ApiObj).then(result => {
+            //         console.log('Faculty available::>>>')
+            //         let facultyList = ``;
+            //         let otherFacultyDetail = `<h5>Other faculties for the selected lecture:</h5><ul>`;
+            //         facultyList += `<select id="faculty-work-event-list" class="form-select my-4">`
+            //         if (result.result.length > 0) {
+                        
+            //             facultyList +=
+            //                 `<option disabled  selected value="">--Select Faculty--</option>`;
+                        
+            //                 for  (let faculty of result.result){
+
+            //                     facultyList +=
+            //                     `<option value="${faculty.faculty_lid}"> ${faculty.faculty_name} </option>`
+            //                 }
+
+            //         } else {
+            //             facultyList +=
+            //                 `<option value=""> No Faculty Found! </option>`
+            //         }
+            //         if (result.facultyAllocationDetails.length > 0) {
+                        
+                        
+            //                 for  (let otherFaculty of result.facultyAllocationDetails){
+
+            //                     otherFacultyDetail +=
+            //                     `<li> ${otherFaculty.faculty_name} : ${otherFaculty.lecture_count} Lectures Allocated </li>`
+            //                 }
+
+            //         } else {
+            //             otherFacultyDetail +=
+            //             `<li> No Other Faculty Allocated </li>`
+            //         }
+            //         facultyList += `</select>`;
+            //         otherFacultyDetail += `</ul>`
+            //         $(document).find("#slotModal .modal-body").html(otherFacultyDetail + facultyList)
+            //         // $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
+            //         $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-allocate')
+            //         $('#slotModal .modal-footer').html(
+            //             `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${startSLotId}" data-end-slot-id="${endSlotId}" data-room-id="${currentRoomLid}"  data-day-lid="${dayLid}" data-event-lid="${eventLid}" disabled="true" data-action-type="allocate">Schedule Slot</button>`
+            //                 );
+            //         $('#slotModal').modal('show');
+            //     }).catch(error => {
+            //         // showError(error.responseJSON)
+            //         console.log('Faculty Availability error', error);
+            //     })
+
+                $('#rescheduleModal').modal('show');
+              })
 
               //RESCHEDULE LOGIC
               $(`.schedule-type`).on('change', function () {
@@ -738,6 +822,7 @@ code {
                 let division_lid = $("#DivisionFilter").val()
                 let module_lid = $("#ModuleFilter").val()
                 let acad_session_lid = $("#SessionFilter").val()
+                let actionType = $(document).find('.schedule-type:checked').attr('id');
 
                 let ApiObj = {
                 type: 'POST',
@@ -750,13 +835,14 @@ code {
                     division_lid: division_lid,
                     module_lid: module_lid,
                     acad_session_lid: acad_session_lid,
+                    actionType: actionType,
                     pageNo: 1
                 },
                 dataType: 'JSON'
                 }
 
                 ajaxApi(ApiObj).then(data => {
-                  AjaxTable(data.lectureList)                  
+                  AjaxTable(data.lectureList, data.actionType);                  
                 }).catch(error => {
                   //  showError(error.responseJSON)
                 })
@@ -981,12 +1067,12 @@ code {
 
                   $(".loaderBody").removeClass('d-none');
 
-                  socket.emit('facultyAvailabilityCheck', {
-                    startDate: rescheduleObj.dateRangeFrom,
-                    endDate: rescheduleObj.dateRangeTo,
-                    facultyId: rescheduleObj.toFacultyId,
-                    facultyType: $(this).find('option:selected').attr('data-faculty-type')
-                  })
+                  // socket.emit('facultyAvailabilityCheck', {
+                  //   startDate: rescheduleObj.dateRangeFrom,
+                  //   endDate: rescheduleObj.dateRangeTo,
+                  //   facultyId: rescheduleObj.toFacultyId,
+                  //   facultyType: $(this).find('option:selected').attr('data-faculty-type')
+                  // })
                 }
 
               })
@@ -1339,7 +1425,7 @@ code {
                   } else {
                     let isConfirmed = confirm('Do you really want to cancel all the marked events?')
                     let timeSheetIdJson = [];
-                    $('.call-datatable tbody tr').each((index, element) => {
+                    $('.lecture-datatable tbody tr').each((index, element) => {
                       timeSheetIdJson.push($(element).attr('data-lid'))
                     })
                     console.log('data id array::', timeSheetIdJson)
@@ -2167,10 +2253,10 @@ code {
               }
 
               function callDatatable() {
-                if ($('.call-datatable').length > 0) {
+                if ($('.lecture-datatable').length > 0) {
                   //CALL DATATABLE
 
-                  $('.call-datatable').DataTable({
+                  $('.lecture-datatable').DataTable({
                     autoFill: false,
                     aLengthMenu: [
                       [25, 50, 100, 200, -1],
@@ -2421,36 +2507,64 @@ code {
     //             showError(error.responseJSON)
     //         })
     // })
+ 
+  function AjaxTable(lectureList, actionType){
 
-  function AjaxTable(lectureList){
+        let bulkLectureTableStr = '';
+        let count = 0;
+        if (lectureList.length > 0) {
 
-                    let bulkLectureTableStr = '';
-                    let count = 0;
-                    if (lectureList.length > 0) {
-                      for (let lecture of lectureList) {
-                        bulkLectureTableStr += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
-                          <td>${++count}</td>
-                          <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
-                          <td>${lecture.event_name}</td>
-                          <td>${lecture.faculty_name}</td>
-                          <td>${lecture.faculty_id}</td>
-                          <td class="date">${lecture.date_str}</td>
-                          <td class="time">${lecture.start_time}-${lecture.end_time}</td>
-                          <td class="room">${lecture.room_no}</td>
-                          <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-                          <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-                          <td><i class="fa-solid fa-square-pen"></i></td>
-                          <td>
-                            <input type='checkbox' class='is-bulk-cancel' style="width: 25px; height: 25px;" checked="checked"/>
-                          </td>
-                          </tr>
-                          `
-                      }
-                    } else {
-                      bulkLectureTableStr = `<tr><td colspan="11">No lecture found for the given date range.</td></tr>`
-                    }
-                    $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
-                    $('#cancel-lecture-list-card').removeClass('d-none')
+          if(actionType == 'cancel'){
+            let table = `  <table class="table table-bordered table-striped lecture-datatable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Event Id</th>
+              <th>Event Name</th>
+              <th>Faculty Name</th>
+              <th>Faculty Id</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Room</th>
+              <th>Status</th>
+              <th>Remark</th>
+              <th>Action</th>
+              <th>Cancel <input id="cancel-all" type="checkbox" checked="checked" />
+                <label>All</label>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          `
+        
+          for (let lecture of lectureList) {
+            table += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
+              <td>${++count}</td>
+              <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
+              <td>${lecture.event_name}</td>
+              <td>${lecture.faculty_name}</td>
+              <td>${lecture.faculty_id}</td>
+              <td class="date" data-day-lid="${lecture.day_lid}">${lecture.date_str}</td>
+              <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
+              <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
+              <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
+              <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
+              <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
+              <td>
+                <input type='checkbox' class='is-bulk-cancel' style="width: 25px; height: 25px;" checked="checked"/>
+              </td>
+              </tr>
+              `
+          }
+
+          table += `</tbody></table>`
+          
+        }
+        } else {
+          bulkLectureTableStr = `<tr><td colspan="11">No lecture found for the given date range.</td></tr>`
+        }
+        $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
+        $('#cancel-lecture-list-card').removeClass('d-none')
   }
 
             })
