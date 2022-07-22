@@ -526,52 +526,52 @@ code {
                         dataType: 'JSON'
                     }
 
-            // ajaxApi(ApiObj).then(result => {
-            //         console.log('Faculty available::>>>')
-            //         let facultyList = ``;
-            //         let otherFacultyDetail = `<h5>Other faculties for the selected lecture:</h5><ul>`;
-            //         facultyList += `<select id="faculty-work-event-list" class="form-select my-4">`
-            //         if (result.result.length > 0) {
+            ajaxApi(ApiObj).then(result => {
+                    console.log('Available Room::>>>', result)
+                    // let facultyList = ``;
+                    // let otherFacultyDetail = `<h5>Other faculties for the selected lecture:</h5><ul>`;
+                    // facultyList += `<select id="faculty-work-event-list" class="form-select my-4">`
+                    // if (result.result.length > 0) {
                         
-            //             facultyList +=
-            //                 `<option disabled  selected value="">--Select Faculty--</option>`;
+                    //     facultyList +=
+                    //         `<option disabled  selected value="">--Select Faculty--</option>`;
                         
-            //                 for  (let faculty of result.result){
+                    //         for  (let faculty of result.result){
 
-            //                     facultyList +=
-            //                     `<option value="${faculty.faculty_lid}"> ${faculty.faculty_name} </option>`
-            //                 }
+                    //             facultyList +=
+                    //             `<option value="${faculty.faculty_lid}"> ${faculty.faculty_name} </option>`
+                    //         }
 
-            //         } else {
-            //             facultyList +=
-            //                 `<option value=""> No Faculty Found! </option>`
-            //         }
-            //         if (result.facultyAllocationDetails.length > 0) {
+                    // } else {
+                    //     facultyList +=
+                    //         `<option value=""> No Faculty Found! </option>`
+                    // }
+                    // if (result.facultyAllocationDetails.length > 0) {
                         
                         
-            //                 for  (let otherFaculty of result.facultyAllocationDetails){
+                    //         for  (let otherFaculty of result.facultyAllocationDetails){
 
-            //                     otherFacultyDetail +=
-            //                     `<li> ${otherFaculty.faculty_name} : ${otherFaculty.lecture_count} Lectures Allocated </li>`
-            //                 }
+                    //             otherFacultyDetail +=
+                    //             `<li> ${otherFaculty.faculty_name} : ${otherFaculty.lecture_count} Lectures Allocated </li>`
+                    //         }
 
-            //         } else {
-            //             otherFacultyDetail +=
-            //             `<li> No Other Faculty Allocated </li>`
-            //         }
-            //         facultyList += `</select>`;
-            //         otherFacultyDetail += `</ul>`
-            //         $(document).find("#slotModal .modal-body").html(otherFacultyDetail + facultyList)
-            //         // $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
-            //         $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-allocate')
-            //         $('#slotModal .modal-footer').html(
-            //             `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${startSLotId}" data-end-slot-id="${endSlotId}" data-room-id="${currentRoomLid}"  data-day-lid="${dayLid}" data-event-lid="${eventLid}" disabled="true" data-action-type="allocate">Schedule Slot</button>`
-            //                 );
-            //         $('#slotModal').modal('show');
-            //     }).catch(error => {
-            //         // showError(error.responseJSON)
-            //         console.log('Faculty Availability error', error);
-            //     })
+                    // } else {
+                    //     otherFacultyDetail +=
+                    //     `<li> No Other Faculty Allocated </li>`
+                    // }
+                    // facultyList += `</select>`;
+                    // otherFacultyDetail += `</ul>`
+                    // $(document).find("#slotModal .modal-body").html(otherFacultyDetail + facultyList)
+                    // // $('#slotModal .modal-body').append(`<div class="my-2"><button type="button" class="btn btn-warning d-block mx-auto w-50" id="allot-faculty">Allot Faculty</button><div>`);
+                    // $(document).find("#slotModal .modal-header #close-btn").attr('data-close-type','close-allocate')
+                    // $('#slotModal .modal-footer').html(
+                    //     `<button type="button" class="btn btn-success" id="schedule-slot" data-start-slot-id="${startSLotId}" data-end-slot-id="${endSlotId}" data-room-id="${currentRoomLid}"  data-day-lid="${dayLid}" data-event-lid="${eventLid}" disabled="true" data-action-type="allocate">Schedule Slot</button>`
+                    //         );
+                    // $('#slotModal').modal('show');
+                }).catch(error => {
+                    // showError(error.responseJSON)
+                    console.log('Faculty Availability error', error);
+                })
 
                 $('#rescheduleModal').modal('show');
               })
@@ -2500,13 +2500,11 @@ code {
               <th>Event Id</th>
               <th>Event Name</th>
               <th>Faculty Name</th>
-              <th>Faculty Id</th>
               <th>Date</th>
               <th>Time</th>
               <th>Room</th>
               <th>Status</th>
               <th>Remark</th>
-              <th>Action</th>
               <th>Cancel <input id="cancel-all" type="checkbox" checked="checked" />
                 <label>All</label>
               </th>
@@ -2521,13 +2519,11 @@ code {
               <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
               <td>${lecture.event_name}</td>
               <td>${lecture.faculty_name}</td>
-              <td>${lecture.faculty_id}</td>
               <td class="date" data-day-lid="${lecture.day_lid}">${lecture.date_str}</td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
               <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
               <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-              <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
               <td>
                 <input type='checkbox' class='is-bulk-cancel' style="width: 25px; height: 25px;" checked="checked"/>
               </td>
@@ -2546,14 +2542,15 @@ code {
               <th>Event Id</th>
               <th>Event Name</th>
               <th>Faculty Name</th>
-              <th>Faculty Id</th>
+              <th>New Faculty Name</th>
               <th>Date</th>
               <th>Time</th>
               <th>Room</th>
+              <th>New Room</th>
               <th>Status</th>
               <th>Remark</th>
               <th>Action</th>
-              <th>Cancel <input id="cancel-all" type="checkbox" checked="checked" />
+              <th>Select <input id="select-all" type="checkbox" checked="checked" />
                 <label>All</label>
               </th>
             </tr>
@@ -2567,15 +2564,16 @@ code {
               <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
               <td>${lecture.event_name}</td>
               <td>${lecture.faculty_name}</td>
-              <td>${lecture.faculty_id}</td>
+              <td class='new-faculty-name'></td>
               <td class="date" data-day-lid="${lecture.day_lid}">${lecture.date_str}</td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
               <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
+              <td class="new-room"></td>
               <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
               <td>
-                <input type='checkbox' class='is-bulk-cancel' style="width: 25px; height: 25px;" checked="checked"/>
+                <input type='checkbox' class='is-select' style="width: 25px; height: 25px;" checked="checked"/>
               </td>
               </tr>
               `

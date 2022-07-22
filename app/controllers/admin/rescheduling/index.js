@@ -513,6 +513,22 @@ module.exports = {
     })
   },
 
+  fetchAvailableRoomAndFaculty: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<')
+
+      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimelid, req.body.endTimelid)
+    ]).then(result => {
+      res.json({
+        status: 200,
+        availableRoom: result[0].recordset,
+      
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
+
   fetchBulkCancelPagination: async (req, res, next) => {
     console.log('>>>>>>>fetchBulkCancelPagination<<<<<<<<<')
     console.log(req.body)
