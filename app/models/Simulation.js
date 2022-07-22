@@ -157,15 +157,16 @@ module.exports = class Simulation {
     }
 
     static newExtraLecture(slug, body) {
+
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
-                .input('sapEventId', sql.NVarChar(20), body.sapEventId)
-                .input('programId', sql.NVarChar(20), body.programId)
-                .input('moduleId', sql.NVarChar(20), body.moduleId)
-                .input('division', sql.NVarChar(20), body.division)
-                .input('facultyId', sql.NVarChar(20), body.facultyId)
-                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND sap_event_id = @sapEventId AND program_id = @programId AND module_id = @moduleId AND division = @division AND faculty_id = @facultyId`)
+                .input('program_lid', sql.NVarChar(20), body.program_lid)
+                .input('module_lid', sql.NVarChar(20), body.module_lid)
+                .input('division_lid', sql.NVarChar(20), body.division_lid)
+                .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND
+                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid`)
         })
     }
 

@@ -101,7 +101,7 @@
                     <th>Program Id</th>
                     <th>Program Code</th>
                     <th>Acad Session</th>
-                    <th>Module Event Abbr</th>
+                    <th>Module Event Abbr (30 CHAR)</th>
 
                 </thead>
                 <tbody>
@@ -116,7 +116,7 @@
                         <td><%-course.program_id%></td>
                         <td><%-course.program_code%></td>
                         <td><%-course.acad_session%></td>
-                        <td><input type="text" class="form-control rounded-0" name="module_event_abbr"
+                        <td><input type="search" class="form-control rounded-0 module_event_abbr" name="module_event_abbr"
                                     value="<%-course.module_event_abbr%>"></td>
                     </tr>
                     <% } %>
@@ -144,6 +144,21 @@
     $(document).ready(function () {
         let username = `<%- locals.userId %>`;
         $('.select2').select2();
+
+
+        $("#courseWorkloadAbbrTable").on('keypress','.module_event_abbr',function(e){
+            let limit = 30
+            console.log('VALUES:::::::::::', $(this).val().length)
+            if($(this).val().length >= limit){ 
+                $(this).css('border-color','red')
+                e.preventDefault()
+               // showSuccess({status:0,message:'', description:"Abbr Length must not be greater than 30"})
+            }else{
+                $(this).css('border-color','')
+                $(this).text(`<span>ABBR MUST BE 30 CHAR</span>`)
+            }
+
+        })
 
         //Filter APIS FOR INITIALCOURSE WORKLOAD
         $("#programNameFilter").on('change',function(){
@@ -356,7 +371,7 @@
                     <th>Program Id</th>
                     <th>Program Code</th>
                     <th>Acad Session</th>
-                    <th>Module Event Abbr</th>
+                    <th>Module Event Abbr (30 CHAR)</th>
                 </thead>
                 <tbody>`;
             if (workloadList.length > 0) {
@@ -370,7 +385,7 @@
                             <td>${course.program_id}</td>
                             <td>${course.program_code}</td>
                             <td>${course.acad_session}</td>
-                            <td><input type="text" class="form-control rounded-0" name="module_event_abbr"
+                            <td><input type="search" class="form-control rounded-0 module_event_abbr" name="module_event_abbr"
                                     value="${course.module_event_abbr}"></td>
                             </tr>`
                 }

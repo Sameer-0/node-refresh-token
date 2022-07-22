@@ -53,6 +53,7 @@ module.exports = function validate(method) {
             };
         }
 
+
         case 'isArrayNumber':{
             return (req, res, next) => {
                 let jsonreq = JSON.parse(req.body.array);
