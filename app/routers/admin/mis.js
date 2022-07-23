@@ -17,4 +17,5 @@ router.post('/mis/simulation-chart/faculty-day-wise', facultydaywise.facultyDayW
 router.get('/mis/simulation-chart/faculty-day-wise/download/:faculty', facultydaywise.download) 
 router.get('/mis/simulation-chart/room-wise-allocation', roomwiseallocation.getPage) 
 router.post('/mis/simulation-chart/room-wise-allocation', roomwiseallocation.getRoomAllocation) 
+router.get('/mis/simulation-chart/room-wise-allocation/download/:roomno', roomwiseallocation.download) 
 module.exports = router;
