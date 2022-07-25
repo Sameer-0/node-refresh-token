@@ -63,6 +63,30 @@ module.exports = class Simulation {
         })
     }
 
+    static getAvailableFacultyForTimeRange(slug, dayLid, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('dayLid', sql.Int, dayLid)
+            .input('roomLid', sql.Int, roomLid)
+            .input('startSlot', sql.Int, startSlot)
+            .input('endSlot', sql.Int, endSlot)
+            .input('programLid', sql.Int, programLid)
+            .input('sessionLid', sql.Int, sessionLid)
+            .input('moduleLid', sql.Int, moduleLid)
+            .query(`SELECT f.id, f.faculty_id AS facultyId, f.faculty_name AS facultyName FROM [${slug}].faculty_works fw
+            INNER JOIN [${slug}].program_sessions ps
+            ON ps.id =  fw.program_session_lid
+            INNER JOIN [${slug}].faculties f
+            ON f.id =  fw.faculty_lid
+            WHERE ps.program_lid = @programLid AND ps.session_lid = @sessionLid AND fw.module_lid = @moduleLid AND 
+            f.id NOT IN (SELECT t2.faculty_lid FROM (SELECT t1.*, fe.faculty_lid FROM 
+            (SELECT eb.event_lid, eb.day_lid, eb.room_lid, MIN(eb.slot_lid) AS start_slot, MAX(eb.slot_lid) AS end_slot FROM [${slug}].event_bookings eb
+            GROUP BY eb.event_lid, eb.day_lid, eb.room_lid) AS t1 
+            INNER JOIN [${slug}].faculty_events fe ON fe.event_lid = t1.event_lid
+            WHERE t1.start_slot = @startSlot AND t1.end_slot = @endSlot AND t1.day_lid = @dayLid AND room_lid = @roomLid) t2)`)
+        })
+    }
+
     static LectureByDateRange(slug, body) {
         console.log('body:::::::::',body)
         return poolConnection.then(pool => {
@@ -165,8 +189,9 @@ module.exports = class Simulation {
                 .input('module_lid', sql.NVarChar(20), body.module_lid)
                 .input('division_lid', sql.NVarChar(20), body.division_lid)
                 .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
+                .input('date_str', sql.NVarChar(20), body.date_str)
                 .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND
-                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid`)
+                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid AND date_str = @date_str`)
         })
     }
 

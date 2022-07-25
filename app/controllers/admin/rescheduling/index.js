@@ -470,7 +470,7 @@ module.exports = {
     console.log(req.body)
     Simulation.newExtraLecture(res.locals.slug, req.body).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result.recordset)
+   //   console.log(result.recordset)
       res.json({
         status: 200,
         lectureList: result.recordset
@@ -512,6 +512,24 @@ module.exports = {
       console.log(err)
     })
   },
+
+  fetchAvailableRoomAndFaculty: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<')
+
+      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimelid, req.body.endTimelid),
+      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.dayLid, req.body.roomLid,  req.body.startTimelid, req.body.endTimelid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
+    ]).then(result => {
+      res.json({
+        status: 200,
+        availableRoom: result[0].recordset,
+        availableFaculty: result[1].recordset,
+      
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
 
   fetchBulkCancelPagination: async (req, res, next) => {
     console.log('>>>>>>>fetchBulkCancelPagination<<<<<<<<<')

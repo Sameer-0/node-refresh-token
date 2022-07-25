@@ -1483,8 +1483,8 @@ module.exports.respond = async socket => {
 
     //faculty check for bulk modify
     socket.on('facultyAvailabilityCheck', async data => {
-        let request = await db.request();
 
+        console.log('facultyAvailabilityCheck DATA::::::::::::::::', data)
         let socketUser = data.socketUser;
         console.log('socketUser>>>>> ', socketUser)
 
@@ -1514,15 +1514,11 @@ module.exports.respond = async socket => {
         console.log(facultyData)
 
         console.log('resourceParam: ', resourceParam)
-
-
         let sapResult = await new Promise((resolve, reject) => {
             soapClient.ZapiFacultyAvailability(resourceParam, async (err, result) => {
                 if (err) throw err;
-
                 console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<')
                 let sapResult = await result.EtResoAvaiInfo
-
                 console.log('sapResult EtResoAvaiInfo: ', sapResult)
                 if (!sapResult) {
                     sapResult = [];
@@ -1536,7 +1532,6 @@ module.exports.respond = async socket => {
                     }
                 }
                 resolve(sapResult)
-
             })
         })
 
