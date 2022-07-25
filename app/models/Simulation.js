@@ -78,7 +78,7 @@ module.exports = class Simulation {
             ON ps.id =  fw.program_session_lid
             INNER JOIN [${slug}].faculties f
             ON f.id =  fw.faculty_lid
-            WHERE ps.program_lid = @programLid AND ps.session_lid = @sessionLid AND fw.module_lid = @moduleLid AND 
+            WHERE ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid AND fw.module_lid = @moduleLid AND 
             f.id NOT IN (SELECT t2.faculty_lid FROM (SELECT t1.*, fe.faculty_lid FROM 
             (SELECT eb.event_lid, eb.day_lid, eb.room_lid, MIN(eb.slot_lid) AS start_slot, MAX(eb.slot_lid) AS end_slot FROM [${slug}].event_bookings eb
             GROUP BY eb.event_lid, eb.day_lid, eb.room_lid) AS t1 

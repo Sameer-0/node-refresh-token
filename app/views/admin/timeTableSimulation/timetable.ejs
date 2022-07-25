@@ -373,9 +373,9 @@
                 if(spanAppendCheck){
                     $('.option-container').append(`<span class="span-filter" data-room-lid="${$('#room-name option:selected').val()}">${$('#room-name option:selected').text()}<i class="fa-solid fa-xmark ms-auto ps-2 room-span-remove"></i></span>`);
                 }
-                
-                filterRoom()
 
+                filterRoom()
+                
             })
 
             $(document).on('click','.room-span-remove', function(){
@@ -401,6 +401,8 @@
                     
                     $(document).find('.room[data-room-lid]').removeClass('d-none')
                 }
+
+            
             }
         
 
@@ -1498,9 +1500,10 @@
         }
 
 
+   
+        let previousScrollY = 0;
         let fixedBreakBounding
         let fixedBreakTwoBounding
-        let previousScrollY = 0;
 
         function dragStart(e) {
 
@@ -1528,10 +1531,11 @@
 
                 dragObj.actionType = 'clicked';
 
-                fixedBreakBounding = document.querySelector('.fixed-break').getBoundingClientRect();
-                fixedBreakTwoBounding = document.querySelector('.fixed-break[data-break-id="2"]').getBoundingClientRect();
-
-                console.log("IS DRAGGABLE");
+                // fixedBreakBounding = document.querySelector('.fixed-break').getBoundingClientRect();
+                // fixedBreakTwoBounding = document.querySelector('.fixed-break[data-break-id="2"]').getBoundingClientRect();
+                fixedBreakBounding = document.querySelector('.room:not(.d-none) .fixed-break').getBoundingClientRect();
+                fixedBreakTwoBounding = document.querySelector('.room:not(.d-none) .fixed-break[data-break-id="2"]').getBoundingClientRect();
+               
 
                 dragObj.isMouseDown = true;
 
@@ -1685,7 +1689,9 @@
                 // }
                 dragObj.targetElem.style.top =  `${targetProp.movedY}px`
 
-           
+           console.log('trect', tRect)
+           console.log('fixedBreakBounding', fixedBreakBounding)
+           console.log('fixedBreakTwoBounding', fixedBreakTwoBounding)
                 if (((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
                         fixedBreakBounding.left && tRect.right <= fixedBreakBounding.right) || (tRect.right >=
                         fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) || 
@@ -1694,7 +1700,7 @@
                     fixedBreakTwoBounding.right && tRect.left < fixedBreakTwoBounding.right))) {
 
                   //SET IS BREAK KEY
-
+                        
                   dragObj.isOverBreak = true;
 
                     cssRoot.style.setProperty('--eventNoBreakWidth', `${(timetableProp.pxPerSlot * 12)}px`);
@@ -1703,7 +1709,7 @@
                     
                     breakEle.classList.add('d-none');
                     dragObj.targetElem.style.width = '156px';
-                    // console.log('over the break:::::::::', dragObj.targetElem.style.width)
+                    console.log('over the break:::::::::')
 
                 } else {
 

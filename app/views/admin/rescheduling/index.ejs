@@ -533,7 +533,9 @@ code {
                 let dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
                 let startTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
                 let endTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
-                let programLid = $(document).find()
+                let programLid = $(document).find('#ProgramFilter').val();
+                let sessionLid = $(document).find('#SessionFilter').val();
+                let moduleLid = $(document).find('#ModuleFilter').val();
 
                 let ApiObj = {
                         url: '/admin/rescheduling/fetch-available-room-by-day-time-range',
@@ -549,8 +551,11 @@ code {
             ajaxApi(ApiObj).then(result => {
                     console.log('Available Room::>>>', result)
                     let roomList = ``;
+                    let facultyList = ``;
                     roomList += `<label for="available-room-list" class="form-label">Select Room</label>`;
                     roomList += `<select id="available-room-list" class="form-select my-4">`
+                    facultyList += `<label for="available-faculty-list" class="form-label">Select Faculty</label>`;
+                    facultyList += `<select id="available-faculty-list" class="form-select my-4">`
                    
 
                     if (result.availableRoom.length > 0) {
@@ -569,9 +574,27 @@ code {
                             `<option value=""> No Room Available For That Duration! </option>`
                     }
                    
+                    if (result.availableFaculty.length > 0) {
+                        
+                      facultyList +=
+                              `<option disabled  selected value="">--Select Faculty--</option>`;
+                          
+                              for  (let faculty of result.availableFaculty){
+  
+                                facultyList +=
+                                  `<option value="${faculty.id}"> ${faculty.faculty_name} </option>`
+                              }
+  
+                      } else {
+                        facultyList +=
+                              `<option value=""> No Faculty Available For That Duration! </option>`
+                      }
+                     
                     roomList += `</select>`;
+                    facultyList += `</select>`;
                     
                     $(document).find("#rescheduleModal .modal-body").html(roomList)
+                    $(document).find("#rescheduleModal .modal-body").append(facultyList)
                     
                     $('#rescheduleModal').modal('show');
                 }).catch(error => {
