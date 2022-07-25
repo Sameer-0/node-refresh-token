@@ -1,3 +1,5 @@
+
+const sql = require('mssql')
 const sanitizer = require('sanitize')();
 const soap = require('soap');
 const path = require('path');
@@ -2446,18 +2448,17 @@ module.exports.respond = async socket => {
         console.log('eventHeaders >>>> ', eventHeaders.length)
         console.log('eventSchedules >>>> ', eventSchedules.length)
 
-        return false;
+       // return false;
 
-        // let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sqh_20220401_2.wsdl");
-
-
-        // let soapClient = await new Promise((resolve, reject) => {
-        //     soap.createClient(wsdlUrl, async function (err, soapClient) {
-        //         if (err) throw err;
-        //         let client = await soapClient;
-        //         resolve(client)
-        //     })
-        // });
+        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sqh_20220401_2.wsdl");
+        
+        let soapClient = await new Promise((resolve, reject) => {
+            soap.createClient(wsdlUrl, async function (err, soapClient) {
+                if (err) throw err;
+                let client = await soapClient;
+                resolve(client)
+            })
+        });
 
 
         await soapClient.ZeventCreateSp({
