@@ -534,7 +534,7 @@ module.exports = {
     console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<')
 
       Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimelid, req.body.endTimelid),
-      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.dayLid, req.body.roomLid,  req.body.startTimelid, req.body.endTimelid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
+      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid,  req.body.startTimelid, req.body.endTimelid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
     ]).then(result => {
       res.json({
         status: 200,

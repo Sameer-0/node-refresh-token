@@ -63,10 +63,10 @@ module.exports = class Simulation {
         })
     }
 
-    static getAvailableFacultyForTimeRange(slug, dayLid, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) {
+    static getAvailableFacultyForTimeRange(slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('dayLid', sql.Int, dayLid)
+            .input('date', sql.NVarChar(sql.MAX), date)
             .input('roomLid', sql.Int, roomLid)
             .input('startSlot', sql.Int, startSlot)
             .input('endSlot', sql.Int, endSlot)

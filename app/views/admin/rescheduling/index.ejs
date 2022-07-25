@@ -547,6 +547,7 @@ code {
 
                 let rowLid = $(this).attr('data-lid');
                 let dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
+                let date = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date-lid]`).attr('data-date-lid');
                 let roomLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid');
                 let startTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
                 let endTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
@@ -561,6 +562,7 @@ code {
                             startTimelid: startTimelid,
                             endTimelid: endTimelid,
                             dayLid: dayLid,
+                            date: date,
                             roomLid: roomLid,
                             programLid: programLid,
                             sessionLid: sessionLid,
@@ -604,7 +606,7 @@ code {
                               for  (let faculty of result.availableFaculty){
   
                                 facultyList +=
-                                  `<option value="${faculty.id}"> ${faculty.faculty_name} </option>`
+                                  `<option value="${faculty.id}" data-faculty-id="${fcaulty.faculty_id}"> ${faculty.faculty_name} </option>`
                               }
   
                       } else {
@@ -2734,7 +2736,7 @@ code {
               <td>${lecture.event_name}</td>
               <td>${lecture.faculty_name}</td>
               <td class='new-faculty-name'></td>
-              <td class="date" data-day-lid="${lecture.day_lid}">${lecture.date_str}</td>
+              <td class="date" data-day-lid="${lecture.day_lid}" data-date-lid="${lecture.date}">${lecture.date_str}</td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
               <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
               <td class="new-room"></td>
