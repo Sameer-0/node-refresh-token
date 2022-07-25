@@ -480,6 +480,23 @@ module.exports = {
     })
   },
 
+  //REGULAR AND EXTRA LECTURES
+  getNewRegularLectures: async (req, res, next) => {
+    console.log('>>>>>>>getNewRegularLectures<<<<<<<<<', req.body)
+    console.log(req.body)
+    Promise.all([Simulation.newRegularLecture(res.locals.slug, req.body), 
+      Simulation.newExtraLecture(res.locals.slug, req.body)]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      res.json({
+        status: 200,
+        regularlectureList: result[0].recordset,
+        extrlectureList: result[1].recordset
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
   facultiesDateRange: async (req, res, next) => {
     console.log('>>>>>>>get faculties date range<<<<<<<<<')
     console.log(req.body)

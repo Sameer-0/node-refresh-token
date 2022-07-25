@@ -39,6 +39,8 @@
   opacity: 0;
   z-index: -1;
 }
+
+
 .inputGroup label:after {
   width: 32px;
   height: 32px;
@@ -99,6 +101,11 @@ html {
 code {
   background-color: #9AA3AC;
   padding: 0 8px;
+}
+
+.accordion-button-custom {
+  background-color: #000000!important;
+  color: #fff!important;
 }
 </style>
 <%- include("../partials/leftSidebar") %>
@@ -289,16 +296,25 @@ code {
           </select> 
         </div> 
 
+
+        <div class="regular_lecture_list d-none cancel-against-e">
+          
+        </div>
+
           <div class="d-none cancel-against-e mt-3">
             <select class="form-control mb-3 select2 extra-lecture" id="extra-lecture-faculty" disabled>
               <option value selected disabled>--Select Extra Lecture--</option>
             </select>
           </div>
 
-          <div class="d-grid gap-2 mt-2 w-50 mx-auto">
-            <button class="btn btn-primary rounded-0" id="cancel-against-extra-class-btn" type="button" disabled>Submit</button>
+          
+
+          <div class="d-grid gap-2 mt-2 w-50 mx-auto d-none cancel-against-e">
+            <button class="btn btn-primary rounded-0" id="cancel-against-extra-class-btn d-none" type="button" disabled>Submit</button>
           </div>
 
+
+         
         </div>
 
         <div id="bulk-modify" class="d-none">
@@ -760,15 +776,15 @@ code {
                   // $('#bulk-cancel-without-report').prop('checked', false);
                   // $('#bulk-cancel-without-report').parent().addClass('d-none');
 
-                    //GET CANCEL LECTURES
-                    $("#cancel-against-extra-class-date").on('change',function(){
 
+                  //GET REGULAR LECTURES
+
+                  $("#cancel-against-extra-class-date").on('change',function(){
                       let date_str = $(this).val()
                       console.log('date_str:::::::::::::::>>',date_str)
-
                       $.ajax({
                     type: 'POST',
-                    url: '/admin/rescheduling/get-new-extra-lectures',
+                    url: '/admin/rescheduling/get-regular-extra-lecture',
                     dataType: "JSON",
                     data: {
                             program_lid: program_lid,
@@ -778,14 +794,47 @@ code {
                             date_str: date_str
                     },
                     success: data => {
-                      let lectureList = data.lectureList;
-                      console.log('lectureList: ', lectureList)
+                      let regularlectureList = data.regularlectureList;
+                      console.log('lectureList: ', data)
 
-                    //  AjaxTable(lectureList, actionType)
-                      let ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
 
-                      if(lectureList.length > 0){
-                        for (let lecture of lectureList) {
+                      let accordination = `<div class="accordion my-2" id="accordionExample">`;
+                        //REGULAR LECTURE LIST WITHOUT E FLAG
+                        for (let lecture of data.regularlectureList){
+                          accordination += `<div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne${lecture.id}">
+                              <button class="accordion-button  accordion-button-custom text-light bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne${lecture.id}" aria-expanded="true" aria-controls="collapseOne${lecture.id}">
+                                <div class="ms-2 form-check pt-0">
+                                <input class="form-check-input" type="radio" name="regularLectureOpn" value="${lecture.id}" id="regularLectureOpn">
+                                <label class="form-check-label" for="regularLectureOpn">
+                                  ${lecture.module_name} - ${lecture.division} | ${lecture.start_time} to ${lecture.end_time}
+                                </label>
+                              </div>
+                              </button>
+                            </h2>
+                            <div id="collapseOne${lecture.id}" class="accordion-collapse collapse show" aria-labelledby="headingOne${lecture.id}" data-bs-parent="#accordionExample">
+                              <div class="accordion-body">
+                            <strong>Current Date</strong> : ${lecture.date_str}<br>
+                            <strong>Event Name</strong> : ${lecture.event_name}<br>
+                            <strong>Program Name</strong> : ${lecture.program_name}<br>
+                            <strong>Faculty Name</strong> : ${lecture.faculty_name}<br>
+                            <strong>Acad Session</strong> : ${lecture.acad_session}<br>
+                            <strong>Class Room:</strong> : ${lecture.room_no}<br>
+                            <strong>Class Timing</strong> : ${lecture.start_time} to ${lecture.end_time}<br>
+                          </div>
+                            </div>
+                          </div>`;
+                        }
+                        `</div>`;
+
+                      $(".regular_lecture_list").html(accordination)
+                      
+                      
+                      //EXTRA LECTURE LIST WITH E FLAG
+                      
+                    let ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
+                      if(data.extrlectureList.length > 0){
+                        for (let lecture of data.extrlectureList) {
                         ajaxData +=
                           `<option value="${lecture.event_name}" data-lid="${lecture.id}" data-unx-lid="${lecture.unx_lid}" data-sap-event-id="${lecture.sap_event_id}" data-module-id="${lecture.module_id}" data-program-id="${lecture.program_id}" data-division="${lecture.div}" data-event-type="${lecture.event_type}" data-date="${lecture.date_str}" data-room-no="${lecture.room_no}" data-acad-year="${lecture.acad_year}" data-acad-session="${lecture.acad_session}" data-faculty-id="${lecture.faculty_id}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot-name=${lecture.slot_name}>${lecture.event_name} | ${lecture.start_time} to ${lecture.end_time} | ${lecture.date_str} | ${lecture.room_no}</option>`;
                      $("#cancel-against-extra-class-btn").prop('disabled', false)
@@ -795,8 +844,6 @@ code {
                           `<option value="">Lecture Not Found</option>`;
                           $("#cancel-against-extra-class-btn").prop('disabled', true)
                       }
-
-
                       $('#cancel-wrapper .cancel-against-e .extra-lecture').html(ajaxData).attr("disabled", false)
                     },
                     error: err => {
@@ -804,6 +851,45 @@ code {
                     }
                   })
                     })
+
+
+                  //GET CANCEL LECTURES
+                  //   $("#cancel-against-extra-class-date").on('change',function(){
+                  //     let date_str = $(this).val()
+                  //     console.log('date_str:::::::::::::::>>',date_str)
+                  //     $.ajax({
+                  //   type: 'POST',
+                  //   url: '/admin/rescheduling/get-new-extra-lectures',
+                  //   dataType: "JSON",
+                  //   data: {
+                  //           program_lid: program_lid,
+                  //           division_lid: division_lid,
+                  //           module_lid: module_lid,
+                  //           acad_session_lid: acad_session_lid,
+                  //           date_str: date_str
+                  //   },
+                  //   success: data => {
+                  //     let lectureList = data.lectureList;
+                  //     console.log('lectureList: ', lectureList)
+                  //     let ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
+                  //     if(lectureList.length > 0){
+                  //       for (let lecture of lectureList) {
+                  //       ajaxData +=
+                  //         `<option value="${lecture.event_name}" data-lid="${lecture.id}" data-unx-lid="${lecture.unx_lid}" data-sap-event-id="${lecture.sap_event_id}" data-module-id="${lecture.module_id}" data-program-id="${lecture.program_id}" data-division="${lecture.div}" data-event-type="${lecture.event_type}" data-date="${lecture.date_str}" data-room-no="${lecture.room_no}" data-acad-year="${lecture.acad_year}" data-acad-session="${lecture.acad_session}" data-faculty-id="${lecture.faculty_id}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot-name=${lecture.slot_name}>${lecture.event_name} | ${lecture.start_time} to ${lecture.end_time} | ${lecture.date_str} | ${lecture.room_no}</option>`;
+                  //    $("#cancel-against-extra-class-btn").prop('disabled', false)
+                  //       }
+                  //     }else{
+                  //       ajaxData +=
+                  //         `<option value="">Lecture Not Found</option>`;
+                  //         $("#cancel-against-extra-class-btn").prop('disabled', true)
+                  //     }
+                  //     $('#cancel-wrapper .cancel-against-e .extra-lecture').html(ajaxData).attr("disabled", false)
+                  //   },
+                  //   error: err => {
+                  //     console.log('Error: ', err)
+                  //   }
+                  // })
+                  //   })
            
 
                  
@@ -1661,22 +1747,16 @@ code {
                 rescheduleObj.reschFlag = "E"
 
                 if (extraClassType === 'EC') {
-
                   $('#en-wrapper').addClass('d-none')
                   $('#ec-wrapper').removeClass('d-none')
-
                   $.ajax({
                     type: 'GET',
                     url: '/admin/rescheduling/get-cancelled-lectures',
                     dataType: "json",
                     success: function (data) {
-
                       let lectureList = data.lectureList;
                       console.log('lectureList: ', lectureList)
-
                       let ajaxData = `<option value selected disabled>--Select Lecture--</option>`;
-
-
                       for (let lecture of lectureList) {
                         ajaxData +=
                           `<option value="${lecture.event_name}" data-lid="${lecture.id}" data-transaction-id="${lecture.transaction_id}" data-sap-event-id="${lecture.sap_event_id}" data-module-id="${lecture.module_id}" data-program-id="${lecture.program_id}" data-division="${lecture.division}" data-event-type="${lecture.event_type}" data-date="${lecture.date_str}" data-room-no="${lecture.room_no}" data-acad-year="${lecture.acad_year}" data-acad-session="${lecture.acad_session}" data-faculty-id="${lecture.faculty_id}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot-name=${lecture.slot_name}>${lecture.event_name} | ${lecture.start_time} to ${lecture.end_time} | ${lecture.date_str}</option>`;
@@ -1685,9 +1765,6 @@ code {
 
                     }
                   })
-
-
-
                 } else {
                   $('#ec-wrapper').addClass('d-none')
                   $('#en-wrapper').removeClass('d-none')
