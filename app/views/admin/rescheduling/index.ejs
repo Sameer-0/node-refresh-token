@@ -274,11 +274,30 @@ code {
           </div>
           <hr />
 
-          <!-- <div class="d-none cancel-against-e">
-            <select class="form-control mb-3 modal-selct2 extra-lecture" disabled>
+
+          <div class="d-none cancel-against-e">
+            <label class="custom-control-label cursor-pointer" for="cancel-against-extra-class-date">
+              Select Date
+            </label>
+          <select id="cancel-against-extra-class-date" class="form-control select2" disabled>
+            <option selected disabled value>--Select Date--</option>
+            <% for (let date of semesterDates) { %>
+              <option value="<%- date.dateString %>">
+                <%- date.dateString %>
+              </option>
+              <% } %>
+          </select> 
+        </div> 
+
+          <div class="d-none cancel-against-e mt-3">
+            <select class="form-control mb-3 select2 extra-lecture" id="extra-lecture-faculty" disabled>
               <option value selected disabled>--Select Extra Lecture--</option>
             </select>
-          </div> -->
+          </div>
+
+          <div class="d-grid gap-2 mt-2 w-50 mx-auto">
+            <button class="btn btn-primary rounded-0" id="cancel-against-extra-class-btn" type="button" disabled>Submit</button>
+          </div>
 
         </div>
 
@@ -680,6 +699,13 @@ code {
 
                     console.log('rescheduleObj::::::::: fetch-bulk-cancel', rescheduleObj)
 
+                    $("#cancel-against-extra-class-date").prop('disabled',false)
+
+
+
+                  
+                        console.log('Cancel Against Extra Class cancelType::::::::::::::::::::::>>>>>>>',cancelType)
+                        let actionType = $(document).find('.schedule-type:checked').attr('id');
                         let program_lid = $("#ProgramFilter").val()
                         let division_lid = $("#DivisionFilter").val()
                         let module_lid = $("#ModuleFilter").val()
@@ -692,10 +718,7 @@ code {
                             acad_session_lid: acad_session_lid,
                             pageNo: 1
                         }
-
                         console.log('Cancel Against Extra Class::::::::::::::::::::::>>>>>>>',obj)
-                        console.log('Cancel Against Extra Class cancelType::::::::::::::::::::::>>>>>>>',cancelType)
-                       let actionType = $(document).find('.schedule-type:checked').attr('id');
                        // console.log('Cancel Against Extra Class actionType::::::::::::::::::::::>>>>>>>',actionType)
                   $('#bulk-modify').addClass('d-none')
                   $(`#modify-from-date`).val('').change()
@@ -707,7 +730,13 @@ code {
                   // $('#bulk-cancel-without-report').prop('checked', false);
                   // $('#bulk-cancel-without-report').parent().addClass('d-none');
 
-                  $.ajax({
+                    //GET CANCEL LECTURES
+                    $("#cancel-against-extra-class-date").on('change',function(){
+
+                      let date_str = $(this).val()
+                      console.log('date_str:::::::::::::::>>',date_str)
+
+                      $.ajax({
                     type: 'POST',
                     url: '/admin/rescheduling/get-new-extra-lectures',
                     dataType: "JSON",
@@ -716,25 +745,38 @@ code {
                             division_lid: division_lid,
                             module_lid: module_lid,
                             acad_session_lid: acad_session_lid,
-                            pageNo: 1
+                            date_str: date_str
                     },
                     success: data => {
                       let lectureList = data.lectureList;
                       console.log('lectureList: ', lectureList)
 
-                      AjaxTable(lectureList, actionType)
-                      // let ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
-                      // for (let lecture of lectureList) {
-                      //   ajaxData +=
-                      //     `<option value="${lecture.event_name}" data-lid="${lecture.id}" data-unx-lid="${lecture.unx_lid}" data-sap-event-id="${lecture.sap_event_id}" data-module-id="${lecture.module_id}" data-program-id="${lecture.program_id}" data-division="${lecture.div}" data-event-type="${lecture.event_type}" data-date="${lecture.date_str}" data-room-no="${lecture.room_no}" data-acad-year="${lecture.acad_year}" data-acad-session="${lecture.acad_session}" data-faculty-id="${lecture.faculty_id}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot-name=${lecture.slot_name}>${lecture.event_name} | ${lecture.start_time} to ${lecture.end_time} | ${lecture.date_str}</option>`;
-                      // }
-                      // $('#cancel-wrapper .cancel-against-e .extra-lecture').html(ajaxData).attr("disabled", false)
+                    //  AjaxTable(lectureList, actionType)
+                      let ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
 
+                      if(lectureList.length > 0){
+                        for (let lecture of lectureList) {
+                        ajaxData +=
+                          `<option value="${lecture.event_name}" data-lid="${lecture.id}" data-unx-lid="${lecture.unx_lid}" data-sap-event-id="${lecture.sap_event_id}" data-module-id="${lecture.module_id}" data-program-id="${lecture.program_id}" data-division="${lecture.div}" data-event-type="${lecture.event_type}" data-date="${lecture.date_str}" data-room-no="${lecture.room_no}" data-acad-year="${lecture.acad_year}" data-acad-session="${lecture.acad_session}" data-faculty-id="${lecture.faculty_id}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot-name=${lecture.slot_name}>${lecture.event_name} | ${lecture.start_time} to ${lecture.end_time} | ${lecture.date_str} | ${lecture.room_no}</option>`;
+                     $("#cancel-against-extra-class-btn").prop('disabled', false)
+                        }
+                      }else{
+                        ajaxData +=
+                          `<option value="">Lecture Not Found</option>`;
+                          $("#cancel-against-extra-class-btn").prop('disabled', true)
+                      }
+
+
+                      $('#cancel-wrapper .cancel-against-e .extra-lecture').html(ajaxData).attr("disabled", false)
                     },
                     error: err => {
                       console.log('Error: ', err)
                     }
                   })
+                    })
+           
+
+                 
 
                   $('#cancel-wrapper .cancel-against-e').removeClass('d-none')
 
@@ -1373,22 +1415,6 @@ code {
                       //   slugName: "<%- slug %>",
                       //   resObj: rescheduleObj
                       // })
-                    }
-                  }
-                } else if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'cae') {
-                  if (!isValidCancelCae()) {
-                    alert('Please fill all the mandatory fields.')
-                  } else {
-                    let isConfirmed = confirm('Do you really want to cancel the event?')
-                    
-                    if (isConfirmed) {
-                      console.log('>>>>>>>>>>>>>>>> Cancelling the event')
-                      $('.loaderBody').removeClass('d-none')
-                      // socket.emit('cancelEventedSlotCae', {
-                      //   slugName: "<%- slug %>",
-                      //   resObj: rescheduleObj
-                      // })
-
                     }
                   }
                 } else if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'bulk') {
@@ -2479,6 +2505,48 @@ code {
     //             showError(error.responseJSON)
     //         })
     // })
+
+    //#cancel-against-extra-class-btn
+    //CANCEL AGAINST EXTRA CLASS API CALLING
+    $("#cancel-against-extra-class-btn").on('click',function(){
+      console.log('CANCEL AGAINST EXTRA CLASS API CALLING >>>> ', rescheduleObj)
+    if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'cae') {
+
+
+                   
+
+                   let ides = []
+                   console.log('ides::::::::::::',ides)
+                   //console.log('ides ARRAY::::::::::::',ides.push($('#extra-lecture-faculty option:selected').attr("data-lid")))
+                     ides.push($('#extra-lecture-faculty option:selected').attr("data-lid"))
+                    rescheduleData.ids = ides
+                    rescheduleData.sapFlagId = $("input[name='scheduleType']").val();
+                    rescheduleData.sapFlag = rescheduleObj.reschFlag
+                    rescheduleData.reasonID = $('#dropReason').val();
+                    rescheduleData.reasonText = $('#cancellationDesc').val();
+
+                    console.log('rescheduleData::::::::::::',rescheduleData)
+
+
+
+                  if (!isValidCancelCae()) {
+                    alert('Please fill all the mandatory fields.')
+                  } else {
+                    let isConfirmed = confirm('Do you really want to cancel the event?')
+                    
+                    if (isConfirmed) {
+                      console.log('>>>>>>>>>>>>>>>> Cancelling the event')
+                      $('.loaderBody').removeClass('d-none')
+                      // socket.emit('cancelEventedSlotCae', {
+                      //   slugName: "<%- slug %>",
+                      //   resObj: rescheduleData
+                      // })
+
+                    }
+                  }
+                } 
+
+    })
  
   function AjaxTable(lectureList, actionType){
 
