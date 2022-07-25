@@ -470,7 +470,7 @@ module.exports = {
     console.log(req.body)
     Simulation.newExtraLecture(res.locals.slug, req.body).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result.recordset)
+   //   console.log(result.recordset)
       res.json({
         status: 200,
         lectureList: result.recordset

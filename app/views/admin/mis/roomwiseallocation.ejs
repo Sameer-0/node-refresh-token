@@ -156,6 +156,7 @@
                 <h5>Room Allocation Status</h5>
             </div>
             <div>
+                <a class="btn btn-danger download-current-report  disabled"  >Download Currunt </a>
             </div>
         </div>
 
@@ -165,6 +166,7 @@
                     <label for="RoomFilter">Select Room:</label>
                     <select name="RoomFilter" id="RoomFilter" class="form-select select2">
                         <option selected disabled value>--Select Room--</option>
+                        <option value="0">Download All</option>
                         <% for(let room_d of roomListStr){%>
                         <option value="<%- room_d.id%>"><%-room_d.room_number%></option>
                         <%}%>
@@ -270,20 +272,36 @@ $(document).ready(function(){
         let room_lid = $(this).val(); 
         $("#showDetails").prop('checked',false)
             console.log('API hit')
-        let ApiObj = {
-            type: 'POST',
-            url: '/admin/mis/simulation-chart/room-wise-allocation',
-            data: {
-                room_lid: room_lid,
-            },
-            dataType: 'JSON'
-        }
 
-        ajaxApi(ApiObj).then(result => {
-            timeTableDisplay(result.result)
-        }).catch(error => {
-            // showError(error.responseJSON)
-        })
+              if(room_lid > 0){
+              $(".download-current-report").attr('data-faculty-id',room_lid)
+              $(".download-current-report").removeClass('disabled')
+              $(".download-current-report").html('Download Current')
+              $(".download-current-report").attr('href',`/admin/mis/simulation-chart/room-wise-allocation/download/${room_lid}`)
+
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/mis/simulation-chart/room-wise-allocation',
+                    data: {
+                        room_lid: room_lid,
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    timeTableDisplay(result.result)
+                }).catch(error => {
+                    // showError(error.responseJSON)
+                })
+              }else{
+                console.log('IN ELSE CONDITION::::::::')
+                $(".download-current-report").attr('data-faculty-id',room_lid)
+                $(".download-current-report").attr('href',`/admin/mis/simulation-chart/room-wise-allocation/download/${room_lid}`)
+                $(".download-current-report").removeClass('disabled')
+                $(".download-current-report").html('Download ALL')
+              }
+
+
     })
 
 

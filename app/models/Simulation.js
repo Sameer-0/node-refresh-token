@@ -189,8 +189,9 @@ module.exports = class Simulation {
                 .input('module_lid', sql.NVarChar(20), body.module_lid)
                 .input('division_lid', sql.NVarChar(20), body.division_lid)
                 .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
+                .input('date_str', sql.NVarChar(20), body.date_str)
                 .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND
-                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid`)
+                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid AND date_str = @date_str`)
         })
     }
 
