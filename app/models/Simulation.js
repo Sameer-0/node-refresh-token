@@ -73,17 +73,22 @@ module.exports = class Simulation {
             .input('programLid', sql.Int, programLid)
             .input('sessionLid', sql.Int, sessionLid)
             .input('moduleLid', sql.Int, moduleLid)
-            .query(`SELECT f.id, f.faculty_id AS facultyId, f.faculty_name AS facultyName FROM [${slug}].faculty_works fw
-            INNER JOIN [${slug}].program_sessions ps
-            ON ps.id =  fw.program_session_lid
-            INNER JOIN [${slug}].faculties f
-            ON f.id =  fw.faculty_lid
-            WHERE ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid AND fw.module_lid = @moduleLid AND 
-            f.id NOT IN (SELECT t2.faculty_lid FROM (SELECT t1.*, fe.faculty_lid FROM 
-            (SELECT eb.event_lid, eb.day_lid, eb.room_lid, MIN(eb.slot_lid) AS start_slot, MAX(eb.slot_lid) AS end_slot FROM [${slug}].event_bookings eb
-            GROUP BY eb.event_lid, eb.day_lid, eb.room_lid) AS t1 
-            INNER JOIN [${slug}].faculty_events fe ON fe.event_lid = t1.event_lid
-            WHERE t1.start_slot = @startSlot AND t1.end_slot = @endSlot AND t1.day_lid = @dayLid AND room_lid = @roomLid) t2)`)
+            .query(`SELECT * FROM (SELECT f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
+                INNER JOIN [${slug}].program_sessions ps
+                ON ps.id =  fw.program_session_lid
+                INNER JOIN [${slug}].faculties f
+                ON f.id =  fw.faculty_lid
+                INNER JOIN (SELECT 122 AS start_time_lid, 133 AS end_time_lid) ts
+                ON 1 = 1
+                WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
+                fp
+                LEFT JOIN
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                ON 
+                fp.faculty_id = fb.faculty_id AND
+                fp.start_time_lid = fb.start_time_lid AND
+                fp.end_time_lid = fb.end_time_lid
+                WHERE fb.faculty_id IS NULL`)
         })
     }
 

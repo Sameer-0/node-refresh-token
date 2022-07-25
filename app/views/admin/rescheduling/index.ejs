@@ -531,6 +531,7 @@ code {
 
                 let rowLid = $(this).attr('data-lid');
                 let dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
+                let roomLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid');
                 let startTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
                 let endTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
                 let programLid = $(document).find('#ProgramFilter').val();
@@ -543,7 +544,12 @@ code {
                         data: {
                             startTimelid: startTimelid,
                             endTimelid: endTimelid,
-                            dayLid: dayLid
+                            dayLid: dayLid,
+                            roomLid: roomLid,
+                            programLid: programLid,
+                            sessionLid: sessionLid,
+                            moduleLid: moduleLid
+
                         },
                         dataType: 'JSON'
                     }
@@ -1105,12 +1111,12 @@ code {
 
                   $(".loaderBody").removeClass('d-none');
 
-                  socket.emit('facultyAvailabilityCheck', {
-                    startDate: rescheduleObj.dateRangeFrom,
-                    endDate: rescheduleObj.dateRangeTo,
-                    facultyId: rescheduleObj.toFacultyId,
-                    facultyType: $(this).find('option:selected').attr('data-faculty-type')
-                  })
+                  // socket.emit('facultyAvailabilityCheck', {
+                  //   startDate: rescheduleObj.dateRangeFrom,
+                  //   endDate: rescheduleObj.dateRangeTo,
+                  //   facultyId: rescheduleObj.toFacultyId,
+                  //   facultyType: $(this).find('option:selected').attr('data-faculty-type')
+                  // })
                 }
 
               })
