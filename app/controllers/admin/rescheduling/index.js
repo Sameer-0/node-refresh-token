@@ -453,18 +453,6 @@ module.exports = {
     })
   },
 
-  getExtraClassFaculties: async (req, res, next) => {
-    console.log('>>>>>>>>EXTRA CLASS FACULTIES<<<<<<<<<')
-    Promise.all([Simulation.extraClassFaculties(res.locals.slug, req.body)]).then(result => {
-      console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result)
-      res.json({
-        status: 200,
-        facultyList: result[0].recordset
-      })
-    })
-
-  },
 
 
   getNewExtraLectures: async (req, res, next) => {
@@ -663,5 +651,35 @@ module.exports = {
         message: "Something went wrong",
       })
     })
-  }
+  },
+
+  getFacultiesForExtraClass: async (req, res, next) => {
+    console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
+    console.log(req.body)
+    Promise.all([
+      Simulation.getFacultiesForExtraClass(res.locals.slug, req.body)
+    ]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log(result[0].recordset)
+      res.json({
+        status: 200,
+        facultyList: result[0].recordset,
+    
+      })
+    })
+  },
+
+  getExtraClassFaculties: async (req, res, next) => {
+    console.log('>>>>>>>>EXTRA CLASS FACULTIES<<<<<<<<<')
+    Promise.all([Simulation.extraClassFaculties(res.locals.slug, req.body)]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log(result)
+      res.json({
+        status: 200,
+        facultyList: result[0].recordset
+      })
+    })
+
+  },
+
 }
