@@ -8,7 +8,7 @@ const {
 const index =  require('../../controllers/admin/rescheduling/index')
 
 //RESCHEDULING EVENTS
-router.get('/rescheduling', index.getPage)
+router.get('/rescheduling', index.getPage) 
 router.post('/rescheduling/fetch-lecture-by-date-range-faculty', index.fetchLectureByDateRangeFaculty) 
 router.post('/rescheduling/get-replacing-faculties', index.getReplacingFaculties)
 router.post('/rescheduling/fetch-bulk-cancel-pagination', index.fetchBulkCancelPagination)

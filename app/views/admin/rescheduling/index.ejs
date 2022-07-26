@@ -308,7 +308,7 @@ code {
             <label class="custom-control-label cursor-pointer" for="cancel-against-extra-class-date">
               Select Date
             </label>
-            <input type="date" min="<%- dateRange.minDate %>" max="<%- dateRange.maxDate %>"
+            <input type="date" min="<%- dateRange.start_date %>" max="<%- dateRange.end_date %>"
             id="cancel-against-extra-class-date" class="form-control rounded-0" disabled/>
           <!-- <select id="cancel-against-extra-class-date" class="form-control select2" disabled>
             <option selected disabled value>--Select Date--</option>
@@ -344,7 +344,7 @@ code {
         <div id="bulk-modify" class="d-none">
           <div class="mb-3">
             <label>From Date: <strong class="text-danger">*</strong></label>
-            <input type="date" min="<%- dateRange.minDate %>" max="<%- dateRange.maxDate %>"
+            <input type="date" min="<%- dateRange.start_date %>" max="<%- dateRange.end_date %>"
               id="modify-from-date" class="form-control rounded-0" />
             <!-- <select id="modify-from-date" class="form-control modal-selct2">
               <option selected disabled value>--Select Date--</option>
@@ -357,7 +357,7 @@ code {
           </div>
           <div class="mb-3">
             <label>To Date: <strong class="text-danger">*</strong></label>
-            <input type="date" min="" max="<%- dateRange.maxDate %>" id="modify-to-date"
+            <input type="date" min="" max="<%- dateRange.end_date %>" id="modify-to-date"
               class="form-control rounded-0" />
             <!-- <select id="modify-to-date" class="form-control modal-selct2" disabled>
               <option selected disabled value>--Select Date--</option>
@@ -567,6 +567,20 @@ code {
                 dateRangeTo: ''
               }
 
+              let academicStartDate = `<%- dateRange.start_date %>`
+              let academicEndDate = `<%- dateRange.end_date %>`
+              let startTimeList = `<label for="start-time-list" class="form-label">Select Start Time</label> <select id="start-time-list" class="form-select mb-4">`;
+              let endTimeList = `<label for=""end-time-list" class="form-label">Select End Time</label> <select id="end-time-list" class="form-select mb-4">`;
+
+              let timeListJson = JSON.parse(`<%- slotIntervalTiming%>`);
+
+              for(let time of timeListJson){
+                startTimeList += `<option value="${time.id}">${time.start_time}</option>`
+                endTimeList += `<option value="${time.id}">${time.end_time}</option>`
+              }
+              startTimeList += `</select>`
+              endTimeList += `</select>`
+
               $(document).on('click', '.reschedule-edit', function() {
 
                 let rowLid = $(this).attr('data-lid');
@@ -600,10 +614,12 @@ code {
                     console.log('Available Room::>>>', result)
                     let roomList = ``;
                     let facultyList = ``;
+                    let dateList = ``;
+                  
                     roomList += `<label for="available-room-list" class="form-label">Select Room</label>`;
                     roomList += `<select id="available-room-list" class="form-select mb-4">`
                     facultyList += `<label for="available-faculty-list" class="form-label">Select Faculty</label>`;
-                    facultyList += `<select id="available-faculty-list" class="form-select ">`
+                    facultyList += `<select id="available-faculty-list" class="form-select">`
                    
 
                     if (result.availableRoom.length > 0) {
@@ -625,7 +641,7 @@ code {
                     if (result.availableFaculty.length > 0) {
                         
                       facultyList +=
-                              `<option disabled  selected value="">--Select Faculty--</option>`;
+                              `<option disabled  selected value="">--Select Faculty--</option>`; 
                           
                               for  (let faculty of result.availableFaculty){
   
@@ -633,18 +649,32 @@ code {
                                   `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}"> ${faculty.faculty_name} </option>`
                               }
   
-                      } else {
-                        facultyList +=
-                              `<option value=""> No Other Faculty Available For That Duration! </option>`
-                      }
+                    } else {
+                      facultyList +=
+                            `<option value=""> No Other Faculty Available For That Duration! </option>`
+                    }
+
+                    
+
                      
                     roomList += `</select>`;
                     facultyList += `</select>`;
                     
                     $(document).find("#rescheduleModal .modal-body").html(roomList)
                     $(document).find("#rescheduleModal .modal-body").append(facultyList)
+                   
                     $(document).find("#rescheduleModal #update-table").attr('data-row-id', rowLid)
                     $(document).find("#rescheduleModal #update-table").attr('disabled', 'true');
+
+                    //Date and Time select for Reschedule modal only
+                    if($(document).find('.schedule-type:checked').val() == 3){
+                      dateList += `<div class="my-4"><label>To Date</label>
+                          <input type="date" min="${academicStartDate}" max="${academicEndDate}" id="modify-from-date" class="form-control rounded-0" /></div>`
+                          $(document).find("#rescheduleModal .modal-body").append(dateList)
+                          $(document).find("#rescheduleModal .modal-body").append(startTimeList)
+                          $(document).find("#rescheduleModal .modal-body").append(endTimeList)
+
+                    }
                     $('#rescheduleModal').modal('show');
                 }).catch(error => {
                     // showError(error.responseJSON)
