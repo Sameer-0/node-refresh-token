@@ -107,6 +107,11 @@ code {
   background-color: #000000!important;
   color: #fff!important;
 }
+
+.reschedule-edit{
+  transform: scale(1.5);
+}
+
 </style>
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
@@ -619,8 +624,8 @@ code {
                     
                     $(document).find("#rescheduleModal .modal-body").html(roomList)
                     $(document).find("#rescheduleModal .modal-body").append(facultyList)
-                    $(document).find("#rescheduleModal .update-table").attr('data-row-id', rowLid)
-                    
+                    $(document).find("#rescheduleModal #update-table").attr('data-row-id', rowLid)
+                    $(document).find("#rescheduleModal #update-table").attr('disabled', 'true');
                     $('#rescheduleModal').modal('show');
                 }).catch(error => {
                     // showError(error.responseJSON)
@@ -631,21 +636,37 @@ code {
               })
 
 
+              //Enable update button  
+              $(document).on('change', '#available-room-list', function() {
+                $(document).find('#update-table').removeAttr('disabled')
+              })
+              $(document).on('change', '#available-faculty-list', function() {
+                $(document).find('#update-table').removeAttr('disabled')
+              })
+            
+
+
               //update table
               $(document).on('click', '#update-table', function() {
 
                 let rowLid = $(this).attr('data-row-id')
-                console.log('update tbale::', rowLid, newRoomTd, $(document).find('#available-room-list option:selected').text())
                 let newRoomTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-room-lid]`)
                 let newFacultyTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-faculty-lid]`)
-                newRoomTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
-                newRoomTd.attr('data-new-room-lid', $(document).find('#available-room-list').val());
-
+                
+                if($(document).find('#available-room-list').val()){
+                  newRoomTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
+                  newRoomTd.attr('data-new-room-lid', $(document).find('#available-room-list').val());
+                }else{
+                  newRoomTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).text()}`)
+                  newRoomTd.attr('data-new-room-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid'));
+                }
+                
                 if($(document).find('#available-faculty-list').val()){
-                  newFacultyTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
+                  newFacultyTd.text(`${$(document).find('#available-faculty-list option:selected').text()}`);
                   newFacultyTd.attr('data-new-faculty-lid', $(document).find('#available-faculty-list').val());
                 }else{
                   newFacultyTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).text()}`)
+                  newFacultyTd.attr('data-new-faculty-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).attr('data-faculty-lid'));
                 }
 
                 $('#rescheduleModal').modal('hide');
@@ -1515,7 +1536,7 @@ code {
 
               $("#scheduleEventedSlot").click(function () {
 
-                console.log('Obj >>>> ', rescheduleObj)
+                console.log('Obj >>>> ', rescheduleObj.reschFlag )
 
                 if (rescheduleObj.reschFlag === 'R') {
 
@@ -1635,61 +1656,40 @@ code {
                       // })
                     }
                   }
-                } else if (rescheduleObj.reschFlag === 'M' && !rescheduleObj.bulkModify) {
-
+                } else if (rescheduleObj.reschFlag === 'M') {
+                  console.log('modify initiated::')
                   if (!isValidModify()) {
-                    alert('Please fill all the mandatory fields.')
+                    alert('Please fill all the mandatory fields for selected rows.')
                   } else {
+                    console.log('else :>>>>>>')
+                    // let isConfirmed = confirm('Do you really want to modify the event?')
+                    // if (isConfirmed) {
 
-                    if (rescheduleObj.fromFacultyId == rescheduleObj.toFacultyId && rescheduleObj.fromRoom ==
-                      rescheduleObj.toRoom) {
-                      alert('No changes in the schedule.')
-                    } else {
+                    //   let resJson = []
 
-                      let isConfirmed = confirm('Do you really want to modify the event?')
-                      if (isConfirmed) {
-                        console.log('>>>>>>>>>>>>>>>> Modifying the event')
-                        $('.loaderBody').removeClass('d-none')
-                        // socket.emit('modifyEventedSlot', {
-                        //   slugName: "<%- slug %>",
-                        //   resObj: rescheduleObj
-                        // })
-                      }
-                    }
-                  }
+                    //   $('#bulk-lecture-list tbody tr').each(function () {
 
-                } else if (rescheduleObj.reschFlag === 'M' && rescheduleObj.bulkModify) {
-                  if (!isValidBulkModify()) {
-                    alert('Please fill all the mandatory fields.')
-                  } else {
-                    let isConfirmed = confirm('Do you really want to modify the event?')
-                    if (isConfirmed) {
-
-                      let resJson = []
-
-                      $('#bulk-lecture-list tbody tr').each(function () {
-
-                        resJson.push({
-                          id: $(this).attr('data-lid'),
-                          date: $(this).attr('data-date'),
-                          slot: $(this).attr('data-slot'),
-                          room: $(this).attr('data-room'),
-                          newDate: $(this).attr('data-new-date'),
-                          newSlot: $(this).attr('data-new-slot'),
-                          newRoom: $(this).attr('data-new-room')
-                        })
-                      })
+                    //     resJson.push({
+                    //       id: $(this).attr('data-lid'),
+                    //       date: $(this).attr('data-date'),
+                    //       slot: $(this).attr('data-slot'),
+                    //       room: $(this).attr('data-room'),
+                    //       newDate: $(this).attr('data-new-date'),
+                    //       newSlot: $(this).attr('data-new-slot'),
+                    //       newRoom: $(this).attr('data-new-room')
+                    //     })
+                    //   })
 
 
 
-                      $('.loaderBody').removeClass('d-none')
-                      // socket.emit('bulkModifyEventedSlot', {
-                      //   transJson: JSON.stringify(resJson),
-                      //   slugName: "<%- slug %>",
-                      //   resObj: rescheduleObj
-                      // })
+                    //   $('.loaderBody').removeClass('d-none')
+                    //   // socket.emit('bulkModifyEventedSlot', {
+                    //   //   transJson: JSON.stringify(resJson),
+                    //   //   slugName: "<%- slug %>",
+                    //   //   resObj: rescheduleObj
+                    //   // })
 
-                    }
+                    // }
                   }
                 } else if (rescheduleObj.reschFlag === 'Y') {
                   if (!isChangeTimetable()) {
@@ -2303,12 +2303,18 @@ code {
               }
 
               let isValidModify = function () {
-                if (rescheduleObj.reschFlag == 'M' && $('#dropReason').val() && rescheduleObj.fromDate && $(
-                  '#reschedule-faculty-dropdown').val() && $('#reschedule-room-dropdown').val()) {
-                  return true;
-                } else {
-                  return false
-                }
+
+                let returnVar = true;
+                $(document).find('.is-select:checked').each((index, element) => {
+                  if(!($(document).find(`.lecture-datatable tbody tr[data-lid="${$(element).attr('data-lid')}"] td[data-new-faculty-lid]`).attr('data-new-faculty-lid')) || 
+                     !($(document).find(`.lecture-datatable tbody tr[data-lid="${$(element).attr('data-lid')}"] td[data-new-room-lid]`).attr('data-new-room-lid')) ){
+                      returnVar = false;
+                     }
+                
+                })
+
+                return returnVar
+
               }
 
               let isValidBulkModify = function () {
@@ -2427,13 +2433,41 @@ code {
               }
             //  callDatatable();
 
-              $('#cancel-all').on('change', function () {
+              $(document).on('change', '#cancel-all', function () {
                 let isChecked = $(this).is(':checked')
 
                 if (isChecked) {
-                  $('.is-bulk-cancel').prop('checked', true)
+                  $(document).find('.is-bulk-cancel').prop('checked', true)
                 } else {
-                  $('.is-bulk-cancel').prop('checked', false)
+                  $(document).find('.is-bulk-cancel').prop('checked', false)
+                }
+              })
+              
+              $(document).on('change', '#select-all', function () {
+                let isChecked = $(this).is(':checked')
+
+                if (isChecked) {
+                  $(document).find('.is-select').prop('checked', true)
+                  $(document).find('.lecture-datatable tbody tr .reschedule-edit').css('pointer-events','all')
+                } else {
+                  $(document).find('.is-select').prop('checked', false)
+                  $(document).find('.lecture-datatable tbody tr .reschedule-edit').css('pointer-events','none')
+                }
+              })
+
+              $(document).on('change', '.is-select', function () {
+                let isChecked = $(this).is(':checked')
+                if (isChecked) {
+                  $(this).prop('checked', true)
+                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] .reschedule-edit`).css('pointer-events','all')
+                } else {
+                  $(this).prop('checked', false)
+                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] .reschedule-edit`).css('pointer-events','none')
+                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-faculty-lid]`).text('')
+                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-faculty-lid]`).attr('data-new-faculty-lid','')
+
+                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-room-lid]`).text('')
+                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-room-lid]`).attr('data-new-faculty-lid','')
                 }
               })
 
@@ -2769,7 +2803,7 @@ code {
               <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
               <td>
-                <input type='checkbox' class='is-select' style="width: 25px; height: 25px;" checked="checked"/>
+                <input type='checkbox' class='is-select' style="width: 25px; height: 25px;" checked="checked" data-lid="${lecture.id}"/>
               </td>
               </tr>
               `
