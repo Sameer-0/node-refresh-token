@@ -278,14 +278,29 @@ code {
             </label>
           </div>
 
-          <div class="custom-control custom-checkbox d-none">
+          <!-- <div class="custom-control custom-checkbox ">
             <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
             <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
               Cancel without report
             </label>
-          </div>
+          </div> -->
+
+          <!-- <div class="inputGroup">
+            <input type="radio" id="cancel-without-work-report" name="cancel-type" value="Z">
+            <label class="custom-control-label cursor-pointer" for="cancel-without-work-report">
+              Cancel w/o Report
+            </label>
+          </div> -->
           <hr />
 
+          <!-- <div class="cancel-without-work-report-card d-none"></div> -->
+
+          <!-- <div class="custom-control custom-checkbox ">
+            <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
+            <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
+              Cancel without report
+            </label>
+          </div> -->
 
           <div class="d-none cancel-against-e">
             <label class="custom-control-label cursor-pointer" for="cancel-against-extra-class-date">
@@ -315,7 +330,7 @@ code {
           
 
           <div class="d-grid gap-2 mt-2 w-50 mx-auto d-none cancel-against-e">
-            <button class="btn btn-primary rounded-0" id="cancel-against-extra-class-btn d-none" type="button" disabled>Submit</button>
+            <button class="btn btn-primary rounded-0" id="cancel-against-extra-class-btn" type="button" disabled>Submit</button>
           </div>
 
 
@@ -841,9 +856,7 @@ code {
                     success: data => {
                       let regularlectureList = data.regularlectureList;
                       console.log('lectureList: ', data)
-
-
-                      let accordination = `<div class="accordion my-2" id="accordionExample">`;
+                      let accordination = `<div class="accordion my-2" id="caeAccordion">`;
                         //REGULAR LECTURE LIST WITHOUT E FLAG
                         for (let lecture of data.regularlectureList){
                           accordination += `<div class="accordion-item">
@@ -852,19 +865,19 @@ code {
                                 <div class="ms-2 form-check pt-0">
                                 <input class="form-check-input" type="radio" name="regularLectureOpn" value="${lecture.id}" id="regularLectureOpn">
                                 <label class="form-check-label" for="regularLectureOpn">
-                                  ${lecture.module_name} - ${lecture.division} | ${lecture.start_time} to ${lecture.end_time}
+                                  ${lecture.module_name} - ${lecture.division} | ${lecture.date_str}  | ${lecture.start_time} to ${lecture.end_time}
                                 </label>
                               </div>
                               </button>
                             </h2>
-                            <div id="collapseOne${lecture.id}" class="accordion-collapse collapse show" aria-labelledby="headingOne${lecture.id}" data-bs-parent="#accordionExample">
+                            <div id="collapseOne${lecture.id}" class="accordion-collapse collapse" aria-labelledby="headingOne${lecture.id}" data-bs-parent="#caeAccordion">
                               <div class="accordion-body">
                             <strong>Current Date</strong> : ${lecture.date_str}<br>
                             <strong>Event Name</strong> : ${lecture.event_name}<br>
                             <strong>Program Name</strong> : ${lecture.program_name}<br>
                             <strong>Faculty Name</strong> : ${lecture.faculty_name}<br>
                             <strong>Acad Session</strong> : ${lecture.acad_session}<br>
-                            <strong>Class Room:</strong> : ${lecture.room_no}<br>
+                            <strong>Class Room:</strong> : ${lecture.room_no}/ ${lecture.room_abbr}<br>
                             <strong>Class Timing</strong> : ${lecture.start_time} to ${lecture.end_time}<br>
                           </div>
                             </div>
@@ -2677,26 +2690,18 @@ code {
     $("#cancel-against-extra-class-btn").on('click',function(){
       console.log('CANCEL AGAINST EXTRA CLASS API CALLING >>>> ', rescheduleObj)
     if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'cae') {
-
-
-                   
-
                    let ides = []
                    console.log('ides::::::::::::',ides)
-                   let regularLectureOpn = $("input[name='regularLectureOpn']").val()
+                   let regularLectureOpn = $("input[name='regularLectureOpn']:checked").val()
                    console.log('regularLectureOpn:::::::::::::::::::',regularLectureOpn)
-                   //console.log('ides ARRAY::::::::::::',ides.push($('#extra-lecture-faculty option:selected').attr("data-lid")))
                      ides.push($('#extra-lecture-faculty option:selected').attr("data-lid"))
                     rescheduleData.ids = ides
                     rescheduleData.sapFlagId = $("input[name='scheduleType']").val();
                     rescheduleData.sapFlag = rescheduleObj.reschFlag
                     rescheduleData.reasonID = $('#dropReason').val();
                     rescheduleData.reasonText = $('#cancellationDesc').val();
-                    rescheduleData.regularlectid = 1
+                    rescheduleData.regularlectid = regularLectureOpn
                     console.log('rescheduleData::::::::::::',rescheduleData)
-
-
-
                   if (!isValidCancelCae()) {
                     alert('Please fill all the mandatory fields.')
                   } else {
@@ -2716,6 +2721,39 @@ code {
 
     })
  
+
+    //CANCEL WITHOUT WORK REPORT
+    $("#cancel-without-work-report").on('change',function(){
+      console.log('cancel-without-work-report:::::::::::>>>')
+      $("#bulk-modify").addClass('d-none')
+      $(".cancel-against-e").addClass('d-none')
+      if($('#cancel-without-work-report').is(':checked')){ 
+      console.log(' IS CHECKED:::::::::::', $(this).val())
+      $(".cancel-without-work-report-card").addClass('d-none')
+      let htmlcard = `<div class="card">
+        <div class="card-body">
+                            <strong>Current Date</strong> : 19/10/2022<br>
+                            <strong>Event Name</strong> : Indian Eco in Global Scenario-7402-T1-B<br>
+                            <strong>Program Name</strong> : BACHELOR OF BUSINESS ADMINISTRATION-7402<br>
+                            <strong>Faculty Name</strong> : Mona Bhalla<br>
+                            <strong>Acad Session</strong> : Semester III<br>
+                            <strong>Class Room:</strong> : 716<br>
+                            <strong>Class Timing</strong> : 11:10:00 to 12:10:00<br>
+                          </div>
+        </div>`;
+
+      $(".cancel-without-work-report-card").html(htmlcard)
+      $("#dropReason").val(12).trigger('change')// HERE 12 IS THE SAP FLAG
+      $(".cancel-without-work-report-card").removeClass('d-none')
+      }else{
+        console.log(' IS NOT  CHECKED:::::::::::')
+        $(".cancel-without-work-report-card").addClass('d-none')
+      }
+      
+
+    })
+
+
   function AjaxTable(lectureList, actionType){
 
         let bulkLectureTableStr = '';
