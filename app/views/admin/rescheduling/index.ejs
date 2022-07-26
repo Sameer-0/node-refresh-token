@@ -128,42 +128,7 @@ code {
 </div>
 
  <!--DASHBOARD CONTENT START-->
- <div class="card table-card mb-1 timetable-filter-container">
-  <div class="card-body" id="timetable-filter">
-      <div class="row">
-        <div class="input-groups col-md-3 col-sm-12">
-              <label for="ProgramFilter">Select Program<span class="text-danger fw-bold fs-5">*</span>:</label>
-              <select name="ProgramFilter" id="ProgramFilter" class="form-select">
-                  <option selected disabled value>--Select Program--</option>
-                  <% for(let program of programList){%>
-                  <option value="<%- program.id%>"><%-program.program_name%></option>
-                  <%}%>
-              </select>
-          </div>
-
-          <div class="input-groups col-md-3 col-sm-12">
-              <label for="SessionFilter">Select Session<span class="text-danger fw-bold fs-5">*</span>:</label>
-              <select name="SessionFilter" id="SessionFilter" class="form-select">
-                  <option selected disabled value>--Select Session--</option>
-              </select>
-          </div>
-
-          <div class="input-groups col-md-3 col-sm-12">
-            <label for="ModuleFilter">Select Module<span class="text-danger fw-bold fs-5">*</span>:</label>
-            <select name="ModuleFilter" id="ModuleFilter" class="form-select">
-                <option selected disabled value>--Select Session--</option>
-            </select>
-        </div>
-
-        <div class="input-groups col-md-3 col-sm-12">
-              <label for="DivisionFilter">Select Division<span class="text-danger fw-bold fs-5">*</span>:</label>
-              <select name="DivisionFilter" id="DivisionFilter" class="form-select">
-                <option selected disabled value>--Select Division--</option>
-            </select>
-          </div>
-      </div>
-  </div>
-</div>
+ 
 
 <div class="card  mt-3">
   <div class="card-header  text-uppercase d-flex align-items-center justify-content-between">
@@ -212,7 +177,7 @@ code {
           <div class="card-body" >
             <%for(let rFlag of rescheduleFlag){%>
               <div class="inputGroup">
-                <input id="<%- rFlag.name %>" name="scheduleType" value="<%-rFlag.id%>" class="custom-control-input schedule-type" data-sap-flag="<%-rFlag.denotedBy%>" type="radio" disabled/>
+                <input id="<%- rFlag.name %>" name="scheduleType" value="<%-rFlag.id%>" class="custom-control-input schedule-type" data-sap-flag="<%-rFlag.denotedBy%>" type="radio"/>
                 <label for="<%-rFlag.name%>"><%-rFlag.name%></label>
             </div>
             <%}%>
@@ -250,6 +215,43 @@ code {
           Reschedule To
          </div>
     
+
+         <div class="card table-card mb-1 timetable-filter-container d-none">
+          <div class="card-body" id="timetable-filter">
+              <div class="row">
+                <div class="input-groups col-md-3 col-sm-12">
+                      <label for="ProgramFilter">Select Program<span class="text-danger fw-bold fs-5">*</span>:</label>
+                      <select name="ProgramFilter" id="ProgramFilter" class="form-select emptyFilter">
+                          <option selected disabled value>--Select Program--</option>
+                          <% for(let program of programList){%>
+                          <option value="<%- program.id%>"><%-program.program_name%></option>
+                          <%}%>
+                      </select>
+                  </div>
+        
+                  <div class="input-groups col-md-3 col-sm-12">
+                      <label for="SessionFilter">Select Session<span class="text-danger fw-bold fs-5">*</span>:</label>
+                      <select name="SessionFilter" id="SessionFilter" class="form-select emptyFilter">
+                          <option selected disabled value>--Select Session--</option>
+                      </select>
+                  </div>
+        
+                  <div class="input-groups col-md-3 col-sm-12">
+                    <label for="ModuleFilter">Select Module<span class="text-danger fw-bold fs-5">*</span>:</label>
+                    <select name="ModuleFilter" id="ModuleFilter" class="form-select emptyFilter">
+                        <option selected disabled value>--Select Session--</option>
+                    </select>
+                </div>
+        
+                <div class="input-groups col-md-3 col-sm-12">
+                      <label for="DivisionFilter">Select Division<span class="text-danger fw-bold fs-5">*</span>:</label>
+                      <select name="DivisionFilter" id="DivisionFilter" class="form-select emptyFilter">
+                        <option selected disabled value>--Select Division--</option>
+                    </select>
+                  </div>
+              </div>
+          </div>
+        </div>
 
         <div id="replace-faculty-wrapper" class="d-none">
           <div class="custom-control custom-switch">
@@ -306,14 +308,16 @@ code {
             <label class="custom-control-label cursor-pointer" for="cancel-against-extra-class-date">
               Select Date
             </label>
-          <select id="cancel-against-extra-class-date" class="form-control select2" disabled>
+            <input type="date" min="<%- dateRange.minDate %>" max="<%- dateRange.maxDate %>"
+            id="cancel-against-extra-class-date" class="form-control rounded-0" disabled/>
+          <!-- <select id="cancel-against-extra-class-date" class="form-control select2" disabled>
             <option selected disabled value>--Select Date--</option>
             <% for (let date of semesterDates) { %>
               <option value="<%- date.dateString %>">
                 <%- date.dateString %>
               </option>
               <% } %>
-          </select> 
+          </select>  -->
         </div> 
 
 
@@ -689,7 +693,7 @@ code {
 
               //RESCHEDULE LOGIC
               $(`.schedule-type`).on('change', function () {
-                console.log('Changed: ', $(this).val())
+                console.log('RESCHEDULE CHANGED ON CLICK:::::::::::>>>>', $(this).val())
                 $('#reschedule-to-wrapper').addClass('blur');
                 $('#reschedule-date-dropdown').val('').change()
                 $('#reschedule-faculty-dropdown').val('')
@@ -715,6 +719,10 @@ code {
                 $('#cancel-wrapper .cancel-against-e .extra-lecture').val('');
                 $(`#cancel-wrapper input[name="cancel-type"]`).prop('checked', false);
 
+
+                $(".timetable-filter-container").removeClass('d-none')
+                $(".emptyFilter").attr('disabled', false);
+                $(".emptyFilter").val('')
 
 
                 let isBlurred = true;
@@ -800,16 +808,9 @@ code {
                   $('#cancel-wrapper .cancel-against-e').addClass('d-none');
                   // $('#bulk-cancel-without-report').parent().removeClass('d-none');
                   $('#fetch-bulk-cancel').removeClass('d-none');
-
                 } else if (cancelType == 'cae') {
-
                     console.log('rescheduleObj::::::::: fetch-bulk-cancel', rescheduleObj)
-
                     $("#cancel-against-extra-class-date").prop('disabled',false)
-
-
-
-                  
                         console.log('Cancel Against Extra Class cancelType::::::::::::::::::::::>>>>>>>',cancelType)
                         let actionType = $(document).find('.schedule-type:checked').attr('id');
                         let program_lid = $("#ProgramFilter").val()
@@ -840,7 +841,7 @@ code {
                   //GET REGULAR LECTURES
 
                   $("#cancel-against-extra-class-date").on('change',function(){
-                      let date_str = $(this).val()
+                      let date_str = convertDate($(this).val(), '-')
                       console.log('date_str:::::::::::::::>>',date_str)
                       $.ajax({
                     type: 'POST',
@@ -2290,7 +2291,7 @@ code {
               }
 
               let isValidCancelCae = function () {
-                if ($('#dropReason').val() && $('#cancel-wrapper .extra-lecture').val()) {
+                if ($('#dropReason').val() && $("#cancellationDesc").val() && $("input[name='regularLectureOpn']:checked").val() && $("#extra-lecture-faculty").val() && $('#cancel-wrapper .extra-lecture').val()) {
                   return true;
                 } else {
                   return false
@@ -2554,8 +2555,8 @@ code {
   //FILTER API
     $("#ProgramFilter").on('change',function(){
       let program_lid = $(this).val()
-      $(".schedule-type").attr('disabled',true)
-      $(".schedule-type").removeAttr('checked')
+      // $(".schedule-type").attr('disabled',true)
+      // $(".schedule-type").removeAttr('checked')
       console.log('ProgramFilter program_id::::::::::',program_lid)
       let ApiObj = {
                 type: 'POST',
@@ -2586,8 +2587,8 @@ code {
     $("#SessionFilter").on('change',function(){
       let program_lid = $("#ProgramFilter").val()
       let acad_session = $("#SessionFilter").val()
-      $(".schedule-type").attr('disabled',true)
-      $(".schedule-type").removeAttr('checked')
+      // $(".schedule-type").attr('disabled',true)
+      // $(".schedule-type").removeAttr('checked')
       console.log('ProgramFilter program_id::::::::::',program_lid, acad_session)
       let ApiObj = {
                 type: 'POST',
@@ -2618,8 +2619,8 @@ code {
       let program_lid = $("#ProgramFilter").val()
       let acad_session_lid = $("#SessionFilter").val()
       let module_lid = $("#ModuleFilter").val()
-      $(".schedule-type").attr('disabled',true)
-      $(".schedule-type").removeAttr('checked')
+      // $(".schedule-type").attr('disabled',true)
+      // $(".schedule-type").removeAttr('checked')
       console.log('ModuleFilter::::::::::',program_lid,acad_session_lid, module_lid)
       let ApiObj = {
                 type: 'POST',
@@ -2654,9 +2655,9 @@ code {
     console.log('DivisionFilter:::::::::::::::',typeof($("#DivisionFilter").val()))
     
 
-    $("#DivisionFilter").on('change',function(){
-      $(".schedule-type").attr('disabled',false)
-    })
+    // $("#DivisionFilter").on('change',function(){
+    //   $(".schedule-type").attr('disabled',false)
+    // })
 
     
 
@@ -2721,37 +2722,6 @@ code {
 
     })
  
-
-    //CANCEL WITHOUT WORK REPORT
-    $("#cancel-without-work-report").on('change',function(){
-      console.log('cancel-without-work-report:::::::::::>>>')
-      $("#bulk-modify").addClass('d-none')
-      $(".cancel-against-e").addClass('d-none')
-      if($('#cancel-without-work-report').is(':checked')){ 
-      console.log(' IS CHECKED:::::::::::', $(this).val())
-      $(".cancel-without-work-report-card").addClass('d-none')
-      let htmlcard = `<div class="card">
-        <div class="card-body">
-                            <strong>Current Date</strong> : 19/10/2022<br>
-                            <strong>Event Name</strong> : Indian Eco in Global Scenario-7402-T1-B<br>
-                            <strong>Program Name</strong> : BACHELOR OF BUSINESS ADMINISTRATION-7402<br>
-                            <strong>Faculty Name</strong> : Mona Bhalla<br>
-                            <strong>Acad Session</strong> : Semester III<br>
-                            <strong>Class Room:</strong> : 716<br>
-                            <strong>Class Timing</strong> : 11:10:00 to 12:10:00<br>
-                          </div>
-        </div>`;
-
-      $(".cancel-without-work-report-card").html(htmlcard)
-      $("#dropReason").val(12).trigger('change')// HERE 12 IS THE SAP FLAG
-      $(".cancel-without-work-report-card").removeClass('d-none')
-      }else{
-        console.log(' IS NOT  CHECKED:::::::::::')
-        $(".cancel-without-work-report-card").addClass('d-none')
-      }
-      
-
-    })
 
 
   function AjaxTable(lectureList, actionType){
