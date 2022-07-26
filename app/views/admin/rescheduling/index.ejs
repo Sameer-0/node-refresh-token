@@ -483,7 +483,7 @@ code {
       </div>
       <div class="modal-footer">
         <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-        <button type="button" class="btn btn-primary" id="drop-slot">Submit</button>
+        <button type="button" class="btn btn-primary" id="update-table">Update</button>
       </div>
     </div>
   </div>
@@ -572,14 +572,14 @@ code {
                         dataType: 'JSON'
                     }
 
-            ajaxApi(ApiObj).then(result => {
+                    ajaxApi(ApiObj).then(result => {
                     console.log('Available Room::>>>', result)
                     let roomList = ``;
                     let facultyList = ``;
                     roomList += `<label for="available-room-list" class="form-label">Select Room</label>`;
-                    roomList += `<select id="available-room-list" class="form-select my-4">`
+                    roomList += `<select id="available-room-list" class="form-select mb-4">`
                     facultyList += `<label for="available-faculty-list" class="form-label">Select Faculty</label>`;
-                    facultyList += `<select id="available-faculty-list" class="form-select my-4">`
+                    facultyList += `<select id="available-faculty-list" class="form-select ">`
                    
 
                     if (result.availableRoom.length > 0) {
@@ -606,12 +606,12 @@ code {
                               for  (let faculty of result.availableFaculty){
   
                                 facultyList +=
-                                  `<option value="${faculty.id}" data-faculty-id="${fcaulty.faculty_id}"> ${faculty.faculty_name} </option>`
+                                  `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}"> ${faculty.faculty_name} </option>`
                               }
   
                       } else {
                         facultyList +=
-                              `<option value=""> No Faculty Available For That Duration! </option>`
+                              `<option value=""> No Other Faculty Available For That Duration! </option>`
                       }
                      
                     roomList += `</select>`;
@@ -619,6 +619,7 @@ code {
                     
                     $(document).find("#rescheduleModal .modal-body").html(roomList)
                     $(document).find("#rescheduleModal .modal-body").append(facultyList)
+                    $(document).find("#rescheduleModal .update-table").attr('data-row-id', rowLid)
                     
                     $('#rescheduleModal').modal('show');
                 }).catch(error => {
@@ -627,6 +628,27 @@ code {
                 })
 
                 // $('#rescheduleModal').modal('show');
+              })
+
+
+              //update table
+              $(document).on('click', '#update-table', function() {
+
+                let rowLid = $(this).attr('data-row-id')
+                console.log('update tbale::', rowLid, newRoomTd, $(document).find('#available-room-list option:selected').text())
+                let newRoomTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-room-lid]`)
+                let newFacultyTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-faculty-lid]`)
+                newRoomTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
+                newRoomTd.attr('data-new-room-lid', $(document).find('#available-room-list').val());
+
+                if($(document).find('#available-faculty-list').val()){
+                  newFacultyTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
+                  newFacultyTd.attr('data-new-faculty-lid', $(document).find('#available-faculty-list').val());
+                }else{
+                  newFacultyTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).text()}`)
+                }
+
+                $('#rescheduleModal').modal('hide');
               })
 
               //RESCHEDULE LOGIC
@@ -2734,12 +2756,12 @@ code {
               <td>${++count}</td>
               <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
               <td>${lecture.event_name}</td>
-              <td>${lecture.faculty_name}</td>
-              <td class='new-faculty-name'></td>
+              <td data-faculty-lid="${lecture.faculty_lid}">${lecture.faculty_name}</td>
+              <td class='new-faculty-name' data-new-faculty-lid=""></td>
               <td class="date" data-day-lid="${lecture.day_lid}" data-date-lid="${lecture.date}">${lecture.date_str}</td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
               <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
-              <td class="new-room"></td>
+              <td class="new-room" data-new-room-lid=""></td>
               <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>

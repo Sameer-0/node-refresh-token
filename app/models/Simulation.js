@@ -73,12 +73,12 @@ module.exports = class Simulation {
             .input('programLid', sql.Int, programLid)
             .input('sessionLid', sql.Int, sessionLid)
             .input('moduleLid', sql.Int, moduleLid)
-            .query(`SELECT * FROM (SELECT f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
+            .query(`SELECT * FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
                 INNER JOIN [${slug}].program_sessions ps
                 ON ps.id =  fw.program_session_lid
                 INNER JOIN [${slug}].faculties f
                 ON f.id =  fw.faculty_lid
-                INNER JOIN (SELECT 122 AS start_time_lid, 133 AS end_time_lid) ts
+                INNER JOIN (SELECT @startSlot AS start_time_lid, @endSlot AS end_time_lid) ts
                 ON 1 = 1
                 WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
                 fp
