@@ -1593,6 +1593,7 @@ code {
                     }
                   }
                 } else if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'bulk') {
+                  
                   if (!isValidBulkCancel()) {
                     alert('Please fill all the mandatory fields and make sure that there are lectures available to be cancelled.')
                   } else {
@@ -1673,7 +1674,11 @@ code {
                   console.log('modify initiated::')
                   if (!isValidModify()) {
                     alert('Please fill all the mandatory fields for selected rows.')
-                  } else {
+                  }
+                  else if($(document).find('.is-select:checked').length < 1){
+                    alert('Please select at least one event for modification')
+                  }
+                  else {
                     console.log('else :>>>>>>')
                     // let isConfirmed = confirm('Do you really want to modify the event?')
                     // if (isConfirmed) {
@@ -2465,6 +2470,11 @@ code {
                 } else {
                   $(document).find('.is-select').prop('checked', false)
                   $(document).find('.lecture-datatable tbody tr .reschedule-edit').css('pointer-events','none')
+
+                  $(document).find(`.lecture-datatable tbody tr td[data-new-faculty-lid]`).text('')
+                  $(document).find(`.lecture-datatable tbody tr td[data-new-faculty-lid]`).attr('data-new-faculty-lid','')
+                  $(document).find(`.lecture-datatable tbody tr td[data-new-room-lid]`).text('')
+                  $(document).find(`.lecture-datatable tbody tr td[data-new-room-lid]`).attr('data-new-room-lid','')
                 }
               })
 
@@ -2480,7 +2490,7 @@ code {
                   $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-faculty-lid]`).attr('data-new-faculty-lid','')
 
                   $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-room-lid]`).text('')
-                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-room-lid]`).attr('data-new-faculty-lid','')
+                  $(document).find(`.lecture-datatable tbody tr[data-lid="${$(this).attr('data-lid')}"] td[data-new-room-lid]`).attr('data-new-room-lid','')
                 }
               })
 
