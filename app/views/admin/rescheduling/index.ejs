@@ -381,35 +381,25 @@ code {
 
         </div>
 
+        <!-- EXTRA LECTURE START -->
         <div id="normal-modify" class="d-none">
           <div class="mb-3">
-            <label>From Date: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-date-dropdown" class="form-control select2" disabled>
+            <label>Select Date: <strong class="text-danger">*</strong></label>
+            <input type="date" min="" max="<%- dateRange.maxDate %>" id="extra-lecture-to-date"
+            class="form-control rounded-0" />
+            <!-- <select id="reschedule-date-dropdown" class="form-control select2" disabled>
               <option selected disabled value>--Select Date--</option>
               <% for (let date of semesterDates) { %>
                 <option value="<%- date.dateString %>">
                   <%- date.dateString %>
                 </option>
                 <% } %>
-            </select>
+            </select> -->
           </div>
-
-          <div class="mb-3">
-            <label>To Date: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-to-date-dropdown" class="form-control select2" >
-              <option selected  value>--Select Date--</option>
-              <% for (let fdate of semesterDates) { %>
-                <option value="<%- fdate.dateString %>">
-                  <%- fdate.dateString %>
-                </option>
-                <% } %>
-            </select>
-          </div>
-
 
           <div class="mb-3">
             <label>Faculty: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-faculty-dropdown" class="form-control" disabled>
+            <select id="select-new-ec-faculty" class="form-control" disabled>
               <option disabled selected value>--Select Faculty--</option>
             </select>
           </div>
@@ -430,6 +420,7 @@ code {
             </select>
           </div> -->
         </div>
+        <!-- EXTRA LECTURE END -->
       </div>
 
       <div class="card col-12 d-none p-0" id="bulk-lecture-list-card">
@@ -1933,48 +1924,7 @@ code {
               })
 
 
-              $('#select-new-ec-lecture').on('change', function () {
-                rescheduleObj.moduleId = $(this).val()
-                rescheduleObj.sapEventId = $(this).find('option:selected').attr('data-sap-event-id')
-                rescheduleObj.eventAbbr = $(this).find('option:selected').attr('data-event-abbr')
-                rescheduleObj.acadYear = $(this).find('option:selected').attr('data-acad-year')
-                rescheduleObj.eventType = $(this).find('option:selected').attr('data-event-type')
-                rescheduleObj.uniqueIdForSap = $(this).find('option:selected').attr('data-unique-id-for-sap')
-                //rescheduleObj.newEventId = $('#select-new-ec-faculty').val()
-                //rescheduleObj.newEventName = $(this).find('option:selected').attr('data-event-name')
-
-
-                $.ajax({
-                  type: 'POST',
-                  url: '/admin/rescheduling/get-extra-class-faculties/',
-                  dataType: "JSON",
-                  data: {
-                    programId: $('#select-new-ec-program').val(),
-                    acadSession: $('#select-new-ec-session').val(),
-                    division: $('#select-new-ec-div').val(),
-                    moduleId: $(this).val(),
-                    dateStr: rescheduleObj.toDate,
-                    slotName: rescheduleObj.toSlot,
-                    roomNo: rescheduleObj.toRoom
-                  },
-                  success: data => {
-                    console.log('Success: ', data)
-                    let facultyListStr = `<option selected disabled value>--Select Faculty--</option>`
-
-                    for (let faculty of data.facultyList) {
-                      facultyListStr +=
-                        `<option value="${faculty.facultyId}" data-lid="${faculty.id}" data-faculty-name="${faculty.facultyName}">${faculty.facultyName}/${faculty.facultyId}</option>`
-                    }
-
-                    $('#select-new-ec-faculty').html(facultyListStr).attr('disabled', false)
-
-                  },
-                  error: err => {
-                    console.log('Error: ', err)
-                  }
-                })
-
-              })
+            
 
               $('#select-new-ec-faculty').on('change', function () {
                 rescheduleObj.toFacultyId = $(this).val()
@@ -2681,6 +2631,54 @@ code {
     //             showError(error.responseJSON)
     //         })
     // })
+
+
+    //EXTRA LECTURE TO DATE
+    $("#extra-lecture-to-date").on('change',function(){
+
+      console.log('EXTRA LECTURE FETCHING FACULTIES')
+                let toDate = convertDate($('#extra-lecture-to-date').val(), '-')
+               
+                let program_lid = $("#ProgramFilter").val()
+                let division_lid = $("#DivisionFilter").val()
+                let module_lid = $("#ModuleFilter").val()
+                let acad_session_lid = $("#SessionFilter").val()
+                 $.ajax({
+                    type: 'POST',
+                    url: '/admin/rescheduling/get-extra-class-faculties',
+                    dataType: "JSON",
+                    data: {
+                      toDate: toDate,
+                      program_lid: program_lid,
+                      division_lid: division_lid,
+                      module_lid: module_lid,
+                      acad_session_lid: acad_session_lid
+                    },
+                    success: data => {
+                      console.log('Success: ', data)
+                      let facultyListStr = `<option disabled selected value>--Select Faculty--</option>`
+
+                      if (data.facultyList.length > 0) {
+                        for (let faculty of data.facultyList) {
+                          facultyListStr +=
+                            `<option value="${faculty.faculty_id}">${faculty.faculty_name} - ${faculty.faculty_id}</option>`
+                        }
+                      }else{
+                        facultyListStr +=
+                            `<option value="">No Lecture And Faculty is allocated for the requested division and duration</option>`
+                      }
+
+                      $('#select-new-ec-faculty').html(facultyListStr).attr('disabled', false)
+                      // $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
+                      // $('#cancel-lecture-list-card').removeClass('d-none')
+
+                    },
+                    error: err => {
+                      console.log('Error: ', err)
+                    }
+                  })
+
+    })
 
     //#cancel-against-extra-class-btn
     //CANCEL AGAINST EXTRA CLASS API CALLING
