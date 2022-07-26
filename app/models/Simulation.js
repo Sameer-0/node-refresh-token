@@ -215,19 +215,7 @@ module.exports = class Simulation {
         })
     }
 
-    static extraClassFaculties(slug, body) {
-        console.log('extraClassFaculties Body:::::::::>>>', body)
-        return poolConnection.then(pool => {
-            let request = pool.request()
-            return request
-                .input('dateStr', sql.NVarChar(20), body.dateStr)
-                .input('programId', sql.NVarChar(20), body.programId)
-                .input('moduleId', sql.NVarChar(20), body.moduleId)
-                .input('slotName', sql.NVarChar(20), body.slotName)
-                .input('facultyId', sql.NVarChar(20), body.facultyId)
-                .query(`SELECT fw.* FROM (SELECT id, facultyId, facultyName FROM [${slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = @moduleId AND programId = @programId) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = @dateStr AND slot_name = @slotName' AND program_id = @programId AND module_id = @moduleId) f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`)
-        })
-    }
+
 
 
     static getLectures(slug, body) {
@@ -389,6 +377,33 @@ module.exports = class Simulation {
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
                 .input('module_lid', sql.Int, body.module_lid)
                 .query(`SELECT DISTINCT division_lid,division from [${slug}].draft_timetable where program_lid = @program_lid and acad_session_lid = @acad_session_lid and module_lid = @module_lid`)
+        })
+    }
+
+
+
+    static extraClassFaculties(slug, body) {
+        // return poolConnection.then(pool => {
+        //     let request = pool.request()
+        //     return request
+        //         .input('dateStr', sql.NVarChar(20), body.dateStr)
+        //         .input('programId', sql.NVarChar(20), body.programId)
+        //         .input('moduleId', sql.NVarChar(20), body.moduleId)
+        //         .input('slotName', sql.NVarChar(20), body.slotName)
+        //         .input('facultyId', sql.NVarChar(20), body.facultyId)
+        //         .query(`SELECT fw.* FROM (SELECT id, facultyId, facultyName FROM [${slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = @moduleId AND programId = @programId) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = @dateStr AND slot_name = @slotName' AND program_id = @programId AND module_id = @moduleId) f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`)
+        // })
+        return poolConnection.then(pool => {
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].draft_timetable WHERE active = 1 AND CONVERT(DATE,date_str, 103) = CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid`;
+            console.log('lecStmt:::::::::::::',lecStmt)
+            let request = pool.request()
+            return request
+                .input('toDate', sql.NVarChar(20), body.toDate)
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('division_lid', sql.Int, body.division_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
+                .query(lecStmt)
         })
     }
 }

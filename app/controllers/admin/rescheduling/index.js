@@ -456,18 +456,6 @@ module.exports = {
     })
   },
 
-  getExtraClassFaculties: async (req, res, next) => {
-    console.log('>>>>>>>>EXTRA CLASS FACULTIES<<<<<<<<<')
-    Promise.all([Simulation.extraClassFaculties(res.locals.slug, req.body)]).then(result => {
-      console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result)
-      res.json({
-        status: 200,
-        facultyList: result[0].recordset
-      })
-    })
-
-  },
 
 
   getNewExtraLectures: async (req, res, next) => {
@@ -596,13 +584,12 @@ module.exports = {
 
   findByProgramId: (req, res, next) => {
     console.log('>>>>>>>>>>>>>>findByProgramId<<<<<<<<<<<<', req.body.program_lid)
-    Promise.all([Simulation.findByFacultyTimeTableByProgramId(req.body.program_lid, res.locals.slug), Simulation.semesterByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
+    Promise.all([Simulation.semesterByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
       // console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
         message: "success",
-        lectureList: result[0].recordset,
-        sessionList: result[1].recordset
+        sessionList: result[0].recordset
       })
     }).catch(error => {
       console.log(error)
@@ -666,5 +653,35 @@ module.exports = {
         message: "Something went wrong",
       })
     })
-  }
+  },
+
+  getFacultiesForExtraClass: async (req, res, next) => {
+    console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
+    console.log(req.body)
+    Promise.all([
+      Simulation.getFacultiesForExtraClass(res.locals.slug, req.body)
+    ]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log(result[0].recordset)
+      res.json({
+        status: 200,
+        facultyList: result[0].recordset,
+    
+      })
+    })
+  },
+
+  getExtraClassFaculties: async (req, res, next) => {
+    console.log('>>>>>>>>EXTRA CLASS FACULTIES<<<<<<<<<')
+    Promise.all([Simulation.extraClassFaculties(res.locals.slug, req.body)]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log(result)
+      res.json({
+        status: 200,
+        facultyList: result[0].recordset
+      })
+    })
+
+  },
+
 }

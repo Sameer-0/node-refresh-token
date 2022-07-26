@@ -14,7 +14,7 @@ router.post('/rescheduling/get-replacing-faculties', index.getReplacingFaculties
 router.post('/rescheduling/fetch-bulk-cancel-pagination', index.fetchBulkCancelPagination)
 router.post('/rescheduling/show-entries', index.showEntries)
 router.post('/rescheduling/fetch-faculties-date-range', index.facultiesDateRange)
-router.post('/rescheduling/get-extra-class-faculties', index.getExtraClassFaculties)
+//router.post('/rescheduling/get-extra-class-faculties', index.getExtraClassFaculties)
 router.post('/rescheduling/findby-programid', index.findByProgramId)
 router.post('/rescheduling/find-division-by-programid-acadsession', index.findByDivisionByProgramSession)
 router.post('/rescheduling/find-by-div-program-session', index.findBySchelDivisionByProgramSession)
@@ -27,4 +27,5 @@ router.post('/rescheduling/get-faculties-rooms-modify', index.getResFacultiesRoo
 router.post('/rescheduling/get-rooms', index.getResRooms)
 router.post('/rescheduling/get-divisionby-program-session-module', index.getDivisionByProgramSessionModule)
 router.post('/rescheduling/fetch-available-room-by-day-time-range', index.fetchAvailableRoomAndFaculty)
+router.post('/rescheduling/get-extra-class-faculties', index.getExtraClassFaculties)
 module.exports = router
