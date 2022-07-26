@@ -2291,7 +2291,7 @@ code {
               }
 
               let isValidCancelCae = function () {
-                if ($('#dropReason').val() && $('#cancel-wrapper .extra-lecture').val()) {
+                if ($('#dropReason').val() && $("#cancellationDesc").val() && $("input[name='regularLectureOpn']:checked").val() && $("#extra-lecture-faculty").val() && $('#cancel-wrapper .extra-lecture').val()) {
                   return true;
                 } else {
                   return false
@@ -2722,37 +2722,6 @@ code {
 
     })
  
-
-    //CANCEL WITHOUT WORK REPORT
-    $("#cancel-without-work-report").on('change',function(){
-      console.log('cancel-without-work-report:::::::::::>>>')
-      $("#bulk-modify").addClass('d-none')
-      $(".cancel-against-e").addClass('d-none')
-      if($('#cancel-without-work-report').is(':checked')){ 
-      console.log(' IS CHECKED:::::::::::', $(this).val())
-      $(".cancel-without-work-report-card").addClass('d-none')
-      let htmlcard = `<div class="card">
-        <div class="card-body">
-                            <strong>Current Date</strong> : 19/10/2022<br>
-                            <strong>Event Name</strong> : Indian Eco in Global Scenario-7402-T1-B<br>
-                            <strong>Program Name</strong> : BACHELOR OF BUSINESS ADMINISTRATION-7402<br>
-                            <strong>Faculty Name</strong> : Mona Bhalla<br>
-                            <strong>Acad Session</strong> : Semester III<br>
-                            <strong>Class Room:</strong> : 716<br>
-                            <strong>Class Timing</strong> : 11:10:00 to 12:10:00<br>
-                          </div>
-        </div>`;
-
-      $(".cancel-without-work-report-card").html(htmlcard)
-      $("#dropReason").val(12).trigger('change')// HERE 12 IS THE SAP FLAG
-      $(".cancel-without-work-report-card").removeClass('d-none')
-      }else{
-        console.log(' IS NOT  CHECKED:::::::::::')
-        $(".cancel-without-work-report-card").addClass('d-none')
-      }
-      
-
-    })
 
 
   function AjaxTable(lectureList, actionType){
