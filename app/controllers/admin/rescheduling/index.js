@@ -24,6 +24,8 @@ module.exports = {
         breadcrumbs: req.breadcrumbs,
         Url: req.originalUrl
       })
+    }).catch(error => {
+      console.log('ERROR:::::::::::::::::>>>>',error)
     })
   },
 
