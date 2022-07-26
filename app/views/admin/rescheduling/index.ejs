@@ -1680,6 +1680,32 @@ code {
                   }
                   else {
                     console.log('else :>>>>>>')
+
+                    let timeSheetIdJson = [];
+                    let modifyObj = {};
+                    $(document).find('.lecture-datatable tbody tr .is-select:checked').each((index, element) => {
+                      modifyObj = {}
+                      modifyObj.id = $(element).attr('data-lid')
+                      modifyObj.newFacultyLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${$(element).attr('data-lid')}"] td[data-new-faculty-lid]`).attr('data-new-faculty-lid')
+                      modifyObj.newRoomLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${$(element).attr('data-lid')}"] td[data-new-room-lid]`).attr('data-new-room-lid')
+                      console.log('modi obj::>>', modifyObj)
+
+                      timeSheetIdJson.push(modifyObj)
+                      console.log('data id array::', timeSheetIdJson)
+                    })
+                    // console.log('data id array::', timeSheetIdJson)
+                    rescheduleData.ids = timeSheetIdJson;
+                    $('.schedule-type').each((index, element) => {
+                      if($(element).is(":checked")){
+                        rescheduleData.sapFlagId = $(element).val();
+                        rescheduleData.sapFlag = $(element).attr('data-sap-flag')
+                      }
+                    })
+                    rescheduleData.reasonID = $('#dropReason').val();
+                    rescheduleData.reasonText = $('#cancellationDesc').val();
+                    
+
+                    console.log('json obj for calcellation',rescheduleData )
                     // let isConfirmed = confirm('Do you really want to modify the event?')
                     // if (isConfirmed) {
 
