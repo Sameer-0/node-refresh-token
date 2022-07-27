@@ -674,10 +674,10 @@ code {
                     console.log('Faculty Availability error', error);
                 })
               }
-
-              for(let time of timeListJson){
                 startTimeList += `<option value="">--Select Start Time--</option>`
                 endTimeList += `<option value="">--Select End Time--</option>`
+              for(let time of timeListJson){
+                
                 startTimeList += `<option value="${time.id}">${time.start_time}</option>`
                 endTimeList += `<option value="${time.id}">${time.end_time}</option>`
               }
@@ -721,6 +721,13 @@ code {
               //On end time change fetch available room and faculty for reschedule
               $(document).on('change','#end-time-list', function() {
 
+                date = $(document).find(`#reschedule-to-date`).val();
+                startTimelid = $(document).find(`#start-time-list`).val();
+                endTimelid = $(document).find(`#end-time-list`).val();
+
+                console.log('res data', date, startTimelid, endTimelid)
+
+                // fetchAvailableFacultyRoomApi();
 
               }) 
 

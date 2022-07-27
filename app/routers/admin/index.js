@@ -21,6 +21,7 @@ function AdminRoute(app) {
     const schooltimings = require('../../routers/admin/schooltimings');
     const reschedule = require('../../routers/admin/reschedule');
     const timesheet = require('../../routers/admin/timesheet');
+    const freezetimetable = require('../../routers/admin/freezetimetable');
     const mis = require('../../routers/admin/mis')
 
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
@@ -38,6 +39,7 @@ function AdminRoute(app) {
     app.use('/admin/', isLoggedIn, checkPermission, schooltimings);
     app.use('/admin/', isLoggedIn, checkPermission, reschedule);
     app.use('/admin/', isLoggedIn, checkPermission, timesheet);
+    app.use('/admin/', isLoggedIn, checkPermission, freezetimetable);
     app.use('/admin/', isLoggedIn, checkPermission, mis)
 
 }
