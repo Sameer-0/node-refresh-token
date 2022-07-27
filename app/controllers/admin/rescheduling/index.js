@@ -5,13 +5,15 @@ const RescheduleFlags = require('../../../models/RescheduleFlags')
 const AcademicCalender = require('../../../models/AcademicCalender')
 const Simulation = require('../../../models/Simulation')
 const Programs = require('../../../models/Programs')
+const SessionCalendar = require('../../../models/SessionCalendar')
+const SlotIntervalTimings = require('../../../models/SlotIntervalTimings')
 
-module.exports = {
+module.exports = { 
 
   //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
-    Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {
+    Promise.all([SessionCalendar.fetchSessionStartEnd(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug), SlotIntervalTimings.fetchAll(1000)]).then(result => {
       res.render('admin/rescheduling/index', {
         dateRange: result[0].recordset[0],
         semesterDates: result[1].recordset,
@@ -21,6 +23,7 @@ module.exports = {
         programList: result[5].recordset,
         dayList: result[6].recordset,
         pageCount: result[7].recordset[0].count,
+        slotIntervalTiming: JSON.stringify(result[8].recordset),
         breadcrumbs: req.breadcrumbs,
         Url: req.originalUrl
       })

@@ -6,11 +6,11 @@ const {
 
 module.exports = class Simulation {
 
-    static dateRange(slug) {
-        return poolConnection.then(pool => {
-            return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, date_str, 103)), 23) AS minDate, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, date_str, 103))), 23) AS maxDate FROM [${slug}].draft_timetable`)
-        })
-    }
+    // static dateRange(slug) {
+    //     return poolConnection.then(pool => {
+    //         return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, date_str, 103)), 23) AS start_date, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, date_str, 103))), 23) AS end_date FROM [${slug}].draft_timetable`)
+    //     }) 
+    // } 
 
     static semesterDates(slug) {
         return poolConnection.then(pool => {
