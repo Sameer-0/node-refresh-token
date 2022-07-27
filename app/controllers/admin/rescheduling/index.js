@@ -21,7 +21,7 @@ module.exports = {
         rescheduleFlag: result[3].recordset,
         slotData: result[4].recordset,
         programList: result[5].recordset,
-        dayList: result[6].recordset,
+        dayList: JSON.stringify(result[6].recordset),
         pageCount: result[7].recordset[0].count,
         slotIntervalTiming: JSON.stringify(result[8].recordset),
         breadcrumbs: req.breadcrumbs,
@@ -526,8 +526,8 @@ module.exports = {
   fetchAvailableRoomAndFaculty: async (req, res, next) => {
     console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<')
 
-      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimelid, req.body.endTimelid),
-      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid,  req.body.startTimelid, req.body.endTimelid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
+      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimeLid, req.body.endTimeLid),
+      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid,  req.body.startTimeLid, req.body.endTimeLid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
     ]).then(result => {
       res.json({
         status: 200,

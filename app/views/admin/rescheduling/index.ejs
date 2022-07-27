@@ -598,8 +598,8 @@ code {
                         url: '/admin/rescheduling/fetch-available-room-by-day-time-range',
                         type: 'POST',
                         data: {
-                            startTimelid: startTimelid,
-                            endTimelid: endTimelid,
+                            startTimeLid: startTimeLid,
+                            endTimeLid: endTimeLid,
                             dayLid: dayLid,
                             date: date,
                             roomLid: roomLid,
@@ -664,8 +664,11 @@ code {
                     
                       $(document).find("#rescheduleModal #update-table").attr('data-row-id', rowLid)
                       $(document).find("#rescheduleModal #update-table").attr('disabled', 'true');
-                  }
+                    }
                  
+                    else if($(document).find('.schedule-type:checked').val() == 3){
+                      console.log('reschedule faculty and room list::', result);
+                    }
                     $('#rescheduleModal').modal('show');
                 }).catch(error => {
                     // showError(error.responseJSON)
@@ -686,9 +689,10 @@ code {
               let dayLid;
               let date;
               let roomLid;
-              let startTimelid;
-              let endTimelid;
-
+              let startTimeLid;
+              let endTimeLid;
+              let dayList = JSON.parse(`<%- dayList%>`)
+              
               //On reschedule/modify modal open 
               $(document).on('click', '.reschedule-edit', function() {
 
@@ -696,8 +700,8 @@ code {
                 dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
                 date = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date-lid]`).attr('data-date-lid');
                 roomLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid');
-                startTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
-                endTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
+                startTimeLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
+                endTimeLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
                
 
                 fetchAvailableFacultyRoomApi();
@@ -720,10 +724,16 @@ code {
               $(document).on('change','#end-time-list', function() {
 
                 date = $(document).find(`#reschedule-to-date`).val();
-                startTimelid = $(document).find(`#start-time-list`).val();
-                endTimelid = $(document).find(`#end-time-list`).val();
+                startTimeLid = $(document).find(`#start-time-list`).val();
+                endTimeLid = $(document).find(`#end-time-list`).val();
+                let dateClass = new Date(date);
+                dayLid = dateClass.getDay(date);
 
-                console.log('res data', date, startTimelid, endTimelid)
+
+
+                console.log('res data', date, startTimeLid, endTimeLid, dayLid);
+                fetchAvailableFacultyRoomApi();
+
 
                 // fetchAvailableFacultyRoomApi();
 
