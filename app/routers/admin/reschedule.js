@@ -29,4 +29,5 @@ router.post('/rescheduling/get-divisionby-program-session-module', index.getDivi
 router.post('/rescheduling/fetch-available-room-by-day-time-range', index.fetchAvailableRoomAndFaculty)
 router.post('/rescheduling/get-extra-class-faculties', index.getExtraClassFaculties)
 router.post('/rescheduling/fetch-available-room-faculty-for-extra-class', index.fetchAvailableRoomAndFacultyForExtraClass)
+router.post('/rescheduling/fetch-available-faculty-for-extra-class', index.fetchAvailableFacultyForExtraClass)
 module.exports = router

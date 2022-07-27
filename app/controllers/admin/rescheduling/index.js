@@ -685,17 +685,27 @@ module.exports = {
 
   fetchAvailableRoomAndFacultyForExtraClass: async (req, res, next) => {
     console.log('>>>>>>>fetchAvailableRoomAndFacultyForExtraClass<<<<<<<<<')
-
     console.log('req::::::::::::::>>>>>>>>>>>>', req.body)
-
-      Promise.all([Simulation.getAvailableRoomForTimeRangeForExtraClass(res.locals.slug, req.body),
-      Simulation.getAvailableFacultyForTimeRangeForExtraClass(res.locals.slug, req.body)
-    ]).then(result => {
+     Simulation.getAvailableRoomForTimeRangeForExtraClass(res.locals.slug, req.body).then(result => {
+      console.log('result[1].recordset:::::::::::::::',result.recordset)
       res.json({
         status: 200,
-        availableRoom: result[0].recordset,
-        availableFaculty: result[1].recordset,
-      
+        availableRoom: result.recordset
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
+  fetchAvailableFacultyForExtraClass: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableFacultyForExtraClass<<<<<<<<<')
+    console.log('req::::::::::::::>>>>>>>>>>>>', req.body)
+      Simulation.getAvailableFacultyForTimeRangeForExtraClass(res.locals.slug, req.body)
+    .then(result => {
+      console.log('result.recordset:::::::::::::::',result.recordset)
+      res.json({
+        status: 200,
+        availableFaculty: result.recordset,
       })
     }).catch(err => {
       console.log(err)
