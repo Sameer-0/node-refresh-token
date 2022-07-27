@@ -654,9 +654,7 @@ code {
                             `<option value=""> No Other Faculty Available For That Duration! </option>`
                     }
 
-                    
 
-                     
                     roomList += `</select>`;
                     facultyList += `</select>`;
                     
@@ -669,7 +667,7 @@ code {
                     //Date and Time select for Reschedule modal only
                     if($(document).find('.schedule-type:checked').val() == 3){
                       dateList += `<div class="my-4"><label>To Date</label>
-                          <input type="date" min="${academicStartDate}" max="${academicEndDate}" id="modify-from-date" class="form-control rounded-0" /></div>`
+                          <input type="date" min="${academicStartDate}" max="${academicEndDate}" id="reschedule-to-date" class="form-control rounded-0" /></div>`
                           $(document).find("#rescheduleModal .modal-body").append(dateList)
                           $(document).find("#rescheduleModal .modal-body").append(startTimeList)
                           $(document).find("#rescheduleModal .modal-body").append(endTimeList)
@@ -687,6 +685,9 @@ code {
 
               //Enable update button  
               $(document).on('change', '#available-room-list', function() {
+                $(document).find('#update-table').removeAttr('disabled')
+              })
+              $(document).on('change', '#available-faculty-list', function() {
                 $(document).find('#update-table').removeAttr('disabled')
               })
               $(document).on('change', '#available-faculty-list', function() {
@@ -717,6 +718,8 @@ code {
                   newFacultyTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).text()}`)
                   newFacultyTd.attr('data-new-faculty-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).attr('data-faculty-lid'));
                 }
+
+
 
                 $('#rescheduleModal').modal('hide');
               })
