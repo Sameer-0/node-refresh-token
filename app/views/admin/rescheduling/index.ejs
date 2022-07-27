@@ -2780,6 +2780,11 @@ code {
 
     
 
+    //EMPY TIME SELECTION
+    $("#select-new-ec-start-time").on('change',function(){
+      $("#select-new-ec-end-time").val('')
+    })
+
 
     //DIVISION API
     // $("#DivisionFilter").on('change',function(){
@@ -2845,13 +2850,13 @@ code {
             }
             ajaxApi(ApiObj).then(result => {
                   console.log('api returnssss:', result)
-                let availableRoomHTML = `<option value="">Select Session Name</option>`;
+                let availableRoomHTML = `<option value="">Select Room</option>`;
                 if (result.availableRoom.length > 0) {
                     result.availableRoom.forEach(element => {
                       availableRoomHTML +=`<option value="${element.room_lid}">${element.room_number}</option>`;
                     });
                 } else {
-                  availableRoomHTML += `<option value="">No Session Found!</option>`;
+                  availableRoomHTML += `<option value="">Room Not Found!</option>`;
                 }
 
                 $("#select-new-ec-room").html(availableRoomHTML).attr('disabled', false)
@@ -2891,13 +2896,13 @@ code {
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                let availableFacultyHTML = `<option value="">Select Session Name</option>`;
+                let availableFacultyHTML = `<option value="">Select Faculty</option>`;
                 if (result.availableFaculty.length > 0) {
                     result.availableFaculty.forEach(element => {
                       availableFacultyHTML +=`<option value="${element.faculty_lid}">${element.faculty_name} - ${element.faculty_id}</option>`;
                     });
                 } else {
-                  availableFacultyHTML += `<option value="">No Session Found!</option>`;
+                  availableFacultyHTML += `<option value="">Faculty Not Found!</option>`;
                 }
               
                 $("#select-new-ec-faculty").html(availableFacultyHTML).attr('disabled', false)
