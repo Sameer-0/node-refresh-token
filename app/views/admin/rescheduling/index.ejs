@@ -612,11 +612,12 @@ code {
                     }
 
                     ajaxApi(ApiObj).then(result => {
-               
-                    if($(document).find('.schedule-type:checked').val() == 2){
+
                       let roomList = ``;
                       let facultyList = ``;
-                    
+
+                    if($(document).find('.schedule-type:checked').val() == 2){
+                     
                       roomList += `<label for="available-room-list" class="form-label">Select Room</label>`;
                       roomList += `<select id="available-room-list" class="form-select mb-4">`
                       facultyList += `<label for="available-faculty-list" class="form-label">Select Faculty</label>`;
@@ -668,6 +669,8 @@ code {
                  
                     else if($(document).find('.schedule-type:checked').val() == 3){
                       console.log('reschedule faculty and room list::', result);
+
+
                     }
                     $('#rescheduleModal').modal('show');
                 }).catch(error => {
@@ -709,11 +712,20 @@ code {
                 let dateList = ``;
                     //Date and Time select for Reschedule modal only
                     if($(document).find('.schedule-type:checked').val() == 3){
+
+                    let roomSelect = `<label for="available-room-list" class="form-label">Select Room</label> 
+                                      <select id="available-room-list" class="form-select mb-4" disabled></select>`;
+            
+                    let facultySelect =  `<label for="available-faculty-list" class="form-label">Select Faculty</label>
+                                          <select id="available-faculty-list" class="form-select" disabled> </select>`;
+
                       dateList += `<div class="my-4"><label>To Date</label>
                           <input type="date" min="${academicStartDate}" max="${academicEndDate}" id="reschedule-to-date" class="form-control rounded-0" /></div>`
                           $(document).find("#rescheduleModal .modal-body").html(dateList)
                           $(document).find("#rescheduleModal .modal-body").append(startTimeList)
                           $(document).find("#rescheduleModal .modal-body").append(endTimeList)
+                          $(document).find("#rescheduleModal .modal-body").append(roomSelect)
+                          $(document).find("#rescheduleModal .modal-body").append(facultySelect)
 
                           $('#rescheduleModal').modal('show');   
                     }
