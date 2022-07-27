@@ -681,7 +681,23 @@ module.exports = {
         facultyList: result[0].recordset
       })
     })
+  },
 
+  fetchAvailableRoomAndFacultyForExtraClass: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableRoomAndFacultyForExtraClass<<<<<<<<<')
+
+      Promise.all([Simulation.getAvailableRoomForTimeRangeForExtraClass(res.locals.slug, req.body),
+      Simulation.getAvailableFacultyForTimeRangeForExtraClass(res.locals.slug, req.body)
+    ]).then(result => {
+      res.json({
+        status: 200,
+        availableRoom: result[0].recordset,
+        availableFaculty: result[1].recordset,
+      
+      })
+    }).catch(err => {
+      console.log(err)
+    })
   },
 
 }
