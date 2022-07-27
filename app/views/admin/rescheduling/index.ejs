@@ -589,27 +589,12 @@ code {
               let academicEndDate = `<%- dateRange.end_date %>`
               let startTimeList = `<label for="start-time-list" class="form-label">Select Start Time</label> <select id="start-time-list" class="form-select mb-4">`;
               let endTimeList = `<label for=""end-time-list" class="form-label">Select End Time</label> <select id="end-time-list" class="form-select mb-4">`;
-
               let timeListJson = JSON.parse(`<%- slotIntervalTiming%>`);
+              let programLid = $(document).find('#ProgramFilter').val();
+              let sessionLid = $(document).find('#SessionFilter').val();
+              let moduleLid = $(document).find('#ModuleFilter').val();
 
-              for(let time of timeListJson){
-                startTimeList += `<option value="${time.id}">${time.start_time}</option>`
-                endTimeList += `<option value="${time.id}">${time.end_time}</option>`
-              }
-              startTimeList += `</select>`
-              endTimeList += `</select>`
-
-              $(document).on('click', '.reschedule-edit', function() {
-
-                let rowLid = $(this).attr('data-lid');
-                let dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
-                let date = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date-lid]`).attr('data-date-lid');
-                let roomLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid');
-                let startTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
-                let endTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
-                let programLid = $(document).find('#ProgramFilter').val();
-                let sessionLid = $(document).find('#SessionFilter').val();
-                let moduleLid = $(document).find('#ModuleFilter').val();
+              function fetchAvailableFacultyRoomApi(){
 
                 let ApiObj = {
                         url: '/admin/rescheduling/fetch-available-room-by-day-time-range',
@@ -629,77 +614,115 @@ code {
                     }
 
                     ajaxApi(ApiObj).then(result => {
-                    console.log('Available Room::>>>', result)
-                    let roomList = ``;
-                    let facultyList = ``;
-                    let dateList = ``;
-                  
-                    roomList += `<label for="available-room-list" class="form-label">Select Room</label>`;
-                    roomList += `<select id="available-room-list" class="form-select mb-4">`
-                    facultyList += `<label for="available-faculty-list" class="form-label">Select Faculty</label>`;
-                    facultyList += `<select id="available-faculty-list" class="form-select">`
-                   
-
-                    if (result.availableRoom.length > 0) {
-                        
-                      roomList +=
-                            `<option disabled  selected value="">--Select Room--</option>`;
-                        
-                            for  (let room of result.availableRoom){
-
-                              roomList +=
-                                `<option value="${room.room_lid}"> ${room.room_number} </option>`
-                            }
-
-                    } else {
-                      roomList +=
-                            `<option value=""> No Room Available For That Duration! </option>`
-                    }
-                   
-                    if (result.availableFaculty.length > 0) {
-                        
-                      facultyList +=
-                              `<option disabled  selected value="">--Select Faculty--</option>`; 
-                          
-                              for  (let faculty of result.availableFaculty){
-  
-                                facultyList +=
-                                  `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}"> ${faculty.faculty_name} </option>`
-                              }
-  
-                    } else {
-                      facultyList +=
-                            `<option value=""> No Other Faculty Available For That Duration! </option>`
-                    }
-
-
-                    roomList += `</select>`;
-                    facultyList += `</select>`;
+               
+                    if($(document).find('.schedule-type:checked').val() == 2){
+                      let roomList = ``;
+                      let facultyList = ``;
                     
-                    $(document).find("#rescheduleModal .modal-body").html(roomList)
-                    $(document).find("#rescheduleModal .modal-body").append(facultyList)
-                   
-                    $(document).find("#rescheduleModal #update-table").attr('data-row-id', rowLid)
-                    $(document).find("#rescheduleModal #update-table").attr('disabled', 'true');
+                      roomList += `<label for="available-room-list" class="form-label">Select Room</label>`;
+                      roomList += `<select id="available-room-list" class="form-select mb-4">`
+                      facultyList += `<label for="available-faculty-list" class="form-label">Select Faculty</label>`;
+                      facultyList += `<select id="available-faculty-list" class="form-select">`
+                    
 
-                    //Date and Time select for Reschedule modal only
-                    if($(document).find('.schedule-type:checked').val() == 3){
-                      dateList += `<div class="my-4"><label>To Date</label>
-                          <input type="date" min="${academicStartDate}" max="${academicEndDate}" id="reschedule-to-date" class="form-control rounded-0" /></div>`
-                          $(document).find("#rescheduleModal .modal-body").append(dateList)
-                          $(document).find("#rescheduleModal .modal-body").append(startTimeList)
-                          $(document).find("#rescheduleModal .modal-body").append(endTimeList)
+                      if (result.availableRoom.length > 0) {
+                          
+                        roomList +=
+                              `<option disabled  selected value="">--Select Room--</option>`;
+                          
+                              for  (let room of result.availableRoom){
 
-                    }
+                                roomList +=
+                                  `<option value="${room.room_lid}"> ${room.room_number} </option>`
+                              }
+
+                      } else {
+                        roomList +=
+                              `<option value=""> No Room Available For That Duration! </option>`
+                      }
+                    
+                      if (result.availableFaculty.length > 0) {
+                          
+                        facultyList +=
+                                `<option disabled  selected value="">--Select Faculty--</option>`; 
+                            
+                                for  (let faculty of result.availableFaculty){
+    
+                                  facultyList +=
+                                    `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}"> ${faculty.faculty_name} </option>`
+                                }
+    
+                      } else {
+                        facultyList +=
+                              `<option value=""> No Other Faculty Available For That Duration! </option>`
+                      }
+
+
+                      roomList += `</select>`;
+                      facultyList += `</select>`;
+                      
+                      $(document).find("#rescheduleModal .modal-body").html(roomList)
+                      $(document).find("#rescheduleModal .modal-body").append(facultyList)
+                    
+                      $(document).find("#rescheduleModal #update-table").attr('data-row-id', rowLid)
+                      $(document).find("#rescheduleModal #update-table").attr('disabled', 'true');
+                  }
+                 
                     $('#rescheduleModal').modal('show');
                 }).catch(error => {
                     // showError(error.responseJSON)
                     console.log('Faculty Availability error', error);
                 })
+              }
 
-                // $('#rescheduleModal').modal('show');
+              for(let time of timeListJson){
+                startTimeList += `<option value="">--Select Start Time--</option>`
+                endTimeList += `<option value="">--Select End Time--</option>`
+                startTimeList += `<option value="${time.id}">${time.start_time}</option>`
+                endTimeList += `<option value="${time.id}">${time.end_time}</option>`
+              }
+              startTimeList += `</select>`
+              endTimeList += `</select>`
+
+              let rowLid;
+              let dayLid;
+              let date;
+              let roomLid;
+              let startTimelid;
+              let endTimelid;
+
+              //On reschedule/modify modal open 
+              $(document).on('click', '.reschedule-edit', function() {
+
+                rowLid = $(this).attr('data-lid');
+                dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
+                date = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date-lid]`).attr('data-date-lid');
+                roomLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid');
+                startTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
+                endTimelid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
+               
+
+                fetchAvailableFacultyRoomApi();
+
+                let dateList = ``;
+                    //Date and Time select for Reschedule modal only
+                    if($(document).find('.schedule-type:checked').val() == 3){
+                      dateList += `<div class="my-4"><label>To Date</label>
+                          <input type="date" min="${academicStartDate}" max="${academicEndDate}" id="reschedule-to-date" class="form-control rounded-0" /></div>`
+                          $(document).find("#rescheduleModal .modal-body").html(dateList)
+                          $(document).find("#rescheduleModal .modal-body").append(startTimeList)
+                          $(document).find("#rescheduleModal .modal-body").append(endTimeList)
+
+                          $('#rescheduleModal').modal('show');   
+                    }
+              
               })
 
+              //On end time change fetch available room and faculty for reschedule
+              $(document).on('change','#end-time-list', function() {
+
+
+              }) 
 
               //Enable update button  
               $(document).on('change', '#available-room-list', function() {
@@ -708,10 +731,16 @@ code {
               $(document).on('change', '#available-faculty-list', function() {
                 $(document).find('#update-table').removeAttr('disabled')
               })
-              $(document).on('change', '#available-faculty-list', function() {
+              $(document).on('change', '#reschedule-to-date', function() {
                 $(document).find('#update-table').removeAttr('disabled')
               })
-            
+              $(document).on('change', '#start-time-list', function() {
+                $(document).find('#update-table').removeAttr('disabled')
+              })
+              $(document).on('change', '#end-time-list', function() {
+                $(document).find('#update-table').removeAttr('disabled')
+              })
+              
 
 
               //update table
@@ -1098,7 +1127,7 @@ code {
               })
 
 
-                      $('#fetch-reschedule-bulk-cancel').on('click', function () {
+              $('#fetch-reschedule-bulk-cancel').on('click', function () {
                         console.log('rescheduleObj::::::::: fetch-event-data', rescheduleObj)
                         let fromDate = rescheduleObj.fromDate
                         let toDate = rescheduleObj.toDate
