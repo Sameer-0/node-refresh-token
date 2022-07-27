@@ -585,7 +585,7 @@ module.exports = {
   findByProgramId: (req, res, next) => {
     console.log('>>>>>>>>>>>>>>findByProgramId<<<<<<<<<<<<', req.body.program_lid)
     Promise.all([Simulation.semesterByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
-      // console.log(result[0].recordset)
+       console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
         message: "success",

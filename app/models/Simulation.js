@@ -8,13 +8,13 @@ module.exports = class Simulation {
 
     // static dateRange(slug) {
     //     return poolConnection.then(pool => {
-    //         return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, date_str, 103)), 23) AS start_date, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, date_str, 103))), 23) AS end_date FROM [${slug}].draft_timetable`)
+    //         return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, date_str, 103)), 23) AS start_date, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, date_str, 103))), 23) AS end_date FROM [${slug}].timesheet`)
     //     }) 
     // } 
 
     static semesterDates(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT date_str as dateString, day_name as dateNameString, active FROM [${slug}].draft_timetable`)
+            return pool.request().query(`SELECT DISTINCT date_str as dateString, day_name as dateNameString, active FROM [${slug}].timesheet`)
         })
     }
 
@@ -35,7 +35,7 @@ module.exports = class Simulation {
 
     static programList(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT DISTINCT p.id, p.program_id, p.program_name as programName from [${slug}].draft_timetable ft INNER JOIN [${slug}].programs p ON p.id = ft.program_lid WHERE ft.active = 1`)
+            return pool.request().query(`SELECT DISTINCT p.id, p.program_id, p.program_name as programName from [${slug}].timesheet ft INNER JOIN [${slug}].programs p ON p.id = ft.program_lid WHERE ft.active = 1`)
         })
     }
 
@@ -83,7 +83,7 @@ module.exports = class Simulation {
                 WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
                 fp
                 LEFT JOIN
-                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].draft_timetable t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
                 ON 
                 fp.faculty_id = fb.faculty_id AND
                 fp.start_time_lid = fb.start_time_lid AND
@@ -95,7 +95,7 @@ module.exports = class Simulation {
     static LectureByDateRange(slug, body) {
         console.log('body:::::::::',body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT * FROM [${slug}].draft_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND sap_flag <> 'E'  ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`;
+            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND sap_flag <> 'E'  ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
@@ -117,7 +117,7 @@ module.exports = class Simulation {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
-                .query(`SELECT COUNT(*) as count FROM [${slug}].draft_timetable WHERE active = 1 AND sap_flag <> 'E'`)
+                .query(`SELECT COUNT(*) as count FROM [${slug}].timesheet WHERE active = 1 AND sap_flag <> 'E'`)
         })
     }
 
@@ -132,7 +132,7 @@ module.exports = class Simulation {
 
             // }
 
-            let lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].draft_timetable WHERE active = 1 ORDER BY id ASC;`
+            let lecStmt = `SELECT TOP ${Number(body.rowcount)} * FROM [${slug}].timesheet WHERE active = 1 ORDER BY id ASC;`
             let request = pool.request()
             return request
                 // .input('fromDate', sql.NVarChar(20), body.fromDate)
@@ -156,7 +156,7 @@ module.exports = class Simulation {
     static facultyByModuleProgramSapDivisionId(slug, body) {
         console.log('facilty_lis:::', body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].draft_timetable WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND sap_flag <> 'E'`;
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND sap_flag <> 'E'`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
@@ -181,7 +181,7 @@ module.exports = class Simulation {
             return request
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .input('toDate', sql.NVarChar(20), body.toDate)
-                .query(`SELECT DISTINCT faculty_id, faculty_name FROM [${slug}].draft_timetable WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103)`)
+                .query(`SELECT DISTINCT faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103)`)
         })
     }
 
@@ -194,7 +194,7 @@ module.exports = class Simulation {
                 .input('division_lid', sql.NVarChar(20), body.division_lid)
                 .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
                 .input('date_str', sql.NVarChar(20), body.date_str)
-                .query(`SELECT * FROM [${slug}].draft_timetable WHERE active = 1 AND sap_flag = 'E'  AND
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E'  AND
                 program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid AND date_str = @date_str`)
         })
     }
@@ -210,7 +210,7 @@ module.exports = class Simulation {
                 .input('division_lid', sql.NVarChar(20), body.division_lid)
                 .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
                 .input('date_str', sql.NVarChar(20), body.date_str)
-                .query(`SELECT * FROM [${slug}].draft_timetable WHERE active = 1 AND sap_flag  <> 'E'  AND
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag  <> 'E'  AND
                 program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid AND date_str = @date_str`)
         })
     }
@@ -235,7 +235,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('program_lid', sql.NVarChar(20), program_lid)
-                .query(`SELECT * FROM [${slug}].draft_timetable WHERE active = 1 AND program_lid = @program_lid AND sap_flag <> 'E' ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND sap_flag <> 'E' ORDER BY id ASC`)
         })
     }
 
@@ -245,7 +245,7 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.NVarChar(20), body.acad_session)
-                .query(`SELECT * FROM [${slug}].draft_timetable WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND sap_flag <> 'E'  ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND sap_flag <> 'E'  ORDER BY id ASC`)
         })
     }
 
@@ -254,7 +254,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('program_lid', sql.Int, program_lid)
-                .query(`SELECT DISTINCT acad_session_lid, acad_session FROM [${slug}].draft_timetable WHERE program_lid = @program_lid`)
+                .query(`SELECT DISTINCT acad_session_lid, acad_session FROM [${slug}].timesheet WHERE program_lid = @program_lid`)
         })
     }
 
@@ -264,7 +264,7 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.Int, body.acad_session)
-                .query(`SELECT DISTINCT division as div FROM [${slug}].draft_timetable WHERE program_lid = @program_lid AND acad_session_lid = @acad_session`)
+                .query(`SELECT DISTINCT division as div FROM [${slug}].timesheet WHERE program_lid = @program_lid AND acad_session_lid = @acad_session`)
         })
     }
 
@@ -275,7 +275,7 @@ module.exports = class Simulation {
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.NVarChar(20), body.acad_session)
                 .input('division', sql.NVarChar(20), body.division)
-                .query(`SELECT * FROM [${slug}].draft_timetable WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND division = @division AND sap_flag <> 'E'  ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND division = @division AND sap_flag <> 'E'  ORDER BY id ASC`)
         })
     }
 
@@ -287,7 +287,7 @@ module.exports = class Simulation {
             return request
                 .input('programId', sql.NVarChar(20), body.programId)
                 .input('acadSession', sql.NVarChar(20), body.acadSession)
-                .query(`SELECT DISTINCT division as div FROM [${slug}].draft_timetable WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession  ORDER BY division`)
+                .query(`SELECT DISTINCT division as div FROM [${slug}].timesheet WHERE active = 1 AND program_id = @programId AND acad_session = @acadSession  ORDER BY division`)
         })
     }
 
@@ -324,7 +324,7 @@ module.exports = class Simulation {
             return request
                 .input('facultyId', sql.NVarChar(20), body.facultyId)
                 .input('dateStr', sql.NVarChar(20), body.dateStr)
-                .query(`select start_time,  end_time,  sap_start_time  from [${slug}].draft_timetable WHERE faculty_id = @facultyId  AND date_str = @dateStr`)
+                .query(`select start_time,  end_time,  sap_start_time  from [${slug}].timesheet WHERE faculty_id = @facultyId  AND date_str = @dateStr`)
         })
     }
 
@@ -335,7 +335,7 @@ module.exports = class Simulation {
                 .input('toDate', sql.NVarChar(20), body.toDate)
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .query(`select DISTINCT faculty_id, faculty_name, faculty_lid 
-                from [asmsoc-mum].draft_timetable WHERE 
+                from [asmsoc-mum].timesheet WHERE 
                 CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103)`)
         })
     }
@@ -345,7 +345,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('dateStr', sql.NVarChar(20), date_str)
-                .query(`select * from [${slug}].draft_timetable WHERE date_str = @dateStr`)
+                .query(`select * from [${slug}].timesheet WHERE date_str = @dateStr`)
         })
     }
 
@@ -355,7 +355,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('dateStr', sql.NVarChar(20), date_str)
-                .query(`select DISTINCT room_no from [${slug}].draft_timetable WHERE date_str = @dateStr`)
+                .query(`select DISTINCT room_no from [${slug}].timesheet WHERE date_str = @dateStr`)
         })
     }
 
@@ -365,7 +365,7 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.Int, body.program_lid)
                 .input('acad_session', sql.Int, body.acad_session)
-                .query(`SELECT DISTINCT module_lid, module_name from [${slug}].draft_timetable where program_lid = @program_lid and acad_session_lid = @acad_session`)
+                .query(`SELECT DISTINCT module_lid, module_name from [${slug}].timesheet where program_lid = @program_lid and acad_session_lid = @acad_session`)
         })
     }
 
@@ -376,7 +376,7 @@ module.exports = class Simulation {
                 .input('program_lid', sql.Int, body.program_lid)
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
                 .input('module_lid', sql.Int, body.module_lid)
-                .query(`SELECT DISTINCT division_lid,division from [${slug}].draft_timetable where program_lid = @program_lid and acad_session_lid = @acad_session_lid and module_lid = @module_lid`)
+                .query(`SELECT DISTINCT division_lid,division from [${slug}].timesheet where program_lid = @program_lid and acad_session_lid = @acad_session_lid and module_lid = @module_lid`)
         })
     }
 
@@ -394,7 +394,7 @@ module.exports = class Simulation {
         //         .query(`SELECT fw.* FROM (SELECT id, facultyId, facultyName FROM [${slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = @moduleId AND programId = @programId) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = @dateStr AND slot_name = @slotName' AND program_id = @programId AND module_id = @moduleId) f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`)
         // })
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].draft_timetable WHERE active = 1 AND CONVERT(DATE,date_str, 103) = CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid`;
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) = CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid`;
             console.log('lecStmt:::::::::::::',lecStmt)
             let request = pool.request()
             return request
@@ -441,7 +441,7 @@ module.exports = class Simulation {
                 WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
                 fp
                 LEFT JOIN
-                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].draft_timetable t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
                 ON 
                 fp.faculty_id = fb.faculty_id AND
                 fp.start_time_lid = fb.start_time_lid AND
