@@ -686,6 +686,8 @@ module.exports = {
   fetchAvailableRoomAndFacultyForExtraClass: async (req, res, next) => {
     console.log('>>>>>>>fetchAvailableRoomAndFacultyForExtraClass<<<<<<<<<')
 
+    console.log('req::::::::::::::>>>>>>>>>>>>', req.body)
+
       Promise.all([Simulation.getAvailableRoomForTimeRangeForExtraClass(res.locals.slug, req.body),
       Simulation.getAvailableFacultyForTimeRangeForExtraClass(res.locals.slug, req.body)
     ]).then(result => {

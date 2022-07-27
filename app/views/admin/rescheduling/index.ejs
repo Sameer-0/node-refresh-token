@@ -381,43 +381,40 @@ code {
 
         </div>
 
-        <!-- <div id="normal-modify" class="d-none">
+        <!-- EXTRA LECTURE START -->
+        <div id="normal-modify" class="d-none">
           <div class="mb-3">
-            <label>From Date: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-date-dropdown" class="form-control select2" disabled>
+            <label>Select Date: <strong class="text-danger">*</strong></label>
+            <input type="date" min="" max="<%- dateRange.maxDate %>" id="extra-lecture-to-date"
+            class="form-control rounded-0" />
+            <!-- <select id="reschedule-date-dropdown" class="form-control select2" disabled>
               <option selected disabled value>--Select Date--</option>
               <% for (let date of semesterDates) { %>
                 <option value="<%- date.dateString %>">
                   <%- date.dateString %>
                 </option>
                 <% } %>
-            </select>
+            </select> -->
           </div>
 
 
           <div class="mb-3">
-            <label>Select Time: <strong class="text-danger">*</strong></label>
-            <select id="select-new-ec-time" class="form-control" disabled>
+            <label>Select Start Time: <strong class="text-danger">*</strong></label>
+            <select id="select-new-ec-start-time" class="form-control" disabled>
               <option disabled selected value>--Select Time--</option>
             </select>
           </div>
 
           <div class="mb-3">
-            <label>To Date: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-to-date-dropdown" class="form-control select2" >
-              <option selected  value>--Select Date--</option>
-              <% for (let fdate of semesterDates) { %>
-                <option value="<%- fdate.dateString %>">
-                  <%- fdate.dateString %>
-                </option>
-                <% } %>
+            <label>Select End Time: <strong class="text-danger">*</strong></label>
+            <select id="select-new-ec-end-time" class="form-control" disabled>
+              <option disabled selected value>--Select End Time--</option>
             </select>
           </div>
 
-
           <div class="mb-3">
             <label>Faculty: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-faculty-dropdown" class="form-control" disabled>
+            <select id="select-new-ec-faculty" class="form-control" disabled>
               <option disabled selected value>--Select Faculty--</option>
             </select>
           </div>
@@ -432,10 +429,10 @@ code {
           </div>
 
           <div class="mb-3">
-            <button class="btn btn-md btn-dark rounded-0" id="schedule-extra-class">Schedule Extra Class</button>
+            <button class="btn btn-md btn-dark rounded-0" id="schedule-extra-class">Schedule</button>
           </div>
 
-         <div class="mb-3">
+          <!-- <div class="mb-3">
             <label>Select Time Slot: <strong class="text-danger">*</strong></label>
             <select id="reschedule-slot-dropdown" class="form-control" disabled>
               <option disabled selected value>--Select Time--</option>
@@ -447,6 +444,8 @@ code {
               <option disabled selected value>--Select Room--</option>
             </select>
           </div> -->
+        </div>
+        <!-- EXTRA LECTURE END -->
         </div>
       </div>
 
@@ -798,7 +797,9 @@ code {
                 $('#cancel-wrapper .cancel-against-e').addClass('d-none')
                 $('#cancel-wrapper .cancel-against-e .extra-lecture').val('');
                 $(`#cancel-wrapper input[name="cancel-type"]`).prop('checked', false);
-
+                
+                
+              
 
                 $(".timetable-filter-container").removeClass('d-none')
                 $(".emptyFilter").attr('disabled', false);
@@ -839,7 +840,7 @@ code {
                   $('#cancel-wrapper .cancel-against-e').addClass('d-none');
                   // $('#bulk-cancel-without-report').parent().removeClass('d-none'); normal-modify
                   $('#fetch-event-data').removeClass('d-none');
-           
+                  $('#normal-modify').addClass('d-none')
                 } else if (rescheduleType == 2) {
                   // $('#replace-faculty-wrapper').removeClass('d-none')
                   // rescheduleObj.toDate = rescheduleObj.fromDate
@@ -855,15 +856,16 @@ code {
 
                   $('#modify-from-date').attr('disabled', false);
                   $('#bulk-modify').removeClass('d-none');
-             
+                  $('#normal-modify').addClass('d-none')
                   $('#cancel-wrapper .cancel-against-e').addClass('d-none');
                   // $('#bulk-cancel-without-report').parent().removeClass('d-none'); normal-modify
                   $('#fetch-event-data').removeClass('d-none');
                 } else if (rescheduleType == 5) {
                   $('#dropReason').val(12).change().attr('disabled', true);
                   $('#cancellationDesc').val('').attr('disabled', true);
+                  $('#normal-modify').addClass('d-none')
                 } else if (rescheduleType == 6) {
-                  // $('#normal-modify').addClass('d-none')
+                   $('#normal-modify').addClass('d-none')
                   //$('#modify-from-date').attr('disabled', false)
                   $('#reschedule-to-wrapper').removeClass('blur');
                   $('#bulk-modify').removeClass('d-none')
@@ -877,10 +879,15 @@ code {
                   }
 
 
-                  // $('#normal-modify').addClass('d-none')
+                   $('#normal-modify').addClass('d-none')
                   $('#cancel-wrapper').removeClass('d-none')
                   $('#reschedule-to-wrapper').removeClass('blur');
 
+                }else if(rescheduleType == 4){
+                  console.log('ENTER IN EXTRA CLASS')
+                    $('#normal-modify').removeClass('d-none')
+                    $("#select-new-ec-start-time").html(startTimeList).attr('disabled', false)
+                    $("#select-new-ec-end-time").html(endTimeList).attr('disabled', false)
                 }
 
               })
@@ -2814,6 +2821,53 @@ code {
     //             showError(error.responseJSON)
     //         })
     // })
+
+    //EXTRA CLASS API CALLING
+    $("#select-new-ec-end-time").on('change',function(){
+      // $("#select-new-ec-start-time").html(startTimeList).attr('disabled', false)
+      // $("#select-new-ec-end-time").html(endTimeList).attr('disabled', false)
+      console.log('EXTRA CLASS API CALLING::::::::::::::::>>>>')
+      let program_lid = $("#ProgramFilter").val()
+      let division_lid = $("#DivisionFilter").val()
+      let  module_lid = $("#ModuleFilter").val()
+      let acad_session_lid = $("#SessionFilter").val()
+      let toDate =  convertDate($("#extra-lecture-to-date").val(), '-')
+      let startTime = $("#select-new-ec-start-time").val()
+      let endTime = $("#select-new-ec-end-time").val()
+
+      let data = {
+        program_lid:program_lid,
+        division_lid: division_lid,
+        module_lid: module_lid,
+        acad_session_lid: acad_session_lid,
+        toDate: toDate,
+        startTime: startTime,
+        endTime: endTime
+      }
+
+      console.log('data:::::::::::::::::::>>>>>>>>>>>',data)
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/rescheduling/fetch-available-room-faculty-for-extra-class',
+                data: {
+                  program_lid:program_lid,
+                  division_lid: division_lid,
+                  module_lid: module_lid,
+                  acad_session_lid: acad_session_lid,
+                  toDate: toDate,
+                  startTime: startTime,
+                  endTime: endTime
+                 },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('api returnssss:', result)
+            }).catch(error => {
+              console.log('error::::::::::::::::',error)
+                showError(error.responseJSON)
+            })
+
+    })
 
     //#cancel-against-extra-class-btn
     //CANCEL AGAINST EXTRA CLASS API CALLING
