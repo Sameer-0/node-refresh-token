@@ -835,10 +835,14 @@ code {
                   $('#cancellationDesc').val('').attr('disabled', true);
                   $('#normal-modify').addClass('d-none')
                 } else if (rescheduleType == 6) {
-                   $('#normal-modify').addClass('d-none')
+                  console.log('REGULAR CLASS')
+                   $('#normal-modify').removeClass('d-none')
+                   $("#bulk-modify").addClass('d-none')
                   //$('#modify-from-date').attr('disabled', false)
                   $('#reschedule-to-wrapper').removeClass('blur');
-                  $('#bulk-modify').removeClass('d-none')
+                  //$('#bulk-modify').removeClass('d-none')
+                  $("#select-new-ec-start-time").html(startTimeList).attr('disabled', false)
+                  $("#select-new-ec-end-time").html(endTimeList).attr('disabled', false)
                 } else if (rescheduleType == 1) {
 
                   console.log('rescheduleObj.isAdjusted: ', rescheduleObj.isAdjusted)
@@ -2401,7 +2405,7 @@ code {
 
 
               let isValidExtraClass = function () {
-                if ($('#ProgramFilter').val() && $("#SessionFilter").val() && $("#ModuleFilter").val() && $("#DivisionFilter").val() && $('#extra-lecture-to-date').val() && $("#select-new-ec-start-time").val() && $("#select-new-ec-end-time").val() && $("#select-new-ec-room").val() && $("#select-new-ec-faculty").val()) {
+                if ($('#ProgramFilter').val() && $("#SessionFilter").val() && $("#ModuleFilter").val() && $("#DivisionFilter").val() && $('#extra-lecture-to-date').val() && $("#select-new-ec-start-time").val() && $("#select-new-ec-end-time").val() && $("#select-new-ec-room").val() && $("#select-new-ec-faculty").val() && $("#cancellationDesc").val() && $('#dropReason').val()) {
                   return true;
                 } else {
                   return false
@@ -2906,8 +2910,12 @@ code {
 
 
 
-    //API FOR EXTRA CLASS SENDING DATA
+    //API FOR EXTRA CLASS SENDING DATA 
+    
     $("#schedule-extra-class").on('click',function(){
+
+      //EXTRA AND REGULAR CLASS API CALLING
+
       let program_lid = $("#ProgramFilter").val()
       let division_lid = $("#DivisionFilter").val()
       let module_lid = $("#ModuleFilter").val()
@@ -2928,13 +2936,12 @@ code {
         roomLid: roomLid,
         sapFlag: rescheduleObj.reschFlag
       }
-      console.log('SCHEDULE EXTRA CLASS::::::::::::>>>>',obj, rescheduleObj)
+      console.log('SCHEDULE EXTRA CLASS::::::::::::>>>>', rescheduleObj)
 
-      if (rescheduleObj.reschFlag === 'E') {
                   if (!isValidExtraClass()) {
                     alert('Please fill all the mandatory fields.')
                   } else {
-                    let isConfirmed = confirm('Do you really want to cancel the event?')
+                    let isConfirmed = confirm('Do you really want to add new lecture?')
                     
                     if (isConfirmed) {
                       console.log('>>>>>>>>>>>>>>>> Cancelling the event')
@@ -2946,7 +2953,6 @@ code {
 
                     }
                   }
-                } 
     })
 
     //#cancel-against-extra-class-btn
