@@ -410,12 +410,13 @@ module.exports = class Simulation {
     static getAvailableRoomForTimeRangeForExtraClass(slug, body) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('dayLid', sql.Int, body.dayLid)
+            .input('toDate', sql.NVarChar(20), body.date)
             .input('startSlot', sql.Int, body.startSlot)
             .input('endSlot', sql.Int, body.endSlot)
             .query(`SELECT DISTINCT eb.room_lid, r.room_number  FROM [${slug}].event_bookings  eb
             INNER JOIN rooms r ON r.id = eb.room_lid
-            WHERE day_lid = @dayLid AND slot_lid BETWEEN @startSlot and @endSlot AND event_lid IS NULL`)
+            INNER JOIN [${slug}].session_calendar sc ON sc.day_lid = eb.day_lid
+             WHERE sc.date_str = @toDate AND slot_lid BETWEEN @startSlot and @endSlot AND event_lid IS NULL`)
         })
     }
 
@@ -426,10 +427,11 @@ module.exports = class Simulation {
             .input('roomLid', sql.Int, body.roomLid)
             .input('startSlot', sql.Int, body.startSlot)
             .input('endSlot', sql.Int, body.endSlot)
-            .input('programLid', sql.Int, body.programLid)
-            .input('sessionLid', sql.Int, body.sessionLid)
-            .input('moduleLid', sql.Int, body.moduleLid)
-            .query(`SELECT * FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
+            .input('programLid', sql.Int, body.program_lid)
+            .input('sessionLid', sql.Int, body.acad_session_lid)
+            .input('moduleLid', sql.Int, body.module_lid)
+            .input('division_lid', sql.Int, body.division_lid)
+            .query(`SELECT fp.faculty_lid, fp.faculty_id, fp.faculty_name FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
                 INNER JOIN [${slug}].program_sessions ps
                 ON ps.id =  fw.program_session_lid
                 INNER JOIN [${slug}].faculties f
@@ -439,7 +441,7 @@ module.exports = class Simulation {
                 WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
                 fp
                 LEFT JOIN
-                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].draft_timetable t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].draft_timetable t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
                 ON 
                 fp.faculty_id = fb.faculty_id AND
                 fp.start_time_lid = fb.start_time_lid AND
