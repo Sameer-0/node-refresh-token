@@ -1493,7 +1493,7 @@ module.exports.respond = async socket => {
         let facultyData = await data;
         console.log('>>>>>>>>>>>>>>CHECK FACULTY AVAILABILITY<<<<<<<<<<<<<<<')
 
-        let wsdlUrl = path.join(process.env.WSDL_PATH, "zapi_faculty_availability_bin_seh_20211230.wsdl");
+        let wsdlUrl = path.join(process.env.WSDL_PATH, "zapi_faculty_availability_bin_sep_20220509.wsdl");
 
 
         let soapClient = await new Promise((resolve, reject) => {
@@ -1539,7 +1539,7 @@ module.exports.respond = async socket => {
 
 
         console.log('>>>>>>>>>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<<<<<')
-        //console.log(sapResult)
+        console.log(sapResult)
         socket.emit('facultyAvlList', {
             socketUser: socketUser,
             facultySchedule: sapResult

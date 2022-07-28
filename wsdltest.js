@@ -3,7 +3,7 @@ const soap = require("soap");
 
 (async () => {
 
-    var wsdlUrl ="F:/INFRA/infra_v2/wsdl/zhr_holiday_date_jp_bin_sep_20220509.wsdl";
+    var wsdlUrl ="D:/INFRAPROJECT/infra_v2/wsdl/zapi_faculty_availability_bin_sep_20220509.wsdl";
       console.log('wsdlUrl::::::::::::::::', wsdlUrl)    
 
       let soapClient = await new Promise(resolve => {
@@ -15,19 +15,35 @@ const soap = require("soap");
         })
       })  
 
-      // console.log('soapClient:::::::::::::::::>>>',soapClient)
+      let resourceParam = {
+        ResourceType: 'H',
+        ResourceId: 'MUM0001701',
+        StartDate: '2022-07-21',
+        EndDate: '2022-07-28',
+        StartTime: '', //moment(lecture.start_time, 'hh:mm:ss A').format('HH:mm:ss'),
+        EndTime: '' //moment(lecture.end_time, 'hh:mm:ss A').format('HH:mm:ss'),
+    }
 
-      let holidayList = await new Promise(async resolve => {
-        await soapClient.ZhrHolidayDateJp({
-            Acadyear: "2022",
-            Campusid: "50070078",
-            Schoolobjectid: "00004533",
-          },
-          async function (err, result) {
-            let output = await result;
-            console.log('output::::::::::::::>>> ', output.Output.item)
-            resolve(1);
-          });
-      })
+
+ 
+    let sapResult = await new Promise((resolve, reject) => {
+        soapClient.ZapiFacultyAvailability(resourceParam, async (err, result) => {
+            if (err) throw err;
+            console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<')
+
+            let sapResult = await result.EtResoAvaiInfo
+
+            if (!sapResult) {
+                sapResult = [];
+            } else {
+                sapResult = sapResult.item
+            }
+            resolve(sapResult)
+        })
+    })
+
+    console.log('sapResult>>> ', sapResult)
+
+
 })();
 
