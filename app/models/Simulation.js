@@ -51,17 +51,18 @@ module.exports = class Simulation {
         })
     }
 
-    static getAvailableRoomForTimeRange(slug, dayLid, startSlot, endSlot) {
-        return poolConnection.then(pool => {
-            return pool.request()
-            .input('dayLid', sql.Int, dayLid)
-            .input('startSlot', sql.Int, startSlot)
-            .input('endSlot', sql.Int, endSlot)
-            .query(`SELECT DISTINCT eb.room_lid, r.room_number  FROM [${slug}].event_bookings  eb
-            INNER JOIN rooms r ON r.id = eb.room_lid
-            WHERE day_lid = @dayLid AND slot_lid BETWEEN @startSlot and @endSlot AND event_lid IS NULL`)
-        })
-    }
+    // static getAvailableRoomForTimeRange(slug, dayLid, startSlot, endSlot) {
+    //     return poolConnection.then(pool => {
+    //         return pool.request()
+    //         .input('dayLid', sql.Int, dayLid)
+    //         .input('startSlot', sql.Int, startSlot)
+    //         .input('endSlot', sql.Int, endSlot)
+    //         .query(`SELECT t1.room_lid, r.room_number FROM
+	// 		(SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
+	// 		NOT IN (SELECT room_lid FROM [${slug}].timesheet WHERE date_str = @date AND  start_time_lid = @startSlot AND end_time_lid = @endSlot)) t1
+	// 		INNER JOIN rooms r ON r.id = t1.room_lid`)
+    //     })
+    // }
 
     static getAvailableFacultyForTimeRange(slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) {
         return poolConnection.then(pool => {
@@ -83,7 +84,7 @@ module.exports = class Simulation {
                 WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
                 fp
                 LEFT JOIN
-                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
                 ON 
                 fp.faculty_id = fb.faculty_id AND
                 fp.start_time_lid = fb.start_time_lid AND
@@ -407,16 +408,16 @@ module.exports = class Simulation {
         })
     }
 
-    static getAvailableRoomForTimeRangeForExtraClass(slug, body) {
+    static getAvailableRoomForTimeRange(slug, body) {
         return poolConnection.then(pool => {
             return pool.request()
-            .input('toDate', sql.NVarChar(20), body.date)
-            .input('startSlot', sql.Int, body.startSlot)
-            .input('endSlot', sql.Int, body.endSlot)
-            .query(`SELECT DISTINCT eb.room_lid, r.room_number  FROM [${slug}].event_bookings  eb
-            INNER JOIN rooms r ON r.id = eb.room_lid
-            INNER JOIN [${slug}].session_calendar sc ON sc.day_lid = eb.day_lid
-             WHERE sc.date_str = @toDate AND slot_lid BETWEEN @startSlot and @endSlot AND event_lid IS NULL`)
+            .input('toDate', sql.NVarChar(sql.MAX), body.date)
+            .input('startSlot', sql.Int, body.startTimeLid)
+            .input('endSlot', sql.Int, body.endTimeLid)
+            .query(`SELECT t1.room_lid, r.room_number FROM
+			(SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
+			NOT IN (SELECT room_lid FROM [${slug}].timesheet WHERE date_str = @toDate AND  start_time_lid = @startSlot AND end_time_lid = @endSlot)) t1
+			INNER JOIN rooms r ON r.id = t1.room_lid`)
         })
     }
 

@@ -524,11 +524,12 @@ module.exports = {
   },
 
   fetchAvailableRoomAndFaculty: async (req, res, next) => {
-    console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<')
+    console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<', req.body)
 
-      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimeLid, req.body.endTimeLid),
-      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid,  req.body.startTimeLid, req.body.endTimeLid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
+      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body),
+      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid, req.body.startTimeLid, req.body.endTimeLid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
     ]).then(result => {
+      console.log('room availability', result[0].recordset)
       res.json({
         status: 200,
         availableRoom: result[0].recordset,
@@ -686,7 +687,7 @@ module.exports = {
   fetchAvailableRoomAndFacultyForExtraClass: async (req, res, next) => {
     console.log('>>>>>>>fetchAvailableRoomAndFacultyForExtraClass<<<<<<<<<')
     console.log('req::::::::::::::>>>>>>>>>>>>', req.body)
-     Simulation.getAvailableRoomForTimeRangeForExtraClass(res.locals.slug, req.body).then(result => {
+     Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body).then(result => {
       console.log('result[1].recordset:::::::::::::::',result.recordset)
       res.json({
         status: 200,

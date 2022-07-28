@@ -701,12 +701,12 @@ code {
 
                 rowLid = $(this).attr('data-lid');
                 dayLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-day-lid]`).attr('data-day-lid');
-                date = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date-lid]`).attr('data-date-lid');
+                date = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date]`).attr('data-date');
                 roomLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid');
                 startTimeLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-start-time-lid');
                 endTimeLid = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time-lid]`).attr('data-end-time-lid');
                
-
+                console.log('date str::', date)
                 fetchAvailableFacultyRoomApi();
 
                 let dateList = ``;
@@ -2906,8 +2906,8 @@ code {
                   module_lid: module_lid,
                   acad_session_lid: acad_session_lid,
                   date: toDate,
-                  startSlot: startTime,
-                  endSlot: endTime
+                  startTimeLid: startTime,
+                  endTimeLid: endTime
                  },
                 dataType: 'JSON'
             }
@@ -2952,8 +2952,8 @@ code {
                   module_lid: module_lid,
                   acad_session_lid: acad_session_lid,
                   date: toDate,
-                  startSlot: startTime,
-                  endSlot: endTime,
+                  startTimeLid: startTime,
+                  endTimeLid: endTime,
                   roomLid: roomLid
                  },
                 dataType: 'JSON'
@@ -3140,7 +3140,7 @@ code {
               <td>${lecture.event_name}</td>
               <td data-faculty-lid="${lecture.faculty_lid}">${lecture.faculty_name}</td>
               <td class='new-faculty-name' data-new-faculty-lid=""></td>
-              <td class="date" data-day-lid="${lecture.day_lid}" data-date-lid="${lecture.date}">${lecture.date_str}</td>
+              <td class="date" data-day-lid="${lecture.day_lid}" data-date="${lecture.date_str}" >${lecture.date_str}</td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
               <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
               <td class="new-room" data-new-room-lid=""></td>
@@ -3191,7 +3191,7 @@ code {
               <td>${lecture.event_name}</td>
               <td data-faculty-lid="${lecture.faculty_lid}">${lecture.faculty_name}</td>
               <td class='new-faculty-name' data-new-faculty-lid=""></td>
-              <td class="date" data-day-lid="${lecture.day_lid}" data-date-lid="${lecture.date}">${lecture.date_str}</td>
+              <td class="date" data-day-lid="${lecture.day_lid}" data-date="${lecture.date_str}">${lecture.date_str}</td>
               <td  data-new-day-lid="" data-new-date-lid=""></td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
               <td  data-new-start-time-lid="${lecture.start_time_lid}" data-new-end-time-lid="${lecture.end_time_lid}"></td>
