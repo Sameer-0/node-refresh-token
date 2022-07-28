@@ -6,7 +6,7 @@ const SchoolTimings = require('../../../models/SchoolTiming');
 module.exports = {
 
     getPage: (req, res, next) => {
-        Promise.all([SessionCalendar.fetchSessionStartEnd(),  Rooms.fetchBookedRooms(res.locals.organizationId), SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug), SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)]).then(result => {
+        Promise.all([SessionCalendar.fetchSessionStartEnd(res.locals.slug),  Rooms.fetchBookedRooms(res.locals.organizationId), SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug), SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)]).then(result => {
 
             res.render('admin/timesheet/index.ejs', {
                 academicDate: result[0].recordset[0],
