@@ -414,10 +414,10 @@ module.exports = class Simulation {
             .input('toDate', sql.NVarChar(sql.MAX), body.date)
             .input('startSlot', sql.Int, body.startTimeLid)
             .input('endSlot', sql.Int, body.endTimeLid)
-            .query(`SELECT t1.room_lid, r.room_number FROM
-			(SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
-			NOT IN (SELECT room_lid FROM [${slug}].timesheet WHERE date_str = @toDate AND  start_time_lid = @startSlot AND end_time_lid = @endSlot)) t1
-			INNER JOIN rooms r ON r.id = t1.room_lid`)
+            .query(`(SELECT t1.room_lid, r.room_number FROM
+                (SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
+                NOT IN (SELECT DISTINCT room_lid FROM [${slug}].timesheet WHERE (date_str = @toDate) AND  ((start_time_lid <= @startSlot AND end_time_lid >= @startSlot) OR (start_time_lid <= @endSlot and end_time_lid >= @endSlot)) )) t1
+                INNER JOIN rooms r ON r.id = t1.room_lid)`)
         })
     }
 

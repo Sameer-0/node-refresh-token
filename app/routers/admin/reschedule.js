@@ -4,7 +4,7 @@ const {
     validationResult,
     body
 } = require('express-validator');
-
+ 
 const index =  require('../../controllers/admin/rescheduling/index')
 
 //RESCHEDULING EVENTS
