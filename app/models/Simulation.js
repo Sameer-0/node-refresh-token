@@ -450,4 +450,26 @@ module.exports = class Simulation {
                 WHERE fb.faculty_id IS NULL`)
         })
     }
+
+
+    static availableFacultyForReplace(slug, body) {
+        console.log('facilty_lis:::', body)
+        return poolConnection.then(pool => {
+            let lecStmt = `SELECT f.id AS faculty_lid, f.faculty_id, f.faculty_name FROM [${slug}].faculty_works fw
+            INNER JOIN [${slug}].faculties f
+            ON f.id =  fw.faculty_lid
+            INNER JOIN [${slug}].program_sessions ps
+            ON ps.id =  fw.program_session_lid
+            WHERE ps.program_lid  = @program_lid AND ps.acad_session_lid = @acad_session_lid AND fw.module_lid = @module_lid`;
+           
+            console.log('lecStmt:::::::::::::',lecStmt)
+
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
+                .query(lecStmt)
+        })
+    }
 }

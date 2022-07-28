@@ -571,14 +571,15 @@ module.exports = {
     console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
     console.log(req.body)
     Promise.all([
-      Simulation.facultyByModuleProgramSapDivisionId(res.locals.slug, req.body)
+      Simulation.facultyByModuleProgramSapDivisionId(res.locals.slug, req.body),
+      Simulation.availableFacultyForReplace(res.locals.slug, req.body)
     ]).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
       console.log(result[0].recordset)
       res.json({
         status: 200,
         facultyList: result[0].recordset,
-    
+        availableFacultyList: result[1].recordset,
       })
     })
   },

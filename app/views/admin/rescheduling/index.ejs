@@ -221,7 +221,7 @@ code {
               <div class="row">
                 <div class="input-groups col-md-3 col-sm-12">
                       <label for="ProgramFilter">Select Program<span class="text-danger fw-bold fs-5">*</span>:</label>
-                      <select name="ProgramFilter" id="ProgramFilter" class="form-select emptyFilter">
+                      <select name="ProgramFilter" id="ProgramFilter" class="form-select emptyFilter data-filter-empty">
                           <option selected disabled value>--Select Program--</option>
                           <% for(let program of programList){%>
                           <option value="<%- program.id%>"><%-program.program_name%></option>
@@ -231,21 +231,21 @@ code {
         
                   <div class="input-groups col-md-3 col-sm-12">
                       <label for="SessionFilter">Select Session<span class="text-danger fw-bold fs-5">*</span>:</label>
-                      <select name="SessionFilter" id="SessionFilter" class="form-select emptyFilter">
+                      <select name="SessionFilter" id="SessionFilter" class="form-select emptyFilter data-filter-empty">
                           <option selected disabled value>--Select Session--</option>
                       </select>
                   </div>
         
                   <div class="input-groups col-md-3 col-sm-12">
                     <label for="ModuleFilter">Select Module<span class="text-danger fw-bold fs-5">*</span>:</label>
-                    <select name="ModuleFilter" id="ModuleFilter" class="form-select emptyFilter">
+                    <select name="ModuleFilter" id="ModuleFilter" class="form-select emptyFilter data-filter-empty">
                         <option selected disabled value>--Select Session--</option>
                     </select>
                 </div>
         
                 <div class="input-groups col-md-3 col-sm-12">
                       <label for="DivisionFilter">Select Division<span class="text-danger fw-bold fs-5">*</span>:</label>
-                      <select name="DivisionFilter" id="DivisionFilter" class="form-select emptyFilter">
+                      <select name="DivisionFilter" id="DivisionFilter" class="form-select emptyFilter data-filter-empty">
                         <option selected disabled value>--Select Division--</option>
                     </select>
                   </div>
@@ -253,196 +253,210 @@ code {
           </div>
         </div>
 
-        <div id="replace-faculty-wrapper" class="d-none">
-          <div class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input cursor-pointer"
-              id="replace-faculty-checkbox">
-            <label class="custom-control-label cursor-pointer" for="replace-faculty-checkbox">Replace
-              faculty for a date range</label>
-          </div>
-          <hr />
-        </div>
-
-        <div id="cancel-wrapper" class="d-none">
-
-          <div class="inputGroup">
-            <input type="radio" id="cancel-e" name="cancel-type"  value="cae">
-            <label class="custom-control-label cursor-pointer" for="cancel-e">
-              Cancel Against Extra Class
-            </label>
+        <div class="res-filter">
+          <div id="replace-faculty-wrapper" class="d-none">
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input cursor-pointer"
+                id="replace-faculty-checkbox">
+              <label class="custom-control-label cursor-pointer" for="replace-faculty-checkbox">Replace
+                faculty for a date range</label>
+            </div>
+            <hr />
           </div>
 
-          <div class="inputGroup">
-            <input type="radio" id="cancel-bulk" name="cancel-type" 
-              value="bulk">
-            <label class="custom-control-label cursor-pointer" for="cancel-bulk">
-              Cancel
-            </label>
+          <div id="cancel-wrapper" class="d-none">
+
+            <div class="inputGroup">
+              <input type="radio" id="cancel-e" name="cancel-type"  value="cae">
+              <label class="custom-control-label cursor-pointer" for="cancel-e">
+                Cancel Against Extra Class
+              </label>
+            </div>
+
+            <div class="inputGroup">
+              <input type="radio" id="cancel-bulk" name="cancel-type" 
+                value="bulk">
+              <label class="custom-control-label cursor-pointer" for="cancel-bulk">
+                Cancel
+              </label>
+            </div>
+
+            <!-- <div class="custom-control custom-checkbox ">
+              <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
+              <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
+                Cancel without report
+              </label>
+            </div> -->
+
+            <!-- <div class="inputGroup">
+              <input type="radio" id="cancel-without-work-report" name="cancel-type" value="Z">
+              <label class="custom-control-label cursor-pointer" for="cancel-without-work-report">
+                Cancel w/o Report
+              </label>
+            </div> -->
+            <hr />
+
+            <!-- <div class="cancel-without-work-report-card d-none"></div> -->
+
+            <!-- <div class="custom-control custom-checkbox ">
+              <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
+              <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
+                Cancel without report
+              </label>
+            </div> -->
+
+            <div class="d-none cancel-against-e">
+              <label class="custom-control-label cursor-pointer" for="cancel-against-extra-class-date">
+                Select Date
+              </label>
+              <input type="date" min="<%- dateRange.start_date %>" max="<%- dateRange.end_date %>"
+              id="cancel-against-extra-class-date" class="form-control rounded-0 emptyFilter" disabled/>
+            <!-- <select id="cancel-against-extra-class-date" class="form-control select2" disabled>
+              <option selected disabled value>--Select Date--</option>
+              <% for (let date of semesterDates) { %>
+                <option value="<%- date.dateString %>">
+                  <%- date.dateString %>
+                </option>
+                <% } %>
+            </select>  -->
+          </div> 
+
+
+          <div class="regular_lecture_list d-none cancel-against-e">
+            
           </div>
 
-          <!-- <div class="custom-control custom-checkbox ">
-            <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
-            <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
-              Cancel without report
-            </label>
-          </div> -->
+            <div class="d-none cancel-against-e mt-3">
+              <select class="form-control mb-3 select2 extra-lecture" id="extra-lecture-faculty" disabled>
+                <option value selected disabled>--Select Extra Lecture--</option>
+              </select>
+            </div>
 
-          <!-- <div class="inputGroup">
-            <input type="radio" id="cancel-without-work-report" name="cancel-type" value="Z">
-            <label class="custom-control-label cursor-pointer" for="cancel-without-work-report">
-              Cancel w/o Report
-            </label>
-          </div> -->
-          <hr />
+            
 
-          <!-- <div class="cancel-without-work-report-card d-none"></div> -->
-
-          <!-- <div class="custom-control custom-checkbox ">
-            <input type="checkbox" id="bulk-cancel-without-report" class="custom-control-input" value="Z">
-            <label class="custom-control-label cursor-pointer" for="bulk-cancel-without-report">
-              Cancel without report
-            </label>
-          </div> -->
-
-          <div class="d-none cancel-against-e">
-            <label class="custom-control-label cursor-pointer" for="cancel-against-extra-class-date">
-              Select Date
-            </label>
-            <input type="date" min="<%- dateRange.start_date %>" max="<%- dateRange.end_date %>"
-            id="cancel-against-extra-class-date" class="form-control rounded-0" disabled/>
-          <!-- <select id="cancel-against-extra-class-date" class="form-control select2" disabled>
-            <option selected disabled value>--Select Date--</option>
-            <% for (let date of semesterDates) { %>
-              <option value="<%- date.dateString %>">
-                <%- date.dateString %>
-              </option>
-              <% } %>
-          </select>  -->
-        </div> 
+            <div class="d-grid gap-2 mt-2 w-50 mx-auto d-none cancel-against-e">
+              <button class="btn btn-primary rounded-0" id="cancel-against-extra-class-btn" type="button" disabled>Submit</button>
+            </div>
 
 
-        <div class="regular_lecture_list d-none cancel-against-e">
           
-        </div>
-
-          <div class="d-none cancel-against-e mt-3">
-            <select class="form-control mb-3 select2 extra-lecture" id="extra-lecture-faculty" disabled>
-              <option value selected disabled>--Select Extra Lecture--</option>
-            </select>
           </div>
 
-          
+          <div id="bulk-modify" class="d-none">
+            <div class="mb-3">
+              <label>From Date: <strong class="text-danger">*</strong></label>
+              <input type="date" min="<%- dateRange.start_date %>" max="<%- dateRange.end_date %>"
+                id="modify-from-date" class="form-control rounded-0 emptyFilter" />
+              <!-- <select id="modify-from-date" class="form-control modal-selct2">
+                <option selected disabled value>--Select Date--</option>
+                <% for (let date of semesterDates) { %>
+                  <option value="<%- date.dateString %>">
+                    <%- date.dateString %>
+                  </option>
+                  <% } %>
+              </select> -->
+            </div>
+            <div class="mb-3">
+              <label>To Date: <strong class="text-danger">*</strong></label>
 
-          <div class="d-grid gap-2 mt-2 w-50 mx-auto d-none cancel-against-e">
-            <button class="btn btn-primary rounded-0" id="cancel-against-extra-class-btn" type="button" disabled>Submit</button>
+              <input type="date" min="" max="<%- dateRange.end_date %>" id="modify-to-date"
+                class="form-control rounded-0 emptyFilter" disabled>
+              <!-- <select id="modify-to-date" class="form-control modal-selct2" disabled>
+                <option selected disabled value>--Select Date--</option>
+                <% for (let date of semesterDates) { %>
+                  <option value="<%- date.dateString %>">
+                    <%- date.dateString %>
+                  </option>
+                  <% } %>
+              </select> -->
+            </div>
+            <div class="mb-3">
+              <label>From Faculty: <strong class="text-danger">*</strong></label>
+              <select id="faculty-dropdown" class="form-control emptyFilter" disabled>
+                <option disabled selected value>--Select Faculty--</option>
+              </select>
+            </div>
+
+            <div class="mb-3 d-none replace-faculty d-none">
+              <label> To Faculty: <strong class="text-danger">*</strong></label>
+              <select id="replace-faculty-dropdown" class="form-control emptyFilter" disabled>
+                <option disabled selected value>--Select Faculty--</option>
+              </select>
+            </div>
+
+            <div class="mb-3 replace-faculty d-none">
+              <button class="btn btn-md btn-dark " id="replace-faculty-btn">Replace Lecture</button>
+            </div>
+
+            <div class="mb-3">
+              <button class="btn btn-md btn-dark d-none" id="fetch-event-data">Fetch lectures</button>
+            </div>
+
           </div>
 
+          <!-- EXTRA LECTURE START -->
+          <div id="normal-modify" class="d-none">
+            <div class="mb-3">
+              <label>Select Date: <strong class="text-danger">*</strong></label>
+              <input type="date" min="" max="<%- dateRange.maxDate %>" id="extra-lecture-to-date"
+              class="form-control rounded-0 emptyFilter" />
+              <!-- <select id="reschedule-date-dropdown" class="form-control select2" disabled>
+                <option selected disabled value>--Select Date--</option>
+                <% for (let date of semesterDates) { %>
+                  <option value="<%- date.dateString %>">
+                    <%- date.dateString %>
+                  </option>
+                  <% } %>
+              </select> -->
+            </div>
 
-         
-        </div>
 
-        <div id="bulk-modify" class="d-none">
-          <div class="mb-3">
-            <label>From Date: <strong class="text-danger">*</strong></label>
-            <input type="date" min="<%- dateRange.start_date %>" max="<%- dateRange.end_date %>"
-              id="modify-from-date" class="form-control rounded-0" />
-            <!-- <select id="modify-from-date" class="form-control modal-selct2">
-              <option selected disabled value>--Select Date--</option>
-              <% for (let date of semesterDates) { %>
-                <option value="<%- date.dateString %>">
-                  <%- date.dateString %>
-                </option>
-                <% } %>
-            </select> -->
+            <div class="mb-3">
+              <label>Select Start Time: <strong class="text-danger">*</strong></label>
+              <select id="select-new-ec-start-time" class="form-control emptyFilter" disabled>
+                <option disabled selected value>--Select Time--</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label>Select End Time: <strong class="text-danger">*</strong></label>
+              <select id="select-new-ec-end-time" class="form-control emptyFilter" disabled>
+                <option disabled selected value>--Select End Time--</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label>Select Room: <strong class="text-danger">*</strong></label>
+              <select id="select-new-ec-room" class="form-control emptyFilter" disabled>
+                <option disabled selected value>--Select Room--</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label>Faculty: <strong class="text-danger">*</strong></label>
+              <select id="select-new-ec-faculty" class="form-control emptyFilter" disabled>
+                <option disabled selected value>--Select Faculty--</option>
+              </select>
+            </div>
+
+
+            <div class="mb-3">
+              <button class="btn btn-md btn-dark rounded-0" id="schedule-extra-class">Schedule</button>
+            </div>
+
+            <!-- <div class="mb-3">
+              <label>Select Time Slot: <strong class="text-danger">*</strong></label>
+              <select id="reschedule-slot-dropdown" class="form-control" disabled>
+                <option disabled selected value>--Select Time--</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label>Select Room: <strong class="text-danger">*</strong></label>
+              <select id="reschedule-room-dropdown" class="form-control select2" disabled>
+                <option disabled selected value>--Select Room--</option>
+              </select>
+            </div> -->
           </div>
-          <div class="mb-3">
-            <label>To Date: <strong class="text-danger">*</strong></label>
-            <input type="date" min="" max="<%- dateRange.end_date %>" id="modify-to-date"
-              class="form-control rounded-0" />
-            <!-- <select id="modify-to-date" class="form-control modal-selct2" disabled>
-              <option selected disabled value>--Select Date--</option>
-              <% for (let date of semesterDates) { %>
-                <option value="<%- date.dateString %>">
-                  <%- date.dateString %>
-                </option>
-                <% } %>
-            </select> -->
-          </div>
-          <div class="mb-3">
-            <label>Faculty: <strong class="text-danger">*</strong></label>
-            <select id="faculty-dropdown" class="form-control" disabled>
-              <option disabled selected value>--Select Faculty--</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <button class="btn btn-md btn-dark d-none" id="fetch-event-data">Fetch lectures</button>
-          </div>
-
-        </div>
-
-        <!-- EXTRA LECTURE START -->
-        <div id="normal-modify" class="d-none">
-          <div class="mb-3">
-            <label>Select Date: <strong class="text-danger">*</strong></label>
-            <input type="date" min="" max="<%- dateRange.maxDate %>" id="extra-lecture-to-date"
-            class="form-control rounded-0" />
-            <!-- <select id="reschedule-date-dropdown" class="form-control select2" disabled>
-              <option selected disabled value>--Select Date--</option>
-              <% for (let date of semesterDates) { %>
-                <option value="<%- date.dateString %>">
-                  <%- date.dateString %>
-                </option>
-                <% } %>
-            </select> -->
-          </div>
-
-
-          <div class="mb-3">
-            <label>Select Start Time: <strong class="text-danger">*</strong></label>
-            <select id="select-new-ec-start-time" class="form-control" disabled>
-              <option disabled selected value>--Select Time--</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label>Select End Time: <strong class="text-danger">*</strong></label>
-            <select id="select-new-ec-end-time" class="form-control" disabled>
-              <option disabled selected value>--Select End Time--</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label>Select Room: <strong class="text-danger">*</strong></label>
-            <select id="select-new-ec-room" class="form-control" disabled>
-              <option disabled selected value>--Select Room--</option>
-            </select>
-          </div>
-
-          <div class="mb-3">
-            <label>Faculty: <strong class="text-danger">*</strong></label>
-            <select id="select-new-ec-faculty" class="form-control" disabled>
-              <option disabled selected value>--Select Faculty--</option>
-            </select>
-          </div>
-
-
-           <div class="mb-3">
-            <button class="btn btn-md btn-dark rounded-0" id="schedule-extra-class">Schedule</button>
-          </div>
-
-          <!-- <div class="mb-3">
-            <label>Select Time Slot: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-slot-dropdown" class="form-control" disabled>
-              <option disabled selected value>--Select Time--</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Select Room: <strong class="text-danger">*</strong></label>
-            <select id="reschedule-room-dropdown" class="form-control select2" disabled>
-              <option disabled selected value>--Select Room--</option>
-            </select>
-          </div> -->
         </div>
         <!-- EXTRA LECTURE END -->
         </div>
@@ -798,6 +812,10 @@ code {
                 $('#rescheduleModal').modal('hide');
               })
 
+              $('.data-filter-empty').on('change', function(){
+                $('.res-filter .emptyFilter').val('');
+              })
+
               //RESCHEDULE LOGIC
               $(`.schedule-type`).on('change', function () {
                 console.log('RESCHEDULE CHANGED ON CLICK:::::::::::>>>>', $(this).val())
@@ -825,15 +843,15 @@ code {
                 $('#cancel-wrapper .cancel-against-e').addClass('d-none')
                 $('#cancel-wrapper .cancel-against-e .extra-lecture').val('');
                 $(`#cancel-wrapper input[name="cancel-type"]`).prop('checked', false);
-                
+                $('#timetable-filter select').attr('disabled',false)
                 
               
 
                 $(".timetable-filter-container").removeClass('d-none')
-                $(".emptyFilter").attr('disabled', false);
+                // $(".emptyFilter").attr('disabled', false);
                 $(".emptyFilter").val('')
 
-
+                $(".replace-faculty").addClass('d-none')
                 let isBlurred = true;
 
                 let rescheduleType = $(this).val();
@@ -855,6 +873,7 @@ code {
                 console.log('Changed Obj: ', rescheduleObj)
 
                 if (rescheduleType == 3) {
+                  console.log('ENTER IN RESCHEDULE')
                   // console.log('REMOVE DISABLED ATTR FROM DATE:::::::::::::::>>>')
                   // $('#bulk-modify').removeClass('d-none');
                   // getFacultiesForModule();
@@ -870,6 +889,7 @@ code {
                   $('#fetch-event-data').removeClass('d-none');
                   $('#normal-modify').addClass('d-none')
                 } else if (rescheduleType == 2) {
+                  console.log('ENTER IN MODIFY')
                   // $('#replace-faculty-wrapper').removeClass('d-none')
                   // rescheduleObj.toDate = rescheduleObj.fromDate
                   // rescheduleObj.toSlot = rescheduleObj.fromSlot
@@ -881,7 +901,7 @@ code {
                   // $('#reschedule-to-wrapper').removeClass('blur');
                   // $('#reschedule-date-dropdown').val(rescheduleObj.fromDate).change();
                   //$('#reschedule-slot-dropdown').val(rescheduleObj.fromSlot).change();
-
+                 // $(".replace-faculty").addClass('d-none')
                   $('#modify-from-date').attr('disabled', false);
                   $('#bulk-modify').removeClass('d-none');
                   $('#normal-modify').addClass('d-none')
@@ -892,6 +912,7 @@ code {
                   $('#dropReason').val(12).change().attr('disabled', true);
                   $('#cancellationDesc').val('').attr('disabled', true);
                   $('#normal-modify').addClass('d-none')
+                  //$(".replace-faculty").addClass('d-none')
                 } else if (rescheduleType == 6) {
                   console.log('REGULAR CLASS')
                    $('#normal-modify').removeClass('d-none')
@@ -899,6 +920,7 @@ code {
                   //$('#modify-from-date').attr('disabled', false)
                   $('#reschedule-to-wrapper').removeClass('blur');
                   //$('#bulk-modify').removeClass('d-none')
+                  //$(".replace-faculty").addClass('d-none')
                   $("#select-new-ec-start-time").html(startTimeList).attr('disabled', false)
                   $("#select-new-ec-end-time").html(endTimeList).attr('disabled', false)
                 } else if (rescheduleType == 1) {
@@ -910,7 +932,7 @@ code {
                     $('#cancel-e').attr('disabled', false);
                   }
 
-
+                 // $(".replace-faculty").addClass('d-none')
                    $('#normal-modify').addClass('d-none')
                   $('#cancel-wrapper').removeClass('d-none')
                   $('#reschedule-to-wrapper').removeClass('blur');
@@ -918,11 +940,13 @@ code {
                 }else if(rescheduleType == 4){
                   console.log('ENTER IN EXTRA CLASS')
                     $('#normal-modify').removeClass('d-none')
+                   // $(".replace-faculty").addClass('d-none')
                     $("#select-new-ec-start-time").html(startTimeList).attr('disabled', false)
                     $("#select-new-ec-end-time").html(endTimeList).attr('disabled', false)
                 }else if(rescheduleType == 7){
                   console.log('ENTER IN REPLACE :::::::::::::::::>>>>>')
                   $("#bulk-modify").removeClass('d-none')
+                  $(".replace-faculty").removeClass('d-none')
                   $('#normal-modify').addClass('d-none')
                   $('#cancel-wrapper').addClass('d-none')
                 }
@@ -1243,7 +1267,9 @@ code {
                 let modifyToDate = $('#modify-to-date')
                 modifyToDate.val('')//.change()
                 modifyToDate.attr('min', $(this).val())
-                modifyToDate.attr('disabled', false)
+                // modifyToDate.attr('disabled', false)
+
+                $('#modify-to-date').attr('disabled', false)
               })
 
 
@@ -1275,7 +1301,7 @@ code {
                       pageNo: 1
                   },
                     success: data => {
-                      console.log('Success: ', data)
+                      console.log('Success::::::::::::::::: ', data.availableFacultyList)
                       let facultyListStr = `<option disabled selected value>--Select Faculty--</option>`
 
                       if (data.facultyList.length > 0) {
@@ -1289,6 +1315,7 @@ code {
                       }
 
                       $('#faculty-dropdown').html(facultyListStr).attr('disabled', false)
+                     
                       // let facultyListStr = `<option disabled selected value>--Select Faculty--</option>`
 
                       // for (let faculty of data.facultyList) {
@@ -1363,6 +1390,21 @@ code {
                       }
 
                       $('#faculty-dropdown').html(facultyListStr).attr('disabled', false)
+
+                      let avblfacultyListStr = `<option disabled selected value>--Select To Faculty--</option>`
+
+                        if (data.availableFacultyList.length > 0) {
+                          for (let faculty of data.availableFacultyList) {
+                            avblfacultyListStr +=
+                              `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}">${faculty.faculty_name} - ${faculty.faculty_id}</option>`
+                          }
+                        }else{
+                          avblfacultyListStr +=
+                              `<option value="">No faculty available to replace</option>`
+                        }
+
+                        console.log('avblfacultyListStr::::::::::',avblfacultyListStr)
+                        $('#replace-faculty-dropdown').html(avblfacultyListStr).attr('disabled', false)
                       // $('#cancel-lecture-list-card table tbody').html(bulkLectureTableStr)
                       // $('#cancel-lecture-list-card').removeClass('d-none')
 
@@ -2475,6 +2517,17 @@ code {
                 }
               }
 
+
+              let isValidRegularClass = function () {
+                if ($('#ProgramFilter').val() && $("#SessionFilter").val() && $("#ModuleFilter").val() && $("#DivisionFilter").val() && $('#modify-from-date').val() && $("#modify-to-date").val() && $("#faculty-dropdown").val() && $("#replace-faculty-dropdown").val() && $("#cancellationDesc").val() && $('#dropReason').val()) {
+                  return true;
+                } else {
+                  return false
+                }
+              }
+
+
+
               let isValidBulkCancel = function () {
                 if ($('#dropReason').val() && $('.is-bulk-cancel:checked').length) {
                   return true;
@@ -2979,11 +3032,8 @@ code {
 
 
     //API FOR EXTRA CLASS SENDING DATA 
-    
     $("#schedule-extra-class").on('click',function(){
-
       //EXTRA AND REGULAR CLASS API CALLING
-
       let program_lid = $("#ProgramFilter").val()
       let division_lid = $("#DivisionFilter").val()
       let module_lid = $("#ModuleFilter").val()
@@ -3017,6 +3067,48 @@ code {
                       // socket.emit('scheduleExtraClass', {
                       //   slugName: "<%- slug %>",
                       //   resObj: extraclassData
+                      // })
+
+                    }
+                  }
+    })
+
+    //API FOR REGULAR CLASS CLASS SENDING DATA 
+        $("#replace-faculty-btn").on('click',function(){
+      //EXTRA AND REGULAR CLASS API CALLING
+      let program_lid = $("#ProgramFilter").val()
+      let division_lid = $("#DivisionFilter").val()
+      let module_lid = $("#ModuleFilter").val()
+      let acad_session_lid = $("#SessionFilter").val()
+      let fromdate =  convertDate($("#modify-from-date").val(), '-')
+      let todate = convertDate($("#modify-to-date").val(),'-')
+      let fromfaculty = $("#faculty-dropdown").val()
+      let tofaculty = $("#replace-faculty-dropdown").val()
+
+
+      let regularclassData = {
+        program_lid: program_lid,
+        division_lid: division_lid,
+        module_lid: module_lid,
+        acad_session_lid: acad_session_lid,
+        fromdate: fromdate,
+        todate: todate,
+        fromfaculty: fromfaculty,
+        tofaculty: tofaculty
+      }
+      console.log('SCHEDULE EXTRA CLASS::::::::::::>>>>', regularclassData)
+
+                  if (!isValidRegularClass()) {
+                    alert('Please fill all the mandatory fields.')
+                  } else {
+                    let isConfirmed = confirm('Do you really want to add new lecture?')
+                    
+                    if (isConfirmed) {
+                      console.log('>>>>>>>>>>>>>>>> Cancelling the event')
+                      $('.loaderBody').removeClass('d-none')
+                      // socket.emit('scheduleExtraClass', {
+                      //   slugName: "<%- slug %>",
+                      //   resObj: regularclassData
                       // })
 
                     }
