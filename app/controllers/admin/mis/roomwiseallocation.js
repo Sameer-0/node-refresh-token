@@ -39,21 +39,11 @@ module.exports = {
 
         console.log('result:::::::::::::::::', req.params.roomno)
         let workbook = new excel.Workbook();
-        let facultyDayWiseWorksheet = workbook.addWorksheet('ROOM ALLOCATION STATUS');
-        facultyDayWiseWorksheet.columns = [
+        let roomWiseWorksheet = workbook.addWorksheet('ROOM ALLOCATION STATUS');
+        roomWiseWorksheet.columns = [
             {
-                header: "Faculty Id",
-                key: "faculty_id",
-                width: 25
-            },
-            {
-                header: "Faculty Name",
-                key: "faculty_name",
-                width: 25
-            },
-            {
-                header: "Time",
-                key: "timing",
+                header: "Room Number",
+                key: "room_number",
                 width: 25
             },
             {
@@ -88,8 +78,8 @@ module.exports = {
             }
         ]
 
-        TimeTable.getRoomAllocation(res.locals.slug, req.params.roomno).then(result => {
-            facultyDayWiseWorksheet.addRows(result.recordset)
+        Mis.getRoomAllocationDownload(res.locals.slug, req.params.roomno).then(result => {
+            roomWiseWorksheet.addRows(result.recordset)
                         // res is a Stream object
                         res.setHeader(
                             "Content-Type",
@@ -97,7 +87,7 @@ module.exports = {
                         );
                          res.setHeader(
                             "Content-Disposition",
-                            "attachment; filename=" + `facultydaywise.xlsx`
+                            "attachment; filename=" + `roomwiseallocation.xlsx`
                         );
             
                         return workbook.xlsx.write(res).then(function () {

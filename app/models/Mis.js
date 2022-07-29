@@ -21,4 +21,14 @@ module.exports = class Mis {
                 .execute(`[${slug}].[faculty_day_wise_mis]`)
         })
     }
+
+
+
+    static getRoomAllocationDownload(slug, room_lid) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('room_lid', sql.Int, room_lid)
+                .execute(`[${slug}].[room-wise-allocation-mis]`)
+        })
+    }
 }
