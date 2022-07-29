@@ -28,7 +28,7 @@ module.exports = class Mis {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request.input('room_lid', sql.Int, room_lid)
-                .execute(`[${slug}].[room-wise-allocation-mis]`)
+                .execute(`[${slug}].[room_wise_allocation_mis]`)
         })
     }
 }
