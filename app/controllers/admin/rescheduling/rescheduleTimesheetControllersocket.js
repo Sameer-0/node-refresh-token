@@ -1484,13 +1484,14 @@ module.exports.respond = async socket => {
     })
 
     //faculty check for bulk modify
-    socket.on('facultyAvailabilityCheck', async data => {
+    socket.on('facultyAvailabilityCheck', async (facultyArg, roomArg) => {
 
-        console.log('facultyAvailabilityCheck DATA::::::::::::::::', data)
-        let socketUser = data.socketUser;
-        console.log('socketUser>>>>> ', socketUser)
+        console.log('facultyAvailabilityCheck DATA::::::::::::::::', facultyArg, roomArg)
 
-        let facultyData = await data;
+
+        let facultyData = await facultyArg;
+        let roomData = await roomArg;
+
         console.log('>>>>>>>>>>>>>>CHECK FACULTY AVAILABILITY<<<<<<<<<<<<<<<')
 
         let wsdlUrl = path.join(process.env.WSDL_PATH, "zapi_faculty_availability_bin_sep_20220509.wsdl");
@@ -1504,22 +1505,32 @@ module.exports.respond = async socket => {
             })
         });
 
-        let resourceParam = {
-            ResourceType: facultyData.facultyType == '0' ? 'P' : 'H',
+        let facultyParam = {
+            ResourceType: facultyData.facultyType,
             ResourceId: facultyData.facultyId,
             StartDate: facultyData.startDate,
             EndDate: facultyData.endDate,
-            StartTime: '', //moment(lecture.start_time, 'hh:mm:ss A').format('HH:mm:ss'),
-            EndTime: '' //moment(lecture.end_time, 'hh:mm:ss A').format('HH:mm:ss'),
+            StartTime:  moment(facultyData.startTime, 'hh:mm:ss A').format('HH:mm:ss'),
+            EndTime: moment(facultyData.endTime, 'hh:mm:ss A').format('HH:mm:ss'),
         }
 
-        console.log(facultyData)
-
-        console.log('resourceParam: ', resourceParam)
-        let sapResult = await new Promise((resolve, reject) => {
-            soapClient.ZapiFacultyAvailability(resourceParam, async (err, result) => {
+        let roomParam = {
+            ResourceType: 'G',
+            ResourceId: roomData.roomAbbr,
+            StartDate: roomData.startDate,
+            EndDate: roomData.endDate,
+            StartTime:  moment(roomData.startTime, 'hh:mm:ss A').format('HH:mm:ss'),
+            EndTime: moment(roomData.endTime, 'hh:mm:ss A').format('HH:mm:ss'),
+        }
+         
+        
+        let sapFacultyResult = await new Promise((resolve, reject) => {
+            soapClient.ZapiFacultyAvailability(facultyParam, async (err, result) => {
+            
                 if (err) throw err;
-                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<')
+                try{
+                
+                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<',result)
                 let sapResult = await result.EtResoAvaiInfo
                 console.log('sapResult EtResoAvaiInfo: ', sapResult)
                 if (!sapResult) {
@@ -1533,19 +1544,48 @@ module.exports.respond = async socket => {
                         item.EndTime = moment(item.EndTime, 'HH:mm:ss').format('hh:mm:ss A')
                     }
                 }
-                resolve(sapResult)
+                resolve({status:200, data: sapResult})
+            }
+            catch(error){
+                console.log('error:::::::::',error)
+                reject({status:500, data: []})
+            }
             })
         })
 
+        let sapRoomResult = await new Promise((resolve, reject) => {
+            soapClient.ZapiFacultyAvailability(roomParam, async (err, result) => {
+            
+                if (err) throw err;
+                try{
+                
+                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<', result)
+                let sapResult = await result.EtResoAvaiInfo
+                console.log('sapResult EtResoAvaiInfo: ', sapResult)
+                if (!sapResult) {
+                    sapResult = [];
+                } else {
+                    sapResult = sapResult.item
 
-        console.log('>>>>>>>>>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<<<<<')
-        console.log(sapResult)
-        socket.emit('facultyAvlList', {
-            socketUser: socketUser,
-            facultySchedule: sapResult
+                    for (let item of sapResult) {
+                        item.EventDate = moment(item.EventDate, 'YYYY-MM-DD').format("DD/MM/YYYY")
+                        item.StartTime = moment(item.StartTime, 'HH:mm:ss').format('hh:mm:ss A')
+                        item.EndTime = moment(item.EndTime, 'HH:mm:ss').format('hh:mm:ss A')
+                    }
+                }
+                resolve({status:200, data: sapResult})
+            }
+            catch(error){
+                console.log('error:::::::::',error)
+                reject({status:500, data: []})
+            }
+            })
         })
 
-
+        console.log('>>>>>>>>>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('sapResult::::::::::::::::::::>>>>>>',sapFacultyResult)
+        socket.emit('facultyRoomAvlList', sapFacultyResult, sapRoomResult)
+        socket.broadcast.emit('facultyRoomAvlList',sapFacultyResult, sapRoomResult)
     })
 
     socket.on("changeTimetable", async data => {

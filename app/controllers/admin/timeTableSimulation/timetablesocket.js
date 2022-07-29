@@ -39,7 +39,7 @@ module.exports.respond = async socket => {
             })
         } else if (data.actionType == 'drag') {
 
-            console.log('>>> DRAG FIRED');
+            console.log('>>>DRAG FIRED');
 
             TimeTable.dragDropEvent(slug, userId, data).then(result => {
                 console.log('result::::::::', result)

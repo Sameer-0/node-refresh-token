@@ -1,9 +1,10 @@
 const path = require("path");
 const soap = require("soap");
 
+
 (async () => {
 
-    var wsdlUrl ="D:/INFRAPROJECT/infra_v2/wsdl/zapi_faculty_availability_bin_sqh_20220728.wsdl";
+    var wsdlUrl ="D:/INFRAPROJECT/infra_v2/wsdl/zapi_faculty_availability_bin_sep_20220509.wsdl"; 
       console.log('wsdlUrl::::::::::::::::', wsdlUrl)    
 
       let soapClient = await new Promise(resolve => {
@@ -16,9 +17,9 @@ const soap = require("soap");
 
       let resourceParam = {
         ResourceType: 'P',
-        ResourceId: '14210011',
-        StartDate: '2022-07-21',
-        EndDate: '2022-07-28',
+        ResourceId: '32100295',
+        StartDate: '2022-07-18',
+        EndDate: '2022-07-27',
         StartTime: '', //moment(lecture.start_time, 'hh:mm:ss A').format('HH:mm:ss'),
         EndTime: '' //moment(lecture.end_time, 'hh:mm:ss A').format('HH:mm:ss'),
     }
@@ -29,7 +30,7 @@ const soap = require("soap");
     let sapResult = await new Promise((resolve, reject) => {
         soapClient.ZapiFacultyAvailability(resourceParam, async (err, result) => {
             if (err) throw err;
-            console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<')
+            console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<', result)
 
             let sapResult = await result.EtResoAvaiInfo
 
@@ -43,7 +44,6 @@ const soap = require("soap");
     })
 
     console.log('sapResult>>> ', sapResult)
-
 
 })();
 

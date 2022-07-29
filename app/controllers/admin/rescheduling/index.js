@@ -702,7 +702,7 @@ module.exports = {
   fetchAvailableFacultyForExtraClass: async (req, res, next) => {
     console.log('>>>>>>>fetchAvailableFacultyForExtraClass<<<<<<<<<')
     console.log('req::::::::::::::>>>>>>>>>>>>', req.body)
-      Simulation.getAvailableFacultyForTimeRangeForExtraClass(res.locals.slug, req.body)
+      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid, req.body.roomLid, req.body.startSlot, req.body.endSlot, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
     .then(result => {
       console.log('result.recordset:::::::::::::::',result.recordset)
       res.json({

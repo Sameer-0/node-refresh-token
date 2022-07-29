@@ -64,7 +64,7 @@ module.exports = class Simulation {
     //     })
     // }
 
-    static getAvailableFacultyForTimeRange(slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) {
+    static getAvailableFacultyForTimeRange(slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) { 
         return poolConnection.then(pool => {
             return pool.request()
             .input('date', sql.NVarChar(sql.MAX), date)
@@ -74,7 +74,7 @@ module.exports = class Simulation {
             .input('programLid', sql.Int, programLid)
             .input('sessionLid', sql.Int, sessionLid)
             .input('moduleLid', sql.Int, moduleLid)
-            .query(`SELECT fp.faculty_lid, fp.faculty_id, fp.faculty_name FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
+            .query(`SELECT fp.faculty_lid, fp.faculty_id, fp.faculty_name, (select abbr from faculty_types where id = (select faculty_type_lid from [${slug}].faculties where id = fp.faculty_lid)) as faculty_type_abbr FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
                 INNER JOIN [${slug}].program_sessions ps
                 ON ps.id =  fw.program_session_lid
                 INNER JOIN [${slug}].faculties f
@@ -414,42 +414,43 @@ module.exports = class Simulation {
             .input('toDate', sql.NVarChar(sql.MAX), body.date)
             .input('startSlot', sql.Int, body.startTimeLid)
             .input('endSlot', sql.Int, body.endTimeLid)
-            .query(`(SELECT t1.room_lid, r.room_number FROM
+            .query(`(SELECT t1.room_lid, r.room_number, r.room_abbr FROM
                 (SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
                 NOT IN (SELECT DISTINCT room_lid FROM [${slug}].timesheet WHERE (date_str = @toDate) AND  ((start_time_lid <= @startSlot AND end_time_lid >= @startSlot) OR (start_time_lid <= @endSlot and end_time_lid >= @endSlot)) )) t1
                 INNER JOIN rooms r ON r.id = t1.room_lid)`)
         })
     }
 
-    static getAvailableFacultyForTimeRangeForExtraClass(slug, body) {
-        return poolConnection.then(pool => {
-            return pool.request()
-            .input('date', sql.NVarChar(sql.MAX), body.date)
-            .input('roomLid', sql.Int, body.roomLid)
-            .input('startSlot', sql.Int, body.startSlot)
-            .input('endSlot', sql.Int, body.endSlot)
-            .input('programLid', sql.Int, body.program_lid)
-            .input('sessionLid', sql.Int, body.acad_session_lid)
-            .input('moduleLid', sql.Int, body.module_lid)
-            .input('division_lid', sql.Int, body.division_lid)
-            .query(`SELECT fp.faculty_lid, fp.faculty_id, fp.faculty_name FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
-                INNER JOIN [${slug}].program_sessions ps
-                ON ps.id =  fw.program_session_lid
-                INNER JOIN [${slug}].faculties f
-                ON f.id =  fw.faculty_lid
-                INNER JOIN (SELECT @startSlot AS start_time_lid, @endSlot AS end_time_lid) ts
-                ON 1 = 1
-                WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
-                fp
-                LEFT JOIN
-                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
-                ON 
-                fp.faculty_id = fb.faculty_id AND
-                fp.start_time_lid = fb.start_time_lid AND
-                fp.end_time_lid = fb.end_time_lid
-                WHERE fb.faculty_id IS NULL`)
-        })
-    }
+    // static getAvailableFacultyForTimeRangeForExtraClass(slug, body) {
+    //     return poolConnection.then(pool => {
+    //         return pool.request()
+    //         .input('date', sql.NVarChar(sql.MAX), body.date)
+    //         .input('roomLid', sql.Int, body.roomLid)
+    //         .input('startSlot', sql.Int, body.startSlot)
+    //         .input('endSlot', sql.Int, body.endSlot)
+    //         .input('programLid', sql.Int, body.program_lid)
+    //         .input('sessionLid', sql.Int, body.acad_session_lid)
+    //         .input('moduleLid', sql.Int, body.module_lid)
+    //         .input('division_lid', sql.Int, body.division_lid)
+    //         .query(`SELECT fp.faculty_lid, fp.faculty_id, fp.faculty_name, ft.abbr FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
+    //             INNER JOIN [${slug}].program_sessions ps
+    //             ON ps.id =  fw.program_session_lid
+    //             INNER JOIN [${slug}].faculties f
+    //             ON f.id =  fw.faculty_lid
+    //             INNER JOIN (SELECT @startSlot AS start_time_lid, @endSlot AS end_time_lid) ts
+    //             ON 1 = 1
+    //             INNER JOIN faculty_types ft ON ft.id = f.faculty_type_lid
+    //             WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
+    //             fp
+    //             LEFT JOIN
+    //             (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+    //             ON 
+    //             fp.faculty_id = fb.faculty_id AND
+    //             fp.start_time_lid = fb.start_time_lid AND
+    //             fp.end_time_lid = fb.end_time_lid
+    //             WHERE fb.faculty_id IS NULL`)
+    //     })
+    // }
 
 
     static availableFacultyForReplace(slug, body) {

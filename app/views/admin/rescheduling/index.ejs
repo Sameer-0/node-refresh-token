@@ -673,7 +673,7 @@ code {
                                 for  (let room of result.availableRoom){
 
                                   roomList +=
-                                    `<option value="${room.room_lid}"> ${room.room_number} </option>`
+                                    `<option value="${room.room_lid}" data-room-abbr="${room.room_abbr}"> ${room.room_number} </option>`
                                 }
 
                         } else {
@@ -689,7 +689,7 @@ code {
                                   for  (let faculty of result.availableFaculty){
       
                                     facultyList +=
-                                      `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}"> ${faculty.faculty_name} </option>`
+                                      `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}" data-faculty-type="${faculty.faculty_type_abbr}"> ${faculty.faculty_name} </option>`
                                   }
       
                         } else {
@@ -703,8 +703,8 @@ code {
                         
                         $(document).find("#rescheduleModal .modal-body").html(roomList)
                         $(document).find("#rescheduleModal .modal-body").append(facultyList)
-                      
                         $(document).find("#rescheduleModal #update-table").attr('data-row-id', rowLid)
+                        
                         $(document).find("#rescheduleModal #update-table").attr('disabled', 'true');
                         $('#rescheduleModal').modal('show');
                       }
@@ -732,7 +732,7 @@ code {
                           $(document).find("#rescheduleModal .modal-body").append(roomSelect)
                           $(document).find("#rescheduleModal .modal-body").append(facultySelect)
                           $(document).find("#rescheduleModal #update-table").attr('disabled', 'true');
-
+                          $(document).find("#rescheduleModal #update-table").attr('data-row-id', rowLid)
                           $('#rescheduleModal').modal('show');   
                     }
               
@@ -798,7 +798,7 @@ code {
                                 for  (let room of result.availableRoom){
   
                                   roomList +=
-                                    `<option value="${room.room_lid}"> ${room.room_number} </option>`
+                                    `<option value="${room.room_lid}" data-room-abbr="${room.room_abbr}"> ${room.room_number} </option>`
                                 }
   
                         } else {
@@ -814,7 +814,7 @@ code {
                                   for  (let faculty of result.availableFaculty){
       
                                     facultyList +=
-                                      `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}"> ${faculty.faculty_name} </option>`
+                                      `<option value="${faculty.faculty_lid}" data-faculty-id="${faculty.faculty_id}"  data-faculty-type="${faculty.faculty_type_abbr}"> ${faculty.faculty_name} </option>`
                                   }
       
                         } else {
@@ -860,30 +860,96 @@ code {
               //update table
               $(document).on('click', '#update-table', function() {
 
-                let rowLid = $(this).attr('data-row-id')
-                let newRoomTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-room-lid]`)
-                let newFacultyTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-faculty-lid]`)
-                
-                if($(document).find('#available-room-list').val()){
-                  newRoomTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
-                  newRoomTd.attr('data-new-room-lid', $(document).find('#available-room-list').val());
-                }else{
-                  newRoomTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).text()}`)
-                  newRoomTd.attr('data-new-room-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid'));
+                  let startDate;
+                  let startTime;
+                  let endTime;
+                  let facultyId;
+                  let roomAbbr;
+                // Reschedule
+                if($(document).find('.schedule-type:checked').val() == 3){
+
+                  startDate =  $(document).find('#reschedule-to-date').val();
+                  startTime =  $(document).find('#start-time-list option:selected').text()
+                  endTime =  $(document).find('#end-time-list option:selected').text()
+                  facultyId = $(document).find('#available-faculty-list option:selected').attr('data-faculty-id');
+                  roomAbbr = $(document).find('#available-room-list option:selected').attr('data-room-abbr')
+
+                  let facultyAvailabilityCheckData = {
+                    startDate: startDate,
+                    endDate: startDate,
+                    startTime: startTime,
+                    endTime: endTime,
+                    facultyId: facultyId,
+                    facultyType: $(document).find('#available-faculty-list option:selected').attr('data-faculty-type')
+                  }
+
+                  let roomAvailabilityCheckData = {
+                    startDate: startDate,
+                    endDate: startDate,
+                    startTime: startTime,
+                    endTime: endTime,
+                    roomAbbr: roomAbbr,
+
+                  }
+
+                  console.log('facultyAvailabilityCheckData', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                  if(isValidRescheduleData()){
+                    socket.emit('facultyAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                    socket.emit('roomAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                  }
+                  else{
+                    alert('all fields are mandatory')
+                  }
+                } 
+                else if($(document).find('.schedule-type:checked').val() == 2){
+                  
+                  startDate =  convertDate($(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date]`).attr('data-date'), '/')
+                  startTime =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time]`).attr('data-start-time')
+                  endTime = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-end-time]`).attr('data-end-time')
+                  roomAbbr = $(document).find('#available-room-list option:selected').attr('data-room-abbr')
+
+                  if($(document).find('#available-faculty-list').val()){
+                    facultyId = $(document).find('#available-faculty-list option:selected').attr('data-faculty-id');
+                  }
+                  else{
+                    facultyId =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-id]`).attr('data-faculty-id');
+                  }
+
+                  let facultyAvailabilityCheckData = {
+                    startDate: startDate,
+                    endDate: startDate,
+                    startTime: startTime,
+                    endTime: endTime,
+                    facultyId: facultyId,
+                    facultyType: $(document).find('#available-faculty-list option:selected').attr('data-faculty-type')
+                  }
+
+                  let roomAvailabilityCheckData = {
+                    startDate: startDate,
+                    endDate: startDate,
+                    startTime: startTime,
+                    endTime: endTime,
+                    roomAbbr: roomAbbr,
+
+                  }
+
+                  console.log('facultyAvailabilityCheckData', facultyAvailabilityCheckData, roomAvailabilityCheckData, $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date]`).attr('data-date') )
+                  // if(isValidRescheduleData()){
+                  //   socket.emit('facultyAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                  //   socket.emit('roomAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                  // }
+                  // else{
+                  //   alert('all fields are mandatory')
+                  // }
+                  
                 }
-                
-                if($(document).find('#available-faculty-list').val()){
-                  newFacultyTd.text(`${$(document).find('#available-faculty-list option:selected').text()}`);
-                  newFacultyTd.attr('data-new-faculty-lid', $(document).find('#available-faculty-list').val());
-                }else{
-                  newFacultyTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).text()}`)
-                  newFacultyTd.attr('data-new-faculty-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).attr('data-faculty-lid'));
-                }
 
-
-
-                $('#rescheduleModal').modal('hide');
+                // $('#rescheduleModal').modal('hide');
               })
+
+              // socket.on('facultyAvlList', function (response) {
+              //   console.log('socket response, ', response)
+              // })
 
               $('.data-filter-empty').on('change', function(){
                 $('.res-filter .emptyFilter').val('');
@@ -2342,14 +2408,74 @@ code {
 
 
               //AFTER SOCKET EVENTS
-              socket.on("facultyAvlList", async function (data) {
-                let facultySchedule = await data.facultySchedule
+              socket.on("facultyRoomAvlList", function (facultyData, roomData) {
+
+                let facultySchedule =  facultyData
+                let roomSchedule = roomData   
                 console.log('facultySchedule: ', facultySchedule);
-                for (sch of facultySchedule) {
-                  $(`#bulk-lecture-list-card table tbody tr[data-date='${sch.EventDate}'][data-start-time='${sch.StartTime}'] .remark`)
-                    .html(`<i class="fas fa-exclamation-triangle text-danger"></i> Faculty not available`)
+                if(facultySchedule.data.length < 1 && roomSchedule.data.length < 1){
+           
+                  if($(document).find('.schedule-type:checked').val() == 3){
+                    let rowLid = $(document).find('#update-table').attr('data-row-id')
+                    let newRoomTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-room-lid]`)
+                    let newFacultyTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-faculty-lid]`)
+                    let newDateTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-date-lid]`)
+                    let newTimeTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-start-time-lid]`)
+                    
+                    if($(document).find('#available-room-list').val()){
+                      newRoomTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
+                      newRoomTd.attr('data-new-room-lid', $(document).find('#available-room-list').val());
+                    }else{
+                      newRoomTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).text()}`)
+                      newRoomTd.attr('data-new-room-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid'));
+                    }
+                    
+                    if($(document).find('#available-faculty-list').val()){
+                      newFacultyTd.text(`${$(document).find('#available-faculty-list option:selected').text()}`);
+                      newFacultyTd.attr('data-new-faculty-lid', $(document).find('#available-faculty-list').val());
+                    }else{
+                      newFacultyTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).text()}`)
+                      newFacultyTd.attr('data-new-faculty-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).attr('data-faculty-lid'));
+                    }
+
+                    newDateTd.text(`${convertDate($(document).find('#reschedule-to-date').val(), '-')}`);
+                    newDateTd.attr('data-new-date-lid', convertDate($(document).find('#reschedule-to-date').val(), '-'));
+
+
+                    newTimeTd.text(`${$(document).find('#start-time-list option:selected').text()} - ${$(document).find('#end-time-list option:selected').text()}`);
+                    newTimeTd.attr('data-new-start-time-lid', $(document).find('#start-time-list').val());
+                    newTimeTd.attr('data-new-end-time-lid', $(document).find('#end-time-list').val());
+
+                    $('#rescheduleModal').modal('hide');
+                  }
+                  else if($(document).find('.schedule-type:checked').val() == 2){
+                    let rowLid = $(this).attr('data-row-id')
+                    let newRoomTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-room-lid]`)
+                    let newFacultyTd =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-new-faculty-lid]`)
+                    
+                    if($(document).find('#available-room-list').val()){
+                      newRoomTd.text(`${$(document).find('#available-room-list option:selected').text()}`);
+                      newRoomTd.attr('data-new-room-lid', $(document).find('#available-room-list').val());
+                    }else{
+                      newRoomTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).text()}`)
+                      newRoomTd.attr('data-new-room-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-lid]`).attr('data-room-lid'));
+                    }
+                    
+                    if($(document).find('#available-faculty-list').val()){
+                      newFacultyTd.text(`${$(document).find('#available-faculty-list option:selected').text()}`);
+                      newFacultyTd.attr('data-new-faculty-lid', $(document).find('#available-faculty-list').val());
+                    }else{
+                      newFacultyTd.text(`${$(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).text()}`)
+                      newFacultyTd.attr('data-new-faculty-lid', $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-lid]`).attr('data-faculty-lid'));
+                    }
+                  }
+
                 }
-                $('.loaderBody').addClass('d-none')
+                else{
+                  alert('Room or faculty is unavailable for that duration')
+                
+                }
+ 
               })
 
 
@@ -2614,6 +2740,14 @@ code {
               let isValidReschedule = function () {
                 if ($('#dropReason').val() && $('#reschedule-date-dropdown').val() && $('#reschedule-faculty-dropdown')
                   .val() && $('#reschedule-slot-dropdown').val() && $('#reschedule-room-dropdown').val()) {
+                  return true;
+                } else {
+                  return false
+                }
+              }
+
+              let isValidRescheduleData = function () {
+                if ($(document).find('#reschedule-to-date').val() && $(document).find('#start-time-list').val() && $(document).find('#end-time-list').val() && $(document).find('#available-room-list').val() && $(document).find('#available-faculty-list').val()) {
                   return true;
                 } else {
                   return false
@@ -3288,8 +3422,6 @@ code {
               <th>Time</th>
               <th>Room</th>
               <th>New Room</th>
-              <th>Status</th>
-              <th>Remark</th>
               <th>Action</th>
               <th>Select <input id="select-all" type="checkbox" checked="checked" />
                 <label>All</label>
@@ -3304,14 +3436,12 @@ code {
               <td>${++count}</td>
               <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
               <td>${lecture.event_name}</td>
-              <td data-faculty-lid="${lecture.faculty_lid}">${lecture.faculty_name}</td>
+              <td data-faculty-lid="${lecture.faculty_lid}" data-faculty-id="${lecture.faculty_id}">${lecture.faculty_name}</td>
               <td class='new-faculty-name' data-new-faculty-lid=""></td>
               <td class="date" data-day-lid="${lecture.day_lid}" data-date="${lecture.date_str}" >${lecture.date_str}</td>
-              <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
-              <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
+              <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-start-time="${lecture.start_time}" data-end-time-lid="${lecture.end_time_lid}" data-end-time="${lecture.end_time}">${lecture.start_time}-${lecture.end_time}</td>
+              <td class="room" data-room-lid="${lecture.room_lid}" data-room-abbr="${lecture.room_abbr}">${lecture.room_no}</td>
               <td class="new-room" data-new-room-lid=""></td>
-              <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-              <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
               <td>
                 <input type='checkbox' class='is-select' style="width: 25px; height: 25px;" checked="checked" data-lid="${lecture.id}"/>
@@ -3339,8 +3469,6 @@ code {
               <th>New Time</th>
               <th>Room</th>
               <th>New Room</th>
-              <th>Status</th>
-              <th>Remark</th>
               <th>Action</th>
               <th>Select <input id="select-all" type="checkbox" checked="checked" />
                 <label>All</label>
@@ -3355,16 +3483,14 @@ code {
               <td>${++count}</td>
               <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
               <td>${lecture.event_name}</td>
-              <td data-faculty-lid="${lecture.faculty_lid}">${lecture.faculty_name}</td>
+              <td data-faculty-lid="${lecture.faculty_lid}" data-faculty-id="${lecture.faculty_id}">${lecture.faculty_name}</td>
               <td class='new-faculty-name' data-new-faculty-lid=""></td>
               <td class="date" data-day-lid="${lecture.day_lid}" data-date="${lecture.date_str}">${lecture.date_str}</td>
               <td  data-new-day-lid="" data-new-date-lid=""></td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
               <td  data-new-start-time-lid="${lecture.start_time_lid}" data-new-end-time-lid="${lecture.end_time_lid}"></td>
-              <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
+              <td class="room" data-room-lid="${lecture.room_lid}" data-room-abbr="${lecture.room_abbr}">${lecture.room_no}</td>
               <td class="new-room" data-new-room-lid=""></td>
-              <td class="status" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
-              <td class="remark" data-lid="${lecture.id}" data-date="${lecture.date_str}" data-room="${lecture.room_no}" data-slot="${lecture.slot_name}"><i class="fas fa-exclamation-triangle text-warning"></i></td>
               <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
               <td>
                 <input type='checkbox' class='is-select' style="width: 25px; height: 25px;" checked="checked" data-lid="${lecture.id}"/>
