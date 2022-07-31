@@ -1486,7 +1486,7 @@ module.exports.respond = async socket => {
     //faculty check for bulk modify
     socket.on('facultyAvailabilityCheck', async (facultyArg, roomArg) => {
 
-        console.log('facultyAvailabilityCheck DATA::::::::::::::::', facultyArg, roomArg)
+        console.log('facultyAvailabilityCheck DATA::::::::::::::::', facultyArg, roomArg) 
 
 
         let facultyData = await facultyArg;

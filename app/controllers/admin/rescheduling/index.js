@@ -21,7 +21,7 @@ module.exports = {
         rescheduleFlag: result[3].recordset,
         slotData: result[4].recordset,
         programList: result[5].recordset,
-        dayList: JSON.stringify(result[6].recordset),
+        dayList: JSON.stringify(result[6].recordset), 
         pageCount: result[7].recordset[0].count,
         slotIntervalTiming: JSON.stringify(result[8].recordset),
         breadcrumbs: req.breadcrumbs,

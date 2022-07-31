@@ -4,7 +4,7 @@ const soap = require("soap");
 
 (async () => {
 
-    var wsdlUrl ="D:/INFRAPROJECT/infra_v2/wsdl/zapi_faculty_availability_bin_sep_20220509.wsdl"; 
+    var wsdlUrl = path.join(process.env.WSDL_PATH, "zapi_faculty_availability_bin_sep_20220509.wsdl"); 
       console.log('wsdlUrl::::::::::::::::', wsdlUrl)    
 
       let soapClient = await new Promise(resolve => {
@@ -17,9 +17,9 @@ const soap = require("soap");
 
       let resourceParam = {
         ResourceType: 'P',
-        ResourceId: '32100295',
-        StartDate: '2022-07-18',
-        EndDate: '2022-07-27',
+        ResourceId: '32100844',
+        StartDate: '2022-08-11',
+        EndDate: '2022-08-11',
         StartTime: '', //moment(lecture.start_time, 'hh:mm:ss A').format('HH:mm:ss'),
         EndTime: '' //moment(lecture.end_time, 'hh:mm:ss A').format('HH:mm:ss'),
     }

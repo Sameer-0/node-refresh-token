@@ -668,7 +668,8 @@ code {
                         if (result.availableRoom.length > 0) {
                             
                           roomList +=
-                                `<option disabled  selected value="">--Select Room--</option>`;
+                                `<option disabled  selected>--Select Room--</option>
+                                <option value="">Current Room</option>`;
                             
                                 for  (let room of result.availableRoom){
 
@@ -678,7 +679,7 @@ code {
 
                         } else {
                           roomList +=
-                                `<option value=""> No Room Available For That Duration! </option>`
+                                `<option value="">Only Current Room Available</option>`
                         }
                       
                         if (result.availableFaculty.length > 0) {
@@ -865,14 +866,17 @@ code {
                   let endTime;
                   let facultyId;
                   let roomAbbr;
+                  let facultyType;
+
                 // Reschedule
                 if($(document).find('.schedule-type:checked').val() == 3){
 
                   startDate =  $(document).find('#reschedule-to-date').val();
-                  startTime =  $(document).find('#start-time-list option:selected').text()
-                  endTime =  $(document).find('#end-time-list option:selected').text()
+                  startTime =  $(document).find('#start-time-list option:selected').text();
+                  endTime =  $(document).find('#end-time-list option:selected').text();
                   facultyId = $(document).find('#available-faculty-list option:selected').attr('data-faculty-id');
-                  roomAbbr = $(document).find('#available-room-list option:selected').attr('data-room-abbr')
+                  roomAbbr = $(document).find('#available-room-list option:selected').attr('data-room-abbr');
+                  facultyType = $(document).find('#available-faculty-list option:selected').attr('data-faculty-type');
 
                   let facultyAvailabilityCheckData = {
                     startDate: startDate,
@@ -880,7 +884,7 @@ code {
                     startTime: startTime,
                     endTime: endTime,
                     facultyId: facultyId,
-                    facultyType: $(document).find('#available-faculty-list option:selected').attr('data-faculty-type')
+                    facultyType: facultyType
                   }
 
                   let roomAvailabilityCheckData = {
@@ -895,7 +899,7 @@ code {
                   console.log('facultyAvailabilityCheckData', facultyAvailabilityCheckData, roomAvailabilityCheckData)
                   if(isValidRescheduleData()){
                     socket.emit('facultyAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
-                    socket.emit('roomAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                    // socket.emit('roomAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
                   }
                   else{
                     alert('all fields are mandatory')
@@ -903,16 +907,21 @@ code {
                 } 
                 else if($(document).find('.schedule-type:checked').val() == 2){
                   
-                  startDate =  convertDate($(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date]`).attr('data-date'), '/')
-                  startTime =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time]`).attr('data-start-time')
-                  endTime = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-end-time]`).attr('data-end-time')
-                  roomAbbr = $(document).find('#available-room-list option:selected').attr('data-room-abbr')
-
-                  if($(document).find('#available-faculty-list').val()){
+                  startDate =  convertDate($(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date]`).attr('data-date'), '/');
+                  startTime =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-start-time]`).attr('data-start-time');
+                  endTime = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-end-time]`).attr('data-end-time');
+                  
+                  if($(document).find('#available-faculty-list').val() && $(document).find('#available-room-list').val()){
                     facultyId = $(document).find('#available-faculty-list option:selected').attr('data-faculty-id');
+                    facultyType = $(document).find('#available-faculty-list option:selected').attr('data-faculty-type');
+
+                    roomAbbr = $(document).find('#available-room-list option:selected').attr('data-room-abbr');
                   }
                   else{
                     facultyId =  $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-id]`).attr('data-faculty-id');
+                    facultyType = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-faculty-type]`).attr('data-faculty-type');
+
+                    roomAbbr = $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-room-abbr]`).attr('data-room-abbr');
                   }
 
                   let facultyAvailabilityCheckData = {
@@ -921,7 +930,7 @@ code {
                     startTime: startTime,
                     endTime: endTime,
                     facultyId: facultyId,
-                    facultyType: $(document).find('#available-faculty-list option:selected').attr('data-faculty-type')
+                    facultyType: facultyType
                   }
 
                   let roomAvailabilityCheckData = {
@@ -933,14 +942,16 @@ code {
 
                   }
 
-                  console.log('facultyAvailabilityCheckData', facultyAvailabilityCheckData, roomAvailabilityCheckData, $(document).find(`.lecture-datatable tbody tr[data-lid="${rowLid}"] td[data-date]`).attr('data-date') )
-                  // if(isValidRescheduleData()){
-                  //   socket.emit('facultyAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
-                  //   socket.emit('roomAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
-                  // }
-                  // else{
-                  //   alert('all fields are mandatory')
-                  // }
+                  console.log('facultyAvailabilityCheckData', facultyAvailabilityCheckData, roomAvailabilityCheckData )
+
+                  if(isValidModifyData(facultyAvailabilityCheckData, roomAvailabilityCheckData)){
+                    console.log('hitting availability wsdl')
+                    socket.emit('facultyAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                    // socket.emit('roomAvailabilityCheck', facultyAvailabilityCheckData, roomAvailabilityCheckData)
+                  }
+                  else{
+                    alert('all fields are mandatory')
+                  }
                   
                 }
 
@@ -2754,6 +2765,23 @@ code {
                 }
               }
 
+              
+              let isValidModifyData = function (facultyJson, roomJson) {
+                let returnValue = true;
+                for(let key in facultyJson){
+                  if(facultyJson[key] == ""){
+                    returnValue = false
+                  }
+                }
+                for(let key in roomJson){
+                  if(roomJson[key] == ""){
+                    returnValue = false
+                  }
+                }
+
+                return returnValue;
+              }
+
               let isValidModify = function () {
 
                 let returnVar = true;
@@ -3436,7 +3464,7 @@ code {
               <td>${++count}</td>
               <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
               <td>${lecture.event_name}</td>
-              <td data-faculty-lid="${lecture.faculty_lid}" data-faculty-id="${lecture.faculty_id}">${lecture.faculty_name}</td>
+              <td data-faculty-lid="${lecture.faculty_lid}" data-faculty-id="${lecture.faculty_id}" data-faculty-type="${lecture.faculty_type}">${lecture.faculty_name}</td>
               <td class='new-faculty-name' data-new-faculty-lid=""></td>
               <td class="date" data-day-lid="${lecture.day_lid}" data-date="${lecture.date_str}" >${lecture.date_str}</td>
               <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-start-time="${lecture.start_time}" data-end-time-lid="${lecture.end_time_lid}" data-end-time="${lecture.end_time}">${lecture.start_time}-${lecture.end_time}</td>
