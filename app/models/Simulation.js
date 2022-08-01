@@ -158,7 +158,7 @@ module.exports = class Simulation {
     static facultyByModuleProgramSapDivisionId(slug, body) {
         console.log('facilty_lis:::', body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND sap_flag <> 'E'`;
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name, faculty_type FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND sap_flag <> 'E'`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
@@ -457,9 +457,11 @@ module.exports = class Simulation {
     static availableFacultyForReplace(slug, body) {
         console.log('facilty_lis:::', body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT f.id AS faculty_lid, f.faculty_id, f.faculty_name FROM [${slug}].faculty_works fw
+            let lecStmt = `SELECT f.id AS faculty_lid, f.faculty_id, f.faculty_name, ft.abbr as faculty_type FROM [${slug}].faculty_works fw
             INNER JOIN [${slug}].faculties f
             ON f.id =  fw.faculty_lid
+            INNER JOIN [dbo].faculty_types ft
+            ON ft.id = f.faculty_type_lid
             INNER JOIN [${slug}].program_sessions ps
             ON ps.id =  fw.program_session_lid
             WHERE ps.program_lid  = @program_lid AND ps.acad_session_lid = @acad_session_lid AND fw.module_lid = @module_lid`;
