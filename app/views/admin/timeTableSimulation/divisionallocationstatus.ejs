@@ -154,6 +154,7 @@
                 <h5>Division Allocation Status</h5>
             </div>
             <div>
+                <a class="btn btn-danger download-current-report" href="/admin/mis/simulation-chart/division-wise-allocation/download?pid=0&sid=0&div=0" >Download ALL </a>
             </div>
         </div>
 
@@ -362,7 +363,15 @@ cssRoot.style.setProperty('--timetableWidth', `${timetableProp.totalSlots * time
                                 let programLid = $("#program-name").val(); 
                                 let sessionLid = $("#session-name").val(); 
 
-                            console.log('API hit', divisionName.trim(), programLid, sessionLid)
+                                if(divisionName){
+
+                                    $(".download-current-report").attr('data-faculty-id',divisionName.trim())
+                                    $(".download-current-report").removeClass('disabled')
+                                    $(".download-current-report").html('Download Current')
+                                    $(".download-current-report").attr('href',`/admin/mis/simulation-chart/division-wise-allocation/download?pid=${programLid}&sid=${programLid}&div=${divisionName.trim()}`)
+
+
+                                    console.log('API hit', divisionName.trim(), programLid, sessionLid)
                                 let ApiObj = {
                                     url: '/admin/time-table-simulation/time-table/get-div-allocation',
                                     type: 'POST',
@@ -411,6 +420,13 @@ cssRoot.style.setProperty('--timetableWidth', `${timetableProp.totalSlots * time
                                 }).catch(error => {
                                     // showError(error.responseJSON)
                                 })
+                                }else{
+                                    console.log('IN ELSE CONDITION::::::::')
+                                    $(".download-current-report").attr('data-faculty-id',divisionName.trim())
+                                    $(".download-current-report").attr('href',`/admin/mis/simulation-chart/division-wise-allocation/download?pid=${0}&sid=${0}&div=${0}`)
+                                    $(".download-current-report").removeClass('disabled')
+                                    $(".download-current-report").html('Download ALL')
+                                }
                             })
 
 
