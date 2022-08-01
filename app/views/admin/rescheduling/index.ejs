@@ -322,8 +322,13 @@ code {
           </div> 
 
 
-          <div class="regular_lecture_list d-none cancel-against-e">
-            
+          <div class="regular_lecture_container cancel-against-e my-2">
+             
+              <label class="custom-control-label cursor-pointer">
+                Select Lecture to cancel against
+              </label>
+              <div class="regular_lecture_list">
+              </div>
           </div>
 
             <div class="d-none cancel-against-e mt-3">
@@ -966,6 +971,8 @@ code {
                 $('.res-filter .emptyFilter').val('');
               })
 
+          
+
               //RESCHEDULE LOGIC
               $(`.schedule-type`).on('change', function () {
                 console.log('RESCHEDULE CHANGED ON CLICK:::::::::::>>>>', $(this).val())
@@ -1102,6 +1109,7 @@ code {
                 }
 
               })
+           
 
               //bulk cancel
               $(`#cancel-wrapper input[name="cancel-type"]`).on('change', function () {
@@ -1123,10 +1131,10 @@ code {
 
                         console.log('Cancel Against Extra Class cancelType::::::::::::::::::::::>>>>>>>', cancelType)
                         let actionType = $(document).find('.schedule-type:checked').attr('id');
-                        let program_lid = $("#ProgramFilter").val()
-                        let division_lid = $("#DivisionFilter").val()
-                        let module_lid = $("#ModuleFilter").val()
-                        let acad_session_lid = $("#SessionFilter").val()
+                        let program_lid = $(document).find("#ProgramFilter").val()
+                        let division_lid = $(document).find("#DivisionFilter").val()
+                        let module_lid = $(document).find("#ModuleFilter").val()
+                        let acad_session_lid = $(document).find("#SessionFilter").val()
 
                         let obj = {
                             program_lid: program_lid,
@@ -1149,13 +1157,21 @@ code {
 
 
                   //GET REGULAR LECTURES
+                //   let program_lid = $("#ProgramFilter").val()
+                // let division_lid = $("#DivisionFilter").val()
+                // let module_lid = $("#ModuleFilter").val()
+                // let acad_session_lid = $("#SessionFilter").val()
 
                   $("#cancel-against-extra-class-date").on('change',function(){
                       let date_str = convertDate($(this).val(), '-')
+                      let program_lid = $(document).find("#ProgramFilter").val()
+                      let division_lid = $(document).find("#DivisionFilter").val()
+                      let module_lid = $(document).find("#ModuleFilter").val()
+                      let acad_session_lid = $(document).find("#SessionFilter").val() 
                       console.log('date_str:::::::::::::::>>',date_str)
                       $.ajax({
                     type: 'POST',
-                    url: '/admin/rescheduling/get-regular-extra-lecture',
+                    url: '/admin/rescheduling/get-regular-extra-lecture', 
                     dataType: "JSON",
                     data: {
                             program_lid: program_lid,
@@ -1167,7 +1183,13 @@ code {
                     success: data => {
                       let regularlectureList = data.regularlectureList;
                       console.log('lectureList: ', data)
-                      let accordination = `<div class="accordion my-2" id="caeAccordion">`;
+                      let accordination = `<div class="accordion mb-2" id="caeAccordion">`;
+
+                      if( data.regularlectureList.length < 1){
+                        accordination += `<div class="accordion-item no-lecture">NO Lecture Found</div></div>`
+                      }
+
+
                         //REGULAR LECTURE LIST WITHOUT E FLAG
                         for (let lecture of data.regularlectureList){
                           accordination += `<div class="accordion-item">
@@ -1926,7 +1948,7 @@ code {
                 } else if (rescheduleObj.reschFlag === 'C' && $(`#cancel-wrapper input[name="cancel-type"]:checked`).val() == 'bulk') {
                   
                   if (!isValidBulkCancel()) {
-                    alert('Please fill all the mandatory fields and make sure that there are lectures available to be cancelled.')
+                    alert('Please fill all the mandatory fields(Reason Also) and make sure that there are lectures available to be cancelled.')
                   } else {
                     let isConfirmed = confirm('Do you really want to cancel all the marked events?')
                     let timeSheetIdJson = [];
@@ -3137,7 +3159,19 @@ code {
 
     //EMPY TIME SELECTION
     $("#select-new-ec-start-time").on('change',function(){
-      $("#select-new-ec-end-time").val('')
+      // $("#select-new-ec-end-time").val('')
+      $(document).find("#select-new-ec-end-time").html('')
+
+      let endTimeOption = '<option value="">--Select End Time--</option>';
+      let startTimeLid = parseInt($(this).val())
+
+      for(let time of timeListJson){
+        if((startTimeLid + 11) == time.id){
+          endTimeOption += `<option value="${time.id}">${time.end_time}</option>`
+        }
+      }
+    
+      $(document).find("#select-new-ec-end-time").append(endTimeOption)
     })
 
 
@@ -3236,7 +3270,7 @@ code {
       let roomLid = $(this).val()
 
             let ApiObj = {
-                type: 'POST',
+                type: 'POST', 
                 url: '/admin/rescheduling/fetch-available-faculty-for-extra-class',
                 data: {
                   program_lid:program_lid,
@@ -3251,6 +3285,7 @@ code {
                 dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
+              console.log('available faculty for extra class', result)
                 let availableFacultyHTML = `<option value="">Select Faculty</option>`;
                 if (result.availableFaculty.length > 0) {
                     result.availableFaculty.forEach(element => {

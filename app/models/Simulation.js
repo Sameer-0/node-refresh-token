@@ -66,6 +66,7 @@ module.exports = class Simulation {
 
     static getAvailableFacultyForTimeRange(slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) { 
         return poolConnection.then(pool => {
+            console.log('available faculty check',slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid)
             return pool.request()
             .input('date', sql.NVarChar(sql.MAX), date)
             .input('roomLid', sql.Int, roomLid)
