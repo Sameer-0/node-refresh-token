@@ -23,7 +23,14 @@ async function   currentAcadYear () {
         })
 }
 
+function isArray(array){
+if (array.length > 0){
+
+}
+}
+
 module.exports = {
     isJsonString,
-    currentAcadYear
+    currentAcadYear,
+    isArray
 }
