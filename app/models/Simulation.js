@@ -26,7 +26,7 @@ module.exports = class Simulation {
 
     static slotData(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select len(sit.slot_name),  sit.slot_name, sit.start_time as starttime, _sit.end_time as  endtime from [${slug}].school_timings st 
+            return pool.request().query(`select len(sit.slot_name),  sit.slot_name, sit.start_time as starttime, _sit.end_time as endtime from [${slug}].school_timings st 
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id = st.slot_start_lid
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  st.slot_end_lid 
             ORDER BY len(sit.slot_name), sit.slot_name`)

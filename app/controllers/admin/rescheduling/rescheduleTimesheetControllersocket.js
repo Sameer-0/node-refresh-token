@@ -323,16 +323,20 @@ module.exports.respond = async socket => {
         let socketUser = data.socketUser;
         let resObj = data.resObj
 
-        resObj.eventType = 'THEO';
-        resObj.schoolId = '00004533'
-        resObj.sapFromStartTime = moment(resObj.fromStartTime, 'hh:mm:ss A').format('HH:mm:ss')
-        resObj.sapFromEndTime = moment(resObj.fromEndTime, 'hh:mm:ss A').format('HH:mm:ss')
-        resObj.sapFromDate = moment(resObj.fromDate, 'DD/MM/YYYY').format("YYYY-MM-DD")
+        // resObj.eventType = 'THEO';
+        // resObj.schoolId = '00004533'
+        // resObj.sapFromStartTime = moment(resObj.fromStartTime, 'hh:mm:ss A').format('HH:mm:ss')
+        // resObj.sapFromEndTime = moment(resObj.fromEndTime, 'hh:mm:ss A').format('HH:mm:ss')
+        // resObj.sapFromDate = moment(resObj.fromDate, 'DD/MM/YYYY').format("YYYY-MM-DD") 
 
-        let acadIdStmt = `SELECT TOP 1 id FROM academicSessionMaster WHERE acadSession = '${resObj.acadSession}'`
-        await request.query(acadIdStmt).then(result => {
-            resObj.acadSessionId = result.recordset[0].id
-        })
+        let cancelEventProcedure = `[${slug}].sp_cancel_event`
+        await request.input('inputJson', sql.NVarChar(sql.MAX), obj.ids)
+        .input('reason_id', sql.Int, obj.reasonId)
+        .input('reason_details', sql.NVarChar(sq.MAX), obj.reasonText)
+        .output('output_flag', sql.Int)
+        .output('output_json', sql.NVarChar(sql.MAX))
+        .execute(cancelEventProcedure).then(result => 
+            { resObj.acadSessionId = result.recordset[0].id})
 
         //get transaction id
         let transactionId;
@@ -340,7 +344,6 @@ module.exports.respond = async socket => {
             transactionId = result.recordset[0].transId
         })
         console.log('transactionId====>> ', transactionId)
-
 
         let rescheduleObj = {
             ItReschedule: {
@@ -4421,10 +4424,7 @@ queue.on('completed', (job, result) => {
 })
 
 
-
 //Fetch api
-
-
 function sendToLms(data) {
     let obj = {
         TransId: data.TransId,
