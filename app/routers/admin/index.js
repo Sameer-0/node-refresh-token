@@ -41,7 +41,6 @@ function AdminRoute(app) {
     app.use('/admin/', isLoggedIn, checkPermission, timesheet);
     app.use('/admin/', isLoggedIn, checkPermission, freezetimetable);
     app.use('/admin/', isLoggedIn, checkPermission, mis)
-
 }
 
 module.exports = AdminRoute;

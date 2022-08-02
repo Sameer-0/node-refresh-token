@@ -138,6 +138,8 @@ const {
 require('dotenv').config();
 
 
+
+
 app.use('/create-events', async (req, res, next) => {
 //     console.log("Message: socket called creating sap events");
 
@@ -325,9 +327,9 @@ app.use('/create-events', async (req, res, next) => {
 })
 
 
-app.use(function (req, res) {
-    res.status(404).redirect('/user/login')
-})
+// app.use(function (req, res) {
+//     res.status(404).redirect('/user/login')
+// })
 
 
 // app.use((err, req, res, next) => {
@@ -371,6 +373,8 @@ app.use(function (req, res) {
 //       })
 //     }
 //   })
+
+
 
 
 if (process.env.APP_ENV === 'PRODUCTION') {
