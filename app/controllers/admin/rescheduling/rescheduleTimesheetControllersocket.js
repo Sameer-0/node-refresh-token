@@ -2485,7 +2485,7 @@ module.exports.respond = async socket => {
 
        // return false;
 
-        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sqh_20220401_2.wsdl");
+        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sep_20220509.wsdl");
         
         let soapClient = await new Promise((resolve, reject) => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
@@ -2513,7 +2513,7 @@ module.exports.respond = async socket => {
 
                 let etReturn = await result.EtReturn.item;
 
-                writeFile(`D:/infralog/quality/course_wsdl.txt`, JSON.stringify(result), err => {
+                writeFile(`D:/infralog/production/course_wsdl.txt`, JSON.stringify(result), err => {
                     if (err) throw err;
                 })
 
