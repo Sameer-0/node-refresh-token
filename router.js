@@ -5,6 +5,8 @@ const {
 
 const Management =  require('./app/routers/management/index')
 const AdminRoute =  require('./app/routers/admin/index')
+const MobileApi =  require('./app/routers/admin/mobileIndex')
+
 
 function setRouter(app) {
     const homeRouter = require("./app/routers/home")
@@ -16,6 +18,10 @@ function setRouter(app) {
     Management(app) 
     //Admin Router
     AdminRoute(app)
+
+    //MODULE API
+   // MobileApi(app)
+   app.use('/mobileApi', MobileApi)
 }
 
 

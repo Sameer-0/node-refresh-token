@@ -31,4 +31,15 @@ module.exports = class Mis {
                 .execute(`[${slug}].[room_wise_allocation_mis]`)
         })
     }
+
+
+    static DivisionWiseDownload(slug, room_lid) {
+        return poolConnection.then(pool => {
+            let request = pool.request();
+            return request.input('program_id', sql.Int, room_lid)
+            .input('acad_session_id', sql.Int, room_lid)
+            .input('division', sql.Int, room_lid)
+            .execute(`[${slug}].[division-wise-allocation-mis]`)
+        })
+    }
 }

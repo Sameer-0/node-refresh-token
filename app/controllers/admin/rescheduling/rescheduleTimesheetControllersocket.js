@@ -1495,6 +1495,7 @@ module.exports.respond = async socket => {
         console.log('>>>>>>>>>>>>>>CHECK FACULTY AVAILABILITY<<<<<<<<<<<<<<<')
 
         let wsdlUrl = path.join(process.env.WSDL_PATH, "zapi_faculty_availability_bin_sep_20220509.wsdl");
+        
 
 
         let soapClient = await new Promise((resolve, reject) => {
