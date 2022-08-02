@@ -131,6 +131,7 @@ module.exports = {
 
  
     getAllStudentLectures(req, res) {
+        console.log('::::::::::::::::::::::getAllStudentLectures::::::::::::::::')
         let eventIdList;
         
         if(isJsonString(req.body.eventIdList)){
@@ -140,6 +141,7 @@ module.exports = {
             eventIdList = req.body.eventIdList;
         }
 
+        console.log('eventIdList:::::::::',eventIdList)
         poolConnection.then(pool => {
             let sqlstmt = `select room_no, date_str, start_time, end_time, division, acad_session, event_name from [${res.locals.slug}].timesheet where sap_event_id in(${eventIdList})`;
             return pool.request()
