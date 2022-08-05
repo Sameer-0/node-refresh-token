@@ -1,4 +1,3 @@
-
 const sql = require('mssql')
 const sanitizer = require('sanitize')();
 const soap = require('soap');
@@ -246,7 +245,7 @@ module.exports.respond = async socket => {
     //cancelEventedSlotBulk
     socket.on("cancelEvents", async data => {
 
-        console.log('>>>>>>>>>>>>>>CANCEL EVENT<<<<<<<<<<<<<<<', data)
+        console.log('>>>>>>>>>>>>>>CANCEL EVENT<<<<<<<<<<<<<<<', )
 
         // let socketUser = data.socketUser;
         // console.log('socketUser>>>>> ', socketUser)
@@ -254,130 +253,131 @@ module.exports.respond = async socket => {
         let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220401_2.wsdl");
 
         console.log('wsdlUrl', wsdlUrl)
-        // let soapClient = await new Promise((resolve, reject) => {
-        //     soap.createClient(wsdlUrl, async function (err, soapClient) {
-        //         if (err) throw err;
-        //         let client = await soapClient;
-        //         resolve(client)
-        //     })
-        // });
+        let soapClient = await new Promise((resolve, reject) => {
+            soap.createClient(wsdlUrl, async function (err, soapClient) {
+                if (err) throw err;
+                let client = await soapClient;
+                resolve(client)
+            })
+        });
 
 
-        let resObj = data.transJson;
-        // resObj.eventType = 'THEO';
-        // resObj.schoolId = '00004533'
+        let resObj = JSON.parse(data.transJson);
+        //resObj.eventType = 'THEO';
+        resObj.schoolId = '00004533'
         // let lecTransObj = data.transJson
 
         console.log('resJSON====>> ', resObj)
+        console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
 
-        let insertedTransData = await db.request()
-            .input('input_json', sql.NVarChar(sql.MAX), resObj.ids)
-            .input('reasonId', sql.Int , resObj.reasonId)
-            .input('reasonDetail', sql.NVarChar(sql.MAX), resObj.reasonDetail)
+        let result = await db.request()
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
+            .input('reason_id', sql.Int, resObj.reasonId)
+            // .input('reasonDetail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
             .input('res_stage', sql.Int, 1)
-            .input('last_modified_by', sql.Int, 1)
+            .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+            .input('last_modified_by', sql.Int, data.userId)
             .output('output_flag', sql.Bit)
             .output('output_json', sql.NVarChar(sql.MAX))
-            .execute('[asmsoc-mum].[sp_cancel_events]')
+            .execute('[asmsoc-mum].[sp_cancel_rescheduling]')
+
+
+        let transLectureList = JSON.parse(result.output.output_json).data
+
 
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
-        console.log('Inserted data: ', insertedTransData)
+        console.log("transLectureList>> ", transLectureList)
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
 
-        return false;
-
         //CREATE SAP OBJ JSON
-        if (insertedTransData.output.output) {
+        let rescheduleItems = [];
 
-            let rescheduleItems = [];
-            let transLectureList = insertedTransData.recordset
-
-            console.log("transLectureList: ", transLectureList)
-
-            for (let lecture of transLectureList) {
-                let item = {
-                    TransId: lecture.transaction_id,
-                    ZBuseve: lecture.sap_event_id,
-                    Zdate: moment(lecture.date_str, 'DD/MM/YYYY').format("YYYY-MM-DD"),
-                    ZtimeFrom: moment(lecture.start_time, 'hh:mm:ss A').format('HH:mm:ss'),
-                    ZtimeTo: moment(lecture.end_time, 'hh:mm:ss A').format('HH:mm:ss'),
-                    Zflag: lecture.z_flag,
-                    ZroomId: lecture.room_uid,
-                    OldZroomId: "",
-                    Zyear: lecture.acad_year,
-                    ZOrg: resObj.schoolId,
-                    ZPrgstd: lecture.program_id,
-                    ZSess: lecture.z_acad_id,
-                    ZModule: lecture.module_id,
-                    ZEvetyp: 'THEO',
-                    ZfacultyId: lecture.faculty_id,
-                    OldZfacultyId: "",
-                    ReasonId: Number(resObj.reasonId),
-                    OldZdate: "",
-                    OldZtimeFrom: "",
-                    OldZtimeTo: "",
-                    Remark: "",
-                    ZfacId: "",
-                    ReasonDetail: resObj.reasonDetail
-                }
-                rescheduleItems.push(item)
+        for (let lecture of transLectureList) {
+            let item = {
+                TransId: lecture.TransId,
+                ZBuseve: lecture.ZBuseve,
+                Zdate: lecture.Zdate,
+                ZtimeFrom: lecture.ZtimeFrom,
+                ZtimeTo: lecture.ZtimeTo,
+                Zflag: lecture.Zflag,
+                ZroomId: lecture.ZroomId,
+                OldZroomId: "",
+                Zyear: lecture.Zyear,
+                ZOrg: resObj.schoolId,
+                ZPrgstd: lecture.ZPrgstd,
+                ZSess: lecture.ZSess,
+                ZModule: lecture.ZModule,
+                ZEvetyp: lecture.ZEvetyp,
+                ZfacultyId: lecture.ZfacultyId,
+                OldZfacultyId: "",
+                ReasonId: lecture.ReasonId,
+                OldZdate: "",
+                OldZtimeFrom: "",
+                OldZtimeTo: "",
+                Remark: "",
+                ZfacId: lecture.ZfacultyId,
+                ReasonDetail: lecture.ReasonDetail
             }
-
-
-            let rescheduleObj = {
-                ItReschedule: {
-                    item: rescheduleItems
-                }
-            }
-
-            console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
-
-            let sapResult = await new Promise((resolve, reject) => {
-                soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
-                    if (err) throw err;
-                    console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
-                    let sapResult = await result.EtReturn.item;
-                    resolve(sapResult);
-                })
-            })
-
-            console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
-            console.log(sapResult)
-            console.log(JSON.stringify(sapResult))
-
-
-            if (sapResult.length > 0) {
-
-                let updatedTimetableData = await db.request()
-                    .input('transJson', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
-                    .output('output', sql.Bit)
-                    .output('msg', sql.NVarChar(sql.MAX))
-                    .execute('after_bulk_cancel_start');
-
-                console.log(updatedTimetableData)
-
-                global.io.emit("bulkCancelled", {
-                    socketUser: socketUser,
-                    updatedLectureList: updatedTimetableData.recordset,
-                    slugName: 'asmsoc-mum',
-                    status: 200,
-                    isUpdated: 1,
-                    msg: 'Lectures has been updated successfully.'
-                })
-            } else {
-                global.io.emit("bulkCancelled", {
-                    socketUser: socketUser,
-                    updatedLectureList: [],
-                    slugName: 'asmsoc-mum',
-                    status: 200,
-                    isUpdated: 0,
-                    msg: 'Lectures has been updated successfully.',
-                })
-            }
-
-        } else {
-            console.log('>>>>>>>>>>>>FAILED: ', insertedTransData.output.msg)
+            rescheduleItems.push(item)
         }
+
+
+        let rescheduleObj = {
+            ItReschedule: {
+                item: rescheduleItems
+            }
+        }
+
+        console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
+
+        let sapResult = await new Promise((resolve, reject) => {
+            soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
+                if (err) throw err;
+                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
+                let sapResult = await result.EtReturn.item;
+                resolve(sapResult);
+            })
+        })
+
+        console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
+        console.log(sapResult)
+        console.log(JSON.stringify(sapResult))
+
+
+        // if (sapResult.length > 0) {
+
+        //     let updatedTimetableData = await db.request()
+        //         .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
+        //         .input('reason_id', sql.Int, resObj.reasonId)
+        //         .input('res_stage', sql.Int, 2)
+        //         .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+        //         .input('last_modified_by', sql.Int, data.userId)
+        //         .output('output', sql.Bit)
+        //         .output('msg', sql.NVarChar(sql.MAX))
+        //         .execute('[asmsoc-mum].[sp_cancel_rescheduling]');
+
+        //     console.log(updatedTimetableData)
+
+        //     global.io.emit("bulkCancelled", {
+        //         socketUser: socketUser,
+        //         updatedLectureList: updatedTimetableData.recordset,
+        //         slugName: 'asmsoc-mum',
+        //         status: 200,
+        //         isUpdated: 1,
+        //         msg: 'Lectures has been updated successfully.'
+        //     })
+        // } else {
+        //     global.io.emit("bulkCancelled", {
+        //         socketUser: socketUser,
+        //         updatedLectureList: [],
+        //         slugName: 'asmsoc-mum',
+        //         status: 200,
+        //         isUpdated: 0,
+        //         msg: 'Lectures has been updated successfully.',
+        //     })
+        // }
+
+
 
     })
 
@@ -1022,7 +1022,7 @@ module.exports.respond = async socket => {
     //faculty check for bulk modify
     socket.on('facultyAvailabilityCheck', async (facultyArg, roomArg) => {
 
-        console.log('facultyAvailabilityCheck DATA::::::::::::::::', facultyArg, roomArg) 
+        console.log('facultyAvailabilityCheck DATA::::::::::::::::', facultyArg, roomArg)
 
 
         let facultyData = await facultyArg;
@@ -1031,7 +1031,7 @@ module.exports.respond = async socket => {
         console.log('>>>>>>>>>>>>>>CHECK FACULTY AVAILABILITY<<<<<<<<<<<<<<<')
 
         let wsdlUrl = path.join(process.env.WSDL_PATH, "zapi_faculty_availability_bin_sep_20220509.wsdl");
-        
+
 
 
         let soapClient = await new Promise((resolve, reject) => {
@@ -1047,7 +1047,7 @@ module.exports.respond = async socket => {
             ResourceId: facultyData.facultyId,
             StartDate: facultyData.startDate,
             EndDate: facultyData.endDate,
-            StartTime:  moment(facultyData.startTime, 'hh:mm:ss A').format('HH:mm:ss'),
+            StartTime: moment(facultyData.startTime, 'hh:mm:ss A').format('HH:mm:ss'),
             EndTime: moment(facultyData.endTime, 'hh:mm:ss A').format('HH:mm:ss'),
         }
 
@@ -1056,73 +1056,83 @@ module.exports.respond = async socket => {
             ResourceId: roomData.roomAbbr,
             StartDate: roomData.startDate,
             EndDate: roomData.endDate,
-            StartTime:  moment(roomData.startTime, 'hh:mm:ss A').format('HH:mm:ss'),
+            StartTime: moment(roomData.startTime, 'hh:mm:ss A').format('HH:mm:ss'),
             EndTime: moment(roomData.endTime, 'hh:mm:ss A').format('HH:mm:ss'),
         }
-         
-        
+
+
         let sapFacultyResult = await new Promise((resolve, reject) => {
             soapClient.ZapiFacultyAvailability(facultyParam, async (err, result) => {
-            
-                if (err) throw err;
-                try{
-                
-                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<',result)
-                let sapResult = await result.EtResoAvaiInfo
-                console.log('sapResult EtResoAvaiInfo: ', sapResult)
-                if (!sapResult) {
-                    sapResult = [];
-                } else {
-                    sapResult = sapResult.item
 
-                    for (let item of sapResult) {
-                        item.EventDate = moment(item.EventDate, 'YYYY-MM-DD').format("DD/MM/YYYY")
-                        item.StartTime = moment(item.StartTime, 'HH:mm:ss').format('hh:mm:ss A')
-                        item.EndTime = moment(item.EndTime, 'HH:mm:ss').format('hh:mm:ss A')
+                if (err) throw err;
+                try {
+
+                    console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<', result)
+                    let sapResult = await result.EtResoAvaiInfo
+                    console.log('sapResult EtResoAvaiInfo: ', sapResult)
+                    if (!sapResult) {
+                        sapResult = [];
+                    } else {
+                        sapResult = sapResult.item
+
+                        for (let item of sapResult) {
+                            item.EventDate = moment(item.EventDate, 'YYYY-MM-DD').format("DD/MM/YYYY")
+                            item.StartTime = moment(item.StartTime, 'HH:mm:ss').format('hh:mm:ss A')
+                            item.EndTime = moment(item.EndTime, 'HH:mm:ss').format('hh:mm:ss A')
+                        }
                     }
+                    resolve({
+                        status: 200,
+                        data: sapResult
+                    })
+                } catch (error) {
+                    console.log('error:::::::::', error)
+                    reject({
+                        status: 500,
+                        data: []
+                    })
                 }
-                resolve({status:200, data: sapResult})
-            }
-            catch(error){
-                console.log('error:::::::::',error)
-                reject({status:500, data: []})
-            }
             })
         })
 
         let sapRoomResult = await new Promise((resolve, reject) => {
             soapClient.ZapiFacultyAvailability(roomParam, async (err, result) => {
-            
-                if (err) throw err;
-                try{
-                
-                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<', result)
-                let sapResult = await result.EtResoAvaiInfo
-                console.log('sapResult EtResoAvaiInfo: ', sapResult)
-                if (!sapResult) {
-                    sapResult = [];
-                } else {
-                    sapResult = sapResult.item
 
-                    for (let item of sapResult) {
-                        item.EventDate = moment(item.EventDate, 'YYYY-MM-DD').format("DD/MM/YYYY")
-                        item.StartTime = moment(item.StartTime, 'HH:mm:ss').format('hh:mm:ss A')
-                        item.EndTime = moment(item.EndTime, 'HH:mm:ss').format('hh:mm:ss A')
+                if (err) throw err;
+                try {
+
+                    console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<', result)
+                    let sapResult = await result.EtResoAvaiInfo
+                    console.log('sapResult EtResoAvaiInfo: ', sapResult)
+                    if (!sapResult) {
+                        sapResult = [];
+                    } else {
+                        sapResult = sapResult.item
+
+                        for (let item of sapResult) {
+                            item.EventDate = moment(item.EventDate, 'YYYY-MM-DD').format("DD/MM/YYYY")
+                            item.StartTime = moment(item.StartTime, 'HH:mm:ss').format('hh:mm:ss A')
+                            item.EndTime = moment(item.EndTime, 'HH:mm:ss').format('hh:mm:ss A')
+                        }
                     }
+                    resolve({
+                        status: 200,
+                        data: sapResult
+                    })
+                } catch (error) {
+                    console.log('error:::::::::', error)
+                    reject({
+                        status: 500,
+                        data: []
+                    })
                 }
-                resolve({status:200, data: sapResult})
-            }
-            catch(error){
-                console.log('error:::::::::',error)
-                reject({status:500, data: []})
-            }
             })
         })
 
         console.log('>>>>>>>>>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<<<<<')
-        console.log('sapResult::::::::::::::::::::>>>>>>',sapFacultyResult)
+        console.log('sapResult::::::::::::::::::::>>>>>>', sapFacultyResult)
         socket.emit('facultyRoomAvlList', sapFacultyResult, sapRoomResult)
-        socket.broadcast.emit('facultyRoomAvlList',sapFacultyResult, sapRoomResult)
+        socket.broadcast.emit('facultyRoomAvlList', sapFacultyResult, sapRoomResult)
     })
 
     socket.on("changeTimetable", async data => {
@@ -2020,10 +2030,10 @@ module.exports.respond = async socket => {
         console.log('eventHeaders >>>> ', eventHeaders.length)
         console.log('eventSchedules >>>> ', eventSchedules.length)
 
-       // return false;
+        // return false;
 
         let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sep_20220509.wsdl");
-        
+
         let soapClient = await new Promise((resolve, reject) => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
                 if (err) throw err;
@@ -2075,51 +2085,51 @@ module.exports.respond = async socket => {
     })
 
 
-//Fetch api
-function sendToLms(data) {
-    let obj = {
-        TransId: data.TransId,
-        ZBuseve: data.ZBuseve,
-        Zdate: data.Zdate,
-        ZtimeFrom: moment(data.ZtimeFrom).format("hh:mm:ss A"),
-        ZtimeTo: moment(data.ZtimeTo).format("hh:mm:ss A"),
-        Zflag: data.Zflag,
-        ZroomId: data.ZroomId,
-        OldZroomId: data.OldZroomId,
-        Zyear: data.Zyear,
-        ZOrg: data.ZOrg,
-        ZPrgstd: data.ZPrgstd,
-        ZSess: data.ZSess,
-        ZModule: data.ZModule,
-        ZEvetyp: data.ZEvetyp,
-        ZfacultyId: data.ZfacultyId,
-        OldZfacultyId: data.OldZfacultyId,
-        ReasonId: data.ReasonId,
-        OldZdate: data.OldZdate,
-        OldZtimeFrom: data.OldZtimeFrom,
-        OldZtimeTo: data.OldZtimeTo,
-        Remark: data.Remark,
-        ZfacId: data.ZfacId,
-        ReasonDetail: data.ReasonDetail,
-        Status: data.Status,
-        StatusRemark: data.StatusRemark
-    }
+    //Fetch api
+    function sendToLms(data) {
+        let obj = {
+            TransId: data.TransId,
+            ZBuseve: data.ZBuseve,
+            Zdate: data.Zdate,
+            ZtimeFrom: moment(data.ZtimeFrom).format("hh:mm:ss A"),
+            ZtimeTo: moment(data.ZtimeTo).format("hh:mm:ss A"),
+            Zflag: data.Zflag,
+            ZroomId: data.ZroomId,
+            OldZroomId: data.OldZroomId,
+            Zyear: data.Zyear,
+            ZOrg: data.ZOrg,
+            ZPrgstd: data.ZPrgstd,
+            ZSess: data.ZSess,
+            ZModule: data.ZModule,
+            ZEvetyp: data.ZEvetyp,
+            ZfacultyId: data.ZfacultyId,
+            OldZfacultyId: data.OldZfacultyId,
+            ReasonId: data.ReasonId,
+            OldZdate: data.OldZdate,
+            OldZtimeFrom: data.OldZtimeFrom,
+            OldZtimeTo: data.OldZtimeTo,
+            Remark: data.Remark,
+            ZfacId: data.ZfacId,
+            ReasonDetail: data.ReasonDetail,
+            Status: data.Status,
+            StatusRemark: data.StatusRemark
+        }
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>> SENDING DATA TO LMS <<<<<<<<<<<<<<<<<<<<<<<')
-    axios.post('https://uat-portal.svkm.ac.in:8080/usermgmtcrud/sendCancledLecture', {
-            data: obj
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                "Access-Control-Allow-Origin": "*",
-            }
-        })
-        .then(function (response) {
-            console.log(response.data);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
-}
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>> SENDING DATA TO LMS <<<<<<<<<<<<<<<<<<<<<<<')
+        axios.post('https://uat-portal.svkm.ac.in:8080/usermgmtcrud/sendCancledLecture', {
+                data: obj
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Access-Control-Allow-Origin": "*",
+                }
+            })
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
 
 }

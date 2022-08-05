@@ -11,7 +11,7 @@ const soap = require("soap");
 
       let soapClient = await new Promise(resolve => {
         soap.createClient(wsdlUrl, async function (err, soapClient) {
-          resolve(soapClient);
+          resolve(soapClient); 
         })
       }).catch(e => console.log("Error>>> ", e))  
 
@@ -33,7 +33,7 @@ const soap = require("soap");
             console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<', result)
 
             let sapResult = await result.EtResoAvaiInfo
-
+        
             if (!sapResult) {
                 sapResult = [];
             } else {
@@ -45,5 +45,5 @@ const soap = require("soap");
 
     console.log('sapResult>>> ', sapResult)
 
-})();
+})(); 
 

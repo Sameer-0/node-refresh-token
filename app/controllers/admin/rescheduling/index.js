@@ -13,6 +13,7 @@ module.exports = {
   //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
+    console.log('user::>>', res.locals.userId)
     Promise.all([SessionCalendar.fetchSessionStartEnd(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug), SlotIntervalTimings.fetchAll(1000)]).then(result => {
       res.render('admin/rescheduling/index', {
         dateRange: result[0].recordset[0],
@@ -24,8 +25,11 @@ module.exports = {
         dayList: JSON.stringify(result[6].recordset), 
         pageCount: result[7].recordset[0].count,
         slotIntervalTiming: JSON.stringify(result[8].recordset),
+        slotIntervalTimingJson: result[8].recordset,
         breadcrumbs: req.breadcrumbs,
-        Url: req.originalUrl
+        Url: req.originalUrl,
+        slug: slug,
+        userId: res.locals.userId
       })
     }).catch(error => {
       console.log('ERROR:::::::::::::::::>>>>',error)
