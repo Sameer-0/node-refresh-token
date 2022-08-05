@@ -14,7 +14,7 @@ router.post('/student/day-wise-lectures', corsAccess, controller.studentDayWiseL
 
 router.post('/division/fetch-all', corsAccess, controller.fetchAllDivisions)
 //11-01-2021
-router.get('/date/current-session', controller.getHoliday);
+router.post('/date/current-session', controller.getHoliday);
 //CORES INABLE
 router.post('/faculty/fetch-all-lectures', corsAccess, controller.getAllFacultyLectures);
 router.post('/faculty/fetch-all-lectures-date-wise', corsAccess, controller.getAllFacultyLecturesDateWise);
