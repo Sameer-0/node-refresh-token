@@ -1,5 +1,3 @@
-const soap = require('soap');
-const path = require('path');
 require('dotenv').config()
 const TimeTable = require('../../../models/TimeTable');
 const isJsonString = require('../../../utils/util')
@@ -25,6 +23,7 @@ module.exports.respond = async socket => {
             socket.broadcast.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'allocate', positionIndex:data.positionIndex})
             //SHOW CHANGES FOR CURRENT USER ONLY
             socket.emit('schedule-event-response', {data: JSON.parse(result.output.output_json), actionType:'allocate', positionIndex:data.positionIndex})
+            
             }).catch(error => {
                 console.log("ERROR>>>>>>> ", error.originalError.info.message)
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
@@ -114,50 +113,4 @@ module.exports.respond = async socket => {
             }
         })
     })
-
-
-
-    //PENDING EVENTS
-    // socket.on('pending-event-request', async function (slug) {
-    //     console.log('pending-event-request::::::::')
-    //     TimeTable.getPendingEvents(slug).then(result => {
-    //         console.log('Pending event list:::', result)
-    //         socket.emit('pending-event-response', result)
-    //     }).catch(error => {
-    //         console.log("ERROR>>>>>>> ", error)
-    //         if (isJsonString.isJsonString(error.originalError.info.message)) {
-    //             socket.emit('pending-event-response', JSON.parse(error.originalError.info.message))
-    //         } else {
-    //             socket.emit('pending-event-response', JSON.parse({
-    //                 status: 500,
-    //                 description: error.originalError.info.message,
-    //                 data: []
-    //             }))
-    //         }
-    //     })
-    // })
-
-    //Swap Event
-    // socket.on('swap-events-request', async function (slug, userId, inputJSON) {
-    //     console.log('swap-events-request::::::::')
-
-    //     let object = {
-    //         swap_events: JSON.parse(inputJSON)
-    //     }
-    //     TimeTable.swapEvents(slug, userId, object).then(result => {
-    //         console.log('result::::::::', result)
-    //         socket.emit('swap-events-response', JSON.parse(result.output.output_json))
-    //     }).catch(error => {
-    //         console.log("ERROR>>>>>>> ", error)
-    //         if (isJsonString.isJsonString(error.originalError.info.message)) {
-    //             socket.emit('swap-events-response', JSON.parse(error.originalError.info.message))
-    //         } else {
-    //             socket.emit('swap-events-response', JSON.parse({
-    //                 status: 500,
-    //                 description: error.originalError.info.message,
-    //                 data: []
-    //             }))
-    //         }
-    //     })
-    // })
 }

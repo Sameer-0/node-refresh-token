@@ -215,7 +215,7 @@ module.exports = class TimeTable {
                 .execute(`[${slug}].sp_drop_event`);
         })
     }
-
+ 
     static scheduleEvent(slug, userId, inputJSON) {
 
         return poolConnection.then(pool => {
