@@ -315,45 +315,71 @@
             </div>
 
             <div id="extra-regular-wrapper" class="d-none">
-              <div class="mb-3">
-                <label>Select Date: <strong class="text-danger">*</strong></label>
-                <input type="date" min="" max="<%- dateRange.maxDate %>" id="schedule-to-date" class="form-control rounded-0 empty-filter"/>
+
+              <div class="extra-class-items d-none">
+                <div class="inputGroup extra-lecture-type-radio">
+                  <input type="radio" id="new-extra-lecture" name="extra-type" value="nel">
+                  <label class="custom-control-label cursor-pointer" for="new-extra-lecture">
+                    New Extra Lecture
+                  </label>
+                </div>
+
+                <div class="inputGroup extra-lecture-type-radio">
+                  <input type="radio" id="extra-against-cancelled" name="extra-type" value="eac">
+                  <label class="custom-control-label cursor-pointer" for="extra-against-cancelled">
+                    Extra Lecture Against Cancelled Lecture
+                  </label>
+                </div>
+
+                <div class="mb-3 extra-against-cancelled-lecture d-none">
+                  <label>Select Cancelled Lecture: <strong class="text-danger">*</strong></label>
+                  <select id="select-cancelled-lecture" class="form-control empty-filter" disabled>
+                    
+                  </select>
+                </div>
               </div>
 
-              <div class="mb-3">
-                <label>Select Start Time: <strong class="text-danger">*</strong></label>
-                <select id="select-schedule-start-time" class="form-control empty-filter" disabled>
-                  <option disabled selected value>--Select Time--</option>
-                  <% for(let time of slotIntervalTimingJson){%>
-                  <option value="<%-time.id %>"><%-time.start_time %></option>
-                  <%}%>
-                </select>
-              </div>
+              <div class="extra-regular-filter">
+                <div class="mb-3">
+                  <label>Select Date: <strong class="text-danger">*</strong></label>
+                  <input type="date" min="" max="<%- dateRange.maxDate %>" id="schedule-to-date" class="form-control rounded-0 empty-filter"/>
+                </div>
 
-              <div class="mb-3">
-                <label>Select End Time: <strong class="text-danger">*</strong></label>
-                <select id="select-schedule-end-time" class="form-control empty-filter" disabled>
-                  <option disabled selected value>--Select End Time--</option>
-                </select>
-              </div>
+                <div class="mb-3">
+                  <label>Select Start Time: <strong class="text-danger">*</strong></label>
+                  <select id="select-schedule-start-time" class="form-control empty-filter" disabled>
+                    <option disabled selected value>--Select Time--</option>
+                    <% for(let time of slotIntervalTimingJson){%>
+                    <option value="<%-time.id %>"><%-time.start_time %></option>
+                    <%}%>
+                  </select>
+                </div>
 
-              <div class="mb-3">
-                <label>Select Room: <strong class="text-danger">*</strong></label>
-                <select id="select-schedule-to-room" class="form-control empty-filter" disabled>
-                  <option disabled selected value>--Select Room--</option>
-                </select>
-              </div>
+                <div class="mb-3">
+                  <label>Select End Time: <strong class="text-danger">*</strong></label>
+                  <select id="select-schedule-end-time" class="form-control empty-filter" disabled>
+                    <option disabled selected value>--Select End Time--</option>
+                  </select>
+                </div>
 
-              <div class="mb-3">
-                <label>Faculty: <strong class="text-danger">*</strong></label>
-                <select id="select-schedule-to-faculty" class="form-control empty-filter" disabled>
-                  <option disabled selected value>--Select Faculty--</option>
-                </select>
-              </div>
+                <div class="mb-3">
+                  <label>Select Room: <strong class="text-danger">*</strong></label>
+                  <select id="select-schedule-to-room" class="form-control empty-filter" disabled>
+                    <option disabled selected value>--Select Room--</option>
+                  </select>
+                </div>
 
-              <div class="mb-3">
-                <button class="btn btn-md btn-dark rounded-0" id="schedule-event">Schedule</button>
-              </div>
+                <div class="mb-3">
+                  <label>Faculty: <strong class="text-danger">*</strong></label>
+                  <select id="select-schedule-to-faculty" class="form-control empty-filter" disabled>
+                    <option disabled selected value>--Select Faculty--</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <button class="btn btn-md btn-dark rounded-0" id="schedule-event">Schedule</button>
+                </div>
+            </div>
             </div>
 
             <div id="replace-faculty-for-all-events-wrapper" class="d-none">
@@ -435,8 +461,9 @@
       $(".select2").select2()
 
       //SOCKET IO
-      let socketRoom = `<%- locals.username %>`
-      console.log('socketRoom==========>>', socketRoom)
+      let socketUser = `<%- userId %>`
+      let orgId = `<%- orgId%>`
+      console.log('socketRoom==========>>', socketUser)
 
       let socket = io();
       socket.on('connect', () => {
@@ -490,21 +517,46 @@
         $('#reschReason').val('');
         $('.event-list-table-container').html('');
         $('#event-list-table-card').addClass('d-none');
+        $('input[name="cancel-type"]').prop('checked', false)
+        $('input[name="extra-type"]').prop('checked', false)
+        $('#select-cancelled-lecture').html('')
 
         rescheduleObj.reschFlag = $(this).attr('data-resch-flag');
 
         if (rescheduleObj.reschFlag == "C" || rescheduleObj.reschFlag == "Z") {
           $('#cancel-wrapper').removeClass('d-none');
-        } else if (rescheduleObj.reschFlag == "M" || rescheduleObj.reschFlag == "R") {
+        } 
+        else if (rescheduleObj.reschFlag == "M" || rescheduleObj.reschFlag == "R") {
           $('#modify-reschedule-wrapper').removeClass('d-none');
-        } else if(rescheduleObj.reschFlag == "E" || rescheduleObj.reschFlag == "Y") {
+        } 
+        else if (rescheduleObj.reschFlag == "E") {
           $('#extra-regular-wrapper').removeClass('d-none');
-        } else if(rescheduleObj.reschFlag == "RP"){
+          $('.extra-class-items').removeClass('d-none');
+          $('.extra-regular-filter').addClass('d-none');
+          $('.extra-against-cancelled-lecture').addClass('d-none');
+        }
+        else if (rescheduleObj.reschFlag == "Y"){
+          $('#extra-regular-wrapper').removeClass('d-none');
+          $('.extra-regular-filter').removeClass('d-none');
+          $('.extra-class-items').addClass('d-none');
+
+        } 
+        else if (rescheduleObj.reschFlag == "RP"){
           $('#replace-faculty-for-all-events-wrapper').removeClass('d-none');
         } 
 
-        console.log('reshobj::>>', rescheduleObj)
+        // console.log('reshobj::>>', rescheduleObj)
 
+      })
+
+      $('#extra-against-cancelled').on('change', function() {
+        $('.extra-against-cancelled-lecture').removeClass('d-none');
+        $('.extra-regular-filter').removeClass('d-none');
+      })
+
+      $('#new-extra-lecture').on('change', function() {
+        $('.extra-against-cancelled-lecture').addClass('d-none');
+        $('.extra-regular-filter').removeClass('d-none');
       })
 
       $('#reschReason').on('change', function() {
@@ -533,6 +585,39 @@
 
       $('#DivisionFilter').on('change', function() {
         rescheduleObj.divisionLid = $(this).val();
+        if($('#extra-against-cancelled:checked').length > 0){
+          let ApiObj = {
+              type: 'POST',
+              url: '/admin/rescheduling/fetch-cancelled-lecture',
+              data: {
+                programLid: rescheduleObj.programLid,
+                divisionLid: rescheduleObj.divisionLid,
+                moduleLid: rescheduleObj.moduleLid,
+                acadSessionLid: rescheduleObj.acadSessionLid,
+              },
+              dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(data => {
+              console.log('canclled lecture data', data.lectureList)
+              // ajaxTable(data.lectureList, data.actionType, replaceToFacultyObj);
+              let cancelledLectureOption = ``;
+              if(data.lectureList.length > 0){
+                for(let lecture of data.lectureList){
+                  cancelledLectureOption += `<option value="${lecture.id}" data-timesheet-lid=${lecture.id} data-sap-event-id="${lecture.sap_event_id}">Date="${lecture.date_str}" || Faculty="${lecture.faculty_name}(${lecture.faculty_id}" || Start Time="${lecture.start_time}" -
+                  End Time="${lecture.end_time}"</option>`
+                }
+              }
+              else{
+                cancelledLectureOption += '<option value="">No Cancelled Lecture Found</option>'
+              }
+              $('#select-cancelled-lecture').html(cancelledLectureOption);
+              $('#select-cancelled-lecture').removeAttr('disabled');
+            }).catch(error => {
+              console.log('cancelled lecture fetch error', error);
+            })
+        }
+
       })
 
       $('input[name="cancel-type"]').on('change', function() {
@@ -1566,11 +1651,14 @@
             rescheduleObj.eventsJson = timeSheetLidJson;
 
             console.log(">>>>>>>>>>>>>>> CANCELLING EVENTS", rescheduleObj)
+
             socket.emit('cancelEvents', {
               slugName: "<%- slug %>",
               transJson: JSON.stringify(rescheduleObj),
-              userId: "<%- userId%>"
+              userId: "<%- userId%>",
+              orgId : orgId
             })
+            $(".modal-loader").removeClass('d-none')
         }
 
       })
@@ -1602,7 +1690,7 @@
           console.log('json obj for Modify', rescheduleObj)
 
           //   $('.loaderBody').removeClass('d-none')
-          //   // socket.emit('bulkModifyEventedSlot', {
+          //   // socket.emit('modifyEvents', {
           //   //   transJson: JSON.stringify(resJson),
           //   //   slugName: "<%- slug %>",
           //   //   resObj: rescheduleObj
@@ -1876,6 +1964,49 @@
       }
       // ---------------------------------------------RESPONSE FROM SOCKET---------------------------------------------------//
 
+      socket.on('cancelEventResponse', async function(data) {
+        console.log('cancelEventResponse')
+        let updatedEvents = JSON.parse(data.updatedLectureList);
+        if(socketUser == data.socketUser){
+          for (let status of updatedEvents.data) {
+            if(status.trans_status == 'succcess'){
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .is-cancel`).attr('disabled', 'disabled')
+              }
+              else{
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+              }
+            }
+        }
+
+        $(".modal-loader").addClass('d-none')
+      })
+
+      socket.on('modifyEventResponse', async function(data) {
+        console.log('cancelEventResponse')
+        let updatedEvents = JSON.parse(data.updatedLectureList);
+        if(socketUser == data.socketUser){
+          for (let status of updatedEvents.data) {
+            if(status.trans_status == 'succcess'){
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .is-cancel`).attr('disabled', 'disabled')
+              }
+              else{
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+              }
+            }
+        }
+
+        $(".modal-loader").addClass('d-none')
+      })
+
+
+
+
       socket.on("facultyRoomAvlList", function(facultyData, roomData) {
 
        
@@ -1988,7 +2119,6 @@
         }
 
       })
-
 
       socket.on("droppedEventedSlot", async function(data) {
         console.log('<<<<<HELLO>>>>>>')
@@ -2174,7 +2304,6 @@
 
       })
 
-
       function ajaxTable(lectureList, actionType, replaceToFacultyObj) {
 
         let tableHtml= ``;
@@ -2192,6 +2321,8 @@
   <th>Date</th>
   <th>Time</th>
   <th>Room</th>
+  <th>Status</th>
+  <th>Remark</th>
   <th>Cancel <input id="cancel-all" type="checkbox" checked="checked" />
     <label>All</label>
   </th>
@@ -2209,6 +2340,8 @@
   <td class="date" data-day-lid="${lecture.day_lid}">${lecture.date_str}</td>
   <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
   <td class="room" data-room-lid="${lecture.room_lid}">${lecture.room_no}</td>
+  <td class="status"><i class="fa-solid fa-circle-pause"></i></td>
+  <td class="remark"><i class="fa-solid fa-circle-pause"></i></td>
   <td>
     <input type='checkbox' class='is-cancel' style="width: 25px; height: 25px;" checked="checked"/>
   </td>

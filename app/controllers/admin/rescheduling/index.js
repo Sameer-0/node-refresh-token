@@ -13,7 +13,7 @@ module.exports = {
   //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
-    console.log('user::>>', res.locals.userId)
+    console.log('user::>>', res.locals)
     Promise.all([SessionCalendar.fetchSessionStartEnd(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug), SlotIntervalTimings.fetchAll(1000)]).then(result => {
       res.render('admin/rescheduling/index', {
         dateRange: result[0].recordset[0],
@@ -29,7 +29,8 @@ module.exports = {
         breadcrumbs: req.breadcrumbs,
         Url: req.originalUrl,
         slug: slug,
-        userId: res.locals.userId
+        userId: res.locals.userId,
+        orgId: res.locals.organizationIdSap
       })
     }).catch(error => {
       console.log('ERROR:::::::::::::::::>>>>',error)
@@ -521,6 +522,21 @@ module.exports = {
         actionType: actionType,
         lectureList: result[0].recordset,
         dataLength: result[1].recordset[0].count
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
+  getCancelledLecture: async (req, res, next) => {
+    console.log('>>>>>>>fetchCancelledLecture<<<<<<<<<')
+
+    Simulation.getCancelledLecture(res.locals.slug, req.body)
+    .then(result => {
+      console.log('cancleed result', result)
+      res.json({
+        status: 200,
+        lectureList: result.recordset,
       })
     }).catch(err => {
       console.log(err)

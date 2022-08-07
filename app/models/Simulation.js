@@ -154,6 +154,19 @@ module.exports = class Simulation {
         })
     }
 
+    static getCancelledLecture(slug, body) {
+        console.log('bosy::>>', body)
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('programLid', sql.Int, body.programLid)
+                .input('divisionLid', sql.Int, body.divisionLid)
+                .input('moduleLid', sql.Int, body.moduleLid)
+                .input('acadSessionLid', sql.Int, body.acadSessionLid)
+                .query(`SELECT * FROM [${slug}].timesheet where program_lid = @programLid AND acad_session_lid = @acadSessionLid AND module_lid = @moduleLid AND division_lid = @divisionLid and active = 0`)
+        })
+    }
+
     static facultyByModuleProgramSapDivisionId(slug, body) {
         console.log('facilty_lis:::', body)
         return poolConnection.then(pool => {
