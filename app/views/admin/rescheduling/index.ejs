@@ -564,6 +564,8 @@
 
         if (rescheduleObj.reschFlag == "C" && rescheduleObj.reasonId == '12') {
           rescheduleObj.reschFlag = "Z"
+        } else if (rescheduleObj.reschFlag == "C" && rescheduleObj.reasonId != '12') {
+          rescheduleObj.reschFlag = "C"
         }
       })
 
@@ -1689,12 +1691,13 @@
 
           console.log('json obj for Modify', rescheduleObj)
 
-          //   $('.loaderBody').removeClass('d-none')
-          //   // socket.emit('modifyEvents', {
-          //   //   transJson: JSON.stringify(resJson),
-          //   //   slugName: "<%- slug %>",
-          //   //   resObj: rescheduleObj
-          //   // })
+            $('.loaderBody').removeClass('d-none')
+            socket.emit('modifyEvents', {
+              transJson: JSON.stringify(rescheduleObj),
+              slugName: "<%- slug %>",
+              userId: "<%- userId%>",
+              orgId : orgId
+            })
 
           // }
         }

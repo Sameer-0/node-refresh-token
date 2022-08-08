@@ -391,7 +391,7 @@ module.exports.respond = async socket => {
         let socketUser = data.userId;
         // console.log('socketUser>>>>> ', socketUser)
 
-        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220401_2.wsdl");
+        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220808.wsdl");
 
         console.log('wsdlUrl', wsdlUrl)
         let soapClient = await new Promise((resolve, reject) => {
@@ -407,26 +407,24 @@ module.exports.respond = async socket => {
 
         console.log('resJSON====>> ', resObj)
         console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
-
+        
         let result = await db.request()
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
             .input('reason_id', sql.Int, resObj.reasonId)
-            // .input('reasonDetail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+            .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
             .input('res_stage', sql.Int, 1)
             .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
             .input('last_modified_by', sql.Int, data.userId)
             .output('output_flag', sql.Bit)
             .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${data.slugName}].[sp_cancel_rescheduling]`)
-
+            .execute(`[${data.slugName}].[sp_modify_rescheduling]`)
 
         let transLectureList = JSON.parse(result.output.output_json).data
-
 
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
         console.log("transLectureList>> ", transLectureList)
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
-
+      
         //CREATE SAP OBJ JSON
         let rescheduleItems = [];
 
@@ -441,7 +439,7 @@ module.exports.respond = async socket => {
                 ZroomId: lecture.ZroomId,
                 OldZroomId: "",
                 Zyear: lecture.Zyear,
-                ZOrg: resObj.schoolId,
+                ZOrg: data.orgId,
                 ZPrgstd: lecture.ZPrgstd,
                 ZSess: lecture.ZSess,
                 ZModule: lecture.ZModule,
@@ -480,7 +478,7 @@ module.exports.respond = async socket => {
         console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
         console.log(sapResult)
         console.log(JSON.stringify(sapResult))
-
+return false
 
         if (sapResult.length > 0) {
 
@@ -492,16 +490,16 @@ module.exports.respond = async socket => {
                 .input('last_modified_by', sql.Int, data.userId)
                 .output('output_flag', sql.Bit)
                 .output('output_json', sql.NVarChar(sql.MAX))
-                .execute('[asmsoc-mum].[sp_cancel_rescheduling]');
+                .execute('[asmsoc-mum].[sp_modify_rescheduling]');
 
             console.log(updatedTimetableData)
 
-            global.io.emit("modifyEventResponse", {
-                socketUser: socketUser,
-                updatedLectureList: updatedTimetableData.output.output_json,
-                slugName: 'asmsoc-mum',
-                status: 200,
-            })
+            // global.io.emit("modifyEventResponse", {
+            //     socketUser: socketUser,
+            //     updatedLectureList: updatedTimetableData.output.output_json,
+            //     slugName: 'asmsoc-mum',
+            //     status: 200,
+            // })
         } else {
             // global.io.emit("bulkCancelled", {
             //     socketUser: socketUser,
