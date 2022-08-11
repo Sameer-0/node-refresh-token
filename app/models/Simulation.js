@@ -26,7 +26,7 @@ module.exports = class Simulation {
 
     static slotData(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select len(sit.slot_name),  sit.slot_name, sit.start_time as starttime, _sit.end_time as  endtime from [${slug}].school_timings st 
+            return pool.request().query(`select len(sit.slot_name),  sit.slot_name, sit.start_time as starttime, _sit.end_time as endtime from [${slug}].school_timings st 
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id = st.slot_start_lid
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  st.slot_end_lid 
             ORDER BY len(sit.slot_name), sit.slot_name`)
@@ -97,7 +97,7 @@ module.exports = class Simulation {
     static LectureByDateRange(slug, body) {
         console.log('body:::::::::',body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND sap_flag <> 'E'  ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`;
+            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND sap_flag <> 'E'  ORDER BY id ASC`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
@@ -110,7 +110,6 @@ module.exports = class Simulation {
                 .input('division_lid', sql.Int, body.division_lid)
                 .input('module_lid', sql.Int, body.module_lid)
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
-                .input('pageNo', sql.Int, body.pageNo)
                 .query(lecStmt)
         })
     }
@@ -152,6 +151,19 @@ module.exports = class Simulation {
                 .input('programId', sql.NVarChar(20), body.programId)
                 .input('moduleId', sql.NVarChar(20), body.moduleId)
                 .query(`SELECT facultyId, facultyName, type FROM [${slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = @programId AND programId = @moduleId`)
+        })
+    }
+
+    static getCancelledLecture(slug, body) {
+        console.log('bosy::>>', body)
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('programLid', sql.Int, body.programLid)
+                .input('divisionLid', sql.Int, body.divisionLid)
+                .input('moduleLid', sql.Int, body.moduleLid)
+                .input('acadSessionLid', sql.Int, body.acadSessionLid)
+                .query(`SELECT * FROM [${slug}].timesheet where program_lid = @programLid AND acad_session_lid = @acadSessionLid AND module_lid = @moduleLid AND division_lid = @divisionLid and active = 0`)
         })
     }
 

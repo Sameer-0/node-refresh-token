@@ -22,7 +22,7 @@ module.exports = {
                 TimeTable.getPendingEvents(res.locals.slug)
             ])
             .then(result => {
-                console.log('pending event list list::::', result[5].recordset)
+                //console.log('pending event list list::::', result[5].recordset)
                 res.render('admin/timeTableSimulation/timetable', {
                     programList: result[0].recordset,
                     programListJson: JSON.stringify(result[0].recordset),

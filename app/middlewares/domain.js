@@ -23,10 +23,10 @@ module.exports = {
             }
         }
 
-        console.log("req.url =========>", req.url);
+        //console.log("req.url =========>", req.url);
         if (isUrl) {
             let subDomain = req.headers.host.split(".")[0];
-            console.log("subdomain =========>", subDomain);
+            //console.log("subdomain =========>", subDomain);
             if (subDomain === 'timetable')
                 return next()
             poolConnection
@@ -49,7 +49,7 @@ module.exports = {
                     res.locals.organizationIdSap = result.recordset[0].org_id
                     res.locals.acadmicYear = process.env.ACADEMIC_YEAR
                     res.locals.page_filter = JSON.parse(process.env.PAGE_FILTER)
-                    console.log('LOCALS:::::::', res.locals)
+                    //console.log('LOCALS:::::::', res.locals)
                     next();
                 })
         } else {

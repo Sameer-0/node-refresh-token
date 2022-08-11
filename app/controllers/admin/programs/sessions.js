@@ -14,7 +14,7 @@ const excel = require("exceljs");
 module.exports = {
     getPage: (req, res) => {
         Promise.all([ProgramSessions.fetchAll(10, res.locals.slug), ProgramSessions.getCount(res.locals.slug)]).then(result => {
-            console.log(result.recordset)
+           // console.log(result.recordset)
             res.render('admin/programs/sessions', {
                 programSessions: result[0].recordset,
                 pageCount: result[1].recordset[0].count,
@@ -84,7 +84,7 @@ module.exports = {
     },
 
     refresh: (req, res) => {
-        console.log('Refresh Program Session::::::::>>')
+        //console.log('Refresh Program Session::::::::>>')
         ProgramSessions.refresh(res.locals.slug, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
@@ -102,7 +102,7 @@ module.exports = {
     getSessions: (req, res, next) => {
         ProgramSessions.getSessionForProgram(res.locals.slug, req.body.programLid)
         .then( result => {
-            console.log('result', result)
+            //console.log('result', result)
             res.status(200).json(result.recordset)
       
         })
@@ -112,11 +112,11 @@ module.exports = {
     },
 
     getSessionsByProgram: (req, res) => {
-        console.log('getSessionsByProgram::::::::>>', req.body)
+       // console.log('getSessionsByProgram::::::::>>', req.body)
 
         ProgramSessions.getLockedSessionByProgram(res.locals.slug, req.body.programLid)
         .then(result => {
-            console.log(result)
+           // console.log(result)
             res.status(200).json(result.recordset)
         })
         .catch(error => {
@@ -135,7 +135,7 @@ module.exports = {
     },
 
     getUnlockedSessionsByProgram: (req, res) => {
-        console.log('getSessionsByProgram::::::::>>', req.body)
+        //console.log('getSessionsByProgram::::::::>>', req.body)
 
         ProgramSessions.getUnlockedSessionByProgram(res.locals.slug, req.body.programLid)
         .then(result => {
@@ -170,7 +170,7 @@ module.exports = {
         ];
 
         ProgramSessions.downloadExcel(res.locals.slug).then(result => {
-            console.log('result', result.recordset)
+            //console.log('result', result.recordset)
             // Add Array Rows
             worksheet.addRows(result.recordset);
             // res is a Stream object
