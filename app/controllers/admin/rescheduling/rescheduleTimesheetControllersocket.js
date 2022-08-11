@@ -2488,7 +2488,7 @@ module.exports.respond = async socket => {
 
                 console.log('procRes>>> ', procRes)
 
-                socket.emit('create-sap-events', {
+                socket.emit('res-create-sap-events', {
                     status: 200,
                     message: 'Event creation completed.'
                 });
