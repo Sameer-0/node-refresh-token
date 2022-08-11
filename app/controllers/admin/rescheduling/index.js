@@ -5,13 +5,16 @@ const RescheduleFlags = require('../../../models/RescheduleFlags')
 const AcademicCalender = require('../../../models/AcademicCalender')
 const Simulation = require('../../../models/Simulation')
 const Programs = require('../../../models/Programs')
+const SessionCalendar = require('../../../models/SessionCalendar')
+const SlotIntervalTimings = require('../../../models/SlotIntervalTimings')
 
-module.exports = {
+module.exports = { 
 
   //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
-    Promise.all([Simulation.dateRange(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug)]).then(result => {
+    console.log('user::>>', res.locals)
+    Promise.all([SessionCalendar.fetchSessionStartEnd(slug), Simulation.semesterDates(slug), CancellationReasons.fetchAll(50), Simulation.rescheduleFlag(slug), Simulation.slotData(slug), Programs.fetchAll(100, slug), Days.fetchActiveDay(res.locals.slug), Simulation.facultyLectureCount(res.locals.slug), SlotIntervalTimings.fetchAll(1000)]).then(result => {
       res.render('admin/rescheduling/index', {
         dateRange: result[0].recordset[0],
         semesterDates: result[1].recordset,
@@ -19,11 +22,18 @@ module.exports = {
         rescheduleFlag: result[3].recordset,
         slotData: result[4].recordset,
         programList: result[5].recordset,
-        dayList: result[6].recordset,
+        dayList: JSON.stringify(result[6].recordset), 
         pageCount: result[7].recordset[0].count,
+        slotIntervalTiming: JSON.stringify(result[8].recordset),
+        slotIntervalTimingJson: result[8].recordset,
         breadcrumbs: req.breadcrumbs,
-        Url: req.originalUrl
+        Url: req.originalUrl,
+        slug: slug,
+        userId: res.locals.userId,
+        orgId: res.locals.organizationIdSap
       })
+    }).catch(error => {
+      console.log('ERROR:::::::::::::::::>>>>',error)
     })
   },
 
@@ -451,18 +461,6 @@ module.exports = {
     })
   },
 
-  getExtraClassFaculties: async (req, res, next) => {
-    console.log('>>>>>>>>EXTRA CLASS FACULTIES<<<<<<<<<')
-    Promise.all([Simulation.extraClassFaculties(res.locals.slug, req.body)]).then(result => {
-      console.log('After promise>>>>>>>>>>>>>>>>>>')
-      console.log(result)
-      res.json({
-        status: 200,
-        facultyList: result[0].recordset
-      })
-    })
-
-  },
 
 
   getNewExtraLectures: async (req, res, next) => {
@@ -474,6 +472,23 @@ module.exports = {
       res.json({
         status: 200,
         lectureList: result.recordset
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
+  //REGULAR AND EXTRA LECTURES
+  getNewRegularLectures: async (req, res, next) => {
+    console.log('>>>>>>>getNewRegularLectures<<<<<<<<<', req.body)
+    console.log(req.body)
+    Promise.all([Simulation.newRegularLecture(res.locals.slug, req.body), 
+      Simulation.newExtraLecture(res.locals.slug, req.body)]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      res.json({
+        status: 200,
+        regularlectureList: result[0].recordset,
+        extrlectureList: result[1].recordset
       })
     }).catch(err => {
       console.log(err)
@@ -513,12 +528,28 @@ module.exports = {
     })
   },
 
-  fetchAvailableRoomAndFaculty: async (req, res, next) => {
-    console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<')
+  getCancelledLecture: async (req, res, next) => {
+    console.log('>>>>>>>fetchCancelledLecture<<<<<<<<<')
 
-      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body.dayLid, req.body.startTimelid, req.body.endTimelid),
-      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.dayLid, req.body.roomLid,  req.body.startTimelid, req.body.endTimelid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
+    Simulation.getCancelledLecture(res.locals.slug, req.body)
+    .then(result => {
+      console.log('cancleed result', result)
+      res.json({
+        status: 200,
+        lectureList: result.recordset,
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
+  fetchAvailableRoomAndFaculty: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableRoomAndFaculty<<<<<<<<<', req.body)
+
+      Promise.all([Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body),
+      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid, req.body.startTimeLid, req.body.endTimeLid, req.body.programLid, req.body.sessionLid, req.body.moduleLid)
     ]).then(result => {
+      console.log('room availability', result[0].recordset)
       res.json({
         status: 200,
         availableRoom: result[0].recordset,
@@ -560,27 +591,27 @@ module.exports = {
     console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
     console.log(req.body)
     Promise.all([
-      Simulation.facultyByModuleProgramSapDivisionId(res.locals.slug, req.body)
+      Simulation.facultyByModuleProgramSapDivisionId(res.locals.slug, req.body),
+      Simulation.availableFacultyForReplace(res.locals.slug, req.body)
     ]).then(result => {
       console.log('After promise>>>>>>>>>>>>>>>>>>')
       console.log(result[0].recordset)
       res.json({
         status: 200,
         facultyList: result[0].recordset,
-    
+        availableFacultyList: result[1].recordset,
       })
     })
   },
 
   findByProgramId: (req, res, next) => {
     console.log('>>>>>>>>>>>>>>findByProgramId<<<<<<<<<<<<', req.body.program_lid)
-    Promise.all([Simulation.findByFacultyTimeTableByProgramId(req.body.program_lid, res.locals.slug), Simulation.semesterByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
-      // console.log(result[0].recordset)
+    Promise.all([Simulation.semesterByProgramId(req.body.program_lid, res.locals.slug)]).then(result => {
+       console.log(result[0].recordset)
       res.status(200).json({
         status: 200,
         message: "success",
-        lectureList: result[0].recordset,
-        sessionList: result[1].recordset
+        sessionList: result[0].recordset
       })
     }).catch(error => {
       console.log(error)
@@ -644,5 +675,63 @@ module.exports = {
         message: "Something went wrong",
       })
     })
-  }
+  },
+
+  getFacultiesForExtraClass: async (req, res, next) => {
+    console.log('>>>>>>>getReplacingFaculties<<<<<<<<<')
+    console.log(req.body)
+    Promise.all([
+      Simulation.getFacultiesForExtraClass(res.locals.slug, req.body)
+    ]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log(result[0].recordset)
+      res.json({
+        status: 200,
+        facultyList: result[0].recordset,
+    
+      })
+    })
+  },
+
+  getExtraClassFaculties: async (req, res, next) => {
+    console.log('>>>>>>>>EXTRA CLASS FACULTIES<<<<<<<<<')
+    Promise.all([Simulation.extraClassFaculties(res.locals.slug, req.body)]).then(result => {
+      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log(result)
+      res.json({
+        status: 200,
+        facultyList: result[0].recordset
+      })
+    })
+  },
+
+  fetchAvailableRoomAndFacultyForExtraClass: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableRoomAndFacultyForExtraClass<<<<<<<<<')
+    console.log('req::::::::::::::>>>>>>>>>>>>', req.body)
+     Simulation.getAvailableRoomForTimeRange(res.locals.slug, req.body).then(result => {
+      console.log('result[1].recordset:::::::::::::::',result.recordset)
+      res.json({
+        status: 200,
+        availableRoom: result.recordset
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
+  fetchAvailableFacultyForExtraClass: async (req, res, next) => {
+    console.log('>>>>>>>fetchAvailableFacultyForExtraClass<<<<<<<<<')
+    console.log('req::::::::::::::>>>>>>>>>>>>', req.body)
+      Simulation.getAvailableFacultyForTimeRange(res.locals.slug, req.body.date, req.body.roomLid, req.body.startTimeLid, req.body.endTimeLid, req.body.program_lid, req.body.acad_session_lid, req.body.module_lid)
+    .then(result => {
+      console.log('result.recordset:::::::::::::::', result)
+      res.json({
+        status: 200,
+        availableFaculty: result.recordset,
+      })
+    }).catch(err => {
+      console.log(err)
+    })
+  },
+
 }

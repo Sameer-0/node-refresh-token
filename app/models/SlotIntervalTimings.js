@@ -6,7 +6,7 @@ const {
 
 module.exports = class SlotIntervalTimings {
     
-    static fetchAll(rowcount) {
+    static fetchAll(rowcount) { 
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} id, CONVERT(NVARCHAR, start_time, 0) AS start_time, CONVERT(NVARCHAR,end_time,0) AS end_time, slot_name FROM [dbo].slot_interval_timings ORDER BY id ASC`)
         })

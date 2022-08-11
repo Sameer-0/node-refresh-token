@@ -166,9 +166,9 @@
                     <label for="RoomFilter">Select Room:</label>
                     <select name="RoomFilter" id="RoomFilter" class="form-select select2">
                         <option selected disabled value>--Select Room--</option>
-                        <option value="0">Download All</option>
+                        <option value="0" data-room-mumber="0">Download All</option>
                         <% for(let room_d of roomListStr){%>
-                        <option value="<%- room_d.id%>"><%-room_d.room_number%></option>
+                        <option value="<%- room_d.id%>" data-room-mumber="<%-room_d.room_number%>"><%-room_d.room_number%></option>
                         <%}%>
                     </select>
                 </div>
@@ -270,14 +270,17 @@ $(document).ready(function(){
 
     $("#RoomFilter").on('change', function () {
         let room_lid = $(this).val(); 
+        let room_number = $("#RoomFilter option:selected").attr("data-room-mumber")
+        console.log('room_number:::::::::',room_number)
         $("#showDetails").prop('checked',false)
             console.log('API hit')
 
+            
               if(room_lid > 0){
-              $(".download-current-report").attr('data-faculty-id',room_lid)
+              $(".download-current-report").attr('data-faculty-id',room_number)
               $(".download-current-report").removeClass('disabled')
               $(".download-current-report").html('Download Current')
-              $(".download-current-report").attr('href',`/admin/mis/simulation-chart/room-wise-allocation/download/${room_lid}`)
+              $(".download-current-report").attr('href',`/admin/mis/simulation-chart/room-wise-allocation/download/${room_number}`)
 
                 let ApiObj = {
                     type: 'POST',
@@ -295,8 +298,8 @@ $(document).ready(function(){
                 })
               }else{
                 console.log('IN ELSE CONDITION::::::::')
-                $(".download-current-report").attr('data-faculty-id',room_lid)
-                $(".download-current-report").attr('href',`/admin/mis/simulation-chart/room-wise-allocation/download/${room_lid}`)
+                $(".download-current-report").attr('data-faculty-id',room_number)
+                $(".download-current-report").attr('href',`/admin/mis/simulation-chart/room-wise-allocation/download/${room_number}`)
                 $(".download-current-report").removeClass('disabled')
                 $(".download-current-report").html('Download ALL')
               }

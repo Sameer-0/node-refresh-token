@@ -6,11 +6,11 @@ const {
 
 module.exports = class Simulation {
 
-    static dateRange(slug) {
-        return poolConnection.then(pool => {
-            return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, date_str, 103)), 23) AS minDate, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, date_str, 103))), 23) AS maxDate FROM [${slug}].timesheet`)
-        })
-    }
+    // static dateRange(slug) {
+    //     return poolConnection.then(pool => {
+    //         return pool.request().query(`SELECT CONVERT(NVARCHAR, MIN(CONVERT(DATE, date_str, 103)), 23) AS start_date, CONVERT(NVARCHAR, DATEADD(DAY, 1, MAX(CONVERT(DATE, date_str, 103))), 23) AS end_date FROM [${slug}].timesheet`)
+    //     }) 
+    // } 
 
     static semesterDates(slug) {
         return poolConnection.then(pool => {
@@ -26,7 +26,7 @@ module.exports = class Simulation {
 
     static slotData(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`select len(sit.slot_name),  sit.slot_name, sit.start_time as starttime, _sit.end_time as  endtime from [${slug}].school_timings st 
+            return pool.request().query(`select len(sit.slot_name),  sit.slot_name, sit.start_time as starttime, _sit.end_time as endtime from [${slug}].school_timings st 
             INNER JOIN [dbo].slot_interval_timings sit ON sit.id = st.slot_start_lid
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  st.slot_end_lid 
             ORDER BY len(sit.slot_name), sit.slot_name`)
@@ -51,46 +51,53 @@ module.exports = class Simulation {
         })
     }
 
-    static getAvailableRoomForTimeRange(slug, dayLid, startSlot, endSlot) {
-        return poolConnection.then(pool => {
-            return pool.request()
-            .input('dayLid', sql.Int, dayLid)
-            .input('startSlot', sql.Int, startSlot)
-            .input('endSlot', sql.Int, endSlot)
-            .query(`SELECT DISTINCT eb.room_lid, r.room_number  FROM [${slug}].event_bookings  eb
-            INNER JOIN rooms r ON r.id = eb.room_lid
-            WHERE day_lid = @dayLid AND slot_lid BETWEEN @startSlot and @endSlot AND event_lid IS NULL`)
-        })
-    }
+    // static getAvailableRoomForTimeRange(slug, dayLid, startSlot, endSlot) {
+    //     return poolConnection.then(pool => {
+    //         return pool.request()
+    //         .input('dayLid', sql.Int, dayLid)
+    //         .input('startSlot', sql.Int, startSlot)
+    //         .input('endSlot', sql.Int, endSlot)
+    //         .query(`SELECT t1.room_lid, r.room_number FROM
+	// 		(SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
+	// 		NOT IN (SELECT room_lid FROM [${slug}].timesheet WHERE date_str = @date AND  start_time_lid = @startSlot AND end_time_lid = @endSlot)) t1
+	// 		INNER JOIN rooms r ON r.id = t1.room_lid`)
+    //     })
+    // }
 
-    static getAvailableFacultyForTimeRange(slug, dayLid, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) {
+    static getAvailableFacultyForTimeRange(slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid) { 
         return poolConnection.then(pool => {
+            console.log('available faculty check',slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid)
             return pool.request()
-            .input('dayLid', sql.Int, dayLid)
+            .input('date', sql.NVarChar(sql.MAX), date)
             .input('roomLid', sql.Int, roomLid)
             .input('startSlot', sql.Int, startSlot)
             .input('endSlot', sql.Int, endSlot)
             .input('programLid', sql.Int, programLid)
             .input('sessionLid', sql.Int, sessionLid)
             .input('moduleLid', sql.Int, moduleLid)
-            .query(`SELECT f.id, f.faculty_id AS facultyId, f.faculty_name AS facultyName FROM [${slug}].faculty_works fw
-            INNER JOIN [${slug}].program_sessions ps
-            ON ps.id =  fw.program_session_lid
-            INNER JOIN [${slug}].faculties f
-            ON f.id =  fw.faculty_lid
-            WHERE ps.program_lid = @programLid AND ps.session_lid = @sessionLid AND fw.module_lid = @moduleLid AND 
-            f.id NOT IN (SELECT t2.faculty_lid FROM (SELECT t1.*, fe.faculty_lid FROM 
-            (SELECT eb.event_lid, eb.day_lid, eb.room_lid, MIN(eb.slot_lid) AS start_slot, MAX(eb.slot_lid) AS end_slot FROM [${slug}].event_bookings eb
-            GROUP BY eb.event_lid, eb.day_lid, eb.room_lid) AS t1 
-            INNER JOIN [${slug}].faculty_events fe ON fe.event_lid = t1.event_lid
-            WHERE t1.start_slot = @startSlot AND t1.end_slot = @endSlot AND t1.day_lid = @dayLid AND room_lid = @roomLid) t2)`)
+            .query(`SELECT fp.faculty_lid, fp.faculty_id, fp.faculty_name, (select abbr from faculty_types where id = (select faculty_type_lid from [${slug}].faculties where id = fp.faculty_lid)) as faculty_type_abbr FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
+                INNER JOIN [${slug}].program_sessions ps
+                ON ps.id =  fw.program_session_lid
+                INNER JOIN [${slug}].faculties f
+                ON f.id =  fw.faculty_lid
+                INNER JOIN (SELECT @startSlot AS start_time_lid, @endSlot AS end_time_lid) ts
+                ON 1 = 1
+                WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
+                fp
+                LEFT JOIN
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                ON 
+                fp.faculty_id = fb.faculty_id AND
+                fp.start_time_lid = fb.start_time_lid AND
+                fp.end_time_lid = fb.end_time_lid
+                WHERE fb.faculty_id IS NULL`)
         })
     }
 
     static LectureByDateRange(slug, body) {
         console.log('body:::::::::',body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC  OFFSET (@pageNo - 1) * 50 ROWS FETCH NEXT 50 ROWS ONLY`;
+            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND sap_flag <> 'E'  ORDER BY id ASC`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
@@ -103,7 +110,6 @@ module.exports = class Simulation {
                 .input('division_lid', sql.Int, body.division_lid)
                 .input('module_lid', sql.Int, body.module_lid)
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
-                .input('pageNo', sql.Int, body.pageNo)
                 .query(lecStmt)
         })
     }
@@ -112,7 +118,7 @@ module.exports = class Simulation {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
-                .query(`SELECT COUNT(*) as count FROM [${slug}].timesheet WHERE active = 1 AND (sap_flag <> 'E' OR is_new_ec <> 1)`)
+                .query(`SELECT COUNT(*) as count FROM [${slug}].timesheet WHERE active = 1 AND sap_flag <> 'E'`)
         })
     }
 
@@ -148,10 +154,23 @@ module.exports = class Simulation {
         })
     }
 
+    static getCancelledLecture(slug, body) {
+        console.log('bosy::>>', body)
+        return poolConnection.then(pool => {
+            let request = pool.request()
+            return request
+                .input('programLid', sql.Int, body.programLid)
+                .input('divisionLid', sql.Int, body.divisionLid)
+                .input('moduleLid', sql.Int, body.moduleLid)
+                .input('acadSessionLid', sql.Int, body.acadSessionLid)
+                .query(`SELECT * FROM [${slug}].timesheet where program_lid = @programLid AND acad_session_lid = @acadSessionLid AND module_lid = @moduleLid AND division_lid = @divisionLid and active = 0`)
+        })
+    }
+
     static facultyByModuleProgramSapDivisionId(slug, body) {
         console.log('facilty_lis:::', body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND (sap_flag <> 'E' OR is_new_ec <> 1)`;
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name, faculty_type FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND sap_flag <> 'E'`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
@@ -181,7 +200,6 @@ module.exports = class Simulation {
     }
 
     static newExtraLecture(slug, body) {
-
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -190,24 +208,28 @@ module.exports = class Simulation {
                 .input('division_lid', sql.NVarChar(20), body.division_lid)
                 .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
                 .input('date_str', sql.NVarChar(20), body.date_str)
-                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E' AND is_new_ec = 1 AND is_adjusted_cancel = 0 AND
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E'  AND
                 program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid AND date_str = @date_str`)
         })
     }
 
-    static extraClassFaculties(slug, body) {
-        console.log('extraClassFaculties Body:::::::::>>>', body)
+
+
+    static newRegularLecture(slug, body) {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
-                .input('dateStr', sql.NVarChar(20), body.dateStr)
-                .input('programId', sql.NVarChar(20), body.programId)
-                .input('moduleId', sql.NVarChar(20), body.moduleId)
-                .input('slotName', sql.NVarChar(20), body.slotName)
-                .input('facultyId', sql.NVarChar(20), body.facultyId)
-                .query(`SELECT fw.* FROM (SELECT id, facultyId, facultyName FROM [${slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = @moduleId AND programId = @programId) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = @dateStr AND slot_name = @slotName' AND program_id = @programId AND module_id = @moduleId) f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`)
+                .input('program_lid', sql.NVarChar(20), body.program_lid)
+                .input('module_lid', sql.NVarChar(20), body.module_lid)
+                .input('division_lid', sql.NVarChar(20), body.division_lid)
+                .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
+                .input('date_str', sql.NVarChar(20), body.date_str)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag  <> 'E'  AND
+                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid AND date_str = @date_str`)
         })
     }
+
+
 
 
     static getLectures(slug, body) {
@@ -227,7 +249,7 @@ module.exports = class Simulation {
             let request = pool.request()
             return request
                 .input('program_lid', sql.NVarChar(20), program_lid)
-                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND sap_flag <> 'E' ORDER BY id ASC`)
         })
     }
 
@@ -237,7 +259,7 @@ module.exports = class Simulation {
             return request
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.NVarChar(20), body.acad_session)
-                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND sap_flag <> 'E'  ORDER BY id ASC`)
         })
     }
 
@@ -267,7 +289,7 @@ module.exports = class Simulation {
                 .input('program_lid', sql.NVarChar(20), body.program_lid)
                 .input('acad_session', sql.NVarChar(20), body.acad_session)
                 .input('division', sql.NVarChar(20), body.division)
-                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND division = @division AND (sap_flag <> 'E' OR is_new_ec <> 1) ORDER BY id ASC`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND program_lid = @program_lid AND acad_session = @acad_session AND division = @division AND sap_flag <> 'E'  ORDER BY id ASC`)
         })
     }
 
@@ -369,6 +391,101 @@ module.exports = class Simulation {
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
                 .input('module_lid', sql.Int, body.module_lid)
                 .query(`SELECT DISTINCT division_lid,division from [${slug}].timesheet where program_lid = @program_lid and acad_session_lid = @acad_session_lid and module_lid = @module_lid`)
+        })
+    }
+
+
+
+    static extraClassFaculties(slug, body) {
+        // return poolConnection.then(pool => {
+        //     let request = pool.request()
+        //     return request
+        //         .input('dateStr', sql.NVarChar(20), body.dateStr)
+        //         .input('programId', sql.NVarChar(20), body.programId)
+        //         .input('moduleId', sql.NVarChar(20), body.moduleId)
+        //         .input('slotName', sql.NVarChar(20), body.slotName)
+        //         .input('facultyId', sql.NVarChar(20), body.facultyId)
+        //         .query(`SELECT fw.* FROM (SELECT id, facultyId, facultyName FROM [${slug}].facultyWorkloadStatus WHERE active = 'Y' AND moduleId = @moduleId AND programId = @programId) fw LEFT JOIN (SELECT faculty_id, faculty_name FROM faculty_timetable WHERE active = 1 AND date_str = @dateStr AND slot_name = @slotName' AND program_id = @programId AND module_id = @moduleId) f ON f.faculty_id = fw.facultyId WHERE f.faculty_id IS NULL`)
+        // })
+        return poolConnection.then(pool => {
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) = CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid`;
+            console.log('lecStmt:::::::::::::',lecStmt)
+            let request = pool.request()
+            return request
+                .input('toDate', sql.NVarChar(20), body.toDate)
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('division_lid', sql.Int, body.division_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
+                .query(lecStmt)
+        })
+    }
+
+    static getAvailableRoomForTimeRange(slug, body) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('toDate', sql.NVarChar(sql.MAX), body.date)
+            .input('startSlot', sql.Int, body.startTimeLid)
+            .input('endSlot', sql.Int, body.endTimeLid)
+            .query(`(SELECT t1.room_lid, r.room_number, r.room_abbr FROM
+                (SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
+                NOT IN (SELECT DISTINCT room_lid FROM [${slug}].timesheet WHERE (date_str = @toDate) AND  ((start_time_lid <= @startSlot AND end_time_lid >= @startSlot) OR (start_time_lid <= @endSlot and end_time_lid >= @endSlot)) )) t1
+                INNER JOIN rooms r ON r.id = t1.room_lid)`)
+        })
+    }
+
+    // static getAvailableFacultyForTimeRangeForExtraClass(slug, body) {
+    //     return poolConnection.then(pool => {
+    //         return pool.request()
+    //         .input('date', sql.NVarChar(sql.MAX), body.date)
+    //         .input('roomLid', sql.Int, body.roomLid)
+    //         .input('startSlot', sql.Int, body.startSlot)
+    //         .input('endSlot', sql.Int, body.endSlot)
+    //         .input('programLid', sql.Int, body.program_lid)
+    //         .input('sessionLid', sql.Int, body.acad_session_lid)
+    //         .input('moduleLid', sql.Int, body.module_lid)
+    //         .input('division_lid', sql.Int, body.division_lid)
+    //         .query(`SELECT fp.faculty_lid, fp.faculty_id, fp.faculty_name, ft.abbr FROM (SELECT f.id AS faculty_lid,  f.faculty_id AS faculty_id,  f.faculty_name AS faculty_name, ts.start_time_lid, ts.end_time_lid FROM [${slug}].faculty_works fw
+    //             INNER JOIN [${slug}].program_sessions ps
+    //             ON ps.id =  fw.program_session_lid
+    //             INNER JOIN [${slug}].faculties f
+    //             ON f.id =  fw.faculty_lid
+    //             INNER JOIN (SELECT @startSlot AS start_time_lid, @endSlot AS end_time_lid) ts
+    //             ON 1 = 1
+    //             INNER JOIN faculty_types ft ON ft.id = f.faculty_type_lid
+    //             WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
+    //             fp
+    //             LEFT JOIN
+    //             (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+    //             ON 
+    //             fp.faculty_id = fb.faculty_id AND
+    //             fp.start_time_lid = fb.start_time_lid AND
+    //             fp.end_time_lid = fb.end_time_lid
+    //             WHERE fb.faculty_id IS NULL`)
+    //     })
+    // }
+
+
+    static availableFacultyForReplace(slug, body) {
+        console.log('facilty_lis:::', body)
+        return poolConnection.then(pool => {
+            let lecStmt = `SELECT f.id AS faculty_lid, f.faculty_id, f.faculty_name, ft.abbr as faculty_type FROM [${slug}].faculty_works fw
+            INNER JOIN [${slug}].faculties f
+            ON f.id =  fw.faculty_lid
+            INNER JOIN [dbo].faculty_types ft
+            ON ft.id = f.faculty_type_lid
+            INNER JOIN [${slug}].program_sessions ps
+            ON ps.id =  fw.program_session_lid
+            WHERE ps.program_lid  = @program_lid AND ps.acad_session_lid = @acad_session_lid AND fw.module_lid = @module_lid`;
+           
+            console.log('lecStmt:::::::::::::',lecStmt)
+
+            let request = pool.request()
+            return request
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
+                .query(lecStmt)
         })
     }
 }
