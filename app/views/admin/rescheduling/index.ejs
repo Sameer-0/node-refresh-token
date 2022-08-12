@@ -148,7 +148,7 @@
 
     <div class="card-body">
       <div class="row">
-        <div class="col-md-4" id="resch-flag-wrapper">
+        <div class="col-md-3" id="resch-flag-wrapper">
 
           <div class="card rounded-0 mt-2">
             <div class="card-header">
@@ -185,7 +185,7 @@
           </div>
         </div>
 
-        <div class="col-md-8 blur" id="resch-filter-wrapper">
+        <div class="col-md-9 blur" id="resch-filter-wrapper">
           
           <div class="card mb-1 event-filter-container d-none">
             <div class="card-body" id="event-filter">
@@ -207,19 +207,26 @@
                     </select>
                 </div>
         
-                <div class="input-groups col-md-3 col-sm-12">
+                <div class="input-groups col-md-2 col-sm-12">
                   <label for="ModuleFilter">Select Module<span class="text-danger fw-bold fs-5">*</span>:</label>
                   <select name="ModuleFilter" id="ModuleFilter" class="form-select empty-filter data-filter-empty">
-                      <option selected disabled value>--Select Session--</option>
+                      <option selected disabled value>--Select Module--</option>
                   </select>
                 </div>
         
-                <div class="input-groups col-md-3 col-sm-12">
+                <div class="input-groups col-md-2 col-sm-12">
                       <label for="DivisionFilter">Select Division<span class="text-danger fw-bold fs-5">*</span>:</label>
                       <select name="DivisionFilter" id="DivisionFilter" class="form-select empty-filter data-filter-empty">
                         <option selected disabled value>--Select Division--</option>
                     </select>
                 </div>
+
+                <div class="input-groups col-md-2 col-sm-12">
+                  <label for="BatchFilter">Select Batch<span class="text-danger fw-bold fs-5">*</span>:</label>
+                  <select name="BatchFilter" id="BatchFilter" class="form-select empty-filter data-filter-empty">
+                    <option selected disabled value>--Select Batch--</option>
+                </select>
+            </div>
               </div>
             </div>
           </div>
@@ -575,18 +582,122 @@
 
       $('#ProgramFilter').on('change', function() {
         rescheduleObj.programLid = $(this).val();
+
+        let ApiObj = {
+          type: 'POST',
+          url: '/admin/rescheduling/findby-programid',
+          data: {
+            program_lid: rescheduleObj.programLid
+          },
+          dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+          console.log('api returnssss:', result)
+          let sessionList = `<option value="">Select Session Name</option>`;
+          if (result.sessionList.length > 0) {
+            result.sessionList.forEach(element => {
+              sessionList += `<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
+            });
+          } else {
+            sessionList += `<option value="">No Session Found!</option>`;
+          }
+          $("#SessionFilter").html(sessionList)
+          //ajaxTable(result.lectureList)
+        }).catch(error => {
+          showError(error.responseJSON)
+        })
       })
 
       $('#SessionFilter').on('change', function() {
         rescheduleObj.acadSessionLid = $(this).val();
+
+        let ApiObj = {
+          type: 'POST',
+          url: '/admin/rescheduling/find-division-by-programid-acadsession',
+          data: {
+            program_lid: rescheduleObj.programLid,
+            acad_session: rescheduleObj.acadSessionLid,
+          },
+          dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+          let moduleList = `<option value="">Select Module</option>`;
+          if (result.moduleList.length > 0) {
+            result.moduleList.forEach(element => {
+              moduleList += `<option value="${element.module_lid}">${element.module_name}</option>`;
+            });
+          } else {
+            moduleList += `<option value="">No Session Found!</option>`;
+          }
+          $("#ModuleFilter").html(moduleList)
+          //ajaxTable(result.lectureList)
+        }).catch(error => {
+          showError(error.responseJSON)
+        })
       })
 
       $('#ModuleFilter').on('change', function() {
         rescheduleObj.moduleLid = $(this).val();
+
+        let ApiObj = {
+          type: 'POST',
+          url: '/admin/rescheduling/get-divisionby-program-session-module',
+          data: {
+            program_lid: rescheduleObj.programLid,
+            acad_session_lid: rescheduleObj.acadSessionLid,
+            module_lid:  rescheduleObj.moduleLid
+          },
+          dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+          console.log('api returnssss:', result)
+          let divisionList = `<option value="">Select Division</option>`;
+          if (result.divisionList.length > 0) {
+            result.divisionList.forEach(element => {
+              divisionList += `<option value="${element.division_lid}">${element.division}</option>`;
+            });
+
+          } else {
+            divisionList += `<option value="">No Division Found!</option>`;
+          }
+          $("#DivisionFilter").html(divisionList)
+        }).catch(error => {
+          console.log('error::::::::::::::::', error)
+          showError(error.responseJSON)
+        })
       })
 
       $('#DivisionFilter').on('change', function() {
         rescheduleObj.divisionLid = $(this).val();
+        let ApiObj = {
+          type: 'POST',
+          url: '/admin/divisions/batches/get-batches-from-division',
+          data: {
+            divisionLid: rescheduleObj.divisionLid
+          },
+          dataType: 'JSON'
+        } 
+        ajaxApi(ApiObj).then(result => {
+          console.log('batch api returnssss:', result)
+          let batchList = `<option value="">Select Batch</option>`;
+          if (result.batchList.length > 0) {
+            result.batchList.forEach(element => {
+              batchList += `<option value="${element.id}">${element.batch}</option>`;
+            });
+
+          } else {
+            batchList += `<option value="">No Batch Found!</option>`;
+          }
+          $("#BatchFilter").html(batchList)
+        }).catch(error => {
+          console.log('error::::::::::::::::', error)
+          showError(error.responseJSON)
+        })
+
+      })
+
+      $('#BatchFilter').on('change', function() {
+        rescheduleObj.batchLid = $(this).val();
         if($('#extra-against-cancelled:checked').length > 0){
           let ApiObj = {
               type: 'POST',
@@ -1059,96 +1170,15 @@
         let program_lid = $(this).val()
         // $(".schedule-type").attr('disabled',true)
         // $(".schedule-type").removeAttr('checked')
-        console.log('ProgramFilter program_id::::::::::', program_lid)
-        let ApiObj = {
-          type: 'POST',
-          url: '/admin/rescheduling/findby-programid',
-          data: {
-            program_lid: program_lid
-          },
-          dataType: 'JSON'
-        }
-        ajaxApi(ApiObj).then(result => {
-          console.log('api returnssss:', result)
-          let sessionList = `<option value="">Select Session Name</option>`;
-          if (result.sessionList.length > 0) {
-            result.sessionList.forEach(element => {
-              sessionList += `<option value="${element.acad_session_lid}">${element.acad_session}</option>`;
-            });
-          } else {
-            sessionList += `<option value="">No Session Found!</option>`;
-          }
-          $("#SessionFilter").html(sessionList)
-          //ajaxTable(result.lectureList)
-        }).catch(error => {
-          showError(error.responseJSON)
-        })
+       
       })
 
       $("#SessionFilter").on('change', function() {
-        let program_lid = $("#ProgramFilter").val()
-        let acad_session = $("#SessionFilter").val()
-        // $(".schedule-type").attr('disabled',true)
-        // $(".schedule-type").removeAttr('checked')
-        console.log('ProgramFilter program_id::::::::::', program_lid, acad_session)
-        let ApiObj = {
-          type: 'POST',
-          url: '/admin/rescheduling/find-division-by-programid-acadsession',
-          data: {
-            program_lid: program_lid,
-            acad_session: acad_session
-          },
-          dataType: 'JSON'
-        }
-        ajaxApi(ApiObj).then(result => {
-          let moduleList = `<option value="">Select Module</option>`;
-          if (result.moduleList.length > 0) {
-            result.moduleList.forEach(element => {
-              moduleList += `<option value="${element.module_lid}">${element.module_name}</option>`;
-            });
-          } else {
-            moduleList += `<option value="">No Session Found!</option>`;
-          }
-          $("#ModuleFilter").html(moduleList)
-          //ajaxTable(result.lectureList)
-        }).catch(error => {
-          showError(error.responseJSON)
-        })
+       
       })
 
       $("#ModuleFilter").on('change', function() {
-        let program_lid = $("#ProgramFilter").val()
-        let acad_session_lid = $("#SessionFilter").val()
-        let module_lid = $("#ModuleFilter").val()
-        // $(".schedule-type").attr('disabled',true)
-        // $(".schedule-type").removeAttr('checked')
-        console.log('ModuleFilter::::::::::', program_lid, acad_session_lid, module_lid)
-        let ApiObj = {
-          type: 'POST',
-          url: '/admin/rescheduling/get-divisionby-program-session-module',
-          data: {
-            program_lid: program_lid,
-            acad_session_lid: acad_session_lid,
-            module_lid: module_lid
-          },
-          dataType: 'JSON'
-        }
-        ajaxApi(ApiObj).then(result => {
-          console.log('api returnssss:', result)
-          let divisionList = `<option value="">Select Division</option>`;
-          if (result.divisionList.length > 0) {
-            result.divisionList.forEach(element => {
-              divisionList += `<option value="${element.division_lid}">${element.division}</option>`;
-            });
-
-          } else {
-            divisionList += `<option value="">No Session Found!</option>`;
-          }
-          $("#DivisionFilter").html(divisionList)
-        }).catch(error => {
-          console.log('error::::::::::::::::', error)
-          showError(error.responseJSON)
-        })
+        
       })
 
       // ---------------------------------------EDIT-UPDATE TABLE FOR MODIFY/RESCHEDULE/REPLACE----------------------------------- //
@@ -1785,6 +1815,7 @@
           divisionLid: rescheduleObj.divisionLid,
           moduleLid: rescheduleObj.moduleLid,
           acadSessionLid: rescheduleObj.acadSessionLid,
+          batchLid: rescheduleObj.batchLid,
           scheduleToDate: scheduleToDate,
           scheduleStartTime: scheduleStartTime,
           scheduleEndTime: scheduleEndTime,
@@ -1936,11 +1967,14 @@
       function isValidScheduleEvent() {
         let returnVal = true;
 
-        $('#extra-regular-wrapper select').each((index, element) => {
-          if(!$(element).val()){
-            returnVal = false;
-          }
-        })
+        // $('#extra-regular-wrapper select').each((index, element) => {
+        //   if(!$(element).val()){
+        //     returnVal = false;
+        //   }
+        // })
+        // if(!$('#schedule-to-date').val()){
+        //   returnVal = false;
+        // }
 
         return returnVal;
       }
