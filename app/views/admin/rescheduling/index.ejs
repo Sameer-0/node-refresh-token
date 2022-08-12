@@ -5,7 +5,7 @@
     display: block;
     margin: 5px 0;
     position: relative;
-  }
+  } 
 
   .inputGroup :hover {
     background: #b1b3c297;
@@ -964,9 +964,9 @@
         let isChecked = $(this).is(':checked')
 
         if (isChecked) {
-          $(document).find('.is-cancel').prop('checked', true)
+          $(document).find('.is-cancel:not([disabled])').prop('checked', true)
         } else {
-          $(document).find('.is-cancel').prop('checked', false)
+          $(document).find('.is-cancel:not([disabled])').prop('checked', false)
         }
       })
   
@@ -1965,6 +1965,7 @@
         let monthInt = date.getMonth();
         return monthInt
       }
+      
       // ---------------------------------------------RESPONSE FROM SOCKET---------------------------------------------------//
 
       socket.on('cancelEventResponse', async function(data) {
@@ -1972,14 +1973,16 @@
         let updatedEvents = JSON.parse(data.updatedLectureList);
         if(socketUser == data.socketUser){
           for (let status of updatedEvents.data) {
-            if(status.trans_status == 'succcess'){
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .is-cancel`).attr('disabled', 'disabled')
+            if(status.trans_status == "success"){
+              console.log('inside success loop::>>>>>', status.trans_status)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-cancel`).prop('checked', false)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-cancel`).attr('disabled', 'disabled')
               }
               else{
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
               }
             }
         }
@@ -1993,13 +1996,13 @@
         if(socketUser == data.socketUser){
           for (let status of updatedEvents.data) {
             if(status.trans_status == 'succcess'){
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .is-cancel`).attr('disabled', 'disabled')
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-cancel`).attr('disabled', 'disabled')
               }
               else{
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid=${status.timesheet_lid}] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
               }
             }
         }

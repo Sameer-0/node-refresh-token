@@ -41,14 +41,14 @@ module.exports = {
 
         store.get(req.sessionID, async (err, result) => {
            
-            console.log('redirectIfLoggedIn::::::::::::::::::>> ', req.session.cookie)
+           // console.log('redirectIfLoggedIn::::::::::::::::::>> ', req.session.cookie)
             if (!result) {
                //return res.redirect('/user/login')
                return next();
             }
             else{
-                console.log('redirect if loggedout result::::::::::::::::::>> ', result)
-                console.log('Logged out:::::::::>>')
+                // console.log('redirect if loggedout result::::::::::::::::::>> ', result)
+                // console.log('Logged out:::::::::>>')
                 // setTimeout(function(){
                 //     return res.redirect('/user/login')
                 // },2000)

@@ -848,6 +848,8 @@
         
 
         socket.on('drop-event-response', function (response) {
+
+            console.log("response>>> ", response)
           
             if (response.status == 1) {
                 console.log('Drop successful')
@@ -883,8 +885,21 @@
             let targetEventLid = $(this).attr("data-target-event-lid");
             let swapEventLid = $(this).attr("data-swap-event-lid");
             let actionType = $(this).attr('data-action-type');
+            
+            let swapEventStartSlotId = $(document).find(`.event[data-event-lid="${swapEventLid}"]`).attr('data-start-time')
+            let swapEventRoomId = $(document).find(`.event[data-event-lid="${swapEventLid}"]`).attr('data-room-lid')
+            let swapEventFacultyLid = $(document).find(`.event[data-event-lid="${swapEventLid}"]`).attr('data-faculty-lid')
+
+            let targetEventStartSlotId = $(document).find(`.event[data-event-lid="${targetEventLid}"]`).attr('data-start-time')
+            let targetEventRoomLid = $(document).find(`.event[data-event-lid="${targetEventLid}"]`).attr('data-room-lid')
+            let targetEventFacultyLid = $(document).find(`.event[data-event-lid="${targetEventLid}"]`).attr('data-faculty-lid')
+
+
+            // let swapEventEndSlotId = $(document).find(`.event [data-lid="${swapEventLid}"]`).attr('"data-start-slot-id')
             let positionIndex = targetProp.finalPositionIndex;
             let initialPositionIndex = targetProp.index;
+
+           
 
             let obj = {
                 roomLid: roomLid,
@@ -897,18 +912,25 @@
                 targetEventLid: targetEventLid,
                 swapEventLid: swapEventLid,
                 positionIndex: positionIndex,
-                initialPositionIndex: initialPositionIndex
-
+                initialPositionIndex: initialPositionIndex,
+                swapEventStartSlotId: swapEventStartSlotId,
+                swapEventRoomId: swapEventRoomId,
+                swapEventFacultyLid: swapEventFacultyLid,
+                targetEventStartSlotId: targetEventStartSlotId,
+                targetEventRoomLid: targetEventRoomLid,
+                targetEventFacultyLid: targetEventFacultyLid
             }
+
+            console.log("OBJ>>>> ", obj)
 
             console.log('ACTION TYPE>>>> ', dragObj.actionType)
             socket.emit('schedule-event-request', slugName, userId, obj);
-
-
         })
 
         socket.on('schedule-event-response', function (response) {
+
             console.log('schedule-event-response::::::::::::::::', response)
+            
 
             if (response.data.status == 1 && response.data.data.length > 0) {
 
@@ -1531,11 +1553,10 @@
 
                 dragObj.actionType = 'clicked';
 
-                // fixedBreakBounding = document.querySelector('.fixed-break').getBoundingClientRect();
-                // fixedBreakTwoBounding = document.querySelector('.fixed-break[data-break-id="2"]').getBoundingClientRect();
-                fixedBreakBounding = document.querySelector('.room:not(.d-none) .fixed-break').getBoundingClientRect();
-                fixedBreakTwoBounding = document.querySelector('.room:not(.d-none) .fixed-break[data-break-id="2"]').getBoundingClientRect();
-               
+                fixedBreakBounding = null//document.querySelector('.fixed-break').getBoundingClientRect();
+                fixedBreakTwoBounding = null//document.querySelector('.fixed-break[data-break-id="2"]').getBoundingClientRect();
+
+                console.log("IS DRAGGABLE");
 
                 dragObj.isMouseDown = true;
 
@@ -1689,15 +1710,15 @@
                 // }
                 dragObj.targetElem.style.top =  `${targetProp.movedY}px`
 
-           console.log('trect', tRect)
-           console.log('fixedBreakBounding', fixedBreakBounding)
-           console.log('fixedBreakTwoBounding', fixedBreakTwoBounding)
-                if (((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
-                        fixedBreakBounding.left && tRect.right <= fixedBreakBounding.right) || (tRect.right >=
-                        fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) || 
-                    ((tRect.left >= fixedBreakTwoBounding.left && tRect.left < fixedBreakTwoBounding.right) || (tRect.right >
-                    fixedBreakTwoBounding.left && tRect.right <= fixedBreakTwoBounding.right) || (tRect.right >=
-                    fixedBreakTwoBounding.right && tRect.left < fixedBreakTwoBounding.right))) {
+           
+                // if (((tRect.left >= fixedBreakBounding.left && tRect.left < fixedBreakBounding.right) || (tRect.right >
+                //         fixedBreakBounding.left && tRect.right <= fixedBreakBounding.right) || (tRect.right >=
+                //         fixedBreakBounding.right && tRect.left < fixedBreakBounding.right)) || 
+                //     ((tRect.left >= fixedBreakTwoBounding.left && tRect.left < fixedBreakTwoBounding.right) || (tRect.right >
+                //     fixedBreakTwoBounding.left && tRect.right <= fixedBreakTwoBounding.right) || (tRect.right >=
+                //     fixedBreakTwoBounding.right && tRect.left < fixedBreakTwoBounding.right))) {
+
+               if (1 !== 1) {
 
                   //SET IS BREAK KEY
                         
