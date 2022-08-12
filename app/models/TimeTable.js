@@ -55,7 +55,7 @@ module.exports = class TimeTable {
 
             //SORT BY SLOT IS NECESSARY FOR PROPER DOM.
             if (program_lid && acad_session_lid) {
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.program_abbr, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)
                 GROUP BY room_lid, day_lid, event_lid, is_break, break_id) t2
@@ -69,7 +69,7 @@ module.exports = class TimeTable {
                 WHERE (e.program_lid = @programLid and e.acad_session_lid = @sessionLid) OR is_break = 1
                 ORDER BY t2.start_slot, t2.end_slot`
             } else if (!program_lid && acad_session_lid) {
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.program_abbr, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)
                 GROUP BY room_lid, day_lid, event_lid, is_break, break_id) t2
@@ -84,7 +84,7 @@ module.exports = class TimeTable {
                 ORDER BY t2.start_slot, t2.end_slot`
             } else if (program_lid && !acad_session_lid) {
 
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.program_abbr, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)
                 GROUP BY room_lid, day_lid, event_lid, is_break, break_id) t2
@@ -99,7 +99,7 @@ module.exports = class TimeTable {
                 ORDER BY t2.start_slot, t2.end_slot`
             } else {
 
-                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
+                stmt = `SELECT  t2.room_lid, t2.day_lid, t2.is_break, t2.break_id, t2.event_lid, t2.start_slot, t2.end_slot, e.program_lid, e.acad_session_lid, e.course_lid, e.division_lid, RTRIM(LTRIM(e.division)) AS division, e.batch_lid, e.batch, e.event_type_lid, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.program_abbr, ads.acad_session, icw.module_name, et.abbr as event_type, fe.faculty_lid, f.faculty_name FROM (SELECT room_lid, day_lid, event_lid, is_break, break_id, MIN(slot_lid) AS start_slot, MAX(slot_lid) AS end_slot
                 FROM [${slug}].event_bookings
                 WHERE day_lid = @dayLid AND (active = 1 OR is_break = 1)
                 GROUP BY room_lid, day_lid, event_lid, is_break, break_id) t2

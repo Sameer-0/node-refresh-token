@@ -62,7 +62,7 @@ module.exports = {
             TimeTable.getEventsByProgramSessionDay(res.locals.slug, req.body.dayLid),
             SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid),
         ]).then(results => {
-            console.log('results::::::::::', results[3])
+            console.log('Event results::::::::::', results[0])
             res.status(200).send({
                 eventList: results[0].recordset,
                 allEventList: results[1].recordset,
