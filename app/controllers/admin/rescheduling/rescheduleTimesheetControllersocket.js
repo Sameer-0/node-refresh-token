@@ -391,7 +391,7 @@ module.exports.respond = async socket => {
         let socketUser = data.userId;
         // console.log('socketUser>>>>> ', socketUser)
 
-        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220808.wsdl"); 
+        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220808.wsdl");  
 
         console.log('wsdlUrl', wsdlUrl)
         let soapClient = await new Promise((resolve, reject) => {

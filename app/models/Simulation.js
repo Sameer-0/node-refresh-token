@@ -85,7 +85,7 @@ module.exports = class Simulation {
                 WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
                 fp
                 LEFT JOIN
-                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date_str = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
                 ON 
                 fp.faculty_id = fb.faculty_id AND
                 fp.start_time_lid = fb.start_time_lid AND
@@ -429,7 +429,7 @@ module.exports = class Simulation {
             .input('endSlot', sql.Int, body.endTimeLid)
             .query(`(SELECT t1.room_lid, r.room_number, r.room_abbr FROM
                 (SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
-                NOT IN (SELECT DISTINCT room_lid FROM [${slug}].timesheet WHERE (date_str = @toDate) AND  ((start_time_lid <= @startSlot AND end_time_lid >= @startSlot) OR (start_time_lid <= @endSlot and end_time_lid >= @endSlot)) )) t1
+                NOT IN (SELECT DISTINCT room_lid FROM [${slug}].timesheet WHERE (date = @toDate) AND  ((start_time_lid <= @startSlot AND end_time_lid >= @startSlot) OR (start_time_lid <= @endSlot and end_time_lid >= @endSlot)) )) t1
                 INNER JOIN rooms r ON r.id = t1.room_lid)`)
         })
     }
