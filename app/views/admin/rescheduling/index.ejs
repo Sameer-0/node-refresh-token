@@ -1804,10 +1804,12 @@
         
           console.log('SCHEDULE EVENT::::::::::::>>>>', scheduleToData)
             // $('.loaderBody').removeClass('d-none')
-            // socket.emit('scheduleExtraClass', {
-            //   slugName: "<%- slug %>",
-            //   resObj: extraclassData
-            // })
+            socket.emit('scheduleExtraClassNew', {
+              slugName: "<%- slug %>",
+              transJson: JSON.stringify(rescheduleObj),
+              userId: "<%- userId%>",
+              orgId : orgId
+            })
 
         }
       })
@@ -1936,11 +1938,11 @@
       function isValidScheduleEvent() {
         let returnVal = true;
 
-        $('#extra-regular-wrapper select').each((index, element) => {
-          if(!$(element).val()){
-            returnVal = false;
-          }
-        })
+        // $('#extra-regular-wrapper select').each((index, element) => {
+        //   if(!$(element).val()){
+        //     returnVal = false;
+        //   }
+        // })
 
         return returnVal;
       }

@@ -419,7 +419,11 @@ module.exports.respond = async socket => {
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${data.slugName}].[sp_modify_rescheduling]`)
 
+
+
         let transLectureList = JSON.parse(result.output.output_json).data
+        console.log('transLectureList', transLectureList)
+
 
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
         console.log("transLectureList>> ", transLectureList)
@@ -1438,83 +1442,14 @@ module.exports.respond = async socket => {
 
     //Extra Class new
     socket.on("scheduleExtraClassNew", async data => {
-        // const job = await queue.add({
-        //     task: "scheduleExtraClassNew",
-        //     reschData: data
-        // });
-        let request = await db.request();
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> EXTRA CLASS EVENT <<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
-        let socketUser = data.socketUser;
-        console.log('socketUser>>>>> ', socketUser)
+        let socketUser = data.userId;
+        // console.log('socketUser>>>>> ', socketUser)
 
-        let resObj = data.resObj
+        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220808.wsdl"); 
 
-        console.log(resObj)
-
-        resObj.eventType = 'THEO';
-        resObj.schoolId = '00004533'
-
-        if (resObj.fromStartTime)
-            resObj.sapFromStartTime = moment(resObj.fromStartTime, 'hh:mm:ss A').format('HH:mm:ss')
-
-        if (resObj.fromEndTime)
-            resObj.sapFromEndTime = moment(resObj.fromEndTime, 'hh:mm:ss A').format('HH:mm:ss')
-
-        if (resObj.fromDate)
-            resObj.sapFromDate = moment(resObj.fromDate, 'DD/MM/YYYY').format("YYYY-MM-DD")
-
-        resObj.sapToStartTime = moment(resObj.toStartTime, 'hh:mm:ss A').format('HH:mm:ss')
-        resObj.sapToEndTime = moment(resObj.toEndTime, 'hh:mm:ss A').format('HH:mm:ss')
-        resObj.sapToDate = moment(resObj.toDate, 'DD/MM/YYYY').format("YYYY-MM-DD")
-
-        let acadIdStmt = `SELECT TOP 1 id FROM academicSessionMaster WHERE acadSession = '${resObj.acadSession}'`
-
-        await request.query(acadIdStmt).then(result => {
-            resObj.acadSessionId = result.recordset[0].id
-        })
-
-        //get transaction id
-        let transactionId;
-        await request.query(`SELECT NEWID() AS transId`).then(result => {
-            transactionId = result.recordset[0].transId
-        })
-        console.log('transactionId====>> ', transactionId)
-
-
-        let rescheduleObj = {
-            ItReschedule: {
-                item: {
-                    TransId: transactionId,
-                    ZBuseve: resObj.sapEventId,
-                    Zdate: resObj.sapToDate,
-                    ZtimeFrom: resObj.sapToStartTime,
-                    ZtimeTo: resObj.sapToEndTime,
-                    Zflag: resObj.reschFlag,
-                    ZroomId: resObj.toRoom,
-                    OldZroomId: resObj.fromRoom,
-                    Zyear: resObj.acadYear,
-                    ZOrg: resObj.schoolId,
-                    ZPrgstd: resObj.programId,
-                    ZSess: resObj.acadSessionId,
-                    ZModule: resObj.moduleId,
-                    ZEvetyp: resObj.eventType,
-                    ZfacultyId: resObj.toFacultyId,
-                    OldZfacultyId: resObj.fromFacultyId,
-                    ReasonId: Number(resObj.reasonId),
-                    OldZdate: resObj.sapFromDate ? resObj.sapFromDate : "",
-                    OldZtimeFrom: resObj.sapFromStartTime ? resObj.sapFromStartTime : "",
-                    OldZtimeTo: resObj.sapFromEndTime ? resObj.sapFromEndTime : "",
-                    Remark: "",
-                    ZfacId: "",
-                    ReasonDetail: resObj.reasonDetail
-                }
-            }
-        }
-
-        console.log('rescheduleObj: =====>>> ', rescheduleObj)
-
-        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220401_2.wsdl");
-
+        console.log('wsdlUrl', wsdlUrl)
         let soapClient = await new Promise((resolve, reject) => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
                 if (err) throw err;
@@ -1524,225 +1459,122 @@ module.exports.respond = async socket => {
         });
 
 
-        let lastInsertedId;
-        let stmt = `INSERT INTO faculty_timetable (faculty_name, faculty_id, date_str, day_str, room_no, room_uid, slot_name, slot_no, program_id, program_code, module_id, module_code, div, acad_session, acad_year, event_name, event_abbr, created_type, sap_event_id, sap_flag, sap_remark, event_type, unique_id_for_sap, uuid, start_time, end_time, active, event_id, is_new_ec) Output Inserted.id VALUES (
-                    '${resObj.toFacultyName}',
-                    '${resObj.toFacultyId}',
-                    '${resObj.toDate}',
-                    (SELECT dateNameString FROM [asmsoc-mum].timesheet07042020 WHERE dateString = '${resObj.toDate}'),
-                    (SELECT roomno FROM [asmsoc-mum].room_data WHERE active = 'Y' AND room_uid = '${resObj.toRoom}'),
-                    '${resObj.toRoom}',
-                    '${resObj.toSlot}',
-                    ${resObj.toSlot.split('t')[1]},
-                    '${resObj.programId}',
-                    (SELECT programCode FROM [asmsoc-mum].programName WHERE active = 'Y' AND programId = '${resObj.programId}'),
-                    '${resObj.moduleId}',
-                    (SELECT module_code FROM [asmsoc-mum].course_work WHERE programId = '${resObj.programId}' AND moduleId = '${resObj.moduleId}' AND acadSession = '${resObj.acadSession}'),
-                    '${resObj.division}',
-                    '${resObj.acadSession}',
-                    '${resObj.acadYear}',
-                    '${resObj.newEventName}',
-                    '${resObj.eventAbbr}',
-                    'A',
-                    '${resObj.sapEventId}',
-                    '${resObj.reschFlag}',
-                    'initiated',
-                    '${resObj.eventType == 'THEO' ? 'TH' : 'PR'}',
-                    '${resObj.uniqueIdForSap}',
-                    NEWID(),
-                    '${resObj.toStartTime}',
-                    '${resObj.toEndTime}',
-                    0,
-                    '${resObj.newEventId}',
-                    1
-                    )`
+        let resObj = JSON.parse(data.transJson);
+
+        console.log('resJSON====>> ', resObj)
+        console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
+        
+        let result = await db.request()
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
+            .input('reason_id', sql.Int, resObj.reasonId)
+            .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+            .input('res_stage', sql.Int, 1)
+            .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+            .input('last_modified_by', sql.Int, data.userId)
+            .output('output_flag', sql.Bit)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${data.slugName}].[sp_extra_class_rescheduling]`)
 
 
-        console.log('add new lecture ==>> ', stmt)
 
-        await request.query(stmt).then(result => {
-            console.log(result)
-            lastInsertedId = result.recordset[0].id
-        }).catch(err => {
-            console.log(err)
-        })
-
-        console.log('lastInsertedId=======>>> ', lastInsertedId)
-        console.log(`UPDATE faculty_timetable SET unx_lid = ${lastInsertedId} WHERE id = ${lastInsertedId}`)
-
-        await request.query(`UPDATE faculty_timetable SET unx_lid = ${lastInsertedId} WHERE id = ${lastInsertedId}`).catch(err => {
-            console.log(err)
-        })
+        let transLectureList = JSON.parse(result.output.output_json).data
+        console.log('transLectureList', transLectureList)
 
 
-        //insert into reschedule transactiopn table
-        let stmtRes = `INSERT INTO reschedule_transaction (transaction_id, z_flag, sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, division, acad_session, faculty_id, date_str, day, room_no, room_uid, slot_name, acad_year, reason_id, reason_detail, trans_status, trans_detail, unique_id_for_sap, uuid, event_id, unx_lid, is_new_ec, is_adjusted_cancel)
-            SELECT '${transactionId}', '${resObj.reschFlag}', sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, div, acad_session, faculty_id, date_str, day_str, room_no, room_uid, slot_name, acad_year, ${Number(resObj.reasonId)}, '${resObj.reasonDetail}', 'initiated', '', unique_id_for_sap, uuid, event_id, unx_lid, is_new_ec,is_adjusted_cancel FROM faculty_timetable WHERE id = ${lastInsertedId}`
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
+        console.log("transLectureList>> ", transLectureList)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
+      
+        //CREATE SAP OBJ JSON
+        let rescheduleItems = [];
 
-        console.log('stmtRes==>> ', stmtRes)
+        for (let lecture of transLectureList) {
+            let item = {
+                TransId: lecture.TransId,
+                ZBuseve: lecture.ZBuseve,
+                Zdate: lecture.Zdate,
+                ZtimeFrom: lecture.ZtimeFrom,
+                ZtimeTo: lecture.ZtimeTo,
+                Zflag: lecture.Zflag,
+                ZroomId: lecture.ZroomId,
+                OldZroomId: "",
+                Zyear: lecture.Zyear,
+                ZOrg: data.orgId,
+                ZPrgstd: lecture.ZPrgstd,
+                ZSess: lecture.ZSess,
+                ZModule: lecture.ZModule,
+                ZEvetyp: lecture.ZEvetyp,
+                ZfacultyId: lecture.ZfacultyId,
+                OldZfacultyId: "",
+                ReasonId: lecture.ReasonId,
+                OldZdate: "",
+                OldZtimeFrom: "",
+                OldZtimeTo: "",
+                Remark: "",
+                ZfacId: lecture.ZfacultyId,
+                ReasonDetail: lecture.ReasonDetail
+            }
+            rescheduleItems.push(item)
+        }
 
-        await request.query(stmtRes).then(result => {
-            console.log(result)
-        }).catch(err => {
-            console.log(err)
-        })
 
+        let rescheduleObj = {
+            ItReschedule: {
+                item: rescheduleItems
+            }
+        }
+
+        console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
 
         let sapResult = await new Promise((resolve, reject) => {
             soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
-                if (err) reject(err);
-
-                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<')
-
-                //console.log("Returned result from sap: ", result)
-                console.log('Result-======>>>> ', result.EtReturn.item)
-
-                let sapResult = await result.EtReturn.item[0]
-                console.log('sapResult Suraj::::::::::::::::::::::::::>>>>>>', sapResult)
-
-                let stmtLastTrans = `SELECT TOP 1 * FROM reschedule_transaction WHERE transaction_id = '${transactionId}'`;
-
-                let resultLastTrans = await request.query(stmtLastTrans)
-                let recordset = resultLastTrans.recordset[0];
-
-                console.log('recordset::::>>>> ', recordset)
-                //condition if empty array return here
-
-
-                let insertStmt = `INSERT INTO reschedule_transaction (transaction_id, z_flag, sap_event_id, event_name, event_abbr, event_type, program_id, program_code, module_id, module_code, division, acad_session, faculty_id, date_str, room_no, room_uid, slot_name, acad_year, reason_id, reason_detail, trans_status, trans_detail, unique_id_for_sap, uuid, day, event_id, unx_lid, is_new_ec, is_adjusted_cancel) VALUES ('${recordset.transaction_id}', '${sapResult.Zflag}', '${sapResult.ZBuseve}', '${resObj.newEventName}', '${recordset.event_abbr}', '${recordset.event_type}', '${sapResult.ZPrgstd}', '${recordset.program_code}', '${sapResult.ZModule}', '${recordset.module_code}', '${recordset.division}', '${recordset.acad_session}', '${sapResult.ZfacultyId}', '${moment(sapResult.Zdate, "YYYY-MM-DD").format("DD/MM/YYYY")}', (SELECT roomno FROM [asmsoc-mum].room_data WHERE room_uid = '${sapResult.ZroomId}' AND active = 'Y'), '${sapResult.ZroomId}', (SELECT slotName FROM [asmsoc-mum].school_timing WHERE sapStartTime = '${moment(sapResult.ZtimeFrom, 'HH:mm:ss').format('hh:mm:ss A')}' AND sapEndTime = '${moment(sapResult.ZtimeTo, 'HH:mm:ss').format('hh:mm:ss A')}' AND dayId = 1), '${sapResult.Zyear}', ${Number(sapResult.ReasonId)}, '${sapResult.ReasonDetail}', '${sapResult.Status}', '${sapResult.StatusRemark}', ${recordset.unique_id_for_sap}, '${recordset.uuid}', (SELECT dateNameString FROM [asmsoc-mum].timesheet07042020 WHERE dateString = '${moment(sapResult.Zdate, "YYYY-MM-DD").format("DD/MM/YYYY")}'), '${resObj.newEventId}', ${recordset.unx_lid}, ${Number(recordset.is_new_ec)}, ${Number(recordset.is_adjusted_cancel)})`
-
-
-                console.log('insertStmt:===>>> ', insertStmt)
-
-                await request.query(insertStmt).then(result => {
-                    console.log('>>>>>>>>Inserted into reschedule_transaction<<<<<<<<', result)
-                }).catch(err => {
-                    throw err;
-                })
-
-                //update faculty_timetable
-
-                if (sapResult.Status == 'success') {
-
-
-                    await request.query(`UPDATE faculty_timetable SET active = 1, sap_remark = '${sapResult.StatusRemark}' WHERE id = ${lastInsertedId}`).catch(err => {
-                        console.log(err)
-                    })
-
-
-                    let newSlotJson = {};
-
-                    newSlotJson.uuid = recordset.uuid;
-                    newSlotJson.starttime = moment(sapResult.ZtimeFrom, 'HH:mm:ss').format('hh:mm:ss A');
-                    newSlotJson.endtime = moment(sapResult.ZtimeTo, 'HH:mm:ss').format('hh:mm:ss A');
-                    newSlotJson.isBooked = "Y";
-                    newSlotJson.bookedProgramId = sapResult.ZPrgstd;
-                    newSlotJson.bookedAcadYear = sapResult.Zyear;
-                    newSlotJson.bookedAcadSession = recordset.acad_session;
-                    newSlotJson.bookedDiv = recordset.division;
-                    newSlotJson.eventName = resObj.newEventName;
-                    newSlotJson.eventId = resObj.newEventId;
-                    newSlotJson.sapEventId = sapResult.ZBuseve;
-                    newSlotJson.createdType = "A";
-                    newSlotJson.facultyId = sapResult.ZfacultyId;
-                    newSlotJson.eventType = recordset.event_type;
-                    newSlotJson.uniqueIdForSAP = recordset.unique_id_for_sap;
-                    newSlotJson.sapFlag = sapResult.Zflag;
-                    newSlotJson.remark = sapResult.Status;
-                    newSlotJson.remarkType = sapResult.StatusRemark;
-
-                    console.log('newSlotJson:======>>>>>>  ', newSlotJson)
-
-
-                    global.io.emit("droppedEventedSlot", {
-                        socketUser: socketUser,
-                        status: sapResult.Status,
-                        msg: sapResult.StatusRemark,
-                        isSameDay: sapResult.Zdate == sapResult.OldZdate ? true : false,
-                        resFlag: sapResult.Zflag,
-                        slugName: 'asmsoc-mum',
-                        fromSlot: resObj.fromSlot,
-                        toSlot: resObj.toSlot,
-                        oldRoomNo: sapResult.OldZroomId,
-                        newRoomNo: sapResult.ZroomId,
-                        inputDate: resObj.toDate,
-                        slotDetail: newSlotJson
-                    })
-
-                    console.log('>>>>>> CALLING sendToLms FUNCTION')
-                    sendToLms({
-                        data: sapResult
-                    });
-
-
-                    console.log('========================>>>>EMITTED<<<<====================================')
-
-                } else {
-                    console.log('Rescheduling failed')
-                    global.io.emit("droppedEventedSlot", {
-                        socketUser: socketUser,
-                        status: sapResult.Status,
-                        msg: sapResult.StatusRemark,
-                        isSameDay: sapResult.Zdate == sapResult.OldZdate ? true : false,
-                        resFlag: sapResult.Zflag,
-                        slugName: 'asmsoc-mum',
-                        fromSlot: resObj.fromSlot,
-                        toSlot: resObj.toSlot,
-                        oldRoomNo: sapResult.OldZroomId,
-                        newRoomNo: sapResult.ZroomId,
-                        inputDate: resObj.fromDate,
-                        slotDetail: ""
-                    })
-                    console.log('========================>>>>EMITTED failed<<<<====================================')
-                }
-
+                if (err) throw err;
+                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
+                let sapResult = await result.EtReturn.item;
                 resolve(sapResult);
-
             })
-
         })
+
+        console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
+        console.log(sapResult)
+        console.log(JSON.stringify(sapResult))
+
+
+        if (sapResult.length > 0) {
+
+            let updatedTimetableData = await db.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
+                .input('reason_id', sql.Int, resObj.reasonId)
+                .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                .input('res_stage', sql.Int, 2)
+                .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                .input('last_modified_by', sql.Int, data.userId)
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[asmsoc-mum].[sp_extra_class_rescheduling]');
+
+            console.log(updatedTimetableData)
+
+            // global.io.emit("modifyEventResponse", {
+            //     socketUser: socketUser,
+            //     updatedLectureList: updatedTimetableData.output.output_json,
+            //     slugName: 'asmsoc-mum',
+            //     status: 200,
+            // })
+        } else {
+            // global.io.emit("bulkCancelled", {
+            //     socketUser: socketUser,
+            //     updatedLectureList: [],
+            //     slugName: 'asmsoc-mum',
+            //     status: 200,
+            //     isUpdated: 0,
+            //     msg: 'Lectures has been updated successfully.',
+            // })
+            console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+        }
+
     })
 
-
-    socket.on("dropAndModify", async function (data) {
-        let request = await db.request()
-        console.log("Reschedule evented Slot", data)
-
-        let slotUuid = sanitizer.value(data.slotUuid, String);
-        let uuid = sanitizer.value(data.uuid, String);
-        let inputDate = sanitizer.value(data.inputDate, String);
-        let roomNo = sanitizer.value(data.roomNo, String);
-        let slotName = sanitizer.value(data.slotName, String);
-        let facultyId = sanitizer.value(data.facultyId, String);
-        let slugName = sanitizer.value(data.slugName, String);
-        let tdData = sanitizer.value(data.tdData, String);
-
-        request.input('slotUuid', sql.NVarChar(1000), slotUuid);
-        request.input('uuid', sql.NVarChar(1000), uuid);
-        request.input('inputDateString', sql.NVarChar(20), inputDate);
-        request.input('inputRoomNo', sql.NVarChar(10), roomNo);
-        request.input('inputSlotName', sql.NVarChar(10), slotName);
-        request.input('facultyId', sql.NVarChar(20), facultyId);
-        request.output('output', sql.Int);
-        request.output('responseText', sql.NVarChar(1000))
-
-        request.execute('[' + slugName + '].RescheduleEventedSlotsDateWise01122020', async function (err, result) {
-            if (err) throw err;
-            console.log(result)
-            let outputValue = await result.output.output;
-            console.log("Output Value: ", outputValue);
-
-            global.io.emit("scheduleCompleted", {
-                isScheduled: outputValue,
-                slugName: slugName,
-                slotName: slotName,
-                roomNo: roomNo,
-                inputDate: inputDate,
-                tdData: tdData
-            })
-
-        })
-    })
 
     //Freeze Timesheet
     socket.on("freezeTimesheet", async (data) => {
