@@ -992,7 +992,7 @@
 
       $("#select-schedule-end-time").on('change', function() {
 
-        scheduleToDate = convertDate($("#schedule-to-date").val(), '-')
+        scheduleToDate = $("#schedule-to-date").val()
         scheduleStartTime = $("#select-schedule-start-time").val()
         scheduleEndTime = $("#select-schedule-end-time").val()
 
@@ -1164,21 +1164,8 @@
         $(document).find('#rescheduleModal .modal-body select').val('');
       })
       
-
-      //FILTER API
-      $("#ProgramFilter").on('change', function() {
-        let program_lid = $(this).val()
-        // $(".schedule-type").attr('disabled',true)
-        // $(".schedule-type").removeAttr('checked')
-       
-      })
-
-      $("#SessionFilter").on('change', function() {
-       
-      })
-
-      $("#ModuleFilter").on('change', function() {
-        
+      $(document).find('input[name="extra-type"]').on('change', function() {
+        $(document).find('.extra-regular-filter select').val('')
       })
 
       // ---------------------------------------EDIT-UPDATE TABLE FOR MODIFY/RESCHEDULE/REPLACE----------------------------------- //
@@ -1824,8 +1811,9 @@
           reschFlag: rescheduleObj.reschFlag
         }
 
+        if((rescheduleObj.reschFlag == 'E' && $(document).find('input[name="extra-type"]:checked').val() == 'nel') || rescheduleObj.reschFlag == 'Y'){
 
-        if (!isValidScheduleEvent()) {
+          if (!isValidNewExtraLecture()) {
           alert('Please fill all the mandatory fields.')
         } 
         else if(!isReasonSelected()) {
@@ -1841,6 +1829,29 @@
             // })
 
         }
+
+        }
+        else if(rescheduleObj.reschFlag == 'E' && $(document).find('input[name="extra-type"]:checked').val() == 'eac'){
+
+          if (!isValidNewExtraLectureAgCanLecture()) {
+          alert('Please fill all the mandatory fields.')
+        } 
+        else if(!isReasonSelected()) {
+          alert('Please Select a Reason')
+        }
+        else {
+        
+          console.log('SCHEDULE EVENT::::::::::::>>>>', scheduleToData)
+            // $('.loaderBody').removeClass('d-none')
+            // socket.emit('scheduleExtraClass', {
+            //   slugName: "<%- slug %>",
+            //   resObj: extraclassData
+            // })
+
+        }
+        }
+
+       
       })
       
       // --------------------------------------------------VALIDATION FUNCTIONS------------------------------------------------- //
@@ -1964,17 +1975,32 @@
         }
       }
 
-      function isValidScheduleEvent() {
+      function isValidNewExtraLecture() {
         let returnVal = true;
 
-        // $('#extra-regular-wrapper select').each((index, element) => {
-        //   if(!$(element).val()){
-        //     returnVal = false;
-        //   }
-        // })
-        // if(!$('#schedule-to-date').val()){
-        //   returnVal = false;
-        // }
+        $('.extra-regular-filter select').each((index, element) => {
+          if(!$(element).val()){
+            returnVal = false;
+          }
+        })
+        if(!$('#schedule-to-date').val()){
+          returnVal = false;
+        }
+
+        return returnVal;
+      }
+
+      function isValidNewExtraLectureAgCanLecture() {
+        let returnVal = true;
+
+        $('.extra-regular-filter select').each((index, element) => {
+          if(!$(element).val()){
+            returnVal = false;
+          }
+        })
+        if(!$('#schedule-to-date').val() || !$('#select-cancelled-lecture').val()){
+          returnVal = false;
+        }
 
         return returnVal;
       }
