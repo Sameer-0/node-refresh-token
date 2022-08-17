@@ -203,13 +203,13 @@ module.exports = class Simulation {
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
-                .input('program_lid', sql.NVarChar(20), body.program_lid)
-                .input('module_lid', sql.NVarChar(20), body.module_lid)
-                .input('division_lid', sql.NVarChar(20), body.division_lid)
-                .input('acad_session_lid', sql.NVarChar(20), body.acad_session_lid)
+                .input('program_lid', sql.Int, body.program_lid)
+                .input('module_lid', sql.Int, body.module_lid)
+                .input('division_lid', sql.Int, body.division_lid)
+                .input('acad_session_lid', sql.Int, body.acad_session_lid)
                 .input('date_str', sql.NVarChar(20), body.date_str)
-                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E'  AND
-                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid AND date_str = @date_str`)
+                .query(`SELECT * FROM [${slug}].timesheet WHERE active = 1 AND sap_flag = 'E' AND
+                program_lid = @program_lid AND module_lid = @module_lid AND division_lid = @division_lid AND acad_session_lid  = @acad_session_lid`)
         })
     }
 
@@ -423,6 +423,7 @@ module.exports = class Simulation {
 
     static getAvailableRoomForTimeRange(slug, body) {
         return poolConnection.then(pool => {
+            console.log('date:::>>>>', body.date)
             return pool.request()
             .input('toDate', sql.NVarChar(sql.MAX), body.date)
             .input('startSlot', sql.Int, body.startTimeLid)
