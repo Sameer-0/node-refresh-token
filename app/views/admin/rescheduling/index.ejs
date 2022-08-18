@@ -768,7 +768,7 @@
 
           $("#cancel-against-extra-class-date").on('change', function() {
             let date_str = convertDate($(this).val(), '-')
-            console.log('date_str:::::::::::::::>>', date_str)
+            console.log('date_str for extra:::::::::::::::>>', date_str)
 
             $.ajax({
               type: 'POST',
@@ -2178,19 +2178,22 @@
       })
 
       socket.on('modifyEventResponse', async function(data) {
-        console.log('modifyEventResponse')
+        console.log('modifyEventResponse', data)
         let updatedEvents = JSON.parse(data.updatedLectureList);
         if(socketUser == data.socketUser){
           for (let status of updatedEvents.data) {
             if(status.trans_status == 'succcess'){
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
-              }
-              else{
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
-              }
+              console.log('modify::>>', status.trans_status)
+                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-select`).prop('checked', false)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-select`).attr('disabled', 'disabled')
             }
+            else{
+              $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
+              $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+            }
+          }
         }
 
         $(".modal-loader").addClass('d-none')
@@ -2202,18 +2205,37 @@
         if(socketUser == data.socketUser){
           for (let status of updatedEvents.data) {
             if(status.trans_status == 'succcess'){
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-select`).prop('checked', false)
+                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-select`).attr('disabled', 'disabled')
               }
               else{
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
+                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
               }
             }
         }
 
+        $(".modal-loader").addClass('d-none') 
+      })
+
+      socket.on('extraClassResponse', async function(data) {
+        //console.log('data>>> ', data)
+        console.log('data>>> ', data.updatedLectureList)
+
+        alert(data.updatedLectureList.description)
+        $(".modal-loader").addClass('d-none')
+
+      })
+
+      socket.on('regularClassResponse', async function(data) {
+        console.log('data', data.updatedLectureList)
+        
+        alert(data.updatedLectureList.description)
         $(".modal-loader").addClass('d-none')
       })
+
 
       socket.on("scheduleCompleted", async function(data) {
         console.log("Data===>> ", data)
@@ -2223,6 +2245,8 @@
           $("#extraClassModal").modal("hide");
         }
       })
+
+
 
 
       // -----------------------------------------------DYNAMIC TABLE---------------------------------------------------//
@@ -2254,7 +2278,7 @@
 `
 
             for (let lecture of lectureList) {
-              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
+              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}" data-unx-lid="${lecture.unx_lid}">
   <td>${++count}</td>
   <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
   <td>${lecture.event_name}</td>
@@ -2292,7 +2316,7 @@
   <th>Status</th>
   <th>Remark</th>
   <th>Action</th>
-  <th>Select <input id="select-all" type="checkbox" checked="checked" />
+  <th>Select <input id="select-all" type="checkbox" checked="checked"/>
     <label>All</label>
   </th>
 </tr>
@@ -2301,7 +2325,7 @@
 `
 
             for (let lecture of lectureList) {
-              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
+              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}" data-unx-lid="${lecture.unx_lid}">
   <td>${++count}</td>
   <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
   <td>${lecture.event_name}</td>
@@ -2353,7 +2377,7 @@
 `
 
             for (let lecture of lectureList) {
-              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
+              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}" data-unx-lid="${lecture.unx_lid}">
   <td>${++count}</td>
   <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
   <td>${lecture.event_name}</td>
@@ -2409,7 +2433,7 @@
 `
 
             for (let lecture of lectureList) {
-              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date_str}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}">
+              tableHtml += `<tr data-lid="${lecture.id}" data-date="${lecture.date}" data-start-time="${lecture.start_time}" data-end-time="${lecture.end_time}" data-slot="${lecture.slot_name}" data-room="${lecture.room_no}" data-unx-lid="${lecture.unx_lid}">
   <td>${++count}</td>
   <td>${lecture.sap_event_id ? lecture.sap_event_id : 'Not Created'}</td>
   <td>${lecture.event_name}</td>
@@ -2442,6 +2466,60 @@
         }
         $('#event-list-table-card').removeClass('d-none')
       }
+
+
+      function showError(errors) {
+
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title: errors.description,
+            message: errors.data,
+            type: 'alert-danger',
+            buttons: {
+                positive: {
+                    text: "Okay",
+                    action: function () {
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancel",
+                    action: function () {
+                        alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+      }
+
+      function showSuccess(errors) {
+
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title: errors.description,
+            message: errors.data,
+            type: 'alert-success',
+            buttons: {
+                positive: {
+                    text: "Okay",
+                    action: function () {
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancel",
+                    action: function () {
+                        alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+      }
+
+
+
 
     })
   </script>

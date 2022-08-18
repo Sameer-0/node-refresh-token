@@ -768,12 +768,12 @@ module.exports.respond = async socket => {
 
             console.log(updatedTimetableData)
 
-            // global.io.emit("modifyEventResponse", {
-            //     socketUser: socketUser,
-            //     updatedLectureList: updatedTimetableData.output.output_json,
-            //     slugName: 'asmsoc-mum',
-            //     status: 200,
-            // })
+            global.io.emit("extraClassResponse", {
+                socketUser: socketUser,
+                updatedLectureList: JSON.parse(updatedTimetableData.output.output_json),
+                slugName: 'asmsoc-mum',
+                status: 200,
+            })
         } else {
             // global.io.emit("bulkCancelled", {
             //     socketUser: socketUser,
@@ -903,12 +903,12 @@ module.exports.respond = async socket => {
 
             console.log(updatedTimetableData)
 
-            // global.io.emit("modifyEventResponse", {
-            //     socketUser: socketUser,
-            //     updatedLectureList: updatedTimetableData.output.output_json,
-            //     slugName: 'asmsoc-mum',
-            //     status: 200,
-            // })
+            global.io.emit("regularClassResponse", {
+                socketUser: socketUser,
+                updatedLectureList: JSON.parse(updatedTimetableData.output.output_json),
+                slugName: 'asmsoc-mum',
+                status: 200,
+            })
         } else {
             // global.io.emit("bulkCancelled", {
             //     socketUser: socketUser,
