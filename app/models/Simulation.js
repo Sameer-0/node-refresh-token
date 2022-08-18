@@ -163,7 +163,7 @@ module.exports = class Simulation {
                 .input('divisionLid', sql.Int, body.divisionLid)
                 .input('moduleLid', sql.Int, body.moduleLid)
                 .input('acadSessionLid', sql.Int, body.acadSessionLid)
-                .query(`SELECT * FROM [${slug}].timesheet t
+                .query(`SELECT t.* FROM [${slug}].timesheet t
                 INNER JOIN [${slug}].reschedule_transaction r
                 ON r.unx_lid = t.unx_lid
                 WHERE r.sap_flag = 'C' AND r.trans_status = 'success' AND r.cancelled_against IS NULL AND t.program_lid = @programLid AND t.acad_session_lid = @acadSessionLid AND t.module_lid = @moduleLid AND t.division_lid = @divisionLid
@@ -212,7 +212,7 @@ module.exports = class Simulation {
                 .input('division_lid', sql.Int, body.division_lid)
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
                 .input('date_str', sql.NVarChar(20), body.date_str)
-                .query(`SELECT * FROM [${slug}].timesheet t
+                .query(`SELECT t.* FROM [${slug}].timesheet t
                 INNER JOIN [${slug}].reschedule_transaction r
                 ON r.unx_lid = t.unx_lid
                 WHERE r.sap_flag = 'E' AND r.trans_status = 'success' AND r.extra_against IS NULL AND t.program_lid = @program_lid AND t.acad_session_lid = @acad_session_lid AND t.module_lid = @module_lid AND t.division_lid = @division_lid`)

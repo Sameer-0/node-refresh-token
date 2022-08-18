@@ -9,7 +9,7 @@ const SessionCalendar = require('../../../models/SessionCalendar')
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings')
 
 module.exports = { 
-
+ 
   //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
