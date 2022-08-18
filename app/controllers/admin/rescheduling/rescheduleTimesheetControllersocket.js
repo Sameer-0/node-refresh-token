@@ -272,7 +272,7 @@ module.exports.respond = async socket => {
         let result = await db.request()
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
             .input('reason_id', sql.Int, resObj.reasonId)
-            .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+            // .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
             .input('res_stage', sql.Int, 1)
             .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
             .input('last_modified_by', sql.Int, data.userId)
@@ -346,7 +346,7 @@ module.exports.respond = async socket => {
             let updatedTimetableData = await db.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
                 .input('reason_id', sql.Int, resObj.reasonId)
-                .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                // .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
                 .input('res_stage', sql.Int, 2)
                 .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
                 .input('last_modified_by', sql.Int, data.userId)
@@ -359,6 +359,141 @@ module.exports.respond = async socket => {
             global.io.emit("cancelEventResponse", {
                 socketUser: socketUser,
                 updatedLectureList: updatedTimetableData.output.output_json,
+                slugName: 'asmsoc-mum',
+                status: 200,
+            })
+        } else {
+            // global.io.emit("bulkCancelled", {
+            //     socketUser: socketUser,
+            //     updatedLectureList: [],
+            //     slugName: 'asmsoc-mum',
+            //     status: 200,
+            //     isUpdated: 0,
+            //     msg: 'Lectures has been updated successfully.',
+            // })
+            console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+        }
+
+
+
+    })
+
+    socket.on("cancelAgainstExtraEvent", async data => {
+
+        console.log('>>>>>>>>>>>>>>CANCEL EVENT<<<<<<<<<<<<<<<', )
+
+        let socketUser = data.userId;
+        // console.log('socketUser>>>>> ', socketUser)
+
+        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_reschedule_sp_bin_sqh_20220808.wsdl");
+
+        console.log('wsdlUrl', wsdlUrl)
+        let soapClient = await new Promise((resolve, reject) => {
+            soap.createClient(wsdlUrl, async function (err, soapClient) {
+                if (err) throw err;
+                let client = await soapClient;
+                resolve(client)
+            })
+        });
+
+
+        let resObj = JSON.parse(data.transJson);
+        //resObj.eventType = 'THEO';
+        // let lecTransObj = data.transJson
+
+        console.log('resJSON====>> ', resObj)
+        console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
+
+        let result = await db.request()
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
+            .input('reason_id', sql.Int, resObj.reasonId)
+            .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+            .input('res_stage', sql.Int, 1)
+            .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+            .input('last_modified_by', sql.Int, data.userId)
+            .output('output_flag', sql.Bit)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${data.slugName}].[sp_cancel_regular_against_extra_rescheduling]`)
+
+        let transLectureList = JSON.parse(result.output.output_json).data
+
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
+        console.log("transLectureList>> ", transLectureList)
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
+
+        //CREATE SAP OBJ JSON
+        let rescheduleItems = [];
+
+        for (let lecture of transLectureList) {
+            let item = {
+                TransId: lecture.TransId,
+                ZBuseve: lecture.ZBuseve,
+                Zdate: lecture.Zdate,
+                ZtimeFrom: lecture.ZtimeFrom,
+                ZtimeTo: lecture.ZtimeTo,
+                Zflag: lecture.Zflag,
+                ZroomId: lecture.ZroomId,
+                OldZroomId: lecture.OldZroomId,
+                Zyear: lecture.Zyear,
+                ZOrg: data.orgId,
+                ZPrgstd: lecture.ZPrgstd,
+                ZSess: lecture.ZSess,
+                ZModule: lecture.ZModule,
+                ZEvetyp: lecture.ZEvetyp,
+                ZfacultyId: lecture.ZfacultyId,
+                OldZfacultyId: lecture.OldZfacultyId,
+                ReasonId: lecture.ReasonId,
+                OldZdate: lecture.OldZdate,
+                OldZtimeFrom: lecture.OldZtimeFrom,
+                OldZtimeTo: lecture.OldZtimeTo,
+                Remark: "",
+                ZfacId: "",
+                ReasonDetail: lecture.ReasonDetail
+            }
+            rescheduleItems.push(item)
+        }
+
+
+        let rescheduleObj = {
+            ItReschedule: {
+                item: rescheduleItems
+            }
+        }
+
+        console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
+
+        let sapResult = await new Promise((resolve, reject) => {
+            soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
+                if (err) throw err;
+                console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
+                let sapResult = await result.EtReturn.item;
+                resolve(sapResult);
+            })
+        })
+
+        console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
+        console.log(sapResult)
+        console.log(JSON.stringify(sapResult))
+
+
+        if (sapResult.length > 0) {
+
+            let updatedTimetableData = await db.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
+                .input('reason_id', sql.Int, resObj.reasonId)
+                .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                .input('res_stage', sql.Int, 2)
+                .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                .input('last_modified_by', sql.Int, data.userId)
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute('[asmsoc-mum].[sp_cancel_regular_against_extra_rescheduling]');
+
+            console.log(updatedTimetableData)
+
+            global.io.emit("cancelAgaistExtraEventResponse", {
+                socketUser: socketUser,
+                updatedLectureList: JSON.parse(updatedTimetableData.output.output_json),
                 slugName: 'asmsoc-mum',
                 status: 200,
             })
