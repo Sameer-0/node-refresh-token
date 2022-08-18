@@ -49,6 +49,13 @@ module.exports = class DivisionBatches {
         })
     }
 
+    static getBatchesFromDivision(slug, divisionId) {
+        return poolConnection.then(pool => {
+            return pool.request().input('divisionId', sql.Int, divisionId)
+                .query(`SELECT id, division_lid, batch, event_type_lid FROM [${slug}].division_batches WHERE division_lid = @divisionId`)
+        })
+    }
+
     static updateBatch(body, slug) {
         return poolConnection.then(pool => {
             return pool.request().input('id', sql.Int, body.id)
