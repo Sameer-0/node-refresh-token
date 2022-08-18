@@ -824,7 +824,8 @@
 
                 //EXTRA LECTURE LIST WITH E FLAG
 
-                let ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
+                let ajaxData = ``;
+                ajaxData = `<option value selected disabled>--Select Extra Lecture--</option>`;
                 if (data.extrlectureList.length > 0) {
                   for (let lecture of data.extrlectureList) {
                     ajaxData +=
@@ -2224,7 +2225,9 @@
         //console.log('data>>> ', data)
         console.log('data>>> ', data.updatedLectureList)
 
-        alert(data.updatedLectureList.description)
+        alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
+        REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
+        `)
         $(".modal-loader").addClass('d-none')
 
       })
@@ -2232,7 +2235,9 @@
       socket.on('regularClassResponse', async function(data) {
         console.log('data', data.updatedLectureList)
         
-        alert(data.updatedLectureList.description)
+        alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
+        REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
+        `)
         $(".modal-loader").addClass('d-none')
       })
 
