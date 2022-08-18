@@ -166,7 +166,7 @@ module.exports = class Simulation {
                 .query(`SELECT t.* FROM [${slug}].timesheet t
                 INNER JOIN [${slug}].reschedule_transaction r
                 ON r.unx_lid = t.unx_lid
-                WHERE r.sap_flag = 'C' AND r.trans_status = 'success' AND r.cancelled_against IS NULL AND t.program_lid = @programLid AND t.acad_session_lid = @acadSessionLid AND t.module_lid = @moduleLid AND t.division_lid = @divisionLid
+                WHERE (r.sap_flag = 'C' OR r.sap_flag = 'Z') AND r.trans_status = 'success' AND r.cancelled_against IS NULL AND t.program_lid = @programLid AND t.acad_session_lid = @acadSessionLid AND t.module_lid = @moduleLid AND t.division_lid = @divisionLid
                 `)
         })
     }
