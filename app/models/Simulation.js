@@ -97,7 +97,7 @@ module.exports = class Simulation {
     static LectureByDateRange(slug, body) {
         console.log('body:::::::::',body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND sap_flag <> 'E'  ORDER BY id ASC`;
+            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND sap_flag <> 'E'  ORDER BY date ASC`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
