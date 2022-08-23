@@ -981,6 +981,45 @@
 
       $('#schedule-to-date').on('change', function() {
         $('#select-schedule-start-time').removeAttr('disabled');
+        scheduleToDate = $(this).val();
+        // $('#select-schedule-start-time').val('');
+
+        if($('#select-schedule-start-time').val() && $('#select-schedule-end-time').val()){
+          let ApiObj = {
+          type: 'POST',
+          url: '/admin/rescheduling/fetch-available-room-faculty-for-extra-class',
+          data: {
+            program_lid: rescheduleObj.programLid,
+            division_lid: rescheduleObj.divisionLid,
+            module_lid: rescheduleObj.moduleLid,
+            acad_session_lid: rescheduleObj.acadSessionLid,
+            date: scheduleToDate,
+            startTimeLid: scheduleStartTime,
+            endTimeLid: scheduleEndTime
+          },
+          dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+
+          let availableRoomHTML = `<option value="">Select Room</option>`;
+          if (result.availableRoom.length > 0) {
+            result.availableRoom.forEach(element => {
+              availableRoomHTML += `<option value="${element.room_lid}">${element.room_number}</option>`;
+            });
+          } else {
+            availableRoomHTML += `<option value="">Room Not Found!</option>`;
+          }
+
+          $("#select-schedule-to-room").html(availableRoomHTML).attr('disabled', false)
+        }).catch(error => {
+          console.log('error::::::::::::::::', error)
+          showError(error.responseJSON)
+        })
+        }
+
+
+
       })
 
       $('#select-schedule-start-time').on('change', function() {
@@ -1058,7 +1097,7 @@
           dataType: 'JSON'
         }
         ajaxApi(ApiObj).then(result => {
-
+          console.log('faculty for extra class', result)
           let availableFacultyHTML = `<option value="">Select Faculty</option>`;
           if (result.availableFaculty.length > 0) {
             result.availableFaculty.forEach(element => {

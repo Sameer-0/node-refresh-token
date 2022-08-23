@@ -69,7 +69,7 @@ module.exports = class Simulation {
             console.log('available faculty check',slug, date, roomLid, startSlot, endSlot, programLid, sessionLid, moduleLid)
             return pool.request()
             .input('date', sql.NVarChar(sql.MAX), date)
-            .input('roomLid', sql.Int, roomLid)
+            // .input('roomLid', sql.Int, roomLid)
             .input('startSlot', sql.Int, startSlot)
             .input('endSlot', sql.Int, endSlot)
             .input('programLid', sql.Int, programLid)
@@ -85,7 +85,7 @@ module.exports = class Simulation {
                 WHERE fw.module_lid = @moduleLid AND ps.program_lid = @programLid AND ps.acad_session_lid = @sessionLid)
                 fp
                 LEFT JOIN
-                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid) fb
+                (SELECT t.faculty_id, t.faculty_name, t.start_time_lid, t.end_time_lid FROM [${slug}].timesheet t WHERE t.date = @date AND t.program_lid = @programLid AND t.acad_session_lid = @sessionLid AND t.module_lid = @moduleLid AND t.active = 1) fb
                 ON 
                 fp.faculty_id = fb.faculty_id AND
                 fp.start_time_lid = fb.start_time_lid AND
