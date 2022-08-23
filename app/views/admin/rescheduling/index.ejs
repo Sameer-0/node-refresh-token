@@ -491,6 +491,7 @@
       let timeListJson = JSON.parse(`<%- slotIntervalTiming%>`);
       let startTimeList = `<label for="start-time-list" class="form-label">Select Start Time</label> <select id="start-time-list" class="form-select mb-4">`;
       startTimeList += `<option value="">--Select Start Time--</option>`
+
       for (let time of timeListJson) {
         startTimeList += `<option value="${time.id}">${time.start_time}</option>`
       }
@@ -1219,6 +1220,16 @@
 
       // ---------------------------------------EDIT-UPDATE TABLE FOR MODIFY/RESCHEDULE/REPLACE----------------------------------- //
 
+    
+      // $('#rescheduleModal').on('shown', function(){
+      //   $('body').css('overflow', 'hidden');
+      // })
+
+      $('#rescheduleModal').on('shown.bs.modal', function () {
+       console.log('yello');
+       $('body').css('overflow', 'auto');
+      })
+
       let dateList = `<div class="my-4">
                       <label>To Date</label>
                       <input type="date" min="${rescheduleObj.academicStartDate}" max="${rescheduleObj.academicEndDate}" id="reschedule-to-date" class="form-control rounded-0"/>
@@ -1278,7 +1289,7 @@
 
                 roomList +=
                   `<option disabled  selected>--Select Room--</option>
-                      <option value="">Current Room</option>`;
+                      `;
 
                 for (let room of result.availableRoom) {
 
@@ -1359,16 +1370,19 @@
       $(document).on('change', '#start-time-list', function() {
 
         $(document).find("#rescheduleModal .modal-body #end-time-list").html('')
-
+    
         let endTimeOption = '<option value="">--Select End Time--</option>';
-        let startTimeLid = parseInt($(this).val())
+     
+      
+          let startTimeLid = parseInt($(this).val())
 
-        for (let time of timeListJson) {
-          if ((startTimeLid + 11) == time.id) {
-            endTimeOption += `<option value="${time.id}">${time.end_time}</option>`
+          for (let time of timeListJson) {
+            if ((startTimeLid + 11) == time.id) {
+              endTimeOption += `<option value="${time.id}">${time.end_time}</option>`
+            }
           }
-        }
 
+        
         $(document).find("#rescheduleModal .modal-body #end-time-list").append(endTimeOption)
       })
 
@@ -2504,11 +2518,11 @@
   <td data-faculty-lid="${lecture.faculty_lid}" data-faculty-id="${lecture.faculty_id}" data-faculty-type="${lecture.faculty_type}">${lecture.faculty_name}</td>
   <td class='new-faculty-name' data-new-faculty-lid="${replaceToFacultyObj.lid}" data-new-faculty-id="${replaceToFacultyObj.id}" data-new-faculty-type="${replaceToFacultyObj.type}">${replaceToFacultyObj.name}</td>
   <td class="date" data-day-lid="${lecture.day_lid}" data-date="${lecture.date}" data-date-str="${lecture.date_str}">${lecture.date_str}</td>
-  <td  data-new-day-lid="" data-new-date=""></td>
+  <td  data-new-day-lid="${lecture.day_lid}" data-new-date="${lecture.date}">${lecture.date_str}</td>
   <td class="time" data-start-time-lid="${lecture.start_time_lid}" data-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
-  <td  data-new-start-time-lid="" data-new-end-time-lid=""></td>
+  <td  data-new-start-time-lid="${lecture.start_time_lid}" data-new-end-time-lid="${lecture.end_time_lid}">${lecture.start_time}-${lecture.end_time}</td>
   <td class="room" data-room-lid="${lecture.room_lid}" data-room-abbr="${lecture.room_abbr}">${lecture.room_no}</td>
-  <td class="new-room" data-new-room-lid="" data-new-room-abbr=""></td>
+  <td class="new-room" data-new-room-lid="${lecture.room_lid}" data-new-room-abbr="${lecture.room_abbr}">${lecture.room_no}</td>
   <td class="status"><i class="fa-solid fa-circle-pause"></i></td>
   <td class="remark"><i class="fa-solid fa-circle-pause"></i></td>
   <td><i class="fa-solid fa-square-pen reschedule-edit" data-lid="${lecture.id}"></i></td>
