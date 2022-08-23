@@ -1746,35 +1746,33 @@
           alert('Please Select all the mandatory fields with Reason')
         }
         else {
-          console.log('hitiing"f')
+          // console.log('hitiing"f')
         
-          let check = 'Do You want to cancel?'
-          confirmation(check)
-          // if(confirmed()){
+          let check = confirm('Do You want to cancel?')
+          // confirmation(check)
+      
+          if(check){
+            console.log('Cancel initiated::')
+            let timeSheetLidJson = [];
 
-          // }
-          // if(confirmed()){
-          //   console.log('Cancel initiated::')
-          //   let timeSheetLidJson = [];
+            $('.is-cancel:checked').each(function() {
+              timeSheetLidJson.push(
+                $(this).closest('tr').attr('data-lid')
+              )
+            })
+            rescheduleObj.eventsJson = timeSheetLidJson;
 
-          //   $('.is-cancel:checked').each(function() {
-          //     timeSheetLidJson.push(
-          //       $(this).closest('tr').attr('data-lid')
-          //     )
-          //   })
-          //   rescheduleObj.eventsJson = timeSheetLidJson;
+            console.log(">>>>>>>>>>>>>>> CANCELLING EVENTS", rescheduleObj)
 
-          //   console.log(">>>>>>>>>>>>>>> CANCELLING EVENTS", rescheduleObj)
-
-          //   // $(".modal-loader").removeClass('d-none')
-          //   // socket.emit('cancelEvents', {
-          //   //   slugName: "<%- slug %>",
-          //   //   transJson: JSON.stringify(rescheduleObj),
-          //   //   userId: "<%- userId%>",
-          //   //   orgId : orgId
-          //   // })
+            $(".modal-loader").removeClass('d-none')
+            socket.emit('cancelEvents', {
+              slugName: "<%- slug %>",
+              transJson: JSON.stringify(rescheduleObj),
+              userId: "<%- userId%>",
+              orgId : orgId
+            })
             
-          // }
+          }
           
         }
 
@@ -2212,22 +2210,22 @@
         return returnVal
       }
 
-      function confirmation(message){
-        $('#alertModal').removeClass('d-none');
-        $('.res-alert-modal-body p').html(message);
-      }
+      // function confirmation(message){
+      //   $('#alertModal').removeClass('d-none');
+      //   $('.res-alert-modal-body p').html(message);
+      // }
 
-      function confirmed(){
-          $('#alertModal').addClass('d-none');
-          console.log('returing true::>>')
-          return true
-        }
+      // function confirmed(){
+      //     $('#alertModal').addClass('d-none');
+      //     console.log('returing true::>>')
+      //     return true
+      //   }
 
-      $('.alert-continue').on('click', confirmed)
+      // $('.alert-continue').on('click', confirmed)
 
-      $('.alert-cancel').on('click', function () {
-        $('#alertModal').removeClass('d-none');
-      })
+      // $('.alert-cancel').on('click', function () {
+      //   $('#alertModal').removeClass('d-none');
+      // })
 
       // $('.alert-continue').on('click',   function confirmed(){
       //   $('#alertModal').addClass('d-none');
