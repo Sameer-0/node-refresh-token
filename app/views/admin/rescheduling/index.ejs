@@ -124,6 +124,8 @@
     right: 0px;
     border-radius: 0;
   }
+
+
 </style>
 <%- include("../partials/leftSidebar") %>
 <%- include("../partials/header") %>
@@ -458,6 +460,26 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- ALERT MODAL -->
+<div id="alertModal" class="alert-modal d-none">
+
+  <!-- Modal content -->
+  <div class="alert-modal-content">
+    <div class="alert-modal-header">
+        <i class="fa-solid fa-circle-exclamation"></i>
+    </div>
+    <div class="res-alert-modal-body">
+        <h4>Are you sure??</h4>
+        <P>By continuing all data will be deleted!!</P>
+    </div>
+    <div class="alert-modal-footer">
+        <div class="alert-cancel alert-btn">Cancel</div>
+        <div class="alert-continue alert-btn">Continue</div>
+    </div>
+  </div>
+
 </div>
 
 
@@ -1715,7 +1737,7 @@
       
       // ---------------------------------SUBMIT EVENTS FOR CANCEL/MODIFY/RESCHEDULE/REPLACE------------------------------------- //
   
-      $(document).on('click', '#cancel-event-btn', function() {
+      $(document).on('click', '#cancel-event-btn', function(e) {
        
         if (!isValidCancelEvent()) {
           alert('Make sure to Check the events you want to cancel.')
@@ -1724,9 +1746,11 @@
           alert('Please Select all the mandatory fields with Reason')
         }
         else {
-
-          let check = confirm('Do You Really want to cancel?')
-          
+          // console.log('hitiing"f')
+        
+          let check = confirm('Do You want to cancel?')
+          // confirmation(check)
+      
           if(check){
             console.log('Cancel initiated::')
             let timeSheetLidJson = [];
@@ -2186,6 +2210,27 @@
         return returnVal
       }
 
+      // function confirmation(message){
+      //   $('#alertModal').removeClass('d-none');
+      //   $('.res-alert-modal-body p').html(message);
+      // }
+
+      // function confirmed(){
+      //     $('#alertModal').addClass('d-none');
+      //     console.log('returing true::>>')
+      //     return true
+      //   }
+
+      // $('.alert-continue').on('click', confirmed)
+
+      // $('.alert-cancel').on('click', function () {
+      //   $('#alertModal').removeClass('d-none');
+      // })
+
+      // $('.alert-continue').on('click',   function confirmed(){
+      //   $('#alertModal').addClass('d-none');
+      //   return true
+      // })
      //CONVERSION FUNCTION
      function convertDate(cDate, splitChar) {
 

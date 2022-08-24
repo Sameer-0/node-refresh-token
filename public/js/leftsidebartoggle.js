@@ -29,13 +29,13 @@ $(".notification-close").on('click', function () {
     location.reload();
 })
 
-//ALERT-MODAL
-var alertCancel = $('.alert-cancel');
+// //ALERT-MODAL
+// var alertCancel = $('.alert-cancel');
 
-function alertMsg() {
-    $('#alertModal').css('display', 'block')
-}
+// function alertMsg() {
+//     $('#alertModal').css('display', 'block')
+// }
 
-$('.alert-cancel').on('click', function () {
-    $('#alertModal').css('display', 'none');
-})
+// $('.alert-cancel').on('click', function () {
+//     $('#alertModal').css('display', 'none');
+// })
