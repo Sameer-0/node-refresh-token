@@ -2210,78 +2210,101 @@
       // ---------------------------------------------RESPONSE FROM SOCKET---------------------------------------------------//
 
       socket.on('cancelEventResponse', async function(data) {
-        console.log('cancelEventResponse')
-        let updatedEvents = JSON.parse(data.updatedLectureList);
-        if(socketUser == data.socketUser){
-          for (let status of updatedEvents.data) {
-            if(status.trans_status == "success"){
-              console.log('inside success loop::>>>>>', status.trans_status)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-cancel`).prop('checked', false)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-cancel`).attr('disabled', 'disabled')
+        if(data.status == 200){
+          console.log('cancelEventResponse')
+          let updatedEvents = JSON.parse(data.updatedLectureList);
+          if(socketUser == data.socketUser){
+            for (let status of updatedEvents.data) {
+              if(status.trans_status == "success"){
+                console.log('inside success loop::>>>>>', status.trans_status)
+                  $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-success">${status.trans_status.toUpperCase()}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-cancel`).prop('checked', false)
+                  $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .is-cancel`).attr('disabled', 'disabled')
+                }
+                else{
+                  $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
+                }
               }
-              else{
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .status`).html(`<span class="badge bg-danger">${status.trans_status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-lid="${status.timesheet_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.trans_detail}</span>`)
-              }
-            }
+          }
         }
-
+        else{
+          alert('Error Occured For The Below Data!');
+        }
+        
         $(".modal-loader").addClass('d-none')
       })
 
       socket.on('cancelAgaistExtraEventResponse', async function(data) {
-        console.log('cancelAgaistExtraEventResponse>>> ', data.updatedLectureList)
+        if(data.status == 200){
+          console.log('cancelAgaistExtraEventResponse>>> ', data.updatedLectureList)
 
-        alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
-        REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
-        `)
+          alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
+          REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
+          `)
+        }
+        else{
+          alert('Error Occured For The Below Data!');
+        }
+        
         $(".modal-loader").addClass('d-none')
 
       })
 
       socket.on('modifyEventResponse', async function(data) {
-        console.log('modifyEventResponse', data)
-        let updatedEvents = JSON.parse(data.updatedLectureList);
-        if(socketUser == data.socketUser){
-          for (let status of updatedEvents.data) {
-            if(status.status == 'success'){
-              console.log('modify::>>', status.status)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-success">${status.status.toUpperCase()}</span>`)
+       
+        if(data.status == 200){
+          console.log('modifyEventResponse', data)
+          let updatedEvents = JSON.parse(data.updatedLectureList);
+          if(socketUser == data.socketUser){
+            for (let status of updatedEvents.data) {
+              if(status.status == 'success'){
+                console.log('modify::>>', status.status)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-success">${status.status.toUpperCase()}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.status_remark}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).prop('checked', false)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).attr('disabled', 'disabled')
+              }
+              else{
+                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-danger">${status.status.toUpperCase()}</span>`)
                 $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.status_remark}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).prop('checked', false)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).attr('disabled', 'disabled')
-            }
-            else{
-              $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-danger">${status.status.toUpperCase()}</span>`)
-              $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.status_remark}</span>`)
+              }
             }
           }
+        }
+        else{
+          alert('Error Occured For The Below Data!');
         }
 
         $(".modal-loader").addClass('d-none')
       })
 
       socket.on('rescheduleEventResponse', async function(data) {
-        let updatedEvents = JSON.parse(data.updatedLectureList);
-        console.log('rescheduleEventResponse', updatedEvents)
-        if(socketUser == data.socketUser){
-          console.log('rescheduleEventResponse2')
-          for (let status of updatedEvents.data) {
-            if(status.status == 'success'){
-              console.log('rescheduleEventResponse3')
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-success">${status.status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.status_remark}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).prop('checked', false)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).attr('disabled', 'disabled')
+
+        if(data.status == 200){
+          let updatedEvents = JSON.parse(data.updatedLectureList);
+          console.log('rescheduleEventResponse', updatedEvents)
+          if(socketUser == data.socketUser){
+            console.log('rescheduleEventResponse2')
+            for (let status of updatedEvents.data) {
+              if(status.status == 'success'){
+                console.log('rescheduleEventResponse3')
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-success">${status.status.toUpperCase()}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.status_remark}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).prop('checked', false)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .is-select`).attr('disabled', 'disabled')
+                }
+                else{
+                  console.log('rescheduleEventResponse4', status.status)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-danger">${status.status.toUpperCase()}</span>`)
+                  $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.status_remark}</span>`)
+                }
               }
-              else{
-                console.log('rescheduleEventResponse4', status.status)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .status`).html(`<span class="badge bg-danger">${status.status.toUpperCase()}</span>`)
-                $(document).find(`.event-list-table-container tbody tr[data-unx-lid="${status.unx_lid}"] .remark`).html(`<span class="badge bg-secondary">${status.status_remark}</span>`)
-              }
-            }
+          }
+        }
+        else{
+          alert('Error Occured For The Below Data!');
         }
 
         $(".modal-loader").addClass('d-none') 
@@ -2289,21 +2312,32 @@
 
       socket.on('extraClassResponse', async function(data) {
         //console.log('data>>> ', data)
-        console.log('data>>> ', data.updatedLectureList)
+        if(data.status == 200){
+          console.log('data>>> ', data.updatedLectureList)
 
-        alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
-        REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
-        `)
+          alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
+          REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
+          `)
+        }
+        else{
+          alert('Error Occured For The Below Data!');
+        }
+        
         $(".modal-loader").addClass('d-none')
 
       })
 
       socket.on('regularClassResponse', async function(data) {
-        console.log('data', data.updatedLectureList)
+        if(data.status == 200){
+          console.log('data', data.updatedLectureList)
+          alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
+          REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
+          `)
+        }
+        else{
+          alert('Error Occured For The Below Data!');
+        }
         
-        alert(`STATUS => ${data.updatedLectureList.data[0].status.toUpperCase()} 
-        REMARK => ${data.updatedLectureList.data[0].remark.toUpperCase()}
-        `)
         $(".modal-loader").addClass('d-none')
       })
 
