@@ -155,7 +155,7 @@ module.exports = class Simulation {
     }
 
     static getCancelledLecture(slug, body) {
-        console.log('bosy::>>', body)
+        console.log('body::>>', body)
         return poolConnection.then(pool => {
             let request = pool.request()
             return request
@@ -163,10 +163,15 @@ module.exports = class Simulation {
                 .input('divisionLid', sql.Int, body.divisionLid)
                 .input('moduleLid', sql.Int, body.moduleLid)
                 .input('acadSessionLid', sql.Int, body.acadSessionLid)
-                .query(`SELECT t.* FROM [${slug}].timesheet t
-                INNER JOIN [${slug}].reschedule_transaction r
-                ON r.unx_lid = t.unx_lid
-                WHERE (r.sap_flag = 'C' OR r.sap_flag = 'Z') AND r.trans_status = 'success' AND r.cancelled_against IS NULL AND t.program_lid = @programLid AND t.acad_session_lid = @acadSessionLid AND t.module_lid = @moduleLid AND t.division_lid = @divisionLid
+                .query(`
+                select ts.* from [${slug}].timesheet ts
+                inner join
+                (select t1.* from
+                (select * from [${slug}].reschedule_transaction where sap_flag ='C' and trans_status = 'success') t1
+                left join (select extra_against from [${slug}].reschedule_transaction where sap_flag ='E' and trans_status = 'success' ) t2 ON t1.unx_lid = t2.extra_against
+                where t2.extra_against is null) t3
+                on t3.unx_lid = ts.unx_lid
+                where ts.program_lid = @programLid AND ts.acad_session_lid = @acadSessionLid AND ts.module_lid = @moduleLid AND ts.division_lid = @divisionLid
                 `)
         })
     }
@@ -212,10 +217,15 @@ module.exports = class Simulation {
                 .input('division_lid', sql.Int, body.division_lid)
                 .input('acad_session_lid', sql.Int, body.acad_session_lid)
                 .input('date_str', sql.NVarChar(20), body.date_str)
-                .query(`SELECT t.* FROM [${slug}].timesheet t
-                INNER JOIN [${slug}].reschedule_transaction r
-                ON r.unx_lid = t.unx_lid
-                WHERE r.sap_flag = 'E' AND r.trans_status = 'success' AND r.extra_against IS NULL AND t.program_lid = @program_lid AND t.acad_session_lid = @acad_session_lid AND t.module_lid = @module_lid AND t.division_lid = @division_lid`)
+                .query(`select ts.* from [${slug}].timesheet ts
+                inner join
+                (select t1.* from
+                (select * from [${slug}].reschedule_transaction where sap_flag ='E' and trans_status = 'success' ) t1
+                left join (select cancelled_against from [${slug}].reschedule_transaction where sap_flag ='C' and trans_status = 'success' ) t2 ON t1.unx_lid = t2.cancelled_against
+                where t2.cancelled_against is null) t3
+                on t3.unx_lid = ts.unx_lid
+                where ts.program_lid = @program_lid AND ts.acad_session_lid = @acad_session_lid AND ts.module_lid = @module_lid AND ts.division_lid = @division_lid
+                `)
         })
     }
 

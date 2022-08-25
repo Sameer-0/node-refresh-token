@@ -748,7 +748,7 @@
               if(data.lectureList.length > 0){
                 cancelledLectureOption += `<option value = "">--Select Cancelled Lecture--</option>`
                 for(let lecture of data.lectureList){
-                  cancelledLectureOption += `<option value="${lecture.id}" data-timesheet-lid=${lecture.id} data-sap-event-id="${lecture.sap_event_id}"> ${lecture.sap_event_id} (${lecture.event_name}) | ${lecture.faculty_name} | ${lecture.date_str} | ${lecture.start_time} - ${lecture.end_time}</option>`
+                  cancelledLectureOption += `<option value="${lecture.id}" data-timesheet-lid=${lecture.id} data-sap-event-id="${lecture.sap_event_id}" data-unx-lid=${lecture.unx_lid}> ${lecture.sap_event_id} (${lecture.event_name}) | ${lecture.faculty_name} | ${lecture.date_str} | ${lecture.start_time} - ${lecture.end_time}</option>`
                 }
               }
               else{
@@ -1991,7 +1991,7 @@
         }
         else if(rescheduleObj.reschFlag == 'E' && $(document).find('input[name="extra-type"]:checked').val() == 'eac'){
 
-          scheduleToData.cancelledLectureId = $(document).find('#select-cancelled-lecture').val();
+          scheduleToData.cancelledLectureId = $(document).find('#select-cancelled-lecture option:selected').attr('data-unx-lid');
 
           if (!isValidNewExtraLectureAgCanLecture()) {
             alert('Please fill all the mandatory fields.')
@@ -2382,7 +2382,7 @@
         else{
           alert('Error Occured For The Below Data!');
         }
-        
+
         $(".modal-loader").addClass('d-none')
       })
 
