@@ -436,7 +436,7 @@ module.exports = class Simulation {
             .input('endSlot', sql.Int, body.endTimeLid)
             .query(`(SELECT t1.room_lid, r.room_number, r.room_abbr FROM
                 (SELECT * FROM [${slug}].room_transaction_details WHERE start_time_id <= @startSlot AND end_time_id >= @endSlot AND room_lid
-                NOT IN (SELECT DISTINCT room_lid FROM [${slug}].timesheet WHERE (date = @toDate) AND  ((start_time_lid <= @startSlot AND end_time_lid >= @startSlot) OR (start_time_lid <= @endSlot and end_time_lid >= @endSlot)) )) t1
+                NOT IN (SELECT DISTINCT room_lid FROM [${slug}].timesheet WHERE (date = @toDate) AND  ((start_time_lid <= @startSlot AND end_time_lid >= @startSlot) OR (start_time_lid <= @endSlot and end_time_lid >= @endSlot)) AND active = 1 )) t1
                 INNER JOIN rooms r ON r.id = t1.room_lid)`)
         })
     }
