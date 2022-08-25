@@ -9,7 +9,7 @@ const SessionCalendar = require('../../../models/SessionCalendar')
 const SlotIntervalTimings = require('../../../models/SlotIntervalTimings')
 
 module.exports = { 
-
+ 
   //slotData check syntax need to change join
   getPage: (req, res) => {
     let slug = res.locals.slug;
@@ -484,7 +484,7 @@ module.exports = {
     console.log(req.body)
     Promise.all([Simulation.newRegularLecture(res.locals.slug, req.body), 
       Simulation.newExtraLecture(res.locals.slug, req.body)]).then(result => {
-      console.log('After promise>>>>>>>>>>>>>>>>>>')
+      console.log('After promise>>>>>>>>>>>>>>>>>>', result)
       res.json({
         status: 200,
         regularlectureList: result[0].recordset,
