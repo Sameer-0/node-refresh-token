@@ -1562,7 +1562,7 @@ module.exports.respond = async socket => {
 
         // return false;
 
-        let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sep_20220509.wsdl");
+        // let wsdlUrl = path.join(process.env.WSDL_PATH, "zevent_create_sp_bin_sep_20220509.wsdl");
 
         let soapClient = await new Promise((resolve, reject) => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {

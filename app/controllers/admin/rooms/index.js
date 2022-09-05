@@ -273,7 +273,9 @@ module.exports = {
         }
      
         RoomTransactionDetails.updateRequest(res.locals.slug, object, res.locals.userId).then(result => {
-            res.status(200).json(JSON.parse(result.output.output_json))
+            console.log('success::>>', JSON.parse(result.output.output_json))
+            // res.status(200).json(JSON.parse(result.output.output_json))
+            res.status(200);
         }).catch(error => {
             console.log('error::::::::::>>',error)
             if(isJsonString.isJsonString(error.originalError.info.message)){

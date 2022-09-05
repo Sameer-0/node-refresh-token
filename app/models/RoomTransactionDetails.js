@@ -64,6 +64,7 @@ module.exports = class RoomTransactionDetails {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                .output('output_flag', sql.Bit)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .input('last_modified_by', sql.Int, userId)
                 .execute(`[${slug}].[sp_cancellation_room_trans]`)
