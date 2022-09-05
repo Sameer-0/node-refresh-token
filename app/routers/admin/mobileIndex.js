@@ -18,8 +18,8 @@ router.post('/date/current-session', controller.getHoliday);
 //CORES INABLE
 router.post('/faculty/fetch-all-lectures', corsAccess, controller.getAllFacultyLectures);
 router.post('/faculty/fetch-all-lectures-date-wise', corsAccess, controller.getAllFacultyLecturesDateWise);
-router.post('/student/fetch-all-lectures-date-wise',corsAccess, controller.getAllStudentLecturesDateWise);
-router.post('/student/fetch-all-lectures',corsAccess, controller.getAllStudentLectures);
+router.post('/student/fetch-all-lectures-date-wise', corsAccess, controller.getAllStudentLecturesDateWise);
+router.post('/student/fetch-all-lectures', corsAccess, controller.getAllStudentLectures);
 
 
 module.exports = router;
