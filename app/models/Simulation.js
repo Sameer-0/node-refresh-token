@@ -179,7 +179,7 @@ module.exports = class Simulation {
     static facultyByModuleProgramSapDivisionId(slug, body) {
         console.log('facilty_lis:::', body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name, faculty_type FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid  AND sap_flag <> 'E'`;
+            let lecStmt = `SELECT DISTINCT faculty_lid, faculty_id, faculty_name, faculty_type FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE,date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND  program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 

@@ -64,137 +64,154 @@ module.exports.respond = async socket => {
         console.log('resJSON====>> ', resObj)
         console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
 
-        let result = await db.request()
-            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
-            .input('reason_id', sql.Int, resObj.reasonId)
-            // .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-            .input('res_stage', sql.Int, 1)
-            .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-            .input('last_modified_by', sql.Int, data.userId)
-            .output('output_flag', sql.Bit)
-            .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${data.slugName}].[sp_cancel_rescheduling]`)
+        try{
 
-        console.log('Stage-1 Result::>>', result.output.output_json)
-        
-        if(result.output.output_json == null){
-            console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
-            global.io.emit("cancelEventResponse", {
-                socketUser: socketUser,
-                message: 'Error Occured',
-                slugName: 'asmsoc-mum',
-                status: 500,
-            })
+            let result = await db.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
+                .input('reason_id', sql.Int, resObj.reasonId)
+                // .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                .input('res_stage', sql.Int, 1)
+                .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                .input('last_modified_by', sql.Int, data.userId)
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${data.slugName}].[sp_cancel_rescheduling]`)
+
+            console.log('Stage-1 Result::>>', result.output.output_json)
             
-        }
-        else{
-
-            let transLectureList = JSON.parse(result.output.output_json).data
-
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
-            console.log("transLectureList>> ", transLectureList)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
-
-            //CREATE SAP OBJ JSON
-            let rescheduleItems = [];
-
-            for (let lecture of transLectureList) {
-                let item = {
-                    TransId: lecture.TransId,
-                    ZBuseve: lecture.ZBuseve,
-                    Zdate: lecture.Zdate,
-                    ZtimeFrom: lecture.ZtimeFrom,
-                    ZtimeTo: lecture.ZtimeTo,
-                    Zflag: lecture.Zflag,
-                    ZroomId: lecture.ZroomId,
-                    OldZroomId: lecture.OldZroomId,
-                    Zyear: lecture.Zyear,
-                    ZOrg: data.orgId,
-                    ZPrgstd: lecture.ZPrgstd,
-                    ZSess: lecture.ZSess,
-                    ZModule: lecture.ZModule,
-                    ZEvetyp: lecture.ZEvetyp,
-                    ZfacultyId: lecture.ZfacultyId,
-                    OldZfacultyId: lecture.OldZfacultyId,
-                    ReasonId: lecture.ReasonId,
-                    OldZdate: lecture.OldZdate,
-                    OldZtimeFrom: lecture.OldZtimeFrom,
-                    OldZtimeTo: lecture.OldZtimeTo,
-                    Remark: "",
-                    ZfacId: "",
-                    ReasonDetail: lecture.ReasonDetail
-                }
-                rescheduleItems.push(item)
-            }
-
-
-            let rescheduleObj = {
-                ItReschedule: {
-                    item: rescheduleItems
-                }
-            }
-
-            console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
-
-            let sapResult = await new Promise((resolve, reject) => {
-                soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
-                    if (err) throw err;
-                    console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
-                    let sapResult = await result.EtReturn.item;
-                    resolve(sapResult);
+            if(result.output.output_json == null){
+                console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
+                global.io.emit("cancelEventResponse", {
+                    socketUser: socketUser,
+                    message: 'Error Occured',
+                    slugName: 'asmsoc-mum',
+                    status: 500,
                 })
-            })
-
-            console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
-            console.log(sapResult)
-            console.log(JSON.stringify(sapResult))
-
-
-            if (sapResult.length > 0) {
-
-                let updatedTimetableData = await db.request()
-                    .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
-                    .input('reason_id', sql.Int, resObj.reasonId)
-                    // .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-                    .input('res_stage', sql.Int, 2)
-                    .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-                    .input('last_modified_by', sql.Int, data.userId)
-                    .output('output_flag', sql.Bit)
-                    .output('output_json', sql.NVarChar(sql.MAX))
-                    .execute('[asmsoc-mum].[sp_cancel_rescheduling]');
-
-                console.log(updatedTimetableData)
-
-                if(result.output.output_json == null){
-                    console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
-                    global.io.emit("cancelEventResponse", {
-                        socketUser: socketUser,
-                        message: 'Error Occured',
-                        slugName: 'asmsoc-mum',
-                        status: 500,
-                    })
-                    
-                }
-                else{
-                    global.io.emit("cancelEventResponse", {
-                        socketUser: socketUser,
-                        updatedLectureList: updatedTimetableData.output.output_json,
-                        slugName: 'asmsoc-mum',
-                        status: 200,
-                    })
-                }
-
-            } else {
-                // global.io.emit("bulkCancelled", {
-                //     socketUser: socketUser,
-                //     updatedLectureList: [],
-                //     slugName: 'asmsoc-mum',
-                //     status: 200,
-                //     isUpdated: 0,
-                //     msg: 'Lectures has been updated successfully.',
-                // })
-                console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                
             }
+            else{
+
+                let transLectureList = JSON.parse(result.output.output_json).data
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
+                console.log("transLectureList>> ", transLectureList)
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
+
+                //CREATE SAP OBJ JSON
+                let rescheduleItems = [];
+
+                for (let lecture of transLectureList) {
+                    let item = {
+                        TransId: lecture.TransId,
+                        ZBuseve: lecture.ZBuseve,
+                        Zdate: lecture.Zdate,
+                        ZtimeFrom: lecture.ZtimeFrom,
+                        ZtimeTo: lecture.ZtimeTo,
+                        Zflag: lecture.Zflag,
+                        ZroomId: lecture.ZroomId,
+                        OldZroomId: lecture.OldZroomId,
+                        Zyear: lecture.Zyear,
+                        ZOrg: data.orgId,
+                        ZPrgstd: lecture.ZPrgstd,
+                        ZSess: lecture.ZSess,
+                        ZModule: lecture.ZModule,
+                        ZEvetyp: lecture.ZEvetyp,
+                        ZfacultyId: lecture.ZfacultyId,
+                        OldZfacultyId: lecture.OldZfacultyId,
+                        ReasonId: lecture.ReasonId,
+                        OldZdate: lecture.OldZdate,
+                        OldZtimeFrom: lecture.OldZtimeFrom,
+                        OldZtimeTo: lecture.OldZtimeTo,
+                        Remark: "",
+                        ZfacId: "",
+                        ReasonDetail: lecture.ReasonDetail
+                    }
+                    rescheduleItems.push(item)
+                }
+
+
+                let rescheduleObj = {
+                    ItReschedule: {
+                        item: rescheduleItems
+                    }
+                }
+
+                console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
+
+                let sapResult = await new Promise((resolve, reject) => {
+                    soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
+                        if (err) throw err;
+                        console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
+                        let sapResult = await result.EtReturn.item;
+                        resolve(sapResult);
+                    })
+                })
+
+                console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
+                console.log(sapResult)
+                console.log(JSON.stringify(sapResult))
+
+
+                if (sapResult.length > 0) {
+
+                    let updatedTimetableData = await db.request()
+                        .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
+                        .input('reason_id', sql.Int, resObj.reasonId)
+                        // .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                        .input('res_stage', sql.Int, 2)
+                        .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                        .input('last_modified_by', sql.Int, data.userId)
+                        .output('output_flag', sql.Bit)
+                        .output('output_json', sql.NVarChar(sql.MAX))
+                        .execute('[asmsoc-mum].[sp_cancel_rescheduling]');
+
+                    console.log(updatedTimetableData)
+
+                    if(result.output.output_json == null){
+                        console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
+                        global.io.emit("cancelEventResponse", {
+                            socketUser: socketUser,
+                            message: 'Error Occured',
+                            slugName: 'asmsoc-mum',
+                            status: 500,
+                        })
+                        
+                    }
+                    else{
+                        global.io.emit("cancelEventResponse", {
+                            socketUser: socketUser,
+                            updatedLectureList: updatedTimetableData.output.output_json,
+                            slugName: 'asmsoc-mum',
+                            status: 200,
+                        })
+                    }
+
+                } else {
+                    // global.io.emit("bulkCancelled", {
+                    //     socketUser: socketUser,
+                    //     updatedLectureList: [],
+                    //     slugName: 'asmsoc-mum',
+                    //     status: 200,
+                    //     isUpdated: 0,
+                    //     msg: 'Lectures has been updated successfully.',
+                    // })
+                    console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                }
+            }
+        }
+        catch(error){
+            console.log('error::>>3', error);
+            console.log('error::>>2', JSON.parse(error.originalError.info.message).description);
+            console.log('error::>>1', typeof error.originalError.info.message);
+          
+                console.log('<<<<<<<<<:::::ERROR STAGE 1::::::>>>>>>>>')
+                global.io.emit("extraClassResponse", {
+                    socketUser: socketUser,
+                    message: JSON.parse(error.originalError.info.message).description,
+                    slugName: 'asmsoc-mum',
+                    status: 500,
+                })
+          
         }
 
     })
@@ -225,137 +242,154 @@ module.exports.respond = async socket => {
         console.log('resJSON====>> ', resObj)
         console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
 
-        let result = await db.request()
-            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
-            .input('reason_id', sql.Int, resObj.reasonId)
-            .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-            .input('res_stage', sql.Int, 1)
-            .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-            .input('last_modified_by', sql.Int, data.userId)
-            .output('output_flag', sql.Bit)
-            .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${data.slugName}].[sp_cancel_regular_against_extra_rescheduling]`)
+        try{
 
-        console.log('Stage-1 Result::>>', result.output.output_json)
+            let result = await db.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
+                .input('reason_id', sql.Int, resObj.reasonId)
+                .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                .input('res_stage', sql.Int, 1)
+                .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                .input('last_modified_by', sql.Int, data.userId)
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${data.slugName}].[sp_cancel_regular_against_extra_rescheduling]`)
 
-        if(result.output.output_json == null){
-            console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
-            global.io.emit("cancelAgaistExtraEventResponse", {
-                socketUser: socketUser,
-                message: 'Error Occured',
-                slugName: 'asmsoc-mum',
-                status: 500,
-            })
-            
-        }
-        else{
+            console.log('Stage-1 Result::>>', result.output.output_json)
 
-            let transLectureList = JSON.parse(result.output.output_json).data
-
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
-            console.log("transLectureList>> ", transLectureList)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
-
-            //CREATE SAP OBJ JSON
-            let rescheduleItems = [];
-
-            for (let lecture of transLectureList) {
-                let item = {
-                    TransId: lecture.TransId,
-                    ZBuseve: lecture.ZBuseve,
-                    Zdate: lecture.Zdate,
-                    ZtimeFrom: lecture.ZtimeFrom,
-                    ZtimeTo: lecture.ZtimeTo,
-                    Zflag: lecture.Zflag,
-                    ZroomId: lecture.ZroomId,
-                    OldZroomId: lecture.OldZroomId,
-                    Zyear: lecture.Zyear,
-                    ZOrg: data.orgId,
-                    ZPrgstd: lecture.ZPrgstd,
-                    ZSess: lecture.ZSess,
-                    ZModule: lecture.ZModule,
-                    ZEvetyp: lecture.ZEvetyp,
-                    ZfacultyId: lecture.ZfacultyId,
-                    OldZfacultyId: lecture.OldZfacultyId,
-                    ReasonId: lecture.ReasonId,
-                    OldZdate: lecture.OldZdate,
-                    OldZtimeFrom: lecture.OldZtimeFrom,
-                    OldZtimeTo: lecture.OldZtimeTo,
-                    Remark: "",
-                    ZfacId: "",
-                    ReasonDetail: lecture.ReasonDetail
-                }
-                rescheduleItems.push(item)
-            }
-
-
-            let rescheduleObj = {
-                ItReschedule: {
-                    item: rescheduleItems
-                }
-            }
-
-            console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
-
-            let sapResult = await new Promise((resolve, reject) => {
-                soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
-                    if (err) throw err;
-                    console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
-                    let sapResult = await result.EtReturn.item;
-                    resolve(sapResult);
+            if(result.output.output_json == null){
+                console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
+                global.io.emit("cancelAgaistExtraEventResponse", {
+                    socketUser: socketUser,
+                    message: 'Error Occured',
+                    slugName: 'asmsoc-mum',
+                    status: 500,
                 })
-            })
-
-            console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
-            console.log(sapResult)
-            console.log(JSON.stringify(sapResult))
-
-
-            if (sapResult.length > 0) {
-
-                let updatedTimetableData = await db.request()
-                    .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
-                    .input('reason_id', sql.Int, resObj.reasonId)
-                    .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-                    .input('res_stage', sql.Int, 2)
-                    .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-                    .input('last_modified_by', sql.Int, data.userId)
-                    .output('output_flag', sql.Bit)
-                    .output('output_json', sql.NVarChar(sql.MAX))
-                    .execute('[asmsoc-mum].[sp_cancel_regular_against_extra_rescheduling]');
-
-                console.log('Stage-2 Result::>>',updatedTimetableData)
-
-                if(result.output.output_json == null){
-                    console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
-                    global.io.emit("cancelAgaistExtraEventResponse", {
-                        socketUser: socketUser,
-                        message: 'Error Occured',
-                        slugName: 'asmsoc-mum',
-                        status: 500,
-                    })
-                    
-                }
-                else{
-                    global.io.emit("cancelAgaistExtraEventResponse", {
-                        socketUser: socketUser,
-                        updatedLectureList: JSON.parse(updatedTimetableData.output.output_json),
-                        slugName: 'asmsoc-mum',
-                        status: 200,
-                    })
-                }
-
-            } else {
-                // global.io.emit("bulkCancelled", {
-                //     socketUser: socketUser,
-                //     updatedLectureList: [],
-                //     slugName: 'asmsoc-mum',
-                //     status: 200,
-                //     isUpdated: 0,
-                //     msg: 'Lectures has been updated successfully.',
-                // })
-                console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                
             }
+            else{
+
+                let transLectureList = JSON.parse(result.output.output_json).data
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
+                console.log("transLectureList>> ", transLectureList)
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
+
+                //CREATE SAP OBJ JSON
+                let rescheduleItems = [];
+
+                for (let lecture of transLectureList) {
+                    let item = {
+                        TransId: lecture.TransId,
+                        ZBuseve: lecture.ZBuseve,
+                        Zdate: lecture.Zdate,
+                        ZtimeFrom: lecture.ZtimeFrom,
+                        ZtimeTo: lecture.ZtimeTo,
+                        Zflag: lecture.Zflag,
+                        ZroomId: lecture.ZroomId,
+                        OldZroomId: lecture.OldZroomId,
+                        Zyear: lecture.Zyear,
+                        ZOrg: data.orgId,
+                        ZPrgstd: lecture.ZPrgstd,
+                        ZSess: lecture.ZSess,
+                        ZModule: lecture.ZModule,
+                        ZEvetyp: lecture.ZEvetyp,
+                        ZfacultyId: lecture.ZfacultyId,
+                        OldZfacultyId: lecture.OldZfacultyId,
+                        ReasonId: lecture.ReasonId,
+                        OldZdate: lecture.OldZdate,
+                        OldZtimeFrom: lecture.OldZtimeFrom,
+                        OldZtimeTo: lecture.OldZtimeTo,
+                        Remark: "",
+                        ZfacId: "",
+                        ReasonDetail: lecture.ReasonDetail
+                    }
+                    rescheduleItems.push(item)
+                }
+
+
+                let rescheduleObj = {
+                    ItReschedule: {
+                        item: rescheduleItems
+                    }
+                }
+
+                console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
+
+                let sapResult = await new Promise((resolve, reject) => {
+                    soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
+                        if (err) throw err;
+                        console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
+                        let sapResult = await result.EtReturn.item;
+                        resolve(sapResult);
+                    })
+                })
+
+                console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
+                console.log(sapResult)
+                console.log(JSON.stringify(sapResult))
+
+
+                if (sapResult.length > 0) {
+
+                    let updatedTimetableData = await db.request()
+                        .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
+                        .input('reason_id', sql.Int, resObj.reasonId)
+                        .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                        .input('res_stage', sql.Int, 2)
+                        .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                        .input('last_modified_by', sql.Int, data.userId)
+                        .output('output_flag', sql.Bit)
+                        .output('output_json', sql.NVarChar(sql.MAX))
+                        .execute('[asmsoc-mum].[sp_cancel_regular_against_extra_rescheduling]');
+
+                    console.log('Stage-2 Result::>>',updatedTimetableData)
+
+                    if(result.output.output_json == null){
+                        console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
+                        global.io.emit("cancelAgaistExtraEventResponse", {
+                            socketUser: socketUser,
+                            message: 'Error Occured',
+                            slugName: 'asmsoc-mum',
+                            status: 500,
+                        })
+                        
+                    }
+                    else{
+                        global.io.emit("cancelAgaistExtraEventResponse", {
+                            socketUser: socketUser,
+                            updatedLectureList: JSON.parse(updatedTimetableData.output.output_json),
+                            slugName: 'asmsoc-mum',
+                            status: 200,
+                        })
+                    }
+
+                } else {
+                    // global.io.emit("bulkCancelled", {
+                    //     socketUser: socketUser,
+                    //     updatedLectureList: [],
+                    //     slugName: 'asmsoc-mum',
+                    //     status: 200,
+                    //     isUpdated: 0,
+                    //     msg: 'Lectures has been updated successfully.',
+                    // })
+                    console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                }
+            }
+        }
+        catch(error){
+            console.log('error::>>3', error);
+            console.log('error::>>2', JSON.parse(error.originalError.info.message).description);
+            console.log('error::>>1', typeof error.originalError.info.message);
+          
+                console.log('<<<<<<<<<:::::ERROR STAGE 1::::::>>>>>>>>')
+                global.io.emit("extraClassResponse", {
+                    socketUser: socketUser,
+                    message: JSON.parse(error.originalError.info.message).description,
+                    slugName: 'asmsoc-mum',
+                    status: 500,
+                })
+          
         }
 
     })
@@ -389,137 +423,154 @@ module.exports.respond = async socket => {
         console.log('resJSON====>> ', resObj)
         console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
         
-        let result = await db.request()
-            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
-            .input('reason_id', sql.Int, resObj.reasonId)
-            .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-            .input('res_stage', sql.Int, 1)
-            .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-            .input('last_modified_by', sql.Int, data.userId)
-            .output('output_flag', sql.Bit)
-            .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${data.slugName}].[sp_modify_rescheduling]`)
+        try{
 
-        console.log('Stage-1 Result::>>', result.output.output_json)
-        if(result.output.output_json == null){
-            console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
-            global.io.emit("modifyEventResponse", {
-                socketUser: socketUser,
-                message: 'Error Occured',
-                slugName: 'asmsoc-mum',
-                status: 500,
-            })
-            
-        }
-        else{
+            let result = await db.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
+                .input('reason_id', sql.Int, resObj.reasonId)
+                .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                .input('res_stage', sql.Int, 1)
+                .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                .input('last_modified_by', sql.Int, data.userId)
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${data.slugName}].[sp_modify_rescheduling]`)
 
-            let transLectureList = JSON.parse(result.output.output_json).data
-            console.log('transLectureList', transLectureList)
-
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
-            console.log("transLectureList>> ", transLectureList)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
-        
-            //CREATE SAP OBJ JSON
-            let rescheduleItems = [];
-
-            for (let lecture of transLectureList) {
-                let item = {
-                    TransId: lecture.TransId,
-                    ZBuseve: lecture.ZBuseve,
-                    Zdate: lecture.Zdate,
-                    ZtimeFrom: lecture.ZtimeFrom,
-                    ZtimeTo: lecture.ZtimeTo,
-                    Zflag: lecture.Zflag,
-                    ZroomId: lecture.ZroomId,
-                    OldZroomId: "",
-                    Zyear: lecture.Zyear,
-                    ZOrg: data.orgId,
-                    ZPrgstd: lecture.ZPrgstd,
-                    ZSess: lecture.ZSess,
-                    ZModule: lecture.ZModule,
-                    ZEvetyp: lecture.ZEvetyp,
-                    ZfacultyId: lecture.ZfacultyId,
-                    OldZfacultyId: "",
-                    ReasonId: lecture.ReasonId,
-                    OldZdate: lecture.Zdate,
-                    OldZtimeFrom: lecture.ZtimeFrom,
-                    OldZtimeTo: lecture.ZtimeTo,
-                    Remark: "",
-                    ZfacId: "",
-                    ReasonDetail: lecture.ReasonDetail
-                }
-                rescheduleItems.push(item)
-            }
-
-
-            let rescheduleObj = {
-                ItReschedule: {
-                    item: rescheduleItems
-                }
-            }
-
-            console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
-
-            let sapResult = await new Promise((resolve, reject) => {
-                soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
-                    if (err) throw err;
-                    console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
-                    let sapResult = await result.EtReturn.item;
-                    resolve(sapResult);
+            console.log('Stage-1 Result::>>', result.output.output_json)
+            if(result.output.output_json == null){
+                console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
+                global.io.emit("modifyEventResponse", {
+                    socketUser: socketUser,
+                    message: 'Error Occured',
+                    slugName: 'asmsoc-mum',
+                    status: 500,
                 })
-            })
-
-            console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
-            console.log(sapResult)
-            console.log(JSON.stringify(sapResult))
-
-
-            if (sapResult.length > 0) {
-
-                let updatedTimetableData = await db.request()
-                    .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
-                    .input('reason_id', sql.Int, resObj.reasonId)
-                    .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-                    .input('res_stage', sql.Int, 2)
-                    .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-                    .input('last_modified_by', sql.Int, data.userId)
-                    .output('output_flag', sql.Bit)
-                    .output('output_json', sql.NVarChar(sql.MAX))
-                    .execute('[asmsoc-mum].[sp_modify_rescheduling]');
-
-                console.log('Stage-2 Result::>>',updatedTimetableData)
-
-                if(result.output.output_json == null){
-                    console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
-                    global.io.emit("modifyEventResponse", {
-                        socketUser: socketUser,
-                        message: 'Error Occured',
-                        slugName: 'asmsoc-mum',
-                        status: 500,
-                    })
-                    
-                }
-                else{
-                    global.io.emit("modifyEventResponse", {
-                        socketUser: socketUser,
-                        updatedLectureList: updatedTimetableData.output.output_json,
-                        slugName: 'asmsoc-mum',
-                        status: 200,
-                    })
-                }
-
-            } else {
-                // global.io.emit("bulkCancelled", {
-                //     socketUser: socketUser,
-                //     updatedLectureList: [],
-                //     slugName: 'asmsoc-mum',
-                //     status: 200,
-                //     isUpdated: 0,
-                //     msg: 'Lectures has been updated successfully.',
-                // })
-                console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                
             }
+            else{
+
+                let transLectureList = JSON.parse(result.output.output_json).data
+                console.log('transLectureList', transLectureList)
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
+                console.log("transLectureList>> ", transLectureList)
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
+            
+                //CREATE SAP OBJ JSON
+                let rescheduleItems = [];
+
+                for (let lecture of transLectureList) {
+                    let item = {
+                        TransId: lecture.TransId,
+                        ZBuseve: lecture.ZBuseve,
+                        Zdate: lecture.Zdate,
+                        ZtimeFrom: lecture.ZtimeFrom,
+                        ZtimeTo: lecture.ZtimeTo,
+                        Zflag: lecture.Zflag,
+                        ZroomId: lecture.ZroomId,
+                        OldZroomId: "",
+                        Zyear: lecture.Zyear,
+                        ZOrg: data.orgId,
+                        ZPrgstd: lecture.ZPrgstd,
+                        ZSess: lecture.ZSess,
+                        ZModule: lecture.ZModule,
+                        ZEvetyp: lecture.ZEvetyp,
+                        ZfacultyId: lecture.ZfacultyId,
+                        OldZfacultyId: "",
+                        ReasonId: lecture.ReasonId,
+                        OldZdate: lecture.Zdate,
+                        OldZtimeFrom: lecture.ZtimeFrom,
+                        OldZtimeTo: lecture.ZtimeTo,
+                        Remark: "",
+                        ZfacId: "",
+                        ReasonDetail: lecture.ReasonDetail
+                    }
+                    rescheduleItems.push(item)
+                }
+
+
+                let rescheduleObj = {
+                    ItReschedule: {
+                        item: rescheduleItems
+                    }
+                }
+
+                console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
+
+                let sapResult = await new Promise((resolve, reject) => {
+                    soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
+                        if (err) throw err;
+                        console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
+                        let sapResult = await result.EtReturn.item;
+                        resolve(sapResult);
+                    })
+                })
+
+                console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
+                console.log(sapResult)
+                console.log(JSON.stringify(sapResult))
+
+
+                if (sapResult.length > 0) {
+
+                    let updatedTimetableData = await db.request()
+                        .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
+                        .input('reason_id', sql.Int, resObj.reasonId)
+                        .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                        .input('res_stage', sql.Int, 2)
+                        .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                        .input('last_modified_by', sql.Int, data.userId)
+                        .output('output_flag', sql.Bit)
+                        .output('output_json', sql.NVarChar(sql.MAX))
+                        .execute('[asmsoc-mum].[sp_modify_rescheduling]');
+
+                    console.log('Stage-2 Result::>>',updatedTimetableData)
+
+                    if(result.output.output_json == null){
+                        console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
+                        global.io.emit("modifyEventResponse", {
+                            socketUser: socketUser,
+                            message: 'Error Occured',
+                            slugName: 'asmsoc-mum',
+                            status: 500,
+                        })
+                        
+                    }
+                    else{
+                        global.io.emit("modifyEventResponse", {
+                            socketUser: socketUser,
+                            updatedLectureList: updatedTimetableData.output.output_json,
+                            slugName: 'asmsoc-mum',
+                            status: 200,
+                        })
+                    }
+
+                } else {
+                    // global.io.emit("bulkCancelled", {
+                    //     socketUser: socketUser,
+                    //     updatedLectureList: [],
+                    //     slugName: 'asmsoc-mum',
+                    //     status: 200,
+                    //     isUpdated: 0,
+                    //     msg: 'Lectures has been updated successfully.',
+                    // })
+                    console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                }
+            }
+        }
+        catch(error){
+            console.log('error::>>3', error);
+            console.log('error::>>2', JSON.parse(error.originalError.info.message).description);
+            console.log('error::>>1', typeof error.originalError.info.message);
+          
+                console.log('<<<<<<<<<:::::ERROR STAGE 1::::::>>>>>>>>')
+                global.io.emit("extraClassResponse", {
+                    socketUser: socketUser,
+                    message: JSON.parse(error.originalError.info.message).description,
+                    slugName: 'asmsoc-mum',
+                    status: 500,
+                })
+          
         }
 
     })
@@ -548,138 +599,155 @@ module.exports.respond = async socket => {
         console.log('resJSON====>> ', resObj)
         console.log('JSON.stringify(resObj.eventsJson) ====>> ', JSON.stringify(resObj.eventsJson))
         
-        let result = await db.request()
-            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
-            .input('reason_id', sql.Int, resObj.reasonId)
-            .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-            .input('res_stage', sql.Int, 1)
-            .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-            .input('last_modified_by', sql.Int, data.userId)
-            .output('output_flag', sql.Bit)
-            .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${data.slugName}].[sp_reschedule]`)
+        try{
 
-        console.log('Stage-1 Result::>>', result.output.output_json)
-        if(result.output.output_json == null){
-            console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
-            global.io.emit("rescheduleEventResponse", {
-                socketUser: socketUser,
-                message: 'Error Occured',
-                slugName: 'asmsoc-mum',
-                status: 500,
-            })
-            
-        }
-        else{
+            let result = await db.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(resObj.eventsJson))
+                .input('reason_id', sql.Int, resObj.reasonId)
+                .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                .input('res_stage', sql.Int, 1)
+                .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                .input('last_modified_by', sql.Int, data.userId)
+                .output('output_flag', sql.Bit)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${data.slugName}].[sp_reschedule]`)
 
-            let transLectureList = JSON.parse(result.output.output_json).data
-            console.log('transLectureList', transLectureList)
-
-
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
-            console.log("transLectureList>> ", transLectureList)
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
-        
-            //CREATE SAP OBJ JSON
-            let rescheduleItems = [];
-
-            for (let lecture of transLectureList) {
-                let item = {
-                    TransId: lecture.TransId,
-                    ZBuseve: lecture.ZBuseve,
-                    Zdate: lecture.Zdate,
-                    ZtimeFrom: lecture.ZtimeFrom,
-                    ZtimeTo: lecture.ZtimeTo,
-                    Zflag: lecture.Zflag,
-                    ZroomId: lecture.ZroomId,
-                    OldZroomId: lecture.OldZroomId,
-                    Zyear: lecture.Zyear,
-                    ZOrg: data.orgId,
-                    ZPrgstd: lecture.ZPrgstd,
-                    ZSess: lecture.ZSess,
-                    ZModule: lecture.ZModule,
-                    ZEvetyp: lecture.ZEvetyp,
-                    ZfacultyId: lecture.ZfacultyId,
-                    OldZfacultyId: lecture.OldZfacultyId,
-                    ReasonId: lecture.ReasonId,
-                    OldZdate: lecture.OldZdate,
-                    OldZtimeFrom: lecture.OldZtimeFrom,
-                    OldZtimeTo: lecture.OldZtimeTo,
-                    Remark: "",
-                    ZfacId: "",
-                    ReasonDetail: lecture.ReasonDetail
-                }
-                rescheduleItems.push(item)
-            }
-
-
-            let rescheduleObj = {
-                ItReschedule: {
-                    item: rescheduleItems
-                }
-            }
-
-            console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
-
-
-            let sapResult = await new Promise((resolve, reject) => {
-                soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
-                    if (err) throw err;
-                    console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
-                    let sapResult = await result.EtReturn.item;
-                    resolve(sapResult);
+            console.log('Stage-1 Result::>>', result.output.output_json)
+            if(result.output.output_json == null){
+                console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 1::::::>>>>>>>>')
+                global.io.emit("rescheduleEventResponse", {
+                    socketUser: socketUser,
+                    message: 'Error Occured',
+                    slugName: 'asmsoc-mum',
+                    status: 500,
                 })
-            })
-
-            console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
-            console.log(sapResult)
-            console.log(JSON.stringify(sapResult))
-
-            if (sapResult.length > 0) {
-
-                let updatedTimetableData = await db.request()
-                    .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
-                    .input('reason_id', sql.Int, resObj.reasonId)
-                    .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
-                    .input('res_stage', sql.Int, 2)
-                    .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
-                    .input('last_modified_by', sql.Int, data.userId)
-                    .output('output_flag', sql.Bit)
-                    .output('output_json', sql.NVarChar(sql.MAX))
-                    .execute(`[${data.slugName}].[sp_reschedule]`);
-
-                console.log('Stage-2 Result',updatedTimetableData)
-                if(result.output.output_json == null){
-                    console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 2::::::>>>>>>>>')
-                    global.io.emit("rescheduleEventResponse", {
-                        socketUser: socketUser,
-                        message: 'Error Occured',
-                        slugName: 'asmsoc-mum',
-                        status: 500,
-                    })
-                    
-                }
-                else{
-                    global.io.emit("rescheduleEventResponse", {
-                        socketUser: socketUser,
-                        updatedLectureList: updatedTimetableData.output.output_json,
-                        slugName: 'asmsoc-mum',
-                        status: 200,
-                    })
-                }
-
-               
-            } else {
-                // global.io.emit("bulkCancelled", {
-                //     socketUser: socketUser,
-                //     updatedLectureList: [],
-                //     slugName: 'asmsoc-mum',
-                //     status: 200,
-                //     isUpdated: 0,
-                //     msg: 'Lectures has been updated successfully.',
-                // })
-                console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                
             }
+            else{
+
+                let transLectureList = JSON.parse(result.output.output_json).data
+                console.log('transLectureList', transLectureList)
+
+
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>BEDFORE')
+                console.log("transLectureList>> ", transLectureList)
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>AFTER')
+            
+                //CREATE SAP OBJ JSON
+                let rescheduleItems = [];
+
+                for (let lecture of transLectureList) {
+                    let item = {
+                        TransId: lecture.TransId,
+                        ZBuseve: lecture.ZBuseve,
+                        Zdate: lecture.Zdate,
+                        ZtimeFrom: lecture.ZtimeFrom,
+                        ZtimeTo: lecture.ZtimeTo,
+                        Zflag: lecture.Zflag,
+                        ZroomId: lecture.ZroomId,
+                        OldZroomId: lecture.OldZroomId,
+                        Zyear: lecture.Zyear,
+                        ZOrg: data.orgId,
+                        ZPrgstd: lecture.ZPrgstd,
+                        ZSess: lecture.ZSess,
+                        ZModule: lecture.ZModule,
+                        ZEvetyp: lecture.ZEvetyp,
+                        ZfacultyId: lecture.ZfacultyId,
+                        OldZfacultyId: lecture.OldZfacultyId,
+                        ReasonId: lecture.ReasonId,
+                        OldZdate: lecture.OldZdate,
+                        OldZtimeFrom: lecture.OldZtimeFrom,
+                        OldZtimeTo: lecture.OldZtimeTo,
+                        Remark: "",
+                        ZfacId: "",
+                        ReasonDetail: lecture.ReasonDetail
+                    }
+                    rescheduleItems.push(item)
+                }
+
+
+                let rescheduleObj = {
+                    ItReschedule: {
+                        item: rescheduleItems
+                    }
+                }
+
+                console.log('>>>>>>>SAP IBJ JSON<<<<<<<<<<<<', rescheduleObj.ItReschedule.item)
+
+
+                let sapResult = await new Promise((resolve, reject) => {
+                    soapClient.ZeventRescheduleSp(rescheduleObj, async (err, result) => {
+                        if (err) throw err;
+                        console.log('>>>>>>>>>> Awaiting result from SAP <<<<<<<<<<');
+                        let sapResult = await result.EtReturn.item;
+                        resolve(sapResult);
+                    })
+                })
+
+                console.log('>>>>>>>>>>SAP RESULT<<<<<<<<<<<<<<<<<<<')
+                console.log(sapResult)
+                console.log(JSON.stringify(sapResult))
+
+                if (sapResult.length > 0) {
+
+                    let updatedTimetableData = await db.request()
+                        .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(sapResult))
+                        .input('reason_id', sql.Int, resObj.reasonId)
+                        .input('reason_detail', sql.NVarChar(sql.MAX), resObj.reasonDescription)
+                        .input('res_stage', sql.Int, 2)
+                        .input('flag', sql.NVarChar(sql.MAX), resObj.reschFlag)
+                        .input('last_modified_by', sql.Int, data.userId)
+                        .output('output_flag', sql.Bit)
+                        .output('output_json', sql.NVarChar(sql.MAX))
+                        .execute(`[${data.slugName}].[sp_reschedule]`);
+
+                    console.log('Stage-2 Result',updatedTimetableData)
+                    if(result.output.output_json == null){
+                        console.log('<<<<<<<<<:::::ERROR OCCURED STAGE 2::::::>>>>>>>>')
+                        global.io.emit("rescheduleEventResponse", {
+                            socketUser: socketUser,
+                            message: 'Error Occured',
+                            slugName: 'asmsoc-mum',
+                            status: 500,
+                        })
+                        
+                    }
+                    else{
+                        global.io.emit("rescheduleEventResponse", {
+                            socketUser: socketUser,
+                            updatedLectureList: updatedTimetableData.output.output_json,
+                            slugName: 'asmsoc-mum',
+                            status: 200,
+                        })
+                    }
+
+                
+                } else {
+                    // global.io.emit("bulkCancelled", {
+                    //     socketUser: socketUser,
+                    //     updatedLectureList: [],
+                    //     slugName: 'asmsoc-mum',
+                    //     status: 200,
+                    //     isUpdated: 0,
+                    //     msg: 'Lectures has been updated successfully.',
+                    // })
+                    console.log('>>>>>>>>>>>>>>>SAP RESULT CAME EMPTY<<<<<<<<<<<<<<<<<')
+                }
+            }
+        }
+        catch(error){
+            console.log('error::>>3', error);
+            console.log('error::>>2', JSON.parse(error.originalError.info.message).description);
+            console.log('error::>>1', typeof error.originalError.info.message);
+          
+                console.log('<<<<<<<<<:::::ERROR STAGE 1::::::>>>>>>>>')
+                global.io.emit("extraClassResponse", {
+                    socketUser: socketUser,
+                    message: JSON.parse(error.originalError.info.message).description,
+                    slugName: 'asmsoc-mum',
+                    status: 500,
+                })
+          
         }
 
     })
