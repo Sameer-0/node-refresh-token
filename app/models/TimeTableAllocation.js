@@ -6,12 +6,12 @@ const {
 
 module.exports = class schoolTiming {
     
-    static generateTimeTable(programLid, sessionlLid, slug) {
+    static generateTimeTable(programLid, sessionLid, slug) {
       
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('program_lid', sql.Int, programLid)
-            .input('acad_session_lid', sql.Int, sessionlLid)
+            .input('session_lid', sql.Int, sessionLid)
             .input('last_modified_by', sql.Int, 1)
             .output('output_flag', sql.Bit, 0)
             .output('output_json', sql.NVarChar(sql.MAX))
@@ -19,12 +19,12 @@ module.exports = class schoolTiming {
         })
     }
 
-    static deAllocateTimeTable(programLid, sessionlLid, slug) {
+    static deAllocateTimeTable(programLid, sessionLid, slug) {
       
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('program_lid', sql.Int, programLid)
-            .input('acad_session_lid', sql.Int, sessionlLid)
+            .input('session_lid', sql.Int, sessionLid)
             .input('last_modified_by', sql.Int, 1)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_deallocate_timetable]`)
