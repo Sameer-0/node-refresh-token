@@ -162,7 +162,8 @@ module.exports = {
             req.session.modules = userDataSet[0].recordset;
 
             console.log('device:::::::::::>>', req.device.type.toUpperCase())
-            console.log('is_trusted::::::::::::::::::>>>', req.body.is_trusted)
+            console.log('is_trusted::::::::::::::::::>>>', req.body)
+            console.log('Here: User Data:::::::::::::::>>>>', userData.recordset)
 
             // IF CHECKED WITH DEVICE TRUSTED
             if (req.body.is_trusted == "on") {
@@ -173,7 +174,7 @@ module.exports = {
                         platform: req.headers["user-agent"]
                     };
                    
-                console.log('Here::::::::::::::::>>>>', userData.recordset[0].email)
+                console.log('Here: User Data:::::::::::::::>>>>', userData.recordset)
                 //INSERT IN DATABASE
                 let obj = {
                     userLid: userData.recordset[0].id,

@@ -6,7 +6,7 @@ const SchoolTimings = require('../../../models/SchoolTiming');
 module.exports = {
 
     getPage: (req, res, next) => {
-        Promise.all([SessionCalendar.fetchSessionStartEnd(res.locals.slug),  Rooms.fetchBookedRooms(res.locals.organizationId), SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug), SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid)]).then(result => {
+        Promise.all([SessionCalendar.fetchSessionStartEnd(res.locals.slug),  Rooms.fetchBookedRooms(res.locals.organizationId), SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug), SchoolTimings.getTimeTableSimulationSlots(res.locals.slug, req.body.dayLid, req.body.programLid, req.body.acadSessionLid), Timesheet.getMinMaxTime(res.locals.slug)]).then(result => {
 
             res.render('admin/timesheet/index.ejs', {
                 academicDate: result[0].recordset[0],
@@ -14,6 +14,7 @@ module.exports = {
                 roomListStr: result[1].recordset,
                 timeSlotList: JSON.stringify(result[2].recordset),
                 slotList: JSON.stringify(result[3].recordset),
+                minMaxTime: JSON.stringify(result[4].recordset),
                 breadcrumbs: req.breadcrumbs,
                 Url: req.originalUrl 
             })
@@ -43,7 +44,7 @@ module.exports = {
                     // date: result[0].recordset[0].date_str,
                     // dayName: result[0].recordset[0].day_str,
                     data: result[0].recordset,
-                    breakData: result[1].recordset
+                    breakData: result[1].recordset,
                 })
             } else {
                 res.json({

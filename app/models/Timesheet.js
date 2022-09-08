@@ -35,4 +35,13 @@ module.exports = class TimeSheet {
 				having is_break = 1`)
         })
     }
+
+    static getMinMaxTime(slug) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .query(`SELECT  Min(ts.start_time_lid) as start_time_lid, MAX(ts.end_time_lid) as end_time_lid FROM [${slug}].timesheet ts
+                        INNER JOIN event_types et ON et.id = ts.event_type_lid
+                        WHERE active = 1`)
+        })
+    }
 }

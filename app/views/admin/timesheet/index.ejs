@@ -452,7 +452,7 @@
             
                         
                         console.log('promise all data', result)
-                        timeTableDisplay(result.data, result.breakData);
+                        timeTableDisplay(result.data, result.breakData, result.minMaxTime);
                         $('.timetable-date').text(formatDate)
                         $('#timetable-details').modal('show');
                 
@@ -463,9 +463,11 @@
             }
 
             showTimesheetModal()
-              
+
             let roomJson = JSON.parse(`<%-roomList%>`) 
-            let timeTablestartSlot = timeJson[0].id;
+            let minMaxTime = JSON.parse(`<%-minMaxTime%>`)
+            let timeTablestartSlot = minMaxTime[0].start_time_lid; //change
+            let totalSlots = minMaxTime[0].end_time_lid - minMaxTime[0].start_time_lid + 1;
             let fixedBreakSlotStart = 115
             let fixedBreakSlotStart2 = 175
             let cssRoot = document.querySelector(':root');
@@ -473,7 +475,7 @@
             
 
             let timetableProp = {
-                totalSlots: 116,
+                totalSlots: totalSlots,
                 pxPerSlot: 15,
                 roomNoWidth: 50,
             }
@@ -483,8 +485,12 @@
             cssRoot.style.setProperty('--breakIntervalWidth', `${timetableProp.pxPerSlot}px`);
             cssRoot.style.setProperty('--eventWidth', `${(timetableProp.pxPerSlot * 12) + timetableProp.pxPerSlot }px`);
             cssRoot.style.setProperty('--roomSlotWidth', `${timetableProp.totalSlots * timetableProp.pxPerSlot}px`);
+              
+            
 
-            function timeTableDisplay(eventListJson, breakData) {
+            function timeTableDisplay(eventListJson, breakData, minMaxTime) {
+
+
                 let fixedBreadWidth;
                 let roomSlot;
                 let eventStartSlot;
