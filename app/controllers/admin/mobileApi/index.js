@@ -141,9 +141,13 @@ module.exports = {
             eventIdList = req.body.eventIdList;
         }
 
-        console.log('eventIdList:::::::::',eventIdList)
+
+        console.log('eventIdList:::::::::', eventIdList)
+
         poolConnection.then(pool => {
             let sqlstmt = `select room_no, date_str, start_time, end_time, division, acad_session, event_name from [${res.locals.slug}].timesheet where sap_event_id in(${eventIdList})`;
+
+            console.log('SQL>>>>> ', sqlstmt)
             return pool.request()
             .query(sqlstmt)
         }).then(result => {

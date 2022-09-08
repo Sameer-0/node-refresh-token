@@ -114,7 +114,7 @@ module.exports = class RoomTransactions {
 
 
 
-    static searchForBookedRooms(body, slug){
+    static searchForBookedRooms(body, slug){ 
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + body.keyword + '%')
             .input('pageNo', sql.Int, body.pageNo)
@@ -129,7 +129,7 @@ module.exports = class RoomTransactions {
             INNER JOIN [dbo].slot_interval_timings _sit ON _sit.id =  rtd.end_time_id
             INNER JOIN [dbo].academic_calendar cal ON cal.id = rtd.start_date_id
             INNER JOIN [dbo].academic_calendar _cal ON _cal.id =  rtd.end_date_id
-            WHERE r.room_number LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR  b.building_name LIKE @keyword  ORDER BY rtd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+            WHERE (r.room_number LIKE @keyword OR r.floor_number LIKE @keyword OR r.capacity LIKE @keyword OR  b.building_name LIKE @keyword) AND rtd.active = 1 ORDER BY rtd.id DESC OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
         })
     }
 
