@@ -28,7 +28,9 @@ module.exports = {
             let subDomain = req.headers.host.split(".")[0];
             //console.log("subdomain =========>", subDomain);
             if (subDomain === 'timetable')
+             
                 return next()
+                console.log('subDomain1', subDomain)
             poolConnection
                 .then(pool => {
                     return pool.request()

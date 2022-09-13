@@ -152,7 +152,7 @@ module.exports = {
     getSlotsByIdAndPrograms: (req, res, next) => {
         console.log('BODY:::::::::', req.body.facultyId)
         Promise.all([SlotIntervalTimings.getFacultySlotsById(req.body.facultyDboLId, res.locals.slug), FacultyWorkTimePreferences.programByFacultyId(req.body.faculty_lid, res.locals.slug)]).then(result => {
-            console.log('result::::::::',result[1].recordset)
+            console.log('result::::::::123', result[1].recordset)
             res.json({
                 status: 200,
                 message: "Success",

@@ -117,7 +117,7 @@ module.exports = class {
 
     static downloadExcel(slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT p.program_name, p.program_code, p.program_id, adc.acad_session, cww.acad_year, pt.name as program_type  FROM [asmsoc-mum].program_sessions ps 
+            return pool.request().query(`SELECT p.program_name, p.program_code, p.program_id, adc.acad_session, cww.acad_year, pt.name as program_type  FROM [${slug}].program_sessions ps 
             INNER JOIN [${slug}].programs p ON ps.program_lid = p.id
             INNER JOIN [dbo].acad_sessions adc ON adc.id = ps.acad_session_lid
             INNER JOIN [${slug}].initial_course_workload icw ON icw.program_id =  p.program_id
