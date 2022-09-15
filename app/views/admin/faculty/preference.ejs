@@ -319,7 +319,7 @@
             let faculty_lid = $('#faculty-drop-down').find('option:selected').attr('data-faculty-lid');
             let ApiObj = {
             type: 'POST',
-            url: '/admin/faculties/workpreferences/faculty-slots-and-programs',
+            url: '/admin/faculties/workpreferences/faculty-slots-and-programs', 
             data: {
                 facultyDboLId: facultyDboLId,
                 faculty_lid: faculty_lid
@@ -345,7 +345,7 @@
                 }
 
                 if (result.programList.length > 0) {
-                    programLists = `<option value="" disabled>Select Program</option>`
+                    programLists = `<option value="">--Select Program--</option>`
                     result.programList.forEach(element => {
                         programLists +=
                             `<option value="${element.id}">${element.program_name}</option>`;
@@ -361,7 +361,7 @@
             showError(error.responseJSON)
         })
         })
-
+        let datNames=``;
         //GET SESSION NAME
         $("#programName").on('change',function(){
             let programId = $(this).val()
@@ -395,7 +395,7 @@
                             `<option value="${element.programday_lid}" data-day-lid="${element.programday_lid}">${element.day_name}</option>`;
                     });
                 } else {
-                    datNames += `<option value="">No Program Found!</option>`;
+                    datNames += `<option value="">No Session Found!</option>`;
                 }
                 $("#add-facultypreference-modal  #sessionName").html(sessionName).trigger('change');
                 $("#add-facultypreference-modal  #dayName").html(datNames).trigger('change');

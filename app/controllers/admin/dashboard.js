@@ -74,7 +74,7 @@ module.exports = {
                 // sessionDateList: result[31].recordset,
                 // schoolTimingSettingsList: result[33].recordset,
                 schoolTimingSettingsListJson: JSON.stringify(result[31].recordset), 
-                stsStatus: result[30].recordset.length > 0 ? result[32].recordset[0].status : 0,
+                // stsStatus: result[30].recordset.length > 0 ? result[32].recordset[0].status : 0,
                 // FacultyDateTimeList: result[35].recordset,
                 // orgParentList: result[36].recordset,
                 // batchList: result[37].recordset,

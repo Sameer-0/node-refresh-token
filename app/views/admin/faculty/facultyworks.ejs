@@ -122,21 +122,21 @@
                 <div class="table-responsive ">
                     <table class="table table-bordered" id="add-more-facultywork-table">
                         <thead>
-                            <th>Faculty</th>
-                            <th>Program</th>
-                            <th>Session</th>
-                            <th>Module</th>
-                            <th>Total Lecture per week</th>
-                            <th>Total Practical per week</th>
-                            <th>Total Tutorial per week</th>
-                            <th>Total Workshop per week</th>
-                            <th>Action</th>
+                            <th width="15%">Faculty</th>
+                            <th width="15%">Program</th>
+                            <th width="15%">Session</th>
+                            <th width="15%">Module</th>
+                            <th width="10%">Total Lecture per week</th>
+                            <th width="10%">Total Practical per week</th>
+                            <th width="10%">Total Tutorial per week</th>
+                            <th width="10%">Total Workshop per week</th>
+                            <th >Action</th>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
                                     <select class="select2 modalSelect2" name="faculty_lid" id="faculty_lid">
-                                        <option value="">--select--</option>
+                                        <option value="">--Select Faculty--</option>
                                         <% for(faculty of facultyList) {%>
                                         <option value="<%- faculty.id %>">
                                             <%- faculty.faculty_name %>-<%- faculty.faculty_id %></option>
@@ -145,7 +145,7 @@
                                 </td>
                                 <td>
                                     <select class="select2 modalSelect2" name="program_lid" id="program_lid">
-                                        <option value="">--select--</option> 
+                                        <option value="">--Select Program--</option> 
                                         <% for(program of programList) {%>
                                         <option value="<%- program.id %>" data-program-id="<%- program.program_id%>"><%- program.program_name%></option>
                                         <%}%>
@@ -157,11 +157,11 @@
                                 </td>
                                 <td>
                                     <select class="select2 modalSelect2" name="module_lid" id="module_lid">
-                                        <option value="">--select--</option>
+                                        <!-- <option value="">--Select Module--</option>
                                         <% for(course of courseWorkload) {%>
                                         <option value="<%- course.id %>">
                                             <%- course.module_name %>(<%- course.module_id %>)</option>
-                                        <%}%>
+                                        <%}%> -->
                                     </select>
                                 </td>
                                 <td>
@@ -579,9 +579,10 @@ $(document).ready(function () {
                     },
                     dataType: 'JSON'
                 }
+                console.log('::>>', session_lid,  program_id)
                 ajaxApi(ApiObj).then(result => {
-                   // let moduleName = `<option value="">Select Module Name</option>`;
-                    let moduleName = ``;
+                    console.log('Module list::>>', result)
+                    let moduleName = `<option value="">Select Module</option>`;
                     if (result.result.length > 0) {
                         result.result.forEach(element => {
                             moduleName +=`<option value="${element.id}">${element.module_name}</option>`;

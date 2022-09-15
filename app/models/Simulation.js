@@ -331,7 +331,7 @@ module.exports = class Simulation {
 
     static getResFaculties(slug, body) {
         return poolConnection.then(pool => {
-            // SELECT facultyId, facultyName FROM [asmsoc_quality].[asmsoc-mum].faculty_work WHERE active = 'Y' AND moduleId = '${req.body.moduleId}' AND programId = ${req.body.programId}
+
 
             let request = pool.request()
             return request
@@ -365,7 +365,7 @@ module.exports = class Simulation {
                 .input('toDate', sql.NVarChar(20), body.toDate)
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .query(`select DISTINCT faculty_id, faculty_name, faculty_lid 
-                from [asmsoc-mum].timesheet WHERE 
+                from [${slug}].timesheet WHERE 
                 CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103)`)
         })
     }

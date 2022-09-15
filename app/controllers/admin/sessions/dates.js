@@ -207,6 +207,8 @@ module.exports = {
             "zacademic_period_jp_bin_sep_20220509.wsdl"
         );
 
+        console.log('iinput data::>>',res.locals.campusIdSap,  res.locals.acadmicYear, res.locals.organizationIdSap)
+
         let soapClient = await new Promise(resolve => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
                 if (err) {
@@ -233,13 +235,14 @@ module.exports = {
         })
 
         console.log('sessionDate:::::::::::::::::::::',JSON.stringify(sessionDate))
+        console.log('sessionDate:::::::::::::::::::::',JSON.parse(sessionDate.length))
 
-        if(sessionDate.length > 0){
+        if(JSON.parse(sessionDate.length) > 0){
             SessionDates.fetchSessionDateSap(res.locals.slug, sessionDate).then(_result => {
                 //console.log('Success:::::::::::::>>>>>',_result)
                 res.status(200).json(JSON.parse(_result.output.output_json))
 
-            }).catch(error => {
+            }).catch(error => { 
              console.log('error:::::::::::::',error)
                 if(isJsonString.isJsonString(error.originalError.info.message)){
                     res.status(500).json(JSON.parse(error.originalError.info.message))
