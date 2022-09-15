@@ -189,14 +189,16 @@ require('dotenv').config();
 
 
 
-if (process.env.APP_ENV === 'PRODUCTION') {
+if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
     const server = https.createServer(sslOptions, app).listen(process.env.APP_PORT);
     //socket initialization
     global.io = require("socket.io")(server);
     //SOCKET CONNECTION
     global.io.on("connection", timetablesocket.respond);
     global.io.on("connection", rescheduleTimesheetControllersocket.respond)
-} else {
+}
+
+else {
     const server = http.createServer(app).listen(process.env.APP_PORT);
     //socket initialization
     global.io = require("socket.io")(server);
