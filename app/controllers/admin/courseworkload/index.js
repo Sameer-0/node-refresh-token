@@ -30,6 +30,7 @@ module.exports = {
 
     fetchFromSAP: async (req, res, next) => {
         console.log('REQ::::::::::::::::', req.body)
+        console.log('RES::::::::::::::::', res.locals)
         let {
             acadYear,
             programLid,
@@ -63,8 +64,8 @@ module.exports = {
         let courseWorkloadList = await new Promise(async resolve => {
             await soapClient.ZACAD_STUDENT_WORKLOAD.ZACAD_STUDENT_WORKLOAD.ZACAD_STUDENT_WORKLOAD({
                     YEAR: acadYear,
-                    CAMPUS_ID: "50070078",
-                    SCHOOL_ID: "00004533",
+                    CAMPUS_ID: res.locals.campusIdSap,
+                    SCHOOL_ID: res.locals.organizationIdSap,
                     SESSION: acadSessionLid,
                     PROGRAM_ID: programLid,
                 },
