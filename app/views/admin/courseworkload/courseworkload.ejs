@@ -688,6 +688,8 @@
 
             $("#courseWorkloadTable").on('click','.delete-course-workload',function(){
                 //showAlert({status:0, description:"", data:[]})
+                //showAlert({status:0, description:"", data:[]})
+                console.log('result')
                 let ApiObj = {
                     type: 'POST',
                     url: '/admin/courseworkload/workload/delete',
@@ -697,7 +699,15 @@
                     dataType: 'JSON' 
                     }
                     ajaxApi(ApiObj).then(result => {
-                        showSuccess(result)              
+                        console.log('result', result.status)
+                        if(result.status == 1){
+                            showSuccess(result) 
+                        }
+                        else{
+                            console.log('error')
+                            showError(result)
+                        }
+                                     
                     }).catch(error => {
                      showError(error.responseJSON)
                     })
@@ -1038,17 +1048,13 @@
         }
 
 
-
-
-
-
         function showError(errors) {
-            console.log(errors);
+            console.log('errors', errors);
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title: errors.description,
                 message: "",
-                type: 'alert-success',
+                type: 'alert-danger',
                 buttons: {
                     positive: {
                         text: "Okay",

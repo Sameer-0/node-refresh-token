@@ -71,7 +71,7 @@
                                         <td><%-schooltime.end_time%></td>
                                         <td><%-schooltime.school_time_type%></td>
                                         <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>" data-school-time-type-id="<%-schooltime.school_time_type_id%>"><span class="fa fa-edit"></span></a>
-                                            <a class="delete-schooltime" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
                                 <%}%>
@@ -96,7 +96,7 @@
                                         <td><%-schooltime.school_time_type%></td>
                                         <td><%-schooltime.day_name%></td>
                                         <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>" data-day-lid="<%-schooltime.day_lid%>" data-school-time-type-id="<%-schooltime.school_time_type_id%>"><span class="fa fa-edit"></span></a>
-                                            <a class="delete-schooltime" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
                                 <%}%>
@@ -122,7 +122,7 @@
                                         <td><%- schooltime.day_name %></td>
                                         <td><%- schooltime.program_name %></td>
                                         <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid %>" data-program-lid="<%-schooltime.program_lid%>" data-day-lid="<%-schooltime.day_lid%>" data-school-time-type-id="<%-schooltime.school_time_type_id%>"><span class="fa fa-edit"></span></a>
-                                            <a class="delete-schooltime" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
                                 <%}%>
@@ -150,7 +150,7 @@
                                         <td><%-schooltime.program_name%></td>
                                         <td><%-schooltime.acad_session%></td>
                                         <td><a class="edit-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>" data-program-lid="<%-schooltime.program_lid%>" data-day-lid="<%-schooltime.day_lid%>" data-session-lid="<%-schooltime.session_lid%>" data-school-time-type-id="<%-schooltime.school_time_type_id%>"><span class="fa fa-edit"></span></a>
-                                            <a class="delete-schooltime" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
+                                            <a class="delete-schooltime" data-id="<%-schooltime.id%>" data-slot-start-lid="<%-schooltime.slot_start_lid%>" data-slot-end-lid="<%-schooltime.slot_end_lid%>"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
                                 <%}%>
@@ -1123,13 +1123,13 @@
         $("#schoolTimingTable").on('click','.delete-schooltime',function(){
            let start_time_lid = $(this).attr("data-slot-start-lid")
            let end_time_lid = $(this).attr("data-slot-end-lid")
-           console.log('SCHOOL TIME ID ::::::::>>',start_time_lid, end_time_lid)
+           let schoolTimingLid = $(this).attr("data-id");
+           console.log('SCHOOL TIME ID ::::::::>>', $(this))
            let ApiObj = {
                 type: 'POST',
                 url: '/admin/schooltiming/delete',
                 data: {
-                    start_time_lid: start_time_lid,
-                    end_time_lid: end_time_lid
+                    schoolTimingLid : schoolTimingLid
                 },
                 dataType: 'JSON'
             }
