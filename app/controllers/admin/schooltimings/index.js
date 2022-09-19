@@ -144,9 +144,9 @@ module.exports = {
     },
 
     delete: (req, res) => {
-        schoolTiming.delete(res.locals.slug, req.body).then(result => {
+        schoolTiming.delete(res.locals.slug, req.body, res.locals.userId).then(result => {
             console.log('result:::::::',result)
-           res.status(200).json({status:200, description:"Successfully deleted",data:[]})
+           res.status(200).json({status:200, description:"Successfully deleted", data:[]})
         }).catch(error => {
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))

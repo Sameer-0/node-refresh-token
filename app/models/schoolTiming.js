@@ -141,12 +141,15 @@ module.exports = class schoolTiming {
     }
 
 
-    static delete(slug, body) {
+    static delete(slug, body, userId) {
+        console.log('delete school timing', body.schoolTimingLid, userId, `[${slug}].[sp_delete_school_timings]`)
         return poolConnection.then(pool => {
-            let request = pool.request()
-            return request.input('start_time_lid', sql.Int, body.start_time_lid)
-                .input('end_time_lid', sql.Int, body.end_time_lid)
-                .query(`DELETE FROM [${slug}].school_timings WHERE slot_start_lid = @start_time_lid and slot_end_lid = @end_time_lid`)
+            // let request = pool.request()
+            return pool.request().input('school_timing_lid', sql.Int, body.schoolTimingLid)
+                .input('last_modified_by', sql.Int, userId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .output('output_flag', sql.Bit)
+                .execute(`[${slug}].[sp_delete_school_timings]`)
         })
     }
 }

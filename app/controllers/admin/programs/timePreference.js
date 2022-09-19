@@ -54,7 +54,7 @@ module.exports = {
 
     delete: (req, res, next) => {
         console.log('delete::::<><>');
-        ProgramSessionTimings.delete(res.locals.slug, req.body.id).then( result => {
+        ProgramSessionTimings.delete(res.locals.slug, req.body.id, res.locals.userId).then( result => {
             console.log('delete time pre::::', result);
             res.status(200).json(result)
         })

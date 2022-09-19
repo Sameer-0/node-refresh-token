@@ -38,11 +38,16 @@ module.exports = class ProgramSessionTimings {
     }
 
 
-    static delete(slug, id) {
+    static delete(slug, id, userId) {
+        console.log('deleete::>>', id, `[${slug}].[sp_delete_program_session_timings]`)
         return poolConnection.then(pool => {
-            let request = pool.request();
+            // let request = pool.request();
             // JSON.parse(ids).forEach(element => {
-            return request.query(`DELETE FROM [${slug}].[program_session_timings] WHERE id = ${id}`)
+            return  pool.request().input('program_session_timing_lid', sql.Int, id)
+            .input('last_modified_by', sql.Int, userId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .output('output_flag', sql.Bit)
+            .execute(`[${slug}].[sp_delete_program_session_timings]`)
             // });
         })
     }
