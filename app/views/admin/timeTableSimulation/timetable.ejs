@@ -978,7 +978,8 @@
                     if(response.positionIndex > 0){
                         document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex-1].insertAdjacentElement("afterend", eventElement)
                     }else{
-                        document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots .room-slot-item:not(.active)`)[response.positionIndex].insertAdjacentElement("beforebegin", eventElement)
+                        console.log('::>>', document.querySelectorAll(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots`))
+                        document.querySelector(`.room[data-room-lid='${responseObj.room_lid}'] .room-slots`).append(eventElement)
                     }
                     
                     //Remove from pending list
@@ -1368,7 +1369,7 @@
                 currentRoomElems[0].insertAdjacentElement("beforebegin", eventElemt);
             } else {
                 //APPEND IN EMPTY ROOM CONDITION
-                dragObj.currentRoom.append(dragObj.clonedTarget);
+                currentRoom.append(eventElemt);
             }
 
             penElem.remove();
@@ -2048,8 +2049,8 @@
             } else if (currentRoomElems.length > 0) {
                 currentRoomElems[0].insertAdjacentElement("beforebegin", dragObj.clonedTarget);
             } else {
-                console.log('condition when no room-slot-items are present in room-slot, which will never occur')
-                // dragObj.currentRoom.append(dragObj.clonedTarget);
+                console.log('condition when no room-slot-items are present in room-slot')
+                dragObj.currentRoom.append(dragObj.clonedTarget);
             }
                 
         }
