@@ -15,7 +15,7 @@ require('dotenv').config()
         })
     }
 
-hashPassword('nmims@123').then(res => {
+hashPassword('password@1234').then(res => {
     console.log(res)
 })
 

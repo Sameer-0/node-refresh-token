@@ -9,7 +9,7 @@ module.exports = class ProgramSessionTimings {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} pst.id, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time FROM [${slug}].program_session_timings pst 
+            return pool.request().query(`SELECT pst.id, p.program_name, ads.acad_session, CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, CONVERT(NVARCHAR, sit2.end_time, 0) AS end_time FROM [${slug}].program_session_timings pst 
             INNER JOIN [${slug}].programs p ON p.id = pst.program_lid 
             INNER JOIN [dbo].acad_sessions ads on ads.id = pst.session_lid
             INNER JOIN [dbo].slot_interval_timings sit on sit.id = pst.start_time_lid

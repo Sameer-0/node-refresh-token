@@ -148,7 +148,7 @@ module.exports = class FacultyBatch {
                 .input('session_lid', sql.Int, body.session_lid)
                 .query(`select icw.id, icw.module_name from [${slug}].faculty_works fw INNER JOIN
                 [${slug}].initial_course_workload icw ON icw.id = fw.module_lid
-                where program_session_lid = (select id as program_session_lid from [${slug}].program_sessions where program_lid = @program_lid AND acad_session_lid = @session_lid) AND fw.faculty_lid = @faculty_lid`)
+                where program_session_lid = (select id as program_session_lid from [${slug}].program_sessions where program_lid = @program_lid AND acad_session_lid = @session_lid) AND fw.faculty_lid = @faculty_lid AND fw.is_batch_preference_set = 1`)
         })
     }
 

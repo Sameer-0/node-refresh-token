@@ -55,7 +55,7 @@ module.exports = class FacultyWorkTimePreferences {
                 .query(`SELECT  fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id, 
                 CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
                 CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
-                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, p.abbr as program_abbr, d.day_name, icw.module_name, ads.acad_session
+                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, d.day_name, icw.module_name, ads.acad_session
                 FROM [${slug}].faculty_work_time_preferences fwtp
                 INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
                 INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
@@ -78,7 +78,7 @@ module.exports = class FacultyWorkTimePreferences {
                 .query(`SELECT fwtp.id, fwtp.faculty_work_lid, fwtp.p_day_lid, fwtp.start_time_id, fwtp.end_time_id, 
                 CONVERT(NVARCHAR, sit.start_time, 0) AS start_time, 
                 CONVERT(NVARCHAR, _sit.end_time, 0) AS end_time,
-                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code,p.abbr as program_abbr, d.day_name, icw.module_name, ads.acad_session
+                f.faculty_name, f.faculty_id, RTRIM(LTRIM(p.program_name)) AS program_name, p.program_id, p.program_code, d.day_name, icw.module_name, ads.acad_session
                 FROM [${slug}].faculty_work_time_preferences fwtp
                 INNER JOIN [${slug}].faculty_works fw ON fwtp.faculty_work_lid = fw.id
                 INNER JOIN [${slug}].program_days pd ON fwtp.p_day_lid =  pd.id
@@ -123,7 +123,7 @@ module.exports = class FacultyWorkTimePreferences {
 
     static programByFacultyId(facultyId, slug) {
         return poolConnection.then(pool => {
-            return pool.request().input('facultyId', sql.Int, facultyId).query(`select p.id, p.program_name from [${slug}].faculty_works fw
+            return pool.request().input('facultyId', sql.Int, facultyId).query(`select distinct p.id, p.program_name from [${slug}].faculty_works fw
             INNER JOIN [${slug}].program_sessions ps ON ps.id =  fw.program_session_lid
             INNER JOIN [${slug}].programs p ON p.id = ps.program_lid
             where fw.faculty_lid = @facultyId`)

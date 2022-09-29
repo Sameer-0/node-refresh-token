@@ -8,7 +8,7 @@ module.exports = class schoolTiming {
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
             return pool.request().query(`SELECT TOP ${Number(rowcount)} st.id, IIF(st.name IS NULL, 'NA', st.name) as name,  st.type_lid, st.slot_start_lid, st.slot_end_lid, CONVERT(NVARCHAR, sit.start_time, 100) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time, st.day_lid, d.day_name,
-            p.program_name, p.abbr as program_abbr, stt.name as schooltimetype, acs.acad_session, p.program_id
+            p.program_name, stt.name as schooltimetype, acs.acad_session, p.program_id
            FROM [${slug}].school_timings st
            INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
            INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
@@ -49,7 +49,7 @@ module.exports = class schoolTiming {
             let request = pool.request()
             return request.input('pageNo', sql.Int, pageNo)
                 .query(`SELECT st.id, IIF(st.name IS NULL, 'NA', st.name) as name,  st.type_lid, st.slot_start_lid, st.slot_end_lid, CONVERT(NVARCHAR, sit.start_time, 100) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time, st.day_lid, d.day_name,
-                p.program_name, p.abbr as program_abbr, stt.name as schooltimetype, acs.acad_session, p.program_id
+                p.program_name, stt.name as schooltimetype, acs.acad_session, p.program_id
                FROM [${slug}].school_timings st
                INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
                INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
@@ -72,7 +72,7 @@ module.exports = class schoolTiming {
         return poolConnection.then(pool => {
             return pool.request().input('keyword', sql.NVarChar(100), '%' + keyword + '%')
                 .query(`SELECT TOP ${Number(rowcount)} st.id, IIF(st.name IS NULL, 'NA', st.name) as name,  st.type_lid, st.slot_start_lid, st.slot_end_lid, CONVERT(NVARCHAR, sit.start_time, 100) AS start_time, CONVERT(NVARCHAR, _sit.end_time, 100) AS end_time, st.day_lid, d.day_name,
-                p.program_name, p.abbr as program_abbr, stt.name as schooltimetype, acs.acad_session, p.program_id
+                p.program_name, stt.name as schooltimetype, acs.acad_session, p.program_id
                FROM [${slug}].school_timings st
                INNER JOIN [dbo].slot_interval_timings sit ON st.slot_start_lid =  sit.id
                INNER JOIN [dbo].slot_interval_timings _sit ON st.slot_end_lid = _sit.id
