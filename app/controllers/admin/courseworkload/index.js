@@ -46,7 +46,7 @@ module.exports = {
 
         var wsdlUrl = path.join(
             process.env.WSDL_PATH,
-            "zacad_student_workload_sep_20220509.wsdl"
+            "zacad_student_workload_sqh_20220808.wsdl"
         );
 
         console.log('wsdlUrl::::::::::::::::', wsdlUrl)

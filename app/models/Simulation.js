@@ -97,7 +97,7 @@ module.exports = class Simulation {
     static LectureByDateRange(slug, body) {
         console.log('body:::::::::',body)
         return poolConnection.then(pool => {
-            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid ORDER BY date ASC`;
+            let lecStmt = `SELECT * FROM [${slug}].timesheet WHERE active = 1 AND CONVERT(DATE, date_str, 103) BETWEEN CONVERT(DATE, @fromDate, 103) AND CONVERT(DATE, @toDate, 103) AND program_lid = @program_lid AND  division_lid = @division_lid AND module_lid = @module_lid AND acad_session_lid = @acad_session_lid AND faculty_lid = @facultyLid ORDER BY date ASC`;
            
             console.log('lecStmt:::::::::::::',lecStmt)
 
@@ -105,7 +105,7 @@ module.exports = class Simulation {
             return request
                 .input('fromDate', sql.NVarChar(20), body.fromDate)
                 .input('toDate', sql.NVarChar(20), body.toDate)
-                .input('facultyId', sql.Int, body.facultyId)
+                .input('facultyLid', sql.Int, body.facultyLid)
                 .input('program_lid', sql.Int, body.program_lid)
                 .input('division_lid', sql.Int, body.division_lid)
                 .input('module_lid', sql.Int, body.module_lid)

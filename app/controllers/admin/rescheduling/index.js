@@ -517,6 +517,7 @@ module.exports = {
       Promise.all([Simulation.LectureByDateRange(res.locals.slug, req.body),
       Simulation.facultyLectureCount(res.locals.slug)
     ]).then(result => {
+      console.log('lecture list::>>', result[0].recordset)
       res.json({
         status: 200,
         actionType: actionType,
