@@ -12,7 +12,7 @@ module.exports = class AcadSession {
 
     static fetchAll(rowcount) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.id AS acadSessionId, ac.acad_session, ac.sap_acad_session_id FROM [dbo].acad_sessions ac ORDER BY ac.id DESC`)
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} ac.sap_acad_session_id AS acadSessionId, ac.acad_session, ac.sap_acad_session_id FROM [dbo].acad_sessions ac ORDER BY ac.id DESC`)
         })
     }
 
