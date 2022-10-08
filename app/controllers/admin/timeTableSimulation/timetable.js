@@ -15,7 +15,7 @@ module.exports = {
         console.log('Hitting get page', )
         Promise.all([
                 ProgramSessions.getLockedProgram(res.locals.slug),
-                Rooms.fetchBookedRooms(res.locals.organizationId),
+                Rooms.fetchBookedRooms(res.locals.organizationId, res.locals.slug),
                 Days.fetchActiveDay(res.locals.slug),
                 TimeTable.getPendingEventPrograms(res.locals.slug),
                 SlotIntervalTiming.slotTimesForSchoolTiming(res.locals.slug),
