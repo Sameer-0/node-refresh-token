@@ -37,12 +37,16 @@ module.exports = {
         }
 
         FacultyBatch.save(object, res.locals.slug, res.locals.userId).then(result => {
+            console.log('ujj::>>', result)
+            console.log('bach::>>>', typeof result.output.output_json)
+            console.log('bach::>>>', JSON.parse(result.output.output_json).description)
             if (req.body.settingName) {
                 Settings.updateByName(res.locals.slug, req.body.settingName)
             }
 
             res.status(200).json(JSON.parse(result.output.output_json))
         }).catch(error => {
+            console.log('bach::>>>', error)
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))
             } else {
@@ -305,26 +309,26 @@ module.exports = {
     batchByFacultyIdAndBatchId: (req, res) => {
         console.log('req.body::::::::::::::::',req.body)
         FacultyBatch.findFacultyBatchById(req.body.id, res.locals.slug).then(result => {
-            DivisionBatches.findDivisionsByBatchId(result.recordset[0].batch_lid, res.locals.slug).then(batchresult => {
-                DivisionBatches.findBatchesByDivisionId(batchresult.recordset[0].division_lid, res.locals.slug).then(divresult => {
-                    console.log('divresult::::::::::::::::::::', divresult.recordset)
+            // DivisionBatches.findDivisionsByBatchId(result.recordset[0].batch_lid, res.locals.slug).then(batchresult => {
+            //     DivisionBatches.findBatchesByDivisionId(batchresult.recordset[0].division_lid, res.locals.slug).then(divresult => {
+                    console.log('facult batch result::::::::::::::::::::', result.recordset)
                     if (result.recordset.length > 0) {
                         res.json({
                             status: "200",
-                            message: "Division Name",
-                            result: divresult.recordset,
-                            length: divresult.recordset.length
+                            message: "faculty batch edit",
+                            result: result.recordset,
+                            length: result.recordset.length
                         })
                     } else {
                         res.json({
                             status: "400",
                             message: "No data found",
-                            result: divresult.recordset,
-                            length: divresult.recordset.length
+                            result: result.recordset,
+                            length: result.recordset.length
                         })
                     }
-                })
-            })
+            //     })
+            // })
         }).catch(error => {
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message))

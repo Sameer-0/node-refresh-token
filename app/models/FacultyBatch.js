@@ -30,7 +30,7 @@ module.exports = class FacultyBatch {
 
     static fetchAll(rowcount, slug) {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, f.faculty_name, f.faculty_id, db.batch, d.division,
+            return pool.request().query(`SELECT TOP ${Number(rowcount)} fb.id, fb.faculty_lid, fb.batch_lid, fb.lec_count, f.faculty_name, f.faculty_id, db.batch, d.division,
             icw.module_name, p.program_name, ads.acad_session, et.name as event_type
              FROM [${slug}].faculty_batches fb
             INNER JOIN [${slug}].faculties f ON fb.faculty_lid =  f.id       
@@ -175,7 +175,14 @@ module.exports = class FacultyBatch {
             let request = pool.request()
             return request
             .input('Id', sql.Int, id)
-                .query(`select * from [${slug}].faculty_batches where id = @Id`)
+                .query(`select db.id, db.batch, et.name, d.division, icw.module_name, p.program_name, ads.acad_session, fb.lec_count from [${slug}].faculty_batches fb
+                INNER JOIN [${slug}].division_batches db on db.id = fb.batch_lid
+                INNER JOIN [${slug}].divisions d on d.id = db.division_lid
+                INNER JOIN [${slug}].initial_course_workload icw ON icw.id = d.course_lid
+                INNER JOIN [${slug}].programs p  ON p.program_id = icw.program_id
+                INNER JOIN [dbo].acad_sessions ads ON ads.id = icw.acad_session_lid
+                INNER JOIN [dbo].event_types et ON et.id =  db.event_type_lid
+                 where fb.id = @Id`)
         })
     }
 
