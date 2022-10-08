@@ -37,9 +37,9 @@ module.exports = {
         }
 
         FacultyBatch.save(object, res.locals.slug, res.locals.userId).then(result => {
-            console.log('ujj::>>', result)
-            console.log('bach::>>>', typeof result.output.output_json)
-            console.log('bach::>>>', JSON.parse(result.output.output_json).description)
+            // console.log('ujj::>>', result)
+            // console.log('bach::>>>', typeof result.output.output_json)
+            // console.log('bach::>>>', JSON.parse(result.output.output_json).description)
             if (req.body.settingName) {
                 Settings.updateByName(res.locals.slug, req.body.settingName)
             }
