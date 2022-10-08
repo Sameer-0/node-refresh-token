@@ -46,7 +46,7 @@ module.exports = {
 
         var wsdlUrl = path.join(
             process.env.WSDL_PATH,
-            "zacad_student_workload_sep_20220509.wsdl"
+            "zacad_student_workload_sqh_20220808.wsdl"
         );
 
         console.log('wsdlUrl::::::::::::::::', wsdlUrl)
@@ -61,6 +61,11 @@ module.exports = {
             })
         })
 
+        console.log('school data::>>>>', acadYear)
+        console.log('res.locals.campusIdSap', res.locals.campusIdSap)
+        console.log('res.locals.campusIdSap', res.locals.organizationIdSap)
+        console.log('res.locals.campusIdSap', acadSessionLid)
+        console.log('programLid', programLid)
         let courseWorkloadList = await new Promise(async resolve => {
             await soapClient.ZACAD_STUDENT_WORKLOAD.ZACAD_STUDENT_WORKLOAD.ZACAD_STUDENT_WORKLOAD({
                     YEAR: acadYear,
