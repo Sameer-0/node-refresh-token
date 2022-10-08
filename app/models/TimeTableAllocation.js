@@ -24,7 +24,7 @@ module.exports = class schoolTiming {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('program_lid', sql.Int, programLid)
-            .input('session_lid', sql.Int, sessionLid)
+            .input('acad_session_lid', sql.Int, sessionLid)
             .input('last_modified_by', sql.Int, 1)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_deallocate_timetable]`)

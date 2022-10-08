@@ -139,6 +139,11 @@ aria-hidden="true">
                 <select class="form-select" name="batchName" id="batchName"></select>
             </div>
 
+            <div class="input-group mb-3 d-flex flex-column">
+                <label class="form-label" >Input Batch Count</label>
+                <input class="form-control w-100" name="batchCount" id="batchCount" type="number">
+            </div>
+
             <div class="mb-3 d-grid gap-2">
                 <button class="btn btn-info text-light add-faculty-batch" disabled>ADD FACULTY BATCH</button>
             </div>
@@ -158,6 +163,7 @@ aria-hidden="true">
                             <th>Module Name</th>
                             <th>Division</th>
                             <th>Batch</th>
+                            <th>Batch Count</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -553,11 +559,15 @@ $(document).ready(function(){
                     // $('.add-faculty-batch').attr('disabled','disabled');
                 }
                 $("#add-facultybatch-modal  #batchName").html(divisionName).trigger('change');
-                $('.add-faculty-batch').removeAttr('disabled');
+               
             }).catch(error => {
                 showError(error.responseJSON)
             })
     })
+
+   $(document).on('change', '#batchName', function() {
+    $('.add-faculty-batch').removeAttr('disabled');
+   })
 
 
             //APPEND FACULTY BATCH
@@ -570,8 +580,11 @@ $(document).ready(function(){
             let programName = $("#programName option:selected").text();
             let academicSessionName = $("#sessionName option:selected").text();
             let moduleName = $("#moduleName option:selected").text();
+            let batchCount = $("#batchCount").val();
 
-            $('#add-more-faculty-batch-table tbody').append(`<tr>
+            if(batchCount.length > 0){
+
+                $('#add-more-faculty-batch-table tbody').append(`<tr>
                 <td>#</td>
                 <td data-faculty-lid="${faculty_lid}">${faculty_name}</td>
                 <td>${programName}</td>
@@ -579,9 +592,16 @@ $(document).ready(function(){
                 <td>${moduleName}</td>
                 <td>${division}</td>
                 <td data-batch-lid="${batch_lid}">${batch_name}</td>
+                <td data-lec-count="${batchCount}">${batchCount}</td>
                 <td>
                     <i class="fas fa-trash-alt text-danger cursor-pointer remove-batch-column"></i></td>
                 </tr>`)
+            }
+            else{
+                alert('Batch Count is mandatory')
+            }
+
+           
         })
 
 
@@ -599,19 +619,22 @@ $(document).ready(function(){
         let facultyBatchCount = facultyBatchElems.length;
         let facultyBatchJson = [];
         facultyBatchElems.each(function (index, elem) {
-            let faculty_lid = $(elem).find('td[data-faculty-lid]').attr('data-faculty-lid')
+            let faculty_lid = $(elem).find('td[data-faculty-lid]').attr('data-faculty-lid');
             let faculty_batch = $(elem).find('td[data-batch-lid]').attr('data-batch-lid');
+            let lec_count = $(elem).find('td[data-lec-count]').attr('data-lec-count');
 
             if (index < facultyBatchCount - 1) {
                 let obj = {
                     faculty_lid: faculty_lid,
-                    batch_lid:faculty_batch
+                    batch_lid:faculty_batch,
+                    lec_count: lec_count
                 }
                 facultyBatchJson.push(obj)
             } else {
                 let obj = {
                     faculty_lid: faculty_lid,
-                    batch_lid:faculty_batch
+                    batch_lid:faculty_batch,
+                    lec_count: lec_count
                 }
                 facultyBatchJson.push(obj)
             }
