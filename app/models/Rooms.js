@@ -148,12 +148,15 @@ module.exports = class Rooms {
     }
 
 
-    static fetchBookedRooms(alloted_to) {
+    static fetchBookedRooms(alloted_to, slug) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('alloted_to', sql.Int, alloted_to)
-                .query(`SELECT id, room_number, room_type_id FROM rooms WHERE id NOT IN (16, 29, 35) ORDER BY room_number`)
-                
+                .query(` SELECT r.id, r.room_number, r.room_type_id FROM rooms r
+                JOIN [${slug}].room_transaction_details rt ON rt.room_lid = r.id 
+                WHERE rt.active = 1`)
+               
+                // SELECT id, room_number, room_type_id FROM rooms WHERE id NOT IN (16, 29, 35) ORDER BY room_number
 				
         })
     }
