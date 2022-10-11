@@ -73,6 +73,7 @@ module.exports = class RoomTransactionRequest {
         return poolConnection.then(pool => {
             const request = pool.request();
             return request.input('input_room_request_lid', sql.Int, body.input_room_request_lid)
+                .input('slug_name', sql.NVarChar(sql.MAX), body.slug_name)
                 .input('approval_flag', sql.TinyInt, body.approval_flag)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[approval_for_room_booking]`)

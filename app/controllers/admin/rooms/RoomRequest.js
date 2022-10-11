@@ -9,7 +9,7 @@ const isJsonString = require('../../../utils/util')
 module.exports = {
     getPage: (req, res) => {
         Promise.all([RoomTransactionRequest.fetchAll(10, res.locals.slug), RoomTransactionRequest.getCount(res.locals.slug)]).then(result => {
-            console.log(result.recordset)
+            console.log( result[0].recordset)
             res.render('admin/rooms/requests', {
                 transactionList: result[0].recordset,
                 totalentries: result[0].recordset ? result[0].recordset.length : 0,
