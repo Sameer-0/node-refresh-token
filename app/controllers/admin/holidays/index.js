@@ -178,21 +178,25 @@ module.exports = {
         } = req.body;
         var wsdlUrl = path.join(
             process.env.WSDL_PATH,
-            "zhr_holiday_date_jp_bin_sep_20220509.wsdl"
+            "zhr_holiday_date_jp_bin_sqh_20220808.wsdl"
         );
            let soapClient = await new Promise(resolve => {
             soap.createClient(wsdlUrl, async function (err, soapClient) {
                 if (err) {
+                    console.log('error holiday wsdl:>>', err)
                     next(err);
                 }
                 resolve(soapClient);
             })
         })
 
+        console.log('soap client holiday wsdl::>>', soapClient)
+        console.log('Acadyear, Campusid, Schoolobjectid::>>', res.locals.acadmicYear, res.locals.campusIdSap, res.locals.organizationIdSap)
+
         let holidayList = await new Promise(async resolve => {
             await soapClient.ZhrHolidayDateJp({
                     Acadyear: res.locals.acadmicYear,
-                    Campusid: res.locals.campusIdSap,
+                    Campusid: res.locals.campusIdSap == 1 ? "" :  res.locals.campusIdSap,
                     Schoolobjectid: res.locals.organizationIdSap,
                 },
                 async function (err, result) {
