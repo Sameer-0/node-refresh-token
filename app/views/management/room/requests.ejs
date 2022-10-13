@@ -52,7 +52,7 @@
                         <td><%-request.stage %></td>
                         <td><%-request.org_abbr %></td>
                         <td><%-request.campus_abbr %></td>
-                        <td><a class="view-room-request" title="View Details" data-id="<%-request.id %>"><img src="/icon_imgs/transparency.png"></a>
+                        <td><a class="view-room-request" title="View Details" data-id="<%-request.id %>" data-slug-name="<%- request.slug_name%>"><img src="/icon_imgs/transparency.png"></a>
                     </tr>
                     <%}%>   
                 </tbody>
@@ -100,8 +100,9 @@
     $(document).ready(function () {
 
         $('#RoomRequests').on('click','.view-room-request',function(){
-            let id = $(this).attr("data-id")
-            let tr = $(this).parent().parent()
+            let id = $(this).attr("data-id");
+            let tr = $(this).parent().parent();
+            let requestSlugName = $(this).attr("data-slug-name");
             console.log('id:::::::::',id);
             let ApiObj = {
                 url: '/management/rooms/requests/roomInfo',
@@ -141,7 +142,7 @@
                        htmlTable+= `</tbody></table>`;
                // console.log(htmlTable)
                 $("#ShowRoomInfoTable").html(htmlTable)
-                $(".approvalAndRejection").attr("data-room-requestid", result.transactionid);
+                $(".approvalAndRejection").attr({"data-room-requestid": result.transactionid, "data-slug-name" : requestSlugName});
                 $("#room-request-info").modal('show')
                 $('.approvalAndRejection').removeClass('d-none');
                 if($(this).parent().parent().find('td:nth-child(3)').text() == 'rejected'){
@@ -165,7 +166,8 @@
                 url: '/management/rooms/requests/approval',
                 data: {
                     input_room_request_lid: $(this).attr("data-room-requestid"),
-                    approval_flag: $(this).attr("data-status")
+                    approval_flag: $(this).attr("data-status"),
+                    slug_name: $(this).attr("data-slug-name")
                 },
                 dataType: 'JSON'
             }

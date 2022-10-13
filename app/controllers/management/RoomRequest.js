@@ -14,7 +14,7 @@ const isJsonString = require('../../utils/util')
 module.exports = {
     getPage: (req, res) => {
         Promise.all([RoomTransactionRequest.fetchAll(10, res.locals.slug), RoomTransactionRequest.getCount(res.locals.slug)]).then(result => {
-            console.log(result.recordset)
+            console.log('svkm room transaction details::>>', result[0].recordset)
             res.render('management/room/requests', {
                 requestedList: result[0].recordset,
                 pageCount: result[1].recordset[0].count,

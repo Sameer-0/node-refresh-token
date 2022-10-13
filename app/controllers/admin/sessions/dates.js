@@ -218,11 +218,13 @@ module.exports = {
             })
         })
 
+        console.log('soapClient', soapClient)
+
         let sessionDate = await new Promise(async resolve => {
 
            // console.log('soapClient::::::',soapClient)
             await soapClient.ZacademicPeriodJp({
-                    Campusid: res.locals.campusIdSap,
+                    Campusid: res.locals.campusIdSap == 1 ? "" :  res.locals.campusIdSap,
                     Acadyear: res.locals.acadmicYear,
                     Schoolobjectid: res.locals.organizationIdSap
                 },
