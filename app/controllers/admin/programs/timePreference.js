@@ -13,7 +13,7 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([ProgramSessionTimings.fetchAll(10,res.locals.slug), Programs.fetchAll(10, res.locals.slug), SlotIntervalTimings.fetchAll(1000)]).then(result => {
+        Promise.all([ProgramSessionTimings.fetchAll(10,res.locals.slug), Programs.fetchAll( res.locals.slug), SlotIntervalTimings.fetchAll(1000)]).then(result => {
             console.log('time-list::::', result[0].recordset)
             res.render('admin/programs/programSessionTimePreference', {
                 programSessionTimingList: result[0].recordset,
