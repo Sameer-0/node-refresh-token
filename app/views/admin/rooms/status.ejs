@@ -3,6 +3,7 @@
 <%- include("../partials/header") %>
 <!--Notificaion icon-->
 <!--HEADER END-->
+
 <style>
     hr {
         margin: 0 !important;
@@ -15,6 +16,10 @@
     }
 
     .day-name {
+        line-height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         min-width: var(--roomNoWidth);
         max-width: var(--roomNoWidth);
         background: #006faa;
@@ -22,11 +27,13 @@
         border-bottom: 1px solid;
         text-align: center;
         padding: 10px 0px;
+        writing-mode: vertical-lr;
+        /* text-orientation: upright; */
     }
 
     .room-slots {
         width: var(--roomSlotWidth);
-        min-height: 30px;
+        min-height: 50px;
         position: relative;
         background-size: var(--breakIntervalWidth);
         background-image: linear-gradient(to right, grey 1px, transparent 1px)
@@ -45,15 +52,15 @@
     }
 
     .room {
-        border: 1px solid black;
-        line-height: 30px;
+        border-bottom: 1px solid black;
+        line-height: 10px;
     }
 
     .event {
         position: absolute;
-        /* width: var(--eventWidth); */
+        width: 120px;
         background: #ffffff;
-        word-break: break-word;
+        word-break: normal;
         height: 100%;
         /* overflow: hidden; */
         padding-right: calc(var(--breakIntervalWidth) + 2px);
@@ -159,24 +166,28 @@
                 <div class="col-md-3">
                     <label>Select Start Date</label>
 
-                    <input type="date" class="select2" id="startDate" name="startDate">
+                    <input type="date" class="form-control" id="startDate" name="startDate">
 
                 </div>
                 <div class="col-md-3">
                     <label>Select End Date</label>
 
-                    <input type="date" class="select2" id="endDate" name="endDate">
+                    <input type="date" class="form-control" id="endDate" name="endDate">
 
                 </div>
                 <div class="col-md-3">
                     <label>Select Room No.</label>
                     <select class="select2" id="RoomNo" name="RoomNo">
-                        <option value="">---SELECT---</option>
-                        <option value="701">701</option>
+                        <option value="0">Select RoomNo</option>
+                        <% for(let rooms of RoomNumbers) {%>
+                        <option value="<%- rooms.room_number %>"><%- rooms.room_number%></option>
+                        <%}%>
                     </select>
+
+
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-primary searchRoom"><i class="fa fa-search"></i> Search</button>
+                    <button class="btn btn-primary ms-3 mt-4 searchRoom"><i class="fa fa-search"></i> Search</button>
                 </div>
             </div>
 
@@ -211,124 +222,156 @@
 
 <%- include("../partials/footer") %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
-<script>
-    $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
 
-        function getTimeStops(start, end) {
-            console.log(start, end)
-            var startTime = moment(start, 'HH:mm');
-            var endTime = moment(end, 'HH:mm');
+            function getTimeStops(start, end) {
+                console.log(start, end)
+                var startTime = moment(start, 'HH:mm');
+                var endTime = moment(end, 'HH:mm');
 
-            if (endTime.isBefore(startTime)) {
-                endTime.add(1, 'day');
+                if (endTime.isBefore(startTime)) {
+                    endTime.add(1, 'day');
+                }
+
+                var timeStops = [];
+
+                while (startTime <= endTime) {
+                    timeStops.push(new moment(startTime).format('LT'));
+                    startTime.add(60, 'minutes');
+                }
+                return timeStops;
             }
 
-            var timeStops = [];
+            function getDatesInRange(start, end) {
 
-            while (startTime <= endTime) {
-                timeStops.push(new moment(startTime).format('LT'));
-                startTime.add(60, 'minutes');
-            }
-            return timeStops;
-        }
+                let dateArray = [];
+                let currentDate = moment(start);
+                let stopDate = moment(end);
 
-        function getDatesInRange(start, end) {
-
-            let dateArray = [];
-            let currentDate = moment(start);
-            let stopDate = moment(end);
-
-            while (currentDate <= stopDate) {
-                dateArray.push(moment(currentDate).format('DD-MM-YYYY'));
-                currentDate = moment(currentDate.add(1, 'days'));
-            }
-            return dateArray;
-        }
-
-        $('.searchRoom').on('click', function () {
-
-            console.log("clickeddd")
-            let startDate = $('#startDate').val().replaceAll('-', '/');
-            let endDate = $('#endDate').val().replaceAll('-', '/');
-
-            let roomNo = $('#RoomNo').val();
-            console.log(10);
-            let ApiObj = {
-                url: '/admin/rooms/getstatus',
-                type: 'POST',
-                data: {
-                    startDate: startDate,
-                    endDate: endDate,
-                    roomNo: roomNo
-                },
-                dataType: 'JSON'
+                while (currentDate <= stopDate) {
+                    dateArray.push(moment(currentDate).format('DD-MM-YYYY'));
+                    currentDate = moment(currentDate.add(1, 'days'));
+                }
+                return dateArray;
             }
 
-            ajaxApi(ApiObj).then(result => {
-                console.log(result)
-                setTable();
-                // ajaxTable(result)
-            }).catch(error => {
-                console.log('Error ::::::::::::::::::::::', error)
-                // showError(error.responseJSON)
+            $('.searchRoom').on('click', function () {
+
+                console.log("clickeddd")
+                let startDate = $('#startDate').val().replaceAll('-', '/');
+                let endDate = $('#endDate').val().replaceAll('-', '/');
+                let roomNo = $('#RoomNo').val();
+
+                if (startDate > endDate || startDate =='' || endDate == '' || roomNo == '0') {
+                    return;
+                }
+
+                console.log(10);
+                let ApiObj = {
+                    url: '/admin/rooms/getstatus',
+                    type: 'POST',
+                    data: {
+                        startDate: startDate,
+                        endDate: endDate,
+                        roomNo: roomNo
+                    },
+                    dataType: 'JSON'
+                }
+
+                ajaxApi(ApiObj).then(result => {
+                    setTable(result);
+                    // ajaxTable(result)
+                }).catch(error => {
+                    console.log('Error ::::::::::::::::::::::', error)
+                    // showError(error.responseJSON)
+                })
+
             })
 
+            function setTable(data) {
+                console.log(data);
+
+                let eventStartSlot;
+                let eventLeftPosition;
+                let roomSlot;
+
+                let div =
+                    ` <div class="text-light" style="display: flex;background:#CC0700"></div>`
+
+                const timings = JSON.parse(`<%- JSON.stringify(RoomTimings) %>`)
+
+
+                const timeStops = getTimeStops(timings[0].min_timing.slice(0, -3), timings[
+                        0].max_timing
+                    .slice(0, -3))
+                const startDateNew = $('#startDate').val();
+                const endDateNew = $('#endDate').val();
+                const daterange = getDatesInRange(startDateNew, endDateNew)
+
+                let slotHtml =
+                    `<div class="text-light" style="display: flex;background:#CC0700">`;
+                timeStops.forEach(item => {
+                    slotHtml += `<span>${item} </span>`
+                });
+                slotHtml += `</div>`
+                $(".timetable-slots").html(slotHtml)
+
+
+                let dayHtml = ``;
+                for (let day of daterange) {
+                    dayHtml += `<div class="d-flex room" day-lid="${day}">
+                            <div class="day-name" day-lid="${day}">
+                                ${day}
+                            </div>
+
+                            <div class="room-slots">
+
+                            </div>
+                            </div>`
+                }
+                $('.timetable-container').html(dayHtml);
+
+                let tableProps = {
+                    pxPerSlot: 10,
+                    roomNoWidth: 50,
+                    totalSpans: timeStops.length,
+                }
+
+                for (let event of data) {
+
+                    eventLeftPosition = (event.start_time_lid - 91) * tableProps.pxPerSlot
+                    console.log("EVENTLEFT>>>>>>>", eventLeftPosition + "px")
+
+                    // let  roomSlotItem = document.createElement('div');
+                    // roomSlotItem.setAttribute("class",`event room-slot-item text-white light-danger}`)
+                    // roomSlotItem.setAttribute("style",`left: ${eventLeftPosition}px ;top: 0; text-align:center; width:${(event.end_time_lid - event.start_time_lid + 1) * tableProps.pxPerSlot}px;`)
+
+
+                    roomSlots = document.querySelector(
+                        `.room[day-lid = "${event.date_str.replaceAll('/','-')}"] .room-slots`
+                        )
+                    console.log(event.date_str)
+                    roomSlots.innerHTML += (`
+                    <div class="event room-slot-item text-white" style="left: ${eventLeftPosition}px;line-height: 1.4; padding-top: 15px; background-color:#1ff704ab;">
+                    <span class="badge  start-time">${event.start_time.slice(0,-3)}</span>
+                    <span class="badge  end-time">${event.end_time.slice(0,-3)}</span></div>`)
+                }
+
+                const totalSlots = tableProps.pxPerSlot * 12;
+                const totalWidth = tableProps.totalSpans * totalSlots
+
+                let cssRoot = document.querySelector(':root');
+                let styleRoot = getComputedStyle(cssRoot);
+
+                cssRoot.style.setProperty('--timetableWidth', `${totalWidth + 50 }px`);
+                cssRoot.style.setProperty('--roomNoWidth', `${tableProps.roomNoWidth}px`);
+                cssRoot.style.setProperty('--breakIntervalWidth',
+                    `${tableProps.pxPerSlot}px`);
+                // cssRoot.style.setProperty('--eventWidth', `${(tableProps.pxPerSlot * 12) + timetableProp.pxPerSlot }px`);
+                cssRoot.style.setProperty('--roomSlotWidth', `${totalWidth}px`);
+            }
         })
-
-        function setTable() {
-            let div = ` <div class="text-light" style="display: flex;background:#CC0700"></div>`
-
-            const timings = JSON.parse(`<%- JSON.stringify(RoomTimings) %>`)
-
-            const timeStops = getTimeStops(timings[0].min_timing.slice(0, -3), timings[0].max_timing
-                .slice(0, -3))
-            const startDateNew = $('#startDate').val();
-            const endDateNew = $('#endDate').val();
-            console.log(startDateNew, endDateNew)
-            const daterange = getDatesInRange(startDateNew, endDateNew)
-            console.log(daterange)
-
-            let slotHtml = `<div class="text-light" style="display: flex;background:#CC0700">`;
-            timeStops.forEach(item => {
-                slotHtml += `<span>${item} </span>`
-            });
-            slotHtml += `</div>`
-            $(".timetable-slots").html(slotHtml)
-
-
-            let dayHtml = ``;
-            for (let day of daterange) {
-                console.log("DAY>>>>", day)
-                dayHtml += `<div class="d-flex room">
-                    <div class="day-name" >
-                        ${day}
-                    </div>
-                   
-                    <div class="room-slots">
-
-                    </div>
-                    </div>`
-            }
-            $('.timetable-container').html(dayHtml);
-
-            let tableProps = {
-                pxPerSlot: 10,
-                roomNoWidth: 50,
-                totalSpans: timeStops.length,
-            }
-            const totalSlots = tableProps.pxPerSlot * 12;
-            const totalWidth = tableProps.totalSpans * totalSlots
-            console.log(totalWidth)
-
-            let cssRoot = document.querySelector(':root');
-            let styleRoot = getComputedStyle(cssRoot);
-
-            cssRoot.style.setProperty('--timetableWidth', `${totalWidth + 50 }px`);
-            cssRoot.style.setProperty('--roomNoWidth', `${tableProps.roomNoWidth}px`);
-            cssRoot.style.setProperty('--breakIntervalWidth', `${tableProps.pxPerSlot}px`);
-            // cssRoot.style.setProperty('--eventWidth', `${(tableProps.pxPerSlot * 12) + timetableProp.pxPerSlot }px`);
-            cssRoot.style.setProperty('--roomSlotWidth', `${totalWidth}px`);
-        }
-    })
-</script>
+    </script>
 <%- include("../partials/footerEnd") %>

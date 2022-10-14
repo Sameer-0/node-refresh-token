@@ -10,10 +10,11 @@ const RoomStatus = require('../../../models/RoomStatus')
 module.exports = {
     getPage: (req, res) => {
         
-        Promise.all([RoomStatus.getRoomTimimgs(res.body)]).then(result => {
+        Promise.all([RoomStatus.getRoomTimings(res.body),RoomStatus.getRoomNumbers()],).then(result => {
             res.render('admin/rooms/status'
             ,{
-                RoomTimings: result[0].recordset
+                RoomTimings: result[0].recordset,
+                RoomNumbers: result[1].recordset
                 // breadcrumbs: req.breadcrumbs,
             })
         }) 
