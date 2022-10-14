@@ -32,10 +32,12 @@ module.exports = class {
 
 
     static findOne(id, slug) {
+        console.log('id::>>', id)
         return poolConnection.then(pool => {
+
             const request = pool.request();
-            request.input('id', sql.Int, id)
-            return request.query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 120) as h_date, FORMAT(h.h_date, 'dddd') as dayname, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h INNER JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid AND h.id = @Id`)
+            return request.input('id', sql.Int, id)
+            .query(`SELECT h.id, h.calendar_year, CONVERT(NVARCHAR, h.h_date, 120) as h_date, FORMAT(h.h_date, 'dddd') as dayname, h.reason, ht.name as holiday_type, h.holiday_type_lid FROM [${slug}].holidays h LEFT JOIN [dbo].holiday_types ht ON  ht.id = h.holiday_type_lid WHERE h.id = @id`)
         })
     }
 
