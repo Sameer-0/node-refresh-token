@@ -58,9 +58,11 @@ module.exports = {
             }
         })
     },
-
+ 
     findOne: (req, res) => {
+        console.log('request::>>> ', req.body.Id)
         Holidays.findOne(req.body.Id, res.locals.slug).then(result => {
+            console.log('edit::>>> ', result)
             res.json({
                 status: 200,
                 data: result.recordset[0]

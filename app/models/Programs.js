@@ -6,7 +6,7 @@ const {
 
 module.exports = class Programs {
 
-    static fetchAll( slug) {
+    static fetchAll(row, slug) {
         return poolConnection.then(pool => {
             let request = pool.request()
             let stmt = `SELECT  p.id, p.program_id, RTRIM(LTRIM(p.program_name)) as program_name, p.abbr, IIF(p.program_code IS NULL, 'NA', p.program_code) AS program_code, pt.name as program_type, p.program_type_lid  FROM [${slug}].programs p INNER JOIN [dbo].program_types pt ON p.program_type_lid = pt.id ORDER BY p.id DESC`;
