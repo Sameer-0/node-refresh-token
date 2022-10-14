@@ -26,11 +26,10 @@
 
     .room-slots {
         width: var(--roomSlotWidth);
-        min-height: 10px;
+        min-height: 30px;
         position: relative;
         background-size: var(--breakIntervalWidth);
-        background-image:
-            linear-gradient(to right, grey 1px, transparent 1px)
+        background-image: linear-gradient(to right, grey 1px, transparent 1px)
     }
 
     .timetable-slots {
@@ -47,7 +46,7 @@
 
     .room {
         border: 1px solid black;
-        line-height: 0px;
+        line-height: 30px;
     }
 
     .event {
@@ -201,101 +200,135 @@
 
 
 
-        <div class="timetable-slots mt-3">
+        <div class="timetable-slots mt-3"></div>
 
-            <div class="timetable-container" style="overflow-x: auto;"></div>
-            <!-- 
-        <div class="card-body table-responsive">
-            <div id="errorHtml"></div> -->
-            <!-- <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div> -->
-            <!-- <table class="table custom_row table-bordered" id="roomstatusTable">
-                <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Date</th>
-                            <th>Room No.</th>
-                            <th>Room Abbr</th>
-                            <th>Day</th>
-                            <th>Event</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Program Name</th>
-                            <th>Acad Session</th>
-                            <th>Module Name</th>
-                            <th>Faculty id</th>
-                            <th>Faculty Name</th>
-                            <th>Division</th>
-                            <th>Batch</th>
-                        </tr>
-                </thead>
-                <tbody>
-                   
-                </tbody>
-            </table>
+        <div class="timetable-container" style="overflow-x: auto;"></div>
 
-
-        </div> -->
-        </div>
     </div>
-    <!--DASHBOARD CONTENT END-->
+</div>
+<!--DASHBOARD CONTENT END-->
 
 
-    <%- include("../partials/footer") %>
+<%- include("../partials/footer") %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.23.0/moment.min.js"></script>
+<script>
+    $(document).ready(function () {
 
-    <script>
-        $(document).ready(function () {
+        function getTimeStops(start, end) {
+            console.log(start, end)
+            var startTime = moment(start, 'HH:mm');
+            var endTime = moment(end, 'HH:mm');
 
-            $('.searchRoom').on('click', function () {
-                console.log("clickeddd")
-                let startDate = $('#startDate').val().replaceAll('-', '/');
-                let endDate = $('#endDate').val().replaceAll('-', '/');
-                let roomNo = $('#RoomNo').val();
-                console.log(roomNo, startDate, endDate);
-                console.log(10);
-                let ApiObj = {
-                    url: '/admin/rooms/getstatus',
-                    type: 'POST',
-                    data: {
-                        startDate: startDate,
-                        endDate: endDate,
-                        roomNo: roomNo
-                    },
-                    dataType: 'JSON'
-                }
+            if (endTime.isBefore(startTime)) {
+                endTime.add(1, 'day');
+            }
 
-                ajaxApi(ApiObj).then(result => {
-                    console.log(result)
-                    // ajaxTable(result)
-                }).catch(error => {
-                    console.log('Error ::::::::::::::::::::::', error)
-                    // showError(error.responseJSON)
-                })
+            var timeStops = [];
+
+            while (startTime <= endTime) {
+                timeStops.push(new moment(startTime).format('LT'));
+                startTime.add(60, 'minutes');
+            }
+            return timeStops;
+        }
+
+        function getDatesInRange(start, end) {
+
+            let dateArray = [];
+            let currentDate = moment(start);
+            let stopDate = moment(end);
+
+            while (currentDate <= stopDate) {
+                dateArray.push(moment(currentDate).format('DD-MM-YYYY'));
+                currentDate = moment(currentDate.add(1, 'days'));
+            }
+            return dateArray;
+        }
+
+        $('.searchRoom').on('click', function () {
+
+            console.log("clickeddd")
+            let startDate = $('#startDate').val().replaceAll('-', '/');
+            let endDate = $('#endDate').val().replaceAll('-', '/');
+
+            let roomNo = $('#RoomNo').val();
+            console.log(10);
+            let ApiObj = {
+                url: '/admin/rooms/getstatus',
+                type: 'POST',
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    roomNo: roomNo
+                },
+                dataType: 'JSON'
+            }
+
+            ajaxApi(ApiObj).then(result => {
+                console.log(result)
+                setTable();
+                // ajaxTable(result)
+            }).catch(error => {
+                console.log('Error ::::::::::::::::::::::', error)
+                // showError(error.responseJSON)
             })
 
+        })
+
+        function setTable() {
             let div = ` <div class="text-light" style="display: flex;background:#CC0700"></div>`
 
             const timings = JSON.parse(`<%- JSON.stringify(RoomTimings) %>`)
-            console.log(...timings[0].min_timing.split(':', 2))
-            console.log(timings[0].max_timing)
+
+            const timeStops = getTimeStops(timings[0].min_timing.slice(0, -3), timings[0].max_timing
+                .slice(0, -3))
+            const startDateNew = $('#startDate').val();
+            const endDateNew = $('#endDate').val();
+            console.log(startDateNew, endDateNew)
+            const daterange = getDatesInRange(startDateNew, endDateNew)
+            console.log(daterange)
+
+            let slotHtml = `<div class="text-light" style="display: flex;background:#CC0700">`;
+            timeStops.forEach(item => {
+                slotHtml += `<span>${item} </span>`
+            });
+            slotHtml += `</div>`
+            $(".timetable-slots").html(slotHtml)
 
 
-            function getTimeStops(start, end) {
-                var startTime = moment(start, 'HH:mm');
-                var endTime = moment(end, 'HH:mm');
+            let dayHtml = ``;
+            for (let day of daterange) {
+                console.log("DAY>>>>", day)
+                dayHtml += `<div class="d-flex room">
+                    <div class="day-name" >
+                        ${day}
+                    </div>
+                   
+                    <div class="room-slots">
 
-                if (endTime.isBefore(startTime)) {
-                    endTime.add(1, 'day');
-                }
-
-                var timeStops = [];
-
-                while (startTime <= endTime) {
-                    timeStops.push(new moment(startTime).format('LT'));
-                    startTime.add(60, 'minutes');
-                }
-                return timeStops;
+                    </div>
+                    </div>`
             }
-        })
-    </script>
-    <%- include("../partials/footerEnd") %>
+            $('.timetable-container').html(dayHtml);
+
+            let tableProps = {
+                pxPerSlot: 10,
+                roomNoWidth: 50,
+                totalSpans: timeStops.length,
+            }
+            const totalSlots = tableProps.pxPerSlot * 12;
+            const totalWidth = tableProps.totalSpans * totalSlots
+            console.log(totalWidth)
+
+            let cssRoot = document.querySelector(':root');
+            let styleRoot = getComputedStyle(cssRoot);
+
+            cssRoot.style.setProperty('--timetableWidth', `${totalWidth + 50 }px`);
+            cssRoot.style.setProperty('--roomNoWidth', `${tableProps.roomNoWidth}px`);
+            cssRoot.style.setProperty('--breakIntervalWidth', `${tableProps.pxPerSlot}px`);
+            // cssRoot.style.setProperty('--eventWidth', `${(tableProps.pxPerSlot * 12) + timetableProp.pxPerSlot }px`);
+            cssRoot.style.setProperty('--roomSlotWidth', `${totalWidth}px`);
+        }
+    })
+</script>
+<%- include("../partials/footerEnd") %>

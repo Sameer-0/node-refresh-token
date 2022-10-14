@@ -36,7 +36,7 @@ module.exports = class RoomStatus {
         return poolConnection.then(pool => {
             let request = pool.request();
             return request
-                .query(`SELECT MIN(start_time) as min_timing,MAX(start_time) as max_timing FROM [asmsoc-mum].timesheet WHERE active = 1 `)
+                .query(`SELECT MIN(start_time) as min_timing,MAX(end_time) as max_timing FROM [asmsoc-mum].timesheet WHERE active = 1 `)
         })
     }
 }
